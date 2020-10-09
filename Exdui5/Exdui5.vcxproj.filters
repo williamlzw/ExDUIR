@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Exdui5.cpp" />
+    <ClCompile Include="Global_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Wnd_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="help_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="HashTable_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="MemPool_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Font_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Brush_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="HandleTable_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="image_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Canvas_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Ntdll_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Path_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Region_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="StrokeStyle_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Object_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Layout_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Array_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Theme_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Class_Scrollbar_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Global">
+      <UniqueIdentifier>{6745ce93-c921-4c97-8ff6-e7c2fcb338d8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Global_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="help_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Wnd_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="constant_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="struct_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="HashTable_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="MemPool_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Font_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Brush_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="HandelTable_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="image_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Canvas_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Ntdll_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Region_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="StrokeStyle_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Object_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Layout_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Array_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Theme_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Class_Scrollbar_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
