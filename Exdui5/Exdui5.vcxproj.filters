@@ -65,6 +65,9 @@
     <ClCompile Include="Class_Scrollbar_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
+    <ClCompile Include="Resource_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Global">
@@ -139,6 +142,9 @@
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="Class_Scrollbar_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
   </ItemGroup>

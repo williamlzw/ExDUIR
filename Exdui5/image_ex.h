@@ -73,6 +73,7 @@ int _img_height(size_t hImg);
 size_t _img_create(int width, int height);
 size_t _img_createfrompngbits(void* lpmem);
 void* _img_createfromstream_init(void* lpData, int dwLen, int* nError);
+size_t _img_createfromstream(void* lpStream);
 size_t _img_createfrommemory(void* lpData, int dwLen);
 size_t _img_createfromhicon(void* hIcon);
 size_t _img_createfromfile(LPCWSTR lpwzFilename);

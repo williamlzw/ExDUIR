@@ -160,6 +160,7 @@
     <ClCompile Include="Object_ex.cpp" />
     <ClCompile Include="Path_ex.cpp" />
     <ClCompile Include="Region_ex.cpp" />
+    <ClCompile Include="Resource_ex.cpp" />
     <ClCompile Include="StrokeStyle_ex.cpp" />
     <ClCompile Include="Theme_ex.cpp" />
     <ClCompile Include="Thread_ex.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Object_ex.h" />
     <ClInclude Include="Path_ex.h" />
     <ClInclude Include="Region_ex.h" />
+    <ClInclude Include="Resource_ex.h" />
     <ClInclude Include="StrokeStyle_ex.h" />
     <ClInclude Include="struct_ex.h" />
     <ClInclude Include="Theme_ex.h" />
