@@ -137,6 +137,50 @@ void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int*
     return tmp;
 }
 
+const std::string ToHexString(const unsigned char* input, const int datasize)
+{
+    char  output[33];
+    for (int j = 0; j < datasize; j++)
+    {
+        unsigned char b = *(input + j);
+        sprintf_s(output + j * 2, 3, "%02x", b);
+    }
+    return std::string(output);
+}
+
+void RC4(void* dest, size_t destlen, const void* pwd, size_t pwdlen)
+{
+    size_t i, j, x;
+    unsigned char m[256], k[256], temp;
+
+    if (pwdlen == 0)
+        return;
+
+    for (i = 0, j = 0; i < 256; ++i)
+    {
+        m[i] = (unsigned char)i;
+        k[i] = ((unsigned char*)pwd)[j];
+        if (++j == pwdlen)
+            j = 0;
+    }
+
+    for (i = 0, j = 0; i < 256; ++i)
+    {
+        j = (j + m[i] + k[i]) & 255;
+        temp = m[i];
+        m[i] = m[j];
+        m[j] = temp;
+    }
+    for (x = 0, i = 0, j = 0; x < destlen; ++x)
+    {
+        i = (i + 1) & 255;
+        j = (j + m[i]) & 255;
+        temp = m[i];
+        m[i] = m[j];
+        m[j] = temp;
+        ((unsigned char*)dest)[x] ^= m[(m[i] + m[j]) & 255];
+    }
+}
 
 const UINT32 table[] = {
     0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
