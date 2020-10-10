@@ -382,6 +382,7 @@ void 位_添加(size_t& dwValue, size_t index);
 void 位_删除(size_t& dwValue, size_t index);
 void 位_取反(size_t& dwValue, size_t index);
 BOOL 位_测试(size_t& dwValue, size_t index);
+int 取最近质数(int value);
 void _struct_destroyfromaddr(void* lpAddr, size_t Offset);
 void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int* nError);
 const std::string ToHexString(const unsigned char* input, const int datasize);

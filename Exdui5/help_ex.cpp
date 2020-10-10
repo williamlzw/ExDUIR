@@ -110,6 +110,18 @@ BOOL 位_测试(size_t& dwValue, size_t index/*0-31 */)//OK
 	return dwValue >> index & (size_t)1;
 }
 
+int 取最近质数(int value)
+{
+    int prime = 0;
+    int i = 0;
+    while (value>= prime)
+    {
+        i = i + 1;
+        prime = i * i + i + 41;
+    }
+    return  prime;
+}
+
 void _struct_destroyfromaddr(void* lpAddr, size_t Offset)
 {
    auto tmp= __get(lpAddr, Offset);

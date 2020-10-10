@@ -64,3 +64,63 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 	}
 	Ex_SetLastError(nError);
 }
+
+void* _res_unpack(void* lpData, size_t dwDataLen, char byteHeader)
+{
+	void* retPtr = nullptr;
+	size_t retLen = 0;
+	void* tableFiles = nullptr;
+	_bin_uncompress(lpData, dwDataLen, 0, 0, retPtr, retLen);
+	if (retLen > 0)
+	{
+		if (__get_bit(retPtr, 0) == byteHeader)
+		{
+			int count = __get_int(retPtr, 1);
+			if (count > 0)
+			{
+				tableFiles = HashTable_Create(取最近质数(count), &pfnDefaultFreeData);
+				if (tableFiles != 0)
+				{
+					retPtr =(void*)((size_t) retPtr + 5);
+					for (int i = 0; i < count; i++)
+					{
+						int atom = __get_int(retPtr, 0);
+						char prop = __get_bit(retPtr, 4);
+						int len = __get_int(retPtr, 5) + 5;//byteProp + len + data
+						if (len > 5)
+						{
+							void* tmp = 申请内存(len);
+							if (tmp != 0)
+							{
+								HashTable_Set(tableFiles, atom, (size_t)tmp);
+								RtlMoveMemory(tmp,(void*)((size_t)retPtr + 4), len);
+							}
+						}
+						retPtr = (void*)((size_t)retPtr + 4 + len);
+					}
+				}
+			}
+		}
+	}
+	return tableFiles;
+}
+
+void* Ex_ResLoadFromMemory(void* lpData, size_t dwDataLen)
+{
+	int nError = 1;
+	void* ret = nullptr;
+	if (dwDataLen > 0)
+	{
+		if (IsBadReadPtr(lpData, dwDataLen))
+		{
+			nError = ERROR_EX_MEMORY_BADPTR;
+		}
+		else {
+			ret = _res_unpack(lpData, dwDataLen, EPDF_FILES);
+		}
+	}else{
+		nError = ERROR_EX_BAD_LENGTH;
+	}
+	Ex_SetLastError(nError);
+	return ret;
+}
