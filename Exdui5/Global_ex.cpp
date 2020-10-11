@@ -24,7 +24,7 @@ void Ex_SetLastError(int nError)
 
 BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme, int dwDefaultThemeLen, LPVOID lpDefaultI18N, int dwDefaultI18NLen)
 {
-	CoInitialize(NULL);
+	//CoInitialize(NULL);
 	g_Li.csError = Thread_InitializeCriticalSection();
 	g_Li.hInstance = hInstance;
 	g_Li.dwFlags = dwGlobalFlags;

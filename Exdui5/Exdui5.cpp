@@ -1,4 +1,6 @@
 ﻿#include <iostream>
+#include <fstream>
+#include <string>
 #include <vector>
 #include <algorithm>
 #include <Windows.h>
@@ -8,7 +10,8 @@
 #include "help_ex.h"
 #include "Global_ex.h"
 #include "Array_ex.h"
-
+#include "Resource_ex.h"
+#include "Gdiplusdll_ex.h"
 
 
 
@@ -136,19 +139,8 @@ void 测试引用(int *a)
 	*a = 5;
 }
 
-
-int main()
+void 测试RC4()
 {
-	
-	//测试句柄池();
-	//数组遍历();
-	//测试哈希表();
-	//测试子程序();
-	//测试数组();
-	//int b;
-	//测试引用(&b);
-	//bool a = true;
-
 	unsigned char A[1000] = { 97,98,99,100,101,102 };
 	unsigned char key[256] = { 97,98,99,100,101,102 };
 	//unsigned char A[1000] = "abcdef";
@@ -159,5 +151,45 @@ int main()
 		std::cout << "A= " << (int)A[index] << std::endl;
 	}
 	std::cout << "M = " << ToHexString(A, 6) << std::endl;
+}
+
+
+
+int main()
+{
+	//char aa[6] = { 2,3,4,5,6 ,7 };
+	//std::cout << sizeof(aa) << std::endl;
+	//打印数组(aa, sizeof(aa));
+	//测试句柄池();
+	//数组遍历();
+	//测试哈希表();
+	//测试子程序();
+	//测试数组();
+	//测试RC4();
+	//int b;
+	//测试引用(&b);
+	//bool a = true;
+	//加载GdiplusDLL();
+	//size_t token;
+	//char iid[16] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	////char iid[32] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	//GdiplusStartup(&token,iid,NULL);
+	//int nError = 1;
+	//g_Li.csError = Thread_InitializeCriticalSection();
+	//g_Li.hHandles = _handle_init();
+	//_canvas_init(&nError);
+
+	//void* retptr=nullptr;
+	//size_t retlen;
+	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", &retptr,&retlen);
+	//std::cout << Ex_ResLoadFromMemory(retptr, retlen) << std::endl;
+	//std::cout << retptr << std::endl;
+	//std::cout << retlen << std::endl;
+	//std::cout << IsBadReadPtr(retptr,retlen) << std::endl;
+	//std::cout << IsBadWritePtr(retptr, retlen) << std::endl;
+	
+	//Ex_ResLoadFromMemory();
+	
+
 }
 

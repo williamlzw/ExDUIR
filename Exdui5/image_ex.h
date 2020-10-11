@@ -19,6 +19,7 @@ struct lockedbitmapdata_s
 	int stride_;
 	int pixelformat_;
 	void* scan0_;
+	int dwlen_;
 	void* pLock_;
 };
 

@@ -2125,9 +2125,9 @@ bool Ex_ObjBeginPaint(size_t hObj, void* lpPS)
 				ret = true;
 			}
 		}
-		Ex_SetLastError(nError);
-		return ret;
 	}
+	Ex_SetLastError(nError);
+	return ret;
 }
 
 bool Ex_ObjEndPaint(size_t hObj, void* lpPS)

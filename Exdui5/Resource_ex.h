@@ -1,10 +1,17 @@
 #pragma once
 #include "help_ex.h"
-#include <Gdiplus.h>
-#include <gdiplusbrush.h>
-using namespace Gdiplus;
-#pragma comment(lib, "Gdiplus.lib")
+#include "Gdiplusdll_ex.h"
+//#include <Gdiplus.h>
+//using namespace Gdiplus;
+//#include <gdiplusbrush.h>
 
-void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void* retPtr, size_t retLen);
+
+//#pragma comment(lib, "Gdiplus.lib")
+
+//#include <gdiplusflat.h>
+
+
+
+void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen);
 void* _res_unpack(void* lpData, size_t dwDataLen, char byteHeader);
 void* Ex_ResLoadFromMemory(void* lpData, size_t dwDataLen);

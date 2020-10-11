@@ -99,7 +99,8 @@ bool _canvas_resize(size_t hCanvas, int width, int height)
 
 void _canvas_init(int* nError)
 {
-	bool bDX;
+	bool bDX=false;
+	CoInitialize(0);
 	*nError = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, &g_Ri.pWICFactory);
 	if (*nError == 0)
 	{

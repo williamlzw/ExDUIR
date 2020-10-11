@@ -89,8 +89,8 @@ void _apng_drawframe(void* pImage, int nIndex)//Î´Íê³É
 	int type = __get_int(pIDAT, 4);
 	if (type == PNG_IDAT || type == PNG_fdAT)
 	{
-		char dispose = __get_bit(pFrame , 32);
-		char blend= __get_bit(pFrame, 33);
+		char dispose = __get_char(pFrame , 32);
+		char blend= __get_char(pFrame, 33);
 		int x = __get_int(pFrame, 20);
 		int y = __get_int(pFrame, 24);
 		int dwHeader=  __get_int(pHeader, 0);
@@ -213,6 +213,7 @@ bool _img_lock(size_t hImg, void* lpRectL, int flags, void* lpLockedBitmapData)/
 		nError = ((IWICBitmapSource*)pBitmap)->GetSize((UINT*)&swidth, (UINT*)&sheight);
 		if (nError == 0)
 		{
+			
 			if (lpRectL == 0 || IsBadReadPtr(lpRectL, 16))
 			{
 				width = swidth;
@@ -231,25 +232,31 @@ bool _img_lock(size_t hImg, void* lpRectL, int flags, void* lpLockedBitmapData)/
 			//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, pixelformat_), 2498570);
 			IWICBitmapLock* pLock;
 			nError = ((IWICBitmap*)pBitmap)->Lock((WICRect*)lpRectL, flags, &pLock);
+			
 			if (nError == 0)
 			{
 				int stride;
 				nError = pLock->GetStride((UINT*)&stride);
+				
 				if (nError == 0)
 				{
 					((lockedbitmapdata_s*)lpLockedBitmapData)->stride_ = stride;
 					//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, stride_), stride);
-					int dwlen;
-					void* scan0 = nullptr;
-					nError = pLock->GetDataPointer((UINT*)&dwlen, (WICInProcPointer*)scan0);
+					UINT dwlen=0;
+					
+					WICInProcPointer scan0 = nullptr;
+					nError = pLock->GetDataPointer(&dwlen,&scan0);
+					
 					if (nError == 0)
 					{
+						
 						((lockedbitmapdata_s*)lpLockedBitmapData)->scan0_ = scan0;
+						((lockedbitmapdata_s*)lpLockedBitmapData)->dwlen_ = dwlen;
 						((lockedbitmapdata_s*)lpLockedBitmapData)->pLock_ = pLock;
 						//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, scan0_), (size_t)scan0);
 						//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, pLock_), (size_t)pLock);
 					}
-					if (nError != 0)
+					else 
 					{
 						pLock->Release();
 					}
@@ -363,6 +370,7 @@ size_t _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nErr
 		((img_s*)pImg)->nMaxFrames_ = frames;
 		//__set(pImg, offsetof(img_s, nMaxFrames_), frames);
 		hImg = _handle_create(HT_IMAGE, pImg, nError);
+	
 	}
 	if (*nError != 0)
 	{
@@ -457,6 +465,7 @@ size_t _wic_init_from_decoder(void* pDecoder, int* nError)
 		void* pFrame = _wic_selectactiveframe(pDecoder, 0, nError);
 		if (*nError == 0)
 		{
+			
 			ret = _img_init(pFrame, 0, pCount, pDecoder, nError);
 		}
 	}
@@ -471,6 +480,7 @@ size_t _img_createfromstream(void* lpStream)
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateDecoderFromStream((IStream*)lpStream, NULL, WICDecodeMetadataCacheOnLoad, (IWICBitmapDecoder**)&pDecoder);
 	if (nError == 0)
 	{
+		
 		hImg = _wic_init_from_decoder(pDecoder, &nError);
 	}
 	if (hImg != 0)

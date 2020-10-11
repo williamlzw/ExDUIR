@@ -195,11 +195,7 @@ struct si_s
 	int wArrows;
 };
 
-struct classtable_s
-{
-	void* tableProps;
-	void* hImage;
-};
+
 
 struct paintstruct_s
 {
@@ -236,6 +232,12 @@ struct ti_s
 	int hinst_;
 	void* lpszText_;
 	size_t lParam_;
+};
+
+struct classtable_s
+{
+	void* tableProps;
+	size_t hImage;
 };
 
 int Ex_ObjRegister(LPCWSTR lptszClassName, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, int dwFlags, void* pfnObjProc);

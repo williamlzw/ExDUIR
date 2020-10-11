@@ -1,7 +1,11 @@
 #pragma once
+
+
 #include <iostream>
 #include <vector>
+#include <string>
 #include <Windows.h>
+
 
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME					//定义一个API函数类型,并声明
@@ -363,26 +367,43 @@ struct RENDERINFO
 extern LOCALINFO g_Li;
 extern RENDERINFO g_Ri;
 
+struct ARGB_s
+{
+	int r;
+	int g;
+	int b;
+	int a;
+};
 
 BOOL 释放内存(void* hMem);
 void* 申请内存(size_t dwSize, int dwFlags = LMEM_ZEROINIT);
 size_t __get(void* lpAddr, size_t offset);
 int __get_int(void* lpAddr, size_t offset);
 float __get_float(void* lpAddr, size_t offset);
-char __get_bit(void* lpAddr, size_t offset);
+short __get_short(void* lpAddr, size_t offset);
+char __get_char(void* lpAddr, size_t offset);
+wchar_t __get_wchar(void* lpAddr, size_t offset);
 void __set(void* lpAddr, size_t offset, size_t value);
 void __set_float(void* lpAddr, size_t offset, float value);
 void __set_int(void* lpAddr, size_t offset, int value);
+void __set_char(void* lpAddr, size_t offset, char value);
+void __set_wchar(void* lpAddr, size_t offset, wchar_t value);
 BOOL __query(void* lpAddr, size_t offset, size_t value);
 void __del(void* lpAddr, size_t offset, size_t value);
 void __add(void* lpAddr, size_t offset, size_t value);
 void __addn(void* lpAddr, size_t offset, size_t value);
 void __subn(void* lpAddr, size_t offset, size_t value);
-void 位_添加(size_t& dwValue, size_t index);
-void 位_删除(size_t& dwValue, size_t index);
-void 位_取反(size_t& dwValue, size_t index);
-BOOL 位_测试(size_t& dwValue, size_t index);
+void 位_添加(size_t* dwValue, size_t index);
+void 位_删除(size_t* dwValue, size_t index);
+void 位_取反(size_t* dwValue, size_t index);
+BOOL 位_测试(size_t* dwValue, size_t index);
+void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar);
+void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int dwLen);
+void U2W_Addr(void* lpUTF8, int dwLen, void** retPtr, size_t* retLen);
+void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen);
+void 打印数组(unsigned char* data, int len);
 int 取最近质数(int value);
+void 读入文件(std::wstring file, void** retPtr, size_t* retLen);
 void _struct_destroyfromaddr(void* lpAddr, size_t Offset);
 void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int* nError);
 const std::string ToHexString(const unsigned char* input, const int datasize);

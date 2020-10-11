@@ -149,6 +149,8 @@
     <ClCompile Include="DirectX_ex.cpp" />
     <ClCompile Include="Exdui5.cpp" />
     <ClCompile Include="Font_ex.cpp" />
+    <ClCompile Include="Format_ex.cpp" />
+    <ClCompile Include="Gdiplusdll_ex.cpp" />
     <ClCompile Include="Global_ex.cpp" />
     <ClCompile Include="HandleTable_ex.cpp" />
     <ClCompile Include="HashTable_ex.cpp" />
@@ -174,6 +176,8 @@
     <ClInclude Include="constant_ex.h" />
     <ClInclude Include="DirectX_ex.h" />
     <ClInclude Include="Font_ex.h" />
+    <ClInclude Include="Format_ex.h" />
+    <ClInclude Include="Gdiplusdll_ex.h" />
     <ClInclude Include="Global_ex.h" />
     <ClInclude Include="HandelTable_ex.h" />
     <ClInclude Include="HashTable_ex.h" />
