@@ -146,6 +146,8 @@
     <ClCompile Include="Brush_ex.cpp" />
     <ClCompile Include="Canvas_ex.cpp" />
     <ClCompile Include="Class_Scrollbar_ex.cpp" />
+    <ClCompile Include="Class_Static_SysLink_ex.cpp" />
+    <ClCompile Include="Class_SysButton_Page_ex.cpp" />
     <ClCompile Include="DirectX_ex.cpp" />
     <ClCompile Include="Exdui5.cpp" />
     <ClCompile Include="Font_ex.cpp" />
@@ -155,7 +157,7 @@
     <ClCompile Include="HandleTable_ex.cpp" />
     <ClCompile Include="HashTable_ex.cpp" />
     <ClCompile Include="help_ex.cpp" />
-    <ClCompile Include="image_ex.cpp" />
+    <ClCompile Include="Image_ex.cpp" />
     <ClCompile Include="Layout_ex.cpp" />
     <ClCompile Include="MemPool_ex.cpp" />
     <ClCompile Include="Ntdll_ex.cpp" />
@@ -173,6 +175,8 @@
     <ClInclude Include="Brush_ex.h" />
     <ClInclude Include="Canvas_ex.h" />
     <ClInclude Include="Class_Scrollbar_ex.h" />
+    <ClInclude Include="Class_Static_SysLink_ex.h" />
+    <ClInclude Include="Class_SysButton_Page_ex.h" />
     <ClInclude Include="constant_ex.h" />
     <ClInclude Include="DirectX_ex.h" />
     <ClInclude Include="Font_ex.h" />
@@ -182,7 +186,7 @@
     <ClInclude Include="HandelTable_ex.h" />
     <ClInclude Include="HashTable_ex.h" />
     <ClInclude Include="help_ex.h" />
-    <ClInclude Include="image_ex.h" />
+    <ClInclude Include="Image_ex.h" />
     <ClInclude Include="Layout_ex.h" />
     <ClInclude Include="MemPool_ex.h" />
     <ClInclude Include="Ntdll_ex.h" />

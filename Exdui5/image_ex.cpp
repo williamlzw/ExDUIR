@@ -1,4 +1,4 @@
-#include "image_ex.h"
+#include "Image_ex.h"
 #include "help_ex.h"
 #include "DirectX_ex.h"
 

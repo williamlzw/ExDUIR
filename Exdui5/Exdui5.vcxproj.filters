@@ -32,9 +32,6 @@
     <ClCompile Include="HandleTable_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
-    <ClCompile Include="image_ex.cpp">
-      <Filter>Global</Filter>
-    </ClCompile>
     <ClCompile Include="Canvas_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
@@ -72,6 +69,15 @@
       <Filter>Global</Filter>
     </ClCompile>
     <ClCompile Include="Format_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Class_Static_SysLink_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Image_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Class_SysButton_Page_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
   </ItemGroup>
@@ -117,9 +123,6 @@
     <ClInclude Include="HandelTable_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
-    <ClInclude Include="image_ex.h">
-      <Filter>Global</Filter>
-    </ClInclude>
     <ClInclude Include="Canvas_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
@@ -157,6 +160,15 @@
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="Format_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Class_Static_SysLink_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Image_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Class_SysButton_Page_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
   </ItemGroup>

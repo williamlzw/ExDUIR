@@ -69,3 +69,18 @@ void _wnd_redraw_bkg(HWND hWnd, void* pWnd, void* lpRect, bool bRedrawBkg, bool 
 		UpdateWindow(hWnd);
 	}
 }
+
+bool 窗口_查询风格(HWND hWnd, int dwStyle, bool bExStyle)
+{
+	return (GetWindowLongW(hWnd, bExStyle ? -20 : -16) & dwStyle) != 0;
+}
+
+size_t 窗口_取图标句柄(HWND hWnd, bool 大图标)
+{
+	size_t ret = SendMessageW(hWnd, 127, (大图标 ? 1 : 0), 0);
+	if (ret == 0)
+	{
+		ret = GetClassLongW(hWnd, 大图标 ? -14 : -34);
+	}
+	return ret;
+}

@@ -2,7 +2,7 @@
 #include "help_ex.h"
 #include "Font_ex.h"
 #include "Brush_ex.h"
-#include "image_ex.h"
+#include "Image_ex.h"
 #include "DirectX_ex.h"
 #include "Wnd_ex.h"
 #include "Path_ex.h"

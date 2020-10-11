@@ -236,8 +236,8 @@ struct ti_s
 
 struct classtable_s
 {
-	void* tableProps;
-	size_t hImage;
+	void* tableProps_;
+	size_t hImage_;
 };
 
 int Ex_ObjRegister(LPCWSTR lptszClassName, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, int dwFlags, void* pfnObjProc);
@@ -343,7 +343,7 @@ bool Ex_ObjTooltipsSetText(size_t hObj, void* lpString);
 void _obj_tooltips_popup(void* pWnd, void* lpTitle, void* lpText, int x, int y, int dwTime, int nIcon, bool fShow);
 bool Ex_ObjTooltipsPopEx(size_t hObj, void* lpTitle, void* lpText, int x, int y, int dwTime, int nIcon, bool fShow);
 size_t Ex_ObjGetFocus(size_t hExDuiOrhObj);
-size_t Ex_ObjGetProp(size_t hObj, int dwKey);
+size_t Ex_ObjGetProp(size_t hObj, size_t dwKey);
 size_t Ex_ObjSetProp(size_t hObj, size_t dwKey, size_t dwValue);
 size_t Ex_ObjRemoveProp(size_t hObj, size_t dwKey);
 bool Ex_ObjInitPropList(size_t hObj, int nPropCount);
@@ -351,3 +351,4 @@ bool Ex_ObjMove(size_t hObj, int x, int y, int width, int height, bool bRepaint)
 void _obj_setuistate(void* pObj, int dwState, bool fRemove, void* lprcUpdate, bool fRedraw, int* nError);
 bool Ex_ObjSetUIState(size_t hObj, int dwState, bool fRemove, void* lprcRedraw, bool fRedraw);
 int Ex_ObjGetUIState(size_t hObj);
+size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t lParam, size_t wParam);

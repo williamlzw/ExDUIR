@@ -2,6 +2,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <Windows.h>
@@ -328,7 +329,7 @@ struct LOCALINFO
 	void* hMenuEdit;
 	void* hHookMsgBox;
 	void* hHandles;
-	std::vector<int> aryThemes;
+	std::vector<void*> aryThemes;
 	std::vector<int> aryColorsAtom;
 	std::vector<int> aryColorsOffset;
 	void* lpstr_min;
@@ -338,7 +339,7 @@ struct LOCALINFO
 	void* lpstr_close;
 	void* lpstr_help;
 	UINT dwClickTime;
-	
+	size_t hToken;
 };
 
 struct RENDERINFO
@@ -382,11 +383,13 @@ int __get_int(void* lpAddr, size_t offset);
 float __get_float(void* lpAddr, size_t offset);
 short __get_short(void* lpAddr, size_t offset);
 char __get_char(void* lpAddr, size_t offset);
+UCHAR __get_unsignedchar(void* lpAddr, size_t offset);
 wchar_t __get_wchar(void* lpAddr, size_t offset);
 void __set(void* lpAddr, size_t offset, size_t value);
 void __set_float(void* lpAddr, size_t offset, float value);
 void __set_int(void* lpAddr, size_t offset, int value);
 void __set_char(void* lpAddr, size_t offset, char value);
+void __set_unsignedchar(void* lpAddr, size_t offset, UCHAR value);
 void __set_wchar(void* lpAddr, size_t offset, wchar_t value);
 BOOL __query(void* lpAddr, size_t offset, size_t value);
 void __del(void* lpAddr, size_t offset, size_t value);
@@ -403,7 +406,7 @@ void U2W_Addr(void* lpUTF8, int dwLen, void** retPtr, size_t* retLen);
 void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen);
 void 打印数组(unsigned char* data, int len);
 int 取最近质数(int value);
-void 读入文件(std::wstring file, void** retPtr, size_t* retLen);
+void 读入文件(std::wstring file, std::vector<char>* data);
 void _struct_destroyfromaddr(void* lpAddr, size_t Offset);
 void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int* nError);
 const std::string ToHexString(const unsigned char* input, const int datasize);

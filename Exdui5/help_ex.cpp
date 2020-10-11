@@ -49,6 +49,12 @@ char __get_char(void* lpAddr, size_t offset)
 	return *(char*)a;
 }
 
+UCHAR __get_unsignedchar(void* lpAddr, size_t offset)
+{
+	size_t a = (size_t)lpAddr + offset;
+	return *(UCHAR*)a;
+}
+
 wchar_t __get_wchar(void* lpAddr, size_t offset)
 {
 	size_t a = (size_t)lpAddr + offset;
@@ -71,6 +77,12 @@ void __set_char(void* lpAddr, size_t offset, char value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(char*)a = value;
+}
+
+void __set_unsignedchar(void* lpAddr, size_t offset, UCHAR value)
+{
+	size_t a = (size_t)lpAddr + offset;
+	*(UCHAR*)a = value;
 }
 
 void __set_wchar(void* lpAddr, size_t offset, wchar_t value)
@@ -161,17 +173,18 @@ void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar)
 
 void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int dwLen)
 {
+	if (CodePage == 0) CodePage = 936;
 	if (dwLen <= 0) dwLen = lstrlenA((LPCSTR)lpszString);
 	int uLen=MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, NULL, 0) * 2;
-	if (IsBadWritePtr(*retPtr, uLen / 2))
+	if (IsBadWritePtr(*retPtr, uLen + 2))
 	{
-		*retPtr = 申请内存(uLen / 2);
+		*retPtr = 申请内存(uLen + 2);
 	}
 	if (uLen > 0)
 	{
-		MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, (LPWSTR)retPtr, uLen);
+		MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, (LPWSTR)*retPtr, uLen);
 	}
-	*retLen = uLen / 2;
+	*retLen = uLen + 2;
 }
 
 void U2W_Addr(void* lpUTF8, int dwLen, void** retPtr, size_t* retLen)
@@ -186,6 +199,7 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 		short bom = __get_short(pAddr, 0);
 		if (bom == -17425)//utf8-bom
 		{
+			
 			U2W_Addr((void*)((size_t)pAddr + 3), dwLen - 3, retPtr, retLen);
 		}
 		else if (bom == -257)//unicode
@@ -261,19 +275,10 @@ int 取最近质数(int value)
 	return  prime;
 }
 
-void 读入文件(std::wstring file, void** retPtr, size_t* retLen)
+void 读入文件(std::wstring file, std::vector<char>* data)
 {
-	auto hfile = CreateFile(file.c_str(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN, 0);
-	LARGE_INTEGER ret;
-	GetFileSizeEx(hfile, &ret);
-	if (IsBadWritePtr(*retPtr, ret.QuadPart))
-	{
-		*retPtr = 申请内存(ret.QuadPart);
-	}
-	DWORD hasread;
-	ReadFile(hfile, *retPtr, ret.QuadPart, &hasread, NULL);
-	*retLen = hasread;
-	CloseHandle(hfile);
+	std::ifstream ifs(file, std::ios::in | std::ios::binary);
+	*data= std::vector<char>((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 }
 
 void _struct_destroyfromaddr(void* lpAddr, size_t Offset)

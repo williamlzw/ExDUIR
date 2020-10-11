@@ -24,7 +24,20 @@ void Ex_SetLastError(int nError)
 
 BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme, int dwDefaultThemeLen, LPVOID lpDefaultI18N, int dwDefaultI18NLen)
 {
-	//CoInitialize(NULL);
+	CoInitialize(NULL);
+	¼ÓÔØGdiplusDLL();
+	if (sizeof(void*) == 4)
+	{
+		char iid[16] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+		GdiplusStartup(&g_Li.hToken, iid, NULL);
+	}
+	else if (sizeof(void*) == 8)
+	{
+		char iid[32] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+		GdiplusStartup(&g_Li.hToken, iid, NULL);
+	}
+	
+	¼ÓÔØNTDLL();
 	g_Li.csError = Thread_InitializeCriticalSection();
 	g_Li.hInstance = hInstance;
 	g_Li.dwFlags = dwGlobalFlags;
@@ -100,9 +113,11 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 		((LOGFONT*)g_Li.lpLogFontDefault)->lfHeight = ((LOGFONT*)g_Li.lpLogFontDefault)->lfHeight / g_Li.DpiY_Real;
 		//__set(g_Li.lpLogFontDefault, 0, __get(g_Li.lpLogFontDefault, 0) / g_Li.DpiY_Real);
 	}
+	g_Li.aryThemes.clear();
+	std::cout<<"hTheme:"<<Ex_ThemeLoadFromMemory(lpDefaultTheme, dwDefaultThemeLen, 0, 0, false)<<std::endl;
 
 
-	return 1;
+	return nError==0;
 }
 
 void _object_init()

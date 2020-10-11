@@ -67,7 +67,7 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 	Ex_SetLastError(nError);
 }
 
-void* _res_unpack(void* lpData, size_t dwDataLen, char byteHeader)
+void* _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 {
 	void* retPtr = nullptr;
 	size_t retLen = 0;
@@ -75,7 +75,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, char byteHeader)
 	_bin_uncompress(lpData, dwDataLen, 0, 0, &retPtr, &retLen);
 	if (retLen > 0)
 	{
-		if (__get_char(retPtr, 0) == byteHeader)
+		if (__get_unsignedchar(retPtr, 0) == byteHeader)
 		{
 			int count = __get_int(retPtr, 1);
 			if (count > 0)
@@ -87,7 +87,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, char byteHeader)
 					for (int i = 0; i < count; i++)
 					{
 						int atom = __get_int(retPtr, 0);
-						char prop = __get_char(retPtr, 4);
+						//UCHAR prop = __get_unsignedchar(retPtr, 4);
 						int len = __get_int(retPtr, 5) + 5;//byteProp + len + data
 						if (len > 5)
 						{
@@ -125,4 +125,46 @@ void* Ex_ResLoadFromMemory(void* lpData, size_t dwDataLen)
 	}
 	Ex_SetLastError(nError);
 	return ret;
+}
+
+void* Ex_ResLoadFromFile(void* lptszFile)
+{
+	int dwLen = lstrlenW((LPCWSTR)lptszFile);
+	void* ret = nullptr;
+	if (dwLen > 0)
+	{
+		std::vector<char> data;
+		std::wstring wstr;
+		wstr += (LPCWSTR)lptszFile;
+		¶ÁÈëÎÄ¼þ(wstr, &data);
+		ret = Ex_ResLoadFromMemory(data.data(), data.size());
+	}
+	return ret;
+}
+
+void Ex_ResFree(void* hRes)
+{
+	if (hRes != 0)
+	{
+		HashTable_Destroy(hRes);
+	}
+}
+
+bool Ex_ResGetFileFromAtom(void* hRes, int atomPath, void** lpFile, size_t* dwFileLen)
+{
+	void* pData = nullptr;
+	if (HashTable_Get(hRes, atomPath, (size_t*)&pData))
+	{
+		if (pData != 0)
+		{
+			*lpFile =(void*)((size_t) pData + 5);
+			*dwFileLen = __get_int(pData, 1);
+		}
+	}
+	return *dwFileLen > 0;
+}
+
+bool Ex_ResGetFile(void* hRes, void* lpwzPath, void** lpFile, size_t* dwFileLen)
+{
+	return Ex_ResGetFileFromAtom(hRes, Ex_Atom((LPCWSTR)lpwzPath), lpFile, dwFileLen);
 }

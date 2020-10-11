@@ -398,7 +398,29 @@ int _obj_baseproc(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wParam, s
 	}
 	else if (uMsg == WM_SHOWWINDOW)
 	{
-
+		_obj_visable(hWnd, hObj, pObj, wParam != 0);
+	}
+	else if (uMsg == WM_ENABLE)
+	{
+		_obj_disable(hWnd, hObj, pObj, wParam == 0);
+	}
+	else if (uMsg == WM_SETREDRAW)
+	{
+		if (wParam == 0)
+		{
+			__del(pObj, offsetof(obj_s, dwFlags_), eof_bCanRedraw);
+		}
+		else {
+			__add(pObj, offsetof(obj_s, dwFlags_), eof_bCanRedraw);
+		}
+	}
+	else if (uMsg == WM_SETFOCUS)
+	{
+		_obj_setfocus_real(hWnd, pObj, hObj, wParam);
+	}
+	else if (uMsg == WM_KILLFOCUS)
+	{
+		_obj_killfocus_real( pObj, hObj, wParam);
 	}
 	void* pfnClsProc = ((obj_s*)pObj)->pfnClsProc_;
 	return ((ClsPROC)pfnClsProc)(hWnd, hObj, uMsg, wParam, lParam, pObj);
@@ -1624,7 +1646,7 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 		hTheme = ((wnd_s*)pWnd)->hTheme_;
 	}
 	else {
-		if (!HashTable_IsExit(((theme_s*)hTheme)->tableClass, atomClass))
+		if (!HashTable_IsExit(((theme_s*)hTheme)->tableClass_, atomClass))
 		{
 			hTheme = ((wnd_s*)pWnd)->hTheme_;
 		}
@@ -1780,11 +1802,11 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 	void* pColors = nullptr;
 	if (hTheme != 0)//加载的主题包获取颜色信息
 	{
-		pColors = ((theme_s*)hTheme)->aryColors;
+		pColors = ((theme_s*)hTheme)->aryColors_;
 	}
 	if (pColors == 0)//如果没有，则从默认的主题包获取颜色信息.
 	{
-		pColors = ((theme_s*)(((wnd_s*)pWnd)->hTheme_))->aryColors;
+		pColors = ((theme_s*)(((wnd_s*)pWnd)->hTheme_))->aryColors_;
 	}
 	if (pColors != 0)//复制颜色信息到本组件
 	{
@@ -1792,7 +1814,7 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 	}
 	if (hTheme != 0)
 	{
-		auto pTheme = ((theme_s*)hTheme)->tableClass;
+		auto pTheme = ((theme_s*)hTheme)->tableClass_;
 		size_t pClass = 0;
 		if (pTheme != 0)
 		{
@@ -1801,7 +1823,7 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 			{
 				if (pClass != 0)
 				{
-					auto pProp = ((classtable_s*)pClass)->tableProps;
+					auto pProp = ((classtable_s*)pClass)->tableProps_;
 					if (pProp != 0)
 					{
 						size_t dwTmp = 0;

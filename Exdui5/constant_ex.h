@@ -67,6 +67,10 @@
 #define EWS_HASICON	128
 // 窗体风格_标题
 #define EWS_TITLE	256
+//窗口风格_信息框 内部使用
+#define EWS_MESSAGEBOX 2147483648
+//窗口风格_菜单 内部使用
+#define EWS_MENU 1073741824
 // 窗体风格_全屏模式.设置该标记窗口最大化时,任务栏将被遮挡.
 #define EWS_FULLSCREEN	512
 // 窗体风格_允许调整尺寸

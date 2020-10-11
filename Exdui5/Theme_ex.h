@@ -7,11 +7,11 @@
 
 struct theme_s
 {
-	void* tableFiles;
-	int loadCount;
-	int crcTheme;
-	void* tableClass;
-	void* aryColors;
+	void* tableFiles_;
+	int loadCount_;
+	int crcTheme_;
+	void* tableClass_;
+	void* aryColors_;
 };
 
 struct colors_s
@@ -29,6 +29,16 @@ struct colors_s
 	int TEXT_SHADOW;
 };
 
-bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen, std::vector<int>* atomFiles, std::vector<void*>* lpFiles, std::vector<char>* dwFileProps);
+bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen, std::vector<int>* atomFiles, std::vector<void*>* lpFiles, std::vector<UCHAR>* dwFileProps);
 int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<size_t>* artItems2);
-bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> atomFiles, std::vector<void*> lpFiles, std::vector<char> dwFileProps, void* aryCorlors);
+bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> atomFiles, std::vector<void*> lpFiles, std::vector<UCHAR> dwFileProps, void* aryCorlors);
+void _theme_freeclass(void* pClass);
+void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen, bool bDefault);
+void* Ex_ThemeLoadFromFile(void* lptszFile, void* lpKey, size_t dwKeyLen, bool bDefault);
+bool Ex_ThemeDrawControlEx(void* hTheme, size_t hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+	int atomClass, int atomSrcRect, int atomBackgroundRepeat, int atomBackgroundPositon, int atomBackgroundGrid, int atomBackgroundFlags, int dwAlpha);
+bool Ex_ThemeDrawControl(void* hTheme, size_t hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+	int atomClass, int atomSrcRect, int dwAlpha);
+void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp);
+int Ex_ThemeGetColor(void* hTheme, int nIndex);
+bool Ex_ThemeFree(void* hTheme);

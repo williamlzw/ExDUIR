@@ -181,15 +181,23 @@ int main()
 
 	//void* retptr=nullptr;
 	//size_t retlen;
-	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", &retptr,&retlen);
-	//std::cout << Ex_ResLoadFromMemory(retptr, retlen) << std::endl;
+	std::vector<char> data;
+	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", &data);
+	//std::cout << Ex_ResLoadFromMemory(data.data(), data.size()) << std::endl;
+
+	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
+	//std::cout << Ex_ThemeLoadFromMemory(data.data(),data.size(),0,0,true) << std::endl;
+	
 	//std::cout << retptr << std::endl;
 	//std::cout << retlen << std::endl;
 	//std::cout << IsBadReadPtr(retptr,retlen) << std::endl;
 	//std::cout << IsBadWritePtr(retptr, retlen) << std::endl;
 	
+	//std::ifstream ifs("C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", std::ios::in | std::ios::binary);
+	//std::vector<char> data((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+	//std::cout << data.size()<<","<<data.data() << std::endl;
 	//Ex_ResLoadFromMemory();
-	
-
+	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
+	Ex_Init(GetModuleHandle(0), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
 }
 
