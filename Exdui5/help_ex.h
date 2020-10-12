@@ -299,6 +299,8 @@ typedef int(*MsgPROC)(HWND, size_t, int, size_t, void*, void*);
 #define 状态_允许多选 16777216
 #define 状态_密码模式 536870912
 
+#define 条目风格_子菜单 1
+#define 条目风格_分隔符 2
 
 struct LOCALINFO
 {

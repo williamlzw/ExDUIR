@@ -254,3 +254,69 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
+
+size_t _page_paint(size_t hObj)
+{
+	paintstruct_s ps;
+	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
+	{
+		Ex_ObjEndPaint(hObj, (void*)&ps);
+	}
+	return 0;
+}
+
+void _page_onvscrollbar(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wParam, size_t lParam)
+{
+	auto nCode = 取低位(wParam);
+	int oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
+	int height = ((obj_s*)pObj)->c_bottom_ - ((obj_s*)pObj)->c_top_;
+	int nPos = 0;
+	if (nCode == SB_THUMBPOSITION)
+	{
+		nPos = oPos;
+	}
+	else if (nCode == SB_PAGEUP)
+	{
+		nPos = oPos - height;
+	}
+	else if (nCode == SB_PAGEDOWN)
+	{
+		nPos = oPos + height;
+	}
+	else if (nCode == SB_LINEUP)
+	{
+		nPos = oPos - 取高位(取低位(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
+	}
+	else if (nCode == SB_LINEDOWN)
+	{
+		nPos = oPos + 取高位(取低位(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
+	}
+	else if (nCode == SB_TOP)
+	{
+		nPos = 0;
+	}
+	else if (nCode == SB_BOTTOM)
+	{
+		RECT rect;
+		Ex_ObjGetRect(((obj_s*)pObj)->objChildFirst_, &rect);
+		nPos = rect.bottom - rect.top - height;
+	}
+	else
+	{ 
+		return;
+	}
+	nPos = Ex_ObjScrollSetPos(hObj, SB_VERT, nPos, true);
+	Ex_ObjSetPos(((obj_s*)pObj)->objChildFirst_, 0, EOP_DEFAULT, (-nPos), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+}
+
+size_t _page_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam, void* pObj)
+{
+	if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL)
+	{
+		if (__query(pObj, offsetof(obj_s, dwStyle_), 条目风格_子菜单))
+		{
+			_page_onvscrollbar(hWnd, hObj, pObj, uMsg, wParam, lParam);
+		}
+	}
+	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
+}

@@ -79,7 +79,23 @@ struct wnd_s
 	void* hrgn_client_;
 	void* hrgn_sizebox_;
 	void* padding_shadow_;
-
+	void* margin_caption_;
+	void* size_caption_;
+	int radius_;
+	int minWidth_;
+	int minHeight_;
+	void* hRes_;
+	int crBkg_;
+	int crBorder_;
+	HWND hWndShadow_;
+	int alpha_;
+	void* pMenuPrevWnd_;
+	void* hMenuPopup_;
+	int szItemSeparator_;
+	int padding_client_;
+	int padding_text_;
+	int padding_separator_;
+	void* hFont_Menu_;
 
 };
 

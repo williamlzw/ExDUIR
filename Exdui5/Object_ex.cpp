@@ -970,7 +970,7 @@ void* _obj_pOwner(void* pObj)
 void _obj_scroll_updatepostion(size_t hSB, void* pSB, bool bVScroll, int cLeft, int cTop, int cRight, int cBottom, bool fDispatch)
 {
 	void* own = ((obj_s*)pSB)->dwOwnerData_;
-	int xyz = ((si_s*)own)->xyz;
+	int xyz = ((si_s*)own)->xyz_;
 	auto xyz1 = 取高位(xyz);
 	auto xyz2 = 取低位(xyz1);
 	int l, t, r, b;
@@ -1318,7 +1318,7 @@ void _obj_scroll_repostion(HWND hWnd, size_t hObj, bool fDispatch)
 				psi = _obj_pOwner(pVSB);
 				if (psi != 0)
 				{
-					xyz = 取高位(((si_s*)psi)->xyz);
+					xyz = 取高位(((si_s*)psi)->xyz_);
 				}
 				if (__query(pVSB, offsetof(obj_s, dwStyle_), EOS_VISIBLE))
 				{
@@ -1341,7 +1341,7 @@ void _obj_scroll_repostion(HWND hWnd, size_t hObj, bool fDispatch)
 				psi = _obj_pOwner(pHSB);
 				if (psi != 0)
 				{
-					xyz = 取高位(((si_s*)psi)->xyz);
+					xyz = 取高位(((si_s*)psi)->xyz_);
 				}
 				if (__query(pHSB, offsetof(obj_s, dwStyle_), EOS_VISIBLE))
 				{
@@ -3174,4 +3174,129 @@ size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t lParam, size_t wPa
 		}
 	}
 	return ret;
+}
+
+bool Ex_ObjScrollGetInfo(size_t hObj, int nBar, void* lpnMin, void* lpnMax, void* lpnPos, void* lpnTrackPos)
+{
+	void* pObj = nullptr;
+	int nError = 1;
+	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	{
+		size_t hSB = _sb_getscroll(pObj, nBar);
+		void* pSB = nullptr;
+		if (_handle_validate(hSB, HT_OBJECT, &pSB, &nError))
+		{
+			void* psi = _obj_pOwner(pSB);
+			if (psi == 0)
+			{
+				nError = ERROR_EX_INVALID_OBJECT;
+			}
+			else {
+				if (lpnMin != 0)
+				{
+					__set_int(lpnMin, 0, ((si_s*)psi)->nMin_);
+				}
+				if (lpnMax != 0)
+				{
+					__set_int(lpnMax, 0, ((si_s*)psi)->nMax_);
+				}
+				if (lpnPos != 0)
+				{
+					__set_int(lpnPos, 0, ((si_s*)psi)->nPos_);
+				}
+				if (lpnTrackPos != 0)
+				{
+					__set_int(lpnTrackPos, 0, ((si_s*)psi)->nTrackPos_);
+				}
+			}
+		}
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
+
+int Ex_ObjScrollGetPos(size_t hObj, int nBar)
+{
+	int ret = 0;
+	Ex_ObjScrollGetInfo(hObj, nBar, 0, 0, &ret, 0);
+	return ret;
+}
+
+int Ex_ObjScrollSetPos(size_t hObj, int nBar, int nPos, bool bRedraw)
+{
+	void* pObj = nullptr;
+	int nError = 1;
+	int ret = 0;
+	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	{
+		size_t hSB = _sb_getscroll(pObj, nBar);
+		void* pSB = nullptr;
+		if (_handle_validate(hSB, HT_OBJECT, &pSB, &nError))
+		{
+			ret = _sb_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_POS, 0, 0, 0, nPos, bRedraw);
+		}
+	}
+	Ex_SetLastError(nError);
+	return ret;
+}
+
+int Ex_ObjScrollSetInfo(size_t hObj, int nBar, int Mask, int nMin, int nMax, int nPage, int nPos, bool bRedraw)
+{
+	void* pObj = nullptr;
+	int nError = 1;
+	int ret = 0;
+	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	{
+		size_t hSB = _sb_getscroll(pObj, nBar);
+		void* pSB = nullptr;
+		if (_handle_validate(hSB, HT_OBJECT, &pSB, &nError))
+		{
+			ret = _sb_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, Mask, nMin, nMax, nPage, nPos, bRedraw);
+		}
+	}
+	Ex_SetLastError(nError);
+	return ret;
+}
+
+int Ex_ObjScrollSetRange(size_t hObj, int nBar, int nMin, int nMax, bool bRedraw)
+{
+	void* pObj = nullptr;
+	int nError = 1;
+	int ret = 0;
+	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	{
+		size_t hSB = _sb_getscroll(pObj, nBar);
+		void* pSB = nullptr;
+		if (_handle_validate(hSB, HT_OBJECT, &pSB, &nError))
+		{
+			ret = _sb_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_RANGE, nMin, nMax, 0, 0, bRedraw);
+		}
+	}
+	Ex_SetLastError(nError);
+	return ret;
+}
+
+size_t Ex_ObjScrollGetControl(size_t hObj, int nBar)
+{
+	void* pObj = nullptr;
+	int nError = 1;
+	size_t ret = 0;
+	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	{
+		ret = _sb_getscroll(pObj, nBar);
+	}
+	Ex_SetLastError(nError);
+	return ret;
+}
+
+int Ex_ObjScrollGetTrackPos(size_t hObj, int nBar)
+{
+	int ret = 0;
+	Ex_ObjScrollGetInfo(hObj, nBar, 0, 0, 0, &ret);
+	return ret;
+}
+
+bool Ex_ObjScrollGetRange(size_t hObj, int nBar, void* lpnMinPos, void* lpnMaxPos)
+{
+	return Ex_ObjScrollGetInfo(hObj, nBar, lpnMinPos, lpnMaxPos, 0, 0);
 }

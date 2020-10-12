@@ -167,35 +167,6 @@ struct obj_s
 	void* index_start_;
 };
 
-struct si_s
-{
-	int xyz;
-	int httype;
-	int nMin;
-	int nMax;
-	int nPos;
-	int nTrackPos;
-	int nTrackPosOffset;
-	int rcRegion_left;
-	int rcRegion_top;
-	int rcRegion_right;
-	int rcRegion_bottom;
-	int rcArrow1_left;
-	int rcArrow1_top;
-	int rcArrow1_right;
-	int rcArrow1_bottom;
-	int rcArrow2_left;
-	int rcArrow2_top;
-	int rcArrow2_right;
-	int rcArrow2_bottom;
-	int rcThumb_left;
-	int rcThumb_top;
-	int rcThumb_right;
-	int rcThumb_bottom;
-	int wArrows;
-};
-
-
 
 struct paintstruct_s
 {
@@ -238,6 +209,35 @@ struct classtable_s
 {
 	void* tableProps_;
 	size_t hImage_;
+};
+
+struct si_s
+{
+	int xyz_;
+	int httype_;
+	int nMin_;
+	int nMax_;
+	int nPage_;
+	int nPos_;
+	int nTrackPos_;
+	int nTrackPosOffset_;
+	int rcRegion_left_;
+	int rcRegion_top_;
+	int rcRegion_right_;
+	int rcRegion_bottom_;
+	int rcArrow1_left_;
+	int rcArrow1_top_;
+	int rcArrow1_right_;
+	int rcArrow1_bottom_;
+	int rcArrow2_left_;
+	int rcArrow2_top_;
+	int rcArrow2_right_;
+	int rcArrow2_bottom_;
+	int rcThumb_left_;
+	int rcThumb_top_;
+	int rcThumb_right_;
+	int rcThumb_bottom_;
+	int wArrows_;
 };
 
 int Ex_ObjRegister(LPCWSTR lptszClassName, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, int dwFlags, void* pfnObjProc);
@@ -352,3 +352,11 @@ void _obj_setuistate(void* pObj, int dwState, bool fRemove, void* lprcUpdate, bo
 bool Ex_ObjSetUIState(size_t hObj, int dwState, bool fRemove, void* lprcRedraw, bool fRedraw);
 int Ex_ObjGetUIState(size_t hObj);
 size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t lParam, size_t wParam);
+bool Ex_ObjScrollGetInfo(size_t hObj, int nBar, void* lpnMin, void* lpnMax, void* lpnPos, void* lpnTrackPos);
+int Ex_ObjScrollGetPos(size_t hObj, int nBar);
+int Ex_ObjScrollSetPos(size_t hObj, int nBar, int nPos, bool bRedraw);
+int Ex_ObjScrollSetInfo(size_t hObj, int nBar, int Mask, int nMin, int nMax, int nPage, int nPos, bool bRedraw);
+int Ex_ObjScrollSetRange(size_t hObj, int nBar, int nMin, int nMax, bool bRedraw);
+size_t Ex_ObjScrollGetControl(size_t hObj, int nBar);
+int Ex_ObjScrollGetTrackPos(size_t hObj, int nBar);
+bool Ex_ObjScrollGetRange(size_t hObj, int nBar, void* lpnMinPos, void* lpnMaxPos);
