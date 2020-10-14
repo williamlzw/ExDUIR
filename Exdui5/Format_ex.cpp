@@ -129,3 +129,71 @@ bool _fmt_color(void* lpValue, void* lpColor)
 	}
 	return ret;
 }
+
+void* _fmt_int(void* lpValue, void* lpdwPercentFlags)
+{
+	auto Value = (void*)_wtoi((const wchar_t*)lpValue);
+	if (lpdwPercentFlags != 0)
+	{
+		if (wcschr((wchar_t*)Value, (wchar_t)37) != 0)
+		{
+			__set_int(lpdwPercentFlags, 0, 1);
+		}
+	}
+	return Value;
+}
+
+bool _fmt_getvalue(void** lpValue, int atomDest)
+{
+	void* lpValueOffset=nullptr;
+	int atomSrc = 0;
+	bool ret = false;
+	atomSrc = _fmt_getatom(*lpValue, &lpValueOffset);
+	if (atomSrc == atomDest)
+	{
+		*lpValue = lpValueOffset;
+		ret = true;
+	}
+	return ret;
+}
+
+bool _fmt_bin(void* hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpFreeBuffer)
+{
+	bool ret = true;
+	*lpFreeBuffer = false;
+	void* lpValueOffset = nullptr;
+	int atomSrc = _fmt_getatom(lpValue, &lpValueOffset);
+	if (atomSrc != 0)
+	{
+		__set_char(lpValueOffset , lstrlenW((LPCWSTR)lpValueOffset) * 2 - 2, 0);
+		if (atomSrc == ATOM_RES)
+		{
+			Ex_ResGetFileFromAtom(hRes, Ex_Atom((LPCWSTR)lpValueOffset), lpBin, lpLen);
+		}
+		else if (atomSrc == ATOM_FILE)
+		{
+			std::wstring str;
+			str.resize(lstrlenW((LPCWSTR)lpValueOffset));
+			RtlMoveMemory((void*)str.data(), lpValueOffset, lstrlenW((LPCWSTR)lpValueOffset));
+			std::vector<char> data;
+			读入文件(str, &data);
+			*lpLen = data.size();
+			if (*lpLen > 0)
+			{
+				*lpBin = 申请内存(*lpLen);
+				if (*lpBin != 0)
+				{
+					RtlMoveMemory(*lpBin, data.data(), *lpLen);
+					*lpFreeBuffer = true;
+				}
+			}
+			else {
+				ret = false;
+			}
+		}
+		else {
+			ret = false;
+		}
+	}
+	return ret;
+}

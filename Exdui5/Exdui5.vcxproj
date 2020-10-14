@@ -157,8 +157,10 @@
     <ClCompile Include="HandleTable_ex.cpp" />
     <ClCompile Include="HashTable_ex.cpp" />
     <ClCompile Include="help_ex.cpp" />
+    <ClCompile Include="Hook_ex.cpp" />
     <ClCompile Include="Image_ex.cpp" />
     <ClCompile Include="Layout_ex.cpp" />
+    <ClCompile Include="Matrix_ex.cpp" />
     <ClCompile Include="MemPool_ex.cpp" />
     <ClCompile Include="Ntdll_ex.cpp" />
     <ClCompile Include="Object_ex.cpp" />
@@ -186,8 +188,10 @@
     <ClInclude Include="HandelTable_ex.h" />
     <ClInclude Include="HashTable_ex.h" />
     <ClInclude Include="help_ex.h" />
+    <ClInclude Include="Hook_ex.h" />
     <ClInclude Include="Image_ex.h" />
     <ClInclude Include="Layout_ex.h" />
+    <ClInclude Include="Matrix_ex.h" />
     <ClInclude Include="MemPool_ex.h" />
     <ClInclude Include="Ntdll_ex.h" />
     <ClInclude Include="Object_ex.h" />

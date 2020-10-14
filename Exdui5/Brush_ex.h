@@ -8,4 +8,4 @@ int _brush_destroy(void* hBrush);
 void _brush_setcolor(void* hBrush, int argb);
 void* _brush_createfromimg(size_t hImg);
 void* _brush_createfromcanvas(size_t hCanvas);
-
+void _brush_settransform(void* hBrush, void* matrix);

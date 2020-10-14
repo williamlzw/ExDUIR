@@ -347,6 +347,7 @@ struct LOCALINFO
 struct RENDERINFO
 {
 	void* pLocalName;
+	void* pMatrix;
 	void* pDWriteFactory;
 	void* pWICFactory;
 	void* pD2Dfactory;
@@ -402,6 +403,15 @@ void 位_添加(size_t* dwValue, size_t index);
 void 位_删除(size_t* dwValue, size_t index);
 void 位_取反(size_t* dwValue, size_t index);
 BOOL 位_测试(size_t* dwValue, size_t index);
+
+template <typename T>
+std::vector<UCHAR> 到字节数组(const T& arg)
+{
+	const UCHAR* pBegin = reinterpret_cast<const UCHAR*>(&arg);
+	const UCHAR* pEnd = pBegin + sizeof(arg);
+	return { pBegin,pEnd };
+}
+
 void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar);
 void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int dwLen);
 void U2W_Addr(void* lpUTF8, int dwLen, void** retPtr, size_t* retLen);
@@ -418,3 +428,12 @@ void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset);
 void _scale_n_float(size_t p, int n);
 void SetDefaultIcon();
 void* copytstr(LPCWSTR lptstr, int len);
+
+HRESULT IUnknown_QueryInterface(void* thisptr, REFIID iid, void** ppvObject);
+ULONG IUnknown_AddRef(void* thisptr);
+ULONG IUnknown_Release(void* thisptr);
+HRESULT IDropTarget_DragEnter(void* thisptr, IDataObject* pDataObject, int grfKeyState, int x, int y, int* pdwEffect);
+HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* pdwEffect);
+HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, int x, int y, int* pdwEffect);
+HRESULT IDropTarget_DragLeave(void* thisptr);
+void* IDropTarget_Init(void* pWnd);

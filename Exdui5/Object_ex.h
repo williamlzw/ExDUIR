@@ -195,7 +195,7 @@ struct ti_s
 	int cbSize_;
 	int uFlags_;
 	HWND hWnd_;
-	int uId_;
+	void* uId_;
 	int rect_left_;
 	int rect_top_;
 	int rect_right_;
@@ -301,6 +301,7 @@ int Ex_ObjDispatchNotify(size_t hObj, int nCode, size_t wParam, size_t lParam);
 void _obj_backgroundimage_clear(HWND hWnd, void* pObj);
 void _obj_destroy(size_t hObj, void* pObj, int* nError);
 size_t _obj_create_init(HWND hWnd, void* pWnd, int atomClass, void* pfnMsgProc, void** pObj, int* nError);
+void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dwStyleEx, int atomClass, void* lpszName, int dwStyle, int x, int y, int width, int height, size_t hParent, int nID, int atomName, size_t lParam, int dwTextFormat);
 void _obj_create_done(HWND hWnd, void* pWnd, size_t hObj, void* pObj);
 void _obj_create_scrollbar(HWND hWnd, void* pWnd, void* pObj, size_t hObj, void* hTheme);
 void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme);

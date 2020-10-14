@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <Windows.h>
 
-#pragma comment ( lib,"Bcrypt.lib" ) 
 
 #include "help_ex.h"
 #include "Global_ex.h"
@@ -13,6 +12,10 @@
 #include "Resource_ex.h"
 #include "Gdiplusdll_ex.h"
 
+#include <Gdiplus.h>
+#include <gdiplusbrush.h>
+using namespace Gdiplus;
+#pragma comment(lib, "Gdiplus.lib")
 
 
 void 测试哈希表()
@@ -153,6 +156,16 @@ void 测试RC4()
 	std::cout << "M = " << ToHexString(A, 6) << std::endl;
 }
 
+std::vector<UCHAR> 整数到字节数组(int value)
+{
+	std::vector<UCHAR> ret;
+	ret.push_back((UCHAR)(value & 0xFF));
+	ret.push_back((UCHAR)((value>>8) & 0xFF));
+	ret.push_back((UCHAR)((value >> 16) & 0xFF));
+	ret.push_back((UCHAR)((value >> 24) & 0xFF));
+	return ret;
+}
+
 
 
 int main()
@@ -181,23 +194,51 @@ int main()
 
 	//void* retptr=nullptr;
 	//size_t retlen;
-	std::vector<char> data;
+	//std::vector<char> data;
 	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", &data);
 	//std::cout << Ex_ResLoadFromMemory(data.data(), data.size()) << std::endl;
 
 	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
 	//std::cout << Ex_ThemeLoadFromMemory(data.data(),data.size(),0,0,true) << std::endl;
-	
+
 	//std::cout << retptr << std::endl;
 	//std::cout << retlen << std::endl;
 	//std::cout << IsBadReadPtr(retptr,retlen) << std::endl;
 	//std::cout << IsBadWritePtr(retptr, retlen) << std::endl;
-	
+
 	//std::ifstream ifs("C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", std::ios::in | std::ios::binary);
 	//std::vector<char> data((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 	//std::cout << data.size()<<","<<data.data() << std::endl;
 	//Ex_ResLoadFromMemory();
-	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
-	Ex_Init(GetModuleHandle(0), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
+	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
+	//Ex_Init(GetModuleHandle(0), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
+
+	//std::vector<UCHAR> data;
+	//data = { 199, 68, 36, 4 };
+	////data.push_back((UCHAR)199);
+	////data.push_back((UCHAR)68);
+	////data.push_back((UCHAR)36);
+	////data.push_back((UCHAR)4);
+	////LongToUChar(22222, data.data());
+	//std::vector<UCHAR> value;
+	//value = 到字节数组(22222);
+ //   data.insert(data.end(),value.begin(),value.end());
+	//data.push_back((UCHAR)233);
+	//value = 到字节数组(22222 -11111 - 13);
+	//data.insert(data.end(), value.begin(), value.end());
+	//////data.push_back((size_t)hWnd);
+	//////data.push_back(GetWindowLongW(hWnd, -4));
+	//value = 到字节数组(11111);
+	//data.insert(data.end(), value.begin(), value.end());
+	//打印数组(data.data(), 17);
+	//for (int i = 0; i < data.size(); i++)
+	//{
+	//	//std::cout << data[i] << std::endl;
+	//}
+	//std::wcout.imbue(std::locale("chs"));
+	//sizeof(USHORT)
+	auto a= 到字节数组((USHORT)0xb948);
+	std::cout << a.size()<< std::endl;
+	
 }
 

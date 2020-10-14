@@ -14,9 +14,9 @@ void 加载NTDLL()
 }
 
 
-int 取系统主版本号(int& dwMinor, int& Optional)
+int 取系统主版本号(int* dwMinor, int* Optional)
 {
 	int dwMajor = 0;
-	RtlGetNtVersionNumbers(&dwMajor, &dwMinor, &Optional);
+	RtlGetNtVersionNumbers(&dwMajor, dwMinor, Optional);
 	return dwMajor;
 }

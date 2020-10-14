@@ -1715,10 +1715,9 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 		if (((wnd_s*)pWnd)->lpIDropTarget_ == 0)
 		{
 			OleInitialize(0);
-			//	RegisterDragDrop(((wnd_s*)pWnd)->hWnd_, IDropTarget_Init(pWnd)); Î´Íê³É
+			RegisterDragDrop(((wnd_s*)pWnd)->hWnd_, (LPDROPTARGET)IDropTarget_Init(pWnd)); 
 		}
 	}
-
 }
 
 void _obj_create_done(HWND hWnd, void* pWnd, size_t hObj, void* pObj)
@@ -2063,8 +2062,8 @@ void _obj_drawbackground(void* pObj, size_t hCanvas, RECT rcPaint)
 	if (__query(pObj, offsetof(obj_s, dwStyleEx_), EOS_EX_COMPOSITED))
 	{
 		auto pWnd = ((obj_s*)pObj)->pwnd_;
-		void* lpdd = ((wnd_s*)pWnd)->canvas_display_;
-		_canvas_bitblt(hCanvas, (size_t)lpdd, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom, ((obj_s*)pObj)->w_left_ + rcPaint.left, ((obj_s*)pObj)->w_top_ + rcPaint.top);
+		size_t lpdd = ((wnd_s*)pWnd)->canvas_display_;
+		_canvas_bitblt(hCanvas, lpdd, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom, ((obj_s*)pObj)->w_left_ + rcPaint.left, ((obj_s*)pObj)->w_top_ + rcPaint.top);
 		if (__query(pObj, offsetof(obj_s, dwStyleEx_), EOS_EX_BLUR))
 		{
 			fBlur = __get_float(pObj, offsetof(obj_s, fBlur_));

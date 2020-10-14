@@ -146,6 +146,8 @@ BOOL 位_测试(size_t* dwValue, size_t index/*0-31 */)//OK
 	return *dwValue >> index & (size_t)1;
 }
 
+
+
 void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar)
 {
 	auto lpstart = lpstr;
@@ -484,4 +486,98 @@ void* copytstr(LPCWSTR lptstr, int len)
 		Ex_SetLastError(ERROR_EX_MEMORY_ALLOC);
 	}
 	return addr;
+}
+
+HRESULT IUnknown_QueryInterface(void* thisptr, REFIID iid, void** ppvObject)
+{
+	return E_NOINTERFACE;
+}
+
+ULONG IUnknown_AddRef(void* thisptr)
+{
+	return E_NOINTERFACE;
+}
+
+ULONG IUnknown_Release(void* thisptr)
+{
+	return E_NOINTERFACE;
+}
+
+HRESULT IDropTarget_DragEnter(void* thisptr, IDataObject* pDataObject, int grfKeyState, int x,int y, int* pdwEffect)
+{
+	return S_OK;
+}
+
+HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* pdwEffect)
+{
+	void* pWnd =(void*) __get(thisptr, sizeof(void*));
+	_wnd_wm_nchittest(pWnd, ((wnd_s*)pWnd)->hWnd_, 合并整数(x, y));
+	void* phit = nullptr;
+	int nError = 1;
+	if (_handle_validate(((wnd_s*)pWnd)->objHittest_, HT_OBJECT, &phit, &nError))
+	{
+		if (__query(phit, offsetof(obj_s, dwStyleEx_), EOS_EX_DRAGDROP))
+		{
+			return S_OK;
+		}
+	}
+	*pdwEffect = 0;
+	return S_OK;
+}
+
+HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, int x,int y, int* pdwEffect)
+{
+	void* pWnd = (void*)__get(thisptr, sizeof(void*));
+	HWND hWnd = ((wnd_s*)pWnd)->hWnd_;
+	_wnd_wm_nchittest(pWnd, hWnd, 合并整数(x, y));
+	size_t hObj = ((wnd_s*)pWnd)->objHittest_;
+	void* pObj = nullptr;
+	int nError = 1;
+	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	{
+		if (__query(pObj, offsetof(obj_s, dwStyleEx_), EOS_EX_DRAGDROP))
+		{
+			FORMATETC cFmt;
+			cFmt.cfFormat = 15;
+			cFmt.ptd = 0;
+			cFmt.dwAspect = 1;
+			cFmt.lindex = -1;
+			cFmt.tymed = 1;
+			if (((IDataObject*)pDataObj)->QueryGetData(&cFmt) == 0)
+			{
+				STGMEDIUM stgMedium = { 0 };
+				if (((IDataObject*)pDataObj)->GetData(&cFmt, &stgMedium) == 0)
+				{
+					void* hDrop = stgMedium.hBitmap;
+					_obj_baseproc(hWnd, hObj, pObj, WM_DROPFILES, (size_t)hDrop, 0);
+					if (stgMedium.hMetaFilePict == 0)
+					{
+						GlobalFree(hDrop);
+					}
+				}
+			}
+		}
+	}
+	return S_OK;
+}
+
+HRESULT IDropTarget_DragLeave(void* thisptr)
+{
+	return S_OK;
+}
+
+void* IDropTarget_Init(void* pWnd)
+{
+	void* lpMethods = 申请内存(7 * sizeof(void*));
+	void* thisptr = 申请内存(2 * sizeof(void*));
+	__set(thisptr, 0, (size_t)lpMethods);
+	__set(thisptr, sizeof(void*), (size_t)pWnd);
+	__set(lpMethods, 0, (size_t)&IUnknown_QueryInterface);
+	__set(lpMethods, sizeof(void*), (size_t)&IUnknown_AddRef);
+	__set(lpMethods, 2 * sizeof(void*), (size_t)&IUnknown_Release);
+	__set(lpMethods, 3 * sizeof(void*), (size_t)&IDropTarget_DragEnter);
+	__set(lpMethods, 4 * sizeof(void*), (size_t)&IDropTarget_DragOver);
+	__set(lpMethods, 5 * sizeof(void*), (size_t)&IDropTarget_DragLeave);
+	__set(lpMethods, 6 * sizeof(void*), (size_t)&IDropTarget_Drop);
+	return thisptr;
 }

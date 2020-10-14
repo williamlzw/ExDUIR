@@ -64,8 +64,7 @@ void* _brush_createfromcanvas(size_t hCanvas)
 	return (void*)hBrush;
 }
 
-int _brush_settransform(size_t hBrush, void* matrix)
+void _brush_settransform(void* hBrush, void* matrix)
 {
-	//auto a = Gdiplus::Matrix::Matrix();
-	return 0;
+	((ID2D1BitmapBrush*)hBrush)->SetTransform(*(D2D1_MATRIX_3X2_F*)matrix);
 }

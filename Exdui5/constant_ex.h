@@ -69,6 +69,8 @@
 #define EWS_TITLE	256
 //窗口风格_信息框 内部使用
 #define EWS_MESSAGEBOX 2147483648
+//窗口风格_模糊背景图片
+#define EWS_BLUR 524288
 //窗口风格_菜单 内部使用
 #define EWS_MENU 1073741824
 // 窗体风格_全屏模式.设置该标记窗口最大化时,任务栏将被遮挡.

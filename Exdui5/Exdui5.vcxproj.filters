@@ -80,6 +80,12 @@
     <ClCompile Include="Class_SysButton_Page_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
+    <ClCompile Include="Hook_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix_ex.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Global">
@@ -169,6 +175,12 @@
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="Class_SysButton_Page_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Hook_ex.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
   </ItemGroup>

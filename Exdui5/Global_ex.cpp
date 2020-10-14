@@ -85,7 +85,7 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	int nError = 1;
 	_canvas_init(&nError);
 	int minjor, optional;
-	if (取系统主版本号(minjor, optional) > 5)
+	if (取系统主版本号(&minjor, &optional) > 5)
 	{
 		SetProcessDPIAware();
 	}

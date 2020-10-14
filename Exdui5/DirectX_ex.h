@@ -2,6 +2,8 @@
 #include <wincodec.h>
 //#include <Gdiplus.h>
 //#include <gdiplusbrush.h>
+//using namespace Gdiplus;
+//#pragma comment(lib, "Gdiplus.lib")
 #include <d3d11.h>
 #include <d2d1.h>
 #include <d2d1_1.h>
@@ -12,8 +14,7 @@
 #pragma comment(lib, "Dwrite.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "windowscodecs.lib")
-//using namespace Gdiplus;
-//#pragma comment(lib, "Gdiplus.lib")
+
 
 #include "help_ex.h"
 #include "Global_ex.h"
