@@ -1,10 +1,82 @@
 #include "Resource_ex.h"
 
+//void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen)
+//{
+//	int i = 1263556677;
+//	int nError = 1;
+//	void* hImg = nullptr;
+//	Gdiplus::GdiplusStartupInput StartupInput;
+//	GdiplusStartup((ULONG_PTR*)&g_Li.hToken, &StartupInput, NULL);
+//	if (__get_int(lpData, 0) == i)
+//	{
+//		void* pData = 申请内存(dwSize);
+//		if (pData == 0)
+//		{
+//			nError = ERROR_EX_MEMORY_ALLOC;
+//		}
+//		else {
+//			RtlMoveMemory(pData, lpData, dwSize);
+//			if (lpKey == 0)
+//			{
+//				lpKey = &i;
+//				dwLen = 4;
+//			}
+//			RC4((void*)((size_t)pData + 4), dwSize - 4, lpKey, dwLen);
+//			__set_int(pData, 0, PNG_HEADER);
+//			void* lpStream = _img_createfromstream_init(pData, dwSize, &nError);
+//			if (nError == 0)
+//			{		
+//				nError=GdipLoadImageFromStream(lpStream, &hImg);
+//				if (nError == 0)
+//				{
+//					void* pBitmapData = 申请内存(sizeof(BitmapData_s));
+//					if (pBitmapData != 0)
+//					{
+//						if (GdipBitmapLockBits(hImg, NULL, 1, 2498570, pBitmapData) == 0)
+//						{
+//							void* pScan0 = ((BitmapData_s*)pBitmapData)->Scan0;
+//							int srcLen = __get_int(pScan0, 0);
+//							//打印数组((unsigned char*)pScan0, srcLen);
+//							if (数据_Crc32_Addr((void*)((size_t)pScan0 + 8), srcLen) == __get_int(pScan0, 4))
+//							{
+//								if (IsBadWritePtr(*retPtr, srcLen))
+//								{
+//									*retPtr = 申请内存(srcLen);
+//								}
+//								RtlMoveMemory(*retPtr, (void*)((size_t)pScan0 + 8), srcLen);
+//								*retLen = srcLen;
+//							}
+//							else {
+//								nError = ERROR_EX_CHECKSUM;
+//							}
+//							GdipBitmapUnlockBits(hImg, pBitmapData);
+//					    }
+//						释放内存(pBitmapData);
+//					}
+//					else {
+//						nError = ERROR_EX_MEMORY_ALLOC;
+//					}
+//					GdipDisposeImage(hImg);
+//				}
+//				((LPSTREAM)lpStream)->Release();
+//			}
+//			释放内存(pData);
+//		}
+//	}
+//	else {
+//		nError = ERROR_EX_UNSUPPORTED_TYPE;
+//	}
+//	Ex_SetLastError(nError);
+//}
+
+
 void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen)
 {
 	int i = 1263556677;
 	int nError = 1;
 	void* hImg = nullptr;
+	Gdiplus::GdiplusStartupInput StartupInput;
+	GdiplusStartup((ULONG_PTR*)&g_Li.hToken, &StartupInput, NULL);
 	if (__get_int(lpData, 0) == i)
 	{
 		void* pData = 申请内存(dwSize);
@@ -23,38 +95,27 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 			__set_int(pData, 0, PNG_HEADER);
 			void* lpStream = _img_createfromstream_init(pData, dwSize, &nError);
 			if (nError == 0)
-			{		
-				nError=GdipLoadImageFromStream(lpStream, &hImg);
-				if (nError == 0)
+			{
+				Gdiplus::Bitmap hImg((IStream*)lpStream, false);
+				Gdiplus::BitmapData pBitmapData;
+				if (hImg.LockBits(NULL, 1, 2498570, &pBitmapData) == 0)
 				{
-					void* pBitmapData = 申请内存(sizeof(BitmapData_s));
-					if (pBitmapData != 0)
+					void* pScan0 = pBitmapData.Scan0;
+					int srcLen = __get_int(pScan0, 0);
+					//打印数组((unsigned char*)pScan0, srcLen);
+					if (数据_Crc32_Addr((void*)((size_t)pScan0 + 8), srcLen) == __get_int(pScan0, 4))
 					{
-						if (GdipBitmapLockBits(hImg, NULL, 1, 2498570, pBitmapData) == 0)
+						if (IsBadWritePtr(*retPtr, srcLen))
 						{
-							void* pScan0 = ((BitmapData_s*)pBitmapData)->Scan0;
-							int srcLen = __get_int(pScan0, 0);
-							//打印数组((unsigned char*)pScan0, srcLen);
-							if (数据_Crc32_Addr((void*)((size_t)pScan0 + 8), srcLen) == __get_int(pScan0, 4))
-							{
-								if (IsBadWritePtr(*retPtr, srcLen))
-								{
-									*retPtr = 申请内存(srcLen);
-								}
-								RtlMoveMemory(*retPtr, (void*)((size_t)pScan0 + 8), srcLen);
-								*retLen = srcLen;
-							}
-							else {
-								nError = ERROR_EX_CHECKSUM;
-							}
-							GdipBitmapUnlockBits(hImg, pBitmapData);
-					    }
-						释放内存(pBitmapData);
+							*retPtr = 申请内存(srcLen);
+						}
+						RtlMoveMemory(*retPtr, (void*)((size_t)pScan0 + 8), srcLen);
+						*retLen = srcLen;
 					}
 					else {
-						nError = ERROR_EX_MEMORY_ALLOC;
+						nError = ERROR_EX_CHECKSUM;
 					}
-					GdipDisposeImage(hImg);
+					hImg.UnlockBits(&pBitmapData);
 				}
 				((LPSTREAM)lpStream)->Release();
 			}
@@ -83,7 +144,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 				tableFiles = HashTable_Create(取最近质数(count), &pfnDefaultFreeData);
 				if (tableFiles != 0)
 				{
-					retPtr =(void*)((size_t) retPtr + 5);
+					retPtr = (void*)((size_t)retPtr + 5);
 					for (int i = 0; i < count; i++)
 					{
 						int atom = __get_int(retPtr, 0);
@@ -95,7 +156,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 							if (tmp != 0)
 							{
 								HashTable_Set(tableFiles, atom, (size_t)tmp);
-								RtlMoveMemory(tmp,(void*)((size_t)retPtr + 4), len);
+								RtlMoveMemory(tmp, (void*)((size_t)retPtr + 4), len);
 							}
 						}
 						retPtr = (void*)((size_t)retPtr + 4 + len);
@@ -120,7 +181,8 @@ void* Ex_ResLoadFromMemory(void* lpData, size_t dwDataLen)
 		else {
 			ret = _res_unpack(lpData, dwDataLen, EPDF_FILES);
 		}
-	}else{
+	}
+	else {
 		nError = ERROR_EX_BAD_LENGTH;
 	}
 	Ex_SetLastError(nError);
@@ -157,7 +219,7 @@ bool Ex_ResGetFileFromAtom(void* hRes, int atomPath, void** lpFile, size_t* dwFi
 	{
 		if (pData != 0)
 		{
-			*lpFile =(void*)((size_t) pData + 5);
+			*lpFile = (void*)((size_t)pData + 5);
 			*dwFileLen = __get_int(pData, 1);
 		}
 	}

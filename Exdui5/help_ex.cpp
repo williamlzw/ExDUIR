@@ -1,4 +1,6 @@
 #include "help_ex.h"
+LOCALINFO g_Li;
+RENDERINFO g_Ri;
 
 void* GetProcAddr(LPCWSTR szMod,LPCSTR szApi)
 {
@@ -468,41 +470,47 @@ void _scale_n_int(size_t p, int n)
 
 void SetDefaultIcon()
 {
-	auto hRes = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(129), MAKEINTRESOURCE(14));
-	if (hRes == 0)
-	{
-		hRes = FindResourceW(g_Li.hInstance, L"DEFAULT_ICON", MAKEINTRESOURCE(14));
-	}
-	if (hRes != 0)
-	{
-		auto hData = LoadResource(g_Li.hInstance, hRes);
-		if (hData != 0)
-		{
-			auto pData = LockResource(hData);
-			int arg[2] = { 16,32 };
-			HICON ret[2] = { nullptr,nullptr };
-			for (int index = 0; index < 2; index++)
-			{
-				auto nID = LookupIconIdFromDirectoryEx((PBYTE)pData, true, arg[index], arg[index], 0);
-				auto hRsrc = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(nID), MAKEINTRESOURCE(3));
-				if (hRsrc != 0)
-				{
-					auto hGlobal = LoadResource(g_Li.hInstance, hRsrc);
-					if (hGlobal != 0)
-					{
-						auto lpRes = LockResource(hGlobal);
-						if (lpRes != 0)
-						{
-							ret[index] = CreateIconFromResourceEx((PBYTE)lpRes, SizeofResource(g_Li.hInstance, hRsrc), true, 196608, 0, 0, 0);
-						}
-					}
-				}
-			}
-			g_Li.hIconsm = ret[0];
-			g_Li.hIcon = ret[1];
-			FreeResource(hData);
-		}
-	}
+
+	g_Li.hIcon = LoadIcon(NULL, IDI_APPLICATION);// ret[1];
+	//auto hRes = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(129), MAKEINTRESOURCE(14));
+	//
+	//if (hRes == 0)
+	//{
+	//	
+	//	hRes = FindResourceW(g_Li.hInstance, L"DEFAULT_ICON", MAKEINTRESOURCE(14));
+	//	
+	//}
+	//if (hRes != 0)
+	//{
+	//	std::cout << "11::" << hRes << "," << GetLastError() << std::endl;
+	//	auto hData = LoadResource(g_Li.hInstance, hRes);
+	//	if (hData != 0)
+	//	{
+	//		auto pData = LockResource(hData);
+	//		int arg[2] = { 16,32 };
+	//		HICON ret[2] = { nullptr,nullptr };
+	//		for (int index = 0; index < 2; index++)
+	//		{
+	//			auto nID = LookupIconIdFromDirectoryEx((PBYTE)pData, true, arg[index], arg[index], 0);
+	//			auto hRsrc = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(nID), MAKEINTRESOURCE(3));
+	//			if (hRsrc != 0)
+	//			{
+	//				auto hGlobal = LoadResource(g_Li.hInstance, hRsrc);
+	//				if (hGlobal != 0)
+	//				{
+	//					auto lpRes = LockResource(hGlobal);
+	//					if (lpRes != 0)
+	//					{
+	//						ret[index] = CreateIconFromResourceEx((PBYTE)lpRes, SizeofResource(g_Li.hInstance, hRsrc), true, 196608, 0, 0, 0);
+	//					}
+	//				}
+	//			}
+	//		}
+	//		g_Li.hIconsm = ret[0];
+	//		g_Li.hIcon = LoadIcon(NULL, IDI_APPLICATION);// ret[1];
+	//		FreeResource(hData);
+	//	}
+	//}
 }
 
 void* copytstr(LPCWSTR lptstr, int len)

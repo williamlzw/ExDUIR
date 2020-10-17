@@ -1051,7 +1051,7 @@
 #define IRF_ROTATE_270_LV_FLIP		15		//270度旋转然后水平翻转然后垂直翻转
 
 	//颜色
-typedef UINT32	ARGB, RGB0;	//ARGB和RGB
+//typedef UINT32	ARGB, RGB0;	//ARGB和RGB
 typedef UINT8	CHANNEL;	//通道
 //
 typedef COLORREF EXARGB;		// 颜色

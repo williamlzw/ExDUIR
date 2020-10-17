@@ -32,12 +32,13 @@ typedef int(*MsgPROC)(HWND, size_t, int, size_t, void*, void*);
 #define 整数反转(x) _byteswap_ulong(x)
 #define 合并整数(a,b) MAKELONG(a,b)
 
+typedef UINT32	ARGB, RGB0;	//ARGB和RGB
 #define ExGetB(rgb)			(LOBYTE(rgb))
 #define ExGetG(rgb)			(LOBYTE(((WORD)(rgb)) >> 8))
 #define ExGetR(rgb)			(LOBYTE((rgb)>>16))
 #define ExGetA(rgb)			(LOBYTE((rgb)>>24))
-#define ExRGB(r,g,b)        ((RGB0)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((INT)(BYTE)(b))<<16)))
-#define ExRGBA(r,g,b,a)		((ARGB)(RGB(b,g,r)|(a<<24)))
+#define ExRGB(r,g,b)        ((int)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((INT)(BYTE)(b))<<16)))
+#define ExRGBA(r,g,b,a)		((int)(RGB(b,g,r)|(a<<24)))
 #define ExARGB(r,g,b)		ExRGBA(r,g,b,0xFF)
 
 #define HT_DUI 1

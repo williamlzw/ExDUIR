@@ -91,9 +91,10 @@
       <ConformanceMode>true</ConformanceMode>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -117,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;__CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -154,7 +155,6 @@
     <ClCompile Include="Exdui5.cpp" />
     <ClCompile Include="Font_ex.cpp" />
     <ClCompile Include="Format_ex.cpp" />
-    <ClCompile Include="Gdiplusdll_ex.cpp" />
     <ClCompile Include="Global_ex.cpp" />
     <ClCompile Include="HandleTable_ex.cpp" />
     <ClCompile Include="HashTable_ex.cpp" />
@@ -164,7 +164,6 @@
     <ClCompile Include="Layout_ex.cpp" />
     <ClCompile Include="Matrix_ex.cpp" />
     <ClCompile Include="MemPool_ex.cpp" />
-    <ClCompile Include="Ntdll_ex.cpp" />
     <ClCompile Include="Object_ex.cpp" />
     <ClCompile Include="Path_ex.cpp" />
     <ClCompile Include="Region_ex.cpp" />
@@ -185,7 +184,6 @@
     <ClInclude Include="DirectX_ex.h" />
     <ClInclude Include="Font_ex.h" />
     <ClInclude Include="Format_ex.h" />
-    <ClInclude Include="Gdiplusdll_ex.h" />
     <ClInclude Include="Global_ex.h" />
     <ClInclude Include="HandelTable_ex.h" />
     <ClInclude Include="HashTable_ex.h" />
@@ -195,7 +193,6 @@
     <ClInclude Include="Layout_ex.h" />
     <ClInclude Include="Matrix_ex.h" />
     <ClInclude Include="MemPool_ex.h" />
-    <ClInclude Include="Ntdll_ex.h" />
     <ClInclude Include="Object_ex.h" />
     <ClInclude Include="Path_ex.h" />
     <ClInclude Include="Region_ex.h" />

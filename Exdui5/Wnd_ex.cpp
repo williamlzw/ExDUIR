@@ -6,17 +6,22 @@ LRESULT Wnd_DefWindowProcW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
 
 WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCURSOR hCursor)
 {
-	WNDCLASSEXW WndClass = {};
+	
+	WNDCLASSEXW WndClass ;
+	
 	WndClass.cbSize = sizeof(WNDCLASSEXW);
-	WndClass.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
+	WndClass.style = CS_VREDRAW | CS_HREDRAW ;//| CS_DBLCLKS
+	
 	WndClass.lpfnWndProc = (WNDPROC)Wnd_DefWindowProcW;
 	WndClass.hInstance = g_Li.hInstance;
 	WndClass.hCursor = (hCursor == NULL ? g_Li.hCursor : hCursor);
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	WndClass.hIcon = (hIcon == NULL ? g_Li.hIcon : hIcon);
-	WndClass.hIconSm = (hIconsm == NULL ? g_Li.hIconsm : hIconsm);
+	
+	WndClass.hbrBackground = NULL; //NULL_BRUSH
+
+	WndClass.hIcon =  (hIcon == NULL ? g_Li.hIcon : hIcon);
+	
+	//WndClass.hIconSm = NULL;// (hIconsm == NULL ? g_Li.hIconsm : hIconsm);
 	WndClass.lpszClassName = lpwzClassName;
-	WndClass.lpszMenuName = L"MainMenu";
 	return RegisterClassExW(&WndClass);
 }
 
@@ -268,9 +273,14 @@ HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName
 	dwStyleEx = dwStyleEx | WS_EX_LAYERED;
 	if (lpwzClassName == 0) lpwzClassName = (LPCWSTR)g_Li.atomClassName;
 	HINSTANCE hInst = g_Li.hInstance;
-	//if (IsWindow(hWndParent)) hInst = (HINSTANCE)GetWindowLongPtrW(hWndParent, -6);
-	std::cout << dwStyleEx << ",lpwzClassName:" << lpwzClassName << ",lpwzWindowName:" << lpwzWindowName << ",dwStyle:" << dwStyle << ", g_Li.hInstance:" << g_Li.hInstance << ",hInst" << hInst << std::endl;
+	if (IsWindow(hWndParent)) hInst = (HINSTANCE)GetWindowLongPtrW(hWndParent, -6);
+	LPWSTR aa = (LPWSTR)申请内存(lstrlenW(lpwzClassName));
+	RtlMoveMemory(aa, lpwzClassName, lstrlenW(lpwzClassName));
+	std::cout << GetLastError()  << std::endl;
+	//std::cout << dwStyleEx << ",lpwzClassName:" << lpwzClassName << ",lpwzWindowName:" << lpwzWindowName << ",dwStyle:" << dwStyle << ", g_Li.hInstance:" << g_Li.hInstance << ",hInst" << hInst << std::endl;
 	HWND hWnd = CreateWindowExW(dwStyleEx, lpwzClassName, lpwzWindowName, dwStyle, x, y, width, height, hWndParent, NULL, hInst, NULL);
+	std::cout << GetLastError() <<","<<hWnd<< std::endl;
+	释放内存(aa);
 	if (hWnd != 0)
 	{
 		SendMessageW(hWnd, 128, 0, (LPARAM)g_Li.hIconsm);
@@ -898,7 +908,7 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	{
 		int offsetX = 0;
 		int offsetY = 0;
-		if (Flag_Query(EXGF_DPI_ENABLE) && 取系统主版本号() > 5)
+		if (Flag_Query(EXGF_DPI_ENABLE) )
 		{
 			size.cx = Ex_Scale(size.cy);
 			size.cy = Ex_Scale(size.cy);

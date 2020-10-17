@@ -35,9 +35,6 @@
     <ClCompile Include="Canvas_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
-    <ClCompile Include="Ntdll_ex.cpp">
-      <Filter>Global</Filter>
-    </ClCompile>
     <ClCompile Include="Path_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
@@ -63,9 +60,6 @@
       <Filter>Global</Filter>
     </ClCompile>
     <ClCompile Include="Resource_ex.cpp">
-      <Filter>Global</Filter>
-    </ClCompile>
-    <ClCompile Include="Gdiplusdll_ex.cpp">
       <Filter>Global</Filter>
     </ClCompile>
     <ClCompile Include="Format_ex.cpp">
@@ -132,9 +126,6 @@
     <ClInclude Include="Canvas_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
-    <ClInclude Include="Ntdll_ex.h">
-      <Filter>Global</Filter>
-    </ClInclude>
     <ClInclude Include="Path_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
@@ -160,9 +151,6 @@
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="Resource_ex.h">
-      <Filter>Global</Filter>
-    </ClInclude>
-    <ClInclude Include="Gdiplusdll_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="Format_ex.h">

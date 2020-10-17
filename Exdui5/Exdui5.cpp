@@ -7,16 +7,12 @@
 
 
 #include "help_ex.h"
-#include "Global_ex.h"
-#include "Array_ex.h"
-#include "Resource_ex.h"
-#include "Gdiplusdll_ex.h"
+//#include "Global_ex.h"
+//#include "Array_ex.h"
+//#include "Resource_ex.h"
+//#include "Gdiplusdll_ex.h"
 
-//#include <Gdiplus.h>
-//#include <gdiplusbrush.h>
-//using namespace Gdiplus;
-//#pragma comment(lib, "Gdiplus.lib")
-
+#define IDI_APP_ICON 129
 
 void 测试哈希表()
 {
@@ -168,7 +164,7 @@ std::vector<UCHAR> 整数到字节数组(int value)
 
 
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int main()
 {
 	BOOL CONSOLE = true;
 	setlocale(LC_CTYPE, "");
@@ -186,11 +182,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::vector<char> data;
 	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
 	//GetModuleHandleW(NULL)
-	Ex_Init(GetModuleHandle(NULL), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
-	std::cout<<Ex_WndRegisterClass(L"ExDircetUI", 0, 0, 0)<<std::endl;
-	std::wstring classa = L"ExDircetUI";
-	std::wstring title = L"aaa";
-	HWND hWnd = Ex_WndCreate(0, classa.c_str(), title.c_str(), 0, 0, 400, 300, 0, 0);
+
+	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
+	
+	auto aa=Ex_WndRegisterClass(L"Ex_DirectUI", 0, 0, 0);
+	LPCWSTR classa = L"Ex_DirectUI";
+	LPCWSTR title = L"aaaas";
+	
+	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
+	std::cout <<"hwnd:" <<hWnd << std::endl;
 	if (hWnd != 0)
 	{
 		size_t hExDui=Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);

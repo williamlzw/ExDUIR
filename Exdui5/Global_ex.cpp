@@ -1,8 +1,7 @@
 #include "Global_ex.h"
 #include "help_ex.h"
 #include "Wnd_ex.h"
-LOCALINFO g_Li;
-RENDERINFO g_Ri;
+
 
 void pfnDefaultFreeData(void* dwData)
 {
@@ -25,8 +24,10 @@ void Ex_SetLastError(int nError)
 BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme, int dwDefaultThemeLen, LPVOID lpDefaultI18N, int dwDefaultI18NLen)
 {
 	CoInitialize(NULL);
-	加载NTDLL();
+	//加载NTDLL();
+	
 	g_Li.csError = Thread_InitializeCriticalSection();
+	
 	g_Li.hInstance = hInstance;
 	g_Li.dwFlags = dwGlobalFlags;
 	if (hDefaultCursor == 0) {
@@ -38,7 +39,9 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	if (lpszDefaultClassName == NULL) {
 		lpszDefaultClassName = L"Ex_DirectUI";
 	}
+	SetDefaultIcon();
 	g_Li.atomClassName = Ex_WndRegisterClass(lpszDefaultClassName, NULL, NULL, NULL);
+	
 	g_Li.dwMessage=RegisterWindowMessageW(L"Ex_DirectUI");
 	g_Li.hTableClass = HashTable_Create(47, &pfnDefaultFreeData);
 	g_Li.hTableFont = HashTable_Create(17, &pfnDefaultFreeFont);
@@ -46,10 +49,13 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	g_Li.hMemPoolMsg = MemPool_Create(256, 20, 0);
 	g_Li.hHandles = _handle_init();
 	g_Li.dwClickTime = GetDoubleClickTime() * 2;
+	
 	g_Li.aryColorsAtom = { ATOM_BACKGROUND_COLOR, ATOM_COLOR_BACKGROUND, ATOM_BORDER_COLOR, ATOM_COLOR_BORDER, ATOM_COLOR, ATOM_COLOR_NORMAL, ATOM_COLOR_HOVER, ATOM_COLOR_DOWN, ATOM_COLOR_FOCUS, ATOM_COLOR_CHECKED, ATOM_COLOR_SELECTED, ATOM_COLOR_HOT, ATOM_COLOR_VISTED, ATOM_COLOR_SHADOW };
 	g_Li.aryColorsOffset = { _obj_crBackground, _obj_crBackground, _obj_crBorder, _obj_crBorder, _obj_crNormal, _obj_crNormal, _obj_crHover, _obj_crDown, _obj_crFocus, _obj_crChecked, _obj_crSelected, _obj_crHot, _obj_crVisted, _obj_crShadow };
 	g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
-	SetDefaultIcon();
+	
+	
+	
 	auto i = 申请内存(64);
 	int len;
 	len=LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);
@@ -73,10 +79,9 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	int nError = 1;
 	_canvas_init(&nError);
 	int minjor, optional;
-	if (取系统主版本号(&minjor, &optional) > 5)
-	{
-		SetProcessDPIAware();
-	}
+	
+	SetProcessDPIAware();
+	
 	g_Li.DpiX = 1;
 	g_Li.DpiY = 1;
 	auto dc = GetDC(NULL);
@@ -103,13 +108,18 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	}
 
 	_object_init();
-
+	
 	g_Li.aryThemes.clear();
 	Ex_ThemeLoadFromMemory(lpDefaultTheme, dwDefaultThemeLen, 0, 0, true);
 	//_layout_init();
-	g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
-	g_Li.hHookMsgBox = SetWindowsHookEx(5,(HOOKPROC)&_hook_proc, 0, GetCurrentThreadId());
+	
+	
 
+	std::cout << "GetLastError SysShadow3:" << GetLastError() << std::endl;
+	g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
+	std::cout << "GetLastError SysShadow3:" << GetLastError() << std::endl;
+	g_Li.hHookMsgBox = SetWindowsHookEx(5,(HOOKPROC)_hook_proc, 0, GetCurrentThreadId());
+	std::cout << "GetLastError SysShadow3:" << GetLastError() << std::endl;
 	Ex_SetLastError(nError);
 	return nError==0;
 }
