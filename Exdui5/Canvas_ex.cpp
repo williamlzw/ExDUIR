@@ -1,56 +1,6 @@
 #include "Canvas_ex.h"
 
-//bool _md_destroy(void* pData, int offsetDc, int offsetBmp, int offsetBits)
-//{
-//	bool ret = false;
-//	HDC mDc = (HDC)__get(pData, offsetDc);
-//	if (mDc != 0)
-//	{
-//		DeleteObject((HBITMAP)__get(pData, offsetBmp));
-//		DeleteDC(mDc);
-//		__set(pData, offsetDc, 0);
-//		__set(pData, offsetBmp, 0);
-//		__set(pData, offsetBits, 0);
-//		ret = true;
-//	}
-//	return ret;
-//}
-//
-//bool _md_create(void* pData, int offsetDc, int offsetBmp, int offsetBits, int width, int height, int& nError)
-//{
-//	if (width <= 0) width = 1;
-//	if (height == 0) height == 1;
-//	HDC mDc = CreateCompatibleDC(NULL);
-//	BITMAPINFO bi = {};
-//	bool ret = false;
-//	if (mDc != 0)
-//	{
-//		bi.bmiHeader.biSize = sizeof(BITMAPINFO);
-//		bi.bmiHeader.biBitCount = 32;
-//		bi.bmiHeader.biPlanes = 1;
-//		bi.bmiHeader.biWidth = width;
-//		bi.bmiHeader.biHeight = -height;
-//		bi.bmiHeader.biSizeImage = width * height * bi.bmiHeader.biBitCount / 8;
-//		void* lpBits = nullptr;
-//		HBITMAP hBmp=CreateDIBSection(mDc, &bi, 0, &lpBits, NULL, 0);
-//		if (hBmp != 0)
-//		{
-//			DeleteObject(SelectObject(mDc, hBmp));
-//			_md_destroy(pData, offsetDc, offsetBmp, offsetBits);
-//			__set(pData, offsetDc, (size_t)mDc);
-//			__set(pData, offsetBmp, (size_t)hBmp);
-//			__set(pData, offsetBits, (size_t)lpBits);
-//			ret = true;
-//		}
-//		else {
-//			DeleteDC(mDc);
-//			nError = GetLastError();
-//		}
-//	}
-//	return ret;
-//}
-
-bool _canvas_destroy(size_t hCanvas)//Ö»Íê³Édx
+bool _canvas_destroy(size_t hCanvas)
 {
 	int nError = 1;
 	void* pCanvas = nullptr;
@@ -75,11 +25,9 @@ void _canvas_recreate(void* pCanvas, int width, int height, int* nError)
 
 	
 	void* pBitmap = _dx_createbitmap(((wnd_s*)(((canvas_s*)pCanvas)->pWnd_))->context_, width, height, nError);
-	//void* pBitmap = _dx_createbitmap((void*)__get((void*)__get(pCanvas, offsetof(canvas_s, pWnd_)), offsetof(wnd_s, context_)), width, height, nError);
 	if (pBitmap != 0)
 	{
 		void* oldBitmap = ((canvas_s*)pCanvas)->pBitmap_;
-		//void* oldBitmap = (void*)__get(pCanvas, offsetof(canvas_s, pBitmap_));
 		((ID2D1Bitmap*)oldBitmap)->Release();
 		((canvas_s*)pCanvas)->pBitmap_ = pBitmap;
 	}
@@ -125,13 +73,16 @@ void* _cv_dx_bmp(void* pCanvas)
 {
 	
 	return ((canvas_s*)pCanvas)->pBitmap_;
-	//return (void*)__get(pCanvas, offsetof(canvas_s, pBitmap_));
 }
 
 void* _cv_context(void* pCanvas)
 {
 	return ((canvas_s*)pCanvas)->pContext_;
-	//return (void*)__get(pCanvas, offsetof(canvas_s, pContext_));
+}
+
+void* _cv_dx_gdiinterop(void* pCanvas)
+{
+	return ((canvas_s*)pCanvas)->pGdiInterop_;
 }
 
 void* _canvas_getcontext(size_t hCanvas, int nType)
@@ -162,9 +113,8 @@ bool _canvas_begindraw(size_t hCanvas)
 	{
 		void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
 		void* pContext = ((wnd_s*)pWnd)->context_;
-		//void* pWnd = (void*)__get(pCanvas, offsetof(canvas_s, pWnd_));
-		//void* pContext = (void*)__get(pWnd, offsetof(wnd_s, context_));
 		((canvas_s*)pCanvas)->pContext_ = pContext;
+		((canvas_s*)pCanvas)->pGdiInterop_ = ((wnd_s*)pWnd)->gdiinterop_;
 		if (((wnd_s*)pWnd)->counts_ == 0)
 		{
 			_dx_begindraw(pContext);
@@ -184,8 +134,6 @@ bool _canvas_enddraw(size_t hCanvas)
 	{
 		void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
 		void* pContext = ((wnd_s*)pWnd)->context_;
-		//void* pWnd = (void*)__get(pCanvas, offsetof(canvas_s, pWnd_));
-		//void* pContext = (void*)__get(pWnd, offsetof(wnd_s, context_));
 		_dx_settarget(pContext, 0);
 		/*if (InterlockedExchangeAdd((size_t*)(__get(pCanvas, offsetof(canvas_s, pWnd_)) + offsetof(wnd_s, counts_)), -1) == 1)
 		{
@@ -303,7 +251,6 @@ bool _canvas_drawpath(size_t hCanvas, size_t hPath, void* hBrush,float strokeWid
 		{
 			void* pContext = _cv_context(pCanvas);
 			((ID2D1DeviceContext*)pContext)->DrawGeometry((ID2D1Geometry*)((path_s*)pPath)->pGeometry_, (ID2D1Brush*)hBrush, strokeWidth, (ID2D1StrokeStyle*)strokeStyle);
-			//((ID2D1DeviceContext*)pContext)->DrawGeometry((ID2D1Geometry*)__get(pPath, offsetof(path_s, pGeometry_)), (ID2D1Brush*)hBrush, strokeWidth, (ID2D1StrokeStyle*)strokeStyle);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -321,7 +268,6 @@ bool _canvas_fillpath(size_t hCanvas, size_t hPath, void* hBrush)
 		{
 			void* pContext = _cv_context(pCanvas);
 			((ID2D1DeviceContext*)pContext)->FillGeometry((ID2D1Geometry*)((path_s*)pPath)->pGeometry_, (ID2D1Brush*)hBrush, 0);
-			// ((ID2D1DeviceContext*)pContext)->FillGeometry((ID2D1Geometry*)__get(pPath, offsetof(path_s, pGeometry_)),(ID2D1Brush*) hBrush, 0);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -393,7 +339,6 @@ bool _canvas_drawimagerectrect(size_t hCanvas, size_t hImage, float dstLeft, flo
 		if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 		{
 			void* pObj = ((img_s*)pImage)->pObj_;
-			//void* pObj = (void*)__get(pImage, offsetof(img_s, pObj_));
 			void* pContext = _cv_context(pCanvas);
 			ID2D1Bitmap* pBitmap = nullptr;
 			nError = ((ID2D1DeviceContext*)pContext)->CreateBitmapFromWicBitmap((IWICBitmapSource*)pObj, &pBitmap);
@@ -489,8 +434,6 @@ bool _canvas_drawimagefrombkgimg_ex(size_t hCanvas, size_t hImage, int x, int y,
 			{
 				rcfDst.right = ((canvas_s*)pCanvas)->width_;
 				rcfDst.bottom = ((canvas_s*)pCanvas)->height_;
-				//rcfDst.right = __get(pCanvas, offsetof(canvas_s, width_));
-				//rcfDst.bottom = __get(pCanvas, offsetof(canvas_s, height_));
 			}
 			else {
 				RtlMoveMemory(&rcfDst, lpRCFDst, sizeof(D2D1_RECT_F));
@@ -599,9 +542,6 @@ bool _canvas_drawimagefrombkgimg(size_t hCanvas, void* lpBkgImg)
 			ret = _canvas_drawimagefrombkgimg_ex(hCanvas, ((bkgimg_s*)lpBkgImg)->hImage_, ((bkgimg_s*)lpBkgImg)->x_,
 				((bkgimg_s*)lpBkgImg)->y_, ((bkgimg_s*)lpBkgImg)->dwRepeat_, ((bkgimg_s*)lpBkgImg)->lpGrid_,
 				((bkgimg_s*)lpBkgImg)->dwFlags_, ((bkgimg_s*)lpBkgImg)->dwAlpha_, NULL, NULL);
-		//ret = _canvas_drawimagefrombkgimg_ex(hCanvas, __get(lpBkgImg, offsetof(bkgimg_s, hImage_)), __get(lpBkgImg, offsetof(bkgimg_s, x_)),
-			//__get(lpBkgImg, offsetof(bkgimg_s, y_)), __get(lpBkgImg, offsetof(bkgimg_s, dwRepeat_)), (void*)__get(lpBkgImg, offsetof(bkgimg_s, lpGrid_)),
-			//__get(lpBkgImg, offsetof(bkgimg_s, dwFlags_)), __get(lpBkgImg, offsetof(bkgimg_s, dwAlpha_)), NULL, NULL);
 	}
 	return ret;
 }
@@ -621,11 +561,9 @@ bool _canvas_cliprect(size_t hCanvas, int left, int top, int right, int bottom)
 		{
 			_dx_resetclip(_cv_context(pCanvas));
 		}
-		((canvas_s*)pCanvas)->dwFlags_ = ((canvas_s*)pCanvas)->dwFlags_ | CVF_CLIPED;
-		//__add(pCanvas, offsetof(canvas_s, dwFlags_), CVF_CLIPED);
+		__add(pCanvas, offsetof(canvas_s, dwFlags_), CVF_CLIPED);
 		RtlMoveMemory((void*)((size_t)pCanvas + offsetof(canvas_s, c_left_)), &left, 16);
 		_dx_cliprect(_cv_context(pCanvas), ((canvas_s*)pCanvas)->c_left_, ((canvas_s*)pCanvas)->c_top_, ((canvas_s*)pCanvas)->c_right_, ((canvas_s*)pCanvas)->c_bottom_);
-		//_dx_cliprect(_cv_context(pCanvas), __get(pCanvas, offsetof(canvas_s, c_left_)), __get(pCanvas, offsetof(canvas_s, c_top_)), __get(pCanvas, offsetof(canvas_s, c_right_)), __get(pCanvas, offsetof(canvas_s, c_bottom_)));
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -640,8 +578,7 @@ bool _canvas_resetclip(size_t hCanvas)
 		if ((((canvas_s*)pCanvas)->dwFlags_ & CVF_CLIPED) == CVF_CLIPED)
 		{
 			_dx_resetclip(_cv_context(pCanvas));
-			((canvas_s*)pCanvas)->dwFlags_ = ((canvas_s*)pCanvas)->dwFlags_ - CVF_CLIPED;
-			//__del(pCanvas, offsetof(canvas_s, dwFlags_), CVF_CLIPED);
+			__del(pCanvas, offsetof(canvas_s, dwFlags_), CVF_CLIPED);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -704,8 +641,6 @@ bool _canvas_getsize(size_t hCanvas, int* width, int* height)
 	{
 		*width = ((canvas_s*)pCanvas)->width_;
 		*height = ((canvas_s*)pCanvas)->height_;
-		//width = __get(pCanvas, offsetof(canvas_s, width_));
-		//height = __get(pCanvas, offsetof(canvas_s, height_));
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -714,7 +649,6 @@ bool _canvas_getsize(size_t hCanvas, int* width, int* height)
 bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** pLayout, int* nError)
 {
 	void* pObj = ((font_s*)pFont)->pObj_;
-	//void* pObj = (void*)__get(pFont, offsetof(font_s, pObj_));
 	if (layoutWidth < 0) layoutWidth = 0;
 	if (layoutHeight < 0) layoutHeight = 0;
 	int nPreFix;
@@ -884,7 +818,6 @@ bool _canvas_blur(size_t hCanvas, float fDeviation, void* lprc)
 		if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 		{
 			_dx_blur(_cv_context(pCanvas), ((canvas_s*)pCanvas)->pBitmap_, fDeviation, lprc, &nError);
-			//_dx_blur(_cv_context(pCanvas), (void*)__get(pCanvas, offsetof(canvas_s, pBitmap_)), fDeviation, lprc, nError);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -898,7 +831,6 @@ bool _canvas_rotate_hue(size_t hCanvas, float fAngle)
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		_dx_rotate_hue(_cv_context(pCanvas), ((canvas_s*)pCanvas)->pBitmap_, fAngle, &nError);
-		//_dx_rotate_hue(_cv_context(pCanvas), (void*)__get(pCanvas, offsetof(canvas_s, pBitmap_)), fAngle, nError);
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -933,4 +865,51 @@ size_t _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, in
 		}
 	}
 	return hCanvas;
+}
+
+void* _canvas_getdc_ex(void* pCanvas, int* nError)
+{
+	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
+	void* hDC = nullptr;
+	if (((wnd_s*)pWnd)->counts_ > 0)
+	{
+		void* pGdiInterop = _cv_dx_gdiinterop(pCanvas);
+		*nError=((ID2D1GdiInteropRenderTarget*)pGdiInterop)->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, (HDC*)&hDC);
+	}
+	return hDC;
+}
+
+void* _canvas_getdc(size_t hCanvas)
+{
+	void* pCanvas = nullptr;
+	int nError = 1;
+	void* ret = nullptr;
+	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
+	{
+		ret=_canvas_getdc_ex(pCanvas, &nError);
+	}
+	Ex_SetLastError(nError);
+	return ret;
+}
+
+void _canvas_releasedc_ex(void* pCanvas, int* nError)
+{
+	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
+	if (((wnd_s*)pWnd)->counts_ > 0)
+	{
+		void* pgdiinterop = _cv_dx_gdiinterop(pCanvas);
+		*nError=((ID2D1GdiInteropRenderTarget*)pgdiinterop)->ReleaseDC(0);
+	}
+}
+
+bool _canvas_releasedc(size_t hCanvas)
+{
+	void* pCanvas = nullptr;
+	int nError = 1;
+	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
+	{
+		_canvas_releasedc_ex(pCanvas, &nError);
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
 }

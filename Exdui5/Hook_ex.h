@@ -15,3 +15,4 @@ struct mbp_s
 };
 
 void _msgbox_drawinfo(void* pWnd, size_t cvBkg);
+void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam);

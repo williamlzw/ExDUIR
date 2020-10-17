@@ -97,10 +97,14 @@
 #define EWS_POPUPWINDOW	524288
 // 背景模糊
 #define EWL_BLUR	-2
+//主题包句柄
+#define EWL_HTHEME -3
 // 窗口消息过程
 #define EWL_MSGPROC	-4
 // 窗口透明度
 #define EWL_ALPHA	-5
+//窗口句柄
+#define EWL_HWND -6
 // 自定义参数
 #define EWL_LPARAM	-7
 // 窗口边框圆角度

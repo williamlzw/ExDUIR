@@ -426,6 +426,7 @@ void RC4(void* dest, size_t destlen, const void* pwd, size_t pwdlen);
 UINT Êý¾Ý_Crc32_Addr(void* buf, UINT nLength);
 void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset);
 void _scale_n_float(size_t p, int n);
+void _scale_n_int(size_t p, int n);
 void SetDefaultIcon();
 void* copytstr(LPCWSTR lptstr, int len);
 

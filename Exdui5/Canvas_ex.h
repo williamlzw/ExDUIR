@@ -20,6 +20,7 @@ struct canvas_s
 	int width_;
 	int height_;
 	void* pContext_;
+	void* pGdiInterop_;
 	void* pBitmap_;
 	void* pWnd_;
 	int c_left_;
@@ -69,6 +70,11 @@ bool _canvas_drawtext(size_t hCanvas, void* hFont, int crText, LPCWSTR lpwzText,
 bool _canvas_blur(size_t hCanvas, float fDeviation, void* lprc);
 bool _canvas_rotate_hue(size_t hCanvas, float fAngle);
 size_t _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, int* nError);
+void* _canvas_getdc_ex(void* pCanvas, int* nError);
+void* _canvas_getdc(size_t hCanvas);
+void _canvas_releasedc_ex(void* pCanvas, int* nError);
+bool _canvas_releasedc(size_t hCanvas);
 
 void* _cv_dx_bmp(void* pCanvas);
 void* _cv_context(void* pCanvas);
+void* _cv_dx_gdiinterop(void* pCanvas);

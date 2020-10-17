@@ -240,3 +240,143 @@ bool _layout_table_setinfo(size_t hLayout, void* aRowHeight, int cRows, void* aC
 	return nError == 0;
 }
 
+bool _layout_setchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t pvValue)
+{
+	void* pLayout = nullptr;
+	int nError = 1;
+	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	{
+		if (hObj != 0)
+		{
+			void* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
+			size_t nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
+			void* pInfo = nullptr;
+			if (nIndex == 0)
+			{
+				pInfo = 申请内存(((layout_s*)pLayout)->cbInfoLen_);
+				if (pInfo != 0)
+				{
+					pInfo = (void*)((size_t)pInfo + 16);
+					__set(pInfo, 0, hObj);
+					((LayoutThreePROC)((layout_s*)pLayout)->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
+					nIndex = Array_AddMember(hArr,(size_t)pInfo);
+				}
+			}
+			else {
+				pInfo = (void*)Array_GetMember(hArr, nIndex);
+			}
+			if (pInfo != 0)
+			{
+				if (((LayoutThreePROC)((layout_s*)pLayout)->lpfnProc_)(pLayout, ELN_CHECKCHILDPROPVALUE, 合并整数(nIndex, dwPropID), pvValue) == 0)
+				{
+					__set(pInfo, dwPropID * sizeof(void*), pvValue);
+				}
+			}
+			else {
+				nError = ERROR_EX_MEMORY_ALLOC;
+			}
+		}
+		else {
+			nError = ERROR_EX_INVALID_OBJECT;
+		}
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
+
+bool _layout_getchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t* pvValue)
+{
+	void* pLayout = nullptr;
+	int nError = 1;
+	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	{
+		void* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
+		size_t nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
+		void* pInfo = nullptr;
+		if (nIndex > 0)
+		{
+			pInfo= (void*)Array_GetMember(hArr, nIndex);
+		}
+		if (pInfo != 0)
+		{
+			dwPropID = dwPropID * sizeof(void*);
+			if (dwPropID >= -16 && dwPropID < ((layout_s*)pLayout)->cbInfoLen_)
+			{
+				*pvValue =__get(pInfo, dwPropID);
+			}
+			else {
+				nError = ERROR_EX_LAYOUT_UNSUPPORTED_PROP;
+			}
+		}
+		else {
+			nError = ERROR_EX_LAYOUT_INVALID;
+		}
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
+
+bool _layout_setprop(size_t hLayout, int dwPropID, size_t pvValue)
+{
+	void* pLayout = nullptr;
+	int nError = 1;
+	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	{
+		void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
+		void* lpfnProc = ((layout_s*)pLayout)->lpfnProc_;
+		if (((LayoutThreePROC)lpfnProc)(pLayout, ELN_CHECKCHILDPROPVALUE, dwPropID, pvValue) == 0)
+		{
+			if (dwPropID > 0)
+			{
+				dwPropID = dwPropID - 1;
+			}
+			__set(pInfo, dwPropID * sizeof(void*),pvValue);
+		}
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
+
+size_t _layout_getprop(size_t hLayout, int dwPropID)
+{
+	void* pLayout = nullptr;
+	int nError = 1;
+	size_t ret = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	{
+		void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
+			if (dwPropID > 0)
+			{
+				dwPropID = dwPropID - 1;
+			}
+			ret =__get(pInfo, dwPropID * sizeof(void*));
+	}
+	Ex_SetLastError(nError);
+	return ret;
+}
+
+bool _layout_absolute_setedge(size_t hLayout, size_t hObjChild, int dwEdge, int dwType, size_t nValue)
+{
+	void* pLayout = nullptr;
+	int nError = 1;
+	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	{
+		if (((layout_s*)pLayout)->nType_ == ELT_ABSOLUTE)
+		{
+			dwEdge = (dwEdge + 1)/2;
+			if (dwEdge >= 1 && dwEdge <= 8)
+			{
+				_layout_setchildprop(hLayout, hObjChild, dwEdge * 2, dwType);
+				_layout_setchildprop(hLayout, hObjChild, dwEdge * 2 - 1, nValue);
+			}
+			else {
+				nError = ERROR_EX_LAYOUT_UNSUPPORTED_PROP;
+			}
+		}
+		else {
+			nError = ERROR_EX_LAYOUT_UNSUPPORTED_PROP;
+		}
+	}
+	Ex_SetLastError(nError);
+	return nError==0;
+}

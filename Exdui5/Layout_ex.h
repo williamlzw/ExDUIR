@@ -133,3 +133,8 @@ int _layout_gettype(size_t hLayout);
 bool _layout_enableupdate(size_t hLayout, bool fUpdateable);
 size_t _layout_notify(size_t hLayout, int nEvent, void* wParam, void* lParam);
 bool _layout_table_setinfo(size_t hLayout, void* aRowHeight, int cRows, void* aCellWidth, int cCells);
+bool _layout_setchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t pvValue);
+bool _layout_getchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t* pvValue);
+bool _layout_setprop(size_t hLayout, int dwPropID, size_t pvValue);
+size_t _layout_getprop(size_t hLayout, int dwPropID);
+bool _layout_absolute_setedge(size_t hLayout, size_t hObjChild, int dwEdge, int dwType, size_t nValue);

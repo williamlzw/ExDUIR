@@ -436,6 +436,18 @@ void _scale_n_float(size_t p, int n)
 	}
 }
 
+void _scale_n_int(size_t p, int n)
+{
+	if (g_Li.DpiX > 1)
+	{
+		size_t pp = p;
+		for (pp; pp < p + n * sizeof(size_t); pp += sizeof(size_t))
+		{
+			__set((void*)pp, 0, round(__get((void*)pp, 0) * g_Li.DpiX));
+		}
+	}
+}
+
 void SetDefaultIcon()
 {
 	auto hRes = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(129), MAKEINTRESOURCE(14));

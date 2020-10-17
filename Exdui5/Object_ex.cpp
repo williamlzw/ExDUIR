@@ -3299,3 +3299,33 @@ bool Ex_ObjScrollGetRange(size_t hObj, int nBar, void* lpnMinPos, void* lpnMaxPo
 {
 	return Ex_ObjScrollGetInfo(hObj, nBar, lpnMinPos, lpnMaxPos, 0, 0);
 }
+
+void _sb_show(size_t hSB, bool fShow)
+{
+	void* pSB = nullptr;
+	int nError = 1;
+	if (_handle_validate(hSB, HT_OBJECT, &pSB, &nError))
+	{
+		HWND hWnd = _obj_gethWnd(pSB);
+		_obj_visable(hWnd, hSB, pSB, fShow);
+		_obj_scroll_repostion(hWnd, ((obj_s*)pSB)->objParent_, false);
+	}
+}
+
+bool Ex_objScrollshow(size_t hObj, int wBar, bool fShow)
+{
+	void* pObj = nullptr;
+	int nError = 1;
+	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	{
+		if (wBar == SB_BOTH)
+		{
+			_sb_show(_sb_getscroll(pObj, SB_VERT), fShow);
+			_sb_show(_sb_getscroll(pObj, SB_HORZ), fShow);
+		}
+		else {
+			_sb_show(_sb_getscroll(pObj, wBar), fShow);
+		}
+	}
+	return nError == 0;
+}

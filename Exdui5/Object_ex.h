@@ -37,6 +37,7 @@ typedef int(*EnumPROC)(size_t, size_t);
 #define _obj_dwShadowSize 128
 
 #define EWF_ACTIVE 2
+#define EWF_INTED 2147483648
 #define EWF_bLayered 4
 #define EWF_SIZED 8
 #define EWF_bMenuContext 16
@@ -361,3 +362,5 @@ int Ex_ObjScrollSetRange(size_t hObj, int nBar, int nMin, int nMax, bool bRedraw
 size_t Ex_ObjScrollGetControl(size_t hObj, int nBar);
 int Ex_ObjScrollGetTrackPos(size_t hObj, int nBar);
 bool Ex_ObjScrollGetRange(size_t hObj, int nBar, void* lpnMinPos, void* lpnMaxPos);
+void _sb_show(size_t hSB, bool fShow);
+bool Ex_objScrollshow(size_t hObj, int wBar, bool fShow);

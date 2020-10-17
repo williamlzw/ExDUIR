@@ -75,3 +75,148 @@ void _msgbox_drawinfo(void* pWnd, size_t cvBkg)
 		}
 	}
 }
+
+void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
+{
+	void* pMsg = ((wnd_s*)pWnd)->lpMsgParams_;
+	if (pMsg == 0) return;
+	auto lpwzCheckbox = ((mbp_s*)pMsg)->lpCheckBox_;
+	auto lpCheckboxChecked = ((mbp_s*)pMsg)->lpCheckBoxChecked_;
+	auto uType=((mbp_s*)pMsg)->uType_;
+	auto pfnCallback = ((mbp_s*)pMsg)->lpfnNotifyCallback_;
+	auto hTheme = ((wnd_s*)pWnd)->hTheme_;
+	auto hWndChild = GetWindow(hWnd, GW_CHILD);
+	RECT rcText;
+	std::vector<std::wstring> aryText;
+	std::vector<size_t> aryID;
+	size_t iDef=0;
+	while (hWndChild!=0)
+	{
+		auto i=GetWindowLongPtrW(hWndChild, -12);
+		if (i == 65535)//内容
+		{
+			GetWindowRect(hWndChild, &rcText);
+		}
+		else if (i == 20)//图标
+		{
+
+		}
+		else {
+			aryText.push_back(窗口_取标题(hWndChild));
+			aryID.push_back(i);
+			if (窗口_查询风格(hWndChild, BS_DEFPUSHBUTTON,false))  iDef = i;
+		}
+		DestroyWindow(hWndChild);
+		hWndChild = GetWindow(hWnd, GW_CHILD);
+	}
+	auto n = aryID.size();
+	int maxWidth = Ex_Scale(10) * 2 + Ex_Scale(80) * n + Ex_Scale(5) * n;
+	size_t hCanvas = ((wnd_s*)pWnd)->canvas_bkg_;
+	void* hFont = _font_create();
+	int width = rcText.right - rcText.left;
+	int w, h;
+	int widthCheckbox;
+	if (hFont != 0 && hCanvas != 0)
+	{
+		if (lpwzCheckbox != 0)
+		{
+			
+			if (_canvas_begindraw(hCanvas))
+			{
+				
+				_canvas_calctextsize(hCanvas, hFont, (LPCWSTR)lpwzCheckbox, -1, DT_LEFT | DT_SINGLELINE, 0, 0, 0, &widthCheckbox, 0);
+				_canvas_enddraw(hCanvas);
+			}
+			widthCheckbox = widthCheckbox + 16 + 8;
+			maxWidth = maxWidth + Ex_Scale(widthCheckbox);
+		}
+		
+		if (_canvas_begindraw(hCanvas))
+		{
+			_canvas_calctextsize(hCanvas, hFont, (LPCWSTR)((mbp_s*)pMsg)->lpText_, -1, DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, 0, width, rcText.bottom - rcText.top, &w, &h);
+			_canvas_enddraw(hCanvas);
+		}
+		_font_destroy(hFont);
+		if (w > width) width = w;
+	}
+	if (!Flag_Query(EXGF_DPI_ENABLE))
+	{
+		width = width + g_Li.DpiX_Real;
+	}
+	width = width + Ex_Scale(20) * 2;
+	std::wstring bin = L"16";
+	auto pValue = Ex_ThemeGetValuePtr(hTheme, ATOM_MESSAGEBOX, Ex_Atom(bin.c_str()));
+	if ((uType & 240) != 0)
+	{
+		width = width + Ex_Scale(__get_int(pValue, 8) - __get_int(pValue, 0)) + Ex_Scale(15);
+	}
+	if (width > maxWidth) maxWidth = width;
+	int height = Ex_Scale(__get_int(pValue, 12) - __get_int(pValue, 4));
+	int maxHeight = h;
+	if (maxHeight < height) maxHeight = height;
+	pValue = Ex_ThemeGetValuePtr(hTheme, ATOM_MESSAGEBOX, ATOM_BACKGROUND_GRID);
+	maxHeight = Ex_Scale(__get_int(pValue, 4)) + Ex_Scale(__get_int(pValue, 12)) + maxHeight + Ex_Scale(15) * 2;
+	if (maxHeight < Ex_Scale(140)) maxHeight = Ex_Scale(140);
+	if (maxWidth < Ex_Scale(220)) maxWidth = Ex_Scale(220);
+	RECT rcWindow;
+	GetWindowRect(hWnd, &rcWindow);
+	int left = rcWindow.right - rcWindow.left;
+	int top= rcWindow.bottom - rcWindow.top;
+	MoveWindow(hWnd, rcWindow.left -(maxWidth - left) / 2, rcWindow.top -(maxHeight - top) /2, maxWidth, maxHeight, 0);
+	if (pfnCallback != 0)
+	{
+		_wnd_dispatch_notify(hWnd, pWnd, ((wnd_s*)pWnd)->hexdui_, -1, NM_INTDLG, 0, 0, 0);
+	}
+	width = Ex_Scale(80);
+	height = Ex_Scale(24);
+	GetWindowRect(hWnd, &rcWindow);
+	maxWidth = rcWindow.right - rcWindow.left;
+	maxHeight = rcWindow.bottom - rcWindow.top;
+	top = maxHeight / g_Li.DpiY - __get_int(pValue, 12) + (__get_int(pValue, 12) - 24) / 2;
+	left = maxWidth / g_Li.DpiX - 85;
+	size_t hObj = 0;
+	void* pObj = nullptr;
+	int nError = 1;
+	for (int i = aryID.size(); i > 1; i--)
+	{
+		hObj = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, 0);
+		if (hObj != 0)
+		{
+			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_BUTTON, aryText.data(), -1, left, top, 80, 24, 0,~aryID[i], 0, aryID[i], -1);
+			__add(pObj, offsetof(obj_s, dwFlags_), eof_bMsgBoxControl);
+			_obj_create_done(hWnd, pWnd, hObj, pObj);
+			if (aryID[i] == iDef) _obj_setfocus(hWnd, pWnd, hObj, pObj, true);
+		}
+		left = left - 65;
+	}
+	if (lpwzCheckbox != 0)
+	{
+		hObj = _obj_create_init(hWnd, pWnd, ATOM_CHECKBUTTON, 0, &pObj, 0);
+		if (hObj != 0)
+		{
+			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_CHECKBUTTON, lpwzCheckbox, -1, 4, top, widthCheckbox, 24, 0, (size_t)lpCheckboxChecked, 0, (size_t)lpCheckboxChecked, -1);
+			_obj_create_done(hWnd, pWnd, hObj, pObj);
+			if (__get_int(lpCheckboxChecked, 0) != 0)
+			{
+				_obj_baseproc(hWnd, hObj, pObj, BM_SETCHECK, 1, 0);
+			}
+		}
+	}
+
+	int wType = uType & 7;
+	if (wType == 2 || wType == 4)
+	{
+		Ex_ObjEnable(Ex_ObjGetFromID(((wnd_s*)pWnd)->objCaption_, EWS_BUTTON_CLOSE), false);
+	}
+	if (__query(pMsg, offsetof(mbp_s, dwFlags_), EMBF_CENTEWINDOW))
+	{
+		Ex_WndCenterFrom(hWnd, (HWND)GetWindowLongPtrW(hWnd, -8), false);
+	}
+	else {
+		Ex_WndCenterFrom(hWnd, 0, false);//检查是否同个屏幕
+	}
+	__add(pWnd, offsetof(mbp_s, dwFlags_), EWF_INTED);
+	ShowWindow(hWnd, 1);
+	InvalidateRect(hWnd, 0, false);
+	UpdateWindow(hWnd);
+}
