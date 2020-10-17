@@ -33,6 +33,7 @@ bool _canvas_destroy(size_t hCanvas);
 void _canvas_recreate(void* pCanvas, int width, int height, int* nError);
 bool _canvas_resize(size_t hCanvas, int width, int height);
 void _canvas_init(int* nError);
+void _canvas_uninit();
 void* _canvas_getcontext(size_t hCanvas, int nType);
 bool _canvas_begindraw(size_t hCanvas);
 bool _canvas_enddraw(size_t hCanvas);

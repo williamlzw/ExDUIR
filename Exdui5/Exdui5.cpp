@@ -12,10 +12,10 @@
 #include "Resource_ex.h"
 #include "Gdiplusdll_ex.h"
 
-#include <Gdiplus.h>
-#include <gdiplusbrush.h>
-using namespace Gdiplus;
-#pragma comment(lib, "Gdiplus.lib")
+//#include <Gdiplus.h>
+//#include <gdiplusbrush.h>
+//using namespace Gdiplus;
+//#pragma comment(lib, "Gdiplus.lib")
 
 
 void 测试哈希表()
@@ -168,77 +168,46 @@ std::vector<UCHAR> 整数到字节数组(int value)
 
 
 
-int main()
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	//char aa[6] = { 2,3,4,5,6 ,7 };
-	//std::cout << sizeof(aa) << std::endl;
-	//打印数组(aa, sizeof(aa));
+	BOOL CONSOLE = true;
+	setlocale(LC_CTYPE, "");
+	if (CONSOLE) {
+		AllocConsole();
+		FILE* fp = freopen("CONOUT$", "w", stdout);
+	}
 	//测试句柄池();
 	//数组遍历();
 	//测试哈希表();
 	//测试子程序();
 	//测试数组();
 	//测试RC4();
-	//int b;
 	//测试引用(&b);
-	//bool a = true;
-	//加载GdiplusDLL();
-	//size_t token;
-	//char iid[16] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-	////char iid[32] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-	//GdiplusStartup(&token,iid,NULL);
-	//int nError = 1;
-	//g_Li.csError = Thread_InitializeCriticalSection();
-	//g_Li.hHandles = _handle_init();
-	//_canvas_init(&nError);
-
-	//void* retptr=nullptr;
-	//size_t retlen;
-	//std::vector<char> data;
-	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", &data);
-	//std::cout << Ex_ResLoadFromMemory(data.data(), data.size()) << std::endl;
-
-	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
-	//std::cout << Ex_ThemeLoadFromMemory(data.data(),data.size(),0,0,true) << std::endl;
-
-	//std::cout << retptr << std::endl;
-	//std::cout << retlen << std::endl;
-	//std::cout << IsBadReadPtr(retptr,retlen) << std::endl;
-	//std::cout << IsBadWritePtr(retptr, retlen) << std::endl;
-
-	//std::ifstream ifs("C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Resource/Test.exr", std::ios::in | std::ios::binary);
-	//std::vector<char> data((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
-	//std::cout << data.size()<<","<<data.data() << std::endl;
-	//Ex_ResLoadFromMemory();
-	//读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
-	//Ex_Init(GetModuleHandle(0), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
-
-	//std::vector<UCHAR> data;
-	//data = { 199, 68, 36, 4 };
-	////data.push_back((UCHAR)199);
-	////data.push_back((UCHAR)68);
-	////data.push_back((UCHAR)36);
-	////data.push_back((UCHAR)4);
-	////LongToUChar(22222, data.data());
-	//std::vector<UCHAR> value;
-	//value = 到字节数组(22222);
- //   data.insert(data.end(),value.begin(),value.end());
-	//data.push_back((UCHAR)233);
-	//value = 到字节数组(22222 -11111 - 13);
-	//data.insert(data.end(), value.begin(), value.end());
-	//////data.push_back((size_t)hWnd);
-	//////data.push_back(GetWindowLongW(hWnd, -4));
-	//value = 到字节数组(11111);
-	//data.insert(data.end(), value.begin(), value.end());
-	//打印数组(data.data(), 17);
-	//for (int i = 0; i < data.size(); i++)
-	//{
-	//	//std::cout << data[i] << std::endl;
-	//}
+	std::vector<char> data;
+	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
+	//GetModuleHandleW(NULL)
+	Ex_Init(GetModuleHandle(NULL), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
+	std::cout<<Ex_WndRegisterClass(L"ExDircetUI", 0, 0, 0)<<std::endl;
+	std::wstring classa = L"ExDircetUI";
+	std::wstring title = L"aaa";
+	HWND hWnd = Ex_WndCreate(0, classa.c_str(), title.c_str(), 0, 0, 400, 300, 0, 0);
+	if (hWnd != 0)
+	{
+		size_t hExDui=Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);
+		Ex_DUISetLong(hExDui, EWL_CRBKG, -97900239);
+		Ex_DUIShowWindow(hExDui, 1, 0, 0, 0);
+		
+	}
+	Ex_WndMsgLoop();
+	Ex_UnInit();
 	//std::wcout.imbue(std::locale("chs"));
 	//sizeof(USHORT)
-	auto a= 到字节数组((USHORT)0xb948);
-	std::cout << a.size()<< std::endl;
-	
+	//auto a= 到字节数组((USHORT)0xb948);
+	//std::cout << a.size()<< std::endl;
+	if (CONSOLE) {
+		fclose(stdout);
+		FreeConsole();
+	}
+	return 0;
 }
 

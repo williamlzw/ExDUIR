@@ -1,5 +1,23 @@
 #include "help_ex.h"
 
+void* GetProcAddr(LPCWSTR szMod,LPCSTR szApi)
+{
+	void* ret = nullptr;
+	auto hLib=GetModuleHandleW(szMod);
+	if (hLib == 0)
+	{
+		hLib=LoadLibraryW(szMod);
+		if (hLib != 0)
+		{
+			ret=GetProcAddress(hLib, szApi);
+			FreeLibrary(hLib);
+		}
+	}
+	else {
+		ret= GetProcAddress(hLib, szApi);
+	}
+	return ret;
+}
 
 BOOL ÊÍ·ÅÄÚ´æ(void* hMem)
 {

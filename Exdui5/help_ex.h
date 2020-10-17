@@ -346,6 +346,7 @@ struct LOCALINFO
 
 struct RENDERINFO
 {
+	void* hToken;
 	void* pLocalName;
 	void* pMatrix;
 	void* pDWriteFactory;
@@ -379,6 +380,7 @@ struct ARGB_s
 	int a;
 };
 
+void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
 BOOL  Õ∑≈ƒ⁄¥Ê(void* hMem);
 void* …Í«Îƒ⁄¥Ê(size_t dwSize, int dwFlags = LMEM_ZEROINIT);
 size_t __get(void* lpAddr, size_t offset);

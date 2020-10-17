@@ -48,7 +48,14 @@ bool _canvas_resize(size_t hCanvas, int width, int height)
 void _canvas_init(int* nError)
 {
 	bool bDX=false;
-	CoInitialize(0);
+	¼ÓÔØGdiplusDLL();
+#if defined(_M_IX86)
+	char iid[16] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+#elif defined(_M_AMD64)
+	char iid[32] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+#endif
+	GdiplusStartup(&g_Ri.hToken, iid, NULL);
+	GdipCreateMatrix(&g_Ri.pMatrix);
 	*nError = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, &g_Ri.pWICFactory);
 	if (*nError == 0)
 	{
@@ -59,14 +66,16 @@ void _canvas_init(int* nError)
 		_dx_uninit();
 		Flag_Del(EXGF_RENDER_METHOD_D2D);
 	}
-	//g_Li.pfnUpdateLayeredWindowIndirect=
-	///////////////////////////////
+	g_Li.pfnUpdateLayeredWindowIndirect =(UpdateLayeredWindowIndirectPROC) GetProcAddr(L"user32.dll", "UpdateLayeredWindowIndirect");
+	nError = 0;
 }
 
 void _canvas_uninit()
 {
 	_dx_uninit();
 	((IWICImagingFactory*)g_Ri.pWICFactory)->Release();
+	GdipDeleteMatrix(g_Ri.pMatrix);
+	GdiplusShutdown(g_Ri.hToken);
 }
 
 void* _cv_dx_bmp(void* pCanvas)

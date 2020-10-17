@@ -8,7 +8,7 @@ WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCUR
 {
 	WNDCLASSEXW WndClass = {};
 	WndClass.cbSize = sizeof(WNDCLASSEXW);
-	WndClass.style = 1 | 2 | 8;
+	WndClass.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
 	WndClass.lpfnWndProc = (WNDPROC)Wnd_DefWindowProcW;
 	WndClass.hInstance = g_Li.hInstance;
 	WndClass.hCursor = (hCursor == NULL ? g_Li.hCursor : hCursor);
@@ -16,6 +16,7 @@ WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCUR
 	WndClass.hIcon = (hIcon == NULL ? g_Li.hIcon : hIcon);
 	WndClass.hIconSm = (hIconsm == NULL ? g_Li.hIconsm : hIconsm);
 	WndClass.lpszClassName = lpwzClassName;
+	WndClass.lpszMenuName = L"MainMenu";
 	return RegisterClassExW(&WndClass);
 }
 
@@ -260,15 +261,16 @@ size_t Ex_WndMsgLoop()
 	return ret.wParam;
 }
 
-HWND Ex_WndCreate(HWND hWndParent, void* lpwzClassName, void* lpwzWindowName, int x, int y, int width, int height, int dwStyle, int dwStyleEx)
+HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName, int x, int y, int width, int height, int dwStyle, int dwStyleEx)
 {
 	if (dwStyle == 0) dwStyle = WS_OVERLAPPEDWINDOW;
 	if (dwStyleEx == 0) dwStyleEx = 768;
 	dwStyleEx = dwStyleEx | WS_EX_LAYERED;
-	if (lpwzClassName == 0) lpwzClassName = (void*)g_Li.atomClassName;
-	auto hInst = g_Li.hInstance;
-	if (IsWindow(hWndParent)) hInst = (HINSTANCE)GetWindowLongPtrW(hWndParent, -6);
-	auto hWnd = CreateWindowExW(dwStyleEx, (LPCWSTR)lpwzClassName, (LPCWSTR)lpwzWindowName, dwStyle, x, y, width, height, hWndParent, 0, hInst, 0);
+	if (lpwzClassName == 0) lpwzClassName = (LPCWSTR)g_Li.atomClassName;
+	HINSTANCE hInst = g_Li.hInstance;
+	//if (IsWindow(hWndParent)) hInst = (HINSTANCE)GetWindowLongPtrW(hWndParent, -6);
+	std::cout << dwStyleEx << ",lpwzClassName:" << lpwzClassName << ",lpwzWindowName:" << lpwzWindowName << ",dwStyle:" << dwStyle << ", g_Li.hInstance:" << g_Li.hInstance << ",hInst" << hInst << std::endl;
+	HWND hWnd = CreateWindowExW(dwStyleEx, lpwzClassName, lpwzWindowName, dwStyle, x, y, width, height, hWndParent, NULL, hInst, NULL);
 	if (hWnd != 0)
 	{
 		SendMessageW(hWnd, 128, 0, (LPARAM)g_Li.hIconsm);
@@ -894,7 +896,8 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	size.cy = rcWindow.bottom - rcWindow.top;
 	if ((dwStyle & EWS_MESSAGEBOX) == 0)
 	{
-		int offsetX, offsetY = 0;
+		int offsetX = 0;
+		int offsetY = 0;
 		if (Flag_Query(EXGF_DPI_ENABLE) && 取系统主版本号() > 5)
 		{
 			size.cx = Ex_Scale(size.cy);
@@ -1079,7 +1082,7 @@ size_t _wnd_shadow_proc(void* pData, int uMsg, size_t wParam, size_t lParam)
 			SendMessageW((HWND)hWndParent, uMsg, wParam, lParam);
 			__set(pData, 38, wParam);
 #endif
-		}
+	}
 	}
 	else if (uMsg == WM_DESTROY)
 	{
@@ -1092,9 +1095,16 @@ size_t _wnd_shadow_proc(void* pData, int uMsg, size_t wParam, size_t lParam)
 void _wnd_dx_unint(void* pWnd)
 {
 	void* pDeviceContext = ((wnd_s*)pWnd)->context_;
-	((ID2D1DeviceContext*)pDeviceContext)->Release();
+	std::cout << "pDeviceContext:" << pDeviceContext << std::endl;
+	if (pDeviceContext != 0)
+	{
+		((ID2D1DeviceContext*)pDeviceContext)->Release();
+	}
 	void* pgdiinterop = ((wnd_s*)pWnd)->gdiinterop_;
-	((ID2D1GdiInteropRenderTarget*)pgdiinterop)->Release();
+	if (pgdiinterop != 0)
+	{
+		((ID2D1GdiInteropRenderTarget*)pgdiinterop)->Release();
+	}
 }
 
 void _wnd_dx_init(void* pWnd)
@@ -2605,7 +2615,7 @@ bool _wnd_wm_measureitem_host(void* pWnd, size_t wParam, size_t lParam)
 		{
 			int nID = __get_int((void*)lParam, 8);
 			void* ppc = ((wnd_s*)pWnd)->padding_client_;
-			int offset=0;
+			int offset = 0;
 			if (ppc != 0)
 			{
 				offset = offset + Ex_Scale(__get_int(ppc, 0) + __get_int(ppc, 8));
@@ -2750,7 +2760,7 @@ void _wnd_wm_initmenupopup(HWND hWnd, void* pWnd, void* hMenu)
 	if (!Flag_Query(EXGF_MENU_ALL))
 	{
 		void* lpMenuParams = ((wnd_s*)pWnd)->lpMenuParams_;
-		if (!IsBadReadPtr(lpMenuParams, 36))
+		if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s)))
 		{
 			if (hMenu == (void*)__get(lpMenuParams, 0))
 			{
@@ -2768,7 +2778,7 @@ void _wnd_wm_initmenupopup(HWND hWnd, void* pWnd, void* hMenu)
 		void* hFont = ((wnd_s*)pWnd)->hFont_Menu_;
 		std::vector<wchar_t> buff;
 		buff.resize(520);
-		int width, height, nMax=0;
+		int width, height, nMax = 0;
 		for (int i = 0; i < nCount; i++)
 		{
 			GetMenuStringW((HMENU)hMenu, i, buff.data(), 520, MF_BYPOSITION);
@@ -3073,8 +3083,10 @@ bool Ex_DUIShowWindowEx(size_t hExDui, int nCmdShow, int dwTimer, int dwFrames, 
 		HWND hWnd = ((wnd_s*)pWnd)->hWnd_;
 		//刷新组件层
 		__add(pWnd, offsetof(wnd_s, dwFlags_), EWF_INTED);
+		std::cout << "nCmdShow:" << GetLastError() << IsWindow(hWnd) << std::endl;
 		ShowWindow(hWnd, nCmdShow);
-		InvalidateRect(hWnd, 0, false);
+		std::cout << "nCmdShow:" << GetLastError()<<IsWindow(hWnd) << std::endl;
+		InvalidateRect(hWnd, NULL, false);
 		ret = UpdateWindow(hWnd);
 	}
 	Ex_SetLastError(nError);

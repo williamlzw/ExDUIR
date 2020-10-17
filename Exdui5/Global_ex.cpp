@@ -25,18 +25,6 @@ void Ex_SetLastError(int nError)
 BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme, int dwDefaultThemeLen, LPVOID lpDefaultI18N, int dwDefaultI18NLen)
 {
 	CoInitialize(NULL);
-	加载GdiplusDLL();
-	if (sizeof(void*) == 4)
-	{
-		char iid[16] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-		GdiplusStartup(&g_Li.hToken, iid, NULL);
-	}
-	else if (sizeof(void*) == 8)
-	{
-		char iid[32] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-		GdiplusStartup(&g_Li.hToken, iid, NULL);
-	}
-	
 	加载NTDLL();
 	g_Li.csError = Thread_InitializeCriticalSection();
 	g_Li.hInstance = hInstance;
@@ -117,10 +105,31 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	_object_init();
 
 	g_Li.aryThemes.clear();
-	std::cout<<"hTheme:"<<Ex_ThemeLoadFromMemory(lpDefaultTheme, dwDefaultThemeLen, 0, 0, false)<<std::endl;
+	Ex_ThemeLoadFromMemory(lpDefaultTheme, dwDefaultThemeLen, 0, 0, true);
+	//_layout_init();
+	g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
+	g_Li.hHookMsgBox = SetWindowsHookEx(5,(HOOKPROC)&_hook_proc, 0, GetCurrentThreadId());
 
-
+	Ex_SetLastError(nError);
 	return nError==0;
+}
+
+void Ex_UnInit()
+{
+	UnhookWindowsHookEx((HHOOK)g_Li.hHookMsgBox);
+	释放内存(g_Li.lpstr_min);
+	释放内存(g_Li.lpstr_max);
+	释放内存(g_Li.lpstr_res_min);
+	释放内存(g_Li.lpstr_res_max);
+	释放内存(g_Li.lpstr_close);
+	释放内存(g_Li.lpstr_help);
+	释放内存(g_Li.lpLogFontDefault);
+	//释放内存(g_Li.pfnEditCallback);
+	_canvas_uninit();
+	_handle_uninit(g_Li.hHandles);
+	HashTable_Destroy(g_Li.hTableClass);
+	Thread_DeleteCriticalSection(g_Li.csError);
+	CoUninitialize();
 }
 
 void _object_init()

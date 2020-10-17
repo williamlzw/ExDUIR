@@ -1,5 +1,14 @@
 #include "Hook_ex.h"
 
+size_t _hook_proc(int code, size_t wParam, size_t lParam)
+{
+	if (code == 3) //HCBT_CREATEWND
+	{
+		return _hook_oncreate(code, (HWND)wParam, lParam);
+	}
+	return CallNextHookEx((HHOOK)g_Li.hHookMsgBox, code, wParam, lParam);
+}
+
 size_t _hook_oncreate(int code, HWND hWnd, size_t lParam)
 {
 	sizeof(CBT_CREATEWND);
@@ -23,11 +32,75 @@ size_t _hook_oncreate(int code, HWND hWnd, size_t lParam)
 				{
 					style = style | EWS_HASICON;
 				}
-				////////////////Ex_DUIBindWindowEx()
+				Ex_DUIBindWindowEx(hWnd, ((wnd_s*)pWnd)->hTheme_, style, (size_t)pMsg, ((mbp_s*)pMsg)->lpfnNotifyCallback_);
 			}
 		}
 	}
-	return 0;
+	else if (atomClass == 32768)
+	{
+		auto style = __get_int(lpcs, 0);
+		Thunkwindow(hWnd, &_menu_proc, 0, 0);
+	}
+	return CallNextHookEx((HHOOK)g_Li.hHookMsgBox, code, (WPARAM)hWnd, lParam);
+}
+
+size_t _menu_proc(void* pData, int uMsg, size_t wParam, size_t lParam)
+{
+#if defined(_M_IX86)
+	HWND hWnd = (HWND)__get_int(pData, 13);
+	LONG pOld = (LONG)__get_int(pData, 17);
+	void* pWnd = (void*)__get_int(pData, 21);
+#elif defined(_M_AMD64)
+	HWND hWnd = (HWND)__get(pData, 22);
+	LONG64 pOld = (LONG64)__get(pData, 30);
+	void* pWnd = (void*)__get(pData, 38);
+#endif
+	if (uMsg == WM_DESTROY)
+	{
+		SetWindowLongPtrW(hWnd, -4, pOld);
+		VirtualFree(pData, 0, MEM_RELEASE);
+	}
+	else if (uMsg == 482)//MN_SIZEWINDOW
+	{
+		_menu_init(hWnd);
+	}
+	return CallWindowProcW((WNDPROC)pOld, hWnd, uMsg, wParam, lParam);
+}
+
+void _menu_init(HWND hWnd)
+{
+	void* hMenu =(void*) SendMessageW(hWnd, 481, 0, 0);
+	if (hMenu != 0)
+	{
+		size_t hExDui;
+		HashTable_Get(g_Li.hTableLayout, (size_t)hMenu, &hExDui);
+		void* pWnd = nullptr;
+		int nError = 1;
+		if (_handle_validate(hExDui, HT_DUI, &pWnd, &nError))
+		{
+			HashTable_Remove(g_Li.hTableLayout, (size_t)hMenu);
+			void* lpMenuParams = ((wnd_s*)pWnd)->lpMenuParams_;
+			SetWindowLongPtrW(hWnd, -20, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+			SetClassLongPtrW(hWnd, -26, 1 | 2 | 8);
+			int dwStyle = EWS_MENU | EWS_NOINHERITBKG | EWS_ESCEXIT | EWS_FULLSCREEN;
+			void* pfnCallback = nullptr;
+			if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s)))
+			{
+				if (__query(lpMenuParams, offsetof(menu_s,dwFlags_), EMNF_NOSHADOW))
+				{
+					dwStyle = dwStyle | EWS_NOSHADOW;
+				}
+				 pfnCallback = ((menu_s*)lpMenuParams)->pfnCallback_;
+			}
+			size_t hExDui = Ex_DUIBindWindowEx(hWnd, ((wnd_s*)pWnd)->hTheme_, dwStyle, (size_t)pWnd, pfnCallback);
+			if (_handle_validate(hExDui, HT_DUI, &pWnd, &nError))
+			{
+				((wnd_s*)pWnd)->lpMenuParams_ = lpMenuParams;
+				((wnd_s*)pWnd)->hMenuPopup_ = hMenu;
+				__add(pWnd, offsetof(wnd_s, dwFlags_), EWF_INTED);
+			}
+		}
+	}
 }
 
 void _msgbox_drawinfo(void* pWnd, size_t cvBkg)

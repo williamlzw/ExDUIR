@@ -1,5 +1,6 @@
 #include "Gdiplusdll_ex.h"
 EX_DECLEAR_API(GdiplusStartup);
+EX_DECLEAR_API(GdiplusShutdown);
 EX_DECLEAR_API(GdipLoadImageFromStream);
 EX_DECLEAR_API(GdipBitmapLockBits);
 EX_DECLEAR_API(GdipBitmapUnlockBits);
@@ -10,6 +11,7 @@ EX_DECLEAR_API(GdipTranslateMatrix);
 EX_DECLEAR_API(GdipRotateMatrix);
 EX_DECLEAR_API(GdipScaleMatrix);
 EX_DECLEAR_API(GdipCreateMatrix);
+EX_DECLEAR_API(GdipDeleteMatrix);
 
 void º”‘ÿGdiplusDLL()
 {
@@ -17,6 +19,7 @@ void º”‘ÿGdiplusDLL()
 	if (hModule)
 	{
 		EX_GET_API(GdiplusStartup);
+		EX_GET_API(GdiplusShutdown);
 		EX_GET_API(GdipLoadImageFromStream);
 		EX_GET_API(GdipBitmapLockBits);
 		EX_GET_API(GdipBitmapUnlockBits);
@@ -27,5 +30,6 @@ void º”‘ÿGdiplusDLL()
 		EX_GET_API(GdipRotateMatrix);
 		EX_GET_API(GdipScaleMatrix);
 		EX_GET_API(GdipCreateMatrix);
+		EX_GET_API(GdipDeleteMatrix);
 	}
 }
