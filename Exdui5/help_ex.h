@@ -14,7 +14,7 @@
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule,#NAME)	
 
 
-#include "Ntdll_ex.h"
+
 #include "constant_ex.h"
 #include "Thread_ex.h"
 #include "HashTable_ex.h"

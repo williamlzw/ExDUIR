@@ -46,45 +46,57 @@ bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen,
 
 int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<size_t>* artItems2)
 {
-	//setlocale(LC_ALL, "chs");
-	//wprintf(L"%ls ", lpContent);
-	auto iOffset1 = wcschr((wchar_t*)lpContent, 10);
+
+	auto iOffset1 = wcschr((wchar_t*)lpContent, '\n')-1;
+
 	
+	/*std::cout << "atomClass:" << atomClass << std::endl;*/
 	int nCount=0;
 	while (iOffset1!=0)
 	{
 		iOffset1 = iOffset1 + 2;
-		auto iOffset2 = wcschr(iOffset1, 13);
-		//std::cout << "nCount:"<< iOffset2 << std::endl;
+		//std::cout << "iOffset1::"<< (int)iOffset1 << std::endl;
+		
+		auto iOffset2 = wcschr(iOffset1, '\r');
+	
 		if (iOffset2 != 0)
 		{
-			__set_unsignedchar(iOffset2,0, 0);
-		}
-		wchar_t c = __get_wchar(iOffset1, 0);
-		if (c != 59)//;
-		{
-			auto iSplit = wcschr(iOffset1, '=');//=
-			if (iSplit != 0)
+			
+			iOffset2 = (wchar_t*)(iOffset2 - 1);
+			if (iOffset2 != 0)
 			{
-				__set_unsignedchar(iSplit, 0, 0);
-				auto dwLen = iSplit - iOffset1;
-				
-				
-				(*artItems1)[nCount] = 数据_Crc32_Addr(iOffset1, dwLen);
-				(*artItems2)[nCount] = (size_t)iSplit + 2;
-				
-				nCount = nCount + 1;
+				__set_wchar(iOffset2, 0, 0);
+			}
+			//std::cout << "11:" << (int)iOffset2 << std::endl;
+			
+			//setlocale(LC_ALL, "chs");
+			//wprintf(L"%ls \r\n", iOffset2);
+			wchar_t c = __get_wchar(iOffset1, 0);
+			if (c != ';')//;
+			{
+				auto iSplit = wcschr(iOffset1, '=');//=
+				if (iSplit != 0)
+				{
+					__set_wchar(iSplit, 0, 0);
+					auto dwLen = (iSplit - iOffset1 + 1) * 2;
+					//wprintf(L"%ls \r\n", iOffset1);
+
+					//system("pause");
+
+					(*artItems1)[nCount] = 数据_Crc32_Addr(iOffset1, dwLen);
+					(*artItems2)[nCount] = (size_t)iSplit + 2;
+
+					nCount = nCount + 1;
+				}
 			}
 		}
-		
-		if (iOffset2 == 0) 
+		else if (iOffset2 == 0)
 		{
-			
-			break; 
+			break;
 		}
-		else {
-			iOffset1 = wcschr(iOffset2 + 2, 10);
-		}
+
+		iOffset1 = wcschr(iOffset2 + 2, '\n')-1;
+		
 	}
 	return nCount;
 }
@@ -108,31 +120,35 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 		CharLowerW((LPWSTR)retPtr);
 		aryAtomKey.resize(32);
 		arylpValue.resize(32);
-		auto iClassStart=wcschr((wchar_t*)retPtr, 91);
+		auto iClassStart=wcschr((wchar_t*)retPtr, '[')-1;
 		
 		
 		int Value;
 		while (iClassStart != 0)
 		{
+			
 			iClassStart = iClassStart + 2;
-			auto iClassEnd = wcschr(iClassStart, 93);
+			auto iClassEnd = wcschr(iClassStart, ']');
 			if (iClassEnd == 0)
 			{
 				break;
 			}
 			else {
-				__set_unsignedchar(iClassEnd, 0, 0);
+				__set_wchar(iClassEnd, 0, 0);
 				auto iContentStart = iClassEnd + 2;
-				auto iContentEnd = wcschr(iContentStart, 91);
+				
+				auto iContentEnd = wcschr(iContentStart, '[');
 				
 				if (iContentEnd != 0)
 				{
+					
 					__set_wchar(iContentEnd, 0, 0);
-					setlocale(LC_ALL, "chs");
-					wprintf(L"%ls ", iContentStart);
+					
 				}
 				auto dwLen = iClassEnd - iClassStart;
-				
+				//setlocale(LC_ALL, "chs");
+				//wprintf(L"%ls \r\n", iClassStart);
+				//system("pause");
 				if (dwLen > 0)
 				{
 					
@@ -140,19 +156,23 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 					
 					
 					int nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
-					
+					std::cout << "_theme_fillclasses->nCount:" << nCount << std::endl;
 					if (nCount > 0)
 					{
 						if (atomClass == ATOM_COLOR)
 						{
+							
 							for (int i = 0; i < nCount; i++)
 							{
 								if (_fmt_color((void*)arylpValue[i], &Value))
 								{
+									
 									for (int ii = 0; ii < g_Li.aryColorsAtom.size(); ii++)
 									{
+										
 										if (g_Li.aryColorsAtom[ii] == aryAtomKey[i])
 										{
+											
 											__set_int(aryCorlors, g_Li.aryColorsOffset[ii] - offsetof(obj_s, crBackground_), Value);
 											break;
 										}
@@ -219,12 +239,19 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 							}
 						}
 					}
-					iClassStart = iContentEnd;
+					
+				}
+
+				iClassStart = iContentEnd-1;
+				if (iContentEnd == 0)
+				{
+					break;
 				}
 			}
 		}
 		ret = true;
 	}
+	
 	return ret;
 }
 
@@ -286,7 +313,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 					}
 					if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors))
 					{
-						
+					
 						((theme_s*)hTheme)->tableFiles_ = pTableFiles;
 						((theme_s*)hTheme)->loadCount_ = 1;
 						((theme_s*)hTheme)->crcTheme_ = crc;
@@ -409,10 +436,11 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 		if (pTheme != 0)
 		{
 			
-			void* pClass = nullptr;
-			if (HashTable_Get(pTheme, atomClass, (size_t*)&pClass))
+			size_t pClass = 0;
+		
+			if (HashTable_Get(pTheme, atomClass, &pClass))
 			{
-				
+				std::cout << "pClass:" << pClass << std::endl;
 				if (pClass != 0)
 				{
 					void* pProp = ((classtable_s*)pClass)->tableProps_;

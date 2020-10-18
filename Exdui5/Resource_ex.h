@@ -1,6 +1,6 @@
 #pragma once
 #include "help_ex.h"
-#include "Gdiplusdll_ex.h"
+
 #include <Gdiplus.h>
 using namespace Gdiplus;
 //#include <gdiplusbrush.h>

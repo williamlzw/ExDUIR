@@ -931,7 +931,9 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 		dwFlags = EWF_bLayered;
 	}
 	((wnd_s*)pWnd)->hExDuiParent_ = Ex_DUIFromWindow(hWndParent);
+	std::cout << "hTheme:" << hTheme << std::endl;
 	if (hTheme == 0) hTheme = g_Li.hThemeDefault;
+	std::cout << "hTheme:" << hTheme << std::endl;
 	if ((dwStyle & EWS_BLUR) != 0) ((wnd_s*)pWnd)->fBlur_ = 15;
 	((wnd_s*)pWnd)->dwStyle_ = dwStyle;
 	((wnd_s*)pWnd)->hImc_ = ImmGetContext(hWnd);
@@ -1369,10 +1371,10 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 		_obj_create_proc(&nError, false, hTheme, pObjCaption, (dwStyle & EWS_NOCAPTIONTOPMOST) != 0 ? 0 : -1, ATOM_SYSBUTTON, lpTitle,
 			EOS_VISIBLE | EWS_TITLE, rcCaption.left, rcCaption.top, rcCaption.right - rcCaption.left, rcCaption.bottom - rcCaption.top, 0, EWS_TITLE, 0, 0, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		
-		void* lpValue = Ex_ThemeGetValuePtr(hTheme, ATOM_WINDOW, ATOM_PADDING_TEXT);
-		if (lpValue != 0)
+		void* lpPT = Ex_ThemeGetValuePtr(hTheme, ATOM_WINDOW, ATOM_PADDING_TEXT);
+		if (lpPT != 0)
 		{
-			RtlMoveMemory((void*)((size_t)pObjCaption + offsetof(obj_s, t_left_)), lpValue, 16);
+			RtlMoveMemory((void*)((size_t)pObjCaption + offsetof(obj_s, t_left_)), lpPT, 16);
 			_scale_n_float(((size_t)pObjCaption + offsetof(obj_s, t_left_)), 4);
 		}
 		void* lpCr = Ex_ThemeGetValuePtr(hTheme, ATOM_WINDOW, ATOM_COLOR_NORMAL);

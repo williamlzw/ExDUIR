@@ -3,7 +3,7 @@
 int _fmt_getatom(void* lpValue, void** lpValueOffset)
 {
 	int atomSrc;
-	*lpValueOffset = wcschr((wchar_t*)lpValue, 40);//(
+	*lpValueOffset = wcschr((wchar_t*)lpValue, '(');//(
 	if (*lpValueOffset != 0)
 	{
 		size_t len = (size_t)*lpValueOffset - (size_t)lpValue;
@@ -30,7 +30,7 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 	std::vector<int> aryTmp;
 	aryTmp.resize(nMax);
 	aryTmp[nCount] = _wtoi((wchar_t*)lpValue);
-	lpValue = wcschr((wchar_t*)lpValue, 44);//,
+	lpValue = wcschr((wchar_t*)lpValue, ',');//,
 	size_t dwFlags = 0;
 	if (fPercentFlags)
 	{
@@ -50,7 +50,7 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 		nCount = nCount + 1;
 		if (fPercentFlags)
 		{
-			auto tmp = wcschr((wchar_t*)lpValue, 44);
+			auto tmp = wcschr((wchar_t*)lpValue, ',');
 			if (tmp != 0)
 			{
 			  auto wchar=__get_wchar(tmp, -2);
@@ -68,7 +68,7 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 			lpValue = tmp;
 		}
 		else {
-			lpValue = wcschr((wchar_t*)lpValue, 44);
+			lpValue = wcschr((wchar_t*)lpValue, ',');
 		}
 	}
 	*lpAry = …Í«Îƒ⁄¥Ê((nCount + 1) * 4);
