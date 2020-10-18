@@ -158,13 +158,13 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 BOOL HashTable_Get(void* hTable, size_t hKey, size_t* dwValue)
 {
 	BOOL ret = false;
-	if (hTable != nullptr)
+	if (hTable != 0)
 	{
 		size_t nPos = 0;
 		nPos = HashTable_GetPos(hKey, ((hashtable_s*)hTable)->dwBound);
 		void* pTable = ((hashtable_s*)hTable)->pTable;
 		void* pEntry = (void*)__get(pTable, nPos * sizeof(void*));
-		while (pEntry != nullptr)
+		while (pEntry != 0)
 		{
 			if (((entry_s*)pEntry)->hKey == hKey)
 			{

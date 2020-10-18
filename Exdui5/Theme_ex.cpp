@@ -46,12 +46,16 @@ bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen,
 
 int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<size_t>* artItems2)
 {
+	//setlocale(LC_ALL, "chs");
+	//wprintf(L"%ls ", lpContent);
 	auto iOffset1 = wcschr((wchar_t*)lpContent, 10);
+	
 	int nCount=0;
 	while (iOffset1!=0)
 	{
 		iOffset1 = iOffset1 + 2;
 		auto iOffset2 = wcschr(iOffset1, 13);
+		//std::cout << "nCount:"<< iOffset2 << std::endl;
 		if (iOffset2 != 0)
 		{
 			__set_unsignedchar(iOffset2,0, 0);
@@ -59,18 +63,23 @@ int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<s
 		wchar_t c = __get_wchar(iOffset1, 0);
 		if (c != 59)//;
 		{
-			auto iSplit = wcschr(iOffset1, 61);//=
+			auto iSplit = wcschr(iOffset1, '=');//=
 			if (iSplit != 0)
 			{
 				__set_unsignedchar(iSplit, 0, 0);
 				auto dwLen = iSplit - iOffset1;
+				
+				
 				(*artItems1)[nCount] = 数据_Crc32_Addr(iOffset1, dwLen);
 				(*artItems2)[nCount] = (size_t)iSplit + 2;
+				
 				nCount = nCount + 1;
 			}
 		}
+		
 		if (iOffset2 == 0) 
 		{
+			
 			break; 
 		}
 		else {
@@ -99,7 +108,9 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 		CharLowerW((LPWSTR)retPtr);
 		aryAtomKey.resize(32);
 		arylpValue.resize(32);
-		auto iClassStart=wcschr((wchar_t*)lpFile, 91);
+		auto iClassStart=wcschr((wchar_t*)retPtr, 91);
+		
+		
 		int Value;
 		while (iClassStart != 0)
 		{
@@ -113,15 +124,23 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 				__set_unsignedchar(iClassEnd, 0, 0);
 				auto iContentStart = iClassEnd + 2;
 				auto iContentEnd = wcschr(iContentStart, 91);
+				
 				if (iContentEnd != 0)
 				{
-					__set_unsignedchar(iContentEnd, 0, 0);
+					__set_wchar(iContentEnd, 0, 0);
+					setlocale(LC_ALL, "chs");
+					wprintf(L"%ls ", iContentStart);
 				}
 				auto dwLen = iClassEnd - iClassStart;
+				
 				if (dwLen > 0)
 				{
+					
 					auto atomClass = 数据_Crc32_Addr(iClassStart, dwLen);
+					
+					
 					int nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
+					
 					if (nCount > 0)
 					{
 						if (atomClass == ATOM_COLOR)
@@ -241,7 +260,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 	}
 	void* hTheme = 申请内存(sizeof(theme_s));
 	
-	int nError = 1;
+	int nError = 0;
 	std::vector<int> atomFiles;
 	std::vector<void*> lpFiles;
 	std::vector<UCHAR> dwFileProps;
@@ -267,6 +286,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 					}
 					if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors))
 					{
+						
 						((theme_s*)hTheme)->tableFiles_ = pTableFiles;
 						((theme_s*)hTheme)->loadCount_ = 1;
 						((theme_s*)hTheme)->crcTheme_ = crc;
@@ -384,12 +404,15 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 	void* pData = nullptr;
 	if (hTheme != 0)
 	{
+		
 		void* pTheme = ((theme_s*)hTheme)->tableClass_;
 		if (pTheme != 0)
 		{
+			
 			void* pClass = nullptr;
 			if (HashTable_Get(pTheme, atomClass, (size_t*)&pClass))
 			{
+				
 				if (pClass != 0)
 				{
 					void* pProp = ((classtable_s*)pClass)->tableProps_;

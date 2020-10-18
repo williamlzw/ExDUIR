@@ -471,46 +471,46 @@ void _scale_n_int(size_t p, int n)
 void SetDefaultIcon()
 {
 
-	g_Li.hIcon = LoadIcon(NULL, IDI_APPLICATION);// ret[1];
-	//auto hRes = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(129), MAKEINTRESOURCE(14));
-	//
-	//if (hRes == 0)
-	//{
-	//	
-	//	hRes = FindResourceW(g_Li.hInstance, L"DEFAULT_ICON", MAKEINTRESOURCE(14));
-	//	
-	//}
-	//if (hRes != 0)
-	//{
-	//	std::cout << "11::" << hRes << "," << GetLastError() << std::endl;
-	//	auto hData = LoadResource(g_Li.hInstance, hRes);
-	//	if (hData != 0)
-	//	{
-	//		auto pData = LockResource(hData);
-	//		int arg[2] = { 16,32 };
-	//		HICON ret[2] = { nullptr,nullptr };
-	//		for (int index = 0; index < 2; index++)
-	//		{
-	//			auto nID = LookupIconIdFromDirectoryEx((PBYTE)pData, true, arg[index], arg[index], 0);
-	//			auto hRsrc = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(nID), MAKEINTRESOURCE(3));
-	//			if (hRsrc != 0)
-	//			{
-	//				auto hGlobal = LoadResource(g_Li.hInstance, hRsrc);
-	//				if (hGlobal != 0)
-	//				{
-	//					auto lpRes = LockResource(hGlobal);
-	//					if (lpRes != 0)
-	//					{
-	//						ret[index] = CreateIconFromResourceEx((PBYTE)lpRes, SizeofResource(g_Li.hInstance, hRsrc), true, 196608, 0, 0, 0);
-	//					}
-	//				}
-	//			}
-	//		}
-	//		g_Li.hIconsm = ret[0];
-	//		g_Li.hIcon = LoadIcon(NULL, IDI_APPLICATION);// ret[1];
-	//		FreeResource(hData);
-	//	}
-	//}
+	//g_Li.hIcon = LoadIcon(NULL, IDI_APPLICATION);// ret[1];
+	auto hRes = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(104), MAKEINTRESOURCE(14));
+	
+	if (hRes == 0)
+	{
+		
+		hRes = FindResourceW(g_Li.hInstance, L"DEFAULT_ICON", MAKEINTRESOURCE(14));
+		
+	}
+	if (hRes != 0)
+	{
+	
+		auto hData = LoadResource(g_Li.hInstance, hRes);
+		if (hData != 0)
+		{
+			auto pData = LockResource(hData);
+			int arg[2] = { 16,32 };
+			HICON ret[2] = { nullptr,nullptr };
+			for (int index = 0; index < 2; index++)
+			{
+				auto nID = LookupIconIdFromDirectoryEx((PBYTE)pData, true, arg[index], arg[index], 0);
+				auto hRsrc = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(nID), MAKEINTRESOURCE(3));
+				if (hRsrc != 0)
+				{
+					auto hGlobal = LoadResource(g_Li.hInstance, hRsrc);
+					if (hGlobal != 0)
+					{
+						auto lpRes = LockResource(hGlobal);
+						if (lpRes != 0)
+						{
+							ret[index] = CreateIconFromResourceEx((PBYTE)lpRes, SizeofResource(g_Li.hInstance, hRsrc), true, 196608, 0, 0, 0);
+						}
+					}
+				}
+			}
+			g_Li.hIconsm = ret[0];
+			g_Li.hIcon = ret[1];
+			FreeResource(hData);
+		}
+	}
 }
 
 void* copytstr(LPCWSTR lptstr, int len)
@@ -551,7 +551,7 @@ HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* 
 	void* pWnd =(void*) __get(thisptr, sizeof(void*));
 	_wnd_wm_nchittest(pWnd, ((wnd_s*)pWnd)->hWnd_, 合并整数(x, y));
 	void* phit = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(((wnd_s*)pWnd)->objHittest_, HT_OBJECT, &phit, &nError))
 	{
 		if (__query(phit, offsetof(obj_s, dwStyleEx_), EOS_EX_DRAGDROP))
@@ -570,7 +570,7 @@ HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, 
 	_wnd_wm_nchittest(pWnd, hWnd, 合并整数(x, y));
 	size_t hObj = ((wnd_s*)pWnd)->objHittest_;
 	void* pObj = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 	{
 		if (__query(pObj, offsetof(obj_s, dwStyleEx_), EOS_EX_DRAGDROP))

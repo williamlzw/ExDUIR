@@ -7,12 +7,14 @@
 
 
 #include "help_ex.h"
+
+
 //#include "Global_ex.h"
 //#include "Array_ex.h"
 //#include "Resource_ex.h"
 //#include "Gdiplusdll_ex.h"
 
-#define IDI_APP_ICON 129
+
 
 void 测试哈希表()
 {
@@ -164,7 +166,7 @@ std::vector<UCHAR> 整数到字节数组(int value)
 
 
 
-int main()
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _In_ LPWSTR wzCmd, _In_ int nCmdShow)
 {
 	BOOL CONSOLE = true;
 	setlocale(LC_CTYPE, "");
@@ -179,24 +181,23 @@ int main()
 	//测试数组();
 	//测试RC4();
 	//测试引用(&b);
+	
 	std::vector<char> data;
 	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
-	//GetModuleHandleW(NULL)
 
 	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
-	
-	auto aa=Ex_WndRegisterClass(L"Ex_DirectUI", 0, 0, 0);
 	LPCWSTR classa = L"Ex_DirectUI";
-	LPCWSTR title = L"aaaas";
-	
+	 auto aa=Ex_WndRegisterClass(classa, 0, 0, 0) ;
+	// std::cout <<"注册窗口类结果：" <<aa << std::endl;
+	LPCWSTR title = L"testTitle";
 	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
 	std::cout <<"hwnd:" <<hWnd << std::endl;
 	if (hWnd != 0)
 	{
 		size_t hExDui=Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);
-		Ex_DUISetLong(hExDui, EWL_CRBKG, -97900239);
-		Ex_DUIShowWindow(hExDui, 1, 0, 0, 0);
-		
+		std::cout << "hExDui:" << hExDui << std::endl;
+		Ex_DUISetLong(hExDui, EWL_CRBKG, -16744448);//-97900239
+		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
 	}
 	Ex_WndMsgLoop();
 	Ex_UnInit();
@@ -208,6 +209,8 @@ int main()
 		fclose(stdout);
 		FreeConsole();
 	}
+	
+	
 	return 0;
 }
 

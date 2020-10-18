@@ -364,3 +364,4 @@ int Ex_ObjScrollGetTrackPos(size_t hObj, int nBar);
 bool Ex_ObjScrollGetRange(size_t hObj, int nBar, void* lpnMinPos, void* lpnMaxPos);
 void _sb_show(size_t hSB, bool fShow);
 bool Ex_objScrollshow(size_t hObj, int wBar, bool fShow);
+bool Ex_ObjScrollEnable(size_t hObj, int wSB, int wArrows);

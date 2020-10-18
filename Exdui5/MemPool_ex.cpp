@@ -149,7 +149,7 @@ void* MemPool_Alloc(void* hMemPool, BOOL fZero)
 				if (ret != nullptr)
 				{
 					((mempoolheader_s*)ret)->dwSize = nBlock - sizeof(mempoolheader_s);
-					//__set(ret, offsetof(mempoolheader_s, dwSize), nBlock - sizeof(mempoolheader_s));
+					
 					ret =(void*)((size_t)ret + sizeof(mempoolheader_s));
 				}
 			}

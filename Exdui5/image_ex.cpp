@@ -6,7 +6,7 @@
 bool _img_destroy(size_t hImg)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
 		void* pObj = ((img_s*)pImage)->pObj_;
@@ -154,7 +154,7 @@ void _apng_drawframe(void* pImage, int nIndex)//Î´Íê³É
 bool _img_selectactiveframe(size_t hImg, int nIndex)
 {
 	void* pImg = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_img_getframecount(hImg) > 1)
 	{
 		if (_handle_validate(hImg, HT_IMAGE, &pImg, &nError))
@@ -189,7 +189,7 @@ void* _wic_getpixel(void* pBitmap, int x, int y, int* nError)
 
 void* _img_getpixel(size_t hImg, int x, int y)
 {
-	int nError = 1;
+	int nError = 0;
 	void* ret = nullptr;
 	void* pImg = nullptr;
 	if (_handle_validate(hImg, HT_IMAGE, &pImg, &nError))
@@ -204,7 +204,7 @@ void* _img_getpixel(size_t hImg, int x, int y)
 bool _img_lock(size_t hImg, void* lpRectL, int flags, void* lpLockedBitmapData)//FLAGS 1¶Á 2Ð´ 3¶ÁÐ´
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
 		void* pBitmap = ((img_s*)pImage)->pObj_;
@@ -271,7 +271,7 @@ bool _img_lock(size_t hImg, void* lpRectL, int flags, void* lpLockedBitmapData)/
 bool _img_unlock(size_t hImg, void* lpLockedBitmapData)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
 		void* pLock = ((lockedbitmapdata_s*)lpLockedBitmapData)->pLock_;
@@ -288,7 +288,7 @@ bool _img_unlock(size_t hImg, void* lpLockedBitmapData)
 bool _img_setpixel(size_t hImg, int x, int y, int color)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
 		void* pBitmapData = ÉêÇëÄÚ´æ(sizeof(lockedbitmapdata_s));
@@ -320,7 +320,7 @@ bool _img_setpixel(size_t hImg, int x, int y, int color)
 bool _img_getsize(size_t hImg, void* lpWidth, void* lpHeight)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
 		void* pObj = ((img_s*)pImage)->pObj_;
@@ -397,7 +397,7 @@ size_t _wic_create(int width, int height, GUID pFormat, int* nError)
 
 size_t _img_create(int width, int height)
 {
-	int nError = 1;
+	int nError = 0;
 	size_t hImg = _wic_create(width, height, GUID_WICPixelFormat32bppPBGRA, &nError);
 	Ex_SetLastError(nError);
 	return hImg;
@@ -405,7 +405,7 @@ size_t _img_create(int width, int height)
 
 size_t _img_createfrompngbits(void* lpmem)
 {
-	int nError = 1;
+	int nError = 0;
 	size_t hImg = 0;
 	int width = __get(lpmem, sizeof(void*));
 	int height = __get(lpmem, 2 * sizeof(void*));
@@ -474,7 +474,7 @@ size_t _wic_init_from_decoder(void* pDecoder, int* nError)
 
 size_t _img_createfromstream(void* lpStream)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pDecoder = nullptr;
 	size_t hImg = 0;
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateDecoderFromStream((IStream*)lpStream, NULL, WICDecodeMetadataCacheOnLoad, (IWICBitmapDecoder**)&pDecoder);
@@ -493,7 +493,7 @@ size_t _img_createfromstream(void* lpStream)
 
 size_t _img_createfrommemory(void* lpData, int dwLen)
 {
-	int nError = 1;
+	int nError = 0;
 	size_t hImg = 0;
 	void* lpStream = _img_createfromstream_init(lpData, dwLen, &nError);
 	if (nError == 0)
@@ -507,7 +507,7 @@ size_t _img_createfrommemory(void* lpData, int dwLen)
 
 size_t _img_createfromhicon(void* hIcon)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pBitmap = nullptr;
 	size_t hImg = 0;
 	((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromHICON((HICON)hIcon, (IWICBitmap**)&pBitmap);
@@ -524,7 +524,7 @@ size_t _img_createfromfile(LPCWSTR lpwzFilename)
 {
 	void* pDecoder = nullptr;
 	size_t hImg = 0;
-	int nError = 1;
+	int nError = 0;
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateDecoderFromFilename(lpwzFilename, NULL, 2147483648, WICDecodeMetadataCacheOnLoad, (IWICBitmapDecoder**)&pDecoder);
 	if (nError == 0)
 	{
@@ -537,7 +537,7 @@ size_t _img_createfromfile(LPCWSTR lpwzFilename)
 size_t _img_copyrect(size_t hImg, int x, int y, int width, int height)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	size_t ret = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
@@ -567,7 +567,7 @@ size_t _img_copy(size_t hImg)
 size_t _img_scale(size_t hImage, int dstWidth, int dstHeight)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	size_t ret = 0;
 	if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 	{
@@ -677,7 +677,7 @@ void _wic_savetobin(void* pBitmap, void* lpBin, size_t* len, int* nError)
 size_t _img_savetomemory(size_t hImage, void* lpBuffer)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	size_t ret = 0;
 	if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 	{
@@ -738,7 +738,7 @@ bool _wic_getframedelay(void* pDecoder, void* lpDelay, int nCount, int* nError)
 bool _img_getframedelay(size_t hImg, void* lpDelayAry, int nFrames)
 {
 	void* pImg = nullptr;
-	int nError = 1;
+	int nError = 0;
 	bool ret = false;
 	if (nFrames > 1 && lpDelayAry != 0)
 	{
@@ -760,7 +760,7 @@ bool _img_getframedelay(size_t hImg, void* lpDelayAry, int nFrames)
 int _img_getframecount(size_t hImage)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	int ret = 1;
 	if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 	{
@@ -773,7 +773,7 @@ int _img_getframecount(size_t hImage)
 void* _img_getcontext(size_t hImage)
 {
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	void* ret = nullptr;
 	if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 	{
@@ -823,7 +823,7 @@ void _apng_int(size_t hImage, void* lpStream)
 			if (__get(lpMem, 0) == PNG_HEADER)
 			{
 				void* pImage = nullptr;
-				int nError = 1;
+				int nError = 0;
 				if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 				{
 					int nPos = 8;

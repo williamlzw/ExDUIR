@@ -2,7 +2,7 @@
 
 void* _strokestyle_create(int startCap,int endCap,int dashCap,int lineJoin,float miterLimit,int dashStyle,float dashOffset)
 {
-	int nError = 1;
+	int nError = 0;
 	D2D1_STROKE_STYLE_PROPERTIES pro = {};
 	pro.startCap = (D2D1_CAP_STYLE)startCap;
 	pro.endCap = (D2D1_CAP_STYLE)endCap;
@@ -19,7 +19,7 @@ void* _strokestyle_create(int startCap,int endCap,int dashCap,int lineJoin,float
 
 bool _strokestyle_destroy(void* hstrokestyle)
 {
-	int nError = 1;
+	int nError = 0;
 	if (hstrokestyle != 0)
 	{
 		nError=((ID2D1StrokeStyle*)hstrokestyle)->Release();

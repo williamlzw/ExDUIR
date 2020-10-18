@@ -94,7 +94,7 @@ void _sysbutton_remove_proc(void* pObj, int width, int height)
 {
 	size_t sObj = ((obj_s*)pObj)->objChildFirst_;
 	void* psobj = nullptr;
-	int nError = 1;
+	int nError = 0;
 	bool bReCalced = false;
 	int nOffset = 0;
 	while (_handle_validate(sObj, HT_OBJECT, &psobj, &nError))
@@ -111,7 +111,7 @@ void _sysbutton_remove_proc(void* pObj, int width, int height)
 
 size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam, void* pObj)
 {
-	int nError = 1;
+	int nError = 0;
 	if (uMsg == WM_NCCREATE)
 	{
 		void* ret = nullptr;
@@ -187,21 +187,21 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	{
 		if (!__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
 		{
-			_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, 0);
+			_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, &nError);
 		}
 	}
 	else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN)
 	{
 		if (!__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
 		{
-			_obj_setuistate(pObj, 状态_按下, false, 0, true, 0);
+			_obj_setuistate(pObj, 状态_按下, false, 0, true, &nError);
 		}
 	}
 	else if (uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONUP)
 	{
 		if (!__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
 		{
-			_obj_setuistate(pObj, 状态_按下, true, 0, true, 0);
+			_obj_setuistate(pObj, 状态_按下, true, 0, true, &nError);
 		}
 	}
 	else if (uMsg == WM_EX_LCLICK)
@@ -215,7 +215,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 			}
 			else {
 				SendMessageW(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
-				_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, 0);
+				_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, &nError);
 			}
 		}
 		else if ((ret & EWS_BUTTON_MAX) != 0)
@@ -227,7 +227,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 			else {
 				SendMessageW(hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 			}
-			_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, 0);
+			_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, &nError);
 		}
 		else if ((ret & EWS_BUTTON_MIN) != 0)
 		{
@@ -238,7 +238,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 			else {
 				SendMessageW(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
 			}
-			_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, 0);
+			_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, &nError);
 		}
 	}
 	else if (uMsg == WM_SETFOCUS)

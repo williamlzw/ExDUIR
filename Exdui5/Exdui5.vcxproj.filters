@@ -171,5 +171,12 @@
     <ClInclude Include="Matrix_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="a.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
 </Project>

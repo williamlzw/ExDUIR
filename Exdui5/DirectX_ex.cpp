@@ -22,13 +22,14 @@ bool _dx_init(int* nError)
 					{
 						((ID2D1DeviceContext*)(g_Ri.pD2DDeviceContext))->SetUnitMode(D2D1_UNIT_MODE_PIXELS);
 						g_Ri.pGDIInterop = _dx_get_gdiInterop(g_Ri.pD2DDeviceContext);
-						sizeof(D2D1_ALPHA_MODE);
+						
 						g_Ri.bp_alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
 						g_Ri.bp_format = DXGI_FORMAT_B8G8R8A8_UNORM;
 						g_Ri.bp_bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
 						g_Ri.bp_dpix = 96;
 						g_Ri.bp_dpiy = 96;
 						*nError = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),(IUnknown**)&(g_Ri.pDWriteFactory));
+						
 						if (*nError == 0)
 						{
 							std::wstring a;
@@ -72,15 +73,19 @@ void* _dx_get_gdiInterop(void* pDeviceContext)
 
 void* _dx_createbitmap(void* pDeviceContext, int width, int height, int* nError)
 {
-	g_Ri.bp_bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
-	D2D1_SIZE_U size = {};
+	g_Ri.bp_bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
+	D2D1_SIZE_U size ;
 	size.width = width;
 	size.height = height;
-	D2D1_BITMAP_PROPERTIES pro = {};
-	pro.pixelFormat.format = (DXGI_FORMAT)g_Ri.bp_format;
-	ID2D1Bitmap* pBitmap=nullptr;
-	*nError=((ID2D1DeviceContext*)pDeviceContext)->CreateBitmap(size,pro,&pBitmap);
-	return (void*)pBitmap;
+	D2D1_BITMAP_PROPERTIES pro ;
+	pro.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	pro.pixelFormat.alphaMode= D2D1_ALPHA_MODE_PREMULTIPLIED;
+	pro.dpiX = 96;
+	pro.dpiY = 96;
+	//pro.bitmapOptions= D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
+	void* pBitmap= nullptr;
+	*nError=((ID2D1DeviceContext*)pDeviceContext)->CreateBitmap(size,nullptr,0,pro,(ID2D1Bitmap**)&pBitmap) ;
+	return pBitmap;
 }
 
 void _dx_settarget(void* pDeviceContext, void* pBitmap)

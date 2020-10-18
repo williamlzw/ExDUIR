@@ -13,7 +13,7 @@ void* _brush_create(int argb)
 
 int _brush_destroy(void* hBrush)
 {
-	int nError = 1;
+	int nError = 0;
 	nError = ((ID2D1SolidColorBrush*)hBrush)->Release();
 	return nError;
 }
@@ -31,7 +31,7 @@ void _brush_setcolor(void* hBrush, int argb)
 void* _brush_createfromimg(size_t hImg)
 {
 	void* pImg = nullptr;
-	int nError = 1;
+	int nError = 0;
 	ID2D1BitmapBrush* hBrush = nullptr;
 	if (_handle_validate(hImg, HT_IMAGE, &pImg, &nError))
 	{
@@ -54,7 +54,7 @@ void* _brush_createfromimg(size_t hImg)
 void* _brush_createfromcanvas(size_t hCanvas)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	ID2D1BitmapBrush* hBrush = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{

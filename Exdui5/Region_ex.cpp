@@ -2,7 +2,7 @@
 
 bool _rgn_destroy(void* hRgn)
 {
-	int nError = 1;
+	int nError = 0;
 	if (hRgn != 0)
 	{
 		nError=((ID2D1PathGeometry*)hRgn)->Release();
@@ -12,7 +12,7 @@ bool _rgn_destroy(void* hRgn)
 
 void* _rgn_createfromroundrect(float left, float top, float right, float bottom, float radiusX, float radiusY)
 {
-	int nError = 1;
+	int nError = 0;
 	void* hgn = nullptr;
 	if (radiusX == 0 && radiusY == 0)
 	{
@@ -37,7 +37,7 @@ void* _rgn_createfromrect(float left, float top, float right, float bottom)
 
 void* _rgn_combine(void* hRgnSrc, void* hRgnDst, int nCombineMode, int dstOffsetX, int dstOffsetY)
 {
-	int nError = 1;
+	int nError = 0;
 	void* hRgn = nullptr;
 	if (hRgnSrc != 0 && hRgnDst != 0)
 	{

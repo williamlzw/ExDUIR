@@ -30,7 +30,7 @@ void _layout_free_info(void* hArr, int nIndex, void* pvItem, int nType)
 size_t _layout_create(int nType, size_t hObjBind)
 {
 	size_t hLayout = 0;
-	int nError = 1;
+	int nError = 0;
 	if (nType > 0 && hObjBind != 0)
 	{
 		size_t lpfnProc = 0;
@@ -93,7 +93,7 @@ size_t _layout_create(int nType, size_t hObjBind)
 
 size_t _layout_get_parent_layout(size_t hObj)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pObj = nullptr;
 	size_t hLayoutParent = 0;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
@@ -111,7 +111,7 @@ size_t _layout_get_parent_layout(size_t hObj)
 
 bool _layout_destory(size_t hLayout)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pLayout = nullptr;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
 	{
@@ -152,7 +152,7 @@ void* _layout_get_child(void* pLayout, size_t hObj)
 
 bool _layout_update(size_t hLayout)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pLayout = nullptr;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
 	{
@@ -168,7 +168,7 @@ bool _layout_update(size_t hLayout)
 
 int _layout_gettype(size_t hLayout)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pLayout = nullptr;
 	int nType = 0;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
@@ -181,7 +181,7 @@ int _layout_gettype(size_t hLayout)
 
 bool _layout_enableupdate(size_t hLayout,bool fUpdateable)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pLayout = nullptr;
 	int nType = 0;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
@@ -194,7 +194,7 @@ bool _layout_enableupdate(size_t hLayout,bool fUpdateable)
 
 size_t _layout_notify(size_t hLayout,int nEvent,void* wParam,void* lParam)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pLayout = nullptr;
 	int ret = 1;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
@@ -211,7 +211,7 @@ size_t _layout_notify(size_t hLayout,int nEvent,void* wParam,void* lParam)
 
 bool _layout_table_setinfo(size_t hLayout, void* aRowHeight, int cRows, void* aCellWidth, int cCells)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pLayout = nullptr;
 	int ret = 1;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
@@ -243,7 +243,7 @@ bool _layout_table_setinfo(size_t hLayout, void* aRowHeight, int cRows, void* aC
 bool _layout_setchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t pvValue)
 {
 	void* pLayout = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
 	{
 		if (hObj != 0)
@@ -287,7 +287,7 @@ bool _layout_setchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t pvVa
 bool _layout_getchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t* pvValue)
 {
 	void* pLayout = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
 	{
 		void* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
@@ -319,7 +319,7 @@ bool _layout_getchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t* pvV
 bool _layout_setprop(size_t hLayout, int dwPropID, size_t pvValue)
 {
 	void* pLayout = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
 	{
 		void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
@@ -340,7 +340,7 @@ bool _layout_setprop(size_t hLayout, int dwPropID, size_t pvValue)
 size_t _layout_getprop(size_t hLayout, int dwPropID)
 {
 	void* pLayout = nullptr;
-	int nError = 1;
+	int nError = 0;
 	size_t ret = 0;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
 	{
@@ -358,7 +358,7 @@ size_t _layout_getprop(size_t hLayout, int dwPropID)
 bool _layout_absolute_setedge(size_t hLayout, size_t hObjChild, int dwEdge, int dwType, size_t nValue)
 {
 	void* pLayout = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
 	{
 		if (((layout_s*)pLayout)->nType_ == ELT_ABSOLUTE)

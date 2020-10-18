@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 #include <Windows.h>
-
+#define IDI_ICON1 129
 
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME					//定义一个API函数类型,并声明
@@ -27,10 +27,14 @@ typedef BOOL (*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
 typedef int(*ClsPROC)(HWND, size_t,int, size_t, size_t,void*);
 typedef int(*MsgPROC)(HWND, size_t, int, size_t, void*, void*);
 
+#define 取高位_短整数(x) HIBYTE(x)
 #define 取高位(x) HIWORD(x)
+
+#define 取低位_短整数(x) LOBYTE(x)
 #define 取低位(x) LOWORD(x)
 #define 整数反转(x) _byteswap_ulong(x)
 #define 合并整数(a,b) MAKELONG(a,b)
+#define 合并短整数(a,b) MAKEWORD(a,b)
 
 typedef UINT32	ARGB, RGB0;	//ARGB和RGB
 #define ExGetB(rgb)			(LOBYTE(rgb))

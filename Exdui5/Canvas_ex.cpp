@@ -2,7 +2,7 @@
 
 bool _canvas_destroy(size_t hCanvas)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pCanvas = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
@@ -22,13 +22,19 @@ void _canvas_recreate(void* pCanvas, int width, int height, int* nError)
 	if (height <= 0) height = 1;
 	((canvas_s*)pCanvas)->width_ = width;
 	((canvas_s*)pCanvas)->height_ = height;
-
+	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
 	
-	void* pBitmap = _dx_createbitmap(((wnd_s*)(((canvas_s*)pCanvas)->pWnd_))->context_, width, height, nError);
+	//std::cout << "创建_dx_createbitmap:" << *nError<<"," << std::endl;
+	void* pBitmap = _dx_createbitmap(((wnd_s*)pWnd)->context_, width, height, nError);
+	
+	//std::cout << "创建_dx_createbitmap:" << *nError << std::endl;
 	if (pBitmap != 0)
 	{
 		void* oldBitmap = ((canvas_s*)pCanvas)->pBitmap_;
-		((ID2D1Bitmap*)oldBitmap)->Release();
+		if (oldBitmap != 0)
+		{
+			((ID2D1Bitmap*)oldBitmap)->Release();
+		}
 		((canvas_s*)pCanvas)->pBitmap_ = pBitmap;
 	}
 }
@@ -36,7 +42,7 @@ void _canvas_recreate(void* pCanvas, int width, int height, int* nError)
 bool _canvas_resize(size_t hCanvas, int width, int height)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		_canvas_recreate(pCanvas, width, height, &nError);
@@ -97,7 +103,7 @@ void* _cv_dx_gdiinterop(void* pCanvas)
 void* _canvas_getcontext(size_t hCanvas, int nType)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	void* ret = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
@@ -117,7 +123,7 @@ void* _canvas_getcontext(size_t hCanvas, int nType)
 bool _canvas_begindraw(size_t hCanvas)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
@@ -138,7 +144,7 @@ bool _canvas_begindraw(size_t hCanvas)
 bool _canvas_enddraw(size_t hCanvas)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
@@ -160,7 +166,7 @@ bool _canvas_enddraw(size_t hCanvas)
 bool _canvas_clear(size_t hCanvas, int Color)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		_dx_clear(_cv_context(pCanvas), Color);
@@ -172,7 +178,7 @@ bool _canvas_clear(size_t hCanvas, int Color)
 bool _canvas_drawline(size_t hCanvas, void* hBrush, float X1, float Y1, float X2, float Y2, float strokeWidth, void* strokeStyle)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		strokeWidth = Ex_Scale(strokeWidth);
@@ -188,7 +194,7 @@ bool _canvas_drawline(size_t hCanvas, void* hBrush, float X1, float Y1, float X2
 bool _canvas_drawrect(size_t hCanvas, void* hBrush, float left, float top, float right, float bottom, float strokeWidth, void* strokeStyle)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		strokeWidth = Ex_Scale(strokeWidth);
@@ -203,7 +209,7 @@ bool _canvas_drawrect(size_t hCanvas, void* hBrush, float left, float top, float
 bool _canvas_fillrect(size_t hCanvas, void* hBrush, float left, float top, float right, float bottom)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pContext = _cv_context(pCanvas);
@@ -217,7 +223,7 @@ bool _canvas_fillrect(size_t hCanvas, void* hBrush, float left, float top, float
 bool _canvas_drawroundedrect(size_t hCanvas, void* hBrush, float left, float top, float right, float bottom, float radiusX, float radiusY, float strokeWidth, void* strokeStyle)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		strokeWidth = Ex_Scale(strokeWidth);
@@ -235,7 +241,7 @@ bool _canvas_drawroundedrect(size_t hCanvas, void* hBrush, float left, float top
 bool _canvas_fillroundedrect(size_t hCanvas, void* hBrush, float left, float top, float right, float bottom, float radiusX, float radiusY)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pContext = _cv_context(pCanvas);
@@ -253,7 +259,7 @@ bool _canvas_drawpath(size_t hCanvas, size_t hPath, void* hBrush,float strokeWid
 {
 	void* pCanvas = nullptr;
 	void* pPath = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
@@ -270,7 +276,7 @@ bool _canvas_fillpath(size_t hCanvas, size_t hPath, void* hBrush)
 {
 	void* pCanvas = nullptr;
 	void* pPath = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
@@ -286,7 +292,7 @@ bool _canvas_fillpath(size_t hCanvas, size_t hPath, void* hBrush)
 bool _canvas_drawellipse(size_t hCanvas, void* hBrush, float x, float y, float radiusX, float radiusY, float strokeWidth, void* strokeStyle)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		strokeWidth = Ex_Scale(strokeWidth);
@@ -304,7 +310,7 @@ bool _canvas_drawellipse(size_t hCanvas, void* hBrush, float x, float y, float r
 bool _canvas_fillellipse(size_t hCanvas, void* hBrush, float x, float y, float radiusX, float radiusY)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pContext = _cv_context(pCanvas);
@@ -320,7 +326,7 @@ bool _canvas_fillellipse(size_t hCanvas, void* hBrush, float x, float y, float r
 
 bool _canvas_fillregion(size_t hCanvas, void* hRgn, void* hBrush)
 {
-	int nError = 1;
+	int nError = 0;
 	if (hRgn != 0)
 	{
 		void* pCanvas = nullptr;
@@ -342,7 +348,7 @@ bool _canvas_drawimagerectrect(size_t hCanvas, size_t hImage, float dstLeft, flo
 {
 	void* pCanvas = nullptr;
 	void* pImage = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
@@ -431,7 +437,7 @@ bool _canvas_drawimagefromgrid(size_t hCanvas, size_t hImage, float dstLeft, flo
 bool _canvas_drawimagefrombkgimg_ex(size_t hCanvas, size_t hImage, int x, int y, int dwRepeat, void* lpGrid, int dwFlags, int dwAlpha, void* lpRcSrc, void* lpRCFDst)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	D2D1_RECT_F rcfDst;
 	RECT rcSrc, rcGrid;
 	int w, h;
@@ -558,7 +564,7 @@ bool _canvas_drawimagefrombkgimg(size_t hCanvas, void* lpBkgImg)
 bool _canvas_cliprect(size_t hCanvas, int left, int top, int right, int bottom)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		/*if (__query(pCanvas, offsetof(canvas_s, dwFlags_), CVF_CLIPED))
@@ -571,7 +577,10 @@ bool _canvas_cliprect(size_t hCanvas, int left, int top, int right, int bottom)
 			_dx_resetclip(_cv_context(pCanvas));
 		}
 		__add(pCanvas, offsetof(canvas_s, dwFlags_), CVF_CLIPED);
-		RtlMoveMemory((void*)((size_t)pCanvas + offsetof(canvas_s, c_left_)), &left, 16);
+		((canvas_s*)pCanvas)->c_left_ = left;
+		((canvas_s*)pCanvas)->c_top_ = top;
+		((canvas_s*)pCanvas)->c_right_ = right;
+		((canvas_s*)pCanvas)->c_bottom_ = bottom;
 		_dx_cliprect(_cv_context(pCanvas), ((canvas_s*)pCanvas)->c_left_, ((canvas_s*)pCanvas)->c_top_, ((canvas_s*)pCanvas)->c_right_, ((canvas_s*)pCanvas)->c_bottom_);
 	}
 	Ex_SetLastError(nError);
@@ -581,7 +590,7 @@ bool _canvas_cliprect(size_t hCanvas, int left, int top, int right, int bottom)
 bool _canvas_resetclip(size_t hCanvas)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		if ((((canvas_s*)pCanvas)->dwFlags_ & CVF_CLIPED) == CVF_CLIPED)
@@ -597,7 +606,7 @@ bool _canvas_resetclip(size_t hCanvas)
 bool _canvas_flush(size_t hCanvas)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		_dx_flush(_cv_context(pCanvas));
@@ -610,7 +619,7 @@ bool _canvas_bitblt(size_t hCanvas, size_t sCanvas, int dstLeft, int dstTop, int
 {
 	void* phCanvas = nullptr;
 	void* psCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &phCanvas, &nError))
 	{
 		if (_handle_validate(sCanvas, HT_CANVAS, &psCanvas, &nError))
@@ -628,7 +637,7 @@ bool _canvas_alphablend(size_t hCanvas, size_t sCanvas, float dstLeft, float dst
 {
 	void* phCanvas = nullptr;
 	void* psCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &phCanvas, &nError))
 	{
 		if (_handle_validate(sCanvas, HT_CANVAS, &psCanvas, &nError))
@@ -645,7 +654,7 @@ bool _canvas_alphablend(size_t hCanvas, size_t sCanvas, float dstLeft, float dst
 bool _canvas_getsize(size_t hCanvas, int* width, int* height)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		*width = ((canvas_s*)pCanvas)->width_;
@@ -741,7 +750,7 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 
 bool _canvas_calctextsize(size_t hCanvas, void* hFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight)
 {
-	int nError = 1;
+	int nError = 0;
 	if (dwLen = -1)
 	{
 		dwLen = lstrlenW(lpwzText);
@@ -789,7 +798,7 @@ bool _canvas_drawtextex(size_t hCanvas, void* hFont, int crText, LPCWSTR lpwzTex
 		dwLen = lstrlenW(lpwzText);
 	}
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (dwLen > 0)
 	{
 		if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
@@ -820,7 +829,7 @@ bool _canvas_drawtext(size_t hCanvas, void* hFont, int crText, LPCWSTR lpwzText,
 
 bool _canvas_blur(size_t hCanvas, float fDeviation, void* lprc)
 {
-	int nError = 1;
+	int nError = 0;
 	if (fDeviation > 0)
 	{
 		void* pCanvas = nullptr;
@@ -835,7 +844,7 @@ bool _canvas_blur(size_t hCanvas, float fDeviation, void* lprc)
 
 bool _canvas_rotate_hue(size_t hCanvas, float fAngle)
 {
-	int nError = 1;
+	int nError = 0;
 	void* pCanvas = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
@@ -851,12 +860,16 @@ size_t _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, in
 	size_t hCanvas = 0;
 	if (pCanvas != 0)
 	{
+		
 		hCanvas = _handle_create(HT_CANVAS, pCanvas, nError);
-		if (hCanvas != 0)
+		
+		if (hCanvas != 0 )
 		{
+			
 			((canvas_s*)pCanvas)->dwFlags_ = dwFlags;
 			((canvas_s*)pCanvas)->pWnd_ = pWnd;
 			_canvas_recreate(pCanvas, width, height,nError);
+			
 		}
 	}
 	else {
@@ -864,6 +877,7 @@ size_t _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, in
 	}
 	if (*nError != 0)
 	{
+		
 		if (pCanvas != 0)
 		{
 			释放内存(pCanvas);
@@ -891,7 +905,7 @@ void* _canvas_getdc_ex(void* pCanvas, int* nError)
 void* _canvas_getdc(size_t hCanvas)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	void* ret = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
@@ -914,7 +928,7 @@ void _canvas_releasedc_ex(void* pCanvas, int* nError)
 bool _canvas_releasedc(size_t hCanvas)
 {
 	void* pCanvas = nullptr;
-	int nError = 1;
+	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		_canvas_releasedc_ex(pCanvas, &nError);

@@ -1,6 +1,6 @@
 #include "Hook_ex.h"
 
-size_t _hook_proc(int code, size_t wParam, size_t lParam)
+LRESULT CALLBACK _hook_proc(int code, size_t wParam, size_t lParam)
 {
 	if (code == 3) //HCBT_CREATEWND
 	{
@@ -9,24 +9,25 @@ size_t _hook_proc(int code, size_t wParam, size_t lParam)
 	return CallNextHookEx((HHOOK)g_Li.hHookMsgBox, code, wParam, lParam);
 }
 
-size_t _hook_oncreate(int code, HWND hWnd, size_t lParam)
+LRESULT _hook_oncreate(int code, HWND hWnd, size_t lParam)
 {
-	sizeof(CBT_CREATEWND);
 	auto lpcs = ((CBT_CREATEWND*)(void*)lParam)->lpcs;
 	auto atomClass = (int)(lpcs->lpszClass);
 	auto hParent = lpcs->hwndParent;
+	
 	if (atomClass == 32770)
 	{
+		
 		auto hExDui = Ex_DUIFromWindow(hParent);
 		void* pWnd = nullptr;
-		int nError = 1;
+		int nError = 0;
 		if (_handle_validate(hExDui, HT_DUI, &pWnd, &nError))
 		{
 			void* pMsg = ((wnd_s*)pWnd)->lpMsgParams_;
 			((wnd_s*)pWnd)->lpMsgParams_ = 0;
 			if (pMsg != 0)
 			{
-				SetClassLongW(hWnd, -12, (LONG)g_Li.hCursor);
+				SetClassLongPtrW(hWnd, -12, (LONG)g_Li.hCursor);
 				int style = EWS_TITLE | EWS_BUTTON_CLOSE | EWS_ESCEXIT | EWS_MOVEABLE | EWS_MESSAGEBOX;
 				if (__query(pMsg, offsetof(mbp_s, dwFlags_), EMBF_WINDOWICON))
 				{
@@ -38,7 +39,6 @@ size_t _hook_oncreate(int code, HWND hWnd, size_t lParam)
 	}
 	else if (atomClass == 32768)
 	{
-		auto style = __get_int(lpcs, 0);
 		Thunkwindow(hWnd, &_menu_proc, 0, 0);
 	}
 	return CallNextHookEx((HHOOK)g_Li.hHookMsgBox, code, (WPARAM)hWnd, lParam);
@@ -75,7 +75,7 @@ void _menu_init(HWND hWnd)
 		size_t hExDui;
 		HashTable_Get(g_Li.hTableLayout, (size_t)hMenu, &hExDui);
 		void* pWnd = nullptr;
-		int nError = 1;
+		int nError = 0;
 		if (_handle_validate(hExDui, HT_DUI, &pWnd, &nError))
 		{
 			HashTable_Remove(g_Li.hTableLayout, (size_t)hMenu);
@@ -116,7 +116,7 @@ void _msgbox_drawinfo(void* pWnd, size_t cvBkg)
 		int l = Ex_Scale(15);
 		int t = Ex_Scale(15);
 		void* pCaption = nullptr;
-		int nError = 1;
+		int nError = 0;
 		if (_handle_validate(((wnd_s*)pWnd)->objCaption_, HT_OBJECT, &pCaption, &nError))
 		{
 			t = t + ((obj_s*)pCaption)->bottom_;
@@ -249,10 +249,10 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 	left = maxWidth / g_Li.DpiX - 85;
 	size_t hObj = 0;
 	void* pObj = nullptr;
-	int nError = 1;
+	int nError = 0;
 	for (int i = aryID.size(); i > 1; i--)
 	{
-		hObj = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, 0);
+		hObj = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, &nError);
 		if (hObj != 0)
 		{
 			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_BUTTON, aryText.data(), -1, left, top, 80, 24, 0,~aryID[i], 0, aryID[i], -1);
@@ -264,7 +264,7 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 	}
 	if (lpwzCheckbox != 0)
 	{
-		hObj = _obj_create_init(hWnd, pWnd, ATOM_CHECKBUTTON, 0, &pObj, 0);
+		hObj = _obj_create_init(hWnd, pWnd, ATOM_CHECKBUTTON, 0, &pObj, &nError);
 		if (hObj != 0)
 		{
 			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_CHECKBUTTON, lpwzCheckbox, -1, 4, top, widthCheckbox, 24, 0, (size_t)lpCheckboxChecked, 0, (size_t)lpCheckboxChecked, -1);

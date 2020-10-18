@@ -27,8 +27,8 @@ struct menu_s
 	int dwFlags_;
 };
 
-size_t _hook_proc(int code, size_t wParam, size_t lParam);
-size_t _hook_oncreate(int code, HWND hWnd, size_t lParam);
+LRESULT CALLBACK _hook_proc(int code, size_t wParam, size_t lParam);
+LRESULT _hook_oncreate(int code, HWND hWnd, size_t lParam);
 size_t _menu_proc(void* pData, int uMsg, size_t wParam, size_t lParam);
 void _menu_init(HWND hWnd);
 void _msgbox_drawinfo(void* pWnd, size_t cvBkg);

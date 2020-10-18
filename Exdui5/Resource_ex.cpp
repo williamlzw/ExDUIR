@@ -3,7 +3,7 @@
 //void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen)
 //{
 //	int i = 1263556677;
-//	int nError = 1;
+//	int nError = 0;
 //	void* hImg = nullptr;
 //	Gdiplus::GdiplusStartupInput StartupInput;
 //	GdiplusStartup((ULONG_PTR*)&g_Li.hToken, &StartupInput, NULL);
@@ -73,7 +73,7 @@
 void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen)
 {
 	int i = 1263556677;
-	int nError = 1;
+	int nError = 0;
 	void* hImg = nullptr;
 	Gdiplus::GdiplusStartupInput StartupInput;
 	GdiplusStartup((ULONG_PTR*)&g_Li.hToken, &StartupInput, NULL);
@@ -170,7 +170,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 
 void* Ex_ResLoadFromMemory(void* lpData, size_t dwDataLen)
 {
-	int nError = 1;
+	int nError = 0;
 	void* ret = nullptr;
 	if (dwDataLen > 0)
 	{

@@ -94,7 +94,7 @@
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -196,12 +196,19 @@
     <ClInclude Include="Object_ex.h" />
     <ClInclude Include="Path_ex.h" />
     <ClInclude Include="Region_ex.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Resource_ex.h" />
     <ClInclude Include="StrokeStyle_ex.h" />
     <ClInclude Include="struct_ex.h" />
     <ClInclude Include="Theme_ex.h" />
     <ClInclude Include="Thread_ex.h" />
     <ClInclude Include="Wnd_ex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="a.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
