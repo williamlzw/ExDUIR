@@ -1931,6 +1931,7 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 						}
 						if (pFamily != -1 || pSize != -1 || pStyle != -1)
 						{
+							
 							((obj_s*)pObj)->hFont_ = _font_createfromfamily((LPWSTR)pFamily, pSize, pStyle);
 							return;
 						}
@@ -2115,6 +2116,7 @@ bool Ex_ObjSetFont(size_t hObj, void* lpszFontfamily, int dwFontsize, int dwFont
 	void* ret = nullptr;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 	{
+		
 		_obj_setfont(pObj, _font_createfromfamily((LPWSTR)lpszFontfamily, dwFontsize, dwFontstyle), fRedraw);
 	}
 	Ex_SetLastError(nError);

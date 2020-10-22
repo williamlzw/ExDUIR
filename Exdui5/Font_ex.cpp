@@ -46,7 +46,7 @@ void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyl
 	{
 		int flag = 0;
 		RtlMoveMemory(lpLogFont, g_Li.lpLogFontDefault, sizeof(LOGFONT));
-		if (lpwzFontFace != L"")
+		if (lpwzFontFace != (LPWSTR)-1)
 		{
 			size_t i = lstrlenW(lpwzFontFace);
 			if (i > 0)

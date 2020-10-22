@@ -164,9 +164,7 @@ std::vector<UCHAR> 整数到字节数组(int value)
 	return ret;
 }
 
-
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _In_ LPWSTR wzCmd, _In_ int nCmdShow)
+void 测试窗口()
 {
 	BOOL CONSOLE = true;
 	setlocale(LC_CTYPE, "");
@@ -174,6 +172,34 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev
 		AllocConsole();
 		FILE* fp = freopen("CONOUT$", "w", stdout);
 	}
+	std::vector<char> data;
+	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
+
+	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE, 0, 0, data.data(), data.size(), 0, 0);
+	LPCWSTR classa = L"Ex_DirectUI";
+	auto aa = Ex_WndRegisterClass(classa, 0, 0, 0);
+	// std::cout <<"注册窗口类结果：" <<aa << std::endl;
+	LPCWSTR title = L"testTitle";
+	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
+	std::cout << "hwnd:" << hWnd << std::endl;
+	if (hWnd != 0)
+	{
+		size_t hExDui = Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);
+		std::cout << "hExDui:" << hExDui << std::endl;
+		Ex_DUISetLong(hExDui, EWL_CRBKG, -16744448);//-97900239
+		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
+	}
+	Ex_WndMsgLoop();
+	Ex_UnInit();
+	if (CONSOLE) {
+		fclose(stdout);
+		FreeConsole();
+	}
+}
+
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _In_ LPWSTR wzCmd, _In_ int nCmdShow)
+{
+	
 	//测试句柄池();
 	//数组遍历();
 	//测试哈希表();
@@ -181,35 +207,33 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev
 	//测试数组();
 	//测试RC4();
 	//测试引用(&b);
-	
-	std::vector<char> data;
-	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
-
-	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D| EXGF_DPI_ENABLE,0,0, data.data(),data.size(),0,0);
-	LPCWSTR classa = L"Ex_DirectUI";
-	 auto aa=Ex_WndRegisterClass(classa, 0, 0, 0) ;
-	// std::cout <<"注册窗口类结果：" <<aa << std::endl;
-	LPCWSTR title = L"testTitle";
-	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
-	std::cout <<"hwnd:" <<hWnd << std::endl;
-	if (hWnd != 0)
-	{
-		size_t hExDui=Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);
-		std::cout << "hExDui:" << hExDui << std::endl;
-		Ex_DUISetLong(hExDui, EWL_CRBKG, -16744448);//-97900239
-		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
-	}
-	Ex_WndMsgLoop();
-	Ex_UnInit();
+	测试窗口();
 	//std::wcout.imbue(std::locale("chs"));
 	//sizeof(USHORT)
 	//auto a= 到字节数组((USHORT)0xb948);
 	//std::cout << a.size()<< std::endl;
-	if (CONSOLE) {
-		fclose(stdout);
-		FreeConsole();
-	}
-	
+
+	//BOOL CONSOLE = true;
+	//setlocale(LC_CTYPE, "");
+	//if (CONSOLE) {
+	//	AllocConsole();
+	//	FILE* fp = freopen("CONOUT$", "w", stdout);
+	//}
+	//std::wstring aa = L"=[aabcdd]";
+	//auto lpaddress = aa.c_str();
+	//auto c= wcschr(lpaddress, '[');
+	//std::cout << (size_t)c - (size_t)lpaddress << std::endl;
+	//c = (wchar_t *)((size_t)c + 2);
+	//std::cout << (size_t)c - (size_t)lpaddress << std::endl;
+	//auto d = wcschr(c, ']');
+	////std::cout << (size_t)lpaddress  << std::endl;
+	////std::cout <<  (size_t)d << std::endl;
+	//std::cout <<  (size_t)d- (size_t)c  << std::endl;
+	//system("pause");
+	//if (CONSOLE) {
+	//	fclose(stdout);
+	//	FreeConsole();
+	//}
 	return 0;
 }
 

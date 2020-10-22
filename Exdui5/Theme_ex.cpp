@@ -6,7 +6,7 @@ bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen,
 	size_t retLen = 0;
 	bool ret = false;
 	_bin_uncompress(lpData, dwDataLen, 0, 0, &retPtr, &retLen);
-	
+
 	if (retLen > 0)
 	{
 		if (__get_unsignedchar(retPtr, 0) == EPDF_THEME)
@@ -24,11 +24,11 @@ bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen,
 					int len = __get_int(retPtr, 5) + 4;
 					if (len > 4)
 					{
-						
-						void* tmp = 申请内存(len+2);
+
+						void* tmp = 申请内存(len + 2);
 						if (tmp != 0)
 						{
-							
+
 							(*atomFiles)[i] = __get_int(retPtr, 0);
 							(*lpFiles)[i] = tmp;
 							(*dwFileProps)[i] = prop;
@@ -46,57 +46,40 @@ bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen,
 
 int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<size_t>* artItems2)
 {
-
-	auto iOffset1 = wcschr((wchar_t*)lpContent, '\n')-1;
-
-	
-	/*std::cout << "atomClass:" << atomClass << std::endl;*/
-	int nCount=0;
-	while (iOffset1!=0)
+	auto iOffset1 = wcschr((wchar_t*)lpContent, '\n');
+	int nCount = 0;
+	while (iOffset1 != 0)
 	{
-		iOffset1 = iOffset1 + 2;
-		//std::cout << "iOffset1::"<< (int)iOffset1 << std::endl;
-		
+		iOffset1 = (wchar_t*)((size_t)iOffset1 + 2);
 		auto iOffset2 = wcschr(iOffset1, '\r');
-	
 		if (iOffset2 != 0)
 		{
-			
-			iOffset2 = (wchar_t*)(iOffset2 - 1);
-			if (iOffset2 != 0)
+			__set_wchar(iOffset2, 0, 0);
+		}
+		wchar_t c = __get_wchar(iOffset1, 0);
+		if (c != ';')//;
+		{
+			auto iSplit = wcschr(iOffset1, '=');//=
+			if (iSplit != 0)
 			{
-				__set_wchar(iOffset2, 0, 0);
-			}
-			//std::cout << "11:" << (int)iOffset2 << std::endl;
-			
-			//setlocale(LC_ALL, "chs");
-			//wprintf(L"%ls \r\n", iOffset2);
-			wchar_t c = __get_wchar(iOffset1, 0);
-			if (c != ';')//;
-			{
-				auto iSplit = wcschr(iOffset1, '=');//=
-				if (iSplit != 0)
-				{
-					__set_wchar(iSplit, 0, 0);
-					auto dwLen = (iSplit - iOffset1 + 1) * 2;
-					//wprintf(L"%ls \r\n", iOffset1);
-
-					//system("pause");
-
-					(*artItems1)[nCount] = 数据_Crc32_Addr(iOffset1, dwLen);
-					(*artItems2)[nCount] = (size_t)iSplit + 2;
-
-					nCount = nCount + 1;
-				}
+				__set_wchar(iSplit, 0, 0);
+				auto dwLen = (size_t)iSplit - (size_t)iOffset1;
+				//setlocale(LC_ALL, "chs");
+				//wprintf(L"%ls \r\n", dwLen);
+				//std::cout << dwLen << std::endl;
+				//system("pause");
+				(*artItems1)[nCount] = 数据_Crc32_Addr(iOffset1, dwLen);
+				(*artItems2)[nCount] = (size_t)(wchar_t*)((size_t)iSplit + 2);
+				nCount = nCount + 1;
 			}
 		}
-		else if (iOffset2 == 0)
+		if (iOffset2 == 0)
 		{
 			break;
 		}
-
-		iOffset1 = wcschr(iOffset2 + 2, '\n')-1;
-		
+		else {
+			iOffset1 = wcschr((wchar_t*)((size_t)iOffset2 + 2), '\n');
+		}
 	}
 	return nCount;
 }
@@ -110,7 +93,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 	{
 		HashTable_Set(pTableFiles, atomFiles[i], (size_t)lpFiles[i]);
 	}
-	int atomINI = - 905600139;
+	int atomINI = -905600139;
 	size_t lpFile = 0;
 	if (HashTable_Get(pTableFiles, atomINI, &lpFile))
 	{
@@ -120,14 +103,14 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 		CharLowerW((LPWSTR)retPtr);
 		aryAtomKey.resize(32);
 		arylpValue.resize(32);
-		auto iClassStart=wcschr((wchar_t*)retPtr, '[')-1;
-		
-		
+		auto iClassStart = wcschr((wchar_t*)retPtr, '[');
+
+
 		int Value;
 		while (iClassStart != 0)
 		{
-			
-			iClassStart = iClassStart + 2;
+
+			iClassStart = (wchar_t*)((size_t)iClassStart + 2);
 			auto iClassEnd = wcschr(iClassStart, ']');
 			if (iClassEnd == 0)
 			{
@@ -135,28 +118,29 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 			}
 			else {
 				__set_wchar(iClassEnd, 0, 0);
-				auto iContentStart = iClassEnd + 2;
-				
+				auto iContentStart = (wchar_t*)((size_t)iClassEnd + 2);
+
 				auto iContentEnd = wcschr(iContentStart, '[');
-				
+
 				if (iContentEnd != 0)
 				{
-					
+
 					__set_wchar(iContentEnd, 0, 0);
-					
+
 				}
-				auto dwLen = iClassEnd - iClassStart;
-				//setlocale(LC_ALL, "chs");
-				//wprintf(L"%ls \r\n", iClassStart);
-				//system("pause");
+				auto dwLen = (size_t)iClassEnd - (size_t)iClassStart;
+				
 				if (dwLen > 0)
 				{
-					
+
 					auto atomClass = 数据_Crc32_Addr(iClassStart, dwLen);
 					
-					
 					int nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
-					std::cout << "_theme_fillclasses->nCount:" << nCount << std::endl;
+					/*for (int i = 0; i < nCount; i++)
+					{
+						std::cout << "_theme_fillclasses->nCount:" << aryAtomKey[i] << "," << arylpValue[i] << std::endl;
+					}*/
+
 					if (nCount > 0)
 					{
 						if (atomClass == ATOM_COLOR)
@@ -166,13 +150,14 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 							{
 								if (_fmt_color((void*)arylpValue[i], &Value))
 								{
-									
+
 									for (int ii = 0; ii < g_Li.aryColorsAtom.size(); ii++)
 									{
-										
+
 										if (g_Li.aryColorsAtom[ii] == aryAtomKey[i])
 										{
-											
+											//std::cout << "填充颜色" << atomClass << std::endl;
+											//system("pause");
 											__set_int(aryCorlors, g_Li.aryColorsOffset[ii] - offsetof(obj_s, crBackground_), Value);
 											break;
 										}
@@ -188,16 +173,17 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 								if (pTableProp != 0)
 								{
 									((classtable_s*)pClass)->tableProps_ = pTableProp;
-									HashTable_Set(pTableClass, atomClass,(size_t) pClass);
+									HashTable_Set(pTableClass, atomClass, (size_t)pClass);
 									for (int i = 0; i < nCount; i++)
 									{
-										auto wchar=__get_wchar((void*)arylpValue[i], 0);
+										auto wchar = __get_wchar((void*)arylpValue[i], 0);
 										if (wchar == 34)//"
 										{
 											arylpValue[i] = arylpValue[i] + 2;
 											dwLen = (lstrlenW((LPCWSTR)arylpValue[i]) - 1) * 2;
 											if (aryAtomKey[i] == ATOM_BACKGROUND_IMAGE)
 											{
+												
 												int atomProp = 数据_Crc32_Addr((void*)arylpValue[i], dwLen);
 												for (int ii = 0; ii < atomFiles.size(); ii++)
 												{
@@ -205,10 +191,10 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 													{
 														if (dwFileProps[ii] == EPDF_PNGBITS)
 														{
-															((classtable_s*)pClass)->hImage_= _img_createfrompngbits(lpFiles[ii]);
+															((classtable_s*)pClass)->hImage_ = _img_createfrompngbits(lpFiles[ii]);
 														}
 														else {
-															((classtable_s*)pClass)->hImage_ = _img_createfrommemory((void*)((size_t)lpFiles[ii]+4),__get_int(lpFiles[ii],0));
+															((classtable_s*)pClass)->hImage_ = _img_createfrommemory((void*)((size_t)lpFiles[ii] + 4), __get_int(lpFiles[ii], 0));
 														}
 														break;
 													}
@@ -217,13 +203,13 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 											}
 											else {
 												void* lpValue = 申请内存(dwLen + 2);
-												RtlMoveMemory(lpValue,(void*)arylpValue[i], dwLen);
+												RtlMoveMemory(lpValue, (void*)arylpValue[i], dwLen);
 												HashTable_Set(pTableProp, aryAtomKey[i], (size_t)lpValue);
 											}
 										}
 										else {
 											void* lpValue = nullptr;
-											int atomProp=_fmt_getatom((void*)arylpValue[i], &lpValue);
+											int atomProp = _fmt_getatom((void*)arylpValue[i], &lpValue);
 											if (atomProp == ATOM_RGB || atomProp == ATOM_RGBA)
 											{
 												lpValue = 申请内存(4);
@@ -239,19 +225,19 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 							}
 						}
 					}
-					
+
 				}
 
-				iClassStart = iContentEnd-1;
-				if (iContentEnd == 0)
+				iClassStart = iContentEnd;
+				/*if (iContentEnd == 0)
 				{
 					break;
-				}
+				}*/
 			}
 		}
 		ret = true;
 	}
-	
+
 	return ret;
 }
 
@@ -286,12 +272,12 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 		}
 	}
 	void* hTheme = 申请内存(sizeof(theme_s));
-	
+
 	int nError = 0;
 	std::vector<int> atomFiles;
 	std::vector<void*> lpFiles;
 	std::vector<UCHAR> dwFileProps;
-	
+
 	if (hTheme == 0)
 	{
 		nError = ERROR_EX_MEMORY_ALLOC;
@@ -299,7 +285,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 	else {
 		if (_theme_unpack(lpData, dwDataLen, lpKey, dwKeyLen, &atomFiles, &lpFiles, &dwFileProps))
 		{
-			
+
 			void* pTableFiles = HashTable_Create(取最近质数(atomFiles.size()), pfnDefaultFreeData);
 			if (pTableFiles != 0)
 			{
@@ -313,7 +299,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 					}
 					if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors))
 					{
-					
+
 						((theme_s*)hTheme)->tableFiles_ = pTableFiles;
 						((theme_s*)hTheme)->loadCount_ = 1;
 						((theme_s*)hTheme)->crcTheme_ = crc;
@@ -378,7 +364,7 @@ bool Ex_ThemeDrawControlEx(void* hTheme, size_t hCanvas, float dstLeft, float ds
 						{
 							return false;
 						}
-						void* pFlags=nullptr;
+						void* pFlags = nullptr;
 						int dwFlags = 0;
 						HashTable_Get(pProp, atomBackgroundFlags, (size_t*)&pFlags);
 						if (pFlags != 0)
@@ -411,7 +397,7 @@ bool Ex_ThemeDrawControlEx(void* hTheme, size_t hCanvas, float dstLeft, float ds
 						void* pGird = nullptr;
 						HashTable_Get(pProp, atomBackgroundGrid, (size_t*)&pGird);
 						RECTF rect = { dstLeft, dstTop, dstRight, dstBottom };
-						ret=_canvas_drawimagefrombkgimg_ex(hCanvas, hImg, x, y, dwRepeat, pGird, dwFlags, dwAlpha, pSrcRect,&rect);
+						ret = _canvas_drawimagefrombkgimg_ex(hCanvas, hImg, x, y, dwRepeat, pGird, dwFlags, dwAlpha, pSrcRect, &rect);
 					}
 				}
 			}
@@ -431,16 +417,12 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 	void* pData = nullptr;
 	if (hTheme != 0)
 	{
-		
 		void* pTheme = ((theme_s*)hTheme)->tableClass_;
 		if (pTheme != 0)
 		{
-			
 			size_t pClass = 0;
-		
 			if (HashTable_Get(pTheme, atomClass, &pClass))
 			{
-				std::cout << "pClass:" << pClass << std::endl;
 				if (pClass != 0)
 				{
 					void* pProp = ((classtable_s*)pClass)->tableProps_;
@@ -476,7 +458,7 @@ bool Ex_ThemeFree(void* hTheme)
 	{
 		if (((theme_s*)hTheme)->crcTheme_ != 0 && ((theme_s*)hTheme)->loadCount_ != 0 && ((theme_s*)hTheme)->tableFiles_ != 0 && ((theme_s*)hTheme)->tableClass_ != 0)
 		{
-			auto i=InterlockedExchangeAdd((size_t*)&((theme_s*)hTheme)->loadCount_, -1);
+			auto i = InterlockedExchangeAdd((size_t*)&((theme_s*)hTheme)->loadCount_, -1);
 			ret = true;
 			if (i == 1)
 			{

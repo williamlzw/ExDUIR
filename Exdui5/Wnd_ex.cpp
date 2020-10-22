@@ -457,7 +457,9 @@ void _wnd_loadtheme(void* pWnd, HWND hWnd, void* hTheme)
 	{
 		lpFontFamily = pData;
 	}
+	
 	void* pfont = _font_createfromfamily((LPWSTR)lpFontFamily, dwFontSize, dwFontStyle);
+	
 	if (pfont != 0)
 	{
 		_font_destroy(((wnd_s*)pWnd)->hFont_Menu_);
