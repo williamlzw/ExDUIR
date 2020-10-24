@@ -225,8 +225,11 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 												_fmt_intary_ex((void*)arylpValue[i], &lpValue, 0, true);
 											}
 											
-											 HashTable_Set(((classtable_s*)pClass)->tableProps_, aryAtomKey[i], (size_t)lpValue);
-											
+											 HashTable_Set(((classtable_s*)pClass)->tableProps_, (size_t)aryAtomKey[i], (size_t)lpValue);
+											 if (1224917892 == aryAtomKey[i] && atomClass == 1405777423)
+											 {
+												 std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)((classtable_s*)pClass)->tableProps_ << ",pData:" << (int)lpValue << std::endl;
+											 }
 											
 										}
 									}
@@ -304,12 +307,15 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 					}
 					if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors))
 					{
-
+						
 						((theme_s*)hTheme)->tableFiles_ = pTableFiles;
 						((theme_s*)hTheme)->loadCount_ = 1;
 						((theme_s*)hTheme)->crcTheme_ = crc;
 						((theme_s*)hTheme)->tableClass_ = pTableClass;
 						((theme_s*)hTheme)->aryColors_ = aryColors;
+						std::cout << pTableClass << std::endl; 
+						std::cout << Ex_ThemeGetValuePtr(hTheme, 1405777423, ATOM_PADDING_SHADOW) << std::endl;
+						system("pause");
 						g_Li.aryThemes.push_back(hTheme);
 						if (bDefault)
 						{
@@ -434,8 +440,9 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 					void* ptableProps = ((classtable_s*)pClass)->tableProps_;
 					if (ptableProps != 0)
 					{
+						std::cout << LocalSize(ptableProps) << std::endl;
 						HashTable_Get(ptableProps, atomProp, (size_t*)&pData);
-
+						std::cout << "Ex_ThemeGetValuePtr->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)ptableProps << ",pData:" << pData << std::endl;
 					}
 				}
 			}

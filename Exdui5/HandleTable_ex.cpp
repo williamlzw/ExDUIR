@@ -68,7 +68,7 @@ bool _handle_validate(size_t handle, int type, void** dwData, int* nError)
 	bool ret = false;
 	if (handle != 0)
 	{
-		std::cout << "22:" << handle <<",type:"<< type << std::endl;
+		
 		size_t nIndex = (handle - (44 << 24) - (type << 18)) >> 2;
 		if (nIndex > 0 && nIndex < 65537)
 		{
@@ -93,7 +93,7 @@ bool _handle_validate(size_t handle, int type, void** dwData, int* nError)
 		}
 	}
 	else {
-		std::cout << "33:" << handle << ",type:" << type << std::endl;
+		
 		*nError = ERROR_EX_HANDLE_INVALID;
 	}
 	return ret;
