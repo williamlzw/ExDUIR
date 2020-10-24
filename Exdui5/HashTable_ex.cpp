@@ -105,7 +105,8 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 		while (pEntry != nullptr)
 		{
 			if (((entry_s*)pEntry)->hKey == hKey) {
-				InterlockedExchange((size_t*)&(((entry_s*)pEntry)->dwValue), (size_t)dwValue);
+				((entry_s*)pEntry)->dwValue = dwValue;
+				//InterlockedExchange((size_t*)&(((entry_s*)pEntry)->dwValue), (size_t)dwValue);
 				return true;
 			}
 			pEntry = ((entry_s*)pEntry)->pEntry;
@@ -114,14 +115,17 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 		{
 			HashTable_ReHash(hTable);
 			nPos = HashTable_GetPos(hKey, ((hashtable_s*)hTable)->dwBound);
-			 pTable = ((hashtable_s*)hTable)->pTable;
+			pTable = ((hashtable_s*)hTable)->pTable;
 		}
 		pEntry = ÉêÇëÄÚ´æ(sizeof(entry_s));
 		((entry_s*)pEntry)->hKey = hKey;
 		((entry_s*)pEntry)->dwValue = dwValue;
-		InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry);
-		((entry_s*)pEntry)->pEntry = 0;
-		InterlockedExchangeAdd((size_t*)&(((hashtable_s*)hTable)->dwCount), 1);
+		//auto aa= InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry);
+		//std::cout << __get(pTable, nPos * sizeof(void*)) << std::endl;
+		((entry_s*)pEntry)->pEntry = (void*)__get(pTable, nPos * sizeof(void*));
+		__set(pTable, nPos * sizeof(void*), (size_t)pEntry);
+		((hashtable_s*)hTable)->dwCount = ((hashtable_s*)hTable)->dwCount + 1;
+		//InterlockedExchangeAdd((size_t*)&(((hashtable_s*)hTable)->dwCount), 1);
 		ret = true;
 	}
 	return ret;

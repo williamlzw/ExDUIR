@@ -153,6 +153,8 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 								void* pTableProp = HashTable_Create(取最近质数(nCount), &pfnDefaultFreeData);
 								if (pTableProp != 0)
 								{
+									((classtable_s*)pClass)->tableProps_ = pTableProp;
+									HashTable_Set(pTableClass, atomClass, (size_t)pClass);
 									for (int i = 0; i < nCount; i++)
 									{
 										auto wchar = __get_wchar((void*)arylpValue[i], 0);
@@ -198,17 +200,8 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 												_fmt_intary_ex((void*)arylpValue[i], &lpValuea, 0, true);
 											}
 											HashTable_Set(pTableProp, (size_t)aryAtomKey[i], (size_t)lpValuea);
-											if (ATOM_PADDING_SHADOW == aryAtomKey[i] && atomClass == ATOM_WINDOW)
-											{
-												std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (size_t)pTableProp << ",pData:" << (size_t)lpValuea << std::endl;
-												void* retvalue=nullptr;
-												HashTable_Get(pTableProp, ATOM_PADDING_SHADOW, (size_t*)&retvalue);
-												std::cout << (size_t)retvalue << std::endl;
-											}
 										}
 									}
-									((classtable_s*)pClass)->tableProps_ = pTableProp;
-									HashTable_Set(pTableClass, atomClass, (size_t)pClass);
 								}
 							}
 						}
@@ -285,8 +278,6 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 						((theme_s*)hTheme)->crcTheme_ = crc;
 						((theme_s*)hTheme)->tableClass_ = pTableClass;
 						((theme_s*)hTheme)->aryColors_ = aryColors;
-						std::cout << Ex_ThemeGetValuePtr(hTheme, ATOM_WINDOW, ATOM_PADDING_SHADOW) << std::endl;
-						system("pause");
 						g_Li.aryThemes.push_back(hTheme);
 						if (bDefault)
 						{
@@ -412,7 +403,6 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 					if (ptableProps != 0)
 					{
 						HashTable_Get(ptableProps, atomProp, (size_t*)&pData);
-						std::cout << "Ex_ThemeGetValuePtr->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (size_t)ptableProps << ",pData:" << pData << std::endl;
 					}
 				}
 			}

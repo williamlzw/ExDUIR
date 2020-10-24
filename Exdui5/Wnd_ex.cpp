@@ -383,10 +383,9 @@ bool _wnd_wm_stylechanging(void* pWnd, HWND hWnd, size_t wParam, size_t lParam)
 void _wnd_loadtheme(void* pWnd, HWND hWnd, void* hTheme)
 {
 	int atom = __query(pWnd, offsetof(wnd_s, dwStyle_), EWS_MENU) ? ATOM_MENU : ATOM_WINDOW;
-	
 	void* pPADDING_SHADOW = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_PADDING_SHADOW);
-	std::cout << "_wnd_loadtheme->pPADDING_SHADOW:" << pPADDING_SHADOW <<",atom:"<< atom << std::endl;
-	system("pause");
+	
+	//system("pause");
 	if (pPADDING_SHADOW != 0)
 	{
 		((wnd_s*)pWnd)->padding_shadow_ = pPADDING_SHADOW;
@@ -411,7 +410,7 @@ void _wnd_loadtheme(void* pWnd, HWND hWnd, void* hTheme)
 	{
 		((wnd_s*)pWnd)->radius_ = __get_int(pRADIUS, 0);
 	}
-	
+	std::cout << "_wnd_loadtheme->pRADIUS:" << pRADIUS << ",__get_int(pRADIUS, 0):" << __get(pRADIUS, 0) << std::endl;
 	void* pBACKGROUND_COLOR = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_BACKGROUND_COLOR);
 	
 	if (pBACKGROUND_COLOR != 0)
