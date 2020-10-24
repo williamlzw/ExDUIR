@@ -3,10 +3,10 @@
 void* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete)
 {
 	void* hTable = (void*)LocalAlloc(LMEM_ZEROINIT, sizeof(hashtable_s));
-	if (hTable != nullptr) {
+	if (hTable != 0) {
 		if (dwBound <= 0) dwBound = 11;
 		void* pTable = (void*)ÉêÇëÄÚ´æ(dwBound * sizeof(void*));
-		if (pTable != nullptr)
+		if (pTable != 0)
 		{
 			((hashtable_s*)hTable)->pfnDelete = pfnDelete;
 			((hashtable_s*)hTable)->pTable = pTable;

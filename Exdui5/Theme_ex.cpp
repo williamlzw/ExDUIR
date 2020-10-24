@@ -153,7 +153,6 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 								void* pTableProp = HashTable_Create(取最近质数(nCount), &pfnDefaultFreeData);
 								if (pTableProp != 0)
 								{
-									
 									for (int i = 0; i < nCount; i++)
 									{
 										auto wchar = __get_wchar((void*)arylpValue[i], 0);
@@ -183,10 +182,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 											else {
 												void* lpValueaa = 申请内存(dwLen + 2);
 												RtlMoveMemory(lpValueaa, (void*)arylpValue[i], dwLen);
-												if (1224917892 == aryAtomKey[i] && atomClass == 1405777423)
-												{
-													std::cout << "重复" << std::endl;
-												}
+												
 												HashTable_Set(pTableProp, aryAtomKey[i], (size_t)lpValueaa);
 											}
 										}
@@ -202,9 +198,12 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 												_fmt_intary_ex((void*)arylpValue[i], &lpValuea, 0, true);
 											}
 											HashTable_Set(pTableProp, (size_t)aryAtomKey[i], (size_t)lpValuea);
-											if (1224917892 == aryAtomKey[i] && atomClass == 1405777423)
+											if (ATOM_PADDING_SHADOW == aryAtomKey[i] && atomClass == ATOM_WINDOW)
 											{
 												std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)pTableProp << ",pData:" << (int)lpValuea << std::endl;
+												size_t retvalue=0;
+												HashTable_Get(pTableProp, ATOM_PADDING_SHADOW, &retvalue);
+												std::cout << retvalue << std::endl;
 											}
 										}
 									}
@@ -286,7 +285,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 						((theme_s*)hTheme)->crcTheme_ = crc;
 						((theme_s*)hTheme)->tableClass_ = pTableClass;
 						((theme_s*)hTheme)->aryColors_ = aryColors;
-						std::cout << Ex_ThemeGetValuePtr(hTheme, 1405777423, ATOM_PADDING_SHADOW) << std::endl;
+						std::cout << Ex_ThemeGetValuePtr(hTheme, ATOM_WINDOW, ATOM_PADDING_SHADOW) << std::endl;
 						system("pause");
 						g_Li.aryThemes.push_back(hTheme);
 						if (bDefault)

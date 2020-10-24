@@ -385,7 +385,7 @@ void _wnd_loadtheme(void* pWnd, HWND hWnd, void* hTheme)
 	int atom = __query(pWnd, offsetof(wnd_s, dwStyle_), EWS_MENU) ? ATOM_MENU : ATOM_WINDOW;
 	
 	void* pPADDING_SHADOW = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_PADDING_SHADOW);
-	std::cout << "_wnd_loadtheme->pPADDING_SHADOW:" << pPADDING_SHADOW << std::endl;
+	std::cout << "_wnd_loadtheme->pPADDING_SHADOW:" << pPADDING_SHADOW <<",atom:"<< atom << std::endl;
 	system("pause");
 	if (pPADDING_SHADOW != 0)
 	{
