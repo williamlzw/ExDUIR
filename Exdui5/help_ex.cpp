@@ -21,11 +21,13 @@ void* GetProcAddr(LPCWSTR szMod,LPCSTR szApi)
 	return ret;
 }
 
-BOOL 释放内存(void* hMem)
+bool 释放内存(void* hMem)
 {
 	if (hMem != nullptr)
 	{
-		auto ret = LocalFree(hMem);
+		//free(hMem);
+		auto ret = HeapFree(GetProcessHeap(), 0,hMem);
+		//auto ret = LocalFree(hMem);
 		if (ret == 0)
 		{
 			return true;
@@ -36,7 +38,9 @@ BOOL 释放内存(void* hMem)
 
 void* 申请内存(size_t dwSize, int dwFlags)
 {
-	return LocalAlloc(dwFlags, dwSize);
+	//return malloc(dwSize);
+	return HeapAlloc(GetProcessHeap(), 8, dwSize);
+	//return LocalAlloc(dwFlags, dwSize);
 }
 
 size_t __get(void* lpAddr, size_t offset)
@@ -117,7 +121,7 @@ void __set_float(void* lpAddr, size_t offset, float value)
 	*(float*)a = value;
 }
 
-BOOL __query(void* lpAddr, size_t offset, size_t value)//OK
+bool __query(void* lpAddr, size_t offset, size_t value)//OK
 {
 	return (*(size_t*)((size_t)lpAddr + offset) & value) == value;
 }
@@ -161,7 +165,7 @@ void 位_取反(size_t* dwValue, size_t index/*0-31 */)//OK
 	*dwValue ^= (size_t)1 << index;
 }
 
-BOOL 位_测试(size_t* dwValue, size_t index/*0-31 */)//OK
+bool 位_测试(size_t* dwValue, size_t index/*0-31 */)//OK
 {
 	return *dwValue >> index & (size_t)1;
 }
@@ -182,14 +186,14 @@ void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar)
 		}
 		else {
 			lpend = (wchar_t*)((size_t)lpend - 2);
-			memmove(lpstart, (wchar_t*)((size_t)lpstart + 2), lpend - lpstart);
+			memmove(lpstart, (wchar_t*)((size_t)lpstart + 2), (size_t)lpend - (size_t)lpstart);
 			fMoved = true;
 		}
 	}
 	if (fMoved)
 	{
 		__set_wchar(lpend, 0, 0);
-		*dwsize = lpend - lpstr;
+		*dwsize = (size_t)lpend - (size_t)lpstr;
 	}
 }
 

@@ -246,7 +246,7 @@ size_t Array_Emum(void* pArray, void* fun, size_t pvParam, bool reverse)
 	auto pData = ((array_s*)pArray)->lpData_;
 	if (reverse)
 	{
-		for (size_t index = nCount; index > 1; index--)
+		for (int index = nCount; index > 1; index--)
 		{
 			if (((ArrayEnumPROC)fun)(pArray, index, (void*)__get(pData, (index - 1) * sizeof(void*)), nType, pvParam))
 			{
@@ -255,7 +255,7 @@ size_t Array_Emum(void* pArray, void* fun, size_t pvParam, bool reverse)
 		}
 	}
 	else {
-		for (size_t index = 0; index < nCount; index++)
+		for (int index = 0; index < nCount; index++)
 		{
 			if (((ArrayEnumPROC)fun)(pArray, index, (void*)__get(pData, (index - 1) * sizeof(void*)), nType,pvParam))
 			{

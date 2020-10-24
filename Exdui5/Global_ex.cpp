@@ -78,7 +78,7 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	ÊÍ·ÅÄÚ´æ(i);
 	int nError = 0;
 	_canvas_init(&nError);
-	int minjor, optional;
+	
 	
 	SetProcessDPIAware();
 	

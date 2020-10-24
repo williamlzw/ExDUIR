@@ -386,7 +386,7 @@ struct ARGB_s
 };
 
 void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
-BOOL 释放内存(void* hMem);
+bool 释放内存(void* hMem);
 void* 申请内存(size_t dwSize, int dwFlags = LMEM_ZEROINIT);
 size_t __get(void* lpAddr, size_t offset);
 int __get_int(void* lpAddr, size_t offset);
@@ -401,7 +401,7 @@ void __set_int(void* lpAddr, size_t offset, int value);
 void __set_char(void* lpAddr, size_t offset, char value);
 void __set_unsignedchar(void* lpAddr, size_t offset, UCHAR value);
 void __set_wchar(void* lpAddr, size_t offset, wchar_t value);
-BOOL __query(void* lpAddr, size_t offset, size_t value);
+bool __query(void* lpAddr, size_t offset, size_t value);
 void __del(void* lpAddr, size_t offset, size_t value);
 void __add(void* lpAddr, size_t offset, size_t value);
 void __addn(void* lpAddr, size_t offset, size_t value);
@@ -409,7 +409,7 @@ void __subn(void* lpAddr, size_t offset, size_t value);
 void 位_添加(size_t* dwValue, size_t index);
 void 位_删除(size_t* dwValue, size_t index);
 void 位_取反(size_t* dwValue, size_t index);
-BOOL 位_测试(size_t* dwValue, size_t index);
+bool 位_测试(size_t* dwValue, size_t index);
 
 template <typename T>
 std::vector<UCHAR> 到字节数组(const T& arg)

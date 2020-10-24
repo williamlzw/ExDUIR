@@ -230,7 +230,7 @@ void IME_Control(HWND hWnd, void* pWnd, bool bEnable)
 
 void Ex_WndCenterFrom(HWND hWnd, HWND hWndFrom, bool bFullScreen)
 {
-	RECT rcWindow, rcParent, rcDest;
+	RECT rcWindow, rcParent;
 	GetWindowRect(hWnd, &rcWindow);
 	if (hWndFrom == 0)
 	{

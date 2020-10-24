@@ -200,10 +200,10 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 											HashTable_Set(pTableProp, (size_t)aryAtomKey[i], (size_t)lpValuea);
 											if (ATOM_PADDING_SHADOW == aryAtomKey[i] && atomClass == ATOM_WINDOW)
 											{
-												std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)pTableProp << ",pData:" << (int)lpValuea << std::endl;
-												size_t retvalue=0;
-												HashTable_Get(pTableProp, ATOM_PADDING_SHADOW, &retvalue);
-												std::cout << retvalue << std::endl;
+												std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (size_t)pTableProp << ",pData:" << (size_t)lpValuea << std::endl;
+												void* retvalue=nullptr;
+												HashTable_Get(pTableProp, ATOM_PADDING_SHADOW, (size_t*)&retvalue);
+												std::cout << (size_t)retvalue << std::endl;
 											}
 										}
 									}
@@ -412,7 +412,7 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 					if (ptableProps != 0)
 					{
 						HashTable_Get(ptableProps, atomProp, (size_t*)&pData);
-						std::cout << "Ex_ThemeGetValuePtr->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)ptableProps << ",pData:" << pData << std::endl;
+						std::cout << "Ex_ThemeGetValuePtr->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (size_t)ptableProps << ",pData:" << pData << std::endl;
 					}
 				}
 			}

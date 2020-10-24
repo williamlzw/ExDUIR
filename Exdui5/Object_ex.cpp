@@ -1911,7 +1911,7 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 					if (pProp != 0)
 					{
 						size_t dwTmp = 0;
-						for (int index = 0; index < g_Li.aryColorsAtom.size(); index++)
+						for (size_t index = 0; index < g_Li.aryColorsAtom.size(); index++)
 						{
 							auto i = g_Li.aryColorsAtom[index];
 							if (HashTable_Get(pProp, i, &dwTmp))
@@ -3025,7 +3025,6 @@ bool Ex_ObjInitPropList(size_t hObj, int nPropCount)
 {
 	void* pObj = nullptr;
 	int nError = 0;
-	size_t dwValue;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 	{
 		int nList = ((obj_s*)pObj)->nPropCount_;
