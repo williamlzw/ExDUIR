@@ -170,7 +170,13 @@ bool _path_addline(size_t hPath, float x1, float y1,float x2,float y2)
 	{
 		if (!((((path_s*)pPath)->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
 		{
-			_scale_n_float((size_t)&x1, 4);
+			if (g_Li.DpiX > 1)
+			{
+				x1 = x1 * g_Li.DpiX;
+				y1 = y1 * g_Li.DpiX;
+				x2 = x2 * g_Li.DpiX;
+				y2 = y2 * g_Li.DpiX;
+			}
 		}
 		void* pSink = ((path_s*)pPath)->pObj_;
 		((ID2D1GeometrySink*)pSink)->AddLine({ x1,y1 });
@@ -188,7 +194,13 @@ bool _path_addarc(size_t hPath, float x1, float y1, float x2, float y2,float rad
 	{
 		if (!((((path_s*)pPath)->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
 		{
-			_scale_n_float((size_t)&x1, 6);
+			if (g_Li.DpiX > 1)
+			{
+				x1 = x1 * g_Li.DpiX;
+				y1 = y1 * g_Li.DpiX;
+				x2 = x2 * g_Li.DpiX;
+				y2 = y2 * g_Li.DpiX;
+			}
 		}
 		void* pSink = ((path_s*)pPath)->pObj_;
 		((ID2D1GeometrySink*)pSink)->AddLine({ x1,y1 });
@@ -212,7 +224,13 @@ bool _path_addrect(size_t hPath, float left, float top, float right, float botto
 	{
 		if (!((((path_s*)pPath)->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
 		{
-			_scale_n_float((size_t)&left, 4);
+			if (g_Li.DpiX > 1)
+			{
+				left = left * g_Li.DpiX;
+				top = top * g_Li.DpiX;
+				right = right * g_Li.DpiX;
+				bottom = bottom * g_Li.DpiX;
+			}
 		}
 		void* pSink = ((path_s*)pPath)->pObj_;
 		((ID2D1GeometrySink*)pSink)->AddLine({ left,top });

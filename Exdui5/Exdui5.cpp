@@ -164,8 +164,11 @@ std::vector<UCHAR> 整数到字节数组(int value)
 	return ret;
 }
 
+
+
 void 测试窗口()
 {
+	
 	BOOL CONSOLE = true;
 	setlocale(LC_CTYPE, "");
 	if (CONSOLE) {
@@ -181,7 +184,6 @@ void 测试窗口()
 	// std::cout <<"注册窗口类结果：" <<aa << std::endl;
 	LPCWSTR title = L"testTitle";
 	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
-	std::cout << "hwnd:" << hWnd << std::endl;
 	if (hWnd != 0)
 	{
 		size_t hExDui = Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);

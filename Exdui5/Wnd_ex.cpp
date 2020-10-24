@@ -383,79 +383,88 @@ bool _wnd_wm_stylechanging(void* pWnd, HWND hWnd, size_t wParam, size_t lParam)
 void _wnd_loadtheme(void* pWnd, HWND hWnd, void* hTheme)
 {
 	int atom = __query(pWnd, offsetof(wnd_s, dwStyle_), EWS_MENU) ? ATOM_MENU : ATOM_WINDOW;
-	void* pData = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_PADDING_SHADOW);
-	if (pData != 0)
+	
+	void* pPADDING_SHADOW = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_PADDING_SHADOW);
+	std::cout << "_wnd_loadtheme->pPADDING_SHADOW:" << pPADDING_SHADOW << std::endl;
+	system("pause");
+	if (pPADDING_SHADOW != 0)
 	{
-		((wnd_s*)pWnd)->padding_shadow_ = pData;
-		((wnd_s*)pWnd)->minWidth_ = Ex_Scale(__get_int(pData, 0) + __get_int(pData, 8));
-		((wnd_s*)pWnd)->minHeight_ = Ex_Scale(__get_int(pData, 4) + __get_int(pData, 8));
+		((wnd_s*)pWnd)->padding_shadow_ = pPADDING_SHADOW;
+		((wnd_s*)pWnd)->minWidth_ = Ex_Scale(__get_int(pPADDING_SHADOW, 0) + __get_int(pPADDING_SHADOW, 8));
+		((wnd_s*)pWnd)->minHeight_ = Ex_Scale(__get_int(pPADDING_SHADOW, 4) + __get_int(pPADDING_SHADOW, 8));
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_SIZE);
-	if (pData != 0)
+	void* pSIZE = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_SIZE);
+	
+	if (pSIZE != 0)
 	{
-		((wnd_s*)pWnd)->size_caption_ = pData;
+		((wnd_s*)pWnd)->size_caption_ = pSIZE;
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_MARGIN);
-	if (pData != 0)
+	void* pMARGIN = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_MARGIN);
+	
+	if (pMARGIN != 0)
 	{
-		((wnd_s*)pWnd)->margin_caption_ = pData;
+		((wnd_s*)pWnd)->margin_caption_ = pMARGIN;
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_RADIUS);
-	if (pData != 0)
+	void* pRADIUS = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_RADIUS);
+	
+	if (pRADIUS != 0)
 	{
-		((wnd_s*)pWnd)->radius_ = __get_int(pData, 0);
+		((wnd_s*)pWnd)->radius_ = __get_int(pRADIUS, 0);
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_BACKGROUND_COLOR);
-	if (pData != 0)
+	
+	void* pBACKGROUND_COLOR = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_BACKGROUND_COLOR);
+	
+	if (pBACKGROUND_COLOR != 0)
 	{
-		((wnd_s*)pWnd)->crBkg_ = __get_int(pData, 0);
+		((wnd_s*)pWnd)->crBkg_ = __get_int(pBACKGROUND_COLOR, 0);
 	}
 	//菜单
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_CLIENT);
-	if (pData != 0)
+	void* pPADDING_CLIENT = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_CLIENT);
+	if (pPADDING_CLIENT != 0)
 	{
-		((wnd_s*)pWnd)->padding_client_ = pData;
+		((wnd_s*)pWnd)->padding_client_ = pPADDING_CLIENT;
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_TEXT);
-	if (pData != 0)
+	void* pPADDING_TEXT = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_TEXT);
+	if (pPADDING_TEXT != 0)
 	{
-		((wnd_s*)pWnd)->padding_text_ = pData;
+		((wnd_s*)pWnd)->padding_text_ = pPADDING_TEXT;
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_SEPARATOR);
-	if (pData != 0)
+	void* pPADDING_SEPARATOR = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_SEPARATOR);
+	if (pPADDING_SEPARATOR != 0)
 	{
-		((wnd_s*)pWnd)->padding_separator_ = pData;
+		((wnd_s*)pWnd)->padding_separator_ = pPADDING_SEPARATOR;
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_SIZE_ITEM);
+	void* pSIZE_ITEM = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_SIZE_ITEM);
 	WORD szItem;
-	if (pData != 0)
+	if (pSIZE_ITEM != 0)
 	{
-		szItem = MAKEWORD(__get_int(pData, 0), __get_int(pData, 4));
+		szItem = 合并短整数(__get_int(pSIZE_ITEM, 0), __get_int(pSIZE_ITEM, 4));
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_SIZE_SEPARATOR);
+	void* pSIZE_SEPARATOR = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_SIZE_SEPARATOR);
 	WORD szSeparator;
-	if (pData != 0)
+	if (pSIZE_SEPARATOR != 0)
 	{
-		szSeparator = MAKEWORD(__get_int(pData, 0), __get_int(pData, 4));
+		szSeparator = 合并短整数(__get_int(pSIZE_SEPARATOR, 0), __get_int(pSIZE_SEPARATOR, 4));
 	}
+	
 	((wnd_s*)pWnd)->szItemSeparator_ = 合并整数(szItem, szSeparator);
 	void* lpFontFamily = nullptr;
 	int dwFontSize = -1;
 	int dwFontStyle = -1;
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_ITEM, ATOM_FONT_SIZE);
-	if (pData != 0)
+	void* pFONT_SIZE = Ex_ThemeGetValuePtr(hTheme, ATOM_ITEM, ATOM_FONT_SIZE);
+	if (pFONT_SIZE != 0)
 	{
-		dwFontSize = __get_int(pData, 0);
+		dwFontSize = __get_int(pFONT_SIZE, 0);
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_ITEM, ATOM_FONT_STYLE);
-	if (pData != 0)
+	void* pFONT_STYLE = Ex_ThemeGetValuePtr(hTheme, ATOM_ITEM, ATOM_FONT_STYLE);
+	if (pFONT_STYLE != 0)
 	{
-		dwFontStyle = __get_int(pData, 0);
+		dwFontStyle = __get_int(pFONT_STYLE, 0);
 	}
-	pData = Ex_ThemeGetValuePtr(hTheme, ATOM_ITEM, ATOM_FONT_FAMILY);
-	if (pData != 0)
+	void* pFONT_FAMILY = Ex_ThemeGetValuePtr(hTheme, ATOM_ITEM, ATOM_FONT_FAMILY);
+	if (pFONT_FAMILY != 0)
 	{
-		lpFontFamily = pData;
+		lpFontFamily = pFONT_FAMILY;
 	}
 	
 	void* pfont = _font_createfromfamily((LPWSTR)lpFontFamily, dwFontSize, dwFontStyle);
@@ -933,9 +942,9 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 		dwFlags = EWF_bLayered;
 	}
 	((wnd_s*)pWnd)->hExDuiParent_ = Ex_DUIFromWindow(hWndParent);
-	std::cout << "hTheme:" << hTheme << std::endl;
+	
 	if (hTheme == 0) hTheme = g_Li.hThemeDefault;
-	std::cout << "hTheme:" << hTheme << std::endl;
+	
 	if ((dwStyle & EWS_BLUR) != 0) ((wnd_s*)pWnd)->fBlur_ = 15;
 	((wnd_s*)pWnd)->dwStyle_ = dwStyle;
 	((wnd_s*)pWnd)->hImc_ = ImmGetContext(hWnd);
@@ -948,6 +957,8 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	((wnd_s*)pWnd)->dwFlags_ = dwFlags | EWF_bLeaveSent;
 	((wnd_s*)pWnd)->pfnMsgProc_ = lpfnMsgProc;
 	((wnd_s*)pWnd)->hTableObjects_ = HashTable_Create(取最近质数(256), NULL);
+
+
 	if ((dwStyle & EWS_MESSAGEBOX) != 0)
 	{
 		((wnd_s*)pWnd)->lpMsgParams_ = (void*)lParam;
@@ -979,7 +990,9 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 		SetClassLongPtrW(hWnd, -26, (tmp1 & ~CS_DROPSHADOW));
 	}
 	int tmp2 = WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_TOPMOST;
+	
 	auto tmp3 = CreateWindowExW(tmp2, (LPCWSTR)g_Li.atomSysShadow, 0, WS_POPUP, 0, 0, 0, 0, hWnd, 0, 0, 0);
+	
 	((wnd_s*)pWnd)->hWndShadow_ = tmp3;
 	int nError = 0;
 	
@@ -1019,9 +1032,11 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	
 	((wnd_s*)pWnd)->canvas_bkg_ = _canvas_createfrompwnd(pWnd, w1, h1, 0, &nError);
 
+
 	if (nError == 0)
 	{
 		//加载主题，并确定客户区
+		
 		_wnd_loadtheme(pWnd, hWnd, hTheme);
 	
 		if ((dwStyle & EWS_MENU) == 0)
@@ -1369,7 +1384,7 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 			auto title = 窗口_取标题(hWnd);
 			lpTitle = (void*)title.data();
 		}
-		
+		std::cout << "_wnd_sysbutton_create->_obj_create_proc" << std::endl;
 		_obj_create_proc(&nError, false, hTheme, pObjCaption, (dwStyle & EWS_NOCAPTIONTOPMOST) != 0 ? 0 : -1, ATOM_SYSBUTTON, lpTitle,
 			EOS_VISIBLE | EWS_TITLE, rcCaption.left, rcCaption.top, rcCaption.right - rcCaption.left, rcCaption.bottom - rcCaption.top, 0, EWS_TITLE, 0, 0, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 		
@@ -1377,7 +1392,13 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 		if (lpPT != 0)
 		{
 			RtlMoveMemory((void*)((size_t)pObjCaption + offsetof(obj_s, t_left_)), lpPT, 16);
-			_scale_n_float(((size_t)pObjCaption + offsetof(obj_s, t_left_)), 4);
+			if (g_Li.DpiX > 1)
+			{
+				((obj_s*)pObjCaption)->t_left_ = ((obj_s*)pObjCaption)->t_left_ * g_Li.DpiX;
+				((obj_s*)pObjCaption)->t_top_ = ((obj_s*)pObjCaption)->t_top_ * g_Li.DpiX;
+				((obj_s*)pObjCaption)->t_right_ = ((obj_s*)pObjCaption)->t_right_ * g_Li.DpiX;
+				((obj_s*)pObjCaption)->t_bottom_ = ((obj_s*)pObjCaption)->t_bottom_ * g_Li.DpiX;
+			}
 		}
 		void* lpCr = Ex_ThemeGetValuePtr(hTheme, ATOM_WINDOW, ATOM_COLOR_NORMAL);
 		if (lpCr != 0)
@@ -1987,7 +2008,13 @@ void _wnd_menu_createitems(HWND hWnd, void* pWnd)
 	if (padding_client != 0)
 	{
 		RtlMoveMemory(&rcPaddingClient, padding_client, 16);
-		_scale_n_int((size_t)&rcPaddingClient, 4);
+		if (g_Li.DpiX > 1)
+		{
+			rcPaddingClient.left = rcPaddingClient.left * g_Li.DpiX;
+			rcPaddingClient.top = rcPaddingClient.top * g_Li.DpiX;
+			rcPaddingClient.right = rcPaddingClient.right * g_Li.DpiX;
+			rcPaddingClient.bottom = rcPaddingClient.bottom * g_Li.DpiX;
+		}
 	}
 
 	void* pParnet = nullptr;
@@ -2055,7 +2082,13 @@ void _wnd_menu_createitems(HWND hWnd, void* pWnd)
 						if (lpPaddingText != 0)
 						{
 							RtlMoveMemory((void*)((size_t)pObj + offsetof(obj_s, t_left_)), lpPaddingText, 16);
-							_scale_n_int((size_t)pObj + offsetof(obj_s, t_left_), 4);
+							if (g_Li.DpiX > 1)
+							{
+								((obj_s*)pObj)->t_left_ = ((obj_s*)pObj)->t_left_ * g_Li.DpiX;
+								((obj_s*)pObj)->t_top_ = ((obj_s*)pObj)->t_top_ * g_Li.DpiX;
+								((obj_s*)pObj)->t_right_ = ((obj_s*)pObj)->t_right_ * g_Li.DpiX;
+								((obj_s*)pObj)->t_bottom_ = ((obj_s*)pObj)->t_bottom_ * g_Li.DpiX;
+							}
 						}
 					}
 					height = height + rcItem.bottom - rcItem.top;

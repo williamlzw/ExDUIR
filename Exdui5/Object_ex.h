@@ -90,10 +90,10 @@ struct obj_s
 	int d_top_;
 	int d_right_;
 	int d_bottom_;
-	int t_left_;//文本偏移矩形
-	int t_top_;
-	int t_right_;
-	int t_bottom_;
+	float t_left_;//文本偏移矩形
+	float t_top_;
+	float t_right_;
+	float t_bottom_;
 	int crBackground_;
 	int crBorder_;
 	int crNormal_;

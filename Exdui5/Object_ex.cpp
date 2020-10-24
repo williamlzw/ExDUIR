@@ -756,7 +756,14 @@ bool Ex_ObjSetPadding(size_t hObj, int nPaddingType, int left, int top, int righ
 		((obj_s*)pObj)->t_top_ = top;
 		((obj_s*)pObj)->t_right_ = right;
 		((obj_s*)pObj)->t_bottom_ = bottom;
-		_scale_n_float((size_t)pObj + offsetof(obj_s, t_left_), 4);
+		if (g_Li.DpiX > 1)
+		{
+			((obj_s*)pObj)->t_left_ = ((obj_s*)pObj)->t_left_ * g_Li.DpiX;
+			((obj_s*)pObj)->t_top_ = ((obj_s*)pObj)->t_top_ * g_Li.DpiX;
+			((obj_s*)pObj)->t_right_ = ((obj_s*)pObj)->t_right_ * g_Li.DpiX;
+			((obj_s*)pObj)->t_bottom_ = ((obj_s*)pObj)->t_bottom_ * g_Li.DpiX;
+		}
+		
 		__del(pObj, offsetof(obj_s, dwFlags_), eof_bAutosized);
 		if (fRedraw)
 		{ 
@@ -1750,9 +1757,9 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 	//初始化其它数据
 	
 	void* pParent = nullptr;
-	std::cout << "_obj_create_proc->error:" << *nError << "," << hParent << std::endl;
+	std::cout << "_obj_create_proc->error1:" << *nError << "," << hParent << std::endl;
 	if (!_handle_validate(hParent, HT_OBJECT, &pParent, nError)) hParent = 0;
-	std::cout << "_obj_create_proc->error:" << *nError <<","<< hParent << std::endl;
+	std::cout << "_obj_create_proc->error2:" << *nError <<","<< hParent << std::endl;
 	((obj_s*)pObj)->objParent_ = hParent;
 	((obj_s*)pObj)->dwStyle_ = dwStyle;
 	((obj_s*)pObj)->dwStyleEx_ = dwStyleEx;
@@ -1851,7 +1858,7 @@ void _obj_create_scrollbar(HWND hWnd, void* pWnd, void* pObj, size_t hObj, void*
 			{
 				style = style | EOS_VISIBLE | EOS_DISABLENOSCROLL;
 			}
-			_obj_create_proc(0, true, hTheme, pSB, EOS_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
+			_obj_create_proc(&nError, true, hTheme, pSB, EOS_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
 			_obj_create_done(hWnd, pWnd, hSb, pSB);
 		}
 	}
@@ -1867,7 +1874,7 @@ void _obj_create_scrollbar(HWND hWnd, void* pWnd, void* pObj, size_t hObj, void*
 			{
 				style = style | EOS_VISIBLE | EOS_DISABLENOSCROLL;
 			}
-			_obj_create_proc(0, true, hTheme, pSB, EOS_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
+			_obj_create_proc(&nError, true, hTheme, pSB, EOS_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
 			_obj_create_done(hWnd, pWnd, hSb, pSB);
 		}
 	}
@@ -1915,7 +1922,13 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 						if (HashTable_Get(pProp, ATOM_PADDING_TEXT, &dwTmp))
 						{
 							RtlMoveMemory((void*)((size_t)pObj + offsetof(obj_s, t_left_)), (void*)dwTmp, 16);
-							_scale_n_float(((size_t)pObj + offsetof(obj_s, t_left_)), 4);
+							if (g_Li.DpiX > 1)
+							{
+								((obj_s*)pObj)->t_left_ = ((obj_s*)pObj)->t_left_ * g_Li.DpiX;
+								((obj_s*)pObj)->t_top_ = ((obj_s*)pObj)->t_top_ * g_Li.DpiX;
+								((obj_s*)pObj)->t_right_ = ((obj_s*)pObj)->t_right_ * g_Li.DpiX;
+								((obj_s*)pObj)->t_bottom_ = ((obj_s*)pObj)->t_bottom_ * g_Li.DpiX;
+							}
 						}
 						size_t pFamily = -1;
 						size_t pSize = -1;
@@ -2734,7 +2747,13 @@ void _obj_setradius(size_t hObj, void* pObj, float topleft, float topright, floa
 		RtlZeroMemory((void*)((size_t)pObj + offsetof(obj_s, radius_topleft_)), 16);
 	}
 	else {
-		_scale_n_float((size_t)&topleft, 4);
+		if (g_Li.DpiX > 1)
+		{
+			topleft = topleft * g_Li.DpiX;
+			topright = topright * g_Li.DpiX;
+			bottomright = bottomright * g_Li.DpiX;
+			bottomleft = bottomleft * g_Li.DpiX;
+		}
 		RECTF rc = { topleft,topright,bottomright,bottomleft };
 		((obj_s*)pObj)->radius_topleft_ = rc.left;
 		((obj_s*)pObj)->radius_topright_ = rc.top;
