@@ -104,12 +104,10 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 		aryAtomKey.resize(32);
 		arylpValue.resize(32);
 		auto iClassStart = wcschr((wchar_t*)retPtr, '[');
-
 		void* lpValue = nullptr;
 		int Value;
 		while (iClassStart != 0)
 		{
-
 			iClassStart = (wchar_t*)((size_t)iClassStart + 2);
 			auto iClassEnd = wcschr(iClassStart, ']');
 			if (iClassEnd == 0)
@@ -119,46 +117,28 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 			else {
 				__set_wchar(iClassEnd, 0, 0);
 				auto iContentStart = (wchar_t*)((size_t)iClassEnd + 2);
-
 				auto iContentEnd = wcschr(iContentStart, '[');
-
 				if (iContentEnd != 0)
 				{
-
 					__set_wchar(iContentEnd, 0, 0);
-
 				}
 				auto dwLen = (size_t)iClassEnd - (size_t)iClassStart;
-				
 				if (dwLen > 0)
 				{
-
 					auto atomClass = 数据_Crc32_Addr(iClassStart, dwLen);
-					
 					int nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
-					
-					/*for (int i = 0; i < nCount; i++)
-					{
-						std::cout << "_theme_fillclasses->nCount:" << aryAtomKey[i] << "," << arylpValue[i] << std::endl;
-					}*/
-
 					if (nCount > 0)
 					{
 						if (atomClass == ATOM_COLOR)
 						{
-							
 							for (int i = 0; i < nCount; i++)
 							{
 								if (_fmt_color((void*)arylpValue[i], &Value))
 								{
-
 									for (int ii = 0; ii < g_Li.aryColorsAtom.size(); ii++)
 									{
-
 										if (g_Li.aryColorsAtom[ii] == aryAtomKey[i])
 										{
-											//std::cout << "填充颜色" << atomClass << std::endl;
-											//system("pause");
 											__set_int(aryCorlors, g_Li.aryColorsOffset[ii] - offsetof(obj_s, crBackground_), Value);
 											break;
 										}
@@ -173,23 +153,16 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 								void* pTableProp = HashTable_Create(取最近质数(nCount), &pfnDefaultFreeData);
 								if (pTableProp != 0)
 								{
-									((classtable_s*)pClass)->tableProps_ = pTableProp;
-									HashTable_Set(pTableClass, atomClass, (size_t)pClass);
 									for (int i = 0; i < nCount; i++)
 									{
-										
 										auto wchar = __get_wchar((void*)arylpValue[i], 0);
-										
 										if (wchar == 34)//"
 										{
 											arylpValue[i] = arylpValue[i] + 2;
 											dwLen = (lstrlenW((LPCWSTR)arylpValue[i]) - 1) * 2;
-											
 											if (aryAtomKey[i] == ATOM_BACKGROUND_IMAGE)
 											{
-												
 												int atomProp = 数据_Crc32_Addr((void*)arylpValue[i], dwLen);
-												
 												for (int ii = 0; ii < atomFiles.size(); ii++)
 												{
 													if (atomProp == atomFiles[ii])
@@ -207,45 +180,45 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 												continue;
 											}
 											else {
-												lpValue = 申请内存(dwLen + 2);
-												RtlMoveMemory(lpValue, (void*)arylpValue[i], dwLen);
-												
-												HashTable_Set(((classtable_s*)pClass)->tableProps_, aryAtomKey[i], (size_t)lpValue);
+												void* lpValueaa = 申请内存(dwLen + 2);
+												RtlMoveMemory(lpValueaa, (void*)arylpValue[i], dwLen);
+												if (1224917892 == aryAtomKey[i] && atomClass == 1405777423)
+												{
+													std::cout << "重复" << std::endl;
+												}
+												HashTable_Set(pTableProp, aryAtomKey[i], (size_t)lpValueaa);
 											}
 										}
 										else {
-											
 											int atomProp = _fmt_getatom((void*)arylpValue[i], &lpValue);
+											void* lpValuea=nullptr;
 											if (atomProp == ATOM_RGB || atomProp == ATOM_RGBA)
 											{
-												lpValue = 申请内存(4);
-												_fmt_color((void*)arylpValue[i], lpValue);
+												lpValuea = 申请内存(4);
+												_fmt_color((void*)arylpValue[i], lpValuea);
 											}
 											else {
-												_fmt_intary_ex((void*)arylpValue[i], &lpValue, 0, true);
+												_fmt_intary_ex((void*)arylpValue[i], &lpValuea, 0, true);
 											}
-											
-											 HashTable_Set(((classtable_s*)pClass)->tableProps_, (size_t)aryAtomKey[i], (size_t)lpValue);
-											 if (1224917892 == aryAtomKey[i] && atomClass == 1405777423)
-											 {
-												 std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)((classtable_s*)pClass)->tableProps_ << ",pData:" << (int)lpValue << std::endl;
-											 }
-											
+											HashTable_Set(pTableProp, (size_t)aryAtomKey[i], (size_t)lpValuea);
+											if (1224917892 == aryAtomKey[i] && atomClass == 1405777423)
+											{
+												std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)((classtable_s*)pClass)->tableProps_ << ",pData:" << (int)lpValuea << std::endl;
+											}
 										}
 									}
+									((classtable_s*)pClass)->tableProps_ = pTableProp;
+									HashTable_Set(pTableClass, atomClass, (size_t)pClass);
 								}
 							}
 						}
 					}
-
 				}
-
 				iClassStart = iContentEnd;
 			}
 		}
 		ret = true;
 	}
-	
 	return ret;
 }
 
@@ -307,19 +280,17 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 					}
 					if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors))
 					{
-						
 						((theme_s*)hTheme)->tableFiles_ = pTableFiles;
 						((theme_s*)hTheme)->loadCount_ = 1;
 						((theme_s*)hTheme)->crcTheme_ = crc;
 						((theme_s*)hTheme)->tableClass_ = pTableClass;
 						((theme_s*)hTheme)->aryColors_ = aryColors;
-						std::cout << pTableClass << std::endl; 
 						std::cout << Ex_ThemeGetValuePtr(hTheme, 1405777423, ATOM_PADDING_SHADOW) << std::endl;
 						system("pause");
 						g_Li.aryThemes.push_back(hTheme);
 						if (bDefault)
 						{
-							
+
 							g_Li.hThemeDefault = hTheme;
 						}
 						return hTheme;
@@ -440,7 +411,6 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 					void* ptableProps = ((classtable_s*)pClass)->tableProps_;
 					if (ptableProps != 0)
 					{
-						std::cout << LocalSize(ptableProps) << std::endl;
 						HashTable_Get(ptableProps, atomProp, (size_t*)&pData);
 						std::cout << "Ex_ThemeGetValuePtr->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)ptableProps << ",pData:" << pData << std::endl;
 					}

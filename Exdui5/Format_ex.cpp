@@ -11,13 +11,11 @@ int _fmt_getatom(void* lpValue, void** lpValueOffset)
 		if (pAtom != 0)
 		{
 			RtlMoveMemory(pAtom, lpValue, len);
-			
 			atomSrc = Ex_Atom((LPCWSTR)pAtom);
 			释放内存(pAtom);
 			*lpValueOffset = (void*)((size_t)*lpValueOffset + 2);
 		}
 	}
-
 	return atomSrc;
 }
 
@@ -33,14 +31,12 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 	aryTmp.resize(nMax);
 	aryTmp[nCount] = _wtoi((wchar_t*)lpValue);
 	lpValue = wcschr((wchar_t*)lpValue, ',');//,
-	
 	size_t dwFlags = 0;
 	if (fPercentFlags)
 	{
 		if (lpValue != 0)
 		{
 			auto wchar=__get_wchar(lpValue, -2);
-			
 			if (wchar == 37)
 			{
 				位_添加(&dwFlags, 0);
@@ -52,11 +48,9 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 		lpValue =(void*)((size_t)lpValue + 2);
 		nCount = nCount + 1;
 		aryTmp[nCount] = _wtoi((wchar_t*)lpValue);
-		
 		if (fPercentFlags)
 		{
 			auto tmp = wcschr((wchar_t*)lpValue, ',');
-			
 			if (tmp != 0)
 			{
 			  auto wchar=__get_wchar(tmp, -2);
@@ -87,7 +81,6 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 	else {
 		nCount = 0;
 	}
-
 	return nCount;
 }
 

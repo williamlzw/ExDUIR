@@ -12,10 +12,6 @@ void* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete)
 			((hashtable_s*)hTable)->pTable = pTable;
 			((hashtable_s*)hTable)->dwBound = dwBound;
 			((hashtable_s*)hTable)->dwThreshold = (size_t)(dwBound * 0.72);
-			//__set(hTable, offsetof(hashtable_s, pfnDelete), (size_t)pfnDelete);
-			//__set(hTable, offsetof(hashtable_s, pTable), (size_t)pTable);
-			//__set(hTable, offsetof(hashtable_s, dwBound), dwBound);
-			//__set(hTable, offsetof(hashtable_s, dwThreshold),(size_t)( dwBound * 0.72));
 		}
 		else {
 			释放内存((HANDLE)hTable);
@@ -32,9 +28,6 @@ BOOL HashTable_Clear(void* hTable)
 		HashTablePROC pfnCbk = ((hashtable_s*)hTable)->pfnDelete;
 		void* pTable =((hashtable_s*)hTable)->pTable;
 		size_t dwBound = ((hashtable_s*)hTable)->dwBound;
-		//HashTablePROC pfnCbk = (HashTablePROC)__get(hTable, offsetof(hashtable_s, pfnDelete));
-		//void* pTable = (void*)__get(hTable, offsetof(hashtable_s, pTable));
-		//size_t dwBound = __get(hTable, offsetof(hashtable_s, dwBound));
 		if (pTable != nullptr) {
 			for (size_t i = 0; i < dwBound; i++) {
 				void* pEntry = (void*)__get(pTable, i * sizeof(void*));
@@ -42,16 +35,13 @@ BOOL HashTable_Clear(void* hTable)
 				{
 					void* tmp = pEntry;
 					pEntry = ((entry_s*)pEntry)->pEntry;
-					//pEntry = (void*)__get(pEntry, offsetof(entry_s, pEntry));
 					if (pfnCbk != 0) {
 						pfnCbk((void*)((entry_s*)tmp)->dwValue);
-						//pfnCbk((void*)__get(tmp, offsetof(entry_s, dwValue)));
 					}
 					释放内存((HANDLE)tmp);
 				}
 			}
 			RtlZeroMemory(pTable, LocalSize(pTable));
-			//memset(pTable, 0, LocalSize(pTable));
 			InterlockedExchange((size_t*)&(((hashtable_s*)hTable)->dwCount), 0);
 			ret = true;
 		}
@@ -67,9 +57,7 @@ BOOL HashTable_Destroy(void* hTable)
 		ret = HashTable_Clear(hTable);
 		if (ret)
 		{
-			
 			释放内存(((hashtable_s*)hTable)->pTable);
-			//释放内存((HANDLE)(__get(hTable, offsetof(hashtable_s, pTable))));
 			释放内存(hTable);
 		}
 	}
@@ -83,11 +71,8 @@ size_t HashTable_GetPos(size_t Key, size_t counts)
 
 void HashTable_ReHash(void* hTable)
 {
-	
 	void* oldTable = ((hashtable_s*)hTable)->pTable;
 	size_t oldBound = ((hashtable_s*)hTable)->dwBound;
-	//void* oldTable = (void*)__get(hTable, offsetof(hashtable_s, pTable));
-	//size_t oldBound = __get(hTable, offsetof(hashtable_s, dwBound));
 	size_t newBound = oldBound * 2 + 1;
 	void* newTable = (void*)LocalAlloc(LMEM_ZEROINIT, newBound * sizeof(void*));
 	for (size_t i = 0; i < oldBound; i++)
@@ -97,20 +82,14 @@ void HashTable_ReHash(void* hTable)
 		{
 			void* oEntry = pEntry;
 			pEntry = ((entry_s*)oEntry)->pEntry;
-			//pEntry = (void*)__get(oEntry, offsetof(entry_s, pEntry));
 			size_t nPos = HashTable_GetPos(((entry_s*)oEntry)->hKey, newBound);
-			//size_t nPos = HashTable_GetPos(__get(oEntry, offsetof(entry_s, hKey)), newBound);
 			__set(newTable, nPos * sizeof(void*), (size_t)oEntry);
 			((entry_s*)oEntry)->pEntry = 0;
-			//__set(oEntry, offsetof(entry_s, pEntry), 0);
 		}
 	}
 	((hashtable_s*)hTable)->pTable = newTable;
 	((hashtable_s*)hTable)->dwBound = newBound;
 	((hashtable_s*)hTable)->dwThreshold = (size_t)(newBound * 0.72);
-	//__set(hTable, offsetof(hashtable_s, pTable), (size_t)newTable);
-	//__set(hTable, offsetof(hashtable_s, dwBound), newBound);
-	//__set(hTable, offsetof(hashtable_s, dwThreshold), (size_t)(newBound * 0.72));
 	释放内存(oldTable);
 }
 
@@ -121,9 +100,7 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 	{
 		size_t nPos = 0;
 		nPos = HashTable_GetPos(hKey, ((hashtable_s*)hTable)->dwBound);
-		//nPos = HashTable_GetPos(hKey, __get(hTable, offsetof(hashtable_s, dwBound)));
 		void* pTable =((hashtable_s*)hTable)->pTable;
-		//void* pTable = (void*)__get(hTable, offsetof(hashtable_s, pTable));
 		void* pEntry = (void*)__get(pTable, nPos * sizeof(void*));
 		while (pEntry != nullptr)
 		{
@@ -138,17 +115,12 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 			HashTable_ReHash(hTable);
 			nPos = HashTable_GetPos(hKey, ((hashtable_s*)hTable)->dwBound);
 			 pTable = ((hashtable_s*)hTable)->pTable;
-			//nPos = HashTable_GetPos(hKey, __get(hTable, offsetof(hashtable_s, dwBound)));
-			//pTable = (void*)__get(hTable, offsetof(hashtable_s, pTable));
 		}
 		pEntry = 申请内存(sizeof(entry_s));
 		((entry_s*)pEntry)->hKey = hKey;
 		((entry_s*)pEntry)->dwValue = dwValue;
-		//__set(pEntry, offsetof(entry_s, hKey), hKey);
-		//__set(pEntry, offsetof(entry_s, dwValue), dwValue);
 		InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry);
 		((entry_s*)pEntry)->pEntry = 0;
-		//__set(pEntry, offsetof(entry_s, pEntry), 0);
 		InterlockedExchangeAdd((size_t*)&(((hashtable_s*)hTable)->dwCount), 1);
 		ret = true;
 	}
