@@ -153,6 +153,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 								void* pTableProp = HashTable_Create(取最近质数(nCount), &pfnDefaultFreeData);
 								if (pTableProp != 0)
 								{
+									
 									for (int i = 0; i < nCount; i++)
 									{
 										auto wchar = __get_wchar((void*)arylpValue[i], 0);
@@ -203,7 +204,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 											HashTable_Set(pTableProp, (size_t)aryAtomKey[i], (size_t)lpValuea);
 											if (1224917892 == aryAtomKey[i] && atomClass == 1405777423)
 											{
-												std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)((classtable_s*)pClass)->tableProps_ << ",pData:" << (int)lpValuea << std::endl;
+												std::cout << "fillclass->pTableClass:" << pTableClass << ",atomClass:" << atomClass << ",pClass:" << pClass << ",ptableProps:" << (int)pTableProp << ",pData:" << (int)lpValuea << std::endl;
 											}
 										}
 									}
