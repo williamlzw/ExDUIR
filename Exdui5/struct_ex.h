@@ -89,7 +89,7 @@ struct EX_EASINGINFO
 	LPVOID		pEasing;			// 0  缓动指针
 	DOUBLE		nProgress;			// 4  进度 0-1
 	DOUBLE		nCurrent;			// 12 当前值
-	int_PTR	pEasingContext;		// 20 缓动参数
+	void*	pEasingContext;		// 20 缓动参数
 	UINT		nTimesSurplus;		// 24 剩余数
 	int		p1;					// 28 参数1
 	int		p2;					// 32 参数2

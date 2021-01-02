@@ -7,7 +7,7 @@ bool _canvas_destroy(size_t hCanvas)
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* bmp = _cv_dx_bmp(pCanvas);
-		((ID2D1Bitmap*)bmp)->Release();
+		((ID2D1Bitmap1*)bmp)->Release();
 		释放内存(pCanvas);
 		_handle_destroy(hCanvas, &nError);
 	}
@@ -24,16 +24,16 @@ void _canvas_recreate(void* pCanvas, int width, int height, int* nError)
 	((canvas_s*)pCanvas)->height_ = height;
 	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
 	
-	//std::cout << "创建_dx_createbitmap:" << *nError<<"," << std::endl;
-	void* pBitmap = _dx_createbitmap(((wnd_s*)pWnd)->context_, width, height, nError);
+
 	
-	//std::cout << "创建_dx_createbitmap:" << *nError << std::endl;
+	void* pBitmap = _dx_createbitmap(((wnd_s*)pWnd)->dx_context_, width, height, nError);
+
 	if (pBitmap != 0)
 	{
 		void* oldBitmap = ((canvas_s*)pCanvas)->pBitmap_;
 		if (oldBitmap != 0)
 		{
-			((ID2D1Bitmap*)oldBitmap)->Release();
+			((ID2D1Bitmap1*)oldBitmap)->Release();
 		}
 		((canvas_s*)pCanvas)->pBitmap_ = pBitmap;
 	}
@@ -45,6 +45,7 @@ bool _canvas_resize(size_t hCanvas, int width, int height)
 	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
+
 		_canvas_recreate(pCanvas, width, height, &nError);
 	}
 	Ex_SetLastError(nError);
@@ -54,7 +55,9 @@ bool _canvas_resize(size_t hCanvas, int width, int height)
 void _canvas_init(int* nError)
 {
 	bool bDX=false;
+
 	//加载GdiplusDLL();
+	
 #if defined(_M_IX86)
 	char iid[16] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 #elif defined(_M_AMD64)
@@ -127,14 +130,15 @@ bool _canvas_begindraw(size_t hCanvas)
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
-		void* pContext = ((wnd_s*)pWnd)->context_;
+		void* pContext = ((wnd_s*)pWnd)->dx_context_;
 		((canvas_s*)pCanvas)->pContext_ = pContext;
-		((canvas_s*)pCanvas)->pGdiInterop_ = ((wnd_s*)pWnd)->gdiinterop_;
-		if (((wnd_s*)pWnd)->counts_ == 0)
+		((canvas_s*)pCanvas)->pGdiInterop_ = ((wnd_s*)pWnd)->dx_gdiinterop_;
+		if (((wnd_s*)pWnd)->dx_counts_ == 0)
 		{
 			_dx_begindraw(pContext);
 		}
-		InterlockedExchangeAdd((size_t*)pContext, (size_t)_cv_dx_bmp(pCanvas));
+		InterlockedExchangeAdd((size_t*)(&(((wnd_s*)pWnd)->dx_counts_)),1);
+		
 		_dx_settarget(pContext, _cv_dx_bmp(pCanvas));
 	}
 	Ex_SetLastError(nError);
@@ -148,13 +152,10 @@ bool _canvas_enddraw(size_t hCanvas)
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
-		void* pContext = ((wnd_s*)pWnd)->context_;
+		void* pContext = ((wnd_s*)pWnd)->dx_context_;
+
 		_dx_settarget(pContext, 0);
-		/*if (InterlockedExchangeAdd((size_t*)(__get(pCanvas, offsetof(canvas_s, pWnd_)) + offsetof(wnd_s, counts_)), -1) == 1)
-		{
-			_dx_enddraw(pContext);
-		}*/
-		if (InterlockedExchangeAdd((size_t*)(((size_t)((canvas_s*)pCanvas)->pWnd_ + offsetof(wnd_s, counts_))), -1) == 1)
+		if (InterlockedExchangeAdd((size_t*)(((size_t)((canvas_s*)pCanvas)->pWnd_ + offsetof(wnd_s, dx_counts_))), -1) == 1)
 		{
 			_dx_enddraw(pContext);
 		}
@@ -169,6 +170,7 @@ bool _canvas_clear(size_t hCanvas, int Color)
 	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
+		
 		_dx_clear(_cv_context(pCanvas), Color);
 	}
 	Ex_SetLastError(nError);
@@ -625,7 +627,9 @@ bool _canvas_bitblt(size_t hCanvas, size_t sCanvas, int dstLeft, int dstTop, int
 		if (_handle_validate(sCanvas, HT_CANVAS, &psCanvas, &nError))
 		{
 			_dx_flush(_cv_context(phCanvas));
-			_dx_bmp_copyfrom(_cv_dx_bmp(phCanvas), _cv_dx_bmp(psCanvas), dstLeft, dstTop, srcLeft, srcTop, srcLeft + dstRight - dstLeft, srcTop + dstBottom - dstTop);
+			
+			_dx_bmp_copyfrom(&((canvas_s*)phCanvas)->pBitmap_, _cv_dx_bmp(psCanvas), dstLeft, dstTop, srcLeft, srcTop, srcLeft + dstRight - dstLeft, srcTop + dstBottom - dstTop);
+		
 		}
 
 	}
@@ -700,7 +704,7 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 				pEllipsis->Release();
 			}
 		}
-		DWRITE_TEXT_METRICS Metrics = {};
+		DWRITE_TEXT_METRICS Metrics = {0};
 		((IDWriteTextLayout*)pLayout)->GetMetrics(&Metrics);
 		 iWidth = Metrics.width;
 		 iHeight = Metrics.height;
@@ -868,6 +872,7 @@ size_t _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, in
 			
 			((canvas_s*)pCanvas)->dwFlags_ = dwFlags;
 			((canvas_s*)pCanvas)->pWnd_ = pWnd;
+			
 			_canvas_recreate(pCanvas, width, height,nError);
 			
 		}
@@ -894,7 +899,7 @@ void* _canvas_getdc_ex(void* pCanvas, int* nError)
 {
 	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
 	void* hDC = nullptr;
-	if (((wnd_s*)pWnd)->counts_ > 0)
+	if (((wnd_s*)pWnd)->dx_counts_ > 0)
 	{
 		void* pGdiInterop = _cv_dx_gdiinterop(pCanvas);
 		*nError=((ID2D1GdiInteropRenderTarget*)pGdiInterop)->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, (HDC*)&hDC);
@@ -918,7 +923,7 @@ void* _canvas_getdc(size_t hCanvas)
 void _canvas_releasedc_ex(void* pCanvas, int* nError)
 {
 	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
-	if (((wnd_s*)pWnd)->counts_ > 0)
+	if (((wnd_s*)pWnd)->dx_counts_ > 0)
 	{
 		void* pgdiinterop = _cv_dx_gdiinterop(pCanvas);
 		*nError=((ID2D1GdiInteropRenderTarget*)pgdiinterop)->ReleaseDC(0);

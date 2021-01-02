@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <Windows.h>
+
 #define IDI_ICON1 129
 
 
@@ -434,6 +435,7 @@ UINT Êý¾Ý_Crc32_Addr(void* buf, UINT nLength);
 void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset);
 
 void SetDefaultIcon();
+std::string GetErrorMessage(DWORD error);
 void* copytstr(LPCWSTR lptstr, int len);
 
 HRESULT IUnknown_QueryInterface(void* thisptr, REFIID iid, void** ppvObject);

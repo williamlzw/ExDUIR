@@ -493,6 +493,25 @@ void SetDefaultIcon()
 	}
 }
 
+std::string GetErrorMessage(DWORD error)
+{
+	CHAR szBuf[256];
+	LPVOID lpMsgBuf;
+	FormatMessageA(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		error,
+		0,
+		(LPSTR)&lpMsgBuf,
+		256, NULL);
+	std::string ret = "";
+	sprintf_s(szBuf, "%s", (char*)lpMsgBuf);
+	ret.append(szBuf);
+	return ret;
+}
+
 void* copytstr(LPCWSTR lptstr, int len)
 {
 	auto addr = …Í«Îƒ⁄¥Ê(len + 2);

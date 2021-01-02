@@ -209,7 +209,7 @@ size_t Array_GetMember(void* pArray, size_t index)
 {
 	if (Array_IsLegal(pArray) == false) return false;
 	auto pvItem = Array_SetEvent(pArray, 数组事件_获取成员, index);
-	//std::cout << "1:" <<  pvItem << std::endl;
+
 	if (pvItem == 0) pvItem = __get(((array_s*)pArray)->lpData_, (index - 1) * sizeof(void*));
 	return pvItem;
 }

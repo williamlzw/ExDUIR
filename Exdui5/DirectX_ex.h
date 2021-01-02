@@ -5,8 +5,9 @@
 //using namespace Gdiplus;
 //#pragma comment(lib, "Gdiplus.lib")
 #include <d3d11.h>
-#include <d2d1.h>
 #include <d2d1_1.h>
+#include <d2d1.h>
+
 #include <dwrite.h>
 
 #pragma comment(lib, "d3d11.lib")
@@ -30,7 +31,7 @@ void _dx_begindraw(void* pDeviceContext);
 int _dx_enddraw(void* pDeviceContext);
 void _dx_flush(void* pDeviceContext);
 void _dx_clear(void* pDeviceContext, int Color);
-bool _dx_createeffect(void* pDeviceContext, IID peffectId, void* peffect, int* nError);
+bool _dx_createeffect(void* pDeviceContext, IID peffectId, void** peffect, int* nError);
 void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation,  void* lprc, int* nError);
 void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle, int* nError);
 void _dx_cliprect(void* pDeviceContext, float left, float top, float right, float bottom);
@@ -39,5 +40,5 @@ void _dx_drawbitmaprect(void* pDeviceContext, void* pBitmap, float dstLeft, floa
 void _dx_drawbitmaprectrect(void* pDeviceContext, void* pBitmap, float dstLeft, float dstTop, float dstRight, float dstBottom, float srcLeft, float srcTop, float srcRight, float srcBottom, int dwAlpha);
 void _dx_drawimage(void* pDeviceContext, void* pimage, float left, float top, int mode);
 void _dx_drawimage_ex(void* pDeviceContext, void* pimage, float dstLeft, float dstTop, float srcLeft, float srcTop, float srcRight, float srcBottom, int mode);
-void _dx_bmp_copyfrom(void* pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom);
+void _dx_bmp_copyfrom(void** pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom);
 

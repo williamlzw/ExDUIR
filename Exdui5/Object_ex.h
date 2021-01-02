@@ -90,10 +90,10 @@ struct obj_s
 	int d_top_;
 	int d_right_;
 	int d_bottom_;
-	float t_left_;//文本偏移矩形
-	float t_top_;
-	float t_right_;
-	float t_bottom_;
+	int t_left_;//文本偏移矩形
+	int t_top_;
+	int t_right_;
+	int t_bottom_;
 	int crBackground_;
 	int crBorder_;
 	int crNormal_;
@@ -127,11 +127,11 @@ struct obj_s
 
 	size_t hPath_Window_;
 	size_t hPath_Client_;
-	float radius_unit_;
-	float radius_topleft_;
-	float radius_topright_;
-	float radius_bottomright_;
-	float radius_bottomleft_;
+	int radius_unit_;
+	int radius_topleft_;
+	int radius_topright_;
+	int radius_bottomright_;
+	int radius_bottomleft_;
 	int nPropCount_;
 	size_t objNext_;
 	size_t objPrev_;

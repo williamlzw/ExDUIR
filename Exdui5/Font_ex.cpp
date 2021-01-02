@@ -51,7 +51,7 @@ void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyl
 			size_t i = lstrlenW(lpwzFontFace);
 			if (i > 0)
 			{
-				RtlMoveMemory((void*)((font_s*)lpLogFont)->font_.lfFaceName, lpwzFontFace, i * 2i64 + 2i64);
+				RtlMoveMemory((void*)((font_s*)lpLogFont)->font_.lfFaceName, lpwzFontFace, i * 2 + 2);
 			}
 		}
 		if (dwFontSize != -1)
@@ -64,12 +64,13 @@ void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyl
 		}
 		if (dwFontStyle != -1)
 		{
-			((LOGFONT*)lpLogFont)->lfHeight = ((dwFontStyle & 粗体) == 0 ? 400 : 700);
-			((LOGFONT*)lpLogFont)->lfWidth = ((dwFontStyle & 斜体) == 0 ? 0 : 1);
-			((LOGFONT*)lpLogFont)->lfEscapement = ((dwFontStyle & 下划线) == 0 ? 0 : 1);
-			((LOGFONT*)lpLogFont)->lfOrientation = ((dwFontStyle & 删除线) == 0 ? 0 : 1);
+			((LOGFONT*)lpLogFont)->lfWeight = ((dwFontStyle & 粗体) == 0 ? 400 : 700);
+			((LOGFONT*)lpLogFont)->lfItalic = ((dwFontStyle & 斜体) == 0 ? 0 : 1);
+			((LOGFONT*)lpLogFont)->lfUnderline = ((dwFontStyle & 下划线) == 0 ? 0 : 1);
+			((LOGFONT*)lpLogFont)->lfStrikeOut = ((dwFontStyle & 删除线) == 0 ? 0 : 1);
 		}
 		ret = _font_createfromlogfont_ex(lpLogFont, flag);
+		
 		释放内存(lpLogFont);
 	}
 	return ret;
@@ -84,8 +85,10 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 	size_t hFont = 数据_Crc32_Addr((UCHAR*)lpLogfont, sizeof(LOGFONT));
 	void* pFont = nullptr;
 	size_t pFonta = 0;
+	
 	if (HashTable_Get(g_Li.hTableFont, hFont, &pFonta))
 	{
+		
 		pFont = (void*)pFonta;
 		if (pFont != 0)
 		{
@@ -95,23 +98,22 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 	else
 	{
 		pFont = 申请内存(sizeof(font_s));
-		if (pFont != nullptr)
+		if (pFont != 0)
 		{
 			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
 			((font_s*)pFont)->dwFlags_ = flags;
 			((font_s*)pFont)->dwCount_ = 1;
-			//__set(pFont, offsetof(font_s, dwFlags_), flags);
-			//__set(pFont, offsetof(font_s, dwCount_), 1);
-			RtlMoveMemory(&(((font_s*)pFont)->font_.lfHeight), lpLogfont, sizeof(LOGFONT));
-			auto lfItalic = ((font_s*)pFont)->font_.lfItalic;
+			((font_s*)pFont)->font_.lfHeight = ((LOGFONT*)lpLogfont)->lfHeight;
+			
+			UINT lfItalic = ((font_s*)pFont)->font_.lfItalic;
+			
 			if (lfItalic != 0)
 			{
 				lfItalic = 2;
 			}
 			((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextFormat(((font_s*)pFont)->font_.lfFaceName, NULL,
 				(DWRITE_FONT_WEIGHT)((font_s*)pFont)->font_.lfWeight, (DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
-				(float)((font_s*)pFont)->font_.lfHeight, (WCHAR*)g_Ri.pLocalName, (IDWriteTextFormat**)&(((font_s*)pFont)->pObj_));
-
+				(FLOAT)(-((font_s*)pFont)->font_.lfHeight), (WCHAR*)g_Ri.pLocalName, (IDWriteTextFormat**)&(((font_s*)pFont)->pObj_));
 		}
 		else
 		{

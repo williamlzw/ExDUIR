@@ -168,7 +168,7 @@ std::vector<UCHAR> 整数到字节数组(int value)
 
 void 测试窗口()
 {
-	
+	auto a= LODWORD(3);
 	BOOL CONSOLE = true;
 	setlocale(LC_CTYPE, "");
 	if (CONSOLE) {
@@ -176,19 +176,19 @@ void 测试窗口()
 		FILE* fp = freopen("CONOUT$", "w", stdout);
 	}
 	std::vector<char> data;
-	读入文件(L"C:/Users/Administrator/Downloads/Ex_DirectUI4.1/Default.ext", &data);
-
+	读入文件(L"F:/Exdui5.0/Exdui5/Exdui5/Default.ext", &data);
+	std::cout << offsetof(D2D1_BRUSH_PROPERTIES, transform.dx) << std::endl;
 	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE, 0, 0, data.data(), data.size(), 0, 0);
 	LPCWSTR classa = L"Ex_DirectUI";
 	auto aa = Ex_WndRegisterClass(classa, 0, 0, 0);
-	// std::cout <<"注册窗口类结果：" <<aa << std::endl;
+	std::cout <<"注册窗口类结果：" <<aa<<",GetLastError:"<< GetErrorMessage(GetLastError()) << std::endl;
 	LPCWSTR title = L"testTitle";
 	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
 	if (hWnd != 0)
 	{
 		size_t hExDui = Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);
 		std::cout << "hExDui:" << hExDui << std::endl;
-		Ex_DUISetLong(hExDui, EWL_CRBKG, -16744448);//-97900239
+		Ex_DUISetLong(hExDui, EWL_CRBKG, -100630528);//-97900239
 		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
 	}
 	Ex_WndMsgLoop();
@@ -209,7 +209,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev
 	//测试数组();
 	//测试RC4();
 	//测试引用(&b);
+	//sizeof(MMRESULT);
+	
 	测试窗口();
+	std::vector<float> aa;
 	//std::wcout.imbue(std::locale("chs"));
 	//sizeof(USHORT)
 	//auto a= 到字节数组((USHORT)0xb948);
@@ -238,4 +241,5 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev
 	//}
 	return 0;
 }
+
 

@@ -1693,7 +1693,9 @@ size_t _obj_create_init(HWND hWnd, void* pWnd, int atomClass, void* pfnMsgProc, 
 
 void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dwStyleEx, int atomClass, void* lpszName, int dwStyle, int x, int y, int width, int height, size_t hParent, int nID, int atomName, size_t lParam, int dwTextFormat)
 {
+	
 	size_t hObj = ((obj_s*)pObj)->hObj_;
+	
 	void* pWnd = ((obj_s*)pObj)->pwnd_;
 	
 	HWND hWnd = ((wnd_s*)pWnd)->hWnd_;
@@ -1704,6 +1706,7 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 	{
 		dwStyle = ((class_s*)pCls)->dwStyle_;
 	}
+	
 	if (dwStyleEx == -1)
 	{
 		dwStyleEx = ((class_s*)pCls)->dwStyleEx_;
@@ -1712,6 +1715,7 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 	{
 		dwTextFormat = ((class_s*)pCls)->dwTextFormat_;
 	}
+	
 	if (hTheme == 0)
 	{
 		hTheme = ((wnd_s*)pWnd)->hTheme_;
@@ -1722,6 +1726,7 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 			hTheme = ((wnd_s*)pWnd)->hTheme_;
 		}
 	}
+	
 	RECT rcObj;
 	rcObj.left = x;
 	rcObj.top = y;
@@ -1749,17 +1754,19 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 	if (__query(pCls, offsetof(class_s, dwFlags_), ECF_D2D_GDI_COMPATIBLE))  flags = CVF_GDI_COMPATIBLE;
 	if (((class_s*)pCls)->atomName_ == ATOM_PAGE)
 	{
+
 		((obj_s*)pObj)->canvas_obj_ = _canvas_createfrompwnd(pWnd, 1, 1, flags, nError);
 	}
 	else {
+
 		((obj_s*)pObj)->canvas_obj_ = _canvas_createfrompwnd(pWnd, rcObj.right - rcObj.left, rcObj.bottom - rcObj.top, flags, nError);
 	}
 	//初始化其它数据
 	
 	void* pParent = nullptr;
-	std::cout << "_obj_create_proc->error1:" << *nError << "," << hParent << std::endl;
+	
 	if (!_handle_validate(hParent, HT_OBJECT, &pParent, nError)) hParent = 0;
-	std::cout << "_obj_create_proc->error2:" << *nError <<","<< hParent << std::endl;
+	
 	((obj_s*)pObj)->objParent_ = hParent;
 	((obj_s*)pObj)->dwStyle_ = dwStyle;
 	((obj_s*)pObj)->dwStyleEx_ = dwStyleEx;
@@ -1789,8 +1796,11 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 	//初始化滚动条
 	_obj_create_scrollbar(hWnd, pWnd, pObj, hObj, hTheme);
 	//消息分发,只提供参考,不提供修改
+	
 	_obj_baseproc(hWnd, hObj, pObj, WM_NCCREATE, 0, (size_t)&dwStyleEx);
+	
 	_obj_baseproc(hWnd, hObj, pObj, WM_CREATE, 0, (size_t)&dwStyleEx);
+	
 	_obj_theme_load_color_font(pWnd, pObj, hTheme);
 	
 	if ((dwStyleEx & EOS_EX_DRAGDROP) != 0)
@@ -1896,6 +1906,7 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 	{
 		RtlMoveMemory((void*)((size_t)pObj + offsetof(obj_s, crBackground_)), pColors, sizeof(colors_s));
 	}
+	
 	if (hTheme != 0)
 	{
 		auto pTheme = ((theme_s*)hTheme)->tableClass_;
@@ -1946,6 +1957,7 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 						{
 							
 							((obj_s*)pObj)->hFont_ = _font_createfromfamily((LPWSTR)pFamily, pSize, pStyle);
+							
 							return;
 						}
 					}
@@ -1953,7 +1965,9 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 			}
 		}
 	}
+	
 	((obj_s*)pObj)->hFont_ = _font_create();
+	
 }
 
 size_t Ex_ObjCreateEx(int dwStyleEx, void* lptszClassName, void* lptszObjTitle, int dwStyle, int x, int y, int width, int height, size_t hParent, int nID, int dwTextFormat, size_t lParam, void* hTheme, void* lpfnMsgProc)
@@ -1995,6 +2009,7 @@ size_t Ex_ObjCreateEx(int dwStyleEx, void* lptszClassName, void* lptszObjTitle, 
 			if (hObj != 0)
 			{
 				_obj_create_proc(&nError, true, hTheme, pObj, dwStyleEx, atom, lptszObjTitle, dwStyle, x, y, width, height, hParent, nID, 0, lParam, dwTextFormat);
+				
 				_obj_create_done(hWnd, pWnd, hObj, pObj);
 			}
 		}

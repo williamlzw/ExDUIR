@@ -15,6 +15,7 @@ void Thread_DeleteCriticalSection(void* addr)
 
 void Thread_EnterCriticalSection(void* addr)
 {
+	std::cout <<"Thread_EnterCriticalSection:"<< LocalSize(addr) << std::endl;
 	EnterCriticalSection((LPCRITICAL_SECTION)addr);
 }
 

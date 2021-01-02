@@ -34,7 +34,7 @@ bool _dx_init(int* nError)
 						{
 							std::wstring a;
 							a.resize(260);
-							int reta=GetUserDefaultLocaleName((LPWSTR)a.c_str(), 260);
+							int reta=GetUserDefaultLocaleName((LPWSTR)a.c_str(), 260) * 2;
 							if (reta > 0)
 							{
 								g_Ri.pLocalName = ÉêÇëÄÚ´æ(reta);
@@ -73,24 +73,33 @@ void* _dx_get_gdiInterop(void* pDeviceContext)
 
 void* _dx_createbitmap(void* pDeviceContext, int width, int height, int* nError)
 {
-	g_Ri.bp_bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
 	D2D1_SIZE_U size ;
 	size.width = width;
 	size.height = height;
-	D2D1_BITMAP_PROPERTIES pro ;
+	D2D1_BITMAP_PROPERTIES1 pro ;
 	pro.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	pro.pixelFormat.alphaMode= D2D1_ALPHA_MODE_PREMULTIPLIED;
 	pro.dpiX = 96;
 	pro.dpiY = 96;
-	//pro.bitmapOptions= D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
-	void* pBitmap= nullptr;
-	*nError=((ID2D1DeviceContext*)pDeviceContext)->CreateBitmap(size,nullptr,0,pro,(ID2D1Bitmap**)&pBitmap) ;
-	return pBitmap;
+	pro.colorContext = NULL;
+	pro.bitmapOptions= D2D1_BITMAP_OPTIONS_TARGET;
+	
+	ID2D1Bitmap1* pBitmap= nullptr;
+	
+	*nError=((ID2D1DeviceContext*)pDeviceContext)->CreateBitmap(size,NULL,0,pro,(ID2D1Bitmap1**)&pBitmap) ;
+	
+	return (void*)pBitmap;
 }
 
 void _dx_settarget(void* pDeviceContext, void* pBitmap)
 {
-	((ID2D1DeviceContext*)pDeviceContext)->SetTarget((ID2D1Bitmap*)pBitmap);
+	if (pBitmap != 0)
+	{
+		
+		((ID2D1DeviceContext*)pDeviceContext)->SetTarget((ID2D1Image*)(ID2D1Bitmap1*)pBitmap);
+		std::cout << "_dx_settarget:" <<GetErrorMessage(GetLastError())<< std::endl;
+	}
+	
 }
 
 void _dx_getsize(void* pBitmap, float* width, float* height)
@@ -129,19 +138,20 @@ void _dx_flush(void* pDeviceContext)
 
 void _dx_clear(void* pDeviceContext,int Color)
 {
-	D2D1_COLOR_F color = {};
-	color.r = (float)(Color & 0XFF);
-	color.g = (float)((Color >> 8) & 0xFF);
-	color.b = (float)((Color >> 16) & 0xFF);
-	color.a = (float)((Color >> 24) & 0xFF);
-	((ID2D1DeviceContext*)pDeviceContext)->Clear(color);
+	D2D1_COLOR_F color_f = {0};
+	color_f.r = (float)(Color & 0XFF);
+	color_f.g = (float)((Color >> 8) & 0xFF);
+	color_f.b = (float)((Color >> 16) & 0xFF);
+	color_f.a = (float)((Color >> 24) & 0xFF);
+	((ID2D1DeviceContext*)pDeviceContext)->Clear(color_f);
+	
 }
 
-bool _dx_createeffect(void* pDeviceContext, IID peffectId, void* peffect, int* nError)
+bool _dx_createeffect(void* pDeviceContext, IID peffectId, void** peffect, int* nError)
 {
 	ID2D1Effect* ret=nullptr;
 	*nError=((ID2D1DeviceContext*)pDeviceContext)->CreateEffect(peffectId, &ret);
-	peffect = (void*)ret;
+	*peffect = (void*)ret;
 	return nError == 0;
 }
 
@@ -150,8 +160,9 @@ void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation,  void* lprc
 	_dx_flush(pDeviceContext);
 	if (g_Ri.pEffectGaussianBlur == 0)
 	{
-		_dx_createeffect(pDeviceContext, CLSID_D2D1GaussianBlur, g_Ri.pEffectGaussianBlur, nError);
+		_dx_createeffect(pDeviceContext, CLSID_D2D1GaussianBlur, &g_Ri.pEffectGaussianBlur, nError);
 		int hard = 1;
+		UINT32 datasize = 4;
 		*nError=((ID2D1Effect*)g_Ri.pEffectGaussianBlur)->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_SOFT);
 		
 	}
@@ -169,13 +180,15 @@ void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation,  void* lprc
 			size.width = (float)((RECT*)lprc)->right- ptOffset.x;
 			size.height = (float)((RECT*)lprc)->bottom - ptOffset.y;
 		}
+
 		void* pCopyBitmap = _dx_createbitmap(pDeviceContext, (int)size.width, (int)size.height, nError);
 		if (*nError == 0)
 		{
-			((ID2D1Bitmap*)pCopyBitmap)->CopyFromBitmap(NULL, (ID2D1Bitmap*)pBitmap, (D2D_RECT_U*)lprc);
+			((ID2D1Bitmap1*)pCopyBitmap)->CopyFromBitmap(NULL, (ID2D1Bitmap*)pBitmap, (D2D_RECT_U*)lprc);
 			((ID2D1Effect*)g_Ri.pEffectGaussianBlur)->SetInput(0, (ID2D1Bitmap*)pCopyBitmap, true);
+			
 			float fScale = fDeviation / 2;
-			*nError = ((ID2D1Effect*)g_Ri.pEffectGaussianBlur)->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, 5.0f);
+			*nError = ((ID2D1Effect*)g_Ri.pEffectGaussianBlur)->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, (BYTE*)&fScale,4);
 			if (*nError == 0)
 			{
 				ID2D1Image* output=nullptr;
@@ -186,7 +199,7 @@ void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation,  void* lprc
 					output->Release();
 				}
 			}
-			((ID2D1Bitmap*)pCopyBitmap)->Release();
+			((ID2D1Bitmap1*)pCopyBitmap)->Release();
 		}
 	}
 }
@@ -252,9 +265,9 @@ void _dx_drawimage_ex(void* pDeviceContext, void* pimage, float dstLeft, float d
 	((ID2D1DeviceContext*)pDeviceContext)->DrawImage((ID2D1Image*)pimage, point, rect, D2D1_INTERPOLATION_MODE_LINEAR, (D2D1_COMPOSITE_MODE)mode);
 }
 
-void _dx_bmp_copyfrom(void* pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom)
+void _dx_bmp_copyfrom(void** pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom)
 {
-	D2D1_POINT_2U point = {};
+	D2D1_POINT_2U point = {0};
 	point.x = dX;
 	point.y = dY;
 	D2D1_RECT_U rect = {};
@@ -262,7 +275,8 @@ void _dx_bmp_copyfrom(void* pDestBitmap, void* pSrcBitmap, int dX, int dY, int s
 	rect.top = srcTop;
 	rect.right = srcRight;
 	rect.bottom = srcBottom;
-	((ID2D1Bitmap*)pDestBitmap)->CopyFromBitmap(&point,(ID2D1Bitmap*) pSrcBitmap, &rect);
+	auto ret=((ID2D1Bitmap1*)*pDestBitmap)->CopyFromBitmap(&point,(ID2D1Bitmap1*) pSrcBitmap, &rect);
+	std::cout << "_dx_bmp_copyfrom:" << ret << std::endl;
 }
 
 void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle,  int* nError)
@@ -270,15 +284,16 @@ void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle,  int* nError)
 	_dx_flush(pContext);
 	if (g_Ri.pEffectHueRotation == 0)
 	{
-		_dx_createeffect(pContext, CLSID_D2D1HueRotation, g_Ri.pEffectHueRotation, nError);
+		_dx_createeffect(pContext, CLSID_D2D1HueRotation, &g_Ri.pEffectHueRotation, nError);
 	}
 	if (*nError == 0)
 	{
 		D2D1_SIZE_F szf =((ID2D1Bitmap*)pBitmap)->GetSize();
+
 		void* pCopyBitmap=_dx_createbitmap(pContext, szf.width, szf.height, nError);
 		if (*nError == 0)
 		{
-			((ID2D1Bitmap*)pCopyBitmap)->CopyFromBitmap(NULL,(ID2D1Bitmap*) pBitmap, NULL);
+			((ID2D1Bitmap1*)pCopyBitmap)->CopyFromBitmap(NULL,(ID2D1Bitmap*) pBitmap, NULL);
 			((ID2D1Effect*)g_Ri.pEffectHueRotation)->SetInput(0, (ID2D1Bitmap*)pCopyBitmap, 1);
 			*nError=((ID2D1Effect*)g_Ri.pEffectHueRotation)->SetValue(0,  (BYTE*)&fAngle, 4);
 			if (*nError == 0)
@@ -291,7 +306,7 @@ void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle,  int* nError)
 					output->Release();
 				}
 			}
-			((ID2D1Bitmap*)pCopyBitmap)->Release();
+			((ID2D1Bitmap1*)pCopyBitmap)->Release();
 		}
 	}
 }

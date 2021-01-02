@@ -14,7 +14,10 @@ void* _brush_create(int argb)
 int _brush_destroy(void* hBrush)
 {
 	int nError = 0;
-	nError = ((ID2D1SolidColorBrush*)hBrush)->Release();
+	if (hBrush != 0)
+	{
+		nError = ((ID2D1SolidColorBrush*)hBrush)->Release();
+	}
 	return nError;
 }
 
@@ -42,9 +45,17 @@ void* _brush_createfromimg(size_t hImg)
 		{
 			D2D1_BRUSH_PROPERTIES pro = {};
 			D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
-			pro.opacity = 1;
-			sizeof(D2D1_BRUSH_PROPERTIES);
-			nError = ((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->CreateBitmapBrush(pBitmap, &hBrush);
+		
+			pro2.extendModeX = D2D1_EXTEND_MODE_WRAP;
+			pro2.extendModeY = D2D1_EXTEND_MODE_WRAP;
+			pro2.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+	
+			//pro.transform._11 = 1065353216;
+			//pro.transform._21 = 1065353216;
+			//pro.transform._31 = 1065353216;
+			//pro.transform.dx
+			//nError = ((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->CreateBitmapBrush(pBitmap, &hBrush);
+			nError = ((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->CreateBitmapBrush(pBitmap, pro2, &hBrush);
 		}
 		pBitmap->Release();
 	}
@@ -59,7 +70,12 @@ void* _brush_createfromcanvas(size_t hCanvas)
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
 		void* pContext=_cv_context(pCanvas);
-		nError = ((ID2D1DeviceContext*)pContext)->CreateBitmapBrush((ID2D1Bitmap*)_cv_dx_bmp(pCanvas), &hBrush);
+		D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
+
+		pro2.extendModeX = D2D1_EXTEND_MODE_WRAP;
+		pro2.extendModeY = D2D1_EXTEND_MODE_WRAP;
+		pro2.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+		nError = ((ID2D1DeviceContext*)pContext)->CreateBitmapBrush((ID2D1Bitmap*)_cv_dx_bmp(pCanvas), pro2, &hBrush);
 	}
 	return (void*)hBrush;
 }

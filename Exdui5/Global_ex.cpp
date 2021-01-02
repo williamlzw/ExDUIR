@@ -113,7 +113,7 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	//_layout_init();
 	g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
 
-	//g_Li.hHookMsgBox = SetWindowsHookEx(WH_CBT, (HOOKPROC)_hook_proc, g_Li.hInstance, GetCurrentThreadId());
+	g_Li.hHookMsgBox = SetWindowsHookEx(WH_CBT, (HOOKPROC)_hook_proc, 0, GetCurrentThreadId());
 	Ex_SetLastError(nError);
 	return nError==0;
 }
