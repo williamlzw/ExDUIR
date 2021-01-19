@@ -365,11 +365,11 @@ struct RENDERINFO
 	void* pEffectGaussianBlur;
 	void* pEffectHueRotation;
 
-	int bp_alphaMode;
 	int bp_format;
-	int bp_bitmapOptions;
+	int bp_alphaMode;
 	float bp_dpix;
 	float bp_dpiy;
+	int bp_bitmapOptions;
 	int bp_colorContext;
 	
 	

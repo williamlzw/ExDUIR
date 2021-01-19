@@ -71,22 +71,28 @@ void* _dx_get_gdiInterop(void* pDeviceContext)
 	return pGDIInterface;
 }
 
-void* _dx_createbitmap(void* pDeviceContext, int width, int height, int* nError)
+void* _dx_createbitmap(void* pDeviceContext, int width, int height, bool fGDI, int* nError)
 {
 	D2D1_SIZE_U size ;
 	size.width = width;
 	size.height = height;
 	D2D1_BITMAP_PROPERTIES1 pro ;
-	pro.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	pro.pixelFormat.alphaMode= D2D1_ALPHA_MODE_PREMULTIPLIED;
-	pro.dpiX = 96;
-	pro.dpiY = 96;
-	pro.colorContext = NULL;
-	pro.bitmapOptions= D2D1_BITMAP_OPTIONS_TARGET;
+	CopyMemory(&pro, &g_Ri.bp_format, sizeof(pro));
+	//pro.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	//pro.pixelFormat.alphaMode= D2D1_ALPHA_MODE_PREMULTIPLIED;
+	//pro.dpiX = 96;
+	//pro.dpiY = 96;
+	//pro.colorContext = NULL;
+	if (fGDI) {
+		pro.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
+	}
+	else {
+		pro.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
+	}
 	
 	ID2D1Bitmap1* pBitmap= nullptr;
 	
-	*nError=((ID2D1DeviceContext*)pDeviceContext)->CreateBitmap(size,NULL,0,pro,(ID2D1Bitmap1**)&pBitmap) ;
+	*nError=((ID2D1DeviceContext*)pDeviceContext)->CreateBitmap(size,NULL,0, pro,(ID2D1Bitmap1**)&pBitmap) ;
 	
 	return (void*)pBitmap;
 }
@@ -181,7 +187,7 @@ void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation,  void* lprc
 			size.height = (float)((RECT*)lprc)->bottom - ptOffset.y;
 		}
 
-		void* pCopyBitmap = _dx_createbitmap(pDeviceContext, (int)size.width, (int)size.height, nError);
+		void* pCopyBitmap = _dx_createbitmap(pDeviceContext, (int)size.width, (int)size.height, false, nError);
 		if (*nError == 0)
 		{
 			((ID2D1Bitmap1*)pCopyBitmap)->CopyFromBitmap(NULL, (ID2D1Bitmap*)pBitmap, (D2D_RECT_U*)lprc);
@@ -290,7 +296,7 @@ void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle,  int* nError)
 	{
 		D2D1_SIZE_F szf =((ID2D1Bitmap*)pBitmap)->GetSize();
 
-		void* pCopyBitmap=_dx_createbitmap(pContext, szf.width, szf.height, nError);
+		void* pCopyBitmap=_dx_createbitmap(pContext, szf.width, szf.height, false, nError);
 		if (*nError == 0)
 		{
 			((ID2D1Bitmap1*)pCopyBitmap)->CopyFromBitmap(NULL,(ID2D1Bitmap*) pBitmap, NULL);

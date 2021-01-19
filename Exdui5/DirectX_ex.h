@@ -23,7 +23,7 @@
 bool _dx_init(int* nError);
 void _dx_uninit();
 void* _dx_get_gdiInterop(void* prt);
-void* _dx_createbitmap(void* pDeviceContext, int width, int height, int* nError);
+void* _dx_createbitmap(void* pDeviceContext, int width, int height, bool fGDI, int* nError);
 void _dx_settarget(void* pDeviceContext, void* pBitmap);
 void _dx_getsize(void* pBitmap, float* width, float* height);
 void* _dx_gettarget(void* pDeviceContext);

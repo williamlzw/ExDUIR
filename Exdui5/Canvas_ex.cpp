@@ -23,10 +23,10 @@ void _canvas_recreate(void* pCanvas, int width, int height, int* nError)
 	((canvas_s*)pCanvas)->width_ = width;
 	((canvas_s*)pCanvas)->height_ = height;
 	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
-	
+	// TODO: gdi support
 
-	
-	void* pBitmap = _dx_createbitmap(((wnd_s*)pWnd)->dx_context_, width, height, nError);
+	bool fGDI = __query(pCanvas, offsetof(canvas_s, dwFlags_), CVF_GDI_COMPATIBLE) or Flag_Query(EXGF_RENDER_METHOD_D2D_GDI_COMPATIBLE);
+	void* pBitmap = _dx_createbitmap(((wnd_s*)pWnd)->dx_context_, width, height, fGDI, nError);
 
 	if (pBitmap != 0)
 	{
