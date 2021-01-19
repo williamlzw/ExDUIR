@@ -182,11 +182,16 @@ bool 窗口_取屏幕矩形(HWND hWnd, RECT* rcMonitor, RECT* rcDesk)
 	auto hMonitor = MonitorFromWindow(hWnd, 2);
 	if (hMonitor != 0)
 	{
-		MONITORINFO info = {};
+		MONITORINFO info = { 0 };
+		info.cbSize = 40;
 		if (GetMonitorInfoW(hMonitor, &info))
 		{
-			*rcMonitor = info.rcMonitor;
-			*rcDesk = info.rcWork;
+			if (rcMonitor) {
+				*rcMonitor = info.rcMonitor;
+			}
+			if (rcDesk) {
+				*rcDesk = info.rcWork;
+			}
 			ret = true;
 		}
 	}
@@ -249,7 +254,7 @@ void Ex_WndCenterFrom(HWND hWnd, HWND hWndFrom, bool bFullScreen)
 			窗口_取屏幕矩形(hWnd, &rcParent);
 		}
 		else {
-			窗口_取屏幕矩形(hWnd, {}, &rcParent);
+			窗口_取屏幕矩形(hWnd, NULL, &rcParent);
 		}
 	}
 	else {
