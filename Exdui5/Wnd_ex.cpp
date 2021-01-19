@@ -91,7 +91,7 @@ bool 窗口_添加风格(HWND hWnd, int dwStyle, bool bExStyle)
 	auto ret = GetWindowLongPtrW(hWnd, bExStyle ? GWL_EXSTYLE : GWL_STYLE);
 	if ((ret & dwStyle) == 0)
 	{
-		SetWindowLongPtrW(hWnd, bExStyle ? GWL_EXSTYLE : GWL_STYLE, ret & dwStyle);
+		SetWindowLongPtrW(hWnd, bExStyle ? GWL_EXSTYLE : GWL_STYLE, ret | dwStyle);
 		return true;
 	}
 	return false;
