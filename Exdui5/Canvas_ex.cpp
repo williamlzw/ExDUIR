@@ -647,7 +647,7 @@ bool _canvas_alphablend(size_t hCanvas, size_t sCanvas, float dstLeft, float dst
 		if (_handle_validate(sCanvas, HT_CANVAS, &psCanvas, &nError))
 		{
 
-			_dx_drawbitmaprectrect(_cv_dx_bmp(phCanvas), _cv_dx_bmp(psCanvas), dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
+			_dx_drawbitmaprectrect(_cv_context(phCanvas), _cv_dx_bmp(psCanvas), dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
 		}
 
 	}
