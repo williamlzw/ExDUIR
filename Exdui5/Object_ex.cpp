@@ -287,7 +287,7 @@ int _obj_wm_nchittest(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wPara
 		}
 		if (fHit)
 		{
-			void* pfnClsProc = ((obj_s*)pObj)->pfnSubClass_;
+			void* pfnClsProc = ((obj_s*)pObj)->pfnClsProc_;
 			ret = ((ClsPROC)pfnClsProc)(hWnd, hObj, uMsg, wParam, lParam, pObj);
 		}
 	}
