@@ -22,9 +22,9 @@ int _fmt_getatom(void* lpValue, void** lpValueOffset)
 int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 {
 	auto dwLen = lstrlenW((LPCWSTR)lpValue) + 1;
-	dwLen = dwLen * 2;
-	_wstr_deletechar(lpValue, &dwLen , 32);//É¾³ý¿Õ¸ñ
-	dwLen = dwLen / 2;
+	auto dwLenTemp = dwLen * 2;
+	_wstr_deletechar(lpValue, &dwLenTemp, 32);//É¾³ý¿Õ¸ñ
+
 	if (nMax == 0) nMax = dwLen;
 	int nCount = 0;
 	std::vector<int> aryTmp;
@@ -72,11 +72,11 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 			lpValue = wcschr((wchar_t*)lpValue, ',');
 		}
 	}
-	*lpAry = ÉêÇëÄÚ´æ((nCount + 1) * 4);
+	*lpAry = ÉêÇëÄÚ´æ((nCount + 2) * 4);
 	if (*lpAry != 0)
 	{
-		RtlMoveMemory(*lpAry, aryTmp.data(), nCount * 4);
-		__set_int(*lpAry, nCount * 4, dwFlags);
+		RtlMoveMemory(*lpAry, aryTmp.data(), (nCount + 1) * 4);
+		__set_int(*lpAry, (nCount + 1) * 4, dwFlags);
 	}
 	else {
 		nCount = 0;
