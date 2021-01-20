@@ -14,10 +14,10 @@ LRESULT _hook_oncreate(int code, HWND hWnd, size_t lParam)
 	auto lpcs = ((CBT_CREATEWND*)(void*)lParam)->lpcs;
 	auto atomClass = (int)(lpcs->lpszClass);
 	auto hParent = lpcs->hwndParent;
-	
+
 	if (atomClass == 32770)
 	{
-		
+
 		auto hExDui = Ex_DUIFromWindow(hParent);
 		void* pWnd = nullptr;
 		int nError = 0;
@@ -69,7 +69,7 @@ size_t _menu_proc(void* pData, int uMsg, size_t wParam, size_t lParam)
 
 void _menu_init(HWND hWnd)
 {
-	void* hMenu =(void*) SendMessageW(hWnd, 481, 0, 0);
+	void* hMenu = (void*)SendMessageW(hWnd, 481, 0, 0);
 	if (hMenu != 0)
 	{
 		size_t hExDui;
@@ -86,11 +86,11 @@ void _menu_init(HWND hWnd)
 			void* pfnCallback = nullptr;
 			if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s)))
 			{
-				if (__query(lpMenuParams, offsetof(menu_s,dwFlags_), EMNF_NOSHADOW))
+				if (__query(lpMenuParams, offsetof(menu_s, dwFlags_), EMNF_NOSHADOW))
 				{
 					dwStyle = dwStyle | EWS_NOSHADOW;
 				}
-				 pfnCallback = ((menu_s*)lpMenuParams)->pfnCallback_;
+				pfnCallback = ((menu_s*)lpMenuParams)->pfnCallback_;
 			}
 			size_t hExDui = Ex_DUIBindWindowEx(hWnd, ((wnd_s*)pWnd)->hTheme_, dwStyle, (size_t)pWnd, pfnCallback);
 			if (_handle_validate(hExDui, HT_DUI, &pWnd, &nError))
@@ -130,8 +130,8 @@ void _msgbox_drawinfo(void* pWnd, size_t cvBkg)
 			int r, b;
 			if (pValue != 0)
 			{
-				 r = l + Ex_Scale(__get_int(pValue, 8) - __get_int(pValue, 0));
-				 b = t + Ex_Scale(__get_int(pValue, 12) - __get_int(pValue, 4));
+				r = l + Ex_Scale(__get_int(pValue, 8) - __get_int(pValue, 0));
+				b = t + Ex_Scale(__get_int(pValue, 12) - __get_int(pValue, 4));
 				Ex_ThemeDrawControlEx(hTheme, cvBkg, l, t, r, b, ATOM_MESSAGEBOX, Ex_Atom(value.data()), 0, 0, 0, 0, 255);
 			}
 			l = r + Ex_Scale(15);
@@ -142,7 +142,7 @@ void _msgbox_drawinfo(void* pWnd, size_t cvBkg)
 			void* hFont = _font_create();
 			if (hFont != 0)
 			{
-				_canvas_drawtext(cvBkg, hFont, -16777216,(LPCWSTR) pText, -1, DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, l, t, w - Ex_Scale(15), h);
+				_canvas_drawtext(cvBkg, hFont, -16777216, (LPCWSTR)pText, -1, DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, l, t, w - Ex_Scale(15), h);
 				_font_destroy(hFont);
 			}
 		}
@@ -155,17 +155,17 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 	if (pMsg == 0) return;
 	auto lpwzCheckbox = ((mbp_s*)pMsg)->lpCheckBox_;
 	auto lpCheckboxChecked = ((mbp_s*)pMsg)->lpCheckBoxChecked_;
-	auto uType=((mbp_s*)pMsg)->uType_;
+	auto uType = ((mbp_s*)pMsg)->uType_;
 	auto pfnCallback = ((mbp_s*)pMsg)->lpfnNotifyCallback_;
 	auto hTheme = ((wnd_s*)pWnd)->hTheme_;
 	auto hWndChild = GetWindow(hWnd, GW_CHILD);
 	RECT rcText;
 	std::vector<std::wstring> aryText;
 	std::vector<size_t> aryID;
-	size_t iDef=0;
-	while (hWndChild!=0)
+	size_t iDef = 0;
+	while (hWndChild != 0)
 	{
-		auto i=GetWindowLongPtrW(hWndChild, -12);
+		auto i = GetWindowLongPtrW(hWndChild, -12);
 		if (i == 65535)//内容
 		{
 			GetWindowRect(hWndChild, &rcText);
@@ -177,7 +177,7 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 		else {
 			aryText.push_back(窗口_取标题(hWndChild));
 			aryID.push_back(i);
-			if (窗口_查询风格(hWndChild, BS_DEFPUSHBUTTON,false))  iDef = i;
+			if (窗口_查询风格(hWndChild, BS_DEFPUSHBUTTON, false))  iDef = i;
 		}
 		DestroyWindow(hWndChild);
 		hWndChild = GetWindow(hWnd, GW_CHILD);
@@ -193,17 +193,17 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 	{
 		if (lpwzCheckbox != 0)
 		{
-			
+
 			if (_canvas_begindraw(hCanvas))
 			{
-				
+
 				_canvas_calctextsize(hCanvas, hFont, (LPCWSTR)lpwzCheckbox, -1, DT_LEFT | DT_SINGLELINE, 0, 0, 0, &widthCheckbox, 0);
 				_canvas_enddraw(hCanvas);
 			}
 			widthCheckbox = widthCheckbox + 16 + 8;
 			maxWidth = maxWidth + Ex_Scale(widthCheckbox);
 		}
-		
+
 		if (_canvas_begindraw(hCanvas))
 		{
 			_canvas_calctextsize(hCanvas, hFont, (LPCWSTR)((mbp_s*)pMsg)->lpText_, -1, DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, 0, width, rcText.bottom - rcText.top, &w, &h);
@@ -234,8 +234,8 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 	RECT rcWindow;
 	GetWindowRect(hWnd, &rcWindow);
 	int left = rcWindow.right - rcWindow.left;
-	int top= rcWindow.bottom - rcWindow.top;
-	MoveWindow(hWnd, rcWindow.left -(maxWidth - left) / 2, rcWindow.top -(maxHeight - top) /2, maxWidth, maxHeight, 0);
+	int top = rcWindow.bottom - rcWindow.top;
+	MoveWindow(hWnd, rcWindow.left - (maxWidth - left) / 2, rcWindow.top - (maxHeight - top) / 2, maxWidth, maxHeight, 0);
 	if (pfnCallback != 0)
 	{
 		_wnd_dispatch_notify(hWnd, pWnd, ((wnd_s*)pWnd)->hexdui_, -1, NM_INTDLG, 0, 0, 0);
@@ -255,7 +255,7 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 		hObj = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, &nError);
 		if (hObj != 0)
 		{
-			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_BUTTON, aryText.data(), -1, left, top, 80, 24, 0,~aryID[i], 0, aryID[i], -1);
+			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_BUTTON, aryText.data(), -1, left, top, 80, 24, 0, ~aryID[i], 0, aryID[i], -1);
 			__add(pObj, offsetof(obj_s, dwFlags_), eof_bMsgBoxControl);
 			_obj_create_done(hWnd, pWnd, hObj, pObj);
 			if (aryID[i] == iDef) _obj_setfocus(hWnd, pWnd, hObj, pObj, true);

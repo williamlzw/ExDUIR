@@ -16,17 +16,17 @@ bool _canvas_destroy(size_t hCanvas)
 
 void _canvas_recreate(void* pCanvas, int width, int height, int* nError)
 {
-	
+
 	if (width == ((canvas_s*)pCanvas)->width_ && height == ((canvas_s*)pCanvas)->height_) return;
 	if (width <= 0) width = 1;
 	if (height <= 0) height = 1;
 	((canvas_s*)pCanvas)->width_ = width;
 	((canvas_s*)pCanvas)->height_ = height;
 	void* pWnd = ((canvas_s*)pCanvas)->pWnd_;
-	
+	// TODO: gdi support
 
-	
-	void* pBitmap = _dx_createbitmap(((wnd_s*)pWnd)->dx_context_, width, height, nError);
+	bool fGDI = __query(pCanvas, offsetof(canvas_s, dwFlags_), CVF_GDI_COMPATIBLE) or Flag_Query(EXGF_RENDER_METHOD_D2D_GDI_COMPATIBLE);
+	void* pBitmap = _dx_createbitmap(((wnd_s*)pWnd)->dx_context_, width, height, fGDI, nError);
 
 	if (pBitmap != 0)
 	{
@@ -54,10 +54,10 @@ bool _canvas_resize(size_t hCanvas, int width, int height)
 
 void _canvas_init(int* nError)
 {
-	bool bDX=false;
+	bool bDX = false;
 
 	//¼ÓÔØGdiplusDLL();
-	
+
 #if defined(_M_IX86)
 	char iid[16] = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 #elif defined(_M_AMD64)
@@ -68,14 +68,14 @@ void _canvas_init(int* nError)
 	*nError = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, &g_Ri.pWICFactory);
 	if (*nError == 0)
 	{
-		bDX=_dx_init(nError);
+		bDX = _dx_init(nError);
 	}
 	if (!bDX)
 	{
 		_dx_uninit();
 		Flag_Del(EXGF_RENDER_METHOD_D2D);
 	}
-	g_Li.pfnUpdateLayeredWindowIndirect =(UpdateLayeredWindowIndirectPROC) GetProcAddr(L"user32.dll", "UpdateLayeredWindowIndirect");
+	g_Li.pfnUpdateLayeredWindowIndirect = (UpdateLayeredWindowIndirectPROC)GetProcAddr(L"user32.dll", "UpdateLayeredWindowIndirect");
 	nError = 0;
 }
 
@@ -89,7 +89,7 @@ void _canvas_uninit()
 
 void* _cv_dx_bmp(void* pCanvas)
 {
-	
+
 	return ((canvas_s*)pCanvas)->pBitmap_;
 }
 
@@ -137,8 +137,8 @@ bool _canvas_begindraw(size_t hCanvas)
 		{
 			_dx_begindraw(pContext);
 		}
-		InterlockedExchangeAdd((size_t*)(&(((wnd_s*)pWnd)->dx_counts_)),1);
-		
+		InterlockedExchangeAdd((size_t*)(&(((wnd_s*)pWnd)->dx_counts_)), 1);
+
 		_dx_settarget(pContext, _cv_dx_bmp(pCanvas));
 	}
 	Ex_SetLastError(nError);
@@ -170,7 +170,7 @@ bool _canvas_clear(size_t hCanvas, int Color)
 	int nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
-		
+
 		_dx_clear(_cv_context(pCanvas), Color);
 	}
 	Ex_SetLastError(nError);
@@ -257,7 +257,7 @@ bool _canvas_fillroundedrect(size_t hCanvas, void* hBrush, float left, float top
 	return nError == 0;
 }
 
-bool _canvas_drawpath(size_t hCanvas, size_t hPath, void* hBrush,float strokeWidth,void* strokeStyle)
+bool _canvas_drawpath(size_t hCanvas, size_t hPath, void* hBrush, float strokeWidth, void* strokeStyle)
 {
 	void* pCanvas = nullptr;
 	void* pPath = nullptr;
@@ -556,9 +556,9 @@ bool _canvas_drawimagefrombkgimg(size_t hCanvas, void* lpBkgImg)
 	bool ret = false;
 	if (lpBkgImg != 0)
 	{
-			ret = _canvas_drawimagefrombkgimg_ex(hCanvas, ((bkgimg_s*)lpBkgImg)->hImage_, ((bkgimg_s*)lpBkgImg)->x_,
-				((bkgimg_s*)lpBkgImg)->y_, ((bkgimg_s*)lpBkgImg)->dwRepeat_, ((bkgimg_s*)lpBkgImg)->lpGrid_,
-				((bkgimg_s*)lpBkgImg)->dwFlags_, ((bkgimg_s*)lpBkgImg)->dwAlpha_, NULL, NULL);
+		ret = _canvas_drawimagefrombkgimg_ex(hCanvas, ((bkgimg_s*)lpBkgImg)->hImage_, ((bkgimg_s*)lpBkgImg)->x_,
+			((bkgimg_s*)lpBkgImg)->y_, ((bkgimg_s*)lpBkgImg)->dwRepeat_, ((bkgimg_s*)lpBkgImg)->lpGrid_,
+			((bkgimg_s*)lpBkgImg)->dwFlags_, ((bkgimg_s*)lpBkgImg)->dwAlpha_, NULL, NULL);
 	}
 	return ret;
 }
@@ -571,7 +571,7 @@ bool _canvas_cliprect(size_t hCanvas, int left, int top, int right, int bottom)
 	{
 		/*if (__query(pCanvas, offsetof(canvas_s, dwFlags_), CVF_CLIPED))
 		{
-			
+
 			_dx_resetclip(_cv_context(pCanvas));
 		}*/
 		if ((((canvas_s*)pCanvas)->dwFlags_ & CVF_CLIPED) == CVF_CLIPED)
@@ -627,9 +627,9 @@ bool _canvas_bitblt(size_t hCanvas, size_t sCanvas, int dstLeft, int dstTop, int
 		if (_handle_validate(sCanvas, HT_CANVAS, &psCanvas, &nError))
 		{
 			_dx_flush(_cv_context(phCanvas));
-			
+
 			_dx_bmp_copyfrom(&((canvas_s*)phCanvas)->pBitmap_, _cv_dx_bmp(psCanvas), dstLeft, dstTop, srcLeft, srcTop, srcLeft + dstRight - dstLeft, srcTop + dstBottom - dstTop);
-		
+
 		}
 
 	}
@@ -647,7 +647,7 @@ bool _canvas_alphablend(size_t hCanvas, size_t sCanvas, float dstLeft, float dst
 		if (_handle_validate(sCanvas, HT_CANVAS, &psCanvas, &nError))
 		{
 
-			_dx_drawbitmaprectrect(_cv_dx_bmp(phCanvas), _cv_dx_bmp(psCanvas), dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
+			_dx_drawbitmaprectrect(_cv_context(phCanvas), _cv_dx_bmp(psCanvas), dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
 		}
 
 	}
@@ -668,7 +668,7 @@ bool _canvas_getsize(size_t hCanvas, int* width, int* height)
 	return nError == 0;
 }
 
-bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** pLayout, int* nError)
+bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** ppLayout, int* nError)
 {
 	void* pObj = ((font_s*)pFont)->pObj_;
 	if (layoutWidth < 0) layoutWidth = 0;
@@ -676,7 +676,8 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 	int nPreFix;
 	auto lpwzTextFix = prefixstring(lpwzText, dwDTFormat, &nPreFix);
 	float iWidth, iHeight;
-	*nError=((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextLayout((WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, (IDWriteTextFormat*)pObj, layoutWidth, layoutHeight, (IDWriteTextLayout**)&pLayout);
+	*nError = ((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextLayout((WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, (IDWriteTextFormat*)pObj, layoutWidth, layoutHeight, (IDWriteTextLayout**)ppLayout);
+	void * pLayout = *ppLayout;
 	if (*nError == 0)
 	{
 		auto byte = ((font_s*)pFont)->font_.lfUnderline;
@@ -685,7 +686,7 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 			DWRITE_TEXT_RANGE range = { 0,dwLen };
 			((IDWriteTextLayout*)pLayout)->SetUnderline(byte, range);
 		}
-		 byte = ((font_s*)pFont)->font_.lfStrikeOut;
+		byte = ((font_s*)pFont)->font_.lfStrikeOut;
 		if (byte != 0)
 		{
 			DWRITE_TEXT_RANGE range = { 0,dwLen };
@@ -695,7 +696,7 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 		if ((dwDTFormat & DT_PATH_ELLIPSIS) != 0 || (dwDTFormat & DT_WORD_ELLIPSIS) != 0)
 		{
 			IDWriteInlineObject* pEllipsis = nullptr;
-			*nError=((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateEllipsisTrimmingSign((IDWriteTextFormat*)pLayout, &pEllipsis);
+			*nError = ((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateEllipsisTrimmingSign((IDWriteTextFormat*)pLayout, &pEllipsis);
 			if (*nError == 0)
 			{
 				DWRITE_TRIMMING tmp1;
@@ -704,10 +705,10 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 				pEllipsis->Release();
 			}
 		}
-		DWRITE_TEXT_METRICS Metrics = {0};
+		DWRITE_TEXT_METRICS Metrics = { 0 };
 		((IDWriteTextLayout*)pLayout)->GetMetrics(&Metrics);
-		 iWidth = Metrics.width;
-		 iHeight = Metrics.height;
+		iWidth = Metrics.width;
+		iHeight = Metrics.height;
 		DWRITE_TEXT_ALIGNMENT ALIGNMENT;
 		if ((dwDTFormat & DT_CENTER) != 0)
 		{
@@ -736,7 +737,7 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 		((IDWriteTextLayout*)pLayout)->SetParagraphAlignment(PALIGNMENT);
 		if (nPreFix != 0)
 		{
-			DWRITE_TEXT_RANGE rangea = { nPreFix /2,1};
+			DWRITE_TEXT_RANGE rangea = { nPreFix / 2,1 };
 			((IDWriteTextLayout*)pLayout)->SetUnderline(true, rangea);
 		}
 	}
@@ -768,7 +769,7 @@ bool _canvas_calctextsize(size_t hCanvas, void* hFont, LPCWSTR lpwzText, int dwL
 			HashTable_Get(g_Li.hTableFont, (size_t)hFont, &pFont);
 			if (pFont != 0)
 			{
-				void* pLayout=nullptr;
+				void* pLayout = nullptr;
 				_canvas_calctextsize_ex(pCanvas, (void*)pFont, lpwzText, dwLen, dwDTFormat, lParam, layoutWidth, layoutHeight, lpWidth, lpHeight, &pLayout, &nError);
 				if (pLayout != 0)
 				{
@@ -788,7 +789,7 @@ void _canvas_dx_drawtext_buffer(void* pCanvas, void* pLayout, int crText, float 
 	if (hBrush != 0)
 	{
 		void* pContext = _cv_context(pCanvas);
-		D2D1_POINT_2F point = {left,top};
+		D2D1_POINT_2F point = { left,top };
 		((ID2D1DeviceContext*)pContext)->DrawTextLayout(point, (IDWriteTextLayout*)pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
 		_brush_destroy(hBrush);
 	}
@@ -807,7 +808,7 @@ bool _canvas_drawtextex(size_t hCanvas, void* hFont, int crText, LPCWSTR lpwzTex
 	{
 		if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 		{
-			size_t pFont=0;
+			size_t pFont = 0;
 			if (HashTable_Get(g_Li.hTableFont, (size_t)hFont, &pFont))
 			{
 				if (bottom > top && right > left)
@@ -864,17 +865,17 @@ size_t _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, in
 	size_t hCanvas = 0;
 	if (pCanvas != 0)
 	{
-		
+
 		hCanvas = _handle_create(HT_CANVAS, pCanvas, nError);
-		
-		if (hCanvas != 0 )
+
+		if (hCanvas != 0)
 		{
-			
+
 			((canvas_s*)pCanvas)->dwFlags_ = dwFlags;
 			((canvas_s*)pCanvas)->pWnd_ = pWnd;
-			
-			_canvas_recreate(pCanvas, width, height,nError);
-			
+
+			_canvas_recreate(pCanvas, width, height, nError);
+
 		}
 	}
 	else {
@@ -882,7 +883,7 @@ size_t _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, in
 	}
 	if (*nError != 0)
 	{
-		
+
 		if (pCanvas != 0)
 		{
 			ÊÍ·ÅÄÚ´æ(pCanvas);
@@ -902,7 +903,7 @@ void* _canvas_getdc_ex(void* pCanvas, int* nError)
 	if (((wnd_s*)pWnd)->dx_counts_ > 0)
 	{
 		void* pGdiInterop = _cv_dx_gdiinterop(pCanvas);
-		*nError=((ID2D1GdiInteropRenderTarget*)pGdiInterop)->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, (HDC*)&hDC);
+		*nError = ((ID2D1GdiInteropRenderTarget*)pGdiInterop)->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, (HDC*)&hDC);
 	}
 	return hDC;
 }
@@ -914,7 +915,7 @@ void* _canvas_getdc(size_t hCanvas)
 	void* ret = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
-		ret=_canvas_getdc_ex(pCanvas, &nError);
+		ret = _canvas_getdc_ex(pCanvas, &nError);
 	}
 	Ex_SetLastError(nError);
 	return ret;
@@ -926,7 +927,7 @@ void _canvas_releasedc_ex(void* pCanvas, int* nError)
 	if (((wnd_s*)pWnd)->dx_counts_ > 0)
 	{
 		void* pgdiinterop = _cv_dx_gdiinterop(pCanvas);
-		*nError=((ID2D1GdiInteropRenderTarget*)pgdiinterop)->ReleaseDC(0);
+		*nError = ((ID2D1GdiInteropRenderTarget*)pgdiinterop)->ReleaseDC(0);
 	}
 }
 

@@ -23,7 +23,7 @@
 bool _dx_init(int* nError);
 void _dx_uninit();
 void* _dx_get_gdiInterop(void* prt);
-void* _dx_createbitmap(void* pDeviceContext, int width, int height, int* nError);
+void* _dx_createbitmap(void* pDeviceContext, int width, int height, bool fGDI, int* nError);
 void _dx_settarget(void* pDeviceContext, void* pBitmap);
 void _dx_getsize(void* pBitmap, float* width, float* height);
 void* _dx_gettarget(void* pDeviceContext);
@@ -32,7 +32,7 @@ int _dx_enddraw(void* pDeviceContext);
 void _dx_flush(void* pDeviceContext);
 void _dx_clear(void* pDeviceContext, int Color);
 bool _dx_createeffect(void* pDeviceContext, IID peffectId, void** peffect, int* nError);
-void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation,  void* lprc, int* nError);
+void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation, void* lprc, int* nError);
 void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle, int* nError);
 void _dx_cliprect(void* pDeviceContext, float left, float top, float right, float bottom);
 void _dx_resetclip(void* pDeviceContext);
@@ -42,3 +42,4 @@ void _dx_drawimage(void* pDeviceContext, void* pimage, float left, float top, in
 void _dx_drawimage_ex(void* pDeviceContext, void* pimage, float dstLeft, float dstTop, float srcLeft, float srcTop, float srcRight, float srcBottom, int mode);
 void _dx_bmp_copyfrom(void** pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom);
 
+void ARGB2ColorF(int argb, D2D1_COLOR_F *color);

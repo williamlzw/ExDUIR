@@ -53,7 +53,7 @@ struct bkgimg_s
 	int dwAlpha_;
 };
 
-size_t _wic_create(int width, int height,GUID pFormat, int* nError);
+size_t _wic_create(int width, int height, GUID pFormat, int* nError);
 void* _wic_selectactiveframe(void* pDecoder, int nIndex, int* nError);
 size_t _wic_init_from_decoder(void* pDecoder, int* nError);
 void _wic_savetobin(void* pBitmap, void* lpBin, size_t* len, int* nError);

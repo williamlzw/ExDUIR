@@ -69,7 +69,7 @@ void* MemPool_GetFreeEntry(void* hMemPool)
 		ret = ((mempool_s*)hMemPool)->pEntry;
 		if (ret != 0)
 		{
-			ret =(void*) ((size_t)ret + sizeof(mempoolheader_s));
+			ret = (void*)((size_t)ret + sizeof(mempoolheader_s));
 		}
 	}
 	return ret;
@@ -112,7 +112,7 @@ void* MemPool_GetAddressFromIndex(void* hMemPool, size_t nIndex)
 		{
 			if (((mempool_s*)hMemPool)->nMax >= nIndex)
 			{
-				ret = (void*)((size_t)(((mempool_s*)hMemPool)->pBase)+ (size_t)(((mempool_s*)hMemPool)->nBlockSize) * (nIndex-1) + sizeof(mempoolheader_s));
+				ret = (void*)((size_t)(((mempool_s*)hMemPool)->pBase) + (size_t)(((mempool_s*)hMemPool)->nBlockSize) * (nIndex - 1) + sizeof(mempoolheader_s));
 				//ret = (void*)(__get(hMemPool, offsetof(mempool_s, pBase)) + __get(hMemPool, offsetof(mempool_s, nBlockSize)) * (nIndex-1) + sizeof(mempoolheader_s));
 			}
 		}
@@ -145,12 +145,12 @@ void* MemPool_Alloc(void* hMemPool, BOOL fZero)
 		{
 			if (!((((mempool_s*)hMemPool)->dwFlags & 内存池标记_禁止超出最大数量) == 内存池标记_禁止超出最大数量))
 			{
-				ret = HeapAlloc(((mempool_s*)hMemPool)->hHeap, fZero? HEAP_ZERO_MEMORY:0,nBlock);
+				ret = HeapAlloc(((mempool_s*)hMemPool)->hHeap, fZero ? HEAP_ZERO_MEMORY : 0, nBlock);
 				if (ret != nullptr)
 				{
 					((mempoolheader_s*)ret)->dwSize = nBlock - sizeof(mempoolheader_s);
-					
-					ret =(void*)((size_t)ret + sizeof(mempoolheader_s));
+
+					ret = (void*)((size_t)ret + sizeof(mempoolheader_s));
 				}
 			}
 		}
@@ -186,7 +186,7 @@ BOOL MemPool_Free(void* hMemPool, void* lpAddress)
 		{
 			if ((((mempoolheader_s*)pEntry)->dwFlags & mpbf_used) == mpbf_used)
 			{
-				
+
 				__del(pEntry, offsetof(mempoolheader_s, dwFlags), mpbf_used);
 				((mempoolheader_s*)pEntry)->pNextEntry = ((mempool_s*)hMemPool)->pEntry;
 				//__set(pEntry, offsetof(mempoolheader_s, pNextEntry), __get(hMemPool, offsetof(mempool_s, pEntry)));

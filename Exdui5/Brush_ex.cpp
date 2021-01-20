@@ -2,10 +2,7 @@
 void* _brush_create(int argb)
 {
 	D2D1_COLOR_F color = {};
-	color.r = (float)(argb & 0XFF);
-	color.g = (float)((argb >> 8) & 0xFF);
-	color.b = (float)((argb >> 16) & 0xFF);
-	color.a = (float)((argb >> 24) & 0xFF);
+	ARGB2ColorF(argb, &color);
 	void* hBrush = nullptr;
 	((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->CreateSolidColorBrush(color, (ID2D1SolidColorBrush**)&hBrush);
 	return hBrush;
@@ -24,10 +21,7 @@ int _brush_destroy(void* hBrush)
 void _brush_setcolor(void* hBrush, int argb)
 {
 	D2D1_COLOR_F color = {};
-	color.r = (float)(argb & 0XFF);
-	color.g = (float)((argb >> 8) & 0xFF);
-	color.b = (float)((argb >> 16) & 0xFF);
-	color.a = (float)((argb >> 24) & 0xFF);
+	ARGB2ColorF(argb, &color);
 	((ID2D1SolidColorBrush*)hBrush)->SetColor(color);
 }
 
@@ -45,11 +39,11 @@ void* _brush_createfromimg(size_t hImg)
 		{
 			D2D1_BRUSH_PROPERTIES pro = {};
 			D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
-		
+
 			pro2.extendModeX = D2D1_EXTEND_MODE_WRAP;
 			pro2.extendModeY = D2D1_EXTEND_MODE_WRAP;
 			pro2.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-	
+
 			//pro.transform._11 = 1065353216;
 			//pro.transform._21 = 1065353216;
 			//pro.transform._31 = 1065353216;
@@ -69,7 +63,7 @@ void* _brush_createfromcanvas(size_t hCanvas)
 	ID2D1BitmapBrush* hBrush = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
-		void* pContext=_cv_context(pCanvas);
+		void* pContext = _cv_context(pCanvas);
 		D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
 
 		pro2.extendModeX = D2D1_EXTEND_MODE_WRAP;

@@ -104,7 +104,7 @@ void _sysbutton_remove_proc(void* pObj, int width, int height)
 			bReCalced = true;
 			nOffset = width - ((obj_s*)psobj)->right_;
 		}
-		Ex_ObjSetPos(sObj, 0, ((obj_s*)psobj)->left_ + nOffset, EOP_DEFAULT, 0, 0, SWP_NOSIZE|SWP_NOZORDER|SWP_NOREDRAW|SWP_NOACTIVATE|SWP_EX_NODPISCALE);
+		Ex_ObjSetPos(sObj, 0, ((obj_s*)psobj)->left_ + nOffset, EOP_DEFAULT, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
 		sObj = ((obj_s*)psobj)->objNext_;
 	}
 }
@@ -302,7 +302,7 @@ void _page_onvscrollbar(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wPa
 		nPos = rect.bottom - rect.top - height;
 	}
 	else
-	{ 
+	{
 		return;
 	}
 	nPos = Ex_ObjScrollSetPos(hObj, SB_VERT, nPos, true);

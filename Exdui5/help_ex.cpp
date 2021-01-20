@@ -2,21 +2,21 @@
 LOCALINFO g_Li;
 RENDERINFO g_Ri;
 
-void* GetProcAddr(LPCWSTR szMod,LPCSTR szApi)
+void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
 {
 	void* ret = nullptr;
-	auto hLib=GetModuleHandleW(szMod);
+	auto hLib = GetModuleHandleW(szMod);
 	if (hLib == 0)
 	{
-		hLib=LoadLibraryW(szMod);
+		hLib = LoadLibraryW(szMod);
 		if (hLib != 0)
 		{
-			ret=GetProcAddress(hLib, szApi);
+			ret = GetProcAddress(hLib, szApi);
 			FreeLibrary(hLib);
 		}
 	}
 	else {
-		ret= GetProcAddress(hLib, szApi);
+		ret = GetProcAddress(hLib, szApi);
 	}
 	return ret;
 }
@@ -26,7 +26,7 @@ bool 释放内存(void* hMem)
 	if (hMem != nullptr)
 	{
 		//free(hMem);
-		auto ret = HeapFree(GetProcessHeap(), 0,hMem);
+		auto ret = HeapFree(GetProcessHeap(), 0, hMem);
 		//auto ret = LocalFree(hMem);
 		if (ret == 0)
 		{
@@ -175,9 +175,9 @@ bool 位_测试(size_t* dwValue, size_t index/*0-31 */)//OK
 void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar)
 {
 	auto lpstart = lpstr;
-	auto lpend =(wchar_t*)((size_t)lpstart + *dwsize);
+	auto lpend = (wchar_t*)((size_t)lpstart + *dwsize);
 	bool fMoved = false;
-	while (lpstart<lpend)
+	while (lpstart < lpend)
 	{
 		lpstart = wcschr((wchar_t*)lpstart, wchar);
 		if (lpstart == 0)
@@ -201,7 +201,7 @@ void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int
 {
 	if (CodePage == 0) CodePage = 936;
 	if (dwLen <= 0) dwLen = lstrlenA((LPCSTR)lpszString);
-	int uLen=MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, NULL, 0) * 2;
+	int uLen = MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, NULL, 0) * 2;
 	if (IsBadWritePtr(*retPtr, uLen + 2))
 	{
 		*retPtr = 申请内存(uLen + 2);
@@ -225,7 +225,7 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 		short bom = __get_short(pAddr, 0);
 		if (bom == -17425)//utf8-bom
 		{
-			
+
 			U2W_Addr((void*)((size_t)pAddr + 3), dwLen - 3, retPtr, retLen);
 		}
 		else if (bom == -257)//unicode
@@ -249,7 +249,7 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 			}
 			else {
 				int cp = CP_UTF8;
-				int ulen=MultiByteToWideChar(cp, 8, (LPCCH)pAddr, dwLen, 0, 0);
+				int ulen = MultiByteToWideChar(cp, 8, (LPCCH)pAddr, dwLen, 0, 0);
 				if (ulen == 0)
 				{
 					cp = 936;
@@ -304,7 +304,7 @@ int 取最近质数(int value)
 void 读入文件(std::wstring file, std::vector<char>* data)
 {
 	std::ifstream ifs(file, std::ios::in | std::ios::binary);
-	*data= std::vector<char>((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+	*data = std::vector<char>((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 }
 
 void _struct_destroyfromaddr(void* lpAddr, size_t Offset)
@@ -453,16 +453,16 @@ void SetDefaultIcon()
 {
 
 	auto hRes = FindResourceW(g_Li.hInstance, MAKEINTRESOURCE(104), MAKEINTRESOURCE(14));
-	
+
 	if (hRes == 0)
 	{
-		
+
 		hRes = FindResourceW(g_Li.hInstance, L"DEFAULT_ICON", MAKEINTRESOURCE(14));
-		
+
 	}
 	if (hRes != 0)
 	{
-	
+
 		auto hData = LoadResource(g_Li.hInstance, hRes);
 		if (hData != 0)
 		{
@@ -514,10 +514,10 @@ std::string GetErrorMessage(DWORD error)
 
 void* copytstr(LPCWSTR lptstr, int len)
 {
-	auto addr = 申请内存(len + 2);
+	auto addr = 申请内存(len * 2 + 2);
 	if (addr != 0)
 	{
-		RtlMoveMemory(addr, lptstr, len);
+		RtlMoveMemory(addr, lptstr, len * 2);
 	}
 	else {
 		Ex_SetLastError(ERROR_EX_MEMORY_ALLOC);
@@ -540,14 +540,14 @@ ULONG IUnknown_Release(void* thisptr)
 	return E_NOINTERFACE;
 }
 
-HRESULT IDropTarget_DragEnter(void* thisptr, IDataObject* pDataObject, int grfKeyState, int x,int y, int* pdwEffect)
+HRESULT IDropTarget_DragEnter(void* thisptr, IDataObject* pDataObject, int grfKeyState, int x, int y, int* pdwEffect)
 {
 	return S_OK;
 }
 
 HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* pdwEffect)
 {
-	void* pWnd =(void*) __get(thisptr, sizeof(void*));
+	void* pWnd = (void*)__get(thisptr, sizeof(void*));
 	_wnd_wm_nchittest(pWnd, ((wnd_s*)pWnd)->hWnd_, 合并整数(x, y));
 	void* phit = nullptr;
 	int nError = 0;
@@ -562,7 +562,7 @@ HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* 
 	return S_OK;
 }
 
-HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, int x,int y, int* pdwEffect)
+HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, int x, int y, int* pdwEffect)
 {
 	void* pWnd = (void*)__get(thisptr, sizeof(void*));
 	HWND hWnd = ((wnd_s*)pWnd)->hWnd_;

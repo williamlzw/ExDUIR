@@ -56,7 +56,7 @@ void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyl
 		}
 		if (dwFontSize != -1)
 		{
-			((LOGFONT*)lpLogFont)->lfHeight = dwFontSize;
+			((LOGFONT*)lpLogFont)->lfHeight = -dwFontSize;
 		}
 		else
 		{
@@ -70,7 +70,7 @@ void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyl
 			((LOGFONT*)lpLogFont)->lfStrikeOut = ((dwFontStyle & 删除线) == 0 ? 0 : 1);
 		}
 		ret = _font_createfromlogfont_ex(lpLogFont, flag);
-		
+
 		释放内存(lpLogFont);
 	}
 	return ret;
@@ -85,10 +85,10 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 	size_t hFont = 数据_Crc32_Addr((UCHAR*)lpLogfont, sizeof(LOGFONT));
 	void* pFont = nullptr;
 	size_t pFonta = 0;
-	
+
 	if (HashTable_Get(g_Li.hTableFont, hFont, &pFonta))
 	{
-		
+
 		pFont = (void*)pFonta;
 		if (pFont != 0)
 		{
@@ -103,10 +103,10 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
 			((font_s*)pFont)->dwFlags_ = flags;
 			((font_s*)pFont)->dwCount_ = 1;
-			((font_s*)pFont)->font_.lfHeight = ((LOGFONT*)lpLogfont)->lfHeight;
-			
+			CopyMemory(&((font_s*)pFont)->font_, lpLogfont, sizeof(LOGFONT));
+
 			UINT lfItalic = ((font_s*)pFont)->font_.lfItalic;
-			
+
 			if (lfItalic != 0)
 			{
 				lfItalic = 2;

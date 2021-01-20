@@ -6,7 +6,7 @@ void _static_paint(size_t hObj, void* pObj)
 	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
 	{
 		Ex_ThemeDrawControl(ps.hTheme_, ps.hCanvas_, 0, 0, ps.width_, ps.height_, ATOM_STATIC, ATOM_NORMAL, 255);
-		void* lpText=((obj_s*)pObj)->pstrTitle_;
+		void* lpText = ((obj_s*)pObj)->pstrTitle_;
 		if (lpText != 0)
 		{
 			_canvas_drawtextex(ps.hCanvas_, ((obj_s*)pObj)->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)lpText, -1, ps.dwTextFormat_, ps.t_left_, ps.t_top_, ps.t_right_, ps.t_bottom_,

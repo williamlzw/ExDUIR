@@ -144,18 +144,35 @@ void _obj_z_set_before_topmost(size_t objChildFirst, void* pObjChildFirst, size_
 
 void _obj_z_set(size_t hObj, void* pObj, size_t hObjInsertAfter, int flags, int* nError)
 {
+	// TODO: hParnet->hParent
 	size_t hParnet = 0;
 	void* pParent = nullptr;
 	void* pObjChildLast = nullptr;
 	void* pObjChildFirst = nullptr;
 	_obj_z_clear(hObj, pObj, &hParnet, &pParent);
 	((obj_s*)pObj)->objParent_ = hParnet;
-	size_t objChildFirst = ((wnd_s*)pParent)->objChildFirst_;
-	size_t objChildLast = ((wnd_s*)pParent)->objChildLast_;
+
+	size_t objChildFirst = 0;
+	size_t objChildLast = 0;
+	if (((obj_s*)pParent)->pwnd_) {
+		objChildFirst = ((obj_s*)pParent)->objChildFirst_;
+		objChildLast = ((obj_s*)pParent)->objChildLast_;
+	}
+	else {
+		objChildFirst = ((wnd_s*)pParent)->objChildFirst_;
+		objChildLast = ((wnd_s*)pParent)->objChildLast_;
+	}
+
 	if (objChildLast == 0 || objChildFirst == 0)
 	{
-		((wnd_s*)pParent)->objChildFirst_ = hObj;
-		((wnd_s*)pParent)->objChildLast_ = hObj;
+		if (((obj_s*)pParent)->pwnd_) {
+			((obj_s*)pParent)->objChildFirst_ = hObj;
+			((obj_s*)pParent)->objChildLast_ = hObj;
+		}
+		else {
+			((wnd_s*)pParent)->objChildFirst_ = hObj;
+			((wnd_s*)pParent)->objChildLast_ = hObj;
+		}
 	}
 	else {
 		if (_handle_validate(objChildLast, HT_OBJECT, &pObjChildLast, nError))
@@ -287,7 +304,7 @@ int _obj_wm_nchittest(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wPara
 		}
 		if (fHit)
 		{
-			void* pfnClsProc = ((obj_s*)pObj)->pfnSubClass_;
+			void* pfnClsProc = ((obj_s*)pObj)->pfnClsProc_;
 			ret = ((ClsPROC)pfnClsProc)(hWnd, hObj, uMsg, wParam, lParam, pObj);
 		}
 	}
@@ -420,7 +437,7 @@ int _obj_baseproc(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wParam, s
 	}
 	else if (uMsg == WM_KILLFOCUS)
 	{
-		_obj_killfocus_real( pObj, hObj, wParam);
+		_obj_killfocus_real(pObj, hObj, wParam);
 	}
 	void* pfnClsProc = ((obj_s*)pObj)->pfnClsProc_;
 	return ((ClsPROC)pfnClsProc)(hWnd, hObj, uMsg, wParam, lParam, pObj);
@@ -763,10 +780,10 @@ bool Ex_ObjSetPadding(size_t hObj, int nPaddingType, int left, int top, int righ
 			((obj_s*)pObj)->t_right_ = ((obj_s*)pObj)->t_right_ * g_Li.DpiX;
 			((obj_s*)pObj)->t_bottom_ = ((obj_s*)pObj)->t_bottom_ * g_Li.DpiX;
 		}
-		
+
 		__del(pObj, offsetof(obj_s, dwFlags_), eof_bAutosized);
 		if (fRedraw)
-		{ 
+		{
 			_obj_invalidaterect(pObj, 0, &nError);
 		}
 	}
@@ -994,7 +1011,7 @@ void* _obj_pOwner(void* pObj)
 
 void _obj_scroll_updatepostion(size_t hSB, void* pSB, bool bVScroll, int cLeft, int cTop, int cRight, int cBottom, bool fDispatch)
 {
-	
+
 	void* own = ((obj_s*)pSB)->dwOwnerData_;
 	int xyz = ((si_s*)own)->xyz_;
 	auto xyz1 = 取高位(xyz);
@@ -1165,7 +1182,7 @@ void _obj_setpos_org(void* pObj, size_t hObj, size_t hObjInsertAfter, int x, int
 			np.rgrc[0].top = ((obj_s*)pObj)->minmax_maxsize_height_;
 			np.rgrc[0].right = ((obj_s*)pObj)->minmax_maxpostion_width_;
 			np.rgrc[0].bottom = ((obj_s*)pObj)->minmax_maxpostion_height_;
-			
+
 			if (np.rgrc[0].left != 0 && np.rgrc[0].left < width)
 			{
 				width = np.rgrc[0].left;
@@ -1188,7 +1205,7 @@ void _obj_setpos_org(void* pObj, size_t hObj, size_t hObjInsertAfter, int x, int
 		np.rgrc[1].top = ((obj_s*)pObj)->top_;
 		np.rgrc[1].right = ((obj_s*)pObj)->right_;
 		np.rgrc[1].bottom = ((obj_s*)pObj)->bottom_;
-		
+
 		if ((flags & SWP_NOMOVE) != 0)//老位置
 		{
 			np.rgrc[0].left = np.rgrc[1].left;
@@ -1198,7 +1215,7 @@ void _obj_setpos_org(void* pObj, size_t hObj, size_t hObjInsertAfter, int x, int
 			np.rgrc[0].left = x;
 			np.rgrc[0].top = y;
 		}
-		if ((flags & SWP_NOMOVE) != 0)//老尺寸
+		if ((flags & SWP_NOSIZE) != 0)//老尺寸
 		{
 			np.rgrc[0].right = np.rgrc[0].left + np.rgrc[1].right - np.rgrc[1].left;
 			np.rgrc[0].bottom = np.rgrc[0].top + np.rgrc[1].bottom - np.rgrc[1].top;
@@ -1211,7 +1228,7 @@ void _obj_setpos_org(void* pObj, size_t hObj, size_t hObjInsertAfter, int x, int
 		np.rgrc[2].top = np.rgrc[0].top;
 		np.rgrc[2].right = np.rgrc[0].right;
 		np.rgrc[2].bottom = np.rgrc[0].bottom;
-		
+
 		if (fNotify)
 		{
 			if (fAsyn)
@@ -1226,20 +1243,20 @@ void _obj_setpos_org(void* pObj, size_t hObj, size_t hObjInsertAfter, int x, int
 		((obj_s*)pObj)->top_ = np.rgrc[0].top;
 		((obj_s*)pObj)->right_ = np.rgrc[0].right;
 		((obj_s*)pObj)->bottom_ = np.rgrc[0].bottom;
-		
+
 		OffsetRect(&np.rgrc[2], (-np.rgrc[0].left), (-np.rgrc[0].top));
 		((obj_s*)pObj)->c_left_ = np.rgrc[2].left;
 		((obj_s*)pObj)->c_top_ = np.rgrc[2].top;
 		((obj_s*)pObj)->c_right_ = np.rgrc[2].right;
 		((obj_s*)pObj)->c_bottom_ = np.rgrc[2].bottom;
-		
+
 		RECT rcOld;
 		//更新窗口位置
 		rcOld.left = ((obj_s*)pObj)->w_left_;
 		rcOld.top = ((obj_s*)pObj)->w_top_;
 		rcOld.right = ((obj_s*)pObj)->w_right_;
 		rcOld.bottom = ((obj_s*)pObj)->w_bottom_;
-		
+
 		_obj_updatewindowpostion(pObj, (void*)((size_t)pObj + offsetof(obj_s, w_left_)), (flags & SWP_NOMOVE) == 0);
 		//更新被修改后的位置信息
 		if ((flags & SWP_NOMOVE) == 0)
@@ -1312,11 +1329,11 @@ void _obj_setpos_org(void* pObj, size_t hObj, size_t hObjInsertAfter, int x, int
 	}
 	else
 	{
-	    np.rgrc[2].left = ((obj_s*)pObj)->left_;
+		np.rgrc[2].left = ((obj_s*)pObj)->left_;
 		np.rgrc[2].top = ((obj_s*)pObj)->top_;
 		np.rgrc[2].right = ((obj_s*)pObj)->right_;
 		np.rgrc[2].bottom = ((obj_s*)pObj)->bottom_;
-		
+
 	}
 	if (__query(pObj, offsetof(obj_s, dwStyle_), EOS_VISIBLE))
 	{
@@ -1368,7 +1385,7 @@ void _obj_scroll_repostion(HWND hWnd, size_t hObj, bool fDispatch)
 		rcClient.top = ((obj_s*)pObj)->c_top_;
 		rcClient.right = ((obj_s*)pObj)->c_right_;
 		rcClient.bottom = ((obj_s*)pObj)->c_bottom_;
-		
+
 		if (__query(pObj, offsetof(obj_s, dwStyle_), EOS_VSCROLL))
 		{
 			hVSB = ((obj_s*)pObj)->objVScroll_;
@@ -1419,7 +1436,7 @@ void _obj_scroll_repostion(HWND hWnd, size_t hObj, bool fDispatch)
 		{
 			_obj_scroll_updatepostion(hVSB, pVSB, true, rcClient.left, rcClient.top, rcClient.right, rcClient.bottom, fDispatch);
 		}
-		if(pHSB != 0)
+		if (pHSB != 0)
 		{
 			_obj_scroll_updatepostion(hHSB, pHSB, false, rcClient.left, rcClient.top, rcClient.right, rcClient.bottom, fDispatch);
 		}
@@ -1574,12 +1591,12 @@ void _obj_destroy(size_t hObj, void* pObj, int* nError)
 {
 	HWND hWnd = _obj_gethWnd(pObj);
 	void* pWnd = ((obj_s*)pObj)->pwnd_;
-	RECT rc ;
+	RECT rc;
 	rc.left = ((obj_s*)pObj)->w_left_;
 	rc.top = ((obj_s*)pObj)->w_top_;
 	rc.right = ((obj_s*)pObj)->w_right_;
 	rc.bottom = ((obj_s*)pObj)->w_bottom_;
-	
+
 	auto  fReDraw = _obj_makeupinvalidaterect(pWnd, pObj, &rc);
 	bool fRelaseCaption = false;
 	if (((wnd_s*)pWnd)->objTrack_ == hObj)
@@ -1660,14 +1677,14 @@ size_t _obj_create_init(HWND hWnd, void* pWnd, int atomClass, void* pfnMsgProc, 
 		*nError = ERROR_EX_INVALID_CLASS;
 	}
 	else {
-		 *pObj = 申请内存(sizeof(obj_s) + ((class_s*)pCls)->cbObjExtra_);
+		*pObj = 申请内存(sizeof(obj_s) + ((class_s*)pCls)->cbObjExtra_);
 		if (*pObj == 0)
 		{
 			*nError = ERROR_EX_MEMORY_ALLOC;
 		}
 		else {
 			hObj = _handle_create(HT_OBJECT, *pObj, nError);
-			
+
 			if (hObj == 0)
 			{
 				释放内存(*pObj);
@@ -1676,7 +1693,7 @@ size_t _obj_create_init(HWND hWnd, void* pWnd, int atomClass, void* pfnMsgProc, 
 		}
 	}
 	if (*nError != 0) return 0;
-	
+
 	//初始化组件数据
 	((obj_s*)(*pObj))->hObj_ = hObj;
 	((obj_s*)(*pObj))->pwnd_ = pWnd;
@@ -1686,27 +1703,27 @@ size_t _obj_create_init(HWND hWnd, void* pWnd, int atomClass, void* pfnMsgProc, 
 	((obj_s*)(*pObj))->dwAlpha_ = 255;
 	((obj_s*)(*pObj))->dwAlphaDisable_ = 128;
 	((obj_s*)(*pObj))->hCursor_ = ((class_s*)pCls)->hCursor_;
-	
+
 	if (atomClass == ATOM_PAGE) __add(*pObj, offsetof(obj_s, dwFlags_), eof_bPage);
 	return hObj;
 }
 
 void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dwStyleEx, int atomClass, void* lpszName, int dwStyle, int x, int y, int width, int height, size_t hParent, int nID, int atomName, size_t lParam, int dwTextFormat)
 {
-	
+
 	size_t hObj = ((obj_s*)pObj)->hObj_;
-	
+
 	void* pWnd = ((obj_s*)pObj)->pwnd_;
-	
+
 	HWND hWnd = ((wnd_s*)pWnd)->hWnd_;
-	
+
 	void* pCls = ((obj_s*)pObj)->pCls_;
 	atomClass = ((class_s*)pCls)->atomName_;
 	if (dwStyle == -1)
 	{
 		dwStyle = ((class_s*)pCls)->dwStyle_;
 	}
-	
+
 	if (dwStyleEx == -1)
 	{
 		dwStyleEx = ((class_s*)pCls)->dwStyleEx_;
@@ -1715,7 +1732,7 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 	{
 		dwTextFormat = ((class_s*)pCls)->dwTextFormat_;
 	}
-	
+
 	if (hTheme == 0)
 	{
 		hTheme = ((wnd_s*)pWnd)->hTheme_;
@@ -1726,7 +1743,7 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 			hTheme = ((wnd_s*)pWnd)->hTheme_;
 		}
 	}
-	
+
 	RECT rcObj;
 	rcObj.left = x;
 	rcObj.top = y;
@@ -1744,11 +1761,11 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 	((obj_s*)pObj)->top_ = rcObj.top;
 	((obj_s*)pObj)->right_ = rcObj.right;
 	((obj_s*)pObj)->bottom_ = rcObj.bottom;
-	((obj_s*)pObj)->c_left_= rcObj.left;
+	((obj_s*)pObj)->c_left_ = rcObj.left;
 	((obj_s*)pObj)->c_top_ = rcObj.top;
 	((obj_s*)pObj)->c_right_ = rcObj.right;
 	((obj_s*)pObj)->c_bottom_ = rcObj.bottom;
-	
+
 	//初始化画布
 	int flags = 0;
 	if (__query(pCls, offsetof(class_s, dwFlags_), ECF_D2D_GDI_COMPATIBLE))  flags = CVF_GDI_COMPATIBLE;
@@ -1762,11 +1779,11 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 		((obj_s*)pObj)->canvas_obj_ = _canvas_createfrompwnd(pWnd, rcObj.right - rcObj.left, rcObj.bottom - rcObj.top, flags, nError);
 	}
 	//初始化其它数据
-	
+
 	void* pParent = nullptr;
-	
+
 	if (!_handle_validate(hParent, HT_OBJECT, &pParent, nError)) hParent = 0;
-	
+
 	((obj_s*)pObj)->objParent_ = hParent;
 	((obj_s*)pObj)->dwStyle_ = dwStyle;
 	((obj_s*)pObj)->dwStyleEx_ = dwStyleEx;
@@ -1792,23 +1809,23 @@ void _obj_create_proc(int* nError, bool fScale, void* hTheme, void* pObj, int dw
 		((obj_s*)pObj)->atomName_ = atomName;
 		HashTable_Set(((wnd_s*)pWnd)->hTableObjects_, atomName, hObj);
 	}
-	
+
 	//初始化滚动条
 	_obj_create_scrollbar(hWnd, pWnd, pObj, hObj, hTheme);
 	//消息分发,只提供参考,不提供修改
-	
+
 	_obj_baseproc(hWnd, hObj, pObj, WM_NCCREATE, 0, (size_t)&dwStyleEx);
-	
+
 	_obj_baseproc(hWnd, hObj, pObj, WM_CREATE, 0, (size_t)&dwStyleEx);
-	
+
 	_obj_theme_load_color_font(pWnd, pObj, hTheme);
-	
+
 	if ((dwStyleEx & EOS_EX_DRAGDROP) != 0)
 	{
 		if (((wnd_s*)pWnd)->lpIDropTarget_ == 0)
 		{
 			OleInitialize(0);
-			RegisterDragDrop(((wnd_s*)pWnd)->hWnd_, (LPDROPTARGET)IDropTarget_Init(pWnd)); 
+			RegisterDragDrop(((wnd_s*)pWnd)->hWnd_, (LPDROPTARGET)IDropTarget_Init(pWnd));
 		}
 	}
 }
@@ -1846,7 +1863,7 @@ void _obj_create_done(HWND hWnd, void* pWnd, size_t hObj, void* pObj)
 
 	flags = flags | SWP_EX_NODPISCALE;
 	int nError = 0;
-	_obj_setpos_org(pObj, hObj, (size_t)HWND_TOP, ((obj_s*)pObj)->left_, ((obj_s*)pObj)->top_, ((obj_s*)pObj)->right_ - ((obj_s*)pObj)->left_, ((obj_s*)pObj)->bottom_ - ((obj_s*)pObj)->top_, flags,&nError);
+	_obj_setpos_org(pObj, hObj, (size_t)HWND_TOP, ((obj_s*)pObj)->left_, ((obj_s*)pObj)->top_, ((obj_s*)pObj)->right_ - ((obj_s*)pObj)->left_, ((obj_s*)pObj)->bottom_ - ((obj_s*)pObj)->top_, flags, &nError);
 	__add(pObj, offsetof(obj_s, dwFlags_), EOF_INITED);
 	_obj_invalidaterect(pObj, 0, &nError);
 	_obj_baseproc(hWnd, hObj, pObj, WM_SETTEXT, 0, (size_t)(((obj_s*)pObj)->pstrTitle_));
@@ -1906,7 +1923,7 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 	{
 		RtlMoveMemory((void*)((size_t)pObj + offsetof(obj_s, crBackground_)), pColors, sizeof(colors_s));
 	}
-	
+
 	if (hTheme != 0)
 	{
 		auto pTheme = ((theme_s*)hTheme)->tableClass_;
@@ -1955,9 +1972,9 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 						}
 						if (pFamily != -1 || pSize != -1 || pStyle != -1)
 						{
-							
+
 							((obj_s*)pObj)->hFont_ = _font_createfromfamily((LPWSTR)pFamily, pSize, pStyle);
-							
+
 							return;
 						}
 					}
@@ -1965,9 +1982,9 @@ void _obj_theme_load_color_font(void* pWnd, void* pObj, void* hTheme)
 			}
 		}
 	}
-	
+
 	((obj_s*)pObj)->hFont_ = _font_create();
-	
+
 }
 
 size_t Ex_ObjCreateEx(int dwStyleEx, void* lptszClassName, void* lptszObjTitle, int dwStyle, int x, int y, int width, int height, size_t hParent, int nID, int dwTextFormat, size_t lParam, void* hTheme, void* lpfnMsgProc)
@@ -2009,7 +2026,7 @@ size_t Ex_ObjCreateEx(int dwStyleEx, void* lptszClassName, void* lptszObjTitle, 
 			if (hObj != 0)
 			{
 				_obj_create_proc(&nError, true, hTheme, pObj, dwStyleEx, atom, lptszObjTitle, dwStyle, x, y, width, height, hParent, nID, 0, lParam, dwTextFormat);
-				
+
 				_obj_create_done(hWnd, pWnd, hObj, pObj);
 			}
 		}
@@ -2131,7 +2148,7 @@ void _obj_setfont(void* pObj, void* hFont, bool fredraw)
 		}
 	}
 	if (fredraw)
-	{ 
+	{
 		int nError = 0;
 		_obj_invalidaterect(pObj, 0, &nError);
 	}
@@ -2144,7 +2161,7 @@ bool Ex_ObjSetFont(size_t hObj, void* lpszFontfamily, int dwFontsize, int dwFont
 	void* ret = nullptr;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 	{
-		
+
 		_obj_setfont(pObj, _font_createfromfamily((LPWSTR)lpszFontfamily, dwFontsize, dwFontstyle), fRedraw);
 	}
 	Ex_SetLastError(nError);
@@ -2238,7 +2255,7 @@ bool Ex_ObjBeginPaint(size_t hObj, void* lpPS)
 			rcPaint.top = ((obj_s*)pObj)->top_;
 			rcPaint.right = ((obj_s*)pObj)->right_;
 			rcPaint.bottom = ((obj_s*)pObj)->bottom_;
-			
+
 			((paintstruct_s*)lpPS)->width_ = rcPaint.right - rcPaint.left;
 			((paintstruct_s*)lpPS)->height_ = rcPaint.bottom - rcPaint.top;
 			rcPaint.left = ((obj_s*)pObj)->d_left_;
@@ -2251,7 +2268,7 @@ bool Ex_ObjBeginPaint(size_t hObj, void* lpPS)
 			((paintstruct_s*)lpPS)->p_bottom_ = ((obj_s*)pObj)->d_bottom_;
 			((paintstruct_s*)lpPS)->t_right_ = ((paintstruct_s*)lpPS)->width_;
 			((paintstruct_s*)lpPS)->t_bottom_ = ((paintstruct_s*)lpPS)->height_;
-			
+
 			((paintstruct_s*)lpPS)->t_left_ = ((obj_s*)pObj)->t_left_;
 			((paintstruct_s*)lpPS)->t_top_ = ((obj_s*)pObj)->t_top_;
 			__subn(lpPS, offsetof(paintstruct_s, t_right_), ((obj_s*)pObj)->t_right_);
@@ -2774,7 +2791,7 @@ void _obj_setradius(size_t hObj, void* pObj, float topleft, float topright, floa
 		((obj_s*)pObj)->radius_topright_ = rc.top;
 		((obj_s*)pObj)->radius_bottomright_ = rc.right;
 		((obj_s*)pObj)->radius_bottomleft_ = rc.bottom;
-		
+
 		__add(pObj, offsetof(obj_s, dwFlags_), (eof_bPath | eof_bPathByRoundedrect));
 		int flags = SWP_NOZORDER | SWP_NOCOPYBITS | SWP_NOSENDCHANGING | SWP_ASYNCWINDOWPOS | SWP_EX_UPDATEPATH | SWP_NOSENDCHANGING;
 		if (fUpdate)
@@ -3129,7 +3146,7 @@ int Ex_ObjGetUIState(size_t hObj)
 	return ret;
 }
 
-size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t lParam, size_t wParam)
+size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam)
 {
 	void* pObj = nullptr;
 	int nError = 0;
@@ -3180,7 +3197,7 @@ size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t lParam, size_t wPa
 				}
 				if (lParam != 0)
 				{
-					((obj_s*)pObj)->pstrTitle_ = copytstr((LPCWSTR)lParam,lstrlenW((LPCWSTR)lParam));
+					((obj_s*)pObj)->pstrTitle_ = copytstr((LPCWSTR)lParam, lstrlenW((LPCWSTR)lParam));
 				}
 
 				if (__query(pObj, offsetof(obj_s, dwStyleEx_), EOS_EX_AUTOSIZE))
@@ -3303,7 +3320,7 @@ size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t lParam, size_t wPa
 		}
 		else if (uMsg == WM_EX_EASING)
 		{
-		    _obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_EASING, wParam, lParam);
+			_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_EASING, wParam, lParam);
 		}
 	}
 	return ret;

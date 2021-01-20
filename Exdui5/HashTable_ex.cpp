@@ -26,7 +26,7 @@ BOOL HashTable_Clear(void* hTable)
 	BOOL ret = false;
 	if (hTable != nullptr) {
 		HashTablePROC pfnCbk = ((hashtable_s*)hTable)->pfnDelete;
-		void* pTable =((hashtable_s*)hTable)->pTable;
+		void* pTable = ((hashtable_s*)hTable)->pTable;
 		size_t dwBound = ((hashtable_s*)hTable)->dwBound;
 		if (pTable != nullptr) {
 			for (size_t i = 0; i < dwBound; i++) {
@@ -100,7 +100,7 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 	{
 		size_t nPos = 0;
 		nPos = HashTable_GetPos(hKey, ((hashtable_s*)hTable)->dwBound);
-		void* pTable =((hashtable_s*)hTable)->pTable;
+		void* pTable = ((hashtable_s*)hTable)->pTable;
 		void* pEntry = (void*)__get(pTable, nPos * sizeof(void*));
 		while (pEntry != nullptr)
 		{
@@ -120,9 +120,8 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 		pEntry = ÉêÇëÄÚ´æ(sizeof(entry_s));
 		((entry_s*)pEntry)->hKey = hKey;
 		((entry_s*)pEntry)->dwValue = dwValue;
-		
-		auto aa= InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry);
-		//std::cout << __get(pTable, nPos * sizeof(void*)) << std::endl;
+
+		auto aa = InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry);
 		((entry_s*)pEntry)->pEntry = (void*)aa;
 		//__set(pTable, nPos * sizeof(void*), (size_t)pEntry);
 		((hashtable_s*)hTable)->dwCount = ((hashtable_s*)hTable)->dwCount + 1;
@@ -171,7 +170,7 @@ BOOL HashTable_Remove(void* hTable, size_t hKey)
 			{
 				if (prev != nullptr)
 				{
-					InterlockedExchange((size_t*)&(((entry_s*)prev)->pEntry),(size_t) ((entry_s*)pEntry)->pEntry);
+					InterlockedExchange((size_t*)&(((entry_s*)prev)->pEntry), (size_t)((entry_s*)pEntry)->pEntry);
 				}
 				else
 				{

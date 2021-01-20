@@ -24,6 +24,7 @@ void _wic_drawframe(void* pImg, void* pFrame, int* nError)
 	if (((img_s*)pImg)->nMaxFrames_ > 1)
 	{
 		void* rtp = ÉêÇëÄÚ´æ(sizeof(D2D1_RENDER_TARGET_PROPERTIES));
+
 		ID2D1RenderTarget* rt = nullptr;
 		((ID2D1Factory1*)g_Ri.pD2Dfactory)->CreateWicBitmapRenderTarget((IWICBitmap*)((img_s*)pImg)->pObj_, (D2D1_RENDER_TARGET_PROPERTIES*)rtp, &rt);
 		if (rt != 0)
