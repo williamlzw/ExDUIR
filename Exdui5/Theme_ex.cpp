@@ -346,7 +346,7 @@ bool Ex_ThemeDrawControlEx(void* hTheme, size_t hCanvas, float dstLeft, float ds
 							dwFlags = __get_int(pFlags, 0);
 						}
 						void* pPosition = nullptr;
-						int x, y;
+						int x = 0, y = 0;
 						HashTable_Get(pProp, atomBackgroundPositon, (size_t*)&pPosition);
 						if (pPosition != 0)
 						{
