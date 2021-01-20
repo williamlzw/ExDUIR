@@ -77,6 +77,7 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 	{
 		RtlMoveMemory(*lpAry, aryTmp.data(), (nCount + 1) * 4);
 		__set_int(*lpAry, (nCount + 1) * 4, dwFlags);
+		nCount += 1;
 	}
 	else {
 		nCount = 0;
@@ -122,7 +123,7 @@ bool _fmt_color(void* lpValue, void* lpColor)
 		{
 			p.a = 255;
 			_fmt_intary(lpValueOffset, &p, 4, false, NULL);
-			__set_int(lpColor, 0, ExARGB(p.r, p.g, p.b));
+			__set_int(lpColor, 0, ExRGBA(p.r, p.g, p.b, p.a));
 		}
 		else {
 			ret = false;
