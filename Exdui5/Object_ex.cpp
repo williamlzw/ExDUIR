@@ -144,18 +144,35 @@ void _obj_z_set_before_topmost(size_t objChildFirst, void* pObjChildFirst, size_
 
 void _obj_z_set(size_t hObj, void* pObj, size_t hObjInsertAfter, int flags, int* nError)
 {
+	// TODO: hParnet->hParent
 	size_t hParnet = 0;
 	void* pParent = nullptr;
 	void* pObjChildLast = nullptr;
 	void* pObjChildFirst = nullptr;
 	_obj_z_clear(hObj, pObj, &hParnet, &pParent);
 	((obj_s*)pObj)->objParent_ = hParnet;
-	size_t objChildFirst = ((wnd_s*)pParent)->objChildFirst_;
-	size_t objChildLast = ((wnd_s*)pParent)->objChildLast_;
+
+	size_t objChildFirst = 0;
+	size_t objChildLast = 0;
+	if (((obj_s*)pParent)->pwnd_) {
+		objChildFirst = ((obj_s*)pParent)->objChildFirst_;
+		objChildLast = ((obj_s*)pParent)->objChildLast_;
+	}
+	else {
+		objChildFirst = ((wnd_s*)pParent)->objChildFirst_;
+		objChildLast = ((wnd_s*)pParent)->objChildLast_;
+	}
+
 	if (objChildLast == 0 || objChildFirst == 0)
 	{
-		((wnd_s*)pParent)->objChildFirst_ = hObj;
-		((wnd_s*)pParent)->objChildLast_ = hObj;
+		if (((obj_s*)pParent)->pwnd_) {
+			((obj_s*)pParent)->objChildFirst_ = hObj;
+			((obj_s*)pParent)->objChildLast_ = hObj;
+		}
+		else {
+			((wnd_s*)pParent)->objChildFirst_ = hObj;
+			((wnd_s*)pParent)->objChildLast_ = hObj;
+		}
 	}
 	else {
 		if (_handle_validate(objChildLast, HT_OBJECT, &pObjChildLast, nError))
@@ -1198,7 +1215,7 @@ void _obj_setpos_org(void* pObj, size_t hObj, size_t hObjInsertAfter, int x, int
 			np.rgrc[0].left = x;
 			np.rgrc[0].top = y;
 		}
-		if ((flags & SWP_NOMOVE) != 0)//¿œ≥ﬂ¥Á
+		if ((flags & SWP_NOSIZE) != 0)//¿œ≥ﬂ¥Á
 		{
 			np.rgrc[0].right = np.rgrc[0].left + np.rgrc[1].right - np.rgrc[1].left;
 			np.rgrc[0].bottom = np.rgrc[0].top + np.rgrc[1].bottom - np.rgrc[1].top;
