@@ -56,7 +56,7 @@ void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyl
 		}
 		if (dwFontSize != -1)
 		{
-			((LOGFONT*)lpLogFont)->lfHeight = dwFontSize;
+			((LOGFONT*)lpLogFont)->lfHeight = -dwFontSize;
 		}
 		else
 		{
@@ -103,7 +103,7 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
 			((font_s*)pFont)->dwFlags_ = flags;
 			((font_s*)pFont)->dwCount_ = 1;
-			((font_s*)pFont)->font_.lfHeight = ((LOGFONT*)lpLogfont)->lfHeight;
+			CopyMemory(&((font_s*)pFont)->font_, lpLogfont, sizeof(LOGFONT));
 			
 			UINT lfItalic = ((font_s*)pFont)->font_.lfItalic;
 			
