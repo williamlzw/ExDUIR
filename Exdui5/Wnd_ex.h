@@ -17,7 +17,7 @@
 
 struct wnd_s
 {
-	size_t ulwi_;
+//TODO:	size_t ulwi_; UPDATELAYEREDWINDOWINFO
 	int ulwi_cbsize_;
 	void* ulwi_hdcDest_;
 	void* ulwi_pptDst_;

@@ -1903,7 +1903,7 @@ void _wnd_render_dc(HWND hWnd, void* pWnd, void* hDC, size_t cvDisplay, RECT rcP
 				UpdateLayeredWindow(hWnd, 0, 0, (SIZE*)(((wnd_s*)pWnd)->ulwi_psize_), (HDC)(((wnd_s*)pWnd)->ulwi_hdcSrc_), (POINT*)(((wnd_s*)pWnd)->ulwi_pptSrc_), 0, &pb_, ULW_ALPHA);
 			}
 			else {
-				((UpdateLayeredWindowIndirectPROC)g_Li.pfnUpdateLayeredWindowIndirect)(hWnd, (UPDATELAYEREDWINDOWINFO*)((size_t)pWnd + offsetof(wnd_s, ulwi_)));
+				((UpdateLayeredWindowIndirectPROC)g_Li.pfnUpdateLayeredWindowIndirect)(hWnd, (UPDATELAYEREDWINDOWINFO*)((size_t)pWnd + offsetof(wnd_s, ulwi_cbsize_)));
 			}
 		}
 		else {
@@ -1919,7 +1919,7 @@ void _wnd_render(HWND hWnd, void* pWnd, void* hDC, RECT rcPaint, bool fLayer, bo
 	
 	if (__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_bRedrawBackground))
 	{
-		
+
 		__del(pWnd, offsetof(wnd_s, dwFlags_), EWF_bRedrawBackground);
 		_wnd_paint_bkg(hWnd, pWnd);
 	}
@@ -2229,7 +2229,7 @@ void _wnd_paint_shadow(void* pWnd, bool bUpdateRgn, bool bFlush)
 							void* mDC = _canvas_getdc(cvShadow);
 							if (mDC != 0)
 							{
-								POINT ptSrc;
+								POINT ptSrc = { 0 };
 								BLENDFUNCTION pb_;
 								pb_.BlendOp = 0;
 								pb_.BlendFlags = 0;
@@ -2251,7 +2251,7 @@ void _wnd_paint_shadow(void* pWnd, bool bUpdateRgn, bool bFlush)
 
 bool _wnd_wm_paint(void* pWnd, HWND hWnd)
 {
-	PAINTSTRUCT ps;
+	PAINTSTRUCT ps = {0};
 	
 	if (__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_INTED))
 	{
