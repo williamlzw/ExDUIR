@@ -1403,7 +1403,7 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 	int nMinHeight = 0;
 	if (objCaption != 0)
 	{
-
+		std::wstring title;
 		void* lpTitle = nullptr;
 		if (__query(pWnd, offsetof(wnd_s, dwStyle_), EWS_MESSAGEBOX))
 		{
@@ -1413,7 +1413,7 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 		}
 		else {
 
-			auto title = 窗口_取标题(hWnd);
+			title = 窗口_取标题(hWnd);
 			lpTitle = (void*)title.data();
 		}
 
