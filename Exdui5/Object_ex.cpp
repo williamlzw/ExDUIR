@@ -3129,7 +3129,7 @@ int Ex_ObjGetUIState(size_t hObj)
 	return ret;
 }
 
-size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t lParam, size_t wParam)
+size_t Ex_ObjDefProc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam)
 {
 	void* pObj = nullptr;
 	int nError = 0;
