@@ -668,7 +668,7 @@ bool _canvas_getsize(size_t hCanvas, int* width, int* height)
 	return nError == 0;
 }
 
-bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** pLayout, int* nError)
+bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** ppLayout, int* nError)
 {
 	void* pObj = ((font_s*)pFont)->pObj_;
 	if (layoutWidth < 0) layoutWidth = 0;
@@ -676,7 +676,8 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 	int nPreFix;
 	auto lpwzTextFix = prefixstring(lpwzText, dwDTFormat, &nPreFix);
 	float iWidth, iHeight;
-	*nError=((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextLayout((WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, (IDWriteTextFormat*)pObj, layoutWidth, layoutHeight, (IDWriteTextLayout**)&pLayout);
+	*nError=((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextLayout((WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, (IDWriteTextFormat*)pObj, layoutWidth, layoutHeight, (IDWriteTextLayout**)ppLayout);
+	void * pLayout = *ppLayout;
 	if (*nError == 0)
 	{
 		auto byte = ((font_s*)pFont)->font_.lfUnderline;
