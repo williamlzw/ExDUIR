@@ -2,10 +2,7 @@
 void* _brush_create(int argb)
 {
 	D2D1_COLOR_F color = {};
-	color.b = (float)(argb & 0XFF);
-	color.g = (float)((argb >> 8) & 0xFF);
-	color.r = (float)((argb >> 16) & 0xFF);
-	color.a = (float)((argb >> 24) & 0xFF);
+	ARGB2ColorF(argb, &color);
 	void* hBrush = nullptr;
 	((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->CreateSolidColorBrush(color, (ID2D1SolidColorBrush**)&hBrush);
 	return hBrush;
@@ -24,10 +21,7 @@ int _brush_destroy(void* hBrush)
 void _brush_setcolor(void* hBrush, int argb)
 {
 	D2D1_COLOR_F color = {};
-	color.b = (float)(argb & 0XFF);
-	color.g = (float)((argb >> 8) & 0xFF);
-	color.r = (float)((argb >> 16) & 0xFF);
-	color.a = (float)((argb >> 24) & 0xFF);
+	ARGB2ColorF(argb, &color);
 	((ID2D1SolidColorBrush*)hBrush)->SetColor(color);
 }
 

@@ -42,3 +42,4 @@ void _dx_drawimage(void* pDeviceContext, void* pimage, float left, float top, in
 void _dx_drawimage_ex(void* pDeviceContext, void* pimage, float dstLeft, float dstTop, float srcLeft, float srcTop, float srcRight, float srcBottom, int mode);
 void _dx_bmp_copyfrom(void** pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom);
 
+void ARGB2ColorF(int argb, D2D1_COLOR_F *color);

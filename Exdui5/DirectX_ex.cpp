@@ -145,10 +145,7 @@ void _dx_flush(void* pDeviceContext)
 void _dx_clear(void* pDeviceContext,int Color)
 {
 	D2D1_COLOR_F color_f = {0};
-	color_f.r = (float)(Color & 0XFF);
-	color_f.g = (float)((Color >> 8) & 0xFF);
-	color_f.b = (float)((Color >> 16) & 0xFF);
-	color_f.a = (float)((Color >> 24) & 0xFF);
+	ARGB2ColorF(Color, &color_f);
 	((ID2D1DeviceContext*)pDeviceContext)->Clear(color_f);
 	
 }
@@ -315,4 +312,11 @@ void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle,  int* nError)
 			((ID2D1Bitmap1*)pCopyBitmap)->Release();
 		}
 	}
+}
+
+void ARGB2ColorF(int argb, D2D1_COLOR_F *color) {
+	color->b = (float)(argb & 0XFF) / 255;
+	color->g = (float)((argb >> 8) & 0xFF) / 255;
+	color->r = (float)((argb >> 16) & 0xFF) / 255;
+	color->a = (float)((argb >> 24) & 0xFF) / 255;
 }
