@@ -32,7 +32,7 @@ int _dx_enddraw(void* pDeviceContext);
 void _dx_flush(void* pDeviceContext);
 void _dx_clear(void* pDeviceContext, int Color);
 bool _dx_createeffect(void* pDeviceContext, IID peffectId, void** peffect, int* nError);
-void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation,  void* lprc, int* nError);
+void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation, void* lprc, int* nError);
 void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle, int* nError);
 void _dx_cliprect(void* pDeviceContext, float left, float top, float right, float bottom);
 void _dx_resetclip(void* pDeviceContext);

@@ -2,7 +2,7 @@
 
 void* Array_MoveMember(void* pData, int nCount, int nSize, int nNewCount)
 {
-	void* pNewData = 申请内存(8+ nSize * sizeof(void*));
+	void* pNewData = 申请内存(8 + nSize * sizeof(void*));
 	int nMoveBytes;
 	if (pData != 0 && nCount != 0 && nSize != 0)
 	{
@@ -23,7 +23,7 @@ bool Array_IsLegal(void* pArray, size_t nIndex)
 	if ((pArray == 0) || IsBadReadPtr(pArray, sizeof(array_s))) return false;
 	if (nIndex != 0)
 	{
-		int nCount=((array_s*)pArray)->nCount_;
+		int nCount = ((array_s*)pArray)->nCount_;
 		if (nIndex <= 0 || nIndex > nCount) return false;
 	}
 	return true;
@@ -32,13 +32,13 @@ bool Array_IsLegal(void* pArray, size_t nIndex)
 bool Array_Resize(void* pArray, int nCount, bool fGrowCount)
 {
 	if (Array_IsLegal(pArray) == false) return false;
-	void* pData=((array_s*)pArray)->lpData_;
+	void* pData = ((array_s*)pArray)->lpData_;
 	if (fGrowCount) nCount = nCount + ((array_s*)pArray)->nCount_;
 	int nSize = ((array_s*)pArray)->nSize_;
 	if (nSize <= 0) nSize = 1;
 	float flGrow = ((array_s*)pArray)->flGrow_;
 	if (flGrow <= 数组默认增长系数) flGrow = (float)数组默认增长系数;
-	while (nSize>=(int)(flGrow*nSize))
+	while (nSize >= (int)(flGrow*nSize))
 	{
 		flGrow = flGrow + (float)0.1;
 	}
@@ -48,16 +48,16 @@ bool Array_Resize(void* pArray, int nCount, bool fGrowCount)
 		if (nSize < nCount)
 		{
 			nSize = (int)(nSize * flGrow);
-			while (nSize<nCount)
+			while (nSize < nCount)
 			{
 				nSize = (int)(nSize * flGrow);
 			}
-			pNewData=Array_MoveMember(pData, ((array_s*)pArray)->nCount_, nSize, nCount);
+			pNewData = Array_MoveMember(pData, ((array_s*)pArray)->nCount_, nSize, nCount);
 		}
 		else {
 			if ((int)(nSize / flGrow) > nCount)
 			{
-				while ((int)(nSize / flGrow)>nCount)
+				while ((int)(nSize / flGrow) > nCount)
 				{
 					nSize = (int)(nSize / flGrow);
 				}
@@ -78,13 +78,13 @@ bool Array_Resize(void* pArray, int nCount, bool fGrowCount)
 	void* pDataa = ((array_s*)pArray)->lpData_;
 	if (pDataa != 0)
 	{
-		__set_int((void*)((size_t)pData -8),0, 1);
+		__set_int((void*)((size_t)pData - 8), 0, 1);
 		__set_int((void*)((size_t)pData - 4), 0, nCount);
 	}
 	return true;
 }
 
-int Array_Compare(void* pArray, size_t index1, size_t value1, size_t index2, size_t value2,int nType,int reasen)
+int Array_Compare(void* pArray, size_t index1, size_t value1, size_t index2, size_t value2, int nType, int reasen)
 {
 	return value2 - value1;
 }
@@ -94,7 +94,7 @@ size_t Array_SetEvent(void* pArray, int nEvent, size_t index1, size_t pvValue, s
 	if (nEvent <= 0 || nEvent > 5) return 0;
 	void* lpfnCbk = (void*)__get(pArray, offsetof(array_s, event_onAppend_) + (nEvent - 1) * sizeof(void*));
 
-	if (lpfnCbk == 0 ) return 0;
+	if (lpfnCbk == 0) return 0;
 	if (((array_s*)pArray)->fDisableEvent_ != 0 && nEvent != 数组事件_比对成员) return 0;
 	int nCount = ((array_s*)pArray)->nCount_;
 	if (index1 <= 0 || index1 > nCount)
@@ -105,7 +105,7 @@ size_t Array_SetEvent(void* pArray, int nEvent, size_t index1, size_t pvValue, s
 	auto nType = ((array_s*)pArray)->nType_;
 	if (pvValue == 0)
 	{
-		pvValue = __get(pData, (index1-1) * sizeof(void*));
+		pvValue = __get(pData, (index1 - 1) * sizeof(void*));
 	}
 	if (nEvent == 数组事件_比对成员)
 	{
@@ -122,8 +122,8 @@ void* Array_Create(int count)
 	void* pArray = 申请内存(sizeof(array_s));
 	((array_s*)pArray)->flGrow_ = (float)数组默认增长系数;
 	((array_s*)pArray)->event_onCompare_ = &Array_Compare;
-	void* pData = 申请内存(8+sizeof(void*));
-	((array_s*)pArray)->lpData_ =(void*) ((size_t)pData + 8);
+	void* pData = 申请内存(8 + sizeof(void*));
+	((array_s*)pArray)->lpData_ = (void*)((size_t)pData + 8);
 	((array_s*)pArray)->nSize_ = 1;
 	Array_Resize(pArray, count, false);
 	return pArray;
@@ -145,12 +145,12 @@ bool Array_Destroy(void* pArray)
 size_t Array_AddMember(void* pArray, size_t value, size_t index)
 {
 	if (Array_IsLegal(pArray) == false) return 0;
-	auto nCount= ((array_s*)pArray)->nCount_;
+	auto nCount = ((array_s*)pArray)->nCount_;
 	if (index <= 0) index = nCount + 1;
 	if (index <= 0 || index > nCount + 1) return 0;
 	Array_Resize(pArray, 1, true);
 	auto pData = ((array_s*)pArray)->lpData_;
-	if (nCount > 0) RtlMoveMemory((void*)((size_t)pData + index * sizeof(void*)), (void*) ((size_t)pData + (index - 1) * sizeof(void*)), (nCount - index + 1) * sizeof(void*));
+	if (nCount > 0) RtlMoveMemory((void*)((size_t)pData + index * sizeof(void*)), (void*)((size_t)pData + (index - 1) * sizeof(void*)), (nCount - index + 1) * sizeof(void*));
 	auto pRet = Array_SetEvent(pArray, 数组事件_添加成员, index, value);
 	if (pRet == 0) pRet = value;
 	__set(pData, (index - 1) * sizeof(void*), pRet);
@@ -161,9 +161,9 @@ bool Array_DelMember(void* pArray, size_t index)
 {
 	if (Array_IsLegal(pArray) == false) return false;
 	Array_SetEvent(pArray, 数组事件_删除成员, index);
-	auto pData= ((array_s*)pArray)->lpData_;
+	auto pData = ((array_s*)pArray)->lpData_;
 	auto nCount = ((array_s*)pArray)->nCount_;
-	RtlMoveMemory((void*)((size_t)pData + (index - 1) * sizeof(void*)), (void*)((size_t)pData + index * sizeof(void*)), (nCount - index ) * sizeof(void*));
+	RtlMoveMemory((void*)((size_t)pData + (index - 1) * sizeof(void*)), (void*)((size_t)pData + index * sizeof(void*)), (nCount - index) * sizeof(void*));
 	Array_Resize(pArray, -1, true);
 	return true;
 }
@@ -257,7 +257,7 @@ size_t Array_Emum(void* pArray, void* fun, size_t pvParam, bool reverse)
 	else {
 		for (int index = 0; index < nCount; index++)
 		{
-			if (((ArrayEnumPROC)fun)(pArray, index, (void*)__get(pData, (index - 1) * sizeof(void*)), nType,pvParam))
+			if (((ArrayEnumPROC)fun)(pArray, index, (void*)__get(pData, (index - 1) * sizeof(void*)), nType, pvParam))
 			{
 				return index;
 			}

@@ -16,7 +16,7 @@ size_t _handle_create(int nType, void* dwData, int *nError)
 {
 	size_t ret = 0;
 	void* lpAddr = MemPool_Alloc(g_Li.hHandles, false);
-	if (lpAddr >0)
+	if (lpAddr > 0)
 	{
 		__set(lpAddr, 0, (size_t)dwData);
 		size_t index = MemPool_GetIndexFromAddrsss(g_Li.hHandles, lpAddr);
@@ -68,7 +68,7 @@ bool _handle_validate(size_t handle, int type, void** dwData, int* nError)
 	bool ret = false;
 	if (handle != 0)
 	{
-		
+
 		size_t nIndex = (handle - (44 << 24) - (type << 18)) >> 2;
 		if (nIndex > 0 && nIndex < 65537)
 		{
@@ -93,7 +93,7 @@ bool _handle_validate(size_t handle, int type, void** dwData, int* nError)
 		}
 	}
 	else {
-		
+
 		*nError = ERROR_EX_HANDLE_INVALID;
 	}
 	return ret;

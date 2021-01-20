@@ -10,7 +10,7 @@ int _sb_parentnotify(HWND hWnd, void* pObj, size_t wParam, size_t lParam, int uM
 	{
 		if (uMsg == 0)
 		{
-			uMsg = __query(pObj, offsetof(obj_s, dwStyle_), 滚动条风格_垂直滚动条) ? WM_VSCROLL:WM_HSCROLL;
+			uMsg = __query(pObj, offsetof(obj_s, dwStyle_), 滚动条风格_垂直滚动条) ? WM_VSCROLL : WM_HSCROLL;
 		}
 		if (bDispatch)
 		{
@@ -184,8 +184,8 @@ void _sb_nccalcsize(HWND hWnd, size_t hObj, void* pObj)
 	int cx, cy;
 	if (__query(pObj, offsetof(obj_s, dwStyle_), 滚动条风格_控制按钮))
 	{
-		 cx = 取低位_短整数(lcxy1);
-		 cy = 取高位_短整数(lcxy1);
+		cx = 取低位_短整数(lcxy1);
+		cy = 取高位_短整数(lcxy1);
 	}
 	RECT rcClient;
 	rcClient.left = ((obj_s*)pObj)->c_left_;
@@ -221,9 +221,9 @@ void _sb_nccalcsize(HWND hWnd, size_t hObj, void* pObj)
 		((si_s*)psi)->rcArrow2_bottom_ = rcClient.bottom;
 
 		((si_s*)psi)->rcRegion_left_ = rcClient.left + cx;
-		((si_s*)psi)->rcRegion_top_ = rcClient.top ;
+		((si_s*)psi)->rcRegion_top_ = rcClient.top;
 		((si_s*)psi)->rcRegion_right_ = rcClient.right - cy;
-		((si_s*)psi)->rcRegion_bottom_ = rcClient.bottom ;
+		((si_s*)psi)->rcRegion_bottom_ = rcClient.bottom;
 	}
 	_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_CALCSIZE, 0, (size_t)psi + offsetof(si_s, rcRegion_left_));
 	_sb_calcthumb(hWnd, pObj, psi, bVScroll);
@@ -246,9 +246,9 @@ int _sb_point2pos(void* psi, int x, int y, bool bVert, bool bCheckPos)
 	int sizeRegion, curPoint, sizeThumb;
 	if (bVert)
 	{
-		 sizeRegion = rcRegion.bottom - rcRegion.top;
-		 curPoint = y - rcRegion.top - ((si_s*)psi)->nTrackPosOffset_;
-		 sizeThumb = rcThumb.bottom - rcThumb.top;
+		sizeRegion = rcRegion.bottom - rcRegion.top;
+		curPoint = y - rcRegion.top - ((si_s*)psi)->nTrackPosOffset_;
+		sizeThumb = rcThumb.bottom - rcThumb.top;
 	}
 	else {
 		sizeRegion = rcRegion.right - rcRegion.left;
@@ -413,11 +413,11 @@ void _sb_lbuttondown(HWND hWnd, size_t hObj, void* pObj, size_t lParam)
 	int httype = ((si_s*)psi)->httype_;
 	int nError = 0;
 	_obj_setuistate(pObj, 状态_按下, false, 0, true, &nError);
-	if(httype!=0)
+	if (httype != 0)
 	{
 		int nTrack = -1;
 		int x, y;
-		bool fTimer=false;
+		bool fTimer = false;
 		if (httype == 滚动条点击类型_滚动条)
 		{
 			x = 取低位(lParam) - ((si_s*)psi)->rcThumb_left_;
@@ -521,7 +521,7 @@ void _sb_oncontextmenu(size_t hObj, void* pObj, size_t lParam)
 	((si_s*)psi)->nTrackPosOffset_ = lParam;
 	int wEnable = __query(psi, offsetof(si_s, wArrows_), ESB_DISABLE_BOTH) ? 1026 : 1024;
 	EnableMenuItem((HMENU)hMenu, 0, wEnable);//滚动至此
-	wEnable = (__query(psi, offsetof(si_s, wArrows_), ESB_DISABLE_LEFT) || (((si_s*)psi)->nPos_== ((si_s*)psi)->nMin_))? 1026 : 1024;
+	wEnable = (__query(psi, offsetof(si_s, wArrows_), ESB_DISABLE_LEFT) || (((si_s*)psi)->nPos_ == ((si_s*)psi)->nMin_)) ? 1026 : 1024;
 	EnableMenuItem((HMENU)hMenu, 2, wEnable);//顶部
 	EnableMenuItem((HMENU)hMenu, 5, wEnable);//上页
 	EnableMenuItem((HMENU)hMenu, 8, wEnable);//上行
@@ -599,7 +599,7 @@ int _sb_paint(size_t hObj, void* pObj)
 			rcRegion.right = ((si_s*)ps.dwOwnerData_)->rcRegion_right_;
 			rcRegion.bottom = ((si_s*)ps.dwOwnerData_)->rcRegion_bottom_;
 			int alpha = __query(ps.dwOwnerData_, offsetof(si_s, wArrows_), ESB_DISABLE_BOTH) ? 128 : 255;
-			Ex_ThemeDrawControl(ps.hTheme_, ps.hCanvas_, rcRegion.left, rcRegion.top, rcRegion.right, rcRegion.bottom, atomClass,  ATOM_RECT, alpha);
+			Ex_ThemeDrawControl(ps.hTheme_, ps.hCanvas_, rcRegion.left, rcRegion.top, rcRegion.right, rcRegion.bottom, atomClass, ATOM_RECT, alpha);
 		}
 		RECT rcThumb;
 		rcThumb.left = ((si_s*)ps.dwOwnerData_)->rcThumb_left_;
@@ -711,7 +711,7 @@ size_t _sb_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam, 
 	}
 	else if (uMsg == SBM_SETPOS)
 	{
-		return _sb_realsetinfo(hWnd, hObj, pObj, SIF_POS, 0, 0, 0, wParam, lParam !=0);
+		return _sb_realsetinfo(hWnd, hObj, pObj, SIF_POS, 0, 0, 0, wParam, lParam != 0);
 	}
 	else if (uMsg == SBM_GETPOS)
 	{

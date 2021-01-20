@@ -39,11 +39,11 @@ void* _brush_createfromimg(size_t hImg)
 		{
 			D2D1_BRUSH_PROPERTIES pro = {};
 			D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
-		
+
 			pro2.extendModeX = D2D1_EXTEND_MODE_WRAP;
 			pro2.extendModeY = D2D1_EXTEND_MODE_WRAP;
 			pro2.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-	
+
 			//pro.transform._11 = 1065353216;
 			//pro.transform._21 = 1065353216;
 			//pro.transform._31 = 1065353216;
@@ -63,7 +63,7 @@ void* _brush_createfromcanvas(size_t hCanvas)
 	ID2D1BitmapBrush* hBrush = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{
-		void* pContext=_cv_context(pCanvas);
+		void* pContext = _cv_context(pCanvas);
 		D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
 
 		pro2.extendModeX = D2D1_EXTEND_MODE_WRAP;

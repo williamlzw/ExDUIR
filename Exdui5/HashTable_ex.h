@@ -1,7 +1,7 @@
 #pragma once
 #include "help_ex.h"
 
-typedef void(* HashTablePROC)(void*);
+typedef void(*HashTablePROC)(void*);
 
 struct entry_s
 {
@@ -10,7 +10,7 @@ struct entry_s
 	void* pEntry;
 };
 
-struct hashtable_s 
+struct hashtable_s
 {
 	HashTablePROC pfnDelete;
 	void* pTable;//一个指向entry_s *的指针
@@ -19,7 +19,7 @@ struct hashtable_s
 	size_t dwThreshold;
 };
 
-void* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete=nullptr);
+void* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete = nullptr);
 BOOL HashTable_Clear(void* hTable);
 BOOL HashTable_Destroy(void* hTable);
 size_t HashTable_GetPos(size_t Key, size_t counts);

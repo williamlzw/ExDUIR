@@ -8,7 +8,7 @@
 
 void pfnDefaultFreeData(void* dwData);
 void Ex_SetLastError(int nError);
-BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName, 
+BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName,
 	LPVOID lpDefaultTheme, int dwDefaultThemeLen, LPVOID lpDefaultI18N, int dwDefaultI18NLen);
 void Ex_UnInit();
 void _object_init();

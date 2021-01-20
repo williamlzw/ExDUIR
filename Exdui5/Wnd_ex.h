@@ -18,7 +18,7 @@
 struct wnd_s
 {
 	int wnd = 0;
-//TODO:	size_t ulwi_; UPDATELAYEREDWINDOWINFO
+	//TODO:	size_t ulwi_; UPDATELAYEREDWINDOWINFO
 	int ulwi_cbsize_;
 	void* ulwi_hdcDest_;
 	void* ulwi_pptDst_;
@@ -127,7 +127,7 @@ struct wnd_s
 
 size_t Ex_DUIFromWindow(HWND hWnd);
 WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCURSOR hCursor);
-bool _wnd_getfromhandle(size_t handle, HWND* hWnd=NULL, void** pWnd = NULL, void** pObj = NULL, bool* isObject = NULL, int* nError = NULL);
+bool _wnd_getfromhandle(size_t handle, HWND* hWnd = NULL, void** pWnd = NULL, void** pObj = NULL, bool* isObject = NULL, int* nError = NULL);
 int _wnd_dispatch_notify(HWND hWnd, void* pWnd, size_t hObj, int nID, int nCode, WPARAM wParam, LPARAM lParam, void* pObj);
 void _wnd_redraw_bkg(HWND hWnd, void* pWnd, void* lpRect, bool bRedrawBkg, bool bUpdate);
 LRESULT 窗口_默认回调(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -185,7 +185,7 @@ void _wnd_wm_mousewheel(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM l
 void _wnd_wm_command(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM lParam);
 size_t _wnd_obj_setnextfocus(HWND hWnd, void* pWnd, size_t objEntry, size_t objLastFocus);
 void _wnd_obj_settabstop(HWND hWnd, void* pWnd, size_t objLastFocus);
-void _wnd_wm_keyboard( void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam);
+void _wnd_wm_keyboard(void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam);
 bool _wnd_obj_childtabstop(size_t objEntry, size_t* objFocusable, void** pObjFocusable, size_t objLast, bool* bFounded);
 void _wnd_wm_ime_composition(HWND hWnd, void* pWnd);
 bool _wnd_wm_measureitem_host(void* pWnd, WPARAM wParam, LPARAM lParam);

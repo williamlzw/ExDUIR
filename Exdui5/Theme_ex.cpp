@@ -64,10 +64,6 @@ int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<s
 			{
 				__set_wchar(iSplit, 0, 0);
 				auto dwLen = (size_t)iSplit - (size_t)iOffset1;
-				//setlocale(LC_ALL, "chs");
-				//wprintf(L"%ls \r\n", dwLen);
-				//std::cout << dwLen << std::endl;
-				//system("pause");
 				(*artItems1)[nCount] = 数据_Crc32_Addr(iOffset1, dwLen);
 				(*artItems2)[nCount] = (size_t)(wchar_t*)((size_t)iSplit + 2);
 				nCount = nCount + 1;
@@ -184,13 +180,13 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 											else {
 												void* lpValueaa = 申请内存(dwLen + 2);
 												RtlMoveMemory(lpValueaa, (void*)arylpValue[i], dwLen);
-												
+
 												HashTable_Set(pTableProp, aryAtomKey[i], (size_t)lpValueaa);
 											}
 										}
 										else {
 											int atomProp = _fmt_getatom((void*)arylpValue[i], &lpValue);
-											void* lpValuea=nullptr;
+											void* lpValuea = nullptr;
 											if (atomProp == ATOM_RGB || atomProp == ATOM_RGBA)
 											{
 												lpValuea = 申请内存(4);

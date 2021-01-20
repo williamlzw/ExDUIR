@@ -36,16 +36,16 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 	{
 		if (lpValue != 0)
 		{
-			auto wchar=__get_wchar(lpValue, -2);
+			auto wchar = __get_wchar(lpValue, -2);
 			if (wchar == 37)
 			{
 				位_添加(&dwFlags, 0);
 			}
 		}
 	}
-	while (lpValue!=0 && nCount<nMax-1)
+	while (lpValue != 0 && nCount < nMax - 1)
 	{
-		lpValue =(void*)((size_t)lpValue + 2);
+		lpValue = (void*)((size_t)lpValue + 2);
 		nCount = nCount + 1;
 		aryTmp[nCount] = _wtoi((wchar_t*)lpValue);
 		if (fPercentFlags)
@@ -53,17 +53,17 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 			auto tmp = wcschr((wchar_t*)lpValue, ',');
 			if (tmp != 0)
 			{
-			  auto wchar=__get_wchar(tmp, -2);
-			  if (wchar == 37)
-			  {
-				  位_添加(&dwFlags, nCount);
-			  }
+				auto wchar = __get_wchar(tmp, -2);
+				if (wchar == 37)
+				{
+					位_添加(&dwFlags, nCount);
+				}
 			}
 			else {
 				if (wcschr((wchar_t*)lpValue, 37) != 0)
 				{
-					
-					位_添加(&dwFlags, nCount );
+
+					位_添加(&dwFlags, nCount);
 				}
 			}
 			lpValue = tmp;
@@ -92,7 +92,7 @@ int _fmt_intary(void* lpValue, void* lpAry, int nMaxCount, bool fZero, void* lpd
 	{
 		if (fZero) RtlZeroMemory(lpAry, nMaxCount * 4);
 		void* pbuffer = nullptr;
-		 nCount = _fmt_intary_ex(lpValue, &pbuffer, nMaxCount, lpdwPercentFlags != 0);
+		nCount = _fmt_intary_ex(lpValue, &pbuffer, nMaxCount, lpdwPercentFlags != 0);
 		if (pbuffer != 0)
 		{
 			RtlMoveMemory(lpAry, pbuffer, nCount * 4);
@@ -147,7 +147,7 @@ void* _fmt_int(void* lpValue, void* lpdwPercentFlags)
 
 bool _fmt_getvalue(void** lpValue, int atomDest)
 {
-	void* lpValueOffset=nullptr;
+	void* lpValueOffset = nullptr;
 	int atomSrc = 0;
 	bool ret = false;
 	atomSrc = _fmt_getatom(*lpValue, &lpValueOffset);
@@ -167,7 +167,7 @@ bool _fmt_bin(void* hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpFr
 	int atomSrc = _fmt_getatom(lpValue, &lpValueOffset);
 	if (atomSrc != 0)
 	{
-		__set_char(lpValueOffset , lstrlenW((LPCWSTR)lpValueOffset) * 2 - 2, 0);
+		__set_char(lpValueOffset, lstrlenW((LPCWSTR)lpValueOffset) * 2 - 2, 0);
 		if (atomSrc == ATOM_RES)
 		{
 			Ex_ResGetFileFromAtom(hRes, Ex_Atom((LPCWSTR)lpValueOffset), lpBin, lpLen);

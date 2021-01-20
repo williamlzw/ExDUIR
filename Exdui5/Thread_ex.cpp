@@ -15,7 +15,6 @@ void Thread_DeleteCriticalSection(void* addr)
 
 void Thread_EnterCriticalSection(void* addr)
 {
-	std::cout <<"Thread_EnterCriticalSection:"<< LocalSize(addr) << std::endl;
 	EnterCriticalSection((LPCRITICAL_SECTION)addr);
 }
 
@@ -24,10 +23,10 @@ void Thread_LeaveCriticalSection(void* addr)
 	LeaveCriticalSection((LPCRITICAL_SECTION)addr);
 }
 
-void Thread_Create(LPTHREAD_START_ROUTINE fun,LPVOID parameter)
+void Thread_Create(LPTHREAD_START_ROUTINE fun, LPVOID parameter)
 {
-	auto hThread=CreateThread(NULL,0,fun, parameter,0,0);
-	if (hThread!=NULL) {
+	auto hThread = CreateThread(NULL, 0, fun, parameter, 0, 0);
+	if (hThread != NULL) {
 		CloseHandle(hThread);
 	}
 }

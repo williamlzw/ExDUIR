@@ -24,8 +24,8 @@
 #include "Global_ex.h"
 
 
-typedef BOOL (*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
-typedef int(*ClsPROC)(HWND, size_t,int, size_t, size_t,void*);
+typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
+typedef int(*ClsPROC)(HWND, size_t, int, size_t, size_t, void*);
 typedef int(*MsgPROC)(HWND, size_t, int, size_t, void*, void*);
 
 #define 取高位_短整数(x) HIBYTE(x)
@@ -361,7 +361,7 @@ struct RENDERINFO
 	void* pD2DDevice;
 	void* pD2DDeviceContext;
 	void* pGDIInterop;
-	
+
 	void* pEffectGaussianBlur;
 	void* pEffectHueRotation;
 
@@ -371,8 +371,8 @@ struct RENDERINFO
 	float bp_dpiy;
 	int bp_bitmapOptions;
 	int bp_colorContext;
-	
-	
+
+
 };
 
 extern LOCALINFO g_Li;
