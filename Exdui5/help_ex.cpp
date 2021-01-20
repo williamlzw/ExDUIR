@@ -514,10 +514,10 @@ std::string GetErrorMessage(DWORD error)
 
 void* copytstr(LPCWSTR lptstr, int len)
 {
-	auto addr = ÉêÇëÄÚ´æ(len + 2);
+	auto addr = ÉêÇëÄÚ´æ(len * 2 + 2);
 	if (addr != 0)
 	{
-		RtlMoveMemory(addr, lptstr, len);
+		RtlMoveMemory(addr, lptstr, len * 2);
 	}
 	else {
 		Ex_SetLastError(ERROR_EX_MEMORY_ALLOC);
