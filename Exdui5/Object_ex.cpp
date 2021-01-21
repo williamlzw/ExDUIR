@@ -50,6 +50,9 @@ size_t Ex_ObjLayoutGet(size_t handle)
 	return hLayout;
 }
 
+//TODO: pParent有可能是wnd或obj，临时解决方案
+#define offsetofobj(s, m) (((obj_s*)s)->pwnd_)?offsetof(obj_s,m):offsetof(wnd_s,m)
+
 void _obj_z_clear(size_t hObj, void* pObj, size_t* hParent, void** pParent)
 {
 	//逆序,顶部->底部
@@ -64,13 +67,13 @@ void _obj_z_clear(size_t hObj, void* pObj, size_t* hParent, void** pParent)
 	size_t objPrev = ((obj_s*)pObj)->objPrev_;
 	size_t objNext = ((obj_s*)pObj)->objNext_;
 	//修复父层组件链表
-	if (((obj_s*)*pParent)->objChildFirst_ == hObj)
+	if (__get(*pParent, offsetofobj(*pParent, objChildFirst_)) == hObj)
 	{
-		((obj_s*)*pParent)->objChildFirst_ = objNext;
+		__set(*pParent, offsetofobj(*pParent, objChildFirst_), objNext);
 	}
-	if (((obj_s*)*pParent)->objChildLast_ == hObj)
+	if (__get(*pParent, offsetofobj(*pParent, objChildLast_)) == hObj)
 	{
-		((obj_s*)*pParent)->objChildLast_ = objPrev;
+		__set(*pParent, offsetofobj(*pParent, objChildLast_), objNext);
 	}
 	//修复兄弟层组件链表
 	void* pNext = nullptr;
@@ -95,7 +98,7 @@ void _obj_z_set_before_topmost(size_t objChildFirst, void* pObjChildFirst, size_
 		size_t objPrev = ((obj_s*)pObjChildLast)->objPrev_;
 		if (objPrev == 0)//没有置顶组件
 		{
-			((wnd_s*)pParent)->objChildFirst_ = hObj;
+			__set(pParent, offsetofobj(pParent, objChildFirst_), hObj);
 			((obj_s*)pObjChildLast)->objPrev_ = hObj;
 			((obj_s*)pObj)->objNext_ = objChildLast;
 		}
@@ -116,7 +119,7 @@ void _obj_z_set_before_topmost(size_t objChildFirst, void* pObjChildFirst, size_
 					else {
 						((obj_s*)pObjPrev)->objPrev_ = hObj;
 						((obj_s*)pObj)->objNext_ = objPrev;
-						((obj_s*)pParent)->objChildFirst_ = hObj;
+						__set(pParent, offsetofobj(pParent, objChildFirst_), hObj);
 					}
 				}
 				else {
@@ -128,7 +131,7 @@ void _obj_z_set_before_topmost(size_t objChildFirst, void* pObjChildFirst, size_
 						((obj_s*)pTmp)->objPrev_ = hObj;
 					}
 					else {
-						((obj_s*)pParent)->objChildFirst_ = hObj;
+						__set(pParent, offsetofobj(pParent, objChildFirst_), hObj);
 					}
 				}
 				break;
@@ -138,7 +141,7 @@ void _obj_z_set_before_topmost(size_t objChildFirst, void* pObjChildFirst, size_
 	else {
 		((obj_s*)pObjChildLast)->objNext_ = hObj;
 		((obj_s*)pObj)->objPrev_ = objChildLast;
-		((obj_s*)pParent)->objChildLast_ = hObj;
+		__set(pParent, offsetofobj(pParent, objChildLast_), hObj);
 	}
 }
 
@@ -154,25 +157,14 @@ void _obj_z_set(size_t hObj, void* pObj, size_t hObjInsertAfter, int flags, int*
 
 	size_t objChildFirst = 0;
 	size_t objChildLast = 0;
-	if (((obj_s*)pParent)->pwnd_) {
-		objChildFirst = ((obj_s*)pParent)->objChildFirst_;
-		objChildLast = ((obj_s*)pParent)->objChildLast_;
-	}
-	else {
-		objChildFirst = ((wnd_s*)pParent)->objChildFirst_;
-		objChildLast = ((wnd_s*)pParent)->objChildLast_;
-	}
+
+	objChildFirst = __get(pParent, offsetofobj(pParent, objChildFirst_));//((obj_s*)pParent)->objChildFirst_;
+	objChildLast = __get(pParent, offsetofobj(pParent, objChildLast_));
 
 	if (objChildLast == 0 || objChildFirst == 0)
 	{
-		if (((obj_s*)pParent)->pwnd_) {
-			((obj_s*)pParent)->objChildFirst_ = hObj;
-			((obj_s*)pParent)->objChildLast_ = hObj;
-		}
-		else {
-			((wnd_s*)pParent)->objChildFirst_ = hObj;
-			((wnd_s*)pParent)->objChildLast_ = hObj;
-		}
+		__set(pParent, offsetofobj(pParent, objChildFirst_), hObj);
+		__set(pParent, offsetofobj(pParent, objChildLast_), hObj);
 	}
 	else {
 		if (_handle_validate(objChildLast, HT_OBJECT, &pObjChildLast, nError))
@@ -190,7 +182,7 @@ void _obj_z_set(size_t hObj, void* pObj, size_t hObjInsertAfter, int flags, int*
 					__add(pObj, offsetof(obj_s, dwStyleEx_), EOS_EX_TOPMOST);
 					((obj_s*)pObjChildLast)->objNext_ = hObj;
 					((obj_s*)pObj)->objPrev_ = objChildLast;
-					((wnd_s*)pParent)->objChildLast_ = hObj;
+					__set(pParent, offsetofobj(pParent, objChildLast_), hObj);
 				}
 				else if (hObjInsertAfter == (size_t)HWND_TOP)//顶层
 				{
@@ -198,7 +190,7 @@ void _obj_z_set(size_t hObj, void* pObj, size_t hObjInsertAfter, int flags, int*
 					{
 						((obj_s*)pObjChildLast)->objNext_ = hObj;
 						((obj_s*)pObj)->objPrev_ = objChildLast;
-						((wnd_s*)pParent)->objChildLast_ = hObj;
+						__set(pParent, offsetofobj(pParent, objChildLast_), hObj);
 					}
 					else {
 						_obj_z_set_before_topmost(objChildFirst, pObjChildFirst, objChildLast, pObjChildLast, hObj, pObj, pParent);
@@ -213,7 +205,7 @@ void _obj_z_set(size_t hObj, void* pObj, size_t hObjInsertAfter, int flags, int*
 					else {
 						((obj_s*)pObjChildFirst)->objPrev_ = hObj;
 						((obj_s*)pObj)->objNext_ = objChildFirst;
-						((obj_s*)pParent)->objChildFirst_ = hObj;
+						__set(pParent, offsetofobj(pParent, objChildFirst_), hObj);
 					}
 				}
 			}
