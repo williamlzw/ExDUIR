@@ -84,7 +84,7 @@ bool Array_Resize(void* pArray, int nCount, bool fGrowCount)
 	return true;
 }
 
-int Array_Compare(void* pArray, size_t index1, size_t value1, size_t index2, size_t value2, int nType, int reasen)
+size_t Array_Compare(void* pArray, size_t index1, size_t value1, size_t index2, size_t value2, int nType, int reasen)
 {
 	return value2 - value1;
 }

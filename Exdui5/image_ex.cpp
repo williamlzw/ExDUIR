@@ -3,7 +3,7 @@
 #include "DirectX_ex.h"
 
 
-bool _img_destroy(size_t hImg)
+bool _img_destroy(ExHandle hImg)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -14,7 +14,7 @@ bool _img_destroy(size_t hImg)
 		void* pWicDecoder = ((img_s*)pImage)->pWicDecoder_;
 		((IWICBitmapDecoder*)pWicDecoder)->Release();
 		ÊÍ·ÅÄÚ´æ(pImage);
-		_handle_destroy((size_t)hImg, &nError);
+		_handle_destroy(hImg, &nError);
 	}
 	return nError == 0;
 }
@@ -152,7 +152,7 @@ void _apng_drawframe(void* pImage, int nIndex)//Î´Íê³É
 	}
 }
 
-bool _img_selectactiveframe(size_t hImg, int nIndex)
+bool _img_selectactiveframe(ExHandle hImg, int nIndex)
 {
 	void* pImg = nullptr;
 	int nError = 0;
@@ -188,7 +188,7 @@ void* _wic_getpixel(void* pBitmap, int x, int y, int* nError)
 	return ret;
 }
 
-void* _img_getpixel(size_t hImg, int x, int y)
+void* _img_getpixel(ExHandle hImg, int x, int y)
 {
 	int nError = 0;
 	void* ret = nullptr;
@@ -202,7 +202,7 @@ void* _img_getpixel(size_t hImg, int x, int y)
 	return ret;
 }
 
-bool _img_lock(size_t hImg, void* lpRectL, int flags, void* lpLockedBitmapData)//FLAGS 1¶Á 2Ð´ 3¶ÁÐ´
+bool _img_lock(ExHandle hImg, void* lpRectL, int flags, void* lpLockedBitmapData)//FLAGS 1¶Á 2Ð´ 3¶ÁÐ´
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -269,7 +269,7 @@ bool _img_lock(size_t hImg, void* lpRectL, int flags, void* lpLockedBitmapData)/
 	return nError == 0;
 }
 
-bool _img_unlock(size_t hImg, void* lpLockedBitmapData)
+bool _img_unlock(ExHandle hImg, void* lpLockedBitmapData)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -286,7 +286,7 @@ bool _img_unlock(size_t hImg, void* lpLockedBitmapData)
 	return nError == 0;
 }
 
-bool _img_setpixel(size_t hImg, int x, int y, int color)
+bool _img_setpixel(ExHandle hImg, int x, int y, int color)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -318,7 +318,7 @@ bool _img_setpixel(size_t hImg, int x, int y, int color)
 	return nError == 0;
 }
 
-bool _img_getsize(size_t hImg, void* lpWidth, void* lpHeight)
+bool _img_getsize(ExHandle hImg, void* lpWidth, void* lpHeight)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -340,24 +340,24 @@ bool _img_getsize(size_t hImg, void* lpWidth, void* lpHeight)
 	return nError == 0;
 }
 
-int _img_width(size_t hImg)
+int _img_width(ExHandle hImg)
 {
 	int width = 0;
 	_img_getsize(hImg, &width, NULL);
 	return width;
 }
 
-int _img_height(size_t hImg)
+int _img_height(ExHandle hImg)
 {
 	int height = 0;
 	_img_getsize(hImg, NULL, &height);
 	return height;
 }
 
-size_t _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nError)
+ExHandle _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nError)
 {
 	void* pImg = ÉêÇëÄÚ´æ(sizeof(img_s));
-	size_t hImg = 0;
+	ExHandle hImg = 0;
 	if (pImg != 0)
 	{
 		((img_s*)pImg)->pObj_ = pObj;
@@ -383,9 +383,9 @@ size_t _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nErr
 	return hImg;
 }
 
-size_t _wic_create(int width, int height, GUID pFormat, int* nError)
+ExHandle _wic_create(int width, int height, GUID pFormat, int* nError)
 {
-	size_t hImg = 0;
+	ExHandle hImg = 0;
 	void* pBitmap = nullptr;
 	*nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmap(width, height, pFormat, WICBitmapCacheOnDemand, (IWICBitmap**)&pBitmap);
 	if (*nError == 0)
@@ -396,23 +396,23 @@ size_t _wic_create(int width, int height, GUID pFormat, int* nError)
 	return hImg;
 }
 
-size_t _img_create(int width, int height)
+ExHandle _img_create(int width, int height)
 {
 	int nError = 0;
-	size_t hImg = _wic_create(width, height, GUID_WICPixelFormat32bppPBGRA, &nError);
+	ExHandle hImg = _wic_create(width, height, GUID_WICPixelFormat32bppPBGRA, &nError);
 	Ex_SetLastError(nError);
 	return hImg;
 }
 
-size_t _img_createfrompngbits(void* lpmem)
+ExHandle _img_createfrompngbits(void* lpmem)
 {
 	int nError = 0;
-	size_t hImg = 0;
-	int width = __get(lpmem, sizeof(void*));
-	int height = __get(lpmem, 2 * sizeof(void*));
+	ExHandle hImg = 0;
+	int width = __get(lpmem, sizeof(int));
+	int height = __get(lpmem, 2 * sizeof(int));
 	int len = width * height * 4;
 	void* pBitmapData = nullptr;
-	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppPBGRA, width * 4, len, (BYTE*)((size_t)lpmem + 3 * sizeof(void*)), (IWICBitmap**)&pBitmapData);
+	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppPBGRA, width * 4, len, (BYTE*)((size_t)lpmem + 3 * sizeof(int)), (IWICBitmap**)&pBitmapData);
 	if (nError == 0)
 	{
 		hImg = _img_init(pBitmapData, 0, 1, NULL, &nError);
@@ -456,10 +456,10 @@ void* _img_createfromstream_init(void* lpData, int dwLen, int* nError)
 }
 
 
-size_t _wic_init_from_decoder(void* pDecoder, int* nError)
+ExHandle _wic_init_from_decoder(void* pDecoder, int* nError)
 {
 	UINT pCount = 0;
-	size_t ret = 0;
+	ExHandle ret = 0;
 	*nError = ((IWICBitmapDecoder*)pDecoder)->GetFrameCount(&pCount);
 	if (*nError == 0)
 	{
@@ -473,11 +473,11 @@ size_t _wic_init_from_decoder(void* pDecoder, int* nError)
 	return ret;
 }
 
-size_t _img_createfromstream(void* lpStream)
+ExHandle _img_createfromstream(void* lpStream)
 {
 	int nError = 0;
 	void* pDecoder = nullptr;
-	size_t hImg = 0;
+	ExHandle hImg = 0;
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateDecoderFromStream((IStream*)lpStream, NULL, WICDecodeMetadataCacheOnLoad, (IWICBitmapDecoder**)&pDecoder);
 	if (nError == 0)
 	{
@@ -492,10 +492,10 @@ size_t _img_createfromstream(void* lpStream)
 	return hImg;
 }
 
-size_t _img_createfrommemory(void* lpData, int dwLen)
+ExHandle _img_createfrommemory(void* lpData, int dwLen)
 {
 	int nError = 0;
-	size_t hImg = 0;
+	ExHandle hImg = 0;
 	void* lpStream = _img_createfromstream_init(lpData, dwLen, &nError);
 	if (nError == 0)
 	{
@@ -506,11 +506,11 @@ size_t _img_createfrommemory(void* lpData, int dwLen)
 	return hImg;
 }
 
-size_t _img_createfromhicon(void* hIcon)
+ExHandle _img_createfromhicon(void* hIcon)
 {
 	int nError = 0;
 	void* pBitmap = nullptr;
-	size_t hImg = 0;
+	ExHandle hImg = 0;
 	((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromHICON((HICON)hIcon, (IWICBitmap**)&pBitmap);
 	void* pBitmapConvert = _wic_convert(pBitmap, true, &nError);
 	if (nError == 0)
@@ -521,10 +521,10 @@ size_t _img_createfromhicon(void* hIcon)
 	return hImg;
 }
 
-size_t _img_createfromfile(LPCWSTR lpwzFilename)
+ExHandle _img_createfromfile(LPCWSTR lpwzFilename)
 {
 	void* pDecoder = nullptr;
-	size_t hImg = 0;
+	ExHandle hImg = 0;
 	int nError = 0;
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateDecoderFromFilename(lpwzFilename, NULL, 2147483648, WICDecodeMetadataCacheOnLoad, (IWICBitmapDecoder**)&pDecoder);
 	if (nError == 0)
@@ -535,11 +535,11 @@ size_t _img_createfromfile(LPCWSTR lpwzFilename)
 	return hImg;
 }
 
-size_t _img_copyrect(size_t hImg, int x, int y, int width, int height)
+ExHandle _img_copyrect(ExHandle hImg, int x, int y, int width, int height)
 {
 	void* pImage = nullptr;
 	int nError = 0;
-	size_t ret = 0;
+	ExHandle ret = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
 		void* pObj = ((img_s*)pImage)->pObj_;
@@ -554,10 +554,10 @@ size_t _img_copyrect(size_t hImg, int x, int y, int width, int height)
 	return ret;
 }
 
-size_t _img_copy(size_t hImg)
+ExHandle _img_copy(ExHandle hImg)
 {
 	int width, height;
-	size_t ret = 0;
+	ExHandle ret = 0;
 	if (_img_getsize(hImg, &width, &height))
 	{
 		ret = _img_copyrect(hImg, 0, 0, width, height);
@@ -565,11 +565,11 @@ size_t _img_copy(size_t hImg)
 	return ret;
 }
 
-size_t _img_scale(size_t hImage, int dstWidth, int dstHeight)
+ExHandle _img_scale(ExHandle hImage, int dstWidth, int dstHeight)
 {
 	void* pImage = nullptr;
 	int nError = 0;
-	size_t ret = 0;
+	ExHandle ret = 0;
 	if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 	{
 		void* pObj = ((img_s*)pImage)->pObj_;
@@ -675,7 +675,7 @@ void _wic_savetobin(void* pBitmap, void* lpBin, size_t* len, int* nError)
 	}
 }
 
-size_t _img_savetomemory(size_t hImage, void* lpBuffer)
+size_t _img_savetomemory(ExHandle hImage, void* lpBuffer)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -736,7 +736,7 @@ bool _wic_getframedelay(void* pDecoder, void* lpDelay, int nCount, int* nError)
 	return fOK;
 }
 
-bool _img_getframedelay(size_t hImg, void* lpDelayAry, int nFrames)
+bool _img_getframedelay(ExHandle hImg, void* lpDelayAry, int nFrames)
 {
 	void* pImg = nullptr;
 	int nError = 0;
@@ -758,7 +758,7 @@ bool _img_getframedelay(size_t hImg, void* lpDelayAry, int nFrames)
 	return ret;
 }
 
-int _img_getframecount(size_t hImage)
+int _img_getframecount(ExHandle hImage)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -771,7 +771,7 @@ int _img_getframecount(size_t hImage)
 	return ret;
 }
 
-void* _img_getcontext(size_t hImage)
+void* _img_getcontext(ExHandle hImage)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -812,7 +812,7 @@ bool _apng_thunk_getnext(void* lpMem, int* nPos, int dwThunkType, void** lpThunk
 	return ret;
 }
 
-void _apng_int(size_t hImage, void* lpStream)
+void _apng_int(ExHandle hImage, void* lpStream)
 {
 	void* hGlobal = nullptr;
 	int i = 0;

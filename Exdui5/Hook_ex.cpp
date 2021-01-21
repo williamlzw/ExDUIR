@@ -103,7 +103,7 @@ void _menu_init(HWND hWnd)
 	}
 }
 
-void _msgbox_drawinfo(void* pWnd, size_t cvBkg)
+void _msgbox_drawinfo(void* pWnd, ExHandle cvBkg)
 {
 	int w, h;
 	_canvas_getsize(cvBkg, &w, &h);
@@ -247,7 +247,7 @@ void _msgbox_initdialog(HWND hWnd, void* pWnd, size_t wParam, size_t lParam)
 	maxHeight = rcWindow.bottom - rcWindow.top;
 	top = maxHeight / g_Li.DpiY - __get_int(pValue, 12) + (__get_int(pValue, 12) - 24) / 2;
 	left = maxWidth / g_Li.DpiX - 85;
-	size_t hObj = 0;
+	ExHandle hObj = 0;
 	void* pObj = nullptr;
 	int nError = 0;
 	for (int i = aryID.size(); i > 1; i--)

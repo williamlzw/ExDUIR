@@ -78,11 +78,6 @@ void* _dx_createbitmap(void* pDeviceContext, int width, int height, bool fGDI, i
 	size.height = height;
 	D2D1_BITMAP_PROPERTIES1 pro;
 	CopyMemory(&pro, &g_Ri.bp_format, sizeof(pro));
-	//pro.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
-	//pro.pixelFormat.alphaMode= D2D1_ALPHA_MODE_PREMULTIPLIED;
-	//pro.dpiX = 96;
-	//pro.dpiY = 96;
-	//pro.colorContext = NULL;
 	if (fGDI) {
 		pro.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
 	}

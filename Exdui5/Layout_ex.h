@@ -110,31 +110,31 @@ struct layout_s
 {
 	int nType_; //布局类型
 	void* lpfnProc_;//布局回调函数
-	size_t hBind_;//绑定的父组件(子组件是相对这个组件的)/HOBJ/HEXDUI
+	ExHandle hBind_;//绑定的父组件(子组件是相对这个组件的)/HOBJ/HEXDUI
 	int nBindType_;//绑定组件的类型,#HT_OBJECT或#HL_DUI
 	void* lpLayoutInfo_;//父组件的布局信息
 	int cbInfoLen_; //子组件属性长度(根据不同布局类型不同)
 	void* hArrChildrenInfo_; //处理的子组件属性数组
 	bool fUpdateable_; //是否允许布局更新
-	size_t hLayout_; //本布局句柄
+	ExHandle hLayout_; //本布局句柄
 };
 
 
 bool _layout_register(int nType, void* lpfnLayoutProc);
 bool _layout_unregister(int nType);
 void _layout_free_info(void* hArr, int nIndex, void* pvItem, int nType);
-size_t _layout_create(int nType, size_t hObjBind);
-size_t _layout_get_parent_layout(size_t hObj);
-bool _layout_destory(size_t hLayout);
+ExHandle _layout_create(int nType, ExHandle hObjBind);
+ExHandle _layout_get_parent_layout(ExHandle hObj);
+bool _layout_destory(ExHandle hLayout);
 bool _layout_enum_find_obj(void* hArr, int nIndex, void* pvItem, int nType, void* pvParam);
-void* _layout_get_child(void* pLayout, size_t hObj);
-bool _layout_update(size_t hLayout);
-int _layout_gettype(size_t hLayout);
-bool _layout_enableupdate(size_t hLayout, bool fUpdateable);
-size_t _layout_notify(size_t hLayout, int nEvent, void* wParam, void* lParam);
-bool _layout_table_setinfo(size_t hLayout, void* aRowHeight, int cRows, void* aCellWidth, int cCells);
-bool _layout_setchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t pvValue);
-bool _layout_getchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t* pvValue);
-bool _layout_setprop(size_t hLayout, int dwPropID, size_t pvValue);
-size_t _layout_getprop(size_t hLayout, int dwPropID);
-bool _layout_absolute_setedge(size_t hLayout, size_t hObjChild, int dwEdge, int dwType, size_t nValue);
+void* _layout_get_child(void* pLayout, ExHandle hObj);
+bool _layout_update(ExHandle hLayout);
+int _layout_gettype(ExHandle hLayout);
+bool _layout_enableupdate(ExHandle hLayout, bool fUpdateable);
+size_t _layout_notify(ExHandle hLayout, int nEvent, void* wParam, void* lParam);
+bool _layout_table_setinfo(ExHandle hLayout, void* aRowHeight, int cRows, void* aCellWidth, int cCells);
+bool _layout_setchildprop(ExHandle hLayout, ExHandle hObj, int dwPropID, size_t pvValue);
+bool _layout_getchildprop(ExHandle hLayout, ExHandle hObj, int dwPropID, size_t* pvValue);
+bool _layout_setprop(ExHandle hLayout, int dwPropID, size_t pvValue);
+size_t _layout_getprop(ExHandle hLayout, int dwPropID);
+bool _layout_absolute_setedge(ExHandle hLayout, ExHandle hObjChild, int dwEdge, int dwType, size_t nValue);

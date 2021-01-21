@@ -1,8 +1,8 @@
 #pragma once
 #include "help_ex.h"
 
-typedef size_t(*ArrayComparePROC)(void*, int, int, int, int, int, int);
-typedef size_t(*ArrayPROC)(void*, int, int, int);
+typedef size_t(*ArrayComparePROC)(void*, size_t, size_t, size_t, size_t, int, int);
+typedef size_t(*ArrayPROC)(void*, size_t, size_t, int);
 typedef bool(*ArrayEnumPROC)(void*, int, void*, int, size_t);
 
 
@@ -32,7 +32,7 @@ struct array_s
 	void* event_onCompare_;
 };
 
-int Array_Compare(void* pArray, size_t index1, size_t value1, size_t index2, size_t value2, int nType, int reasen);
+size_t Array_Compare(void* pArray, size_t index1, size_t value1, size_t index2, size_t value2, int nType, int reasen);
 void* Array_MoveMember(void* pData, int nCount, int nSize, int nNewCount);
 bool Array_IsLegal(void* pArray, size_t nIndex = 0);
 bool Array_Resize(void* pArray, int nCount, bool fGrowCount);
