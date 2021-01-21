@@ -55,13 +55,27 @@ bool _dx_init(int* nError)
 void _dx_uninit()
 {
 	ÊÍ·ÅÄÚ´æ(g_Ri.pLocalName);
-	((ID2D1Effect*)g_Ri.pEffectGaussianBlur)->Release();
-	((ID2D1Effect*)g_Ri.pEffectHueRotation)->Release();
-	((ID2D1GdiInteropRenderTarget*)g_Ri.pGDIInterop)->Release();
-	((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->Release();
-	((ID2D1Device*)g_Ri.pD2DDevice)->Release();
-	((ID2D1Factory1*)g_Ri.pD2Dfactory)->Release();
-	((IDWriteFactory*)g_Ri.pDWriteFactory)->Release();
+	if (g_Ri.pEffectGaussianBlur) {
+		((ID2D1Effect*)g_Ri.pEffectGaussianBlur)->Release();
+	}
+	if (g_Ri.pEffectHueRotation) {
+		((ID2D1Effect*)g_Ri.pEffectHueRotation)->Release();
+	}
+	if (g_Ri.pGDIInterop) {
+		((ID2D1GdiInteropRenderTarget*)g_Ri.pGDIInterop)->Release();
+	}
+	if (g_Ri.pD2DDeviceContext) {
+		((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->Release();
+	}
+	if (g_Ri.pD2DDevice) {
+		((ID2D1Device*)g_Ri.pD2DDevice)->Release();
+	}
+	if (g_Ri.pD2Dfactory) {
+		((ID2D1Factory1*)g_Ri.pD2Dfactory)->Release();
+	}
+	if (g_Ri.pDWriteFactory) {
+		((IDWriteFactory*)g_Ri.pDWriteFactory)->Release();
+	}
 }
 
 void* _dx_get_gdiInterop(void* pDeviceContext)

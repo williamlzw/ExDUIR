@@ -162,7 +162,7 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle);
 void _wnd_render_obj(HWND hWnd, void* pWnd, void* pContext, ExHandle cvDisplay, void* pBitmapDisplay, RECT rcPaint,
 	ExHandle objChildFirst, int offsetX, int offsetY, int pAlpha, bool fDX, void* hBorderBrush);
 bool _wnd_wm_setcursor(HWND hWnd, void* pWnd, LPARAM lParam);
-void _wnd_timer_mousetrack(HWND hWnd, int uMsg, int idEvent, int dwTime);
+void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 void _wnd_wm_leavecheck(HWND hWnd, void* pWnd, ExHandle objCheck, ExHandle objHittest, void* pObjHittest, bool fTrack);
 int _wnd_destroy(HWND hWnd, void* pWnd);
 void _wnd_paint_bkg(HWND hWnd, void* pWnd);
