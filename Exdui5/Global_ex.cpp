@@ -50,11 +50,12 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	g_Li.hHandles = _handle_init();
 	g_Li.dwClickTime = GetDoubleClickTime() * 2;
 
+
+	
 	g_Li.aryColorsAtom = { ATOM_BACKGROUND_COLOR, ATOM_COLOR_BACKGROUND, ATOM_BORDER_COLOR, ATOM_COLOR_BORDER, ATOM_COLOR, ATOM_COLOR_NORMAL, ATOM_COLOR_HOVER, ATOM_COLOR_DOWN, ATOM_COLOR_FOCUS, ATOM_COLOR_CHECKED, ATOM_COLOR_SELECTED, ATOM_COLOR_HOT, ATOM_COLOR_VISTED, ATOM_COLOR_SHADOW };
-	g_Li.aryColorsOffset = { _obj_crBackground, _obj_crBackground, _obj_crBorder, _obj_crBorder, _obj_crNormal, _obj_crNormal, _obj_crHover, _obj_crDown, _obj_crFocus, _obj_crChecked, _obj_crSelected, _obj_crHot, _obj_crVisted, _obj_crShadow };
+	g_Li.aryColorsOffset = { offsetof(obj_s, crBackground_), offsetof(obj_s, crBackground_), offsetof(obj_s, crBorder_), offsetof(obj_s, crBorder_), offsetof(obj_s, crNormal_), offsetof(obj_s, crNormal_), offsetof(obj_s, crHover_), offsetof(obj_s, crDown_), offsetof(obj_s, crFocus_), offsetof(obj_s, crChecked_), offsetof(obj_s, crSelected_), offsetof(obj_s, crHot_), offsetof(obj_s, crVisted_), offsetof(obj_s, crShadow_) };
 	g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
-
-
+	
 
 	auto i = …Í«Îƒ⁄¥Ê(64);
 	int len;

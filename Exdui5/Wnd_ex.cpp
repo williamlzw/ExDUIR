@@ -604,8 +604,6 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	void* pWnd = (void*)__get_int(pData, 21);
 #endif
 
-	std::cout << uMsg << std::endl;
-
 	void* pfnMsgProc = ((wnd_s*)pWnd)->pfnMsgProc_;
 	if (pfnMsgProc != 0)
 	{
@@ -652,24 +650,26 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (__query(pWnd, offsetof(wnd_s, dwStyle_), EWS_MENU))
 		{
-			if (!__query((void*)lParam, 24, SWP_NOSIZE))
+			tagWINDOWPOS* pos = (tagWINDOWPOS*)lParam;
+			if (!(pos->flags & SWP_NOSIZE))
 			{
 				void* padding_client = ((wnd_s*)pWnd)->padding_client_;
 				if (padding_client != 0)
 				{
-					__addn((void*)lParam, 20, Ex_Scale(__get_int(padding_client, 4) + __get_int(padding_client, 12)));
+					pos->cy += Ex_Scale(__get_int(padding_client, 4) + __get_int(padding_client, 12));
+					//__addn((void*)lParam, 20, Ex_Scale(__get_int(padding_client, 4) + __get_int(padding_client, 12)));
 				}
 			}
 
-			if (!__query((void*)lParam, 24, SWP_NOMOVE))//被移动了
+			if (!(pos->flags & SWP_NOMOVE))//被移动了
 			{
 				if (GetWindow(hWnd, GW_OWNER) != 0)//子菜单
 				{
 					__del(((wnd_s*)pWnd)->pMenuHostWnd_, offsetof(wnd_s, dwFlags_), EWF_bMenuRepostion);
-					_wnd_menu_setpos(hWnd, pWnd, lParam);
+					_wnd_menu_setpos(hWnd, pWnd, pos);
 				}
-				((wnd_s*)pWnd)->left_ = __get_int((void*)lParam, 8);
-				((wnd_s*)pWnd)->top_ = __get_int((void*)lParam, 12);
+				((wnd_s*)pWnd)->left_ = pos->x;
+				((wnd_s*)pWnd)->top_ = pos->y;
 				_wnd_menu_init(hWnd, pWnd);
 				return 0;
 			}
@@ -677,10 +677,11 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	else if (uMsg == WM_WINDOWPOSCHANGED)//71
 	{
-		if (!__query((void*)lParam, 24, SWP_NOMOVE))
+		tagWINDOWPOS* pos = (tagWINDOWPOS*)lParam;
+		if (!(pos->flags & SWP_NOMOVE))
 		{
-			__set_int(pWnd, offsetof(wnd_s, left_), __get_int((void*)lParam, 8));
-			__set_int(pWnd, offsetof(wnd_s, top_), __get_int((void*)lParam, 12));
+			__set_int(pWnd, offsetof(wnd_s, left_), pos->x);
+			__set_int(pWnd, offsetof(wnd_s, top_), pos->y);
 			_wnd_paint_shadow(pWnd, false, false);
 		}
 	}
@@ -1987,7 +1988,7 @@ void _wnd_wm_size(void* pWnd, HWND hWnd, WPARAM wParam, int width, int height)
 	InvalidateRect(hWnd, 0, FALSE);
 }
 
-void _wnd_menu_setpos(HWND hWnd, void* pWnd, LPARAM lParam)
+void _wnd_menu_setpos(HWND hWnd, void* pWnd, tagWINDOWPOS* pos)
 {
 	void* pMenuHostWnd = ((wnd_s*)pWnd)->pMenuHostWnd_;
 	void* pMenuPrevWnd = nullptr;
@@ -2001,8 +2002,8 @@ void _wnd_menu_setpos(HWND hWnd, void* pWnd, LPARAM lParam)
 		}
 	}
 	auto offset = 取低位(取高位(((wnd_s*)pWnd)->szItemSeparator_));
-	int x = __get_int((void*)lParam, 8);
-	int y = __get_int((void*)lParam, 12);
+	int x = pos->x;
+	int y = pos->y;
 	POINT pt;
 	GetCursorPos(&pt);
 	if (rcParent.left < x)//子菜单在右边
@@ -2016,7 +2017,7 @@ void _wnd_menu_setpos(HWND hWnd, void* pWnd, LPARAM lParam)
 		x = x - (rcParent.right - rcParent.left) + GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + 1;
 		x = x - offset;
 	}
-	__set_int((void*)lParam, 8, x);
+	pos->x = x;
 	if (pMenuPrevWnd != 0)
 	{
 		ExHandle hObj = ((wnd_s*)pMenuPrevWnd)->objFocus_;
@@ -2035,7 +2036,7 @@ void _wnd_menu_setpos(HWND hWnd, void* pWnd, LPARAM lParam)
 			}
 		}
 	}
-	__set_int((void*)lParam, 12, y);
+	pos->y = y;
 }
 
 void _wnd_menu_createitems(HWND hWnd, void* pWnd)
@@ -2178,7 +2179,7 @@ void _wnd_paint_shadow(void* pWnd, bool bUpdateRgn, bool bFlush)
 			RECT rcPadding;
 			if (prcPadding != 0)
 			{
-				RtlMoveMemory(&rcPadding, prcPadding, 16);
+				RtlMoveMemory(&rcPadding, prcPadding, sizeof(RECT));
 				rcPadding.left = Ex_Scale(rcPadding.left);
 				rcPadding.top = Ex_Scale(rcPadding.top);
 				rcPadding.right = Ex_Scale(rcPadding.right);

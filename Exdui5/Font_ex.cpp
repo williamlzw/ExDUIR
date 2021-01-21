@@ -82,7 +82,7 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 	{
 		((LOGFONT*)lpLogfont)->lfHeight = ((LOGFONT*)lpLogfont)->lfHeight * g_Li.DpiY;
 	}
-	size_t hFont = 数据_Crc32_Addr((UCHAR*)lpLogfont, sizeof(LOGFONT));
+	int hFont = 数据_Crc32_Addr((UCHAR*)lpLogfont, sizeof(LOGFONT));
 	void* pFont = nullptr;
 	size_t pFonta = 0;
 

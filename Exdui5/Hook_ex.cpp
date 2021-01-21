@@ -103,7 +103,7 @@ void _menu_init(HWND hWnd)
 	}
 }
 
-void _msgbox_drawinfo(void* pWnd, size_t cvBkg)
+void _msgbox_drawinfo(void* pWnd, ExHandle cvBkg)
 {
 	int w, h;
 	_canvas_getsize(cvBkg, &w, &h);

@@ -23,19 +23,6 @@ typedef int(*EnumPROC)(size_t, size_t);
 #define eof_bEventBubble 524288
 #define eof_bPage 1048576
 
-#define _obj_crBackground 84
-#define _obj_crBorder 88
-#define _obj_crNormal 92
-#define _obj_crHover 96
-#define _obj_crDown 100
-#define _obj_crFocus 104
-#define _obj_crChecked 108
-#define _obj_crSelected 112
-#define _obj_crHot 116
-#define _obj_crVisted 120
-#define _obj_crShadow 124
-#define _obj_dwShadowSize 128
-
 #define EWF_ACTIVE 2
 #define EWF_INTED 2147483648
 #define EWF_bLayered 4

@@ -408,11 +408,11 @@ ExHandle _img_createfrompngbits(void* lpmem)
 {
 	int nError = 0;
 	ExHandle hImg = 0;
-	int width = __get(lpmem, sizeof(void*));
-	int height = __get(lpmem, 2 * sizeof(void*));
+	int width = __get(lpmem, sizeof(int));
+	int height = __get(lpmem, 2 * sizeof(int));
 	int len = width * height * 4;
 	void* pBitmapData = nullptr;
-	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppPBGRA, width * 4, len, (BYTE*)((size_t)lpmem + 3 * sizeof(void*)), (IWICBitmap**)&pBitmapData);
+	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppPBGRA, width * 4, len, (BYTE*)((size_t)lpmem + 3 * sizeof(int)), (IWICBitmap**)&pBitmapData);
 	if (nError == 0)
 	{
 		hImg = _img_init(pBitmapData, 0, 1, NULL, &nError);

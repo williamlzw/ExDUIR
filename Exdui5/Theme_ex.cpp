@@ -121,7 +121,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 				auto dwLen = (size_t)iClassEnd - (size_t)iClassStart;
 				if (dwLen > 0)
 				{
-					auto atomClass = 数据_Crc32_Addr(iClassStart, dwLen);
+					int atomClass = 数据_Crc32_Addr(iClassStart, dwLen);
 					int nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
 					if (nCount > 0)
 					{
@@ -232,7 +232,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 		{
 			if (((theme_s*)g_Li.aryThemes[i])->crcTheme_ == crc)
 			{
-				InterlockedExchangeAdd((size_t*)&(((theme_s*)g_Li.aryThemes[i])->loadCount_), 1);
+				InterlockedExchangeAdd((long*)&(((theme_s*)g_Li.aryThemes[i])->loadCount_), 1);
 				if (bDefault)
 				{
 					g_Li.hThemeDefault = g_Li.aryThemes[i];
@@ -308,7 +308,7 @@ void* Ex_ThemeLoadFromFile(void* lptszFile, void* lpKey, size_t dwKeyLen, bool b
 	return ret;
 }
 
-bool Ex_ThemeDrawControlEx(void* hTheme, size_t hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+bool Ex_ThemeDrawControlEx(void* hTheme, ExHandle hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
 	int atomClass, int atomSrcRect, int atomBackgroundRepeat, int atomBackgroundPositon, int atomBackgroundGrid, int atomBackgroundFlags, int dwAlpha)
 {
 	bool ret = false;
@@ -320,7 +320,7 @@ bool Ex_ThemeDrawControlEx(void* hTheme, size_t hCanvas, float dstLeft, float ds
 		HashTable_Get(pTheme, atomClass, (size_t*)&pClass);
 		if (pClass != 0)
 		{
-			size_t hImg = ((classtable_s*)pClass)->hImage_;
+			ExHandle hImg = ((classtable_s*)pClass)->hImage_;
 			if (hImg != 0)
 			{
 				void* pProp = ((classtable_s*)pClass)->tableProps_;
@@ -376,7 +376,7 @@ bool Ex_ThemeDrawControlEx(void* hTheme, size_t hCanvas, float dstLeft, float ds
 	return ret;
 }
 
-bool Ex_ThemeDrawControl(void* hTheme, size_t hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+bool Ex_ThemeDrawControl(void* hTheme, ExHandle hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
 	int atomClass, int atomSrcRect, int dwAlpha)
 {
 	return Ex_ThemeDrawControlEx(hTheme, hCanvas, dstLeft, dstTop, dstRight, dstBottom, atomClass, atomSrcRect, ATOM_BACKGROUND_REPEAT, ATOM_BACKGROUND_POSITION, ATOM_BACKGROUND_GRID, ATOM_BACKGROUND_FLAGS, dwAlpha);
@@ -428,7 +428,7 @@ bool Ex_ThemeFree(void* hTheme)
 	{
 		if (((theme_s*)hTheme)->crcTheme_ != 0 && ((theme_s*)hTheme)->loadCount_ != 0 && ((theme_s*)hTheme)->tableFiles_ != 0 && ((theme_s*)hTheme)->tableClass_ != 0)
 		{
-			auto i = InterlockedExchangeAdd((size_t*)&((theme_s*)hTheme)->loadCount_, -1);
+			auto i = InterlockedExchangeAdd((long*)&((theme_s*)hTheme)->loadCount_, -1);
 			ret = true;
 			if (i == 1)
 			{

@@ -169,7 +169,7 @@ void _wnd_paint_bkg(HWND hWnd, void* pWnd);
 void _wnd_render_dc(HWND hWnd, void* pWnd, void* hDC, ExHandle cvDisplay, RECT rcPaint, bool fLayer);
 void _wnd_render(HWND hWnd, void* pWnd, void* hDC, RECT rcPaint, bool fLayer, bool fDX);
 void _wnd_wm_size(void* pWnd, HWND hWnd, WPARAM wParam, int width, int height);
-void _wnd_menu_setpos(HWND hWnd, void* pWnd, LPARAM lParam);
+void _wnd_menu_setpos(HWND hWnd, void* pWnd, tagWINDOWPOS* lParam);
 void _wnd_menu_createitems(HWND hWnd, void* pWnd);
 void _wnd_menu_init(HWND hWnd, void* pWnd);
 void _wnd_paint_shadow(void* pWnd, bool bUpdateRgn, bool bFlush);
