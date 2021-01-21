@@ -1,6 +1,6 @@
 #include "Class_Static_SysLink_ex.h"
 
-void _static_paint(size_t hObj, void* pObj)
+void _static_paint(ExHandle hObj, void* pObj)
 {
 	paintstruct_s ps;
 	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
@@ -16,7 +16,7 @@ void _static_paint(size_t hObj, void* pObj)
 	}
 }
 
-size_t _static_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam, void* pObj)
+size_t _static_proc(HWND hWnd, ExHandle hObj, int uMsg, size_t wParam, size_t lParam, void* pObj)
 {
 	if (uMsg == WM_PAINT)
 	{

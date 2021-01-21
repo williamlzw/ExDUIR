@@ -19,7 +19,7 @@ WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCUR
 	return RegisterClassExW(&WndClass);
 }
 
-size_t Ex_DUIFromWindow(HWND hWnd)
+ExHandle Ex_DUIFromWindow(HWND hWnd)
 {
 	return SendMessageW(hWnd, g_Li.dwMessage, EMV_HEXDUI, 合并整数(EMT_DUI, 0));
 }
@@ -584,7 +584,7 @@ int _wnd_dispatch_msg_obj(HWND hWnd, void* lpData, int data, int uMsg, WPARAM wP
 		//RtlMoveMemory(pObj, lpData, 20);
 		if (lpData != 0)
 		{
-			size_t hObj = ((obj_s*)lpData)->hObj_;
+			ExHandle hObj = ((obj_s*)lpData)->hObj_;
 			ret = _obj_msgproc(hWnd, hObj, lpData, uMsg, wParam, lParam);
 		}
 		MemPool_Free(g_Li.hMemPoolMsg, lpData);
@@ -603,6 +603,8 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	LONG pOld = (LONG)__get_int(pData, 17);
 	void* pWnd = (void*)__get_int(pData, 21);
 #endif
+
+	std::cout << uMsg << std::endl;
 
 	void* pfnMsgProc = ((wnd_s*)pWnd)->pfnMsgProc_;
 	if (pfnMsgProc != 0)
@@ -696,7 +698,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			if (__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_ACTIVE))
 			{
-				size_t focus = ((wnd_s*)pWnd)->objFocus_;
+				ExHandle focus = ((wnd_s*)pWnd)->objFocus_;
 				__del(pWnd, offsetof(wnd_s, dwFlags_), EWF_ACTIVE);
 				((wnd_s*)pWnd)->objFocusPrev_ = focus;
 				Ex_ObjKillFocus(focus);
@@ -706,7 +708,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (!__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_ACTIVE))
 			{
 				__add(pWnd, offsetof(wnd_s, dwFlags_), EWF_ACTIVE);
-				size_t focus = ((wnd_s*)pWnd)->objFocusPrev_;
+				ExHandle focus = ((wnd_s*)pWnd)->objFocusPrev_;
 				((wnd_s*)pWnd)->objFocusPrev_ = 0;
 				Ex_ObjSetFocus(focus);
 			}
@@ -739,7 +741,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == 0)
 		{
-			size_t objHittest = ((wnd_s*)pWnd)->objHittest_;
+			ExHandle objHittest = ((wnd_s*)pWnd)->objHittest_;
 			if (objHittest != 0)
 			{
 				Ex_ObjDispatchMessage(objHittest, WM_MOUSELEAVE, 0, 0);
@@ -999,13 +1001,14 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	}
 
 	//layer
-	((wnd_s*)pWnd)->ulwi_pptDst_ = (void*)((size_t)pWnd + offsetof(wnd_s, left_));
-	((wnd_s*)pWnd)->ulwi_psize_ = (void*)((size_t)pWnd + offsetof(wnd_s, width_));
-	((wnd_s*)pWnd)->ulwi_pptSrc_ = (void*)((size_t)pWnd + offsetof(wnd_s, ulwi_pptSrc_x_));
-	((wnd_s*)pWnd)->ulwi_pblend_ = (void*)((size_t)pWnd + offsetof(wnd_s, ulwi_pblend_bytes_));
-	((wnd_s*)pWnd)->ulwi_prcDirty_ = (void*)((size_t)pWnd + offsetof(wnd_s, ulwi_prcDirty_left_));
-	((wnd_s*)pWnd)->ulwi_cbsize_ = 40;
-	((wnd_s*)pWnd)->ulwi_dwFlags_ = 2;
+	((wnd_s*)pWnd)->ulwi_.pptDst = (POINT*)((size_t)pWnd + offsetof(wnd_s, left_));
+	((wnd_s*)pWnd)->ulwi_.psize = (SIZE*)((size_t)pWnd + offsetof(wnd_s, width_));
+	((wnd_s*)pWnd)->ulwi_.pptSrc = (POINT*)((size_t)pWnd + offsetof(wnd_s, ulwi_pptSrc_x_));
+	((wnd_s*)pWnd)->ulwi_.pblend = (BLENDFUNCTION*)((size_t)pWnd + offsetof(wnd_s, ulwi_pblend_bytes_));
+	((wnd_s*)pWnd)->ulwi_.prcDirty = (RECT*)((size_t)pWnd + offsetof(wnd_s, ulwi_prcDirty_left_));
+
+	((wnd_s*)pWnd)->ulwi_.cbSize = sizeof(((wnd_s*)pWnd)->ulwi_);
+	((wnd_s*)pWnd)->ulwi_.dwFlags = 2;
 	((wnd_s*)pWnd)->ulwi_pblend_bytes_ = 33488896;
 	((wnd_s*)pWnd)->left_ = rcWindow.left;
 	((wnd_s*)pWnd)->top_ = rcWindow.top;
@@ -1183,9 +1186,9 @@ void _wnd_dx_init(void* pWnd)
 	}
 }
 
-size_t _wnd_wm_nchittest_obj(HWND hWnd, void* pWnd, size_t objLast, int x, int y, int* hitCode, void** pObjMouse)
+ExHandle _wnd_wm_nchittest_obj(HWND hWnd, void* pWnd, ExHandle objLast, int x, int y, int* hitCode, void** pObjMouse)
 {
-	size_t objPrev = objLast;
+	ExHandle objPrev = objLast;
 	void* pObj = nullptr;
 	int nError = 0;
 	while (_handle_validate(objPrev, HT_OBJECT, &pObj, &nError))
@@ -1327,7 +1330,7 @@ int _wnd_wm_nchittest(void* pWnd, HWND hWnd, LPARAM lParam)
 	}
 
 	POINT pt;
-	size_t objMouse = 0;
+	ExHandle objMouse = 0;
 	if (lParam == -1)
 	{
 		GetCursorPos(&pt);
@@ -1395,7 +1398,7 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 	_wnd_calc_captionrect(pWnd, &rcCaption);
 	void* pObjCaption = nullptr;
 	int nError = 0;
-	size_t objCaption = _obj_create_init(hWnd, pWnd, ATOM_SYSBUTTON, 0, &pObjCaption, &nError);
+	ExHandle objCaption = _obj_create_init(hWnd, pWnd, ATOM_SYSBUTTON, 0, &pObjCaption, &nError);
 
 	int nMinHeight = 0;
 	if (objCaption != 0)
@@ -1493,7 +1496,7 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 				void* pObjTmp = nullptr;
 				int nError = 0;
 
-				size_t objTmp = _obj_create_init(hWnd, pWnd, ATOM_SYSBUTTON, 0, &pObjTmp, &nError);
+				ExHandle objTmp = _obj_create_init(hWnd, pWnd, ATOM_SYSBUTTON, 0, &pObjTmp, &nError);
 				if (objTmp != 0)
 				{
 
@@ -1521,10 +1524,10 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 
 }
 
-void _wnd_render_obj(HWND hWnd, void* pWnd, void* pContext, size_t cvDisplay, void* pBitmapDisplay, RECT rcPaint,
-	size_t objChildFirst, int offsetX, int offsetY, int pAlpha, bool fDX, void* hBorderBrush)
+void _wnd_render_obj(HWND hWnd, void* pWnd, void* pContext, ExHandle cvDisplay, void* pBitmapDisplay, RECT rcPaint,
+	ExHandle objChildFirst, int offsetX, int offsetY, int pAlpha, bool fDX, void* hBorderBrush)
 {
-	size_t objNext = objChildFirst;
+	ExHandle objNext = objChildFirst;
 	int nError = 0;
 	if (objNext != 0)
 	{
@@ -1600,7 +1603,7 @@ void _wnd_render_obj(HWND hWnd, void* pWnd, void* pContext, size_t cvDisplay, vo
 							_canvas_drawrect(cvDisplay, hBorderBrush, ((obj_s*)pObj)->w_left_, ((obj_s*)pObj)->w_top_, ((obj_s*)pObj)->w_right_, ((obj_s*)pObj)->w_bottom_, 1, 0);
 						}
 
-						size_t objChild = ((obj_s*)pObj)->objChildFirst_;
+						ExHandle objChild = ((obj_s*)pObj)->objChildFirst_;
 						if (objChild != 0)
 						{
 							_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcClip, objChild, rcObj.left, rcObj.top, alpha, fDX, hBorderBrush);
@@ -1694,7 +1697,7 @@ bool _wnd_wm_setcursor(HWND hWnd, void* pWnd, LPARAM lParam)
 	return false;
 }
 
-void _wnd_timer_mousetrack(HWND hWnd, int uMsg, int idEvent, int dwTime)
+void _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	KillTimer(hWnd, idEvent);
 	void* pWnd = (void*)(idEvent - TIMER_MOUSETRACK);
@@ -1707,7 +1710,7 @@ void _wnd_timer_mousetrack(HWND hWnd, int uMsg, int idEvent, int dwTime)
 			if (!__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_bLeaveSent))
 			{
 				__add(pWnd, offsetof(wnd_s, dwFlags_), EWF_bLeaveSent);
-				size_t hObj = ((wnd_s*)pWnd)->objHittestPrev_;
+				ExHandle hObj = ((wnd_s*)pWnd)->objHittestPrev_;
 				void* pObj = nullptr;
 				int nError = 0;
 				if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
@@ -1721,7 +1724,7 @@ void _wnd_timer_mousetrack(HWND hWnd, int uMsg, int idEvent, int dwTime)
 	}
 }
 
-void _wnd_wm_leavecheck(HWND hWnd, void* pWnd, size_t objCheck, size_t objHittest, void* pObjHittest, bool fTrack)
+void _wnd_wm_leavecheck(HWND hWnd, void* pWnd, ExHandle objCheck, ExHandle objHittest, void* pObjHittest, bool fTrack)
 {
 	int nError = 0;
 	if (objHittest = -1)
@@ -1750,9 +1753,9 @@ void _wnd_wm_leavecheck(HWND hWnd, void* pWnd, size_t objCheck, size_t objHittes
 
 	if (objHittest != 0 && fTrack)
 	{
-		objHittest = (size_t)pWnd + TIMER_MOUSETRACK;
-		KillTimer(hWnd, objHittest);
-		SetTimer(hWnd, objHittest, 50, (TIMERPROC)&_wnd_timer_mousetrack);
+		size_t nEvent = (size_t)pWnd + TIMER_MOUSETRACK;
+		KillTimer(hWnd, nEvent);
+		SetTimer(hWnd, nEvent, 50, &_wnd_timer_mousetrack);
 	}
 }
 
@@ -1761,7 +1764,7 @@ int _wnd_destroy(HWND hWnd, void* pWnd)
 	__add(pWnd, offsetof(wnd_s, dwFlags_), EWF_bDestroyWindow);
 	DestroyWindow(((wnd_s*)pWnd)->hWndTips_);
 	DestroyWindow(((wnd_s*)pWnd)->hWndShadow_);
-	size_t hObj = ((wnd_s*)pWnd)->objChildFirst_;
+	ExHandle hObj = ((wnd_s*)pWnd)->objChildFirst_;
 	void* pObj = nullptr;
 	int nError = 0;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
@@ -1827,7 +1830,7 @@ int _wnd_destroy(HWND hWnd, void* pWnd)
 
 void _wnd_paint_bkg(HWND hWnd, void* pWnd)
 {
-	size_t cvBkg = ((wnd_s*)pWnd)->canvas_bkg_;
+	ExHandle cvBkg = ((wnd_s*)pWnd)->canvas_bkg_;
 	void* p = pWnd;
 	if (_canvas_begindraw(cvBkg))
 	{
@@ -1873,7 +1876,7 @@ void _wnd_paint_bkg(HWND hWnd, void* pWnd)
 	}
 }
 
-void _wnd_render_dc(HWND hWnd, void* pWnd, void* hDC, size_t cvDisplay, RECT rcPaint, bool fLayer)
+void _wnd_render_dc(HWND hWnd, void* pWnd, void* hDC, ExHandle cvDisplay, RECT rcPaint, bool fLayer)
 {
 	void* mDC = _canvas_getdc(cvDisplay);
 	if (mDC != 0)
@@ -1885,18 +1888,18 @@ void _wnd_render_dc(HWND hWnd, void* pWnd, void* hDC, size_t cvDisplay, RECT rcP
 			((wnd_s*)pWnd)->ulwi_prcDirty_right_ = rcPaint.right;
 			((wnd_s*)pWnd)->ulwi_prcDirty_bottom_ = rcPaint.bottom;
 
-			((wnd_s*)pWnd)->ulwi_hdcSrc_ = mDC;
-			if (g_Li.pfnUpdateLayeredWindowIndirect == 0)
+			((wnd_s*)pWnd)->ulwi_.hdcSrc = (HDC)mDC;
+			if (g_Li.pfnUpdateLayeredWindowIndirect != 0)
 			{
 				BLENDFUNCTION pb_;
 				pb_.BlendOp = 0;
 				pb_.BlendFlags = 0;
 				pb_.SourceConstantAlpha = 0xFF;
 				pb_.AlphaFormat = 1;
-				UpdateLayeredWindow(hWnd, 0, 0, (SIZE*)(((wnd_s*)pWnd)->ulwi_psize_), (HDC)(((wnd_s*)pWnd)->ulwi_hdcSrc_), (POINT*)(((wnd_s*)pWnd)->ulwi_pptSrc_), 0, &pb_, ULW_ALPHA);
+				UpdateLayeredWindow(hWnd, 0, 0, (SIZE *)((wnd_s*)pWnd)->ulwi_.psize, ((wnd_s*)pWnd)->ulwi_.hdcSrc, (POINT *)((wnd_s*)pWnd)->ulwi_.pptSrc, 0, &pb_, ULW_ALPHA);
 			}
 			else {
-				((UpdateLayeredWindowIndirectPROC)g_Li.pfnUpdateLayeredWindowIndirect)(hWnd, (UPDATELAYEREDWINDOWINFO*)((size_t)pWnd + offsetof(wnd_s, ulwi_cbsize_)));
+				((UpdateLayeredWindowIndirectPROC)g_Li.pfnUpdateLayeredWindowIndirect)(hWnd, &((wnd_s*)pWnd)->ulwi_);
 			}
 		}
 		else {
@@ -1916,7 +1919,7 @@ void _wnd_render(HWND hWnd, void* pWnd, void* hDC, RECT rcPaint, bool fLayer, bo
 		__del(pWnd, offsetof(wnd_s, dwFlags_), EWF_bRedrawBackground);
 		_wnd_paint_bkg(hWnd, pWnd);
 	}
-	size_t cvDisplay = ((wnd_s*)pWnd)->canvas_display_;
+	ExHandle cvDisplay = ((wnd_s*)pWnd)->canvas_display_;
 	if (_canvas_begindraw(cvDisplay))
 	{
 		void* pContext = nullptr;
@@ -2016,7 +2019,7 @@ void _wnd_menu_setpos(HWND hWnd, void* pWnd, LPARAM lParam)
 	__set_int((void*)lParam, 8, x);
 	if (pMenuPrevWnd != 0)
 	{
-		size_t hObj = ((wnd_s*)pMenuPrevWnd)->objFocus_;
+		ExHandle hObj = ((wnd_s*)pMenuPrevWnd)->objFocus_;
 		void* pObj = nullptr;
 		int nError = 0;
 		if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
@@ -2061,15 +2064,15 @@ void _wnd_menu_createitems(HWND hWnd, void* pWnd)
 
 	void* pParnet = nullptr;
 	int nError = 0;
-	size_t objParent = _obj_create_init(hWnd, pWnd, ATOM_PAGE, 0, &pParnet, &nError);
+	ExHandle objParent = _obj_create_init(hWnd, pWnd, ATOM_PAGE, 0, &pParnet, &nError);
 	if (objParent != 0)
 	{
 		int width = ((wnd_s*)pWnd)->width_ - (rcPaddingClient.left + rcPaddingClient.right);
 		int height = ((wnd_s*)pWnd)->height_ - (rcPaddingClient.top + rcPaddingClient.bottom);
 		_obj_create_proc(&nError, false, hTheme, pParnet, EOS_EX_FOCUSABLE, ATOM_PAGE, 0, EOS_VISIBLE | EOS_VSCROLL | 条目风格_子菜单, rcPaddingClient.left, rcPaddingClient.top, width, height, 0, 0, 0, 0, 0);
 		_obj_create_done(hWnd, pWnd, objParent, pParnet);
-		size_t objPP = objParent;
-		size_t hLayout = _layout_create(ELT_ABSOLUTE, ((wnd_s*)pWnd)->hexdui_);
+		ExHandle objPP = objParent;
+		ExHandle hLayout = _layout_create(ELT_ABSOLUTE, ((wnd_s*)pWnd)->hexdui_);
 		_layout_absolute_setedge(hLayout, objPP, ELCP_ABSOLUTE_LEFT, ELCP_ABSOLUTE_TYPE_PX, rcPaddingClient.left);
 		_layout_absolute_setedge(hLayout, objPP, ELCP_ABSOLUTE_TOP, ELCP_ABSOLUTE_TYPE_PX, rcPaddingClient.top);
 		_layout_absolute_setedge(hLayout, objPP, ELCP_ABSOLUTE_RIGHT, ELCP_ABSOLUTE_TYPE_PX, rcPaddingClient.right);
@@ -2115,7 +2118,7 @@ void _wnd_menu_createitems(HWND hWnd, void* pWnd)
 					OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
 					GetMenuStringW((HMENU)hMenu, i, bin.data(), 520, MF_BYPOSITION);
 					void* pObj = nullptr;
-					size_t hObj = _obj_create_init(hWnd, pWnd, ATOM_ITEM, 0, &pObj, &nError);
+					ExHandle hObj = _obj_create_init(hWnd, pWnd, ATOM_ITEM, 0, &pObj, &nError);
 					if (hObj != 0)
 					{
 						_obj_create_proc(&nError, false, hTheme, pObj, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, ATOM_ITEM, bin.data(), eos, rcItem.left, rcItem.top, width, rcItem.bottom - rcItem.top, objParent, mii.wID, 0, i, DT_VCENTER | DT_SINGLELINE);
@@ -2211,7 +2214,7 @@ void _wnd_paint_shadow(void* pWnd, bool bUpdateRgn, bool bFlush)
 				if (hDC != 0)
 				{
 					int nError = 0;
-					size_t cvShadow = _canvas_createfrompwnd(pWnd, sz.cx, sz.cy, CVF_GDI_COMPATIBLE, &nError);
+					ExHandle cvShadow = _canvas_createfrompwnd(pWnd, sz.cx, sz.cy, CVF_GDI_COMPATIBLE, &nError);
 					if (cvShadow != 0)
 					{
 						int alpha = __query(pWnd, offsetof(wnd_s, dwFlags_), EWF_ACTIVE) ? 255 : 204;
@@ -2327,7 +2330,7 @@ bool _wnd_wm_getminmaxinfo(void* pWnd, HWND hWnd, LPARAM lParam)
 	return ret;
 }
 
-void _wnd_wm_buttondown(HWND hWnd, void* pWnd, size_t hObj, void* pObj, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_buttondown(HWND hWnd, void* pWnd, ExHandle hObj, void* pObj, int uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (!__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_bTrackObject))
 	{
@@ -2360,7 +2363,7 @@ void _wnd_obj_untrack(HWND hWnd, void* pWnd, bool fMsgDispatch)
 	if (__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_bTrackObject))
 	{
 		__del(pWnd, offsetof(wnd_s, dwFlags_), EWF_bTrackObject);
-		size_t objTrack = ((wnd_s*)pWnd)->objTrack_;
+		ExHandle objTrack = ((wnd_s*)pWnd)->objTrack_;
 		((wnd_s*)pWnd)->objTrack_ = 0;
 		((wnd_s*)pWnd)->objTrackPrev_ = objTrack;
 		if (!fMsgDispatch)
@@ -2422,7 +2425,7 @@ void _wnd_wm_captionchange(HWND hWnd, void* pWnd)
 
 void _wnd_wm_mouse(void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
-	size_t hObj;
+	ExHandle hObj;
 	if (__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_bTrackObject))//是否按住组件
 	{
 		hObj = ((wnd_s*)pWnd)->objTrack_;
@@ -2489,7 +2492,7 @@ void _wnd_wm_mouse(void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam
 
 void _wnd_wm_menucontext(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
-	size_t objHittest = ((wnd_s*)pWnd)->objHittest_;
+	ExHandle objHittest = ((wnd_s*)pWnd)->objHittest_;
 	void* pObj = nullptr;
 	int nError = 0;
 	if (_handle_validate(objHittest, HT_OBJECT, &pObj, &nError))
@@ -2503,7 +2506,7 @@ void _wnd_wm_menucontext(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM 
 
 void _wnd_wm_mousewheel(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
-	size_t objHittest = ((wnd_s*)pWnd)->objHittest_;
+	ExHandle objHittest = ((wnd_s*)pWnd)->objHittest_;
 	void* pObj = nullptr;
 	int nError = 0;
 	if (_handle_validate(objHittest, HT_OBJECT, &pObj, &nError))
@@ -2540,7 +2543,7 @@ void _wnd_wm_command(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM lPar
 		}
 	}
 	else {
-		size_t objMenucontext = ((wnd_s*)pWnd)->objMenucontext_;
+		ExHandle objMenucontext = ((wnd_s*)pWnd)->objMenucontext_;
 		((wnd_s*)pWnd)->objMenucontext_ = 0;
 		void* pObj = nullptr;
 		int nError = 0;
@@ -2551,7 +2554,7 @@ void _wnd_wm_command(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM lPar
 	}
 }
 
-size_t _wnd_obj_setnextfocus(HWND hWnd, void* pWnd, size_t objEntry, size_t objLastFocus)
+ExHandle _wnd_obj_setnextfocus(HWND hWnd, void* pWnd, ExHandle objEntry, ExHandle objLastFocus)
 {
 	void* pObjEntry = nullptr;
 	int nError = 0;
@@ -2570,17 +2573,17 @@ size_t _wnd_obj_setnextfocus(HWND hWnd, void* pWnd, size_t objEntry, size_t objL
 	return 0;
 }
 
-void _wnd_obj_settabstop(HWND hWnd, void* pWnd, size_t objLastFocus)
+void _wnd_obj_settabstop(HWND hWnd, void* pWnd, ExHandle objLastFocus)
 {
 	void* pObjLast = nullptr;
 	int nError = 0;
-	size_t objNextFocus;
+	ExHandle objNextFocus;
 	if (_handle_validate(objLastFocus, HT_OBJECT, &pObjLast, &nError))
 	{
-		size_t objNextFocus = _wnd_obj_setnextfocus(hWnd, pWnd, ((obj_s*)pObjLast)->objNext_, objLastFocus);
+		ExHandle objNextFocus = _wnd_obj_setnextfocus(hWnd, pWnd, ((obj_s*)pObjLast)->objNext_, objLastFocus);
 		if (objNextFocus == 0)
 		{
-			size_t objParent = ((obj_s*)pObjLast)->objParent_;
+			ExHandle objParent = ((obj_s*)pObjLast)->objParent_;
 			void* pObjParent = nullptr;
 			if (_handle_validate(objParent, HT_OBJECT, &pObjParent, &nError))
 			{
@@ -2598,7 +2601,7 @@ void _wnd_obj_settabstop(HWND hWnd, void* pWnd, size_t objLastFocus)
 
 void _wnd_wm_keyboard(void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
-	size_t objFocus = ((wnd_s*)pWnd)->objFocus_;
+	ExHandle objFocus = ((wnd_s*)pWnd)->objFocus_;
 	void* pObj = nullptr;
 	int nError = 0;
 	if (_handle_validate(objFocus, HT_OBJECT, &pObj, &nError))
@@ -2669,7 +2672,7 @@ void _wnd_wm_keyboard(void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lPa
 	}
 }
 
-bool _wnd_obj_childtabstop(size_t objEntry, size_t* objFocusable, void** pObjFocusable, size_t objLast, bool* bFounded)
+bool _wnd_obj_childtabstop(ExHandle objEntry, ExHandle* objFocusable, void** pObjFocusable, ExHandle objLast, bool* bFounded)
 {
 	void* pObj = nullptr;
 	int nError = 0;
@@ -2687,7 +2690,7 @@ bool _wnd_obj_childtabstop(size_t objEntry, size_t* objFocusable, void** pObjFoc
 			ret = true;
 			break;
 		}
-		size_t objSub = ((obj_s*)pObj)->objChildFirst_;
+		ExHandle objSub = ((obj_s*)pObj)->objChildFirst_;
 		if (objSub != 0)
 		{
 			if (_wnd_obj_childtabstop(objSub, objFocusable, pObjFocusable, objLast, bFounded))
@@ -2713,7 +2716,7 @@ void _wnd_wm_ime_composition(HWND hWnd, void* pWnd)
 		cf.ptCurrentPos.x = pt.x;
 		cf.ptCurrentPos.y = pt.y;
 		ImmSetCompositionWindow(hImc, &cf);
-		size_t hObj = ((wnd_s*)pWnd)->objFocus_;
+		ExHandle hObj = ((wnd_s*)pWnd)->objFocus_;
 		if (hObj != 0)
 		{
 			void* pObj = nullptr;
@@ -2805,12 +2808,12 @@ bool _wnd_menu_mouse(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, size_t* iIt
 	return ret;
 }
 
-bool _wnd_menu_item_callback(HWND hWnd, size_t hObj, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
+bool _wnd_menu_item_callback(HWND hWnd, ExHandle hObj, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
 {
 	return false;
 }
 
-bool _wnd_menu_callback_test(HWND hWnd, size_t hExDui, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
+bool _wnd_menu_callback_test(HWND hWnd, ExHandle hExDui, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
 {
 	if (uMsg == WM_INITMENUPOPUP)
 	{
@@ -2821,7 +2824,7 @@ bool _wnd_menu_callback_test(HWND hWnd, size_t hExDui, int uMsg, WPARAM wParam, 
 		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_FTYPE | MIIM_SUBMENU | MIIM_ID;
 		int nCount = GetMenuItemCount((HMENU)wParam) - 1;
-		std::vector<size_t> aryItems;
+		std::vector<ExHandle> aryItems;
 		aryItems.resize(nCount);
 		int index = 0;
 		for (int i = 0; i < nCount; i++)
@@ -2837,7 +2840,7 @@ bool _wnd_menu_callback_test(HWND hWnd, size_t hExDui, int uMsg, WPARAM wParam, 
 		}
 		if (index > 0)
 		{
-			size_t objEntry = Ex_ObjGetObj(aryItems[0], GW_HWNDFIRST);
+			ExHandle objEntry = Ex_ObjGetObj(aryItems[0], GW_HWNDFIRST);
 		}
 		aryItems.resize(index);
 		int radian = 2 * 3.1415926 / index;
@@ -2854,13 +2857,13 @@ bool _wnd_menu_callback_test(HWND hWnd, size_t hExDui, int uMsg, WPARAM wParam, 
 	{
 		POINT pt;
 		GetCursorPos(&pt);
-		size_t hdui = Ex_DUIFromWindow(WindowFromPoint(pt));
+		ExHandle hdui = Ex_DUIFromWindow(WindowFromPoint(pt));
 		void* pdui = nullptr;
 		int nError = 0;
 		if (_handle_validate(hdui, HT_DUI, &pdui, &nError))
 		{
 			ScreenToClient(((wnd_s*)pdui)->hWnd_, &pt);
-			size_t hObj = _wnd_wm_nchittest_obj((HWND)((wnd_s*)pdui)->hexdui_, pdui, ((wnd_s*)pdui)->objChildLast_, pt.x, pt.y, 0, 0);
+			ExHandle hObj = _wnd_wm_nchittest_obj((HWND)((wnd_s*)pdui)->hexdui_, pdui, ((wnd_s*)pdui)->objChildLast_, pt.x, pt.y, 0, 0);
 			void* pObj = nullptr;
 			if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 			{
@@ -2898,7 +2901,7 @@ void _wnd_wm_initmenupopup(HWND hWnd, void* pWnd, void* hMenu)
 	if (fChecked)
 	{
 		int nCount = GetMenuItemCount((HMENU)hMenu) - 1;
-		size_t hCanvas = ((wnd_s*)pWnd)->canvas_bkg_;
+		ExHandle hCanvas = ((wnd_s*)pWnd)->canvas_bkg_;
 		void* hFont = ((wnd_s*)pWnd)->hFont_Menu_;
 		std::vector<wchar_t> buff;
 		buff.resize(520);
@@ -2973,7 +2976,7 @@ int Ex_MessageBox(size_t handle, void* lpText, void* lpCaption, int uType, int d
 	return Ex_MessageBoxEx(handle, lpText, lpCaption, uType, 0, 0, 0, dwFlags, 0);
 }
 
-bool Ex_DUISetBlur(size_t hExDui, float fDeviation)
+bool Ex_DUISetBlur(ExHandle hExDui, float fDeviation)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -2993,7 +2996,7 @@ bool Ex_DUISetBlur(size_t hExDui, float fDeviation)
 	return nError == 0;
 }
 
-bool Ex_DUITrayIconPopup(size_t hExDui, void* lpwzInfo, void* lpwzInfoTitle, int dwInfoFlags)
+bool Ex_DUITrayIconPopup(ExHandle hExDui, void* lpwzInfo, void* lpwzInfoTitle, int dwInfoFlags)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -3018,7 +3021,7 @@ bool Ex_DUITrayIconPopup(size_t hExDui, void* lpwzInfo, void* lpwzInfoTitle, int
 	return nError == 0;
 }
 
-bool Ex_DUITrayIconSet(size_t hExDui, size_t hIcon, void* lpwzTips)
+bool Ex_DUITrayIconSet(ExHandle hExDui, size_t hIcon, void* lpwzTips)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -3073,7 +3076,7 @@ bool Ex_DUITrayIconSet(size_t hExDui, size_t hIcon, void* lpwzTips)
 	return nError = 0;
 }
 
-bool Ex_DUIGetBackgroundImage(size_t hExDui, void* lpBackgroundImage)
+bool Ex_DUIGetBackgroundImage(ExHandle hExDui, void* lpBackgroundImage)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -3109,7 +3112,7 @@ void _wnd_getclientrect(void* pWnd, void* lpRect, int* nError)
 	}
 }
 
-BOOL Ex_DUIGetClientRect(size_t hExDui, void* lpClientRect)
+BOOL Ex_DUIGetClientRect(ExHandle hExDui, void* lpClientRect)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -3120,7 +3123,7 @@ BOOL Ex_DUIGetClientRect(size_t hExDui, void* lpClientRect)
 	return nError == 0;
 }
 
-size_t Ex_DUIGetLong(size_t hExDui, int nIndex)
+size_t Ex_DUIGetLong(ExHandle hExDui, int nIndex)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -3156,7 +3159,7 @@ size_t Ex_DUIGetLong(size_t hExDui, int nIndex)
 	return ret;
 }
 
-size_t Ex_DUISetLong(size_t hExDui, int nIndex, size_t dwNewlong)
+size_t Ex_DUISetLong(ExHandle hExDui, int nIndex, size_t dwNewlong)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -3198,7 +3201,7 @@ size_t Ex_DUISetLong(size_t hExDui, int nIndex, size_t dwNewlong)
 	return ret;
 }
 
-bool Ex_DUIShowWindowEx(size_t hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags, int uEasing, WPARAM wParam, LPARAM lParam)
+bool Ex_DUIShowWindowEx(ExHandle hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags, int uEasing, WPARAM wParam, LPARAM lParam)
 {
 	void* pWnd = nullptr;
 	int nError = 0;
@@ -3217,16 +3220,16 @@ bool Ex_DUIShowWindowEx(size_t hExDui, int nCmdShow, int dwTimer, int dwFrames, 
 	return ret;
 }
 
-bool Ex_DUIShowWindow(size_t hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags)
+bool Ex_DUIShowWindow(ExHandle hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags)
 {
 	return Ex_DUIShowWindowEx(hExDui, nCmdShow, dwTimer, dwFrames, dwFlags, 0, 0, 0);
 }
 
-size_t Ex_DUIBindWindowEx(HWND hWnd, void* hTheme, int dwStyle, LPARAM lParam, void* lpfnMsgProc)
+ExHandle Ex_DUIBindWindowEx(HWND hWnd, void* hTheme, int dwStyle, LPARAM lParam, void* lpfnMsgProc)
 {
 	int nError = 0;
 	void* pWnd = nullptr;
-	size_t hExDui = 0;
+	ExHandle hExDui = 0;
 	if (IsWindow(hWnd))
 	{
 		pWnd = 申请内存(sizeof(wnd_s));
@@ -3261,7 +3264,7 @@ size_t Ex_DUIBindWindowEx(HWND hWnd, void* hTheme, int dwStyle, LPARAM lParam, v
 	return hExDui;
 }
 
-size_t Ex_DUIBindWindow(HWND hWnd, void* hTheme, int dwStyle)
+ExHandle Ex_DUIBindWindow(HWND hWnd, void* hTheme, int dwStyle)
 {
 	return Ex_DUIBindWindowEx(hWnd, hTheme, dwStyle, 0, 0);
 }

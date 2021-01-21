@@ -3,8 +3,8 @@
 size_t _sysbutton_paint(HWND hWnd, size_t hObj, void* pObj)
 {
 	paintstruct_s ps;
-	int atomClass;
-	int atomState;
+	int atomClass = 0;
+	int atomState = 0;
 	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
 	{
 		if ((ps.dwStyle_ & EWS_BUTTON_CLOSE) != 0)
@@ -92,7 +92,7 @@ size_t _sysbutton_paint(HWND hWnd, size_t hObj, void* pObj)
 
 void _sysbutton_remove_proc(void* pObj, int width, int height)
 {
-	size_t sObj = ((obj_s*)pObj)->objChildFirst_;
+	ExHandle sObj = ((obj_s*)pObj)->objChildFirst_;
 	void* psobj = nullptr;
 	int nError = 0;
 	bool bReCalced = false;

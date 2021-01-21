@@ -27,9 +27,9 @@ void _layout_free_info(void* hArr, int nIndex, void* pvItem, int nType)
 	ÊÍ·ÅÄÚ´æ((void*)((size_t)pvItem - 16));
 }
 
-size_t _layout_create(int nType, size_t hObjBind)
+ExHandle _layout_create(int nType, ExHandle hObjBind)
 {
-	size_t hLayout = 0;
+	ExHandle hLayout = 0;
 	int nError = 0;
 	if (nType > 0 && hObjBind != 0)
 	{
@@ -91,14 +91,14 @@ size_t _layout_create(int nType, size_t hObjBind)
 	return hLayout;
 }
 
-size_t _layout_get_parent_layout(size_t hObj)
+ExHandle _layout_get_parent_layout(ExHandle hObj)
 {
 	int nError = 0;
 	void* pObj = nullptr;
-	size_t hLayoutParent = 0;
+	ExHandle hLayoutParent = 0;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 	{
-		size_t hObj = ((obj_s*)pObj)->objParent_;
+		ExHandle hObj = ((obj_s*)pObj)->objParent_;
 		if (hObj == 0)
 		{
 			auto pWnd = ((obj_s*)pObj)->pwnd_;
@@ -109,7 +109,7 @@ size_t _layout_get_parent_layout(size_t hObj)
 	return hLayoutParent;
 }
 
-bool _layout_destory(size_t hLayout)
+bool _layout_destory(ExHandle hLayout)
 {
 	int nError = 0;
 	void* pLayout = nullptr;
@@ -130,10 +130,10 @@ bool _layout_enum_find_obj(void* hArr, int nIndex, void* pvItem, int nType, void
 	return ((void*)__get(pvItem, 0) == pvParam);
 }
 
-void* _layout_get_child(void* pLayout, size_t hObj)
+void* _layout_get_child(void* pLayout, ExHandle hObj)
 {
 	auto hObjP = ((layout_s*)pLayout)->hBind_;
-	size_t hExDUI = 0;
+	ExHandle hExDUI = 0;
 	void* pInfo = nullptr;
 	if (Ex_ObjGetParentEx(hObj, &hExDUI) == hObjP)
 	{
@@ -150,7 +150,7 @@ void* _layout_get_child(void* pLayout, size_t hObj)
 	return pInfo;
 }
 
-bool _layout_update(size_t hLayout)
+bool _layout_update(ExHandle hLayout)
 {
 	int nError = 0;
 	void* pLayout = nullptr;
@@ -166,7 +166,7 @@ bool _layout_update(size_t hLayout)
 	return nError == 0;
 }
 
-int _layout_gettype(size_t hLayout)
+int _layout_gettype(ExHandle hLayout)
 {
 	int nError = 0;
 	void* pLayout = nullptr;
@@ -179,7 +179,7 @@ int _layout_gettype(size_t hLayout)
 	return nType;
 }
 
-bool _layout_enableupdate(size_t hLayout, bool fUpdateable)
+bool _layout_enableupdate(ExHandle hLayout, bool fUpdateable)
 {
 	int nError = 0;
 	void* pLayout = nullptr;
@@ -192,7 +192,7 @@ bool _layout_enableupdate(size_t hLayout, bool fUpdateable)
 	return nError == 0;
 }
 
-size_t _layout_notify(size_t hLayout, int nEvent, void* wParam, void* lParam)
+size_t _layout_notify(ExHandle hLayout, int nEvent, void* wParam, void* lParam)
 {
 	int nError = 0;
 	void* pLayout = nullptr;
@@ -209,7 +209,7 @@ size_t _layout_notify(size_t hLayout, int nEvent, void* wParam, void* lParam)
 	return ret;
 }
 
-bool _layout_table_setinfo(size_t hLayout, void* aRowHeight, int cRows, void* aCellWidth, int cCells)
+bool _layout_table_setinfo(ExHandle hLayout, void* aRowHeight, int cRows, void* aCellWidth, int cCells)
 {
 	int nError = 0;
 	void* pLayout = nullptr;
@@ -240,7 +240,7 @@ bool _layout_table_setinfo(size_t hLayout, void* aRowHeight, int cRows, void* aC
 	return nError == 0;
 }
 
-bool _layout_setchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t pvValue)
+bool _layout_setchildprop(ExHandle hLayout, ExHandle hObj, int dwPropID, size_t pvValue)
 {
 	void* pLayout = nullptr;
 	int nError = 0;
@@ -284,7 +284,7 @@ bool _layout_setchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t pvVa
 	return nError == 0;
 }
 
-bool _layout_getchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t* pvValue)
+bool _layout_getchildprop(ExHandle hLayout, ExHandle hObj, int dwPropID, size_t* pvValue)
 {
 	void* pLayout = nullptr;
 	int nError = 0;
@@ -316,7 +316,7 @@ bool _layout_getchildprop(size_t hLayout, size_t hObj, int dwPropID, size_t* pvV
 	return nError == 0;
 }
 
-bool _layout_setprop(size_t hLayout, int dwPropID, size_t pvValue)
+bool _layout_setprop(ExHandle hLayout, int dwPropID, size_t pvValue)
 {
 	void* pLayout = nullptr;
 	int nError = 0;
@@ -337,7 +337,7 @@ bool _layout_setprop(size_t hLayout, int dwPropID, size_t pvValue)
 	return nError == 0;
 }
 
-size_t _layout_getprop(size_t hLayout, int dwPropID)
+size_t _layout_getprop(ExHandle hLayout, int dwPropID)
 {
 	void* pLayout = nullptr;
 	int nError = 0;
@@ -355,7 +355,7 @@ size_t _layout_getprop(size_t hLayout, int dwPropID)
 	return ret;
 }
 
-bool _layout_absolute_setedge(size_t hLayout, size_t hObjChild, int dwEdge, int dwType, size_t nValue)
+bool _layout_absolute_setedge(ExHandle hLayout, ExHandle hObjChild, int dwEdge, int dwType, size_t nValue)
 {
 	void* pLayout = nullptr;
 	int nError = 0;

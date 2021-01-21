@@ -14,7 +14,7 @@
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME																	//声明一个函数指针变量
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule,#NAME)	
 
-
+typedef int ExHandle;
 
 #include "constant_ex.h"
 #include "Thread_ex.h"
@@ -22,6 +22,7 @@
 #include "MemPool_ex.h"
 #include "HandelTable_ex.h"
 #include "Global_ex.h"
+
 
 
 typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
@@ -370,9 +371,7 @@ struct RENDERINFO
 	float bp_dpix;
 	float bp_dpiy;
 	int bp_bitmapOptions;
-	int bp_colorContext;
-
-
+	void* bp_colorContext;
 };
 
 extern LOCALINFO g_Li;
