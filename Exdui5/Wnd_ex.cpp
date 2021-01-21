@@ -1698,7 +1698,7 @@ bool _wnd_wm_setcursor(HWND hWnd, void* pWnd, LPARAM lParam)
 	return false;
 }
 
-void _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	KillTimer(hWnd, idEvent);
 	void* pWnd = (void*)(idEvent - TIMER_MOUSETRACK);
