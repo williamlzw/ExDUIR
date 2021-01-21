@@ -1568,7 +1568,14 @@ int Ex_ObjDispatchNotify(ExHandle hObj, int nCode, size_t wParam, size_t lParam)
 
 void _obj_backgroundimage_clear(HWND hWnd, void* pObj)
 {
-	void* dwTmp = ((obj_s*)pObj)->lpBackgroundImage_;
+	void* dwTmp = 0;
+	if (((obj_s*)pObj)->pwnd_) {
+		dwTmp = ((obj_s*)pObj)->lpBackgroundImage_;
+	}
+	else {
+		dwTmp = ((wnd_s*)pObj)->lpBackgroundImage_;
+	}
+
 	if (dwTmp != 0)
 	{
 		KillTimer(hWnd, (UINT_PTR)((size_t)pObj + TIMER_BKG));
@@ -1695,7 +1702,7 @@ ExHandle _obj_create_init(HWND hWnd, void* pWnd, int atomClass, void* pfnMsgProc
 	((obj_s*)(*pObj))->dwAlpha_ = 255;
 	((obj_s*)(*pObj))->dwAlphaDisable_ = 128;
 	((obj_s*)(*pObj))->hCursor_ = ((class_s*)pCls)->hCursor_;
-
+	((obj_s*)(*pObj))->lpBackgroundImage_ = 0;
 	if (atomClass == ATOM_PAGE) __add(*pObj, offsetof(obj_s, dwFlags_), eof_bPage);
 	return hObj;
 }
