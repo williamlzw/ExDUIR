@@ -17,7 +17,7 @@
 
 struct wnd_s
 {
-	int wnd = 0;
+	int wnd = 0; // 标记是wnd对象还是obj对象，obj对象为非0
 	//TODO:	size_t ulwi_; UPDATELAYEREDWINDOWINFO
 	int ulwi_cbsize_;
 	void* ulwi_hdcDest_;
@@ -29,10 +29,8 @@ struct wnd_s
 	void* ulwi_pblend_;
 	int ulwi_dwFlags_;
 	void* ulwi_prcDirty_;
-	int ulwi_pptDst_x_;
-	int ulwi_pptDst_y_;
-	int left_;
-	int top_;
+	int left_; //TODO: ulwi_pptDst_x
+	int top_; //TODO: ulwi_pptDst_y
 	int width_;
 	int height_;
 	int ulwi_pptSrc_x_;

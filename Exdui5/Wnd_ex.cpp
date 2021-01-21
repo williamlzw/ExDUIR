@@ -999,7 +999,7 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	}
 
 	//layer
-	((wnd_s*)pWnd)->ulwi_pptDst_ = (void*)((size_t)pWnd + offsetof(wnd_s, ulwi_pptDst_x_));
+	((wnd_s*)pWnd)->ulwi_pptDst_ = (void*)((size_t)pWnd + offsetof(wnd_s, left_));
 	((wnd_s*)pWnd)->ulwi_psize_ = (void*)((size_t)pWnd + offsetof(wnd_s, width_));
 	((wnd_s*)pWnd)->ulwi_pptSrc_ = (void*)((size_t)pWnd + offsetof(wnd_s, ulwi_pptSrc_x_));
 	((wnd_s*)pWnd)->ulwi_pblend_ = (void*)((size_t)pWnd + offsetof(wnd_s, ulwi_pblend_bytes_));
@@ -1007,8 +1007,8 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	((wnd_s*)pWnd)->ulwi_cbsize_ = 40;
 	((wnd_s*)pWnd)->ulwi_dwFlags_ = 2;
 	((wnd_s*)pWnd)->ulwi_pblend_bytes_ = 33488896;
-	((wnd_s*)pWnd)->ulwi_pptDst_x_ = rcWindow.left;
-	((wnd_s*)pWnd)->ulwi_pptDst_y_ = rcWindow.top;
+	((wnd_s*)pWnd)->left_ = rcWindow.left;
+	((wnd_s*)pWnd)->top_ = rcWindow.top;
 	((wnd_s*)pWnd)->width_ = size.cx;
 	((wnd_s*)pWnd)->height_ = size.cy;
 	((wnd_s*)pWnd)->ulwi_prcDirty_right_ = size.cx;
@@ -1327,7 +1327,7 @@ int _wnd_wm_nchittest(void* pWnd, HWND hWnd, LPARAM lParam)
 	}
 
 	POINT pt;
-	size_t objMouse;
+	size_t objMouse = 0;
 	if (lParam == -1)
 	{
 		GetCursorPos(&pt);
@@ -1379,6 +1379,7 @@ int _wnd_wm_nchittest(void* pWnd, HWND hWnd, LPARAM lParam)
 	}
 
 	auto objHittest = ((wnd_s*)pWnd)->objHittest_;
+	((wnd_s*)pWnd)->objHittest_ = objMouse;
 	if (objHittest != objMouse)
 	{
 		((wnd_s*)pWnd)->objHittestPrev_ = objHittest;
@@ -1468,7 +1469,6 @@ void _wnd_sysbutton_create(HWND hWnd, void* pWnd, int dwStyle)
 		nMinHeight = rcCaption.bottom + rcCaption.top;
 
 	}
-
 	std::vector<int> aryBtn = { EWS_BUTTON_CLOSE ,EWS_BUTTON_MAX ,EWS_BUTTON_MIN ,EWS_BUTTON_MENU ,EWS_BUTTON_SKIN ,EWS_BUTTON_SETTING ,EWS_BUTTON_HELP };
 	std::vector<int> aryAtom = { ATOM_SYSBUTTON_CLOSE ,ATOM_SYSBUTTON_MAX ,ATOM_SYSBUTTON_MIN ,ATOM_SYSBUTTON_MENU ,ATOM_SYSBUTTON_SKN ,ATOM_SYSBUTTON_SETTING ,ATOM_SYSBUTTON_HELP };
 	int left = rcCaption.right - rcCaption.left;
@@ -2444,7 +2444,6 @@ void _wnd_wm_mouse(void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam
 			lParam = ((wnd_s*)pWnd)->dwHitObjPos_Abs_;
 		}
 	}
-
 	if (uMsg == WM_MOUSEMOVE)
 	{
 		if (wParam == 0)
