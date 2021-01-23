@@ -45,4 +45,6 @@ echart3:
 echart4:  
 ![image](https://github.com/laizewei/Exdui4.1R/blob/master/demo_image/demo_echart4.png)    
 echart5:  
-![image](https://github.com/laizewei/Exdui4.1R/blob/master/demo_image/demo_echart5.png)  
+![image](https://github.com/laizewei/Exdui4.1R/blob/master/demo_image/demo_echart5.png)    
+music box:  
+![image](https://github.com/laizewei/Exdui4.1R/blob/master/demo_image/demo_music_box.png)
