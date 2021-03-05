@@ -72,7 +72,7 @@ void 测试子程序()
 	//std::wstring a = L"RGBA";
 	//std::cout << Ex_Atom((LPWSTR)a.c_str()) << std::endl;
    // BYTE aa[5] = { 1,2,3,4,5 };
-	//std::cout << 数据_Crc32_Addr((UCHAR*)aa,5) << std::endl;
+	//std::cout << Crc32_Addr((UCHAR*)aa,5) << std::endl;
 	//float a = round(1.6 * 2);
 	//std::cout <<a<< std::endl;
 
@@ -115,7 +115,7 @@ void 测试数组()
 void 测试句柄池()
 {
 	g_Li.hHandles = _handle_init();
-	auto bb = 申请内存(sizeof(img_s));
+	auto bb = Ex_MemAlloc(sizeof(img_s));
 	int nError=0;
 	std::cout << "bb:" << bb << std::endl;
 	auto cc = _handle_create(HT_IMAGE, bb, &nError);
@@ -130,7 +130,7 @@ void 测试句柄池()
 	_handle_destroy(cc, &nError);
 	_handle_uninit(g_Li.hHandles);
 	std::cout << IsBadReadPtr(bb, sizeof(img_s)) << std::endl;
-	释放内存(bb);
+	Ex_MemFree(bb);
 	std::cout << IsBadReadPtr(bb, sizeof(img_s)) << std::endl;
 }
 
@@ -175,13 +175,14 @@ void 测试窗口()
 		AllocConsole();
 		FILE* fp = freopen("CONOUT$", "w", stdout);
 	}
+
 	std::vector<char> data;
-	读入文件(L"F:/Exdui5.0/Exdui5/Exdui5/Default.ext", &data);
-	std::cout << offsetof(D2D1_BRUSH_PROPERTIES, transform.dx) << std::endl;
+	Ex_ReadFile(L".\\Default.ext", &data);
+	
 	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE, 0, 0, data.data(), data.size(), 0, 0);
 	LPCWSTR classa = L"Ex_DirectUI";
 	auto aa = Ex_WndRegisterClass(classa, 0, 0, 0);
-	std::cout <<"注册窗口类结果：" <<aa<<",GetLastError:"<< GetErrorMessage(GetLastError()) << std::endl;
+	
 	LPCWSTR title = L"testTitle";
 	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
 	if (hWnd != 0)
@@ -189,6 +190,9 @@ void 测试窗口()
 		size_t hExDui = Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE);
 		std::cout << "hExDui:" << hExDui << std::endl;
 		Ex_DUISetLong(hExDui, EWL_CRBKG, -100630528);//-97900239
+		LPCWSTR class_name = L"static";
+		LPCWSTR title_button = L"test";
+		Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, EOS_VISIBLE, 50, 50, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
 		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
 	}
 	Ex_WndMsgLoop();
@@ -209,36 +213,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev
 	//测试数组();
 	//测试RC4();
 	//测试引用(&b);
-	//sizeof(MMRESULT);
+
 	
 	测试窗口();
-	std::vector<float> aa;
-	//std::wcout.imbue(std::locale("chs"));
-	//sizeof(USHORT)
-	//auto a= 到字节数组((USHORT)0xb948);
-	//std::cout << a.size()<< std::endl;
 
-	//BOOL CONSOLE = true;
-	//setlocale(LC_CTYPE, "");
-	//if (CONSOLE) {
-	//	AllocConsole();
-	//	FILE* fp = freopen("CONOUT$", "w", stdout);
-	//}
-	//std::wstring aa = L"=[aabcdd]";
-	//auto lpaddress = aa.c_str();
-	//auto c= wcschr(lpaddress, '[');
-	//std::cout << (size_t)c - (size_t)lpaddress << std::endl;
-	//c = (wchar_t *)((size_t)c + 2);
-	//std::cout << (size_t)c - (size_t)lpaddress << std::endl;
-	//auto d = wcschr(c, ']');
-	////std::cout << (size_t)lpaddress  << std::endl;
-	////std::cout <<  (size_t)d << std::endl;
-	//std::cout <<  (size_t)d- (size_t)c  << std::endl;
-	//system("pause");
-	//if (CONSOLE) {
-	//	fclose(stdout);
-	//	FreeConsole();
-	//}
 	return 0;
 }
 

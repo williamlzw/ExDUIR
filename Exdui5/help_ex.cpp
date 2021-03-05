@@ -21,7 +21,7 @@ void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
 	return ret;
 }
 
-bool 释放内存(void* hMem)
+bool Ex_MemFree(void* hMem)
 {
 	if (hMem != nullptr)
 	{
@@ -36,7 +36,7 @@ bool 释放内存(void* hMem)
 	return false;
 }
 
-void* 申请内存(size_t dwSize, int dwFlags)
+void* Ex_MemAlloc(size_t dwSize, int dwFlags)
 {
 	//return malloc(dwSize);
 	return HeapAlloc(GetProcessHeap(), 8, dwSize);
@@ -150,22 +150,22 @@ void __subn(void* lpAddr, size_t offset, size_t value)//OK
 	*(size_t*)a = *(size_t*)a - value;
 }
 
-void 位_添加(size_t* dwValue, size_t index/*0-31 */)//OK
+void _bit_add(size_t* dwValue, size_t index/*0-31 */)//OK
 {
 	*dwValue |= (size_t)1 << index;
 }
 
-void 位_删除(size_t* dwValue, size_t index/*0-31 */)//OK
+void _bit_del(size_t* dwValue, size_t index/*0-31 */)//OK
 {
 	*dwValue &= ~((size_t)1 << index);
 }
 
-void 位_取反(size_t* dwValue, size_t index/*0-31 */)//OK
+void _bit_not(size_t* dwValue, size_t index/*0-31 */)//OK
 {
 	*dwValue ^= (size_t)1 << index;
 }
 
-bool 位_测试(size_t* dwValue, size_t index/*0-31 */)//OK
+bool _bit_test(size_t* dwValue, size_t index/*0-31 */)//OK
 {
 	return *dwValue >> index & (size_t)1;
 }
@@ -204,7 +204,7 @@ void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int
 	int uLen = MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, NULL, 0) * 2;
 	if (IsBadWritePtr(*retPtr, uLen + 2))
 	{
-		*retPtr = 申请内存(uLen + 2);
+		*retPtr = Ex_MemAlloc(uLen + 2);
 	}
 	if (uLen > 0)
 	{
@@ -232,17 +232,17 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 		{
 			if (IsBadWritePtr(*retPtr, dwLen - 2))
 			{
-				*retPtr = 申请内存(dwLen - 2);
+				*retPtr = Ex_MemAlloc(dwLen - 2);
 			}
 			RtlMoveMemory(*retPtr, (void*)((size_t)pAddr + 2), dwLen - 2);
 			*retLen = dwLen - 2;
 		}
 		else {
-			if (取高位(bom) == 0)
+			if (HIWORD(bom) == 0)
 			{
 				if (IsBadWritePtr(*retPtr, dwLen))
 				{
-					*retPtr = 申请内存(dwLen);
+					*retPtr = Ex_MemAlloc(dwLen);
 				}
 				RtlMoveMemory(*retPtr, pAddr, dwLen);
 				*retLen = dwLen;
@@ -260,7 +260,7 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 					ulen = (ulen + 1) * 2;
 					if (IsBadWritePtr(*retPtr, ulen))
 					{
-						*retPtr = 申请内存(ulen);
+						*retPtr = Ex_MemAlloc(ulen);
 					}
 					if (ulen > 0)
 					{
@@ -273,7 +273,7 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 	}
 }
 
-void 打印数组(unsigned char* data, int len)
+void PrintArray(unsigned char* data, int len)
 {
 	std::string str;
 	str.push_back('{');
@@ -289,7 +289,7 @@ void 打印数组(unsigned char* data, int len)
 	std::cout << str << std::endl;
 }
 
-int 取最近质数(int value)
+int GetNearestPrime(int value)
 {
 	int prime = 0;
 	int i = 0;
@@ -301,7 +301,7 @@ int 取最近质数(int value)
 	return  prime;
 }
 
-void 读入文件(std::wstring file, std::vector<char>* data)
+void Ex_ReadFile(std::wstring file, std::vector<char>* data)
 {
 	std::ifstream ifs(file, std::ios::in | std::ios::binary);
 	*data = std::vector<char>((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
@@ -312,7 +312,7 @@ void _struct_destroyfromaddr(void* lpAddr, size_t Offset)
 	auto tmp = __get(lpAddr, Offset);
 	if (tmp != 0)
 	{
-		释放内存((void*)tmp);
+		Ex_MemFree((void*)tmp);
 		__set(lpAddr, Offset, 0);
 	}
 }
@@ -322,7 +322,7 @@ void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int*
 	void* tmp = (void*)__get(lpAddr, Offset);
 	if (tmp == 0)
 	{
-		tmp = 申请内存(sizeofstruct);
+		tmp = Ex_MemAlloc(sizeofstruct);
 		if (tmp == 0)
 		{
 			*nError = ERROR_EX_MEMORY_ALLOC;
@@ -414,7 +414,7 @@ const UINT32 table[] = {
 	0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-UINT 数据_Crc32_Addr(void* buf, UINT nLength)//OK
+UINT Crc32_Addr(void* buf, UINT nLength)//OK
 {
 	if (nLength < 1) return 0xffffffff;
 
@@ -437,7 +437,7 @@ void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset)
 		{
 			auto len = lstrlenW(lpString) * 2;
 			*nOffset = lpOffset - lpString;
-			ret = 申请内存(len);
+			ret = Ex_MemAlloc(len);
 			if (ret != 0)
 			{
 				RtlMoveMemory(ret, lpString, *nOffset);
@@ -514,7 +514,7 @@ std::string GetErrorMessage(DWORD error)
 
 void* copytstr(LPCWSTR lptstr, int len)
 {
-	auto addr = 申请内存(len * 2 + 2);
+	auto addr = Ex_MemAlloc(len * 2 + 2);
 	if (addr != 0)
 	{
 		RtlMoveMemory(addr, lptstr, len * 2);
@@ -548,7 +548,7 @@ HRESULT IDropTarget_DragEnter(void* thisptr, IDataObject* pDataObject, int grfKe
 HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* pdwEffect)
 {
 	void* pWnd = (void*)__get(thisptr, sizeof(void*));
-	_wnd_wm_nchittest(pWnd, ((wnd_s*)pWnd)->hWnd_, 合并整数(x, y));
+	_wnd_wm_nchittest(pWnd, ((wnd_s*)pWnd)->hWnd_, MAKELONG(x, y));
 	void* phit = nullptr;
 	int nError = 0;
 	if (_handle_validate(((wnd_s*)pWnd)->objHittest_, HT_OBJECT, &phit, &nError))
@@ -566,7 +566,7 @@ HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, 
 {
 	void* pWnd = (void*)__get(thisptr, sizeof(void*));
 	HWND hWnd = ((wnd_s*)pWnd)->hWnd_;
-	_wnd_wm_nchittest(pWnd, hWnd, 合并整数(x, y));
+	_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(x, y));
 	size_t hObj = ((wnd_s*)pWnd)->objHittest_;
 	void* pObj = nullptr;
 	int nError = 0;
@@ -605,8 +605,8 @@ HRESULT IDropTarget_DragLeave(void* thisptr)
 
 void* IDropTarget_Init(void* pWnd)
 {
-	void* lpMethods = 申请内存(7 * sizeof(void*));
-	void* thisptr = 申请内存(2 * sizeof(void*));
+	void* lpMethods = Ex_MemAlloc(7 * sizeof(void*));
+	void* thisptr = Ex_MemAlloc(2 * sizeof(void*));
 	__set(thisptr, 0, (size_t)lpMethods);
 	__set(thisptr, sizeof(void*), (size_t)pWnd);
 	__set(lpMethods, 0, (size_t)&IUnknown_QueryInterface);

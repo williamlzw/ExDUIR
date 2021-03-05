@@ -27,7 +27,7 @@
 #define EXGF_JS_FILE	524288
 // 允许JS全局对象访问内存
 #define EXGF_JS_MEMORY	1048576
-// 允许JS全局对象申请内存
+// 允许JS全局对象Ex_MemAlloc
 #define EXGF_JS_MEMORY_ALLOC	2097152
 // 允许JS全局对象创建进程、允许程序、加载DLL
 #define EXGF_JS_PROCESS	4194304

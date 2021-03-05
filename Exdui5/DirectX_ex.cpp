@@ -37,7 +37,7 @@ bool _dx_init(int* nError)
 							int reta = GetUserDefaultLocaleName((LPWSTR)a.c_str(), 260) * 2;
 							if (reta > 0)
 							{
-								g_Ri.pLocalName = ÉêÇëÄÚ´æ(reta);
+								g_Ri.pLocalName = Ex_MemAlloc(reta);
 								RtlMoveMemory(g_Ri.pLocalName, a.c_str(), reta);
 							}
 							ret = true;
@@ -54,7 +54,7 @@ bool _dx_init(int* nError)
 
 void _dx_uninit()
 {
-	ÊÍ·ÅÄÚ´æ(g_Ri.pLocalName);
+	Ex_MemFree(g_Ri.pLocalName);
 	if (g_Ri.pEffectGaussianBlur) {
 		((ID2D1Effect*)g_Ri.pEffectGaussianBlur)->Release();
 	}

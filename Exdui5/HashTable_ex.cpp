@@ -5,7 +5,7 @@ void* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete)
 	void* hTable = (void*)LocalAlloc(LMEM_ZEROINIT, sizeof(hashtable_s));
 	if (hTable != 0) {
 		if (dwBound <= 0) dwBound = 11;
-		void* pTable = (void*)申请内存(dwBound * sizeof(void*));
+		void* pTable = (void*)Ex_MemAlloc(dwBound * sizeof(void*));
 		if (pTable != 0)
 		{
 			((hashtable_s*)hTable)->pfnDelete = pfnDelete;
@@ -14,7 +14,7 @@ void* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete)
 			((hashtable_s*)hTable)->dwThreshold = (size_t)(dwBound * 0.72);
 		}
 		else {
-			释放内存((HANDLE)hTable);
+			Ex_MemFree((HANDLE)hTable);
 			hTable = 0;
 		}
 	}
@@ -38,7 +38,7 @@ BOOL HashTable_Clear(void* hTable)
 					if (pfnCbk != 0) {
 						pfnCbk((void*)((entry_s*)tmp)->dwValue);
 					}
-					释放内存((HANDLE)tmp);
+					Ex_MemFree((HANDLE)tmp);
 				}
 			}
 			RtlZeroMemory(pTable, LocalSize(pTable));
@@ -57,8 +57,8 @@ BOOL HashTable_Destroy(void* hTable)
 		ret = HashTable_Clear(hTable);
 		if (ret)
 		{
-			释放内存(((hashtable_s*)hTable)->pTable);
-			释放内存(hTable);
+			Ex_MemFree(((hashtable_s*)hTable)->pTable);
+			Ex_MemFree(hTable);
 		}
 	}
 	return ret;
@@ -90,7 +90,7 @@ void HashTable_ReHash(void* hTable)
 	((hashtable_s*)hTable)->pTable = newTable;
 	((hashtable_s*)hTable)->dwBound = newBound;
 	((hashtable_s*)hTable)->dwThreshold = (size_t)(newBound * 0.72);
-	释放内存(oldTable);
+	Ex_MemFree(oldTable);
 }
 
 BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
@@ -117,7 +117,7 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 			nPos = HashTable_GetPos(hKey, ((hashtable_s*)hTable)->dwBound);
 			pTable = ((hashtable_s*)hTable)->pTable;
 		}
-		pEntry = 申请内存(sizeof(entry_s));
+		pEntry = Ex_MemAlloc(sizeof(entry_s));
 		((entry_s*)pEntry)->hKey = hKey;
 		((entry_s*)pEntry)->dwValue = dwValue;
 
@@ -179,7 +179,7 @@ BOOL HashTable_Remove(void* hTable, size_t hKey)
 				InterlockedExchangeAdd((size_t*)&((hashtable_s*)hTable)->dwCount, -1);
 				HashTablePROC pfn = ((hashtable_s*)hTable)->pfnDelete;
 				pfn((void*)((entry_s*)pEntry)->dwValue);
-				释放内存((HANDLE)pEntry);
+				Ex_MemFree((HANDLE)pEntry);
 				ret = true;
 				break;
 			}

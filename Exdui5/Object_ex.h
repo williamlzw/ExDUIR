@@ -233,7 +233,8 @@ void _obj_register(int atomClass, int dwStyle, int dwStyleEx, int dwTextFormat, 
 ExHandle Ex_ObjLayoutGet(ExHandle handle);
 void _obj_z_clear(ExHandle hObj, void* pObj, ExHandle* hParent, void** pParent);
 void _obj_z_set_before_topmost(ExHandle objChildFirst, void* pObjChildFirst, ExHandle objChildLast, void* pObjChildLast, ExHandle hObj, void* pObj, void* pParent);
-void _obj_z_set(ExHandle hObj, void* pObj, ExHandle hObjInsertAfter, int flags, int* nError);
+//void _obj_z_set(ExHandle hObj, void* pObj, ExHandle hObjInsertAfter, int flags, int* nError);
+void _obj_z_set(ExHandle hObj, obj_s* pObj, ExHandle hObjInsertAfter, UINT flags, int* nError);
 bool _obj_autosize(void* pObj, ExHandle hObj, int* width, int* height);
 size_t _obj_sendmessage(HWND hWnd, ExHandle hObj, void* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved);
 bool _obj_postmessage(HWND hWnd, ExHandle hObj, void* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved);

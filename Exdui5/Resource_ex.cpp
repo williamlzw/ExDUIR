@@ -1,74 +1,5 @@
 #include "Resource_ex.h"
 
-//void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen)
-//{
-//	int i = 1263556677;
-//	int nError = 0;
-//	void* hImg = nullptr;
-//	Gdiplus::GdiplusStartupInput StartupInput;
-//	GdiplusStartup((ULONG_PTR*)&g_Li.hToken, &StartupInput, NULL);
-//	if (__get_int(lpData, 0) == i)
-//	{
-//		void* pData = 申请内存(dwSize);
-//		if (pData == 0)
-//		{
-//			nError = ERROR_EX_MEMORY_ALLOC;
-//		}
-//		else {
-//			RtlMoveMemory(pData, lpData, dwSize);
-//			if (lpKey == 0)
-//			{
-//				lpKey = &i;
-//				dwLen = 4;
-//			}
-//			RC4((void*)((size_t)pData + 4), dwSize - 4, lpKey, dwLen);
-//			__set_int(pData, 0, PNG_HEADER);
-//			void* lpStream = _img_createfromstream_init(pData, dwSize, &nError);
-//			if (nError == 0)
-//			{		
-//				nError=GdipLoadImageFromStream(lpStream, &hImg);
-//				if (nError == 0)
-//				{
-//					void* pBitmapData = 申请内存(sizeof(BitmapData_s));
-//					if (pBitmapData != 0)
-//					{
-//						if (GdipBitmapLockBits(hImg, NULL, 1, 2498570, pBitmapData) == 0)
-//						{
-//							void* pScan0 = ((BitmapData_s*)pBitmapData)->Scan0;
-//							int srcLen = __get_int(pScan0, 0);
-//							//打印数组((unsigned char*)pScan0, srcLen);
-//							if (数据_Crc32_Addr((void*)((size_t)pScan0 + 8), srcLen) == __get_int(pScan0, 4))
-//							{
-//								if (IsBadWritePtr(*retPtr, srcLen))
-//								{
-//									*retPtr = 申请内存(srcLen);
-//								}
-//								RtlMoveMemory(*retPtr, (void*)((size_t)pScan0 + 8), srcLen);
-//								*retLen = srcLen;
-//							}
-//							else {
-//								nError = ERROR_EX_CHECKSUM;
-//							}
-//							GdipBitmapUnlockBits(hImg, pBitmapData);
-//					    }
-//						释放内存(pBitmapData);
-//					}
-//					else {
-//						nError = ERROR_EX_MEMORY_ALLOC;
-//					}
-//					GdipDisposeImage(hImg);
-//				}
-//				((LPSTREAM)lpStream)->Release();
-//			}
-//			释放内存(pData);
-//		}
-//	}
-//	else {
-//		nError = ERROR_EX_UNSUPPORTED_TYPE;
-//	}
-//	Ex_SetLastError(nError);
-//}
-
 
 void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen)
 {
@@ -79,7 +10,7 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 	GdiplusStartup((ULONG_PTR*)&g_Li.hToken, &StartupInput, NULL);
 	if (__get_int(lpData, 0) == i)
 	{
-		void* pData = 申请内存(dwSize);
+		void* pData = Ex_MemAlloc(dwSize);
 		if (pData == 0)
 		{
 			nError = ERROR_EX_MEMORY_ALLOC;
@@ -102,12 +33,12 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 				{
 					void* pScan0 = pBitmapData.Scan0;
 					int srcLen = __get_int(pScan0, 0);
-					//打印数组((unsigned char*)pScan0, srcLen);
-					if (数据_Crc32_Addr((void*)((size_t)pScan0 + 8), srcLen) == __get_int(pScan0, 4))
+					//PrintArray((unsigned char*)pScan0, srcLen);
+					if (Crc32_Addr((void*)((size_t)pScan0 + 8), srcLen) == __get_int(pScan0, 4))
 					{
 						if (IsBadWritePtr(*retPtr, srcLen))
 						{
-							*retPtr = 申请内存(srcLen);
+							*retPtr = Ex_MemAlloc(srcLen);
 						}
 						RtlMoveMemory(*retPtr, (void*)((size_t)pScan0 + 8), srcLen);
 						*retLen = srcLen;
@@ -119,7 +50,7 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 				}
 				((LPSTREAM)lpStream)->Release();
 			}
-			释放内存(pData);
+			Ex_MemFree(pData);
 		}
 	}
 	else {
@@ -141,7 +72,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 			int count = __get_int(retPtr, 1);
 			if (count > 0)
 			{
-				tableFiles = HashTable_Create(取最近质数(count), &pfnDefaultFreeData);
+				tableFiles = HashTable_Create(GetNearestPrime(count), &pfnDefaultFreeData);
 				if (tableFiles != 0)
 				{
 					retPtr = (void*)((size_t)retPtr + 5);
@@ -152,7 +83,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 						int len = __get_int(retPtr, 5) + 5;//byteProp + len + data
 						if (len > 5)
 						{
-							void* tmp = 申请内存(len);
+							void* tmp = Ex_MemAlloc(len);
 							if (tmp != 0)
 							{
 								HashTable_Set(tableFiles, atom, (size_t)tmp);
@@ -198,7 +129,7 @@ void* Ex_ResLoadFromFile(void* lptszFile)
 		std::vector<char> data;
 		std::wstring wstr;
 		wstr += (LPCWSTR)lptszFile;
-		读入文件(wstr, &data);
+		Ex_ReadFile(wstr, &data);
 		ret = Ex_ResLoadFromMemory(data.data(), data.size());
 	}
 	return ret;

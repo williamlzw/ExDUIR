@@ -2,7 +2,7 @@
 
 void* Array_MoveMember(void* pData, int nCount, int nSize, int nNewCount)
 {
-	void* pNewData = 申请内存(8 + nSize * sizeof(void*));
+	void* pNewData = Ex_MemAlloc(8 + nSize * sizeof(void*));
 	int nMoveBytes;
 	if (pData != 0 && nCount != 0 && nSize != 0)
 	{
@@ -70,7 +70,7 @@ bool Array_Resize(void* pArray, int nCount, bool fGrowCount)
 		((array_s*)pArray)->nSize_ = nSize;
 		if (pData != 0)
 		{
-			释放内存((void*)((size_t)pData - 8));
+			Ex_MemFree((void*)((size_t)pData - 8));
 		}
 		((array_s*)pArray)->lpData_ = pNewData;
 	}
@@ -119,10 +119,10 @@ size_t Array_SetEvent(void* pArray, int nEvent, size_t index1, size_t pvValue, s
 
 void* Array_Create(int count)
 {
-	void* pArray = 申请内存(sizeof(array_s));
+	void* pArray = Ex_MemAlloc(sizeof(array_s));
 	((array_s*)pArray)->flGrow_ = (float)数组默认增长系数;
 	((array_s*)pArray)->event_onCompare_ = &Array_Compare;
-	void* pData = 申请内存(8 + sizeof(void*));
+	void* pData = Ex_MemAlloc(8 + sizeof(void*));
 	((array_s*)pArray)->lpData_ = (void*)((size_t)pData + 8);
 	((array_s*)pArray)->nSize_ = 1;
 	Array_Resize(pArray, count, false);
@@ -137,8 +137,8 @@ bool Array_Destroy(void* pArray)
 		Array_SetEvent(pArray, 数组事件_删除成员, index);
 	}
 	auto pData = ((array_s*)pArray)->lpData_;
-	if (pData != 0) 释放内存((void*)((size_t)pData - 8));
-	释放内存(pArray);
+	if (pData != 0) Ex_MemFree((void*)((size_t)pData - 8));
+	Ex_MemFree(pArray);
 	return true;
 }
 
