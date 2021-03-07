@@ -2630,7 +2630,7 @@ bool _obj_backgroundimage_set(HWND hWnd, void* pObj, void* lpImage, int dwImageL
 		size_t hImg = _img_createfrommemory(lpImage, dwImageLen);
 		if (hImg != 0)
 		{
-			void* lpBI = _struct_createfromaddr(pObj, offsetof(obj_s, lpBackgroundImage_), sizeof(bkgimg_s), nError);
+			void* lpBI = _struct_createfromaddr(pObj, offsetofobj(pObj, lpBackgroundImage_), sizeof(bkgimg_s), nError);
 			if (lpBI != 0)
 			{
 				((bkgimg_s*)lpBI)->dwFlags_ = dwFlags;

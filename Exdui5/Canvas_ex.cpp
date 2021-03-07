@@ -439,10 +439,10 @@ bool _canvas_drawimagefromgrid(ExHandle hCanvas, ExHandle hImage, float dstLeft,
 
 bool _canvas_drawimagefrombkgimg_ex(ExHandle hCanvas, ExHandle hImage, int x, int y, int dwRepeat, void* lpGrid, int dwFlags, int dwAlpha, void* lpRcSrc, void* lpRCFDst)
 {
-	void* pCanvas = nullptr;
+	void* pCanvas = NULL;
 	int nError = 0;
-	D2D1_RECT_F rcfDst;
-	RECT rcSrc, rcGrid;
+	D2D1_RECT_F rcfDst = { 0 };
+	RECT rcSrc = { 0 }, rcGrid = { 0 };
 	int w, h;
 	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
 	{

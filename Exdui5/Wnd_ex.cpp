@@ -24,23 +24,37 @@ ExHandle Ex_DUIFromWindow(HWND hWnd)
 	return SendMessageW(hWnd, g_Li.dwMessage, EMV_HEXDUI, MAKELONG(EMT_DUI, 0));
 }
 
-bool _wnd_getfromhandle(size_t handle, HWND* hWnd, void** pWnd, void** pObj, bool* isObject, int* nError)
+bool _wnd_getfromhandle(size_t handle, HWND* hWnd, void** ppWnd, void** ppObj, bool* isObject, int* nError)
 {
 	*isObject = false;
 	if (IsWindow((HWND)handle)) handle = Ex_DUIFromWindow((HWND)handle);
-	if (_handle_validate(handle, HT_DUI, pWnd, nError))
+
+	wnd_s* pWnd = NULL;
+	obj_s* pObj = NULL;
+
+	if (_handle_validate(handle, HT_DUI, (void**)&pWnd, nError))
 	{
-		*hWnd = ((wnd_s*)*pWnd)->hWnd_;
-		pObj = pWnd;
+		if (hWnd) {
+			*hWnd = pWnd->hWnd_;
+		}
+		pObj = (obj_s*)pWnd;
 	}
-	else if (_handle_validate(handle, HT_OBJECT, pObj, nError))
+	else if (_handle_validate(handle, HT_OBJECT, (void**)&pObj, nError))
 	{
-		*pWnd = ((obj_s*)pObj)->pwnd_;
-		*hWnd = ((wnd_s*)pWnd)->hWnd_;
+		pWnd = (wnd_s*)pObj->pwnd_;
+		if (hWnd) {
+			*hWnd = pWnd->hWnd_;
+		}
 		*isObject = true;
 	}
 	else {
 		return false;
+	}
+	if (ppWnd) {
+		*ppWnd = pWnd;
+	}
+	if (ppObj) {
+		*ppObj = pObj;
 	}
 	return true;
 }
