@@ -319,6 +319,7 @@ void _struct_destroyfromaddr(void* lpAddr, size_t Offset)
 
 void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int* nError)
 {
+	//TODO: x64 support
 	void* tmp = (void*)__get(lpAddr, Offset);
 	if (tmp == 0)
 	{
