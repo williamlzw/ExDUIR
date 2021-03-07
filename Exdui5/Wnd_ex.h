@@ -135,7 +135,7 @@ bool 窗口_删除风格(HWND hWnd, int dwStyle, bool bExStyle);
 bool 窗口_添加风格(HWND hWnd, int dwStyle, bool bExStyle);
 size_t 窗口_取图标句柄(HWND hWnd, bool 大图标);
 void* Thunkwindow(HWND hWnd, void* pfnProc, void* dwData, int* nError);
-bool 窗口_取屏幕矩形(HWND hWnd, RECT *rcMonitor = {}, RECT *rcDesk = {});
+bool 窗口_取屏幕矩形(HWND hWnd, RECT *rcMonitor = NULL, RECT *rcDesk = NULL);
 std::wstring 窗口_取标题(HWND hWnd);
 int Wnd_ClassToAtom(HWND hWnd);
 int 窗口_取功能键();
