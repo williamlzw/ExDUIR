@@ -2,7 +2,7 @@
 
 void* MemPool_Create(size_t nMax, size_t dwSize, size_t dwFlags)
 {
-	void* hMemPool = (void*)申请内存(sizeof(mempool_s));
+	void* hMemPool = (void*)Ex_MemAlloc(sizeof(mempool_s));
 	if (hMemPool != nullptr)
 	{
 		HANDLE hHeap = HeapCreate(HEAP_GENERATE_EXCEPTIONS, 0, 0);
@@ -39,7 +39,7 @@ void* MemPool_Create(size_t nMax, size_t dwSize, size_t dwFlags)
 			}
 			HeapDestroy(hHeap);
 		}
-		释放内存((HANDLE)hMemPool);
+		Ex_MemFree((HANDLE)hMemPool);
 	}
 	return 0;
 }
@@ -55,7 +55,7 @@ BOOL MemPool_Destroy(void* hMemPool)
 			HeapDestroy(hHeap);
 		}
 		Thread_DeleteCriticalSection(((mempool_s*)hMemPool)->cs);
-		ret = 释放内存((HANDLE)hMemPool);
+		ret = Ex_MemFree((HANDLE)hMemPool);
 
 	}
 	return ret;

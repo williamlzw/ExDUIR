@@ -24,7 +24,7 @@ void _layout_free_info(void* hArr, int nIndex, void* pvItem, int nType)
 {
 	void* pLayout = (void*)Array_GetExtra(hArr);
 	((LayoutTwoPROC)((layout_s*)pLayout)->lpfnProc_)(ELN_UNINITCHILDPROPS, __get(pvItem, 0), (size_t)pvItem);
-	释放内存((void*)((size_t)pvItem - 16));
+	Ex_MemFree((void*)((size_t)pvItem - 16));
 }
 
 ExHandle _layout_create(int nType, ExHandle hObjBind)
@@ -37,7 +37,7 @@ ExHandle _layout_create(int nType, ExHandle hObjBind)
 		HashTable_Get(g_Li.hTableLayout, nType, &lpfnProc);
 		if (lpfnProc != 0)
 		{
-			void* pLayout = 申请内存(sizeof(layout_s));
+			void* pLayout = Ex_MemAlloc(sizeof(layout_s));
 			void* pObj = nullptr;
 			if (pLayout != 0)
 			{
@@ -59,7 +59,7 @@ ExHandle _layout_create(int nType, ExHandle hObjBind)
 					((layout_s*)pLayout)->lpfnProc_ = (void*)lpfnProc;
 					((layout_s*)pLayout)->hBind_ = hObjBind;
 					int nCount = ((LayoutThreePROC)lpfnProc)(NULL, ELN_GETPROPSCOUNT, NULL, NULL);
-					void* pInfo = (void*)((size_t)申请内存((nCount + (size_t)4) * (size_t)4) + (size_t)16);
+					void* pInfo = (void*)((size_t)Ex_MemAlloc((nCount + (size_t)4) * (size_t)4) + (size_t)16);
 					((layout_s*)pLayout)->lpLayoutInfo_ = pInfo;
 					((LayoutThreePROC)lpfnProc)(NULL, ELN_INITPROPS, NULL, (size_t)pInfo);
 					nCount = ((LayoutThreePROC)lpfnProc)(NULL, ELN_GETCHILDPROPCOUNT, NULL, NULL);
@@ -73,7 +73,7 @@ ExHandle _layout_create(int nType, ExHandle hObjBind)
 					((wnd_s*)pObj)->hLayout_ = hLayout;
 				}
 				else {
-					释放内存(pLayout);
+					Ex_MemFree(pLayout);
 				}
 			}
 			else {
@@ -118,8 +118,8 @@ bool _layout_destory(ExHandle hLayout)
 		void* lpfnProc = ((layout_s*)pLayout)->lpfnProc_;
 		((LayoutTwoPROC)lpfnProc)(ELN_UNINITPROPS, 0, (size_t)((layout_s*)pLayout)->lpLayoutInfo_);
 		Array_Destroy(((layout_s*)pLayout)->hArrChildrenInfo_);
-		释放内存((void*)((size_t)((layout_s*)pLayout)->lpLayoutInfo_ - 16));
-		释放内存(pLayout);
+		Ex_MemFree((void*)((size_t)((layout_s*)pLayout)->lpLayoutInfo_ - 16));
+		Ex_MemFree(pLayout);
 		_handle_destroy(hLayout, &nError);
 	}
 	return nError == 0;
@@ -253,7 +253,7 @@ bool _layout_setchildprop(ExHandle hLayout, ExHandle hObj, int dwPropID, size_t 
 			void* pInfo = nullptr;
 			if (nIndex == 0)
 			{
-				pInfo = 申请内存(((layout_s*)pLayout)->cbInfoLen_);
+				pInfo = Ex_MemAlloc(((layout_s*)pLayout)->cbInfoLen_);
 				if (pInfo != 0)
 				{
 					pInfo = (void*)((size_t)pInfo + 16);
@@ -267,7 +267,7 @@ bool _layout_setchildprop(ExHandle hLayout, ExHandle hObj, int dwPropID, size_t 
 			}
 			if (pInfo != 0)
 			{
-				if (((LayoutThreePROC)((layout_s*)pLayout)->lpfnProc_)(pLayout, ELN_CHECKCHILDPROPVALUE, 合并整数(nIndex, dwPropID), pvValue) == 0)
+				if (((LayoutThreePROC)((layout_s*)pLayout)->lpfnProc_)(pLayout, ELN_CHECKCHILDPROPVALUE, MAKELONG(nIndex, dwPropID), pvValue) == 0)
 				{
 					__set(pInfo, dwPropID * sizeof(void*), pvValue);
 				}

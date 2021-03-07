@@ -99,9 +99,6 @@
     <ClInclude Include="constant_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
-    <ClInclude Include="struct_ex.h">
-      <Filter>Global</Filter>
-    </ClInclude>
     <ClInclude Include="HashTable_ex.h">
       <Filter>Global</Filter>
     </ClInclude>
@@ -178,5 +175,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Default.ext">
+      <Filter>Global</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
 bool _matrix_destroy(void* pMatrix)
 {
-	return ÊÍ·ÅÄÚ´æ(pMatrix);
+	return Ex_MemFree(pMatrix);
 }
 
 bool _matrix_reset(void* pMatrix)
@@ -20,7 +20,7 @@ bool _matrix_reset(void* pMatrix)
 
 void* _matrix_create()
 {
-	void* pmx = ÉêÇëÄÚ´æ(sizeof(matrix_s));
+	void* pmx = Ex_MemAlloc(sizeof(matrix_s));
 	if (pmx != 0)
 	{
 		_matrix_reset(pmx);

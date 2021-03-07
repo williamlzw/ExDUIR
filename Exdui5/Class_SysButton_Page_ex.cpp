@@ -159,7 +159,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 			_obj_setuistate(pObj, 状态_点燃, false, 0, true, &nError);
 			if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_BUTTON_MAX))
 			{
-				释放内存(((obj_s*)pObj)->pstrTips_);
+				Ex_MemFree(((obj_s*)pObj)->pstrTips_);
 				if (窗口_查询风格(hWnd, WS_MAXIMIZE, false))
 				{
 					ret = copytstr((LPCWSTR)g_Li.lpstr_res_max, lstrlenW((LPCWSTR)g_Li.lpstr_res_max));
@@ -171,7 +171,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 			}
 			else if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_BUTTON_MIN))
 			{
-				释放内存(((obj_s*)pObj)->pstrTips_);
+				Ex_MemFree(((obj_s*)pObj)->pstrTips_);
 				if (窗口_查询风格(hWnd, WS_MINIMIZE, false))
 				{
 					ret = copytstr((LPCWSTR)g_Li.lpstr_res_min, lstrlenW((LPCWSTR)g_Li.lpstr_res_min));
@@ -249,7 +249,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	{
 		if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
 		{
-			_sysbutton_remove_proc(pObj, 取低位(lParam), 取高位(lParam));
+			_sysbutton_remove_proc(pObj, LOWORD(lParam), HIWORD(lParam));
 		}
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
@@ -267,7 +267,7 @@ size_t _page_paint(size_t hObj)
 
 void _page_onvscrollbar(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wParam, size_t lParam)
 {
-	auto nCode = 取低位(wParam);
+	auto nCode = LOWORD(wParam);
 	int oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
 	int height = ((obj_s*)pObj)->c_bottom_ - ((obj_s*)pObj)->c_top_;
 	int nPos = 0;
@@ -285,11 +285,11 @@ void _page_onvscrollbar(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wPa
 	}
 	else if (nCode == SB_LINEUP)
 	{
-		nPos = oPos - 取高位(取低位(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
+		nPos = oPos - HIWORD(LOWORD(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
 	}
 	else if (nCode == SB_LINEDOWN)
 	{
-		nPos = oPos + 取高位(取低位(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
+		nPos = oPos + HIWORD(LOWORD(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
 	}
 	else if (nCode == SB_TOP)
 	{

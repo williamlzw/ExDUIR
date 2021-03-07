@@ -8,7 +8,7 @@ bool _canvas_destroy(ExHandle hCanvas)
 	{
 		void* bmp = _cv_dx_bmp(pCanvas);
 		((ID2D1Bitmap1*)bmp)->Release();
-		释放内存(pCanvas);
+		Ex_MemFree(pCanvas);
 		_handle_destroy(hCanvas, &nError);
 	}
 	return nError == 0;
@@ -744,7 +744,7 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 	}
 	if (lpwzTextFix != 0)
 	{
-		释放内存(lpwzTextFix);
+		Ex_MemFree(lpwzTextFix);
 	}
 	if (lpWidth != 0)
 	{
@@ -862,7 +862,7 @@ bool _canvas_rotate_hue(ExHandle hCanvas, float fAngle)
 
 ExHandle _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, int* nError)
 {
-	void* pCanvas = 申请内存(sizeof(canvas_s));
+	void* pCanvas = Ex_MemAlloc(sizeof(canvas_s));
 	ExHandle hCanvas = 0;
 	if (pCanvas != 0)
 	{
@@ -887,7 +887,7 @@ ExHandle _canvas_createfrompwnd(void* pWnd, int width, int height, int dwFlags, 
 
 		if (pCanvas != 0)
 		{
-			释放内存(pCanvas);
+			Ex_MemFree(pCanvas);
 		}
 		if (hCanvas != 0)
 		{

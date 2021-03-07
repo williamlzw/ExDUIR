@@ -11,7 +11,7 @@ void pfnDefaultFreeFont(void* dwData)
 			((IDWriteFactory*)pObj)->Release();
 
 		}
-		释放内存(dwData);
+		Ex_MemFree(dwData);
 	}
 
 }
@@ -41,7 +41,7 @@ void* _font_create()
 void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyle)
 {
 	void* ret = nullptr;
-	void* lpLogFont = 申请内存(sizeof(LOGFONT));
+	void* lpLogFont = Ex_MemAlloc(sizeof(LOGFONT));
 	if (lpLogFont != nullptr)
 	{
 		int flag = 0;
@@ -71,7 +71,7 @@ void* _font_createfromfamily(LPWSTR lpwzFontFace, int dwFontSize, int dwFontStyl
 		}
 		ret = _font_createfromlogfont_ex(lpLogFont, flag);
 
-		释放内存(lpLogFont);
+		Ex_MemFree(lpLogFont);
 	}
 	return ret;
 }
@@ -82,7 +82,7 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 	{
 		((LOGFONT*)lpLogfont)->lfHeight = ((LOGFONT*)lpLogfont)->lfHeight * g_Li.DpiY;
 	}
-	int hFont = 数据_Crc32_Addr((UCHAR*)lpLogfont, sizeof(LOGFONT));
+	int hFont = Crc32_Addr((UCHAR*)lpLogfont, sizeof(LOGFONT));
 	void* pFont = nullptr;
 	size_t pFonta = 0;
 
@@ -97,7 +97,7 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 	}
 	else
 	{
-		pFont = 申请内存(sizeof(font_s));
+		pFont = Ex_MemAlloc(sizeof(font_s));
 		if (pFont != 0)
 		{
 			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);

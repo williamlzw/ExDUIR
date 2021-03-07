@@ -57,7 +57,7 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
 	
 
-	auto i = 申请内存(64);
+	auto i = Ex_MemAlloc(64);
 	int len;
 	len = LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);
 	g_Li.lpstr_min = copytstr((LPWSTR)i, len);
@@ -76,7 +76,7 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	RtlZeroMemory(i, 64);
 	len = LoadStringW(g_Li.hModuleUser, 905, (LPWSTR)i, 64);
 	g_Li.lpstr_close = copytstr((LPWSTR)i, len);
-	释放内存(i);
+	Ex_MemFree(i);
 	int nError = 0;
 	_canvas_init(&nError);
 
@@ -100,7 +100,7 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 			g_Li.DpiY = g_Li.DpiY_Real;
 		}
 	}
-	g_Li.lpLogFontDefault = 申请内存(sizeof(LOGFONT));
+	g_Li.lpLogFontDefault = Ex_MemAlloc(sizeof(LOGFONT));
 	SystemParametersInfoW(31, sizeof(LOGFONT), g_Li.lpLogFontDefault, 0);
 	if (!Flag_Query(EXGF_DPI_ENABLE))
 	{
@@ -122,14 +122,14 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 void Ex_UnInit()
 {
 	UnhookWindowsHookEx((HHOOK)g_Li.hHookMsgBox);
-	释放内存(g_Li.lpstr_min);
-	释放内存(g_Li.lpstr_max);
-	释放内存(g_Li.lpstr_res_min);
-	释放内存(g_Li.lpstr_res_max);
-	释放内存(g_Li.lpstr_close);
-	释放内存(g_Li.lpstr_help);
-	释放内存(g_Li.lpLogFontDefault);
-	//释放内存(g_Li.pfnEditCallback);
+	Ex_MemFree(g_Li.lpstr_min);
+	Ex_MemFree(g_Li.lpstr_max);
+	Ex_MemFree(g_Li.lpstr_res_min);
+	Ex_MemFree(g_Li.lpstr_res_max);
+	Ex_MemFree(g_Li.lpstr_close);
+	Ex_MemFree(g_Li.lpstr_help);
+	Ex_MemFree(g_Li.lpLogFontDefault);
+	//Ex_MemFree(g_Li.pfnEditCallback);
 	_canvas_uninit();
 	_handle_uninit(g_Li.hHandles);
 	HashTable_Destroy(g_Li.hTableClass);
@@ -162,8 +162,8 @@ int Ex_Atom(LPCWSTR lptstring)//OK
 	int ret = 1;
 	if (len > 0)
 	{
-		CharLowerW((LPWSTR)lptstring);
-		ret = 数据_Crc32_Addr((UCHAR*)lptstring, len);
+		//CharLowerW((LPWSTR)lptstring);
+		ret = Crc32_Addr((UCHAR*)lptstring, len);
 	}
 	return ret;
 }

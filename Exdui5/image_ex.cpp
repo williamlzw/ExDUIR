@@ -13,7 +13,7 @@ bool _img_destroy(ExHandle hImg)
 		((IWICBitmap*)pObj)->Release();
 		void* pWicDecoder = ((img_s*)pImage)->pWicDecoder_;
 		((IWICBitmapDecoder*)pWicDecoder)->Release();
-		释放内存(pImage);
+		Ex_MemFree(pImage);
 		_handle_destroy(hImg, &nError);
 	}
 	return nError == 0;
@@ -23,7 +23,7 @@ void _wic_drawframe(void* pImg, void* pFrame, int* nError)
 {
 	if (((img_s*)pImg)->nMaxFrames_ > 1)
 	{
-		void* rtp = 申请内存(sizeof(D2D1_RENDER_TARGET_PROPERTIES));
+		void* rtp = Ex_MemAlloc(sizeof(D2D1_RENDER_TARGET_PROPERTIES));
 
 		ID2D1RenderTarget* rt = nullptr;
 		((ID2D1Factory1*)g_Ri.pD2Dfactory)->CreateWicBitmapRenderTarget((IWICBitmap*)((img_s*)pImg)->pObj_, (D2D1_RENDER_TARGET_PROPERTIES*)rtp, &rt);
@@ -40,7 +40,7 @@ void _wic_drawframe(void* pImg, void* pFrame, int* nError)
 			_dx_enddraw(rt);
 			rt->Release();
 		}
-		释放内存(rtp);
+		Ex_MemFree(rtp);
 	}
 }
 
@@ -117,7 +117,7 @@ void _apng_drawframe(void* pImage, int nIndex)//未完成
 					RtlMoveMemory(pBuffer,(void*)((size_t) pHeader + 4), dwHeader);
 					__set_int(pBuffer, 16, __get_int(pFrame, 12));
 					__set_int(pBuffer, 20, __get_int(pFrame, 16));
-					__set_int(pBuffer, 29,整数反转( 数据_Crc32_Addr((void*)((size_t)pBuffer+12),17)));
+					__set_int(pBuffer, 29,_byteswap_ulong( Crc32_Addr((void*)((size_t)pBuffer+12),17)));
 					void* pOffset =(void*)((size_t)pBuffer + dwHeader);
 					pIDATNext = pIDAT;
 					type = __get_int(pIDAT, 4);
@@ -126,10 +126,10 @@ void _apng_drawframe(void* pImage, int nIndex)//未完成
 						int dwDat = _apng_thunk_getlength(pIDATNext);
 						if (type == PNG_fdAT)
 						{
-							__set_int(pOffset, 0, 整数反转(dwDat - 4));
+							__set_int(pOffset, 0, _byteswap_ulong(dwDat - 4));
 							__set_int(pOffset, 4, PNG_IDAT);
 							RtlMoveMemory((void*)((size_t)pOffset + 8), (void*)((size_t)pIDATNext + 8 + 4), dwDat - 4);
-							__set_int(pOffset, dwDat + 12 - 4, 整数反转(数据_Crc32_Addr((void*)((size_t)pOffset + 4), dwDat)));
+							__set_int(pOffset, dwDat + 12 - 4, _byteswap_ulong(Crc32_Addr((void*)((size_t)pOffset + 4), dwDat)));
 							pOffset =(void*) ((size_t)pOffset + dwDat + 12 - 4);
 						}
 						else {
@@ -292,7 +292,7 @@ bool _img_setpixel(ExHandle hImg, int x, int y, int color)
 	int nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
-		void* pBitmapData = 申请内存(sizeof(lockedbitmapdata_s));
+		void* pBitmapData = Ex_MemAlloc(sizeof(lockedbitmapdata_s));
 		if (pBitmapData != 0)
 		{
 			RECT rect1 = { x,y,1,1 };
@@ -308,7 +308,7 @@ bool _img_setpixel(ExHandle hImg, int x, int y, int color)
 				}
 				_img_unlock(hImg, pBitmapData);
 			}
-			释放内存(pBitmapData);
+			Ex_MemFree(pBitmapData);
 		}
 		else {
 			nError = ERROR_EX_MEMORY_ALLOC;
@@ -356,7 +356,7 @@ int _img_height(ExHandle hImg)
 
 ExHandle _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nError)
 {
-	void* pImg = 申请内存(sizeof(img_s));
+	void* pImg = Ex_MemAlloc(sizeof(img_s));
 	ExHandle hImg = 0;
 	if (pImg != 0)
 	{
@@ -377,7 +377,7 @@ ExHandle _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nE
 	{
 		if (pImg != 0)
 		{
-			释放内存(pImg);
+			Ex_MemFree(pImg);
 		}
 	}
 	return hImg;
@@ -683,13 +683,13 @@ size_t _img_savetomemory(ExHandle hImage, void* lpBuffer)
 	if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 	{
 		void* pBitmap = ((img_s*)pImage)->pObj_;
-		void* buffer = 申请内存(4);
+		void* buffer = Ex_MemAlloc(4);
 		_wic_savetobin(pBitmap, buffer, &ret, &nError);
 		if (!IsBadWritePtr(lpBuffer, ret))
 		{
 			RtlMoveMemory(lpBuffer, buffer, ret);
 		}
-		释放内存(buffer);
+		Ex_MemFree(buffer);
 	}
 	return ret;
 }
@@ -785,7 +785,7 @@ void* _img_getcontext(ExHandle hImage)
 
 int _apng_thunk_getlength(void* lpMem)
 {
-	return 整数反转(__get(lpMem, 0));
+	return _byteswap_ulong(__get(lpMem, 0));
 }
 
 bool _apng_thunk_getnext(void* lpMem, int* nPos, int dwThunkType, void** lpThunk, int* dwThunkLen)
@@ -839,7 +839,7 @@ void _apng_int(ExHandle hImage, void* lpStream)
 						_apng_thunk_getnext(lpMem, &nPos, PNG_PLTE, &pPLTE, &dwPLTE);
 						_apng_thunk_getnext(lpMem, &nPos, PNG_tRNS, &pTRNS, &dwTRNS);
 						int dwLen = 4 + 8 + dwIHDR + dwPLTE + dwTRNS;
-						void* pHeader = 申请内存(dwLen);
+						void* pHeader = Ex_MemAlloc(dwLen);
 						if (pHeader != 0)
 						{
 							__set_int(pHeader, 0, dwLen - 4);
@@ -861,7 +861,7 @@ void _apng_int(ExHandle hImage, void* lpStream)
 							if (_apng_thunk_getnext(lpMem, &nPos, PNG_acTL, &pThunk, &dwLen))
 							{
 								int nCount = _apng_thunk_getlength((void*)((size_t)pThunk + 8));
-								void* pFrames = 申请内存(nCount * sizeof(void*));
+								void* pFrames = Ex_MemAlloc(nCount * sizeof(void*));
 								if (pFrames != 0)
 								{
 									((img_s*)pImage)->dwFlags_ = ((img_s*)pImage)->dwFlags_ | IMGF_APNG;
@@ -894,7 +894,7 @@ void _apng_int(ExHandle hImage, void* lpStream)
 								}
 							}
 							else {
-								释放内存(pHeader);
+								Ex_MemFree(pHeader);
 							}
 						}
 					}
@@ -927,7 +927,7 @@ bool _apng_getframedelay(void* pImg, void* lpDelay, int nFrames)
 			auto index = i * sizeof(void*);
 			short delay_num = __get((void*)__get(lpFrames, index), 28);
 			__set_int(lpDelay, index, 200);
-			delay_num = 取高位(delay_num) / 取低位(delay_num) * 100;
+			delay_num = HIWORD(delay_num) / LOWORD(delay_num) * 100;
 			if (delay_num == 0) delay_num = 10;
 			__set_int(lpDelay, index, delay_num);
 		}

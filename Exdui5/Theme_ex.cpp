@@ -25,7 +25,7 @@ bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen,
 					if (len > 4)
 					{
 
-						void* tmp = 申请内存(len + 2);
+						void* tmp = Ex_MemAlloc(len + 2);
 						if (tmp != 0)
 						{
 
@@ -64,7 +64,7 @@ int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<s
 			{
 				__set_wchar(iSplit, 0, 0);
 				auto dwLen = (size_t)iSplit - (size_t)iOffset1;
-				(*artItems1)[nCount] = 数据_Crc32_Addr(iOffset1, dwLen);
+				(*artItems1)[nCount] = Crc32_Addr(iOffset1, dwLen);
 				(*artItems2)[nCount] = (size_t)(wchar_t*)((size_t)iSplit + 2);
 				nCount = nCount + 1;
 			}
@@ -121,7 +121,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 				auto dwLen = (size_t)iClassEnd - (size_t)iClassStart;
 				if (dwLen > 0)
 				{
-					int atomClass = 数据_Crc32_Addr(iClassStart, dwLen);
+					int atomClass = Crc32_Addr(iClassStart, dwLen);
 					int nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
 					if (nCount > 0)
 					{
@@ -143,10 +143,10 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 							}
 						}
 						else {
-							void* pClass = 申请内存(sizeof(classtable_s));
+							void* pClass = Ex_MemAlloc(sizeof(classtable_s));
 							if (pClass != 0)
 							{
-								void* pTableProp = HashTable_Create(取最近质数(nCount), &pfnDefaultFreeData);
+								void* pTableProp = HashTable_Create(GetNearestPrime(nCount), &pfnDefaultFreeData);
 								if (pTableProp != 0)
 								{
 									((classtable_s*)pClass)->tableProps_ = pTableProp;
@@ -160,7 +160,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 											dwLen = (lstrlenW((LPCWSTR)arylpValue[i]) - 1) * 2;
 											if (aryAtomKey[i] == ATOM_BACKGROUND_IMAGE)
 											{
-												int atomProp = 数据_Crc32_Addr((void*)arylpValue[i], dwLen);
+												int atomProp = Crc32_Addr((void*)arylpValue[i], dwLen);
 												for (int ii = 0; ii < atomFiles.size(); ii++)
 												{
 													if (atomProp == atomFiles[ii])
@@ -178,7 +178,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 												continue;
 											}
 											else {
-												void* lpValueaa = 申请内存(dwLen + 2);
+												void* lpValueaa = Ex_MemAlloc(dwLen + 2);
 												RtlMoveMemory(lpValueaa, (void*)arylpValue[i], dwLen);
 
 												HashTable_Set(pTableProp, aryAtomKey[i], (size_t)lpValueaa);
@@ -189,7 +189,7 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 											void* lpValuea = nullptr;
 											if (atomProp == ATOM_RGB || atomProp == ATOM_RGBA)
 											{
-												lpValuea = 申请内存(4);
+												lpValuea = Ex_MemAlloc(4);
 												_fmt_color((void*)arylpValue[i], lpValuea);
 											}
 											else {
@@ -217,14 +217,14 @@ void _theme_freeclass(void* pClass)
 	{
 		HashTable_Destroy(((classtable_s*)pClass)->tableProps_);
 		_img_destroy(((classtable_s*)pClass)->hImage_);
-		释放内存(pClass);
+		Ex_MemFree(pClass);
 	}
 }
 
 void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen, bool bDefault)
 {
 	if (lpData == 0 || dwDataLen == 0) return 0;
-	int crc = 数据_Crc32_Addr(lpData, dwDataLen);
+	int crc = Crc32_Addr(lpData, dwDataLen);
 	if (crc == 0) return 0;
 	for (int i = 0; i < g_Li.aryThemes.size(); i++)
 	{
@@ -241,7 +241,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 			}
 		}
 	}
-	void* hTheme = 申请内存(sizeof(theme_s));
+	void* hTheme = Ex_MemAlloc(sizeof(theme_s));
 
 	int nError = 0;
 	std::vector<int> atomFiles;
@@ -256,13 +256,13 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 		if (_theme_unpack(lpData, dwDataLen, lpKey, dwKeyLen, &atomFiles, &lpFiles, &dwFileProps))
 		{
 
-			void* pTableFiles = HashTable_Create(取最近质数(atomFiles.size()), pfnDefaultFreeData);
+			void* pTableFiles = HashTable_Create(GetNearestPrime(atomFiles.size()), pfnDefaultFreeData);
 			if (pTableFiles != 0)
 			{
 				void* pTableClass = HashTable_Create(27, &_theme_freeclass);
 				if (pTableClass != 0)
 				{
-					void* aryColors = 申请内存(sizeof(colors_s));
+					void* aryColors = Ex_MemAlloc(sizeof(colors_s));
 					if (g_Li.hThemeDefault != 0)
 					{
 						RtlMoveMemory(aryColors, (void*)__get(g_Li.hThemeDefault, offsetof(theme_s, aryColors_)), sizeof(colors_s));
@@ -287,7 +287,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 				HashTable_Destroy(pTableFiles);
 			}
 		}
-		释放内存(hTheme);
+		Ex_MemFree(hTheme);
 	}
 	Ex_SetLastError(nError);
 	return 0;
@@ -302,7 +302,7 @@ void* Ex_ThemeLoadFromFile(void* lptszFile, void* lpKey, size_t dwKeyLen, bool b
 		std::vector<char> data;
 		std::wstring wstr;
 		wstr += (LPCWSTR)lptszFile;
-		读入文件(wstr, &data);
+		Ex_ReadFile(wstr, &data);
 		ret = Ex_ThemeLoadFromMemory(data.data(), data.size(), lpKey, dwKeyLen, bDefault);
 	}
 	return ret;
@@ -442,8 +442,8 @@ bool Ex_ThemeFree(void* hTheme)
 				}
 				HashTable_Destroy(((theme_s*)hTheme)->tableFiles_);
 				HashTable_Destroy(((theme_s*)hTheme)->tableClass_);
-				释放内存(((theme_s*)hTheme)->aryColors_);
-				释放内存(hTheme);
+				Ex_MemFree(((theme_s*)hTheme)->aryColors_);
+				Ex_MemFree(hTheme);
 			}
 		}
 	}

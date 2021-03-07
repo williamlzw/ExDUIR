@@ -9,7 +9,7 @@ bool _path_destroy(ExHandle hPath)
 		void* pGeometry = ((path_s*)pPath)->pGeometry_;
 		((ID2D1PathGeometry*)pGeometry)->Release();
 		RtlZeroMemory(pPath, sizeof(path_s));
-		 Õ∑≈ƒ⁄¥Ê(pPath);
+		Ex_MemFree(pPath);
 		_handle_destroy(hPath, &nError);
 	}
 	return nError == 0;
@@ -38,7 +38,7 @@ bool _path_reset(ExHandle hPath)
 bool _path_create(int dwFlags, ExHandle* hPath)
 {
 	int nError = 0;
-	void* pPath = …Í«Îƒ⁄¥Ê(sizeof(path_s));
+	void* pPath = Ex_MemAlloc(sizeof(path_s));
 	if (pPath != 0)
 	{
 		*hPath = _handle_create(HT_PATH, pPath, &nError);

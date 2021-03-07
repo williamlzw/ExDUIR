@@ -23,22 +23,10 @@ typedef int ExHandle;
 #include "HandelTable_ex.h"
 #include "Global_ex.h"
 
-
-
 typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
 typedef int(*ClsPROC)(HWND, size_t, int, size_t, size_t, void*);
 typedef int(*MsgPROC)(HWND, size_t, int, size_t, void*, void*);
 
-#define 取高位_短整数(x) HIBYTE(x)
-#define 取高位(x) HIWORD(x)
-
-#define 取低位_短整数(x) LOBYTE(x)
-#define 取低位(x) LOWORD(x)
-#define 整数反转(x) _byteswap_ulong(x)
-#define 合并整数(a,b) MAKELONG(a,b)
-#define 合并短整数(a,b) MAKEWORD(a,b)
-
-typedef UINT32	ARGB, RGB0;	//ARGB和RGB
 #define ExGetB(rgb)			(LOBYTE(rgb))
 #define ExGetG(rgb)			(LOBYTE(((WORD)(rgb)) >> 8))
 #define ExGetR(rgb)			(LOBYTE((rgb)>>16))
@@ -261,10 +249,10 @@ typedef UINT32	ARGB, RGB0;	//ARGB和RGB
 #define ERROR_EX_INVALID_CLASS 16009 //未初始化的组件类
 
 #define ERROR_EX_MEMORY_OVERFLOW 16010 //超出尺寸/超出内存
-#define ERROR_EX_MEMORY_ALLOC 16011 //申请内存失败
+#define ERROR_EX_MEMORY_ALLOC 16011 //Ex_MemAlloc失败
 #define ERROR_EX_MEMORY_BADPTR 16012
 
-#define ERROR_EX_MEMPOOL_ALLOC 16021 // 内存池，申请内存失败
+#define ERROR_EX_MEMPOOL_ALLOC 16021 // 内存池，Ex_MemAlloc失败
 #define ERROR_EX_MEMPOOL_BADINDEX 16022 //检索索引失败
 #define ERROR_EX_MEMPOOL_BADPTR 16023 //检索指针失败
 #define ERROR_EX_MEMPOOL_INVALIDBLOCK 16024 //未初始化的内存块
@@ -386,8 +374,8 @@ struct ARGB_s
 };
 
 void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
-bool 释放内存(void* hMem);
-void* 申请内存(size_t dwSize, int dwFlags = LMEM_ZEROINIT);
+bool Ex_MemFree(void* hMem);
+void* Ex_MemAlloc(size_t dwSize, int dwFlags = LMEM_ZEROINIT);
 size_t __get(void* lpAddr, size_t offset);
 int __get_int(void* lpAddr, size_t offset);
 float __get_float(void* lpAddr, size_t offset);
@@ -406,31 +394,25 @@ void __del(void* lpAddr, size_t offset, size_t value);
 void __add(void* lpAddr, size_t offset, size_t value);
 void __addn(void* lpAddr, size_t offset, size_t value);
 void __subn(void* lpAddr, size_t offset, size_t value);
-void 位_添加(size_t* dwValue, size_t index);
-void 位_删除(size_t* dwValue, size_t index);
-void 位_取反(size_t* dwValue, size_t index);
-bool 位_测试(size_t* dwValue, size_t index);
+void _bit_add(size_t* dwValue, size_t index);
+void _bit_del(size_t* dwValue, size_t index);
+void _bit_not(size_t* dwValue, size_t index);
+bool _bit_test(size_t* dwValue, size_t index);
 
-template <typename T>
-std::vector<UCHAR> 到字节数组(const T& arg)
-{
-	const UCHAR* pBegin = reinterpret_cast<const UCHAR*>(&arg);
-	const UCHAR* pEnd = pBegin + sizeof(arg);
-	return { pBegin,pEnd };
-}
+
 
 void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar);
 void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int dwLen);
 void U2W_Addr(void* lpUTF8, int dwLen, void** retPtr, size_t* retLen);
 void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen);
-void 打印数组(unsigned char* data, int len);
-int 取最近质数(int value);
-void 读入文件(std::wstring file, std::vector<char>* data);
+void PrintArray(unsigned char* data, int len);
+int GetNearestPrime(int value);
+void Ex_ReadFile(std::wstring file, std::vector<char>* data);
 void _struct_destroyfromaddr(void* lpAddr, size_t Offset);
 void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int* nError);
 const std::string ToHexString(const unsigned char* input, const int datasize);
 void RC4(void* dest, size_t destlen, const void* pwd, size_t pwdlen);
-UINT 数据_Crc32_Addr(void* buf, UINT nLength);
+UINT Crc32_Addr(void* buf, UINT nLength);
 void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset);
 
 void SetDefaultIcon();

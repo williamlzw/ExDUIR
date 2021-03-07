@@ -7,12 +7,12 @@ int _fmt_getatom(void* lpValue, void** lpValueOffset)
 	if (*lpValueOffset != 0)
 	{
 		size_t len = (size_t)(*lpValueOffset) - (size_t)lpValue;
-		void* pAtom = 申请内存(len + 2);
+		void* pAtom = Ex_MemAlloc(len + 2);
 		if (pAtom != 0)
 		{
 			RtlMoveMemory(pAtom, lpValue, len);
 			atomSrc = Ex_Atom((LPCWSTR)pAtom);
-			释放内存(pAtom);
+			Ex_MemFree(pAtom);
 			*lpValueOffset = (void*)((size_t)*lpValueOffset + 2);
 		}
 	}
@@ -39,7 +39,7 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 			auto wchar = __get_wchar(lpValue, -2);
 			if (wchar == 37)
 			{
-				位_添加(&dwFlags, 0);
+				_bit_add(&dwFlags, 0);
 			}
 		}
 	}
@@ -56,14 +56,14 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 				auto wchar = __get_wchar(tmp, -2);
 				if (wchar == 37)
 				{
-					位_添加(&dwFlags, nCount);
+					_bit_add(&dwFlags, nCount);
 				}
 			}
 			else {
 				if (wcschr((wchar_t*)lpValue, 37) != 0)
 				{
 
-					位_添加(&dwFlags, nCount);
+					_bit_add(&dwFlags, nCount);
 				}
 			}
 			lpValue = tmp;
@@ -72,7 +72,7 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 			lpValue = wcschr((wchar_t*)lpValue, ',');
 		}
 	}
-	*lpAry = 申请内存((nCount + 2) * 4);
+	*lpAry = Ex_MemAlloc((nCount + 2) * 4);
 	if (*lpAry != 0)
 	{
 		RtlMoveMemory(*lpAry, aryTmp.data(), (nCount + 1) * 4);
@@ -100,7 +100,7 @@ int _fmt_intary(void* lpValue, void* lpAry, int nMaxCount, bool fZero, void* lpd
 			{
 				__set_int(lpdwPercentFlags, 0, __get_int(pbuffer, nCount * 4));
 			}
-			释放内存(pbuffer);
+			Ex_MemFree(pbuffer);
 		}
 	}
 	return nCount;
@@ -178,11 +178,11 @@ bool _fmt_bin(void* hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpFr
 			str.resize(lstrlenW((LPCWSTR)lpValueOffset));
 			RtlMoveMemory((void*)str.data(), lpValueOffset, lstrlenW((LPCWSTR)lpValueOffset));
 			std::vector<char> data;
-			读入文件(str, &data);
+			Ex_ReadFile(str, &data);
 			*lpLen = data.size();
 			if (*lpLen > 0)
 			{
-				*lpBin = 申请内存(*lpLen);
+				*lpBin = Ex_MemAlloc(*lpLen);
 				if (*lpBin != 0)
 				{
 					RtlMoveMemory(*lpBin, data.data(), *lpLen);

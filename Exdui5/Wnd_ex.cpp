@@ -21,7 +21,7 @@ WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCUR
 
 ExHandle Ex_DUIFromWindow(HWND hWnd)
 {
-	return SendMessageW(hWnd, g_Li.dwMessage, EMV_HEXDUI, 合并整数(EMT_DUI, 0));
+	return SendMessageW(hWnd, g_Li.dwMessage, EMV_HEXDUI, MAKELONG(EMT_DUI, 0));
 }
 
 bool _wnd_getfromhandle(size_t handle, HWND* hWnd, void** pWnd, void** pObj, bool* isObject, int* nError)
@@ -459,16 +459,16 @@ void _wnd_loadtheme(void* pWnd, HWND hWnd, void* hTheme)
 	WORD szItem = 0;
 	if (pSIZE_ITEM != 0)
 	{
-		szItem = 合并短整数(__get_int(pSIZE_ITEM, 0), __get_int(pSIZE_ITEM, 4));
+		szItem = MAKEWORD(__get_int(pSIZE_ITEM, 0), __get_int(pSIZE_ITEM, 4));
 	}
 	void* pSIZE_SEPARATOR = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_SIZE_SEPARATOR);
 	WORD szSeparator = 0;
 	if (pSIZE_SEPARATOR != 0)
 	{
-		szSeparator = 合并短整数(__get_int(pSIZE_SEPARATOR, 0), __get_int(pSIZE_SEPARATOR, 4));
+		szSeparator = MAKEWORD(__get_int(pSIZE_SEPARATOR, 0), __get_int(pSIZE_SEPARATOR, 4));
 	}
 
-	((wnd_s*)pWnd)->szItemSeparator_ = 合并整数(szItem, szSeparator);
+	((wnd_s*)pWnd)->szItemSeparator_ = MAKELONG(szItem, szSeparator);
 	void* lpFontFamily = nullptr;
 	int dwFontSize = -1;
 	int dwFontStyle = -1;
@@ -544,7 +544,7 @@ void _wnd_backgroundimage_timer_inherit(HWND hWnd, int uMsg, int idEvent, int dw
 
 int _wnd_dispatch_msg(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
-	auto nType = 取低位(lParam);
+	auto nType = LOWORD(lParam);
 	int ret = 0;
 	if (nType == EMT_OBJECT)//组件消息
 	{
@@ -644,7 +644,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	else if (uMsg == WM_SIZE)
 	{
-		_wnd_wm_size(pWnd, hWnd, wParam, 取低位(lParam), 取高位(lParam));
+		_wnd_wm_size(pWnd, hWnd, wParam, LOWORD(lParam), HIWORD(lParam));
 	}
 	else if (uMsg == WM_WINDOWPOSCHANGING)//70
 	{
@@ -865,7 +865,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_bTrackObject))
 		{
 			GetCursorPos((LPPOINT)&wParam);
-			_wnd_wm_mouse(pWnd, hWnd, WM_MOUSEMOVE, 1, 合并整数(wParam - ((wnd_s*)pWnd)->left_, lParam - ((wnd_s*)pWnd)->top_));
+			_wnd_wm_mouse(pWnd, hWnd, WM_MOUSEMOVE, 1, MAKELONG(wParam - ((wnd_s*)pWnd)->left_, lParam - ((wnd_s*)pWnd)->top_));
 			return 0;
 		}
 		else {
@@ -991,7 +991,7 @@ int _wnd_create(size_t hExDui, void* pWnd, HWND hWnd, int dwStyle, void* hTheme,
 	((wnd_s*)pWnd)->alpha_ = 255;
 	((wnd_s*)pWnd)->dwFlags_ = dwFlags | EWF_bLeaveSent;
 	((wnd_s*)pWnd)->pfnMsgProc_ = lpfnMsgProc;
-	((wnd_s*)pWnd)->hTableObjects_ = HashTable_Create(取最近质数(256), NULL);
+	((wnd_s*)pWnd)->hTableObjects_ = HashTable_Create(GetNearestPrime(256), NULL);
 
 	if ((dwStyle & EWS_MESSAGEBOX) != 0)
 	{
@@ -1202,7 +1202,7 @@ ExHandle _wnd_wm_nchittest_obj(HWND hWnd, void* pWnd, ExHandle objLast, int x, i
 			{
 				int ox = x - ((obj_s*)pObj)->left_;
 				int oy = y - ((obj_s*)pObj)->top_;
-				auto lParam = 合并整数(ox, oy);
+				auto lParam = MAKELONG(ox, oy);
 				if (__query(pObj, offsetof(obj_s, dwStyle_), EOS_DISABLED))//检测是否被禁止，被禁止组件还需检测是否可穿透
 				{
 					*hitCode = _obj_baseproc(hWnd, objPrev, pObj, WM_NCHITTEST, 0, lParam);
@@ -1337,8 +1337,8 @@ int _wnd_wm_nchittest(void* pWnd, HWND hWnd, LPARAM lParam)
 		GetCursorPos(&pt);
 	}
 	else {
-		pt.x = 取低位(lParam);
-		pt.y = 取高位(lParam);
+		pt.x = LOWORD(lParam);
+		pt.y = HIWORD(lParam);
 	}
 	ScreenToClient(hWnd, &pt);
 	if (_rgn_hittest(((wnd_s*)pWnd)->hrgn_client_, pt.x, pt.y) || ((wnd_s*)pWnd)->dwWinState_ == 2)
@@ -1622,7 +1622,7 @@ void _wnd_render_obj(HWND hWnd, void* pWnd, void* pContext, ExHandle cvDisplay, 
 
 bool _wnd_wm_setcursor(HWND hWnd, void* pWnd, LPARAM lParam)
 {
-	auto uHitCode = 取低位(lParam);
+	auto uHitCode = LOWORD(lParam);
 	auto hCursor = ((wnd_s*)pWnd)->hCursor_;
 	if (uHitCode == HTCLIENT)
 	{
@@ -1631,7 +1631,7 @@ bool _wnd_wm_setcursor(HWND hWnd, void* pWnd, LPARAM lParam)
 		int nError = 0;
 		if (_handle_validate(objHittest, HT_OBJECT, &pObj, &nError))
 		{
-			if (_obj_baseproc(hWnd, objHittest, pObj, WM_SETCURSOR, ((wnd_s*)pWnd)->dwHitObjPos_Abs_, 合并整数(((wnd_s*)pWnd)->dwHitCode_, 取高位(lParam))) != 0)
+			if (_obj_baseproc(hWnd, objHittest, pObj, WM_SETCURSOR, ((wnd_s*)pWnd)->dwHitObjPos_Abs_, MAKELONG(((wnd_s*)pWnd)->dwHitCode_, HIWORD(lParam))) != 0)
 			{
 				return true;
 			}
@@ -1799,7 +1799,7 @@ int _wnd_destroy(HWND hWnd, void* pWnd)
 	if (nID != 0)
 	{
 		Shell_NotifyIconW(NIM_DELETE, (PNOTIFYICONDATAW)nID);
-		释放内存(nID);
+		Ex_MemFree(nID);
 	}
 
 	HashTable_Destroy(((wnd_s*)pWnd)->hTableObjects_);
@@ -1824,7 +1824,7 @@ int _wnd_destroy(HWND hWnd, void* pWnd)
 	_wnd_dx_unint(pWnd);
 	size_t hExDui = ((wnd_s*)pWnd)->hexdui_;
 	_handle_destroy(hExDui, &nError);
-	释放内存(pWnd);
+	Ex_MemFree(pWnd);
 	Ex_SetLastError(nError);
 	return (int)bMainWnd;
 }
@@ -2001,7 +2001,7 @@ void _wnd_menu_setpos(HWND hWnd, void* pWnd, tagWINDOWPOS* pos)
 			GetWindowRect(((wnd_s*)pMenuPrevWnd)->hWnd_, &rcParent);
 		}
 	}
-	auto offset = 取低位(取高位(((wnd_s*)pWnd)->szItemSeparator_));
+	auto offset = LOWORD(HIWORD(((wnd_s*)pWnd)->szItemSeparator_));
 	int x = pos->x;
 	int y = pos->y;
 	POINT pt;
@@ -2392,11 +2392,11 @@ void _wnd_obj_untrack(HWND hWnd, void* pWnd, bool fMsgDispatch)
 					uMsg = WM_MBUTTONUP;
 				}
 				_obj_baseproc(hWnd, objTrack, pObj, uMsg, 0, 0);
-				_wnd_wm_nchittest(pWnd, hWnd, 合并整数(pt.x, pt.y));
+				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
 				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (void*)-1, false);
 			}
 			else {
-				_wnd_wm_nchittest(pWnd, hWnd, 合并整数(pt.x, pt.y));
+				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
 				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (void*)-1, false);
 				if (((wnd_s*)pWnd)->objHittest_ == objTrack)
 				{
@@ -2441,7 +2441,7 @@ void _wnd_wm_mouse(void* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam
 	{
 		if (__query(pWnd, offsetof(wnd_s, dwFlags_), EWF_bTrackObject))
 		{
-			lParam = 合并整数(取低位(lParam) - ((obj_s*)pObj)->w_left_, 取高位(lParam) - ((obj_s*)pObj)->w_top_);
+			lParam = MAKELONG(LOWORD(lParam) - ((obj_s*)pObj)->w_left_, HIWORD(lParam) - ((obj_s*)pObj)->w_top_);
 			((wnd_s*)pWnd)->dwHitObjPos_Abs_ = lParam;
 		}
 		else {
@@ -2724,10 +2724,10 @@ void _wnd_wm_ime_composition(HWND hWnd, void* pWnd)
 			int nError = 0;
 			if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 			{
-				void* lpLogfont = 申请内存(sizeof(LOGFONTW));
+				void* lpLogfont = Ex_MemAlloc(sizeof(LOGFONTW));
 				_font_getlogfont(((obj_s*)pObj)->hFont_, lpLogfont);
 				ImmSetCompositionFontW(hImc, (LPLOGFONTW)lpLogfont);
-				释放内存(lpLogfont);
+				Ex_MemFree(lpLogfont);
 			}
 		}
 		ImmReleaseContext(hWnd, hImc);
@@ -2789,8 +2789,8 @@ bool _wnd_menu_mouse(HWND hWnd, void* pWnd, int uMsg, WPARAM wParam, size_t* iIt
 	*iItem = -1;
 	POINT pt;
 	GetCursorPos(&pt);
-	_wnd_wm_nchittest(pWnd, hWnd, 合并整数(pt.x, pt.y));
-	_wnd_wm_mouse(pWnd, hWnd, uMsg, wParam, 合并整数(pt.x, pt.y));
+	_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
+	_wnd_wm_mouse(pWnd, hWnd, uMsg, wParam, MAKELONG(pt.x, pt.y));
 	void* pObj = nullptr;
 	int nError = 0;
 	bool ret = false;
@@ -3037,7 +3037,7 @@ bool Ex_DUITrayIconSet(ExHandle hExDui, size_t hIcon, void* lpwzTips)
 			{
 				hIcon = 窗口_取图标句柄(hWnd, false);
 			}
-			void* lpNid = 申请内存(sizeof(NOTIFYICONDATAW));
+			void* lpNid = Ex_MemAlloc(sizeof(NOTIFYICONDATAW));
 			((NOTIFYICONDATAW*)lpNid)->cbSize = sizeof(NOTIFYICONDATAW);
 			((NOTIFYICONDATAW*)lpNid)->hWnd = hWnd;
 			((NOTIFYICONDATAW*)lpNid)->uID = 1;
@@ -3233,7 +3233,7 @@ ExHandle Ex_DUIBindWindowEx(HWND hWnd, void* hTheme, int dwStyle, LPARAM lParam,
 	ExHandle hExDui = 0;
 	if (IsWindow(hWnd))
 	{
-		pWnd = 申请内存(sizeof(wnd_s));
+		pWnd = Ex_MemAlloc(sizeof(wnd_s));
 		if (pWnd != 0)
 		{
 			hExDui = _handle_create(HT_DUI, pWnd, &nError);
@@ -3254,7 +3254,7 @@ ExHandle Ex_DUIBindWindowEx(HWND hWnd, void* hTheme, int dwStyle, LPARAM lParam,
 	{
 		if (pWnd != 0)
 		{
-			释放内存(pWnd);
+			Ex_MemFree(pWnd);
 		}
 		if (hExDui != 0)
 		{
