@@ -3,7 +3,7 @@
 #include "DirectX_ex.h"
 
 
-bool _img_destroy(ExHandle hImg)
+bool _img_destroy(EXHANDLE hImg)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -152,7 +152,7 @@ void _apng_drawframe(void* pImage, int nIndex)//未完成
 	}
 }
 
-bool _img_selectactiveframe(ExHandle hImg, int nIndex)
+bool _img_selectactiveframe(EXHANDLE hImg, int nIndex)
 {
 	void* pImg = nullptr;
 	int nError = 0;
@@ -188,7 +188,7 @@ void* _wic_getpixel(void* pBitmap, int x, int y, int* nError)
 	return ret;
 }
 
-void* _img_getpixel(ExHandle hImg, int x, int y)
+void* _img_getpixel(EXHANDLE hImg, int x, int y)
 {
 	int nError = 0;
 	void* ret = nullptr;
@@ -202,7 +202,7 @@ void* _img_getpixel(ExHandle hImg, int x, int y)
 	return ret;
 }
 
-bool _img_lock(ExHandle hImg, void* lpRectL, int flags, void* lpLockedBitmapData)//FLAGS 1读 2写 3读写
+bool _img_lock(EXHANDLE hImg, void* lpRectL, int flags, void* lpLockedBitmapData)//FLAGS 1读 2写 3读写
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -210,7 +210,7 @@ bool _img_lock(ExHandle hImg, void* lpRectL, int flags, void* lpLockedBitmapData
 	{
 		void* pBitmap = ((img_s*)pImage)->pObj_;
 		int swidth, sheight;
-		size_t width, height;
+		int width, height;
 		nError = ((IWICBitmapSource*)pBitmap)->GetSize((UINT*)&swidth, (UINT*)&sheight);
 		if (nError == 0)
 		{
@@ -221,16 +221,13 @@ bool _img_lock(ExHandle hImg, void* lpRectL, int flags, void* lpLockedBitmapData
 				height = sheight;
 			}
 			else {
-				width = __get(lpRectL, 8);
-				height = __get(lpRectL, 12);
+				width = __get_int(lpRectL, 8);
+				height = __get_int(lpRectL, 12);
 			}
 			int stride = swidth * 4;
 			((lockedbitmapdata_s*)lpLockedBitmapData)->width_ = width;
 			((lockedbitmapdata_s*)lpLockedBitmapData)->height_ = height;
 			((lockedbitmapdata_s*)lpLockedBitmapData)->pixelformat_ = 2498570;
-			//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, width_), width);
-			//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, height_), height);
-			//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, pixelformat_), 2498570);
 			IWICBitmapLock* pLock;
 			nError = ((IWICBitmap*)pBitmap)->Lock((WICRect*)lpRectL, flags, &pLock);
 			
@@ -242,9 +239,7 @@ bool _img_lock(ExHandle hImg, void* lpRectL, int flags, void* lpLockedBitmapData
 				if (nError == 0)
 				{
 					((lockedbitmapdata_s*)lpLockedBitmapData)->stride_ = stride;
-					//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, stride_), stride);
 					UINT dwlen=0;
-					
 					WICInProcPointer scan0 = nullptr;
 					nError = pLock->GetDataPointer(&dwlen,&scan0);
 					
@@ -254,8 +249,6 @@ bool _img_lock(ExHandle hImg, void* lpRectL, int flags, void* lpLockedBitmapData
 						((lockedbitmapdata_s*)lpLockedBitmapData)->scan0_ = scan0;
 						((lockedbitmapdata_s*)lpLockedBitmapData)->dwlen_ = dwlen;
 						((lockedbitmapdata_s*)lpLockedBitmapData)->pLock_ = pLock;
-						//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, scan0_), (size_t)scan0);
-						//__set(lpLockedBitmapData, offsetof(lockedbitmapdata_s, pLock_), (size_t)pLock);
 					}
 					else 
 					{
@@ -269,7 +262,7 @@ bool _img_lock(ExHandle hImg, void* lpRectL, int flags, void* lpLockedBitmapData
 	return nError == 0;
 }
 
-bool _img_unlock(ExHandle hImg, void* lpLockedBitmapData)
+bool _img_unlock(EXHANDLE hImg, void* lpLockedBitmapData)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -286,7 +279,7 @@ bool _img_unlock(ExHandle hImg, void* lpLockedBitmapData)
 	return nError == 0;
 }
 
-bool _img_setpixel(ExHandle hImg, int x, int y, int color)
+bool _img_setpixel(EXHANDLE hImg, int x, int y, int color)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -318,7 +311,7 @@ bool _img_setpixel(ExHandle hImg, int x, int y, int color)
 	return nError == 0;
 }
 
-bool _img_getsize(ExHandle hImg, void* lpWidth, void* lpHeight)
+bool _img_getsize(EXHANDLE hImg, void* lpWidth, void* lpHeight)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -329,47 +322,44 @@ bool _img_getsize(ExHandle hImg, void* lpWidth, void* lpHeight)
 		nError = ((IWICBitmap*)pObj)->GetSize((UINT*)&w, (UINT*)&h);
 		if (lpWidth != 0)
 		{
-			__set(lpWidth, 0, w);
+			
+			__set_int(lpWidth, 0, w);
 		}
 		if (lpHeight != 0)
 		{
-			__set(lpHeight, 0, h);
+			__set_int(lpHeight, 0, h);
 		}
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
 }
 
-int _img_width(ExHandle hImg)
+int _img_width(EXHANDLE hImg)
 {
 	int width = 0;
 	_img_getsize(hImg, &width, NULL);
 	return width;
 }
 
-int _img_height(ExHandle hImg)
+int _img_height(EXHANDLE hImg)
 {
 	int height = 0;
 	_img_getsize(hImg, NULL, &height);
 	return height;
 }
 
-ExHandle _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nError)
+EXHANDLE _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nError)
 {
 	void* pImg = Ex_MemAlloc(sizeof(img_s));
-	ExHandle hImg = 0;
+	EXHANDLE hImg = 0;
 	if (pImg != 0)
 	{
 		((img_s*)pImg)->pObj_ = pObj;
 		((img_s*)pImg)->nCurFrame_ = curframe;
 		((img_s*)pImg)->pWicDecoder_ = pDecoder;
-		
-		//__set(pImg, offsetof(img_s, pObj_), (size_t)pObj);
-		//__set(pImg, offsetof(img_s, nCurFrame_), curframe);
-		//__set(pImg, offsetof(img_s, pWicDecoder_), (size_t)pDecoder);
+
 		_wic_drawframe(pImg, pObj, nError);
 		((img_s*)pImg)->nMaxFrames_ = frames;
-		//__set(pImg, offsetof(img_s, nMaxFrames_), frames);
 		hImg = _handle_create(HT_IMAGE, pImg, nError);
 	
 	}
@@ -383,9 +373,9 @@ ExHandle _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nE
 	return hImg;
 }
 
-ExHandle _wic_create(int width, int height, GUID pFormat, int* nError)
+EXHANDLE _wic_create(int width, int height, GUID pFormat, int* nError)
 {
-	ExHandle hImg = 0;
+	EXHANDLE hImg = 0;
 	void* pBitmap = nullptr;
 	*nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmap(width, height, pFormat, WICBitmapCacheOnDemand, (IWICBitmap**)&pBitmap);
 	if (*nError == 0)
@@ -396,20 +386,20 @@ ExHandle _wic_create(int width, int height, GUID pFormat, int* nError)
 	return hImg;
 }
 
-ExHandle _img_create(int width, int height)
+EXHANDLE _img_create(int width, int height)
 {
 	int nError = 0;
-	ExHandle hImg = _wic_create(width, height, GUID_WICPixelFormat32bppPBGRA, &nError);
+	EXHANDLE hImg = _wic_create(width, height, GUID_WICPixelFormat32bppPBGRA, &nError);
 	Ex_SetLastError(nError);
 	return hImg;
 }
 
-ExHandle _img_createfrompngbits(void* lpmem)
+EXHANDLE _img_createfrompngbits(void* lpmem)
 {
 	int nError = 0;
-	ExHandle hImg = 0;
-	int width = __get(lpmem, sizeof(int));
-	int height = __get(lpmem, 2 * sizeof(int));
+	EXHANDLE hImg = 0;
+	int width = __get_int(lpmem, sizeof(int));
+	int height = __get_int(lpmem, 2 * sizeof(int));
 	int len = width * height * 4;
 	void* pBitmapData = nullptr;
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppPBGRA, width * 4, len, (BYTE*)((size_t)lpmem + 3 * sizeof(int)), (IWICBitmap**)&pBitmapData);
@@ -456,10 +446,10 @@ void* _img_createfromstream_init(void* lpData, int dwLen, int* nError)
 }
 
 
-ExHandle _wic_init_from_decoder(void* pDecoder, int* nError)
+EXHANDLE _wic_init_from_decoder(void* pDecoder, int* nError)
 {
 	UINT pCount = 0;
-	ExHandle ret = 0;
+	EXHANDLE ret = 0;
 	*nError = ((IWICBitmapDecoder*)pDecoder)->GetFrameCount(&pCount);
 	if (*nError == 0)
 	{
@@ -473,11 +463,11 @@ ExHandle _wic_init_from_decoder(void* pDecoder, int* nError)
 	return ret;
 }
 
-ExHandle _img_createfromstream(void* lpStream)
+EXHANDLE _img_createfromstream(void* lpStream)
 {
 	int nError = 0;
 	void* pDecoder = nullptr;
-	ExHandle hImg = 0;
+	EXHANDLE hImg = 0;
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateDecoderFromStream((IStream*)lpStream, NULL, WICDecodeMetadataCacheOnLoad, (IWICBitmapDecoder**)&pDecoder);
 	if (nError == 0)
 	{
@@ -492,10 +482,10 @@ ExHandle _img_createfromstream(void* lpStream)
 	return hImg;
 }
 
-ExHandle _img_createfrommemory(void* lpData, int dwLen)
+EXHANDLE _img_createfrommemory(void* lpData, int dwLen)
 {
 	int nError = 0;
-	ExHandle hImg = 0;
+	EXHANDLE hImg = 0;
 	void* lpStream = _img_createfromstream_init(lpData, dwLen, &nError);
 	if (nError == 0)
 	{
@@ -506,11 +496,11 @@ ExHandle _img_createfrommemory(void* lpData, int dwLen)
 	return hImg;
 }
 
-ExHandle _img_createfromhicon(void* hIcon)
+EXHANDLE _img_createfromhicon(void* hIcon)
 {
 	int nError = 0;
 	void* pBitmap = nullptr;
-	ExHandle hImg = 0;
+	EXHANDLE hImg = 0;
 	((IWICImagingFactory*)g_Ri.pWICFactory)->CreateBitmapFromHICON((HICON)hIcon, (IWICBitmap**)&pBitmap);
 	void* pBitmapConvert = _wic_convert(pBitmap, true, &nError);
 	if (nError == 0)
@@ -521,10 +511,10 @@ ExHandle _img_createfromhicon(void* hIcon)
 	return hImg;
 }
 
-ExHandle _img_createfromfile(LPCWSTR lpwzFilename)
+EXHANDLE _img_createfromfile(LPCWSTR lpwzFilename)
 {
 	void* pDecoder = nullptr;
-	ExHandle hImg = 0;
+	EXHANDLE hImg = 0;
 	int nError = 0;
 	nError = ((IWICImagingFactory*)g_Ri.pWICFactory)->CreateDecoderFromFilename(lpwzFilename, NULL, 2147483648, WICDecodeMetadataCacheOnLoad, (IWICBitmapDecoder**)&pDecoder);
 	if (nError == 0)
@@ -535,11 +525,11 @@ ExHandle _img_createfromfile(LPCWSTR lpwzFilename)
 	return hImg;
 }
 
-ExHandle _img_copyrect(ExHandle hImg, int x, int y, int width, int height)
+EXHANDLE _img_copyrect(EXHANDLE hImg, int x, int y, int width, int height)
 {
 	void* pImage = nullptr;
 	int nError = 0;
-	ExHandle ret = 0;
+	EXHANDLE ret = 0;
 	if (_handle_validate(hImg, HT_IMAGE, &pImage, &nError))
 	{
 		void* pObj = ((img_s*)pImage)->pObj_;
@@ -554,10 +544,10 @@ ExHandle _img_copyrect(ExHandle hImg, int x, int y, int width, int height)
 	return ret;
 }
 
-ExHandle _img_copy(ExHandle hImg)
+EXHANDLE _img_copy(EXHANDLE hImg)
 {
 	int width, height;
-	ExHandle ret = 0;
+	EXHANDLE ret = 0;
 	if (_img_getsize(hImg, &width, &height))
 	{
 		ret = _img_copyrect(hImg, 0, 0, width, height);
@@ -565,11 +555,11 @@ ExHandle _img_copy(ExHandle hImg)
 	return ret;
 }
 
-ExHandle _img_scale(ExHandle hImage, int dstWidth, int dstHeight)
+EXHANDLE _img_scale(EXHANDLE hImage, int dstWidth, int dstHeight)
 {
 	void* pImage = nullptr;
 	int nError = 0;
-	ExHandle ret = 0;
+	EXHANDLE ret = 0;
 	if (_handle_validate(hImage, HT_IMAGE, &pImage, &nError))
 	{
 		void* pObj = ((img_s*)pImage)->pObj_;
@@ -675,7 +665,7 @@ void _wic_savetobin(void* pBitmap, void* lpBin, size_t* len, int* nError)
 	}
 }
 
-size_t _img_savetomemory(ExHandle hImage, void* lpBuffer)
+size_t _img_savetomemory(EXHANDLE hImage, void* lpBuffer)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -736,7 +726,7 @@ bool _wic_getframedelay(void* pDecoder, void* lpDelay, int nCount, int* nError)
 	return fOK;
 }
 
-bool _img_getframedelay(ExHandle hImg, void* lpDelayAry, int nFrames)
+bool _img_getframedelay(EXHANDLE hImg, void* lpDelayAry, int nFrames)
 {
 	void* pImg = nullptr;
 	int nError = 0;
@@ -745,7 +735,7 @@ bool _img_getframedelay(ExHandle hImg, void* lpDelayAry, int nFrames)
 	{
 		if (_handle_validate(hImg, HT_IMAGE, &pImg, &nError))
 		{
-			if (__query(pImg, offsetof(img_s, dwFlags_), IMGF_APNG))
+			if (((((img_s*)pImg)->dwFlags_ & IMGF_APNG) == IMGF_APNG))
 			{
 				ret = _apng_getframedelay(pImg, lpDelayAry, nFrames);
 			}
@@ -758,7 +748,7 @@ bool _img_getframedelay(ExHandle hImg, void* lpDelayAry, int nFrames)
 	return ret;
 }
 
-int _img_getframecount(ExHandle hImage)
+int _img_getframecount(EXHANDLE hImage)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -771,7 +761,7 @@ int _img_getframecount(ExHandle hImage)
 	return ret;
 }
 
-void* _img_getcontext(ExHandle hImage)
+void* _img_getcontext(EXHANDLE hImage)
 {
 	void* pImage = nullptr;
 	int nError = 0;
@@ -785,7 +775,7 @@ void* _img_getcontext(ExHandle hImage)
 
 int _apng_thunk_getlength(void* lpMem)
 {
-	return _byteswap_ulong(__get(lpMem, 0));
+	return _byteswap_ulong(__get_int(lpMem, 0));
 }
 
 bool _apng_thunk_getnext(void* lpMem, int* nPos, int dwThunkType, void** lpThunk, int* dwThunkLen)
@@ -795,7 +785,7 @@ bool _apng_thunk_getnext(void* lpMem, int* nPos, int dwThunkType, void** lpThunk
 	int dwThunkDataLen = _apng_thunk_getlength((void*)((size_t)lpMem + i));
 	while (dwThunkDataLen != 0)
 	{
-		if (__get(lpMem, i + 4) == dwThunkType)
+		if (__get_int(lpMem, i + 4) == dwThunkType)
 		{
 			ret = true;
 		}
@@ -812,7 +802,7 @@ bool _apng_thunk_getnext(void* lpMem, int* nPos, int dwThunkType, void** lpThunk
 	return ret;
 }
 
-void _apng_int(ExHandle hImage, void* lpStream)
+void _apng_int(EXHANDLE hImage, void* lpStream)
 {
 	void* hGlobal = nullptr;
 	int i = 0;
@@ -821,7 +811,7 @@ void _apng_int(ExHandle hImage, void* lpStream)
 		void* lpMem = GlobalLock(hGlobal);
 		if (lpMem != 0)
 		{
-			if (__get(lpMem, 0) == PNG_HEADER)
+			if (__get_int(lpMem, 0) == PNG_HEADER)
 			{
 				void* pImage = nullptr;
 				int nError = 0;
@@ -868,10 +858,6 @@ void _apng_int(ExHandle hImage, void* lpStream)
 									((img_s*)pImage)->nMaxFrames_ = nCount;
 									((img_s*)pImage)->lpFrames_ = pFrames;
 									((img_s*)pImage)->lpHeader_ = pHeader;
-									//__add(pImage, offsetof(img_s, dwFlags_), IMGF_APNG);
-									//__set(pImage, offsetof(img_s, nMaxFrames_), nCount);
-									//__set(pImage, offsetof(img_s, lpFrames_), (size_t)pFrames);
-									//__set(pImage, offsetof(img_s, lpHeader_), (size_t)pHeader);
 									while (_apng_thunk_getnext(lpMem, &nPos, PNG_fcTL, &pThunk, &dwLen))
 									{
 										/*' 0 dwLen
@@ -925,7 +911,7 @@ bool _apng_getframedelay(void* pImg, void* lpDelay, int nFrames)
 		for (int i = 0; i < nFrames; i++)
 		{
 			auto index = i * sizeof(void*);
-			short delay_num = __get((void*)__get(lpFrames, index), 28);
+			short delay_num = __get_short((void*)__get(lpFrames, index), 28);
 			__set_int(lpDelay, index, 200);
 			delay_num = HIWORD(delay_num) / LOWORD(delay_num) * 100;
 			if (delay_num == 0) delay_num = 10;
