@@ -5,7 +5,6 @@ void pfnDefaultFreeFont(void* dwData)
 	if (IsBadReadPtr(dwData, sizeof(font_s)))
 	{
 		void* pObj = ((font_s*)dwData)->pObj_;
-		//void* pObj = (void*)__get(dwData, offsetof(font_s, pObj_));
 		if (pObj != 0)
 		{
 			((IDWriteFactory*)pObj)->Release();

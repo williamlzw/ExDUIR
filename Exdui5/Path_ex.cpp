@@ -1,6 +1,6 @@
 #include "Path_ex.h"
 
-bool _path_destroy(ExHandle hPath)
+bool _path_destroy(EXHANDLE hPath)
 {
 	void* pPath = nullptr;
 	int nError = 0;
@@ -15,7 +15,7 @@ bool _path_destroy(ExHandle hPath)
 	return nError == 0;
 }
 
-bool _path_reset(ExHandle hPath)
+bool _path_reset(EXHANDLE hPath)
 {
 	void* pPath = nullptr;
 	int nError = 0;
@@ -29,13 +29,12 @@ bool _path_reset(ExHandle hPath)
 		if (nError == 0)
 		{
 			((path_s*)pPath)->pGeometry_ = pObj;
-			//__set(pPath, offsetof(path_s, pGeometry_), (size_t)pObj);
 		}
 	}
 	return nError == 0;
 }
 
-bool _path_create(int dwFlags, ExHandle* hPath)
+bool _path_create(int dwFlags, EXHANDLE* hPath)
 {
 	int nError = 0;
 	void* pPath = Ex_MemAlloc(sizeof(path_s));
@@ -46,7 +45,6 @@ bool _path_create(int dwFlags, ExHandle* hPath)
 		{
 			nError = _path_reset(*hPath);
 			((path_s*)pPath)->dwFlags_ = dwFlags;
-			//__set(pPath, offsetof(path_s, dwFlags_), dwFlags);
 			if (nError != 0)
 			{
 				_path_destroy(*hPath);
@@ -61,7 +59,7 @@ bool _path_create(int dwFlags, ExHandle* hPath)
 	return nError == 0;
 }
 
-bool _path_getbounds(ExHandle hPath, void* lpBounds)
+bool _path_getbounds(EXHANDLE hPath, void* lpBounds)
 {
 	int nError = 0;
 	if (IsBadWritePtr(lpBounds, 16))
@@ -80,7 +78,7 @@ bool _path_getbounds(ExHandle hPath, void* lpBounds)
 	return nError == 0;
 }
 
-bool _path_open(ExHandle hPath)
+bool _path_open(EXHANDLE hPath)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -96,16 +94,14 @@ bool _path_open(ExHandle hPath)
 		if (nError == 0)
 		{
 			((path_s*)pPath)->pObj_ = pSink;
-			//__set(pPath, offsetof(path_s, pObj_),(size_t) pSink);
 			((path_s*)pPath)->dwFlags_ = ((path_s*)pPath)->dwFlags_ | epf_bOpened;
-			//__add(pPath, offsetof(path_s, dwFlags_), epf_bOpened);
 		}
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
 }
 
-bool _path_close(ExHandle hPath)
+bool _path_close(EXHANDLE hPath)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -122,7 +118,7 @@ bool _path_close(ExHandle hPath)
 	return nError == 0;
 }
 
-bool _path_beginfigure(ExHandle hPath)
+bool _path_beginfigure(EXHANDLE hPath)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -135,7 +131,7 @@ bool _path_beginfigure(ExHandle hPath)
 	return nError == 0;
 }
 
-bool _path_endfigure(ExHandle hPath, bool fCloseFigure)
+bool _path_endfigure(EXHANDLE hPath, bool fCloseFigure)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -148,7 +144,7 @@ bool _path_endfigure(ExHandle hPath, bool fCloseFigure)
 	return nError == 0;
 }
 
-bool _path_hittest(ExHandle hPath, float x, float y)
+bool _path_hittest(EXHANDLE hPath, float x, float y)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -162,7 +158,7 @@ bool _path_hittest(ExHandle hPath, float x, float y)
 	return ret;
 }
 
-bool _path_addline(ExHandle hPath, float x1, float y1, float x2, float y2)
+bool _path_addline(EXHANDLE hPath, float x1, float y1, float x2, float y2)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -186,7 +182,7 @@ bool _path_addline(ExHandle hPath, float x1, float y1, float x2, float y2)
 	return nError == 0;
 }
 
-bool _path_addarc(ExHandle hPath, float x1, float y1, float x2, float y2, float radiusX, float radiusY, bool fClockwise)
+bool _path_addarc(EXHANDLE hPath, float x1, float y1, float x2, float y2, float radiusX, float radiusY, bool fClockwise)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -216,7 +212,7 @@ bool _path_addarc(ExHandle hPath, float x1, float y1, float x2, float y2, float 
 	return nError == 0;
 }
 
-bool _path_addrect(ExHandle hPath, float left, float top, float right, float bottom)
+bool _path_addrect(EXHANDLE hPath, float left, float top, float right, float bottom)
 {
 	int nError = 0;
 	void* pPath = nullptr;
@@ -243,7 +239,7 @@ bool _path_addrect(ExHandle hPath, float left, float top, float right, float bot
 	return nError == 0;
 }
 
-bool _path_addroundedrect(ExHandle hPath, float left, float top, float right, float bottom, float radiusTopLeft, float radiusTopRight, float radiusBottomLeft, float radiusBottomRight)
+bool _path_addroundedrect(EXHANDLE hPath, float left, float top, float right, float bottom, float radiusTopLeft, float radiusTopRight, float radiusBottomLeft, float radiusBottomRight)
 {
 	int nError = 0;
 	void* pPath = nullptr;

@@ -1056,7 +1056,8 @@ typedef UINT8	CHANNEL;	//通道
 //
 typedef COLORREF EXARGB;		// 颜色
 typedef UINT32 EXATOM;			// 原子号
-typedef HANDLE EXHANDLE;		// 句柄
+
+typedef UINT32 EXHANDLE;		// 句柄
 typedef EXHANDLE HEXDUI;		// 界面句柄
 typedef EXHANDLE HEXLAYOUT;		// 布局句柄
 typedef EXHANDLE HEXTHEME;		// 主题句柄
@@ -1068,6 +1069,10 @@ typedef EXHANDLE HEXFONT;		// 字体句柄
 typedef EXHANDLE HEXEASING;		// 缓动句柄/指针
 typedef EXHANDLE HEXPATH;		// 路径句柄
 typedef EXHANDLE HEXMATRIX;		// 矩阵句柄
+
+
+struct wnd_s;
+struct obj_s;
 
 struct EXDATA
 {

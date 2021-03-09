@@ -175,19 +175,16 @@ BOOL Ex_IsDxRender()
 
 bool Flag_Query(int dwFlag)
 {
-	//return  (g_Li.dwFlags & dwFlag) == dwFlag;
-	return __query(&g_Li.dwFlags, 0, dwFlag);
+	return  (g_Li.dwFlags & dwFlag) == dwFlag;
 }
 
 void Flag_Add(int dwFlag)
 {
-	//g_Li.dwFlags = g_Li.dwFlags | dwFlag;
-	__add(&g_Li.dwFlags, 0, dwFlag);
+	g_Li.dwFlags = g_Li.dwFlags | dwFlag;
 }
 
 void Flag_Del(int dwFlag)
 {
-	//g_Li.dwFlags = g_Li.dwFlags - dwFlag;
-	__del(&g_Li.dwFlags, 0, dwFlag);
+	g_Li.dwFlags = g_Li.dwFlags - (g_Li.dwFlags & dwFlag);
 }
 

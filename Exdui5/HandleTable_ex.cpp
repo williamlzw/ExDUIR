@@ -12,14 +12,14 @@ bool _handle_uninit(void* hTable)
 	return ret;
 }
 
-ExHandle _handle_create(int nType, void* dwData, int *nError)
+EXHANDLE _handle_create(int nType, void* dwData, int *nError)
 {
-	ExHandle ret = 0;
+	EXHANDLE ret = 0;
 	void* lpAddr = MemPool_Alloc(g_Li.hHandles, false);
 	if (lpAddr > 0)
 	{
 		__set(lpAddr, 0, (size_t)dwData);
-		ExHandle index = MemPool_GetIndexFromAddrsss(g_Li.hHandles, lpAddr);
+		EXHANDLE index = MemPool_GetIndexFromAddrsss(g_Li.hHandles, lpAddr);
 		if (index > 0 && index < 65537)
 		{
 			ret = (index << 2) | (nType << 18) | (44 << 24);
@@ -36,12 +36,12 @@ ExHandle _handle_create(int nType, void* dwData, int *nError)
 	return ret;
 }
 
-bool _handle_destroy(ExHandle handle, int* nError)
+bool _handle_destroy(EXHANDLE handle, int* nError)
 {
 	bool ret = false;
 	if ((handle && 3) == 0)
 	{
-		ExHandle nIndex = (handle << 12) >> 14;
+		EXHANDLE nIndex = (handle << 12) >> 14;
 		if (nIndex > 0 && nIndex < 65537)
 		{
 			void* lpAddress = MemPool_GetAddressFromIndex(g_Li.hHandles, nIndex);
@@ -63,13 +63,13 @@ bool _handle_destroy(ExHandle handle, int* nError)
 	return ret;
 }
 
-bool _handle_validate(ExHandle handle, int type, void** dwData, int* nError)
+bool _handle_validate(EXHANDLE handle, int type, void** dwData, int* nError)
 {
 	bool ret = false;
 	if (handle != 0)
 	{
 
-		ExHandle nIndex = (handle - (44 << 24) - (type << 18)) >> 2;
+		EXHANDLE nIndex = (handle - (44 << 24) - (type << 18)) >> 2;
 		if (nIndex > 0 && nIndex < 65537)
 		{
 			void* pData = MemPool_GetAddressFromIndex(g_Li.hHandles, nIndex);

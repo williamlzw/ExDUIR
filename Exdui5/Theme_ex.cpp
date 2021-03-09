@@ -308,7 +308,7 @@ void* Ex_ThemeLoadFromFile(void* lptszFile, void* lpKey, size_t dwKeyLen, bool b
 	return ret;
 }
 
-bool Ex_ThemeDrawControlEx(void* hTheme, ExHandle hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+bool Ex_ThemeDrawControlEx(void* hTheme, EXHANDLE hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
 	int atomClass, int atomSrcRect, int atomBackgroundRepeat, int atomBackgroundPositon, int atomBackgroundGrid, int atomBackgroundFlags, int dwAlpha)
 {
 	bool ret = false;
@@ -320,7 +320,7 @@ bool Ex_ThemeDrawControlEx(void* hTheme, ExHandle hCanvas, float dstLeft, float 
 		HashTable_Get(pTheme, atomClass, (size_t*)&pClass);
 		if (pClass != 0)
 		{
-			ExHandle hImg = ((classtable_s*)pClass)->hImage_;
+			EXHANDLE hImg = ((classtable_s*)pClass)->hImage_;
 			if (hImg != 0)
 			{
 				void* pProp = ((classtable_s*)pClass)->tableProps_;
@@ -376,7 +376,7 @@ bool Ex_ThemeDrawControlEx(void* hTheme, ExHandle hCanvas, float dstLeft, float 
 	return ret;
 }
 
-bool Ex_ThemeDrawControl(void* hTheme, ExHandle hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+bool Ex_ThemeDrawControl(void* hTheme, EXHANDLE hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
 	int atomClass, int atomSrcRect, int dwAlpha)
 {
 	return Ex_ThemeDrawControlEx(hTheme, hCanvas, dstLeft, dstTop, dstRight, dstBottom, atomClass, atomSrcRect, ATOM_BACKGROUND_REPEAT, ATOM_BACKGROUND_POSITION, ATOM_BACKGROUND_GRID, ATOM_BACKGROUND_FLAGS, dwAlpha);

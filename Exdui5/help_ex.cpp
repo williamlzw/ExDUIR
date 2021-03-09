@@ -126,6 +126,11 @@ bool __query(void* lpAddr, size_t offset, size_t value)//OK
 	return (*(size_t*)((size_t)lpAddr + offset) & value) == value;
 }
 
+bool __query_int(void* lpAddr, size_t offset, int value)//OK
+{
+	return (*(int*)((size_t)lpAddr + offset) & value) == value;
+}
+
 void __del(void* lpAddr, size_t offset, size_t value)//OK
 {
 	size_t a = (size_t)lpAddr + offset;
@@ -548,13 +553,13 @@ HRESULT IDropTarget_DragEnter(void* thisptr, IDataObject* pDataObject, int grfKe
 
 HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* pdwEffect)
 {
-	void* pWnd = (void*)__get(thisptr, sizeof(void*));
-	_wnd_wm_nchittest(pWnd, ((wnd_s*)pWnd)->hWnd_, MAKELONG(x, y));
+	wnd_s* pWnd = (wnd_s*)__get(thisptr, sizeof(wnd_s*));
+	_wnd_wm_nchittest(pWnd, pWnd->hWnd_, MAKELONG(x, y));
 	void* phit = nullptr;
 	int nError = 0;
-	if (_handle_validate(((wnd_s*)pWnd)->objHittest_, HT_OBJECT, &phit, &nError))
+	if (_handle_validate(pWnd->objHittest_, HT_OBJECT, &phit, &nError))
 	{
-		if (__query(phit, offsetof(obj_s, dwStyleEx_), EOS_EX_DRAGDROP))
+		if (((((obj_s*)phit)->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
 		{
 			return S_OK;
 		}
@@ -565,15 +570,16 @@ HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* 
 
 HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, int x, int y, int* pdwEffect)
 {
-	void* pWnd = (void*)__get(thisptr, sizeof(void*));
-	HWND hWnd = ((wnd_s*)pWnd)->hWnd_;
+	wnd_s* pWnd = (wnd_s*)__get(thisptr, sizeof(wnd_s*));
+	HWND hWnd = pWnd->hWnd_;
 	_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(x, y));
-	size_t hObj = ((wnd_s*)pWnd)->objHittest_;
+	size_t hObj = pWnd->objHittest_;
 	void* pObj = nullptr;
 	int nError = 0;
 	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
 	{
-		if (__query(pObj, offsetof(obj_s, dwStyleEx_), EOS_EX_DRAGDROP))
+		
+		if (((((obj_s*)pObj)->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
 		{
 			FORMATETC cFmt;
 			cFmt.cfFormat = 15;
@@ -604,7 +610,7 @@ HRESULT IDropTarget_DragLeave(void* thisptr)
 	return S_OK;
 }
 
-void* IDropTarget_Init(void* pWnd)
+void* IDropTarget_Init(wnd_s* pWnd)
 {
 	void* lpMethods = Ex_MemAlloc(7 * sizeof(void*));
 	void* thisptr = Ex_MemAlloc(2 * sizeof(void*));

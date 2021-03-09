@@ -123,9 +123,9 @@ BOOL HashTable_Set(void* hTable, size_t hKey, size_t dwValue)
 
 		auto aa = InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry);
 		((entry_s*)pEntry)->pEntry = (void*)aa;
-		//__set(pTable, nPos * sizeof(void*), (size_t)pEntry);
+
 		((hashtable_s*)hTable)->dwCount = ((hashtable_s*)hTable)->dwCount + 1;
-		//InterlockedExchangeAdd((size_t*)&(((hashtable_s*)hTable)->dwCount), 1);
+
 		ret = true;
 	}
 	return ret;

@@ -65,7 +65,7 @@ size_t _sysbutton_paint(HWND hWnd, size_t hObj, void* pObj)
 		if ((ps.dwStyle_ & EWS_TITLE) != 0)
 		{
 			left = ps.t_left_;
-			if (__query(((obj_s*)pObj)->pwnd_, offsetof(wnd_s, dwStyle_), EWS_HASICON))
+			if (((((obj_s*)pObj)->pWnd_->dwStyle_ & EWS_HASICON) == EWS_HASICON))
 			{
 				size_t atomClass = 窗口_取图标句柄(hWnd, false);
 				if (atomClass != 0)
@@ -79,7 +79,8 @@ size_t _sysbutton_paint(HWND hWnd, size_t hObj, void* pObj)
 					}
 				}
 			}
-			if (__query(((obj_s*)pObj)->pwnd_, offsetof(wnd_s, dwStyle_), EWS_TITLE))
+			
+			if (((((obj_s*)pObj)->pWnd_->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 			{
 				_canvas_drawtextex(ps.hCanvas_, ((obj_s*)pObj)->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)(((obj_s*)pObj)->pstrTitle_), -1,
 					DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_WORD_ELLIPSIS, left, ps.t_top_, ps.t_right_, ps.t_bottom_, ((obj_s*)pObj)->dwShadowSize_, 0, 0, 0);
@@ -92,7 +93,7 @@ size_t _sysbutton_paint(HWND hWnd, size_t hObj, void* pObj)
 
 void _sysbutton_remove_proc(void* pObj, int width, int height)
 {
-	ExHandle sObj = ((obj_s*)pObj)->objChildFirst_;
+	EXHANDLE sObj = ((obj_s*)pObj)->objChildFirst_;
 	void* psobj = nullptr;
 	int nError = 0;
 	bool bReCalced = false;
@@ -115,15 +116,15 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	if (uMsg == WM_NCCREATE)
 	{
 		void* ret = nullptr;
-		if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_BUTTON_MIN))
+		if (((((obj_s*)pObj)->dwStyle_ & EWS_BUTTON_MIN) == EWS_BUTTON_MIN))
 		{
 			ret = copytstr((LPCWSTR)(g_Li.lpstr_min), lstrlenW((LPCWSTR)(g_Li.lpstr_min)));
 		}
-		else if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_BUTTON_CLOSE))
+		else if (((((obj_s*)pObj)->dwStyle_ & EWS_BUTTON_CLOSE) == EWS_BUTTON_CLOSE))
 		{
 			ret = copytstr((LPCWSTR)(g_Li.lpstr_close), lstrlenW((LPCWSTR)(g_Li.lpstr_close)));
 		}
-		else if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_BUTTON_HELP))
+		else if (((((obj_s*)pObj)->dwStyle_ & EWS_BUTTON_HELP) == EWS_BUTTON_HELP))
 		{
 			ret = copytstr((LPCWSTR)(g_Li.lpstr_help), lstrlenW((LPCWSTR)(g_Li.lpstr_help)));
 		}
@@ -154,10 +155,10 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	else if (uMsg == WM_MOUSEHOVER)
 	{
 		void* ret = nullptr;
-		if (!__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
+		if (!((((obj_s*)pObj)->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 		{
 			_obj_setuistate(pObj, 状态_点燃, false, 0, true, &nError);
-			if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_BUTTON_MAX))
+			if (((((obj_s*)pObj)->dwStyle_ & EWS_BUTTON_MAX) == EWS_BUTTON_MAX))
 			{
 				Ex_MemFree(((obj_s*)pObj)->pstrTips_);
 				if (窗口_查询风格(hWnd, WS_MAXIMIZE, false))
@@ -169,7 +170,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 				}
 				((obj_s*)pObj)->pstrTips_ = ret;
 			}
-			else if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_BUTTON_MIN))
+			else if (((((obj_s*)pObj)->dwStyle_ & EWS_BUTTON_MIN) == EWS_BUTTON_MIN))
 			{
 				Ex_MemFree(((obj_s*)pObj)->pstrTips_);
 				if (窗口_查询风格(hWnd, WS_MINIMIZE, false))
@@ -185,21 +186,21 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	}
 	else if (uMsg == WM_MOUSELEAVE)
 	{
-		if (!__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
+		if (!((((obj_s*)pObj)->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 		{
 			_obj_setuistate(pObj, 状态_点燃 | 状态_按下, true, 0, true, &nError);
 		}
 	}
 	else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN)
 	{
-		if (!__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
+		if (!((((obj_s*)pObj)->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 		{
 			_obj_setuistate(pObj, 状态_按下, false, 0, true, &nError);
 		}
 	}
 	else if (uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONUP)
 	{
-		if (!__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
+		if (!((((obj_s*)pObj)->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 		{
 			_obj_setuistate(pObj, 状态_按下, true, 0, true, &nError);
 		}
@@ -209,7 +210,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 		int ret = ((obj_s*)pObj)->dwStyle_;
 		if ((ret & EWS_BUTTON_CLOSE) != 0)
 		{
-			if (__query(((obj_s*)pObj)->pwnd_, offsetof(wnd_s, dwStyle_), EWS_MESSAGEBOX))
+			if (((((obj_s*)pObj)->pWnd_->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
 			{
 				EndDialog(hWnd, IDCANCEL);
 			}
@@ -247,7 +248,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	}
 	else if (uMsg == WM_SIZE)
 	{
-		if (__query(pObj, offsetof(obj_s, dwStyle_), EWS_TITLE))
+		if (((((obj_s*)pObj)->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 		{
 			_sysbutton_remove_proc(pObj, LOWORD(lParam), HIWORD(lParam));
 		}
@@ -285,11 +286,11 @@ void _page_onvscrollbar(HWND hWnd, size_t hObj, void* pObj, int uMsg, size_t wPa
 	}
 	else if (nCode == SB_LINEUP)
 	{
-		nPos = oPos - HIWORD(LOWORD(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
+		nPos = oPos - HIWORD(LOWORD(((obj_s*)pObj)->pWnd_->szItemSeparator_));
 	}
 	else if (nCode == SB_LINEDOWN)
 	{
-		nPos = oPos + HIWORD(LOWORD(((wnd_s*)(((obj_s*)pObj)->pwnd_))->szItemSeparator_));
+		nPos = oPos + HIWORD(LOWORD(((obj_s*)pObj)->pWnd_->szItemSeparator_));
 	}
 	else if (nCode == SB_TOP)
 	{
@@ -313,7 +314,7 @@ size_t _page_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam
 {
 	if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL)
 	{
-		if (__query(pObj, offsetof(obj_s, dwStyle_), 条目风格_子菜单))
+		if (((((obj_s*)pObj)->dwStyle_ & 条目风格_子菜单) == 条目风格_子菜单))
 		{
 			_page_onvscrollbar(hWnd, hObj, pObj, uMsg, wParam, lParam);
 		}

@@ -201,7 +201,7 @@ bool Array_SetMember(void* pArray, size_t index, size_t value)
 	if (Array_IsLegal(pArray) == false) return false;
 	auto pvItem = Array_SetEvent(pArray, 数组事件_设置成员, index, value);
 	if (pvItem == 0) pvItem = value;
-	__set_int(((array_s*)pArray)->lpData_, (index - 1) * sizeof(void*), pvItem);
+	__set(((array_s*)pArray)->lpData_, (index - 1) * sizeof(void*), pvItem);
 	return true;
 }
 

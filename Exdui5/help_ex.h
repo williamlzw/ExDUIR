@@ -14,8 +14,6 @@
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME																	//声明一个函数指针变量
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule,#NAME)	
 
-typedef int ExHandle;
-
 #include "constant_ex.h"
 #include "Thread_ex.h"
 #include "HashTable_ex.h"
@@ -34,6 +32,10 @@ typedef int(*MsgPROC)(HWND, size_t, int, size_t, void*, void*);
 #define ExRGB(r,g,b)        ((int)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((INT)(BYTE)(b))<<16)))
 #define ExRGBA(r,g,b,a)		((int)(RGB(b,g,r)|(a<<24)))
 #define ExARGB(r,g,b)		ExRGBA(r,g,b,0xFF)
+
+#define FLAG_CHECK(a,b) ((a)&(b)) == (b)
+#define FLAG_ADD(a,b) a |= | (b)
+#define FLAG_DEL(a,b)  a &= ~(b)
 
 #define HT_DUI 1
 #define HT_OBJECT 2
@@ -390,6 +392,7 @@ void __set_char(void* lpAddr, size_t offset, char value);
 void __set_unsignedchar(void* lpAddr, size_t offset, UCHAR value);
 void __set_wchar(void* lpAddr, size_t offset, wchar_t value);
 bool __query(void* lpAddr, size_t offset, size_t value);
+bool __query_int(void* lpAddr, size_t offset, int value);
 void __del(void* lpAddr, size_t offset, size_t value);
 void __add(void* lpAddr, size_t offset, size_t value);
 void __addn(void* lpAddr, size_t offset, size_t value);
@@ -426,4 +429,4 @@ HRESULT IDropTarget_DragEnter(void* thisptr, IDataObject* pDataObject, int grfKe
 HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* pdwEffect);
 HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, int x, int y, int* pdwEffect);
 HRESULT IDropTarget_DragLeave(void* thisptr);
-void* IDropTarget_Init(void* pWnd);
+void* IDropTarget_Init(wnd_s* pWnd);

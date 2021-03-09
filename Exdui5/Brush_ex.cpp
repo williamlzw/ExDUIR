@@ -25,7 +25,7 @@ void _brush_setcolor(void* hBrush, int argb)
 	((ID2D1SolidColorBrush*)hBrush)->SetColor(color);
 }
 
-void* _brush_createfromimg(ExHandle hImg)
+void* _brush_createfromimg(EXHANDLE hImg)
 {
 	void* pImg = nullptr;
 	int nError = 0;
@@ -56,7 +56,7 @@ void* _brush_createfromimg(ExHandle hImg)
 	return (void*)hBrush;
 }
 
-void* _brush_createfromcanvas(ExHandle hCanvas)
+void* _brush_createfromcanvas(EXHANDLE hCanvas)
 {
 	void* pCanvas = nullptr;
 	int nError = 0;
