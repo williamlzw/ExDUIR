@@ -1,11 +1,12 @@
 ﻿################################################################################
 # 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
 ################################################################################
-
-/Exdui5/x64/Debug
-/Release
-/Exdui5/Release
-/Exdui5/Debug/Exdui5.tlog
-/Exdui5/Debug
-/.vs/Exdui5/v15
-/Debug
+/.idea/
+/.vs/
+/msvc/test/Release/
+/msvc/test/Debug/
+/msvc/libexdui/Debug/
+/msvc/libexdui/Release/
+/msvc/dll/Debug/
+/msvc/dll/Release/
+/cmake-build-debug/
