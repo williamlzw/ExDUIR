@@ -38,14 +38,14 @@ EXHANDLE _layout_create(int nType, EXHANDLE hObjBind)
 		if (lpfnProc != 0)
 		{
 			void* pLayout = Ex_MemAlloc(sizeof(layout_s));
-			void* pObj = nullptr;
+			obj_s* pObj = nullptr;
 			if (pLayout != 0)
 			{
-				if (_handle_validate(hObjBind, HT_OBJECT, &pObj, &nError))
+				if (_handle_validate(hObjBind, HT_OBJECT, (void**)&pObj, &nError))
 				{
 					((layout_s*)pLayout)->nBindType_ = HT_OBJECT;
 				}
-				else if (_handle_validate(hObjBind, HT_DUI, &pObj, &nError))
+				else if (_handle_validate(hObjBind, HT_DUI, (void**)&pObj, &nError))
 				{
 					((layout_s*)pLayout)->nBindType_ = HT_DUI;
 				}
@@ -94,14 +94,14 @@ EXHANDLE _layout_create(int nType, EXHANDLE hObjBind)
 EXHANDLE _layout_get_parent_layout(EXHANDLE hObj)
 {
 	int nError = 0;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	EXHANDLE hLayoutParent = 0;
-	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 	{
-		EXHANDLE hObj = ((obj_s*)pObj)->objParent_;
+		EXHANDLE hObj = pObj->objParent_;
 		if (hObj == 0)
 		{
-			auto pWnd = ((obj_s*)pObj)->pWnd_;
+			auto pWnd = pObj->pWnd_;
 			hObj = pWnd->hexdui_;
 		}
 		hLayoutParent = Ex_ObjLayoutGet(hObj);

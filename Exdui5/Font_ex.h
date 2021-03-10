@@ -14,7 +14,7 @@ struct font_s
 {
 	size_t dwFlags_;
 	size_t dwCount_;
-	void* pObj_;
+	obj_s* pObj_;
 	LOGFONT font_;
 };
 void pfnDefaultFreeFont(void* dwData);

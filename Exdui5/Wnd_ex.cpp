@@ -24,7 +24,7 @@ EXHANDLE Ex_DUIFromWindow(HWND hWnd)
 	return SendMessageW(hWnd, g_Li.dwMessage, EMV_HEXDUI, MAKELONG(EMT_DUI, 0));
 }
 
-bool _wnd_getfromhandle(size_t handle, HWND* hWnd, wnd_s** ppWnd, void** ppObj, bool* isObject, int* nError)
+bool _wnd_getfromhandle(size_t handle, HWND* hWnd, wnd_s** ppWnd, obj_s** ppObj, bool* isObject, int* nError)
 {
 	*isObject = false;
 	if (IsWindow((HWND)handle)) handle = Ex_DUIFromWindow((HWND)handle);
@@ -59,7 +59,7 @@ bool _wnd_getfromhandle(size_t handle, HWND* hWnd, wnd_s** ppWnd, void** ppObj, 
 	return true;
 }
 
-int _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, int nID, int nCode, WPARAM wParam, LPARAM lParam, void* pObj)
+int _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, int nID, int nCode, WPARAM wParam, LPARAM lParam, obj_s* pObj)
 {
 	auto pfnMsgProc = pWnd->pfnMsgProc_;
 	int ret = 1;
@@ -567,7 +567,7 @@ int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lP
 	int ret = 0;
 	if (nType == EMT_OBJECT)//组件消息
 	{
-		ret = _wnd_dispatch_msg_obj(hWnd, (void*)wParam, 0, 0, 0, 0);
+		ret = _wnd_dispatch_msg_obj(hWnd, (obj_s*)wParam, 0, 0, 0, 0);
 	}
 	else if (nType == EMT_DUI)//窗体消息
 	{
@@ -595,7 +595,7 @@ int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lP
 	return ret;
 }
 
-int _wnd_dispatch_msg_obj(HWND hWnd, void* lpData, int data, int uMsg, WPARAM wParam, LPARAM lParam)
+int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int data, int uMsg, WPARAM wParam, LPARAM lParam)
 {
 	int ret = 0;
 	if (MemPool_AddressIsUsed(lpData))
@@ -603,7 +603,7 @@ int _wnd_dispatch_msg_obj(HWND hWnd, void* lpData, int data, int uMsg, WPARAM wP
 		//RtlMoveMemory(pObj, lpData, 20);
 		if (lpData != 0)
 		{
-			EXHANDLE hObj = ((obj_s*)lpData)->hObj_;
+			EXHANDLE hObj = lpData->hObj_;
 			ret = _obj_msgproc(hWnd, hObj, lpData, uMsg, wParam, lParam);
 		}
 		MemPool_Free(g_Li.hMemPoolMsg, lpData);
@@ -616,7 +616,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #ifdef _WIN64
 	HWND hWnd = (HWND)__get(pData, 22);
 	LONG64 pOld = (LONG64)__get(pData, 30);
-	wnd_s* pWnd = (void*)__get(pData, 38);
+	wnd_s* pWnd = (wnd_s*)__get(pData, 38);
 #else
 	HWND hWnd = (HWND)__get_int(pData, 13);
 	LONG pOld = (LONG)__get_int(pData, 17);
@@ -713,7 +713,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	else if (uMsg == WM_NCACTIVATE)//134
 	{
-		_wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittest_, -1, (void*)-1, true);
+		_wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittest_, -1, (obj_s*)-1, true);
 		if (wParam == 0)
 		{
 			
@@ -870,7 +870,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_bMenuInited);
 		size_t objHittest = pWnd->objHittest_;
 		_wnd_wm_nchittest(pWnd, hWnd, -1);
-		_wnd_wm_leavecheck(hWnd, pWnd, objHittest, -1, (void*)-1, true);
+		_wnd_wm_leavecheck(hWnd, pWnd, objHittest, -1, (obj_s*)-1, true);
 	}
 	else if (uMsg == WM_IME_COMPOSITION)//271
 	{
@@ -1217,27 +1217,27 @@ void _wnd_dx_init(wnd_s* pWnd)
 EXHANDLE _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, EXHANDLE objLast, int x, int y, int* hitCode, void** pObjMouse)
 {
 	EXHANDLE objPrev = objLast;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
-	while (_handle_validate(objPrev, HT_OBJECT, &pObj, &nError))
+	while (_handle_validate(objPrev, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		
-		if (((((obj_s*)pObj)->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+		if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
 		{
-			RECT rt = { ((obj_s*)pObj)->left_,((obj_s*)pObj)->top_,((obj_s*)pObj)->right_,((obj_s*)pObj)->bottom_ };
+			RECT rt = { pObj->left_,pObj->top_,pObj->right_,pObj->bottom_ };
 			POINT po = { x,y };
 			if (PtInRect(&rt, po))
 			{
-				int ox = x - ((obj_s*)pObj)->left_;
-				int oy = y - ((obj_s*)pObj)->top_;
+				int ox = x - pObj->left_;
+				int oy = y - pObj->top_;
 				auto lParam = MAKELONG(ox, oy);
 				
-				if (((((obj_s*)pObj)->dwStyle_ & EOS_DISABLED) == EOS_DISABLED))//检测是否被禁止，被禁止组件还需检测是否可穿透
+				if (((pObj->dwStyle_ & EOS_DISABLED) == EOS_DISABLED))//检测是否被禁止，被禁止组件还需检测是否可穿透
 				{
 					*hitCode = _obj_baseproc(hWnd, objPrev, pObj, WM_NCHITTEST, 0, lParam);
 					if (*hitCode == HTTRANSPARENT)//在穿透区域,则继续寻找
 					{
-						objPrev = ((obj_s*)pObj)->objPrev_;
+						objPrev = pObj->objPrev_;
 						continue;
 					}
 					else {
@@ -1247,7 +1247,7 @@ EXHANDLE _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, EXHANDLE objLast, int x, 
 					}
 				}
 				else {
-					objLast = ((obj_s*)pObj)->objChildLast_;
+					objLast = pObj->objChildLast_;
 					if (objLast != 0)
 					{
 						auto ret = _wnd_wm_nchittest_obj(hWnd, pWnd, objLast, ox, oy, hitCode, pObjMouse);
@@ -1260,7 +1260,7 @@ EXHANDLE _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, EXHANDLE objLast, int x, 
 				*hitCode = _obj_baseproc(hWnd, objPrev, pObj, WM_NCHITTEST, 0, lParam);
 				if (*hitCode == HTTRANSPARENT)// 如果可穿透，则继续寻找
 				{
-					objPrev = ((obj_s*)pObj)->objPrev_;
+					objPrev = pObj->objPrev_;
 					continue;
 				}
 				else {
@@ -1270,7 +1270,7 @@ EXHANDLE _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, EXHANDLE objLast, int x, 
 				}
 			}
 		}
-		objPrev = ((obj_s*)pObj)->objPrev_;
+		objPrev = pObj->objPrev_;
 	}
 	return 0;
 }
@@ -1433,7 +1433,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, int dwStyle)
 	void* hTheme = pWnd->hTheme_;
 	RECT rcCaption = { 0 };
 	_wnd_calc_captionrect(pWnd, &rcCaption);
-	void* pObjCaption = nullptr;
+	obj_s* pObjCaption = nullptr;
 	int nError = 0;
 	EXHANDLE objCaption = _obj_create_init(hWnd, pWnd, ATOM_SYSBUTTON, 0, &pObjCaption, &nError);
 
@@ -1531,7 +1531,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, int dwStyle)
 				rcObject.bottom = Ex_Scale(rcObject.bottom - rcObject.top);
 
 				left = left - rcObject.right;
-				void* pObjTmp = nullptr;
+				obj_s* pObjTmp = nullptr;
 				int nError = 0;
 
 				EXHANDLE objTmp = _obj_create_init(hWnd, pWnd, ATOM_SYSBUTTON, 0, &pObjTmp, &nError);
@@ -1572,33 +1572,33 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, void* pContext, EXHANDLE cvDisplay,
 	{
 		do
 		{
-			void* pObj = nullptr;
-			if (_handle_validate(objNext, HT_OBJECT, &pObj, &nError))
+			obj_s* pObj = nullptr;
+			if (_handle_validate(objNext, HT_OBJECT, (void**)&pObj, &nError))
 			{
 			
-				if (((((obj_s*)pObj)->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+				if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
 				{
 					RECT rcObj;
-					rcObj.left = ((obj_s*)pObj)->left_;
-					rcObj.top = ((obj_s*)pObj)->top_;
-					rcObj.right = ((obj_s*)pObj)->right_;
-					rcObj.bottom = ((obj_s*)pObj)->bottom_;
+					rcObj.left = pObj->left_;
+					rcObj.top = pObj->top_;
+					rcObj.right = pObj->right_;
+					rcObj.bottom = pObj->bottom_;
 
 					OffsetRect(&rcObj, offsetX, offsetY);
 					RECT rcClip;
 					if (IntersectRect(&rcClip, &rcPaint, &rcObj))
 					{
 						
-						auto fPage = !((((obj_s*)pObj)->dwFlags_ & eof_bPage) == eof_bPage);
+						auto fPage = !((pObj->dwFlags_ & eof_bPage) == eof_bPage);
 						if (fPage)
 						{
 							
-							if (((((obj_s*)pObj)->dwFlags_ & eof_bCanRedraw) == eof_bCanRedraw))
+							if (((pObj->dwFlags_ & eof_bCanRedraw) == eof_bCanRedraw))
 							{
 								
-								if (((((obj_s*)pObj)->dwFlags_ & eof_bNeedRedraw) == eof_bNeedRedraw))
+								if (((pObj->dwFlags_ & eof_bNeedRedraw) == eof_bNeedRedraw))
 								{
-									((obj_s*)pObj)->dwFlags_ = ((obj_s*)pObj)->dwFlags_ - (((obj_s*)pObj)->dwFlags_ & eof_bNeedRedraw);
+									pObj->dwFlags_ = pObj->dwFlags_ - (pObj->dwFlags_ & eof_bNeedRedraw);
 									if (!IsRectEmpty((RECT*)((size_t)pObj + offsetof(obj_s, d_left_))))
 									{
 										_obj_baseproc(hWnd, objNext, pObj, WM_PAINT, 0, 0);
@@ -1610,46 +1610,46 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, void* pContext, EXHANDLE cvDisplay,
 								}
 							}
 						}
-						int alpha = ((obj_s*)pObj)->dwAlpha_;
+						int alpha = pObj->dwAlpha_;
 						alpha = alpha * pAlpha / 255;
 						
-						if (((((obj_s*)pObj)->dwStyle_ & EOS_DISABLED) == EOS_DISABLED))
+						if (((pObj->dwStyle_ & EOS_DISABLED) == EOS_DISABLED))
 						{
-							alpha = alpha * ((obj_s*)pObj)->dwAlphaDisable_ / 255;
+							alpha = alpha * pObj->dwAlphaDisable_ / 255;
 						}
 						if (fPage)//非页面
 						{
 							
-							if (((((obj_s*)pObj)->dwFlags_ & eof_bPath) == eof_bPath))
+							if (((pObj->dwFlags_ & eof_bPath) == eof_bPath))
 							{
-								void* hPathBrush = _brush_createfromcanvas(((obj_s*)pObj)->canvas_obj_);
+								void* hPathBrush = _brush_createfromcanvas(pObj->canvas_obj_);
 								if (hPathBrush != 0)
 								{
 									void* matrix = _matrix_create();
-									_matrix_translate(matrix, ((obj_s*)pObj)->w_left_, ((obj_s*)pObj)->w_top_, 0);
+									_matrix_translate(matrix, pObj->w_left_, pObj->w_top_, 0);
 									_brush_settransform(hPathBrush, matrix);
-									_canvas_fillpath(cvDisplay, ((obj_s*)pObj)->hPath_Window_, hPathBrush);
+									_canvas_fillpath(cvDisplay, pObj->hPath_Window_, hPathBrush);
 									_brush_destroy(hPathBrush);
 									_matrix_destroy(matrix);
 								}
 							}
 							else {
 								
-								if (((((obj_s*)pObj)->dwStyleEx_ & EOS_EX_COMPOSITED) == EOS_EX_COMPOSITED))
+								if (((pObj->dwStyleEx_ & EOS_EX_COMPOSITED) == EOS_EX_COMPOSITED))
 								{
-									_canvas_bitblt(cvDisplay, ((obj_s*)pObj)->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom, rcClip.left - rcObj.left, rcClip.top - rcObj.top);
+									_canvas_bitblt(cvDisplay, pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom, rcClip.left - rcObj.left, rcClip.top - rcObj.top);
 								}
 								else {
-									_canvas_alphablend(cvDisplay, ((obj_s*)pObj)->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom, rcClip.left - rcObj.left, rcClip.top - rcObj.top, rcClip.right - rcObj.left, rcClip.bottom - rcObj.top, alpha);
+									_canvas_alphablend(cvDisplay, pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom, rcClip.left - rcObj.left, rcClip.top - rcObj.top, rcClip.right - rcObj.left, rcClip.bottom - rcObj.top, alpha);
 								}
 							}
 						}
 						if (hBorderBrush != 0)
 						{
-							_canvas_drawrect(cvDisplay, hBorderBrush, ((obj_s*)pObj)->w_left_, ((obj_s*)pObj)->w_top_, ((obj_s*)pObj)->w_right_, ((obj_s*)pObj)->w_bottom_, 1, 0);
+							_canvas_drawrect(cvDisplay, hBorderBrush, pObj->w_left_, pObj->w_top_, pObj->w_right_, pObj->w_bottom_, 1, 0);
 						}
 
-						EXHANDLE objChild = ((obj_s*)pObj)->objChildFirst_;
+						EXHANDLE objChild = pObj->objChildFirst_;
 						if (objChild != 0)
 						{
 							_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcClip, objChild, rcObj.left, rcObj.top, alpha, fDX, hBorderBrush);
@@ -1660,7 +1660,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, void* pContext, EXHANDLE cvDisplay,
 			else {
 				break;
 			}
-			objNext = ((obj_s*)pObj)->objNext_;
+			objNext = pObj->objNext_;
 		} while (objNext != 0);
 	}
 }
@@ -1672,9 +1672,9 @@ bool _wnd_wm_setcursor(HWND hWnd, wnd_s* pWnd, LPARAM lParam)
 	if (uHitCode == HTCLIENT)
 	{
 		auto objHittest = pWnd->objHittest_;
-		void* pObj = nullptr;
+		obj_s* pObj = nullptr;
 		int nError = 0;
-		if (_handle_validate(objHittest, HT_OBJECT, &pObj, &nError))
+		if (_handle_validate(objHittest, HT_OBJECT, (void**)&pObj, &nError))
 		{
 			if (_obj_baseproc(hWnd, objHittest, pObj, WM_SETCURSOR, pWnd->dwHitObjPos_Abs_, MAKELONG(pWnd->dwHitCode_, HIWORD(lParam))) != 0)
 			{
@@ -1759,9 +1759,9 @@ void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWOR
 			{
 				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_bLeaveSent;
 				EXHANDLE hObj = pWnd->objHittestPrev_;
-				void* pObj = nullptr;
+				obj_s* pObj = nullptr;
 				int nError = 0;
-				if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+				if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 				{
 					_obj_baseproc(hWnd, hObj, pObj, WM_MOUSELEAVE, 0, 0);//发送离开
 					pWnd->objHittestPrev_ = pWnd->objHittest_;
@@ -1772,18 +1772,18 @@ void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWOR
 	}
 }
 
-void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, EXHANDLE objCheck, EXHANDLE objHittest, void* pObjHittest, bool fTrack)
+void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, EXHANDLE objCheck, EXHANDLE objHittest, obj_s* pObjHittest, bool fTrack)
 {
 	int nError = 0;
 	if (objHittest = -1)
 	{
 		objHittest = pWnd->objHittest_;
-		_handle_validate(objHittest, HT_OBJECT, &pObjHittest, &nError);
+		_handle_validate(objHittest, HT_OBJECT, (void**)&pObjHittest, &nError);
 	}
 	if (objCheck != objHittest)
 	{
-		void* pObjCheck = nullptr;
-		if (_handle_validate(objCheck, HT_OBJECT, &pObjCheck, &nError))
+		obj_s* pObjCheck = nullptr;
+		if (_handle_validate(objCheck, HT_OBJECT, (void**)&pObjCheck, &nError))
 		{
 			
 			if (!((pWnd->dwFlags_ & EWF_bLeaveSent) == EWF_bLeaveSent))
@@ -1814,9 +1814,9 @@ int _wnd_destroy(HWND hWnd, wnd_s* pWnd)
 	DestroyWindow(pWnd->hWndTips_);
 	DestroyWindow(pWnd->hWndShadow_);
 	EXHANDLE hObj = pWnd->objChildFirst_;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
-	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		_obj_notify_brothers(hWnd, hObj, pObj, WM_DESTROY, 0, 0, false, false);
 	}
@@ -2075,18 +2075,18 @@ void _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* pos)
 	if (pMenuPrevWnd != 0)
 	{
 		EXHANDLE hObj = ((wnd_s*)pMenuPrevWnd)->objFocus_;
-		void* pObj = nullptr;
+		obj_s* pObj = nullptr;
 		int nError = 0;
-		if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+		if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 		{
 			void* padding_client = pWnd->padding_client_;
-			y = ((obj_s*)pObj)->w_top_ + ((wnd_s*)pMenuPrevWnd)->top_ - __get_int(padding_client, 4);
+			y = pObj->w_top_ + ((wnd_s*)pMenuPrevWnd)->top_ - __get_int(padding_client, 4);
 			GetWindowRect(hWnd, &rcParent);
 			int height = rcParent.bottom - rcParent.top - GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
 			窗口_取屏幕矩形(hWnd, &rcParent);
 			if (y + height > rcParent.bottom)
 			{
-				y = ((obj_s*)pObj)->w_bottom_ - height + __get_int(padding_client, 12);
+				y = pObj->w_bottom_ - height + __get_int(padding_client, 12);
 			}
 		}
 	}
@@ -2117,7 +2117,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 		}
 	}
 
-	void* pParnet = nullptr;
+	obj_s* pParnet = nullptr;
 	int nError = 0;
 	EXHANDLE objParent = _obj_create_init(hWnd, pWnd, ATOM_PAGE, 0, &pParnet, &nError);
 	if (objParent != 0)
@@ -2172,22 +2172,22 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 					bin.resize(520);
 					OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
 					GetMenuStringW((HMENU)hMenu, i, bin.data(), 520, MF_BYPOSITION);
-					void* pObj = nullptr;
+					obj_s* pObj = nullptr;
 					EXHANDLE hObj = _obj_create_init(hWnd, pWnd, ATOM_ITEM, 0, &pObj, &nError);
 					if (hObj != 0)
 					{
 						_obj_create_proc(&nError, false, hTheme, pObj, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, ATOM_ITEM, bin.data(), eos, rcItem.left, rcItem.top, width, rcItem.bottom - rcItem.top, objParent, mii.wID, 0, i, DT_VCENTER | DT_SINGLELINE);
-						((obj_s*)pObj)->dwFlags_ = ((obj_s*)pObj)->dwFlags_ | eof_bMenuItem;
+						pObj->dwFlags_ = pObj->dwFlags_ | eof_bMenuItem;
 						_obj_create_done(hWnd, pWnd, hObj, pObj);
 						if (lpPaddingText != 0)
 						{
 							RtlMoveMemory((void*)((size_t)pObj + offsetof(obj_s, t_left_)), lpPaddingText, 16);
 							if (g_Li.DpiX > 1)
 							{
-								((obj_s*)pObj)->t_left_ = ((obj_s*)pObj)->t_left_ * g_Li.DpiX;
-								((obj_s*)pObj)->t_top_ = ((obj_s*)pObj)->t_top_ * g_Li.DpiX;
-								((obj_s*)pObj)->t_right_ = ((obj_s*)pObj)->t_right_ * g_Li.DpiX;
-								((obj_s*)pObj)->t_bottom_ = ((obj_s*)pObj)->t_bottom_ * g_Li.DpiX;
+								pObj->t_left_ = pObj->t_left_ * g_Li.DpiX;
+								pObj->t_top_ = pObj->t_top_ * g_Li.DpiX;
+								pObj->t_right_ = pObj->t_right_ * g_Li.DpiX;
+								pObj->t_bottom_ = pObj->t_bottom_ * g_Li.DpiX;
 							}
 						}
 					}
@@ -2390,7 +2390,7 @@ bool _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam)
 	return ret;
 }
 
-void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, void* pObj, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, WPARAM wParam, LPARAM lParam)
 {
 	
 	if (!((pWnd->dwFlags_ & EWF_bTrackObject) == EWF_bTrackObject))
@@ -2432,9 +2432,9 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, bool fMsgDispatch)
 		{
 			ReleaseCapture();//对menu窗口无效
 		}
-		void* pObj = nullptr;
+		obj_s* pObj = nullptr;
 		int nError = 0;
-		if (_handle_validate(objTrack, HT_OBJECT, &pObj, &nError))
+		if (_handle_validate(objTrack, HT_OBJECT, (void**)&pObj, &nError))
 		{
 			POINT pt;
 			GetCursorPos(&pt);
@@ -2456,11 +2456,11 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, bool fMsgDispatch)
 				}
 				_obj_baseproc(hWnd, objTrack, pObj, uMsg, 0, 0);
 				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
-				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (void*)-1, false);
+				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (obj_s*)-1, false);
 			}
 			else {
 				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
-				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (void*)-1, false);
+				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (obj_s*)-1, false);
 				if (pWnd->objHittest_ == objTrack)
 				{
 					
@@ -2501,14 +2501,14 @@ void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lPara
 		hObj = pWnd->objHittest_;
 	}
 	int dwHitCode = pWnd->dwHitCode_;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
-	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		
 		if (((pWnd->dwFlags_ & EWF_bTrackObject) == EWF_bTrackObject))
 		{
-			lParam = MAKELONG(LOWORD(lParam) - ((obj_s*)pObj)->w_left_, HIWORD(lParam) - ((obj_s*)pObj)->w_top_);
+			lParam = MAKELONG(LOWORD(lParam) - pObj->w_left_, HIWORD(lParam) - pObj->w_top_);
 			pWnd->dwHitObjPos_Abs_ = lParam;
 		}
 		else {
@@ -2561,9 +2561,9 @@ void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lPara
 void _wnd_wm_menucontext(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
 	EXHANDLE objHittest = pWnd->objHittest_;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
-	if (_handle_validate(objHittest, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(objHittest, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		pWnd->objMenucontext_ = objHittest;
 		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_bMenuContext;
@@ -2575,24 +2575,24 @@ void _wnd_wm_menucontext(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM
 void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
 	EXHANDLE objHittest = pWnd->objHittest_;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
-	if (_handle_validate(objHittest, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(objHittest, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		if (_obj_baseproc(hWnd, objHittest, pObj, uMsg, wParam, lParam) == 0)//我认为这样是不完善的，因为存在转发WHEEL消息让别的控件滚动的可能性
 		{
-			void* pCls = ((obj_s*)pObj)->pCls_;
+			void* pCls = pObj->pCls_;
 			if (((class_s*)pCls)->atomName_ == ATOM_SCROLLBAR)
 			{
 				_sb_parentnotify(hWnd, pObj, wParam > 0 ? SB_LINEUP : SB_LINEDOWN, objHittest, 0, true);
 			}
 			
-			if (((((obj_s*)pObj)->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL))
+			if (((pObj->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL))
 			{
 				_obj_baseproc(hWnd, objHittest, pObj, WM_VSCROLL, wParam > 0 ? SB_LINEUP : SB_LINEDOWN, 0);
 			}
 			
-			if (((((obj_s*)pObj)->dwStyle_ & EOS_HSCROLL) == EOS_HSCROLL))
+			if (((pObj->dwStyle_ & EOS_HSCROLL) == EOS_HSCROLL))
 			{
 				_obj_baseproc(hWnd, objHittest, pObj, WM_HSCROLL, wParam > 0 ? SB_LINEUP : SB_LINEDOWN, 0);
 			}
@@ -2616,9 +2616,9 @@ void _wnd_wm_command(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lPa
 	else {
 		EXHANDLE objMenucontext = pWnd->objMenucontext_;
 		pWnd->objMenucontext_ = 0;
-		void* pObj = nullptr;
+		obj_s* pObj = nullptr;
 		int nError = 0;
-		if (_handle_validate(objMenucontext, HT_OBJECT, &pObj, &nError))
+		if (_handle_validate(objMenucontext, HT_OBJECT, (void**)&pObj, &nError))
 		{
 			_obj_baseproc(hWnd, objMenucontext, pObj, uMsg, wParam, lParam);
 		}
@@ -2627,9 +2627,9 @@ void _wnd_wm_command(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lPa
 
 EXHANDLE _wnd_obj_setnextfocus(HWND hWnd, wnd_s* pWnd, EXHANDLE objEntry, EXHANDLE objLastFocus)
 {
-	void* pObjEntry = nullptr;
+	obj_s* pObjEntry = nullptr;
 	int nError = 0;
-	while (_handle_validate(objEntry, HT_OBJECT, &pObjEntry, &nError))
+	while (_handle_validate(objEntry, HT_OBJECT, (void**)&pObjEntry, &nError))
 	{
 		
 		if (((((obj_s*)pObjEntry)->dwStyleEx_ & EOS_EX_TABSTOP) == EOS_EX_TABSTOP))
@@ -2647,17 +2647,17 @@ EXHANDLE _wnd_obj_setnextfocus(HWND hWnd, wnd_s* pWnd, EXHANDLE objEntry, EXHAND
 
 void _wnd_obj_settabstop(HWND hWnd, wnd_s* pWnd, EXHANDLE objLastFocus)
 {
-	void* pObjLast = nullptr;
+	obj_s* pObjLast = nullptr;
 	int nError = 0;
 	EXHANDLE objNextFocus;
-	if (_handle_validate(objLastFocus, HT_OBJECT, &pObjLast, &nError))
+	if (_handle_validate(objLastFocus, HT_OBJECT, (void**)&pObjLast, &nError))
 	{
 		EXHANDLE objNextFocus = _wnd_obj_setnextfocus(hWnd, pWnd, ((obj_s*)pObjLast)->objNext_, objLastFocus);
 		if (objNextFocus == 0)
 		{
 			EXHANDLE objParent = ((obj_s*)pObjLast)->objParent_;
-			void* pObjParent = nullptr;
-			if (_handle_validate(objParent, HT_OBJECT, &pObjParent, &nError))
+			obj_s* pObjParent = nullptr;
+			if (_handle_validate(objParent, HT_OBJECT, (void**)&pObjParent, &nError))
 			{
 				objNextFocus = _wnd_obj_setnextfocus(hWnd, pWnd, ((obj_s*)pObjParent)->objChildFirst_, objLastFocus);
 			}
@@ -2674,9 +2674,9 @@ void _wnd_obj_settabstop(HWND hWnd, wnd_s* pWnd, EXHANDLE objLastFocus)
 void _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
 	EXHANDLE objFocus = pWnd->objFocus_;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
-	if (_handle_validate(objFocus, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(objFocus, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		if (_obj_baseproc(hWnd, objFocus, pObj, uMsg, wParam, lParam) != 0)//先给组件，看他需不需要消息。
 		{
@@ -2747,24 +2747,24 @@ void _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lP
 
 bool _wnd_obj_childtabstop(EXHANDLE objEntry, EXHANDLE* objFocusable, void** pObjFocusable, EXHANDLE objLast, bool* bFounded)
 {
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
 	bool ret = false;
-	while (_handle_validate(objEntry, HT_OBJECT, &pObj, &nError))
+	while (_handle_validate(objEntry, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		if (!*bFounded)
 		{
 			if (objLast = objEntry) *bFounded = true;
 		}
 		
-		if (((((obj_s*)pObj)->dwStyleEx_ & EOS_EX_TABSTOP) == EOS_EX_TABSTOP))
+		if (((pObj->dwStyleEx_ & EOS_EX_TABSTOP) == EOS_EX_TABSTOP))
 		{
 			*objFocusable = objEntry;
 			*pObjFocusable = pObj;
 			ret = true;
 			break;
 		}
-		EXHANDLE objSub = ((obj_s*)pObj)->objChildFirst_;
+		EXHANDLE objSub = pObj->objChildFirst_;
 		if (objSub != 0)
 		{
 			if (_wnd_obj_childtabstop(objSub, objFocusable, pObjFocusable, objLast, bFounded))
@@ -2773,7 +2773,7 @@ bool _wnd_obj_childtabstop(EXHANDLE objEntry, EXHANDLE* objFocusable, void** pOb
 				break;
 			}
 		}
-		objEntry = ((obj_s*)pObj)->objNext_;
+		objEntry = pObj->objNext_;
 	}
 	return ret;
 }
@@ -2793,12 +2793,12 @@ void _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd)
 		EXHANDLE hObj = pWnd->objFocus_;
 		if (hObj != 0)
 		{
-			void* pObj = nullptr;
+			obj_s* pObj = nullptr;
 			int nError = 0;
-			if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+			if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 			{
 				void* lpLogfont = Ex_MemAlloc(sizeof(LOGFONTW));
-				_font_getlogfont(((obj_s*)pObj)->hFont_, lpLogfont);
+				_font_getlogfont(pObj->hFont_, lpLogfont);
 				ImmSetCompositionFontW(hImc, (LPLOGFONTW)lpLogfont);
 				Ex_MemFree(lpLogfont);
 			}
@@ -2864,18 +2864,18 @@ bool _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, size_t* iI
 	GetCursorPos(&pt);
 	_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
 	_wnd_wm_mouse(pWnd, hWnd, uMsg, wParam, MAKELONG(pt.x, pt.y));
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
 	bool ret = false;
-	if (_handle_validate(pWnd->objHittest_, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(pWnd->objHittest_, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		
-		if (((((obj_s*)pObj)->dwStyleEx_ & EOS_EX_FOCUSABLE) == EOS_EX_FOCUSABLE))
+		if (((pObj->dwStyleEx_ & EOS_EX_FOCUSABLE) == EOS_EX_FOCUSABLE))
 		{
 		
-			if (((((obj_s*)pObj)->dwFlags_ & eof_bMenuItem) == eof_bMenuItem))
+			if (((pObj->dwFlags_ & eof_bMenuItem) == eof_bMenuItem))
 			{
-				*iItem = ((obj_s*)pObj)->lParam_;
+				*iItem = pObj->lParam_;
 			}
 			ret = true;
 		}
@@ -2940,10 +2940,10 @@ bool _wnd_menu_callback_test(HWND hWnd, EXHANDLE hExDui, int uMsg, WPARAM wParam
 		{
 			ScreenToClient(pdui->hWnd_, &pt);
 			EXHANDLE hObj = _wnd_wm_nchittest_obj((HWND)pdui->hexdui_, pdui, pdui->objChildLast_, pt.x, pt.y, 0, 0);
-			void* pObj = nullptr;
-			if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+			obj_s* pObj = nullptr;
+			if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 			{
-				if (((obj_s*)pObj)->id_ == 1007)
+				if (pObj->id_ == 1007)
 				{
 					//先判断控件类型为菜单栏
 					// 分发一条消息给控件,判断鼠标命中的位置是不是还是当前的菜单

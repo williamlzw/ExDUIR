@@ -574,12 +574,12 @@ HRESULT IDropTarget_Drop(void* thisptr, IDataObject* pDataObj, int grfKeyState, 
 	HWND hWnd = pWnd->hWnd_;
 	_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(x, y));
 	size_t hObj = pWnd->objHittest_;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
-	if (_handle_validate(hObj, HT_OBJECT, &pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		
-		if (((((obj_s*)pObj)->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
+		if (((pObj->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
 		{
 			FORMATETC cFmt;
 			cFmt.cfFormat = 15;

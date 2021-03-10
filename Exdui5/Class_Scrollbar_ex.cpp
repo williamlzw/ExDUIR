@@ -1,16 +1,16 @@
 #include "Class_Scrollbar_ex.h"
 
-int _sb_parentnotify(HWND hWnd, void* pObj, size_t wParam, size_t lParam, int uMsg, bool bDispatch)
+int _sb_parentnotify(HWND hWnd, obj_s* pObj, size_t wParam, size_t lParam, int uMsg, bool bDispatch)
 {
-	EXHANDLE hParent = ((obj_s*)pObj)->objParent_;
-	void* lpParent = nullptr;
+	EXHANDLE hParent = pObj->objParent_;
+	obj_s* lpParent = nullptr;
 	int nError = 0;
 	int ret = 0;
-	if (_handle_validate(hParent, HT_OBJECT, &lpParent, &nError))
+	if (_handle_validate(hParent, HT_OBJECT, (void**)&lpParent, &nError))
 	{
 		if (uMsg == 0)
 		{
-			uMsg = ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条) ? WM_VSCROLL : WM_HSCROLL;
+			uMsg = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条) ? WM_VSCROLL : WM_HSCROLL;
 		}
 		if (bDispatch)
 		{
@@ -23,7 +23,7 @@ int _sb_parentnotify(HWND hWnd, void* pObj, size_t wParam, size_t lParam, int uM
 	return ret;
 }
 
-int _sb_pos2point(HWND hWnd, void* pObj, void* psi, int* nPos, bool bVert, int* cxy)
+int _sb_pos2point(HWND hWnd, obj_s* pObj, void* psi, int* nPos, bool bVert, int* cxy)
 {
 	int l = ((si_s*)psi)->rcRegion_left_;
 	int t = ((si_s*)psi)->rcRegion_top_;
@@ -62,25 +62,25 @@ int _sb_pos2point(HWND hWnd, void* pObj, void* psi, int* nPos, bool bVert, int* 
 	return point;
 }
 
-EXHANDLE _sb_getscroll(void* pObj, int nBar)
+EXHANDLE _sb_getscroll(obj_s* pObj, int nBar)
 {
 	EXHANDLE ret = 0;
 	if (nBar == SB_HORZ)
 	{
-		ret = ((obj_s*)pObj)->objHScroll_;
+		ret = pObj->objHScroll_;
 	}
 	else if (nBar == SB_VERT)
 	{
-		ret = ((obj_s*)pObj)->objVScroll_;
+		ret = pObj->objVScroll_;
 	}
 	else if (nBar == SB_CTL)
 	{
-		ret = ((obj_s*)pObj)->hObj_;
+		ret = pObj->hObj_;
 	}
 	return ret;
 }
 
-void _sb_calcthumb(HWND hWnd, void* pObj, void* psi, bool bVScroll)
+void _sb_calcthumb(HWND hWnd, obj_s* pObj, void* psi, bool bVScroll)
 {
 	int cxy;
 	int point = _sb_pos2point(hWnd, pObj, psi, &(((si_s*)psi)->nPos_), bVScroll, &cxy);
@@ -99,7 +99,7 @@ void _sb_calcthumb(HWND hWnd, void* pObj, void* psi, bool bVScroll)
 	}
 }
 
-int _sb_realsetinfo(HWND hWnd, EXHANDLE hObj, void* pObj, int Mask, int nMin, int nMax, int nPage, int nPos, bool bRedraw)
+int _sb_realsetinfo(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int Mask, int nMin, int nMax, int nPage, int nPos, bool bRedraw)
 {
 	void* psi = _obj_pOwner(pObj);
 	if ((Mask & SIF_POS) != 0)
@@ -116,7 +116,7 @@ int _sb_realsetinfo(HWND hWnd, EXHANDLE hObj, void* pObj, int Mask, int nMin, in
 		((si_s*)psi)->nMax_ = nMax;
 	}
 	int nPosOrg = ((si_s*)psi)->nPos_;
-	_sb_calcthumb(hWnd, pObj, psi, ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条));
+	_sb_calcthumb(hWnd, pObj, psi, ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条));
 	nPos = ((si_s*)psi)->nPos_;
 	if (nPos != nPosOrg)
 	{
@@ -130,14 +130,14 @@ int _sb_realsetinfo(HWND hWnd, EXHANDLE hObj, void* pObj, int Mask, int nMin, in
 	return nPos;
 }
 
-void _sb_init(void* pObj)
+void _sb_init(obj_s* pObj)
 {
 	void* psi = _struct_createfromaddr(pObj, offsetof(obj_s, dwOwnerData_), sizeof(si_s), 0);
 	bool bVS = false;
 	if (psi != 0)
 	{
-		bVS = ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条);
-		void* hTheme = ((obj_s*)pObj)->hTheme_;
+		bVS = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条);
+		void* hTheme = pObj->hTheme_;
 		int atom = bVS ? ATOM_VSCROLL : ATOM_HSCROLL;
 		void* pValue = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_SIZE);
 		if (pValue != 0)
@@ -145,7 +145,7 @@ void _sb_init(void* pObj)
 			((si_s*)psi)->xyz_ = MAKELONG(MAKEWORD(Ex_Scale(__get_int(pValue, 0)), Ex_Scale(__get_int(pValue, 4))), MAKEWORD(Ex_Scale(__get_int(pValue, 8)), Ex_Scale(__get_int(pValue, 12))));
 		}
 	}
-	if (((((obj_s*)pObj)->dwStyle_ & EOS_DISABLENOSCROLL) == EOS_DISABLENOSCROLL))
+	if (((pObj->dwStyle_ & EOS_DISABLENOSCROLL) == EOS_DISABLENOSCROLL))
 	{
 		((si_s*)psi)->wArrows_ = ESB_DISABLE_BOTH;
 	}
@@ -168,30 +168,30 @@ void _sb_init(void* pObj)
 	}
 }
 
-void _sb_uninit(void* pObj)
+void _sb_uninit(obj_s* pObj)
 {
 	_struct_destroyfromaddr(pObj, offsetof(obj_s, dwOwnerData_));
 }
 
-void _sb_nccalcsize(HWND hWnd, EXHANDLE hObj, void* pObj)
+void _sb_nccalcsize(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 {
 	void* psi = _obj_pOwner(pObj);
-	bool bVScroll = ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条);
+	bool bVScroll = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条);
 	int xyz = ((si_s*)psi)->xyz_;
 	auto hcxy = HIWORD(xyz);
 	auto lcxy = LOBYTE(hcxy);
 	auto lcxy1 = LOWORD(lcxy);
 	int cx, cy;
-	if (((((obj_s*)pObj)->dwStyle_ & 滚动条风格_控制按钮) == 滚动条风格_控制按钮))
+	if (((pObj->dwStyle_ & 滚动条风格_控制按钮) == 滚动条风格_控制按钮))
 	{
 		cx = LOBYTE(lcxy1);
 		cy = HIBYTE(lcxy1);
 	}
 	RECT rcClient;
-	rcClient.left = ((obj_s*)pObj)->c_left_;
-	rcClient.top = ((obj_s*)pObj)->c_top_;
-	rcClient.right = ((obj_s*)pObj)->c_right_;
-	rcClient.bottom = ((obj_s*)pObj)->c_bottom_;
+	rcClient.left = pObj->c_left_;
+	rcClient.top = pObj->c_top_;
+	rcClient.right = pObj->c_right_;
+	rcClient.bottom = pObj->c_bottom_;
 	if (bVScroll)
 	{
 		((si_s*)psi)->rcArrow1_left_ = rcClient.left;
@@ -270,7 +270,7 @@ int _sb_point2pos(void* psi, int x, int y, bool bVert, bool bCheckPos)
 	return nPos;
 }
 
-void _sb_nchittest(void* pObj, int x, int y)
+void _sb_nchittest(obj_s* pObj, int x, int y)
 {
 	void* psi = _obj_pOwner(pObj);
 	RECT rc;
@@ -322,7 +322,7 @@ void _sb_nchittest(void* pObj, int x, int y)
 					rcRegion.bottom = ((si_s*)psi)->rcRegion_bottom_;
 					if (PtInRect(&rcRegion, pt))
 					{
-						if (((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条))
+						if (((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条))
 						{
 							if (y <= ((si_s*)psi)->rcThumb_top_)
 							{
@@ -355,7 +355,7 @@ void _sb_nchittest(void* pObj, int x, int y)
 	}
 }
 
-void _sb_mousemove(HWND hWnd, EXHANDLE hObj, void* pObj, size_t wParam, int x, int y)
+void _sb_mousemove(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, int x, int y)
 {
 	if (wParam != 0)
 	{
@@ -363,7 +363,7 @@ void _sb_mousemove(HWND hWnd, EXHANDLE hObj, void* pObj, size_t wParam, int x, i
 		if (((si_s*)psi)->httype_ = 滚动条点击类型_滚动条)
 		{
 			int lstPos = ((si_s*)psi)->nTrackPos_;
-			int curPos = _sb_point2pos(psi, x, y, ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条), true);
+			int curPos = _sb_point2pos(psi, x, y, ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条), true);
 			if (lstPos != curPos)
 			{
 				((si_s*)psi)->nTrackPos_ = curPos;
@@ -379,7 +379,8 @@ void _sb_mousemove(HWND hWnd, EXHANDLE hObj, void* pObj, size_t wParam, int x, i
 
 void _sb_timer(HWND hWnd, int uMsg, int idEvent, int dwTime)
 {
-	void* pObj = (void*)(idEvent - TIMER_SCROLLBAR);
+    //TODO: x64 idEvent
+	obj_s* pObj = (obj_s*)(idEvent - TIMER_SCROLLBAR);
 	void* psi = _obj_pOwner(pObj);
 	int nTrack;
 	if (((si_s*)psi)->httype_ == 滚动条点击类型_调节按钮1)
@@ -389,7 +390,7 @@ void _sb_timer(HWND hWnd, int uMsg, int idEvent, int dwTime)
 	else {
 		nTrack = SB_LINEDOWN;
 	}
-	_sb_parentnotify(hWnd, pObj, MAKELONG(nTrack, 0), ((obj_s*)pObj)->hObj_, 0, true);
+	_sb_parentnotify(hWnd, pObj, MAKELONG(nTrack, 0), pObj->hObj_, 0, true);
 	nTrack = ((si_s*)psi)->nPos_;
 	if (((si_s*)psi)->httype_ == 滚动条点击类型_调节按钮1)
 	{
@@ -407,7 +408,7 @@ void _sb_timer(HWND hWnd, int uMsg, int idEvent, int dwTime)
 
 }
 
-void _sb_lbuttondown(HWND hWnd, EXHANDLE hObj, void* pObj, size_t lParam)
+void _sb_lbuttondown(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t lParam)
 {
 	void* psi = _obj_pOwner(pObj);
 	int httype = ((si_s*)psi)->httype_;
@@ -422,7 +423,7 @@ void _sb_lbuttondown(HWND hWnd, EXHANDLE hObj, void* pObj, size_t lParam)
 		{
 			x = LOWORD(lParam) - ((si_s*)psi)->rcThumb_left_;
 			y = HIWORD(lParam) - ((si_s*)psi)->rcThumb_top_;
-			((si_s*)psi)->nTrackPosOffset_ = ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条) ? y : x;
+			((si_s*)psi)->nTrackPosOffset_ = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条) ? y : x;
 			((si_s*)psi)->nTrackPos_ = ((si_s*)psi)->nPos_;
 		}
 		else if (httype == 滚动条点击类型_调节按钮1)
@@ -455,7 +456,7 @@ void _sb_lbuttondown(HWND hWnd, EXHANDLE hObj, void* pObj, size_t lParam)
 	}
 }
 
-void _sb_lbuttonup(HWND hWnd, EXHANDLE hObj, void* pObj, size_t lParam)
+void _sb_lbuttonup(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t lParam)
 {
 	int nError = 0;
 	_obj_setuistate(pObj, 状态_按下, true, 0, true, &nError);
@@ -464,7 +465,7 @@ void _sb_lbuttonup(HWND hWnd, EXHANDLE hObj, void* pObj, size_t lParam)
 	KillTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR);
 }
 
-void _sb_oncommand(HWND hWnd, EXHANDLE hObj, void* pObj, size_t wParam, size_t lParam)
+void _sb_oncommand(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, size_t lParam)
 {
 	bool fNotify = true;
 	wnd_s* pWnd;
@@ -472,11 +473,11 @@ void _sb_oncommand(HWND hWnd, EXHANDLE hObj, void* pObj, size_t wParam, size_t l
 	int nCode;
 	if (wParam == 4100)
 	{
-		pWnd = ((obj_s*)pObj)->pWnd_;
+		pWnd = pObj->pWnd_;
 		void* psi = _obj_pOwner(pObj);
 		int nTrackPosOffset = ((si_s*)psi)->nTrackPosOffset_;
 		((si_s*)psi)->nTrackPosOffset_ = 0;
-		nPos = _sb_point2pos(psi, LOWORD(nTrackPosOffset) - ((obj_s*)pObj)->w_left_ - pWnd->left_, HIWORD(nTrackPosOffset) - ((obj_s*)pObj)->w_top_ - pWnd->top_, ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条), true);
+		nPos = _sb_point2pos(psi, LOWORD(nTrackPosOffset) - pObj->w_left_ - pWnd->left_, HIWORD(nTrackPosOffset) - pObj->w_top_ - pWnd->top_, ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条), true);
 		((si_s*)psi)->nTrackPos_ = nPos;
 		nCode = SB_THUMBPOSITION;
 	}
@@ -513,9 +514,9 @@ void _sb_oncommand(HWND hWnd, EXHANDLE hObj, void* pObj, size_t wParam, size_t l
 	}
 }
 
-void _sb_oncontextmenu(EXHANDLE hObj, void* pObj, size_t lParam)
+void _sb_oncontextmenu(EXHANDLE hObj, obj_s* pObj, size_t lParam)
 {
-	void* hMenu = ((((obj_s*)pObj)->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条) ? g_Li.hMenuVS : g_Li.hMenuHS;
+	void* hMenu = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条) ? g_Li.hMenuVS : g_Li.hMenuHS;
 	hMenu = GetSubMenu((HMENU)hMenu, 0);
 	void* psi = _obj_pOwner(pObj);
 	((si_s*)psi)->nTrackPosOffset_ = lParam;
@@ -532,7 +533,7 @@ void _sb_oncontextmenu(EXHANDLE hObj, void* pObj, size_t lParam)
 	Ex_TrackPopupMenu(hMenu, 0, LOWORD(lParam), HIWORD(lParam), 0, hObj, 0, 0, 0);
 }
 
-int _sb_paint(EXHANDLE hObj, void* pObj)
+int _sb_paint(EXHANDLE hObj, obj_s* pObj)
 {
 	paintstruct_s ps;
 	if (Ex_ObjBeginPaint(hObj, &ps))
@@ -631,9 +632,9 @@ int _sb_paint(EXHANDLE hObj, void* pObj)
 
 void _sb_set_wArrows(EXHANDLE hSB, int wArrows, bool fRedraw)
 {
-	void* pSB = nullptr;
+	obj_s* pSB = nullptr;
 	int nError = 0;
-	if (_handle_validate(hSB, HT_OBJECT, &pSB, &nError))
+	if (_handle_validate(hSB, HT_OBJECT, (void**)&pSB, &nError))
 	{
 		void* psi = _obj_pOwner(pSB);
 		if (psi != 0)
@@ -654,7 +655,7 @@ void _sb_set_wArrows(EXHANDLE hSB, int wArrows, bool fRedraw)
 	}
 }
 
-size_t _sb_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, void* pObj)
+size_t _sb_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
 {
 	int nError = 0;
 	if (uMsg == WM_CREATE)

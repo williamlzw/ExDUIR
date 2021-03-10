@@ -126,8 +126,8 @@ struct wnd_s
 
 EXHANDLE Ex_DUIFromWindow(HWND hWnd);
 WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCURSOR hCursor);
-bool _wnd_getfromhandle(size_t handle, HWND* hWnd = NULL, wnd_s** pWnd = NULL, void** pObj = NULL, bool* isObject = NULL, int* nError = NULL);
-int _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, int nID, int nCode, WPARAM wParam, LPARAM lParam, void* pObj);
+bool _wnd_getfromhandle(size_t handle, HWND* hWnd = NULL, wnd_s** pWnd = NULL, obj_s** pObj = NULL, bool* isObject = NULL, int* nError = NULL);
+int _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, int nID, int nCode, WPARAM wParam, LPARAM lParam, obj_s* pObj);
 void _wnd_redraw_bkg(HWND hWnd, wnd_s* pWnd, void* lpRect, bool bRedrawBkg, bool bUpdate);
 LRESULT 窗口_默认回调(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 bool 窗口_查询风格(HWND hWnd, int dwStyle, bool bExStyle);
@@ -150,7 +150,7 @@ void _wnd_calc_captionrect(wnd_s* pWnd, RECT* rcCaption);
 int _wnd_create(size_t hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, void* hTheme, LPARAM lParam, void* lpfnMsgProc);
 void _wnd_backgroundimage_timer_inherit(HWND hWnd, int uMsg, int idEvent, int dwTime);
 int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam);
-int _wnd_dispatch_msg_obj(HWND hWnd, void* lpData, int pObj, int uMsg, WPARAM wParam, LPARAM lParam);
+int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int pObj, int uMsg, WPARAM wParam, LPARAM lParam);
 size_t CALLBACK _wnd_tooltips_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam);
 size_t CALLBACK _wnd_shadow_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void _wnd_dx_unint(wnd_s* pWnd);
@@ -163,7 +163,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, void* pContext, EXHANDLE cvDisplay,
 	EXHANDLE objChildFirst, int offsetX, int offsetY, int pAlpha, bool fDX, void* hBorderBrush);
 bool _wnd_wm_setcursor(HWND hWnd, wnd_s* pWnd, LPARAM lParam);
 void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
-void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, EXHANDLE objCheck, EXHANDLE objHittest, void* pObjHittest, bool fTrack);
+void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, EXHANDLE objCheck, EXHANDLE objHittest, obj_s* pObjHittest, bool fTrack);
 int _wnd_destroy(HWND hWnd, wnd_s* pWnd);
 void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd);
 void _wnd_render_dc(HWND hWnd, wnd_s* pWnd, void* hDC, EXHANDLE cvDisplay, RECT rcPaint, bool fLayer);
@@ -175,7 +175,7 @@ void _wnd_menu_init(HWND hWnd, wnd_s* pWnd);
 void _wnd_paint_shadow(wnd_s* pWnd, bool bUpdateRgn, bool bFlush);
 bool _wnd_wm_paint(wnd_s* pWnd, HWND hWnd);
 bool _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam);
-void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, void* pObj, int uMsg, WPARAM wParam, LPARAM lParam);
+void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, WPARAM wParam, LPARAM lParam);
 void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, bool fMsgDispatch);
 void _wnd_wm_captionchange(HWND hWnd, wnd_s* pWnd);
 void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam);

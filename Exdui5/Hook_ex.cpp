@@ -54,7 +54,7 @@ size_t _menu_proc(void* pData, int uMsg, size_t wParam, size_t lParam)
 #elif defined(_M_AMD64)
 	HWND hWnd = (HWND)__get(pData, 22);
 	LONG64 pOld = (LONG64)__get(pData, 30);
-	wnd_s* pWnd = (void*)__get(pData, 38);
+	wnd_s* pWnd = (wnd_s*)__get(pData, 38);
 #endif
 	if (uMsg == WM_DESTROY)
 	{
@@ -249,7 +249,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 	top = maxHeight / g_Li.DpiY - __get_int(pValue, 12) + (__get_int(pValue, 12) - 24) / 2;
 	left = maxWidth / g_Li.DpiX - 85;
 	EXHANDLE hObj = 0;
-	void* pObj = nullptr;
+	obj_s* pObj = nullptr;
 	int nError = 0;
 	for (int i = aryID.size(); i > 1; i--)
 	{
@@ -257,7 +257,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 		if (hObj != 0)
 		{
 			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_BUTTON, aryText.data(), -1, left, top, 80, 24, 0, ~aryID[i], 0, aryID[i], -1);
-			((obj_s*)pObj)->dwFlags_ = ((obj_s*)pObj)->dwFlags_ | eof_bMsgBoxControl;
+			pObj->dwFlags_ = pObj->dwFlags_ | eof_bMsgBoxControl;
 			_obj_create_done(hWnd, pWnd, hObj, pObj);
 			if (aryID[i] == iDef) _obj_setfocus(hWnd, pWnd, hObj, pObj, true);
 		}

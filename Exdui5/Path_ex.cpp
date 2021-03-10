@@ -24,7 +24,7 @@ bool _path_reset(EXHANDLE hPath)
 		void* pGeometry = ((path_s*)pPath)->pGeometry_;
 		((ID2D1PathGeometry*)pGeometry)->Release();
 		RtlZeroMemory(pPath, sizeof(path_s));
-		void* pObj = nullptr;
+		obj_s* pObj = nullptr;
 		nError = ((ID2D1Factory*)g_Ri.pD2Dfactory)->CreatePathGeometry((ID2D1PathGeometry**)&pObj);
 		if (nError == 0)
 		{

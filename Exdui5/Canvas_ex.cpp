@@ -672,7 +672,7 @@ bool _canvas_getsize(EXHANDLE hCanvas, int* width, int* height)
 
 bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** ppLayout, int* nError)
 {
-	void* pObj = ((font_s*)pFont)->pObj_;
+	obj_s* pObj = ((font_s*)pFont)->pObj_;
 	if (layoutWidth < 0) layoutWidth = 0;
 	if (layoutHeight < 0) layoutHeight = 0;
 	int nPreFix;
