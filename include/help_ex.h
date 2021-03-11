@@ -14,6 +14,7 @@
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME																	//声明一个函数指针变量
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule,#NAME)	
 
+
 #include "constant_ex.h"
 #include "Thread_ex.h"
 #include "HashTable_ex.h"
@@ -22,8 +23,7 @@
 #include "Global_ex.h"
 
 typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
-typedef int(*ClsPROC)(HWND, size_t, int, size_t, size_t, void*);
-typedef int(*MsgPROC)(HWND, size_t, int, size_t, void*, void*);
+typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 
 #define ExGetB(rgb)			(LOBYTE(rgb))
 #define ExGetG(rgb)			(LOBYTE(((WORD)(rgb)) >> 8))

@@ -535,7 +535,7 @@ void _wnd_calc_captionrect(wnd_s* pWnd, RECT* rcCaption)
 }
 
 
-void _wnd_backgroundimage_timer_inherit(HWND hWnd, int uMsg, int idEvent, int dwTime)
+void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	KillTimer(hWnd, idEvent);
 	wnd_s* pWnd = (wnd_s*)(idEvent - TIMER_BKG_INHERIT);
@@ -546,15 +546,15 @@ void _wnd_backgroundimage_timer_inherit(HWND hWnd, int uMsg, int idEvent, int dw
 		int nError = 0;
 		if (_handle_validate(pWnd->hExDuiParent_, HT_DUI, &ppWnd, &nError))
 		{
-			void* lpBI = ((wnd_s*)ppWnd)->lpBackgroundImage_;
-			if (lpBI != 0)
+			bkgimg_s* lpBI = (bkgimg_s*)((wnd_s*)ppWnd)->lpBackgroundImage_;
+			if (lpBI)
 			{
-				void* pDelay = ((bkgimg_s*)lpBI)->lpDelay_;
+				void* pDelay = lpBI->lpDelay_;
 				if (pDelay != 0)
 				{
 					_wnd_redraw_bkg(hWnd, pWnd, 0, true, false);
 					UpdateWindow(hWnd);
-					SetTimer(hWnd, idEvent, __get_int(pDelay, ((bkgimg_s*)lpBI)->curFrame_ * 4) * 10, (TIMERPROC)&_wnd_backgroundimage_timer_inherit);
+					SetTimer(hWnd, idEvent, __get_int(pDelay, lpBI->curFrame_ * 4) * 10, &_wnd_backgroundimage_timer_inherit);
 				}
 			}
 		}
@@ -952,7 +952,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return CallWindowProcW((WNDPROC)pOld, hWnd, uMsg, wParam, lParam);
 }
 
-int _wnd_create(size_t hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, void* hTheme, LPARAM lParam, void* lpfnMsgProc)
+int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, void* hTheme, LPARAM lParam, void* lpfnMsgProc)
 {
 
 	ShowWindow(hWnd, 0);
@@ -1865,14 +1865,14 @@ int _wnd_destroy(HWND hWnd, wnd_s* pWnd)
 	_rgn_destroy(pWnd->hrgn_sizebox_);
 	_canvas_destroy(pWnd->canvas_bkg_);
 	_canvas_destroy(pWnd->canvas_display_);
-	size_t hLayout = pWnd->hLayout_;
+	EXHANDLE hLayout = pWnd->hLayout_;
 	if (hLayout != 0)
 	{
 		_layout_destory(hLayout);
 	}
 
 	_wnd_dx_unint(pWnd);
-	size_t hExDui = pWnd->hexdui_;
+	EXHANDLE hExDui = pWnd->hexdui_;
 	_handle_destroy(hExDui, &nError);
 	Ex_MemFree(pWnd);
 	Ex_SetLastError(nError);
@@ -1898,7 +1898,7 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd)
 			if (!((pWnd->dwFlags_ & EWF_bInheritBkgStarted) == EWF_bInheritBkgStarted))
 			{
 				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_bInheritBkgStarted;
-				SetTimer(hWnd, (size_t)pWnd + TIMER_BKG_INHERIT, 100, (TIMERPROC)&_wnd_backgroundimage_timer_inherit);
+				SetTimer(hWnd, (size_t)pWnd + TIMER_BKG_INHERIT, 100, &_wnd_backgroundimage_timer_inherit);
 			}
 		}
 		//绘制底色
@@ -2581,8 +2581,8 @@ void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM 
 	{
 		if (_obj_baseproc(hWnd, objHittest, pObj, uMsg, wParam, lParam) == 0)//我认为这样是不完善的，因为存在转发WHEEL消息让别的控件滚动的可能性
 		{
-			void* pCls = pObj->pCls_;
-			if (((class_s*)pCls)->atomName_ == ATOM_SCROLLBAR)
+			class_s* pCls = pObj->pCls_;
+			if (pCls->atomName_ == ATOM_SCROLLBAR)
 			{
 				_sb_parentnotify(hWnd, pObj, wParam > 0 ? SB_LINEUP : SB_LINEDOWN, objHittest, 0, true);
 			}

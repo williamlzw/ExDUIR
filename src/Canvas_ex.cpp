@@ -364,7 +364,7 @@ bool _canvas_drawimagerectrect(EXHANDLE hCanvas, EXHANDLE hImage, float dstLeft,
 			{
 				D2D1_RECT_F rect = { dstLeft,dstTop,dstRight,dstBottom };
 				D2D1_RECT_F srect = { srcLeft,srcTop,srcRight,srcBottom };
-				((ID2D1DeviceContext*)pContext)->DrawBitmap(pBitmap, rect, alpha / 255.0, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, srect);
+				((ID2D1DeviceContext*)pContext)->DrawBitmap(pBitmap, rect, alpha / 255.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, srect);
 				((ID2D1Bitmap*)pBitmap)->Release();
 			}
 		}
@@ -670,14 +670,14 @@ bool _canvas_getsize(EXHANDLE hCanvas, int* width, int* height)
 	return nError == 0;
 }
 
-bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** ppLayout, int* nError)
+bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, DWORD dwLen, DWORD dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** ppLayout, int* nError)
 {
 	obj_s* pObj = ((font_s*)pFont)->pObj_;
 	if (layoutWidth < 0) layoutWidth = 0;
 	if (layoutHeight < 0) layoutHeight = 0;
 	int nPreFix;
 	auto lpwzTextFix = prefixstring(lpwzText, dwDTFormat, &nPreFix);
-	float iWidth, iHeight;
+	float iWidth = 0, iHeight = 0;
 	*nError = ((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextLayout((WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, (IDWriteTextFormat*)pObj, layoutWidth, layoutHeight, (IDWriteTextLayout**)ppLayout);
 	void * pLayout = *ppLayout;
 	if (*nError == 0)
@@ -755,10 +755,10 @@ bool _canvas_calctextsize_ex(void* pCanvas, void* pFont, LPCWSTR lpwzText, int d
 	return *nError == 0;
 }
 
-bool _canvas_calctextsize(EXHANDLE hCanvas, void* hFont, LPCWSTR lpwzText, int dwLen, int dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight)
+bool _canvas_calctextsize(EXHANDLE hCanvas, void* hFont, LPCWSTR lpwzText, DWORD dwLen, DWORD dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight)
 {
 	int nError = 0;
-	if (dwLen = -1)
+	if (dwLen == -1)
 	{
 		dwLen = lstrlenW(lpwzText);
 	}
@@ -798,7 +798,7 @@ void _canvas_dx_drawtext_buffer(void* pCanvas, void* pLayout, int crText, float 
 	((IDWriteTextLayout*)pLayout)->Release();
 }
 
-bool _canvas_drawtextex(EXHANDLE hCanvas, void* hFont, int crText, LPCWSTR lpwzText, int dwLen, int dwDTFormat, float left, float top, float right, float bottom, int iGlowsize, int crShadom, LPARAM lParam, void* prclayout)
+bool _canvas_drawtextex(EXHANDLE hCanvas, void* hFont, int crText, LPCWSTR lpwzText, DWORD dwLen, DWORD dwDTFormat, float left, float top, float right, float bottom, int iGlowsize, int crShadom, LPARAM lParam, void* prclayout)
 {
 	if (dwLen == -1)
 	{
