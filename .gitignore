@@ -10,3 +10,6 @@
 /msvc/dll/Debug/
 /msvc/dll/Release/
 /cmake-build-debug/
+/x64/
+/Debug/
+/Release/
