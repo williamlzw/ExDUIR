@@ -1,11 +1,11 @@
 #include "Class_Scrollbar_ex.h"
 
-int _sb_parentnotify(HWND hWnd, obj_s* pObj, size_t wParam, size_t lParam, int uMsg, bool bDispatch)
+size_t _sb_parentnotify(HWND hWnd, obj_s* pObj, size_t wParam, size_t lParam, int uMsg, bool bDispatch)
 {
 	EXHANDLE hParent = pObj->objParent_;
 	obj_s* lpParent = nullptr;
 	int nError = 0;
-	int ret = 0;
+	size_t ret = 0;
 	if (_handle_validate(hParent, HT_OBJECT, (void**)&lpParent, &nError))
 	{
 		if (uMsg == 0)
@@ -36,7 +36,7 @@ int _sb_pos2point(HWND hWnd, obj_s* pObj, void* psi, int* nPos, bool bVert, int*
 	auto  nMinThumbsize2 = HIBYTE(nMinThumbsize);
 	int maxPos = nMax - nMin;
 	int sizeRegin = bVert ? b - t : r - l;
-	int point;
+	int point = 0;
 	if (maxPos > 0)
 	{
 		if (*nPos < nMin)
@@ -134,7 +134,7 @@ void _sb_init(obj_s* pObj)
 {
 	void* psi = _struct_createfromaddr(pObj, offsetof(obj_s, dwOwnerData_), sizeof(si_s), 0);
 	bool bVS = false;
-	if (psi != 0)
+	if (psi)
 	{
 		bVS = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条);
 		void* hTheme = pObj->hTheme_;
@@ -144,12 +144,11 @@ void _sb_init(obj_s* pObj)
 		{
 			((si_s*)psi)->xyz_ = MAKELONG(MAKEWORD(Ex_Scale(__get_int(pValue, 0)), Ex_Scale(__get_int(pValue, 4))), MAKEWORD(Ex_Scale(__get_int(pValue, 8)), Ex_Scale(__get_int(pValue, 12))));
 		}
+		if (((pObj->dwStyle_ & EOS_DISABLENOSCROLL) == EOS_DISABLENOSCROLL))
+		{
+			((si_s*)psi)->wArrows_ = ESB_DISABLE_BOTH;
+		}
 	}
-	if (((pObj->dwStyle_ & EOS_DISABLENOSCROLL) == EOS_DISABLENOSCROLL))
-	{
-		((si_s*)psi)->wArrows_ = ESB_DISABLE_BOTH;
-	}
-
 	if (g_Li.hMenuVS == 0 && bVS)
 	{
 		HMODULE puser32 = GetModuleHandleW(L"user32.dll");
@@ -181,7 +180,7 @@ void _sb_nccalcsize(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 	auto hcxy = HIWORD(xyz);
 	auto lcxy = LOBYTE(hcxy);
 	auto lcxy1 = LOWORD(lcxy);
-	int cx, cy;
+	int cx = 0, cy = 0;
 	if (((pObj->dwStyle_ & 滚动条风格_控制按钮) == 滚动条风格_控制按钮))
 	{
 		cx = LOBYTE(lcxy1);
@@ -281,7 +280,7 @@ void _sb_nchittest(obj_s* pObj, int x, int y)
 	POINT pt;
 	pt.x = x;
 	pt.y = y;
-	int httype;
+	int httype = NULL;
 	if (PtInRect(&rc, pt))
 	{
 		if (!((((si_s*)psi)->wArrows_ & ESB_DISABLE_LEFT) == ESB_DISABLE_LEFT))
@@ -360,7 +359,7 @@ void _sb_mousemove(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, int x, 
 	if (wParam != 0)
 	{
 		void* psi = _obj_pOwner(pObj);
-		if (((si_s*)psi)->httype_ = 滚动条点击类型_滚动条)
+		if (((si_s*)psi)->httype_ == 滚动条点击类型_滚动条)
 		{
 			int lstPos = ((si_s*)psi)->nTrackPos_;
 			int curPos = _sb_point2pos(psi, x, y, ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条), true);
@@ -377,9 +376,8 @@ void _sb_mousemove(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, int x, 
 	}
 }
 
-void _sb_timer(HWND hWnd, int uMsg, int idEvent, int dwTime)
+void CALLBACK _sb_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-    //TODO: x64 idEvent
 	obj_s* pObj = (obj_s*)(idEvent - TIMER_SCROLLBAR);
 	void* psi = _obj_pOwner(pObj);
 	int nTrack;
@@ -451,7 +449,7 @@ void _sb_lbuttondown(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t lParam)
 		}
 		if (fTimer)
 		{
-			SetTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR, 200, (TIMERPROC)&_sb_timer);
+			SetTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR, 200, &_sb_timer);
 		}
 	}
 }
@@ -469,7 +467,7 @@ void _sb_oncommand(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, size_t 
 {
 	bool fNotify = true;
 	wnd_s* pWnd;
-	int nPos;
+	int nPos = NULL;
 	int nCode;
 	if (wParam == 4100)
 	{

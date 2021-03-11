@@ -7,6 +7,7 @@
 #include "Class_Scrollbar_ex.h"
 
 typedef int(*EnumPROC)(size_t, size_t);
+typedef size_t(*ClsPROC)(HWND, EXHANDLE, int, size_t, size_t, obj_s*);
 
 #define eof_bUserProcessesed 1
 #define eof_bMsgBoxControl 2
@@ -54,7 +55,7 @@ struct class_s
 	int dwTextFormat_;
 	int cbObjExtra_;
 	void* hCursor_;
-	void* pfnObjProc_;
+	ClsPROC pfnObjProc_;
 	int atomName_;
 };
 
@@ -139,8 +140,8 @@ struct obj_s
 	void* hCursor_;
 	int dwStyle_;
 	void* pPropListEntry_;
-	void* pCls_;
-	void* pfnClsProc_;
+	class_s* pCls_;
+	ClsPROC pfnClsProc_;
 	int id_;
 	int dwTextFormat_;
 	void* hRgbSizebox_;
@@ -228,8 +229,8 @@ struct si_s
 	int wArrows_;
 };
 
-int Ex_ObjRegister(LPCWSTR lptszClassName, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, int dwFlags, void* pfnObjProc);
-void _obj_register(int atomClass, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, void* pfnObjProc, int dwFlags, int* nError);
+int Ex_ObjRegister(LPCWSTR lptszClassName, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, int dwFlags, ClsPROC pfnObjProc);
+void _obj_register(int atomClass, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, ClsPROC pfnObjProc, int dwFlags, int* nError);
 EXHANDLE Ex_ObjLayoutGet(EXHANDLE handle);
 void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, void** pParent);
 void _obj_z_set_before_topmost(EXHANDLE objChildFirst, void* pObjChildFirst, EXHANDLE objChildLast, obj_s* pObjChildLast, EXHANDLE hObj, obj_s* pObj, void* pParent);
@@ -317,7 +318,7 @@ EXHANDLE Ex_ObjGetFromID(EXHANDLE hExDuiOrhObj, int nID);
 EXHANDLE Ex_ObjFind(EXHANDLE hObjParent, EXHANDLE hObjChildAfter, void* lpClassName, void* lpTitle);
 bool Ex_ObjEnumChild(EXHANDLE hObjParent, void* lpEnumFunc, size_t lParam);
 bool Ex_ObjGetBackgroundImage(EXHANDLE handle, void* lpBackgroundImage);
-void _obj_backgroundimage_timer(HWND hWnd, int uMsg, int idEvent, int dwTime);
+void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 bool _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, void* lpImage, int dwImageLen, int x, int y, int dwRepeat, void* lpGrid, int dwFlags, int dwAlpha, int* nError);
 bool Ex_ObjSetBackgroundImage(EXHANDLE handle, void* lpImage, int dwImageLen, int x, int y, int dwRepeat, void* lpGrid, int dwFlags, int dwAlpha, bool fUpdate);
 void _obj_backgroundimage_frames(HWND hWnd, obj_s* pObj, bool bResetFrame, bool bPlayFrames, bool fUpdate, int* nError);

@@ -874,6 +874,8 @@ void _apng_int(EXHANDLE hImage, void* lpStream)
 										__set_int(pThunk, 20, _apng_thunk_getlength((void*)((size_t)pThunk + 20)));
 										__set_int(pThunk, 24, _apng_thunk_getlength((void*)((size_t)pThunk + 24)));
 										__set_int(pThunk, 28, _apng_thunk_getlength((void*)((size_t)pThunk + 28)));
+
+										//TODO: x64
 										__set_int(pFrames, i * sizeof(void*), (int)pThunk);
 										i = i + 1;
 									}

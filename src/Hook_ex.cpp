@@ -73,7 +73,7 @@ void _menu_init(HWND hWnd)
 	void* hMenu = (void*)SendMessageW(hWnd, 481, 0, 0);
 	if (hMenu != 0)
 	{
-		size_t hExDui;
+		size_t hExDui; // 由于HashTable_Get会写入8字节，这里必须是size_t类型
 		HashTable_Get(g_Li.hTableLayout, (size_t)hMenu, &hExDui);
 		wnd_s* pWnd = nullptr;
 		int nError = 0;
@@ -93,7 +93,7 @@ void _menu_init(HWND hWnd)
 				}
 				pfnCallback = ((menu_s*)lpMenuParams)->pfnCallback_;
 			}
-			size_t hExDui = Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, dwStyle, (size_t)pWnd, pfnCallback);
+			EXHANDLE hExDui = Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, dwStyle, (size_t)pWnd, pfnCallback);
 			if (_handle_validate(hExDui, HT_DUI, (void**)&pWnd, &nError))
 			{
 				pWnd->lpMenuParams_ = lpMenuParams;
@@ -128,7 +128,7 @@ void _msgbox_drawinfo(wnd_s* pWnd, EXHANDLE cvBkg)
 			std::wstring value;
 			value.push_back(wType);
 			void* pValue = Ex_ThemeGetValuePtr(hTheme, ATOM_MESSAGEBOX, Ex_Atom(value.data()));
-			int r, b;
+			int r = NULL, b = NULL;
 			if (pValue != 0)
 			{
 				r = l + Ex_Scale(__get_int(pValue, 8) - __get_int(pValue, 0));
@@ -160,7 +160,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 	auto pfnCallback = ((mbp_s*)pMsg)->lpfnNotifyCallback_;
 	auto hTheme = pWnd->hTheme_;
 	auto hWndChild = GetWindow(hWnd, GW_CHILD);
-	RECT rcText;
+	RECT rcText = { 0 };
 	std::vector<std::wstring> aryText;
 	std::vector<size_t> aryID;
 	size_t iDef = 0;
@@ -185,11 +185,11 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 	}
 	auto n = aryID.size();
 	int maxWidth = Ex_Scale(10) * 2 + Ex_Scale(80) * n + Ex_Scale(5) * n;
-	size_t hCanvas = pWnd->canvas_bkg_;
+	EXHANDLE hCanvas = pWnd->canvas_bkg_;
 	void* hFont = _font_create();
 	int width = rcText.right - rcText.left;
-	int w, h;
-	int widthCheckbox;
+	int w = NULL, h = NULL;
+	int widthCheckbox = NULL;
 	if (hFont != 0 && hCanvas != 0)
 	{
 		if (lpwzCheckbox != 0)
@@ -251,7 +251,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 	EXHANDLE hObj = 0;
 	obj_s* pObj = nullptr;
 	int nError = 0;
-	for (int i = aryID.size(); i > 1; i--)
+	for (size_t i = aryID.size(); i > 1; i--)
 	{
 		hObj = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, &nError);
 		if (hObj != 0)

@@ -1,6 +1,6 @@
 #include "Class_SysButton_Page_ex.h"
 
-size_t _sysbutton_paint(HWND hWnd, size_t hObj, obj_s* pObj)
+size_t _sysbutton_paint(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 {
 	paintstruct_s ps;
 	int atomClass = 0;
@@ -70,7 +70,7 @@ size_t _sysbutton_paint(HWND hWnd, size_t hObj, obj_s* pObj)
 				size_t atomClass = 窗口_取图标句柄(hWnd, false);
 				if (atomClass != 0)
 				{
-					size_t hImg = _img_createfromhicon((void*)atomClass);
+					EXHANDLE hImg = _img_createfromhicon((void*)atomClass);
 					if (hImg != 0)
 					{
 						_canvas_drawimagerect(ps.hCanvas_, hImg, left, (ps.t_bottom_ - ps.t_top_ - 16) / 2, left + 16, (ps.t_bottom_ - ps.t_top_ - 16) / 2 + 16, 255);
@@ -110,7 +110,7 @@ void _sysbutton_remove_proc(obj_s* pObj, int width, int height)
 	}
 }
 
-size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
+size_t _sysbutton_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
 {
 	int nError = 0;
 	if (uMsg == WM_NCCREATE)
@@ -256,7 +256,7 @@ size_t _sysbutton_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t l
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-size_t _page_paint(size_t hObj)
+size_t _page_paint(EXHANDLE hObj)
 {
 	paintstruct_s ps;
 	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
@@ -266,7 +266,7 @@ size_t _page_paint(size_t hObj)
 	return 0;
 }
 
-void _page_onvscrollbar(HWND hWnd, size_t hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam)
+void _page_onvscrollbar(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam)
 {
 	auto nCode = LOWORD(wParam);
 	int oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
@@ -310,7 +310,7 @@ void _page_onvscrollbar(HWND hWnd, size_t hObj, obj_s* pObj, int uMsg, size_t wP
 	Ex_ObjSetPos(pObj->objChildFirst_, 0, EOP_DEFAULT, (-nPos), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
 }
 
-size_t _page_proc(HWND hWnd, size_t hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
+size_t _page_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
 {
 	if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL)
 	{

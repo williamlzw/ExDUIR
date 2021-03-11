@@ -31,7 +31,7 @@ bool Array_IsLegal(void* pArray, size_t nIndex)
 
 bool Array_Resize(void* pArray, int nCount, bool fGrowCount)
 {
-	if (Array_IsLegal(pArray) == false) return false;
+	if (!Array_IsLegal(pArray)) return false;
 	void* pData = ((array_s*)pArray)->lpData_;
 	if (fGrowCount) nCount = nCount + ((array_s*)pArray)->nCount_;
 	int nSize = ((array_s*)pArray)->nSize_;
