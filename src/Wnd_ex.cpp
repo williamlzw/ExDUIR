@@ -3031,9 +3031,9 @@ bool Ex_TrackPopupMenu(void* hMenu, int uFlags, int x, int y, int nReserved, siz
 {
 	HWND hWnd = 0;
 	wnd_s* pWnd = nullptr;
+    menu_s menu{};
 	if (_wnd_getfromhandle(handle, &hWnd, &pWnd))
 	{
-	    menu_s menu{};
 	    menu.hMenu_ = hMenu;
 	    menu.uFlags_ = uFlags;
 	    menu.x_ = x;
@@ -3053,9 +3053,9 @@ int Ex_MessageBoxEx(size_t handle, void* lpText, void* lpCaption, int uType, voi
 {
     HWND hWnd = 0;
     wnd_s* pWnd = nullptr;
+    mbp_s mbp{};
     if (_wnd_getfromhandle(handle, &hWnd, &pWnd))
     {
-        mbp_s mbp{};
         mbp.handle_ = handle;
         mbp.lpText_ = lpText;
         mbp.lpCaption_ = lpCaption;
