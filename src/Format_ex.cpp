@@ -159,7 +159,7 @@ bool _fmt_getvalue(void** lpValue, int atomDest)
 	return ret;
 }
 
-bool _fmt_bin(void* hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpFreeBuffer)
+bool _fmt_bin(hashtable_s* hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpFreeBuffer)
 {
 	bool ret = true;
 	*lpFreeBuffer = false;

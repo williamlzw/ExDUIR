@@ -131,7 +131,7 @@
     <ClInclude Include="..\..\include\Hook_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\image_ex.h">
+    <ClInclude Include="..\..\include\Image_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Layout_ex.h">
@@ -156,9 +156,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\StrokeStyle_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\struct_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Theme_ex.h">

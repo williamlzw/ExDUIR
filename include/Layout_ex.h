@@ -1,9 +1,6 @@
 #pragma once
 #include "help_ex.h"
-#include "HashTable_ex.h"
-#include "Array_ex.h"
-#include "Object_ex.h"
-#include "Wnd_ex.h"
+
 
 typedef int(*LayoutThreePROC)(void*, int, size_t, size_t);
 typedef int(*LayoutTwoPROC)(int, size_t, size_t);
@@ -114,7 +111,7 @@ struct layout_s
 	int nBindType_;//绑定组件的类型,#HT_OBJECT或#HL_DUI
 	void* lpLayoutInfo_;//父组件的布局信息
 	int cbInfoLen_; //子组件属性长度(根据不同布局类型不同)
-	void* hArrChildrenInfo_; //处理的子组件属性数组
+	array_s* hArrChildrenInfo_; //处理的子组件属性数组
 	bool fUpdateable_; //是否允许布局更新
 	EXHANDLE hLayout_; //本布局句柄
 };
@@ -122,12 +119,12 @@ struct layout_s
 
 bool _layout_register(int nType, void* lpfnLayoutProc);
 bool _layout_unregister(int nType);
-void _layout_free_info(void* hArr, int nIndex, void* pvItem, int nType);
+void _layout_free_info(array_s* hArr, int nIndex, void* pvItem, int nType);
 EXHANDLE _layout_create(int nType, EXHANDLE hObjBind);
 EXHANDLE _layout_get_parent_layout(EXHANDLE hObj);
 bool _layout_destory(EXHANDLE hLayout);
 bool _layout_enum_find_obj(void* hArr, int nIndex, void* pvItem, int nType, void* pvParam);
-void* _layout_get_child(void* pLayout, EXHANDLE hObj);
+void* _layout_get_child(layout_s* pLayout, EXHANDLE hObj);
 bool _layout_update(EXHANDLE hLayout);
 int _layout_gettype(EXHANDLE hLayout);
 bool _layout_enableupdate(EXHANDLE hLayout, bool fUpdateable);

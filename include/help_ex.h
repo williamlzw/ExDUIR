@@ -1,13 +1,10 @@
 #pragma once
 
-
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <Windows.h>
-
-#define IDI_ICON1 129
 
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME					//定义一个API函数类型,并声明
@@ -16,11 +13,33 @@
 
 
 #include "constant_ex.h"
+#include "Array_ex.h"
 #include "Thread_ex.h"
 #include "HashTable_ex.h"
 #include "MemPool_ex.h"
 #include "HandelTable_ex.h"
 #include "Global_ex.h"
+
+#include "Canvas_ex.h"
+#include "Font_ex.h"
+#include "Format_ex.h"
+#include "Brush_ex.h"
+#include "Image_ex.h"
+#include "DirectX_ex.h"
+#include "Object_ex.h"
+#include "Wnd_ex.h"
+#include "Path_ex.h"
+#include "Layout_ex.h"
+#include "Region_ex.h"
+#include "Resource_ex.h"
+#include "StrokeStyle_ex.h"
+#include "Theme_ex.h"
+#include "Hook_ex.h"
+#include "Matrix_ex.h"
+
+#include "Class_Static_SysLink_ex.h"
+#include "Class_SysButton_Page_ex.h"
+#include "Class_Scrollbar_ex.h"
 
 typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
 typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
@@ -316,19 +335,19 @@ struct LOCALINFO
 	WORD atomClassName;
 	WORD atomSysShadow;
 	UINT dwMessage;
-	void* hMemPoolMsg;
-	void* hTableClass;
-	void* hTableFont;
-	void* hTableLayout;
+	mempool_s* hMemPoolMsg;
+	hashtable_s* hTableClass;
+	hashtable_s* hTableFont;
+	hashtable_s* hTableLayout;
 	UpdateLayeredWindowIndirectPROC pfnUpdateLayeredWindowIndirect;
 	void* lpLogFontDefault;
-	void* hThemeDefault;
+	theme_s* hThemeDefault;
 	void* hMenuVS;
 	void* hMenuHS;
 	void* hMenuEdit;
 	void* hHookMsgBox;
-	void* hHandles;
-	std::vector<void*> aryThemes;
+	mempool_s* hHandles;
+	std::vector<theme_s*> aryThemes;
 	std::vector<int> aryColorsAtom;
 	std::vector<int> aryColorsOffset;
 	void* lpstr_min;

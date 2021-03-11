@@ -23,18 +23,18 @@ LRESULT _hook_oncreate(int code, HWND hWnd, size_t lParam)
 		int nError = 0;
 		if (_handle_validate(hExDui, HT_DUI, (void**)&pWnd, &nError))
 		{
-			void* pMsg = pWnd->lpMsgParams_;
+			mbp_s* pMsg = pWnd->lpMsgParams_;
 			pWnd->lpMsgParams_ = 0;
 			if (pMsg != 0)
 			{
 				SetClassLongPtrW(hWnd, -12, (LONG)g_Li.hCursor);
 				int style = EWS_TITLE | EWS_BUTTON_CLOSE | EWS_ESCEXIT | EWS_MOVEABLE | EWS_MESSAGEBOX;
 				
-				if (((((mbp_s*)pMsg)->dwFlags_ & EMBF_WINDOWICON) == EMBF_WINDOWICON))
+				if (((pMsg->dwFlags_ & EMBF_WINDOWICON) == EMBF_WINDOWICON))
 				{
 					style = style | EWS_HASICON;
 				}
-				Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, style, (size_t)pMsg, ((mbp_s*)pMsg)->lpfnNotifyCallback_);
+				Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, style, (size_t)pMsg, pMsg->lpfnNotifyCallback_);
 			}
 		}
 	}
@@ -80,18 +80,18 @@ void _menu_init(HWND hWnd)
 		if (_handle_validate(hExDui, HT_DUI, (void**)&pWnd, &nError))
 		{
 			HashTable_Remove(g_Li.hTableLayout, (size_t)hMenu);
-			void* lpMenuParams = pWnd->lpMenuParams_;
+			menu_s* lpMenuParams = pWnd->lpMenuParams_;
 			SetWindowLongPtrW(hWnd, -20, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 			SetClassLongPtrW(hWnd, -26, 1 | 2 | 8);
 			int dwStyle = EWS_MENU | EWS_NOINHERITBKG | EWS_ESCEXIT | EWS_FULLSCREEN;
 			void* pfnCallback = nullptr;
 			if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s)))
 			{
-				if (((((menu_s*)lpMenuParams)->dwFlags_ & EMNF_NOSHADOW) == EMNF_NOSHADOW))
+				if (((lpMenuParams->dwFlags_ & EMNF_NOSHADOW) == EMNF_NOSHADOW))
 				{
 					dwStyle = dwStyle | EWS_NOSHADOW;
 				}
-				pfnCallback = ((menu_s*)lpMenuParams)->pfnCallback_;
+				pfnCallback = lpMenuParams->pfnCallback_;
 			}
 			EXHANDLE hExDui = Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, dwStyle, (size_t)pWnd, pfnCallback);
 			if (_handle_validate(hExDui, HT_DUI, (void**)&pWnd, &nError))
@@ -108,19 +108,19 @@ void _msgbox_drawinfo(wnd_s* pWnd, EXHANDLE cvBkg)
 {
 	int w, h;
 	_canvas_getsize(cvBkg, &w, &h);
-	void* hTheme = pWnd->hTheme_;
+	theme_s* hTheme = pWnd->hTheme_;
 	Ex_ThemeDrawControl(hTheme, cvBkg, 0, 0, w, h, ATOM_MESSAGEBOX, ATOM_RECT, 255);
-	void* pMsg = pWnd->lpMsgParams_;
+	mbp_s* pMsg = pWnd->lpMsgParams_;
 	if (pMsg != 0)
 	{
-		int wType = ((mbp_s*)pMsg)->uType_ & 240;
+		int wType = pMsg->uType_ & 240;
 		int l = Ex_Scale(15);
 		int t = Ex_Scale(15);
-		void* pCaption = nullptr;
+		obj_s* pCaption = nullptr;
 		int nError = 0;
-		if (_handle_validate(pWnd->objCaption_, HT_OBJECT, &pCaption, &nError))
+		if (_handle_validate(pWnd->objCaption_, HT_OBJECT, (void**)&pCaption, &nError))
 		{
-			t = t + ((obj_s*)pCaption)->bottom_;
+			t = t + pCaption->bottom_;
 		}
 
 		if (wType != 0)
@@ -137,7 +137,7 @@ void _msgbox_drawinfo(wnd_s* pWnd, EXHANDLE cvBkg)
 			}
 			l = r + Ex_Scale(15);
 		}
-		void* pText = ((mbp_s*)pMsg)->lpText_;
+		void* pText = pMsg->lpText_;
 		if (pText != 0)
 		{
 			void* hFont = _font_create();
@@ -152,12 +152,12 @@ void _msgbox_drawinfo(wnd_s* pWnd, EXHANDLE cvBkg)
 
 void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 {
-	void* pMsg = pWnd->lpMsgParams_;
+	mbp_s* pMsg = pWnd->lpMsgParams_;
 	if (pMsg == 0) return;
-	auto lpwzCheckbox = ((mbp_s*)pMsg)->lpCheckBox_;
-	auto lpCheckboxChecked = ((mbp_s*)pMsg)->lpCheckBoxChecked_;
-	auto uType = ((mbp_s*)pMsg)->uType_;
-	auto pfnCallback = ((mbp_s*)pMsg)->lpfnNotifyCallback_;
+	auto lpwzCheckbox = pMsg->lpCheckBox_;
+	auto lpCheckboxChecked = pMsg->lpCheckBoxChecked_;
+	auto uType = pMsg->uType_;
+	auto pfnCallback = pMsg->lpfnNotifyCallback_;
 	auto hTheme = pWnd->hTheme_;
 	auto hWndChild = GetWindow(hWnd, GW_CHILD);
 	RECT rcText = { 0 };
@@ -207,7 +207,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 
 		if (_canvas_begindraw(hCanvas))
 		{
-			_canvas_calctextsize(hCanvas, hFont, (LPCWSTR)((mbp_s*)pMsg)->lpText_, -1, DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, 0, width, rcText.bottom - rcText.top, &w, &h);
+			_canvas_calctextsize(hCanvas, hFont, (LPCWSTR)pMsg->lpText_, -1, DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, 0, width, rcText.bottom - rcText.top, &w, &h);
 			_canvas_enddraw(hCanvas);
 		}
 		_font_destroy(hFont);
@@ -283,14 +283,14 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 		Ex_ObjEnable(Ex_ObjGetFromID(pWnd->objCaption_, EWS_BUTTON_CLOSE), false);
 	}
 	
-	if (((((mbp_s*)pMsg)->dwFlags_ & EMBF_CENTEWINDOW) == EMBF_CENTEWINDOW))
+	if (((pMsg->dwFlags_ & EMBF_CENTEWINDOW) == EMBF_CENTEWINDOW))
 	{
 		Ex_WndCenterFrom(hWnd, (HWND)GetWindowLongPtrW(hWnd, -8), false);
 	}
 	else {
 		Ex_WndCenterFrom(hWnd, 0, false);//检查是否同个屏幕
 	}
-	((mbp_s*)pWnd)->dwFlags_ = ((mbp_s*)pWnd)->dwFlags_ | EWF_INTED;
+	pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_INTED;
 	ShowWindow(hWnd, 1);
 	InvalidateRect(hWnd, 0, false);
 	UpdateWindow(hWnd);

@@ -1,6 +1,6 @@
 #pragma once
 #include "help_ex.h"
-#include "DirectX_ex.h"
+
 
 bool _rgn_destroy(void* hRgn);
 void* _rgn_createfromroundrect(float left, float top, float right, float bottom, float radiusX, float radiusY);

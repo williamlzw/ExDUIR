@@ -254,15 +254,15 @@ void _dx_drawbitmaprectrect(void* pDeviceContext, void* pBitmap, float dstLeft, 
 	((ID2D1DeviceContext*)pDeviceContext)->DrawBitmap((ID2D1Bitmap*)pBitmap, rect, (float)(dwAlpha / 255.0), D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rect2);
 }
 
-void _dx_drawimage(void* pDeviceContext, void* pimage, float left, float top, int mode)
+void _dx_drawimage(void* pDeviceContext, img_s* pImage, float left, float top, int mode)
 {
 	D2D1_POINT_2F point = {};
 	point.x = left;
 	point.y = top;
-	((ID2D1DeviceContext*)pDeviceContext)->DrawImage((ID2D1Image*)pimage, point, D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR, (D2D1_COMPOSITE_MODE)mode);
+	((ID2D1DeviceContext*)pDeviceContext)->DrawImage((ID2D1Image*)pImage, point, D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR, (D2D1_COMPOSITE_MODE)mode);
 }
 
-void _dx_drawimage_ex(void* pDeviceContext, void* pimage, float dstLeft, float dstTop, float srcLeft, float srcTop, float srcRight, float srcBottom, int mode)
+void _dx_drawimage_ex(void* pDeviceContext, img_s* pImage, float dstLeft, float dstTop, float srcLeft, float srcTop, float srcRight, float srcBottom, int mode)
 {
 	D2D1_POINT_2F point = {};
 	point.x = dstLeft;
@@ -272,7 +272,7 @@ void _dx_drawimage_ex(void* pDeviceContext, void* pimage, float dstLeft, float d
 	rect.top = srcTop;
 	rect.right = srcRight;
 	rect.bottom = srcBottom;
-	((ID2D1DeviceContext*)pDeviceContext)->DrawImage((ID2D1Image*)pimage, point, rect, D2D1_INTERPOLATION_MODE_LINEAR, (D2D1_COMPOSITE_MODE)mode);
+	((ID2D1DeviceContext*)pDeviceContext)->DrawImage((ID2D1Image*)pImage, point, rect, D2D1_INTERPOLATION_MODE_LINEAR, (D2D1_COMPOSITE_MODE)mode);
 }
 
 void _dx_bmp_copyfrom(void** pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom)

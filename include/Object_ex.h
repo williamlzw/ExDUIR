@@ -1,10 +1,6 @@
 #pragma once
 #include "help_ex.h"
-#include "Path_ex.h"
-#include "Layout_ex.h"
-#include "Region_ex.h"
-#include "Theme_ex.h"
-#include "Class_Scrollbar_ex.h"
+
 
 typedef int(*EnumPROC)(size_t, size_t);
 typedef size_t(*ClsPROC)(HWND, EXHANDLE, int, size_t, size_t, obj_s*);
@@ -99,8 +95,8 @@ struct obj_s
 	EXHANDLE objChildLast_;
 	EXHANDLE hLayout_;
 	int dwFlags_;
-	void* lpBackgroundImage_;
-	void* hTheme_;
+	bkgimg_s* lpBackgroundImage_;
+	theme_s* hTheme_;
 
 	int minmax_reserved_1_;
 	int minmax_reserved_2_;
@@ -129,9 +125,9 @@ struct obj_s
 	void* pstrTitle_;
 	void* pstrTips_;
 	EXHANDLE pObjJS_;
-	void* hTableJsEvents_;
+	hashtable_s* hTableJsEvents_;
 	int dwState_;
-	void* dwOwnerData_;
+	si_s* dwOwnerData_;
 	EXHANDLE canvas_obj_;
 	void* dwUserData_;
 	int dwStyleEx_;
@@ -139,7 +135,7 @@ struct obj_s
 	int atomName_;
 	void* hCursor_;
 	int dwStyle_;
-	void* pPropListEntry_;
+	hashtable_s* pPropListEntry_;
 	class_s* pCls_;
 	ClsPROC pfnClsProc_;
 	int id_;
@@ -160,7 +156,7 @@ struct obj_s
 struct paintstruct_s
 {
 	EXHANDLE hCanvas_;
-	void* hTheme_;
+	theme_s* hTheme_;
 	int dwStyle_;
 	int dwStyleEx_;
 	int dwTextFormat_;
@@ -196,7 +192,7 @@ struct ti_s
 
 struct classtable_s
 {
-	void* tableProps_;
+	hashtable_s* tableProps_;
 	EXHANDLE hImage_;
 };
 
@@ -234,7 +230,6 @@ void _obj_register(int atomClass, int dwStyle, int dwStyleEx, int dwTextFormat, 
 EXHANDLE Ex_ObjLayoutGet(EXHANDLE handle);
 void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, void** pParent);
 void _obj_z_set_before_topmost(EXHANDLE objChildFirst, void* pObjChildFirst, EXHANDLE objChildLast, obj_s* pObjChildLast, EXHANDLE hObj, obj_s* pObj, void* pParent);
-//void _obj_z_set(EXHANDLE hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, int flags, int* nError);
 void _obj_z_set(EXHANDLE hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, UINT flags, int* nError);
 bool _obj_autosize(obj_s* pObj, EXHANDLE hObj, int* width, int* height);
 size_t _obj_sendmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved);
@@ -277,7 +272,7 @@ EXHANDLE Ex_ObjGetParentEx(EXHANDLE hObj, EXHANDLE* phExDUI);
 size_t Ex_ObjGetLong(EXHANDLE hObj, int nIndex);
 size_t Ex_ObjSetLong(EXHANDLE hObj, int nIndex, size_t dwNewLong);
 void _obj_reset_path(obj_s* pObj, int left, int top, int right, int bottom, int nOffset);
-void* _obj_pOwner(obj_s* pObj);
+si_s* _obj_pOwner(obj_s* pObj);
 void _obj_scroll_updatepostion(EXHANDLE hSB, obj_s* pSB, bool bVScroll, int cLeft, int cTop, int cRight, int cBottom, bool fDispatch);
 void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x, int y, int width, int height, int flags, int* nError);
 bool Ex_ObjSetPos(EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x, int y, int width, int height, int flags);
@@ -290,11 +285,11 @@ int Ex_ObjDispatchNotify(EXHANDLE hObj, int nCode, size_t wParam, size_t lParam)
 void _obj_backgroundimage_clear(HWND hWnd, void* pObj);
 void _obj_destroy(EXHANDLE hObj, obj_s* pObj, int* nError);
 EXHANDLE _obj_create_init(HWND hWnd, wnd_s* pWnd, int atomClass, void* pfnMsgProc, obj_s** pObj, int* nError);
-void _obj_create_proc(int* nError, bool fScale, void* hTheme, obj_s* pObj, int dwStyleEx, int atomClass, void* lpszName, int dwStyle, int x, int y, int width, int height, EXHANDLE hParent, int nID, int atomName, size_t lParam, int dwTextFormat);
+void _obj_create_proc(int* nError, bool fScale, theme_s* hTheme, obj_s* pObj, int dwStyleEx, int atomClass, void* lpszName, int dwStyle, int x, int y, int width, int height, EXHANDLE hParent, int nID, int atomName, size_t lParam, int dwTextFormat);
 void _obj_create_done(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, obj_s* pObj);
-void _obj_create_scrollbar(HWND hWnd, wnd_s* pWnd, obj_s* pObj, EXHANDLE hObj, void* hTheme);
-void _obj_theme_load_color_font(wnd_s* pWnd, obj_s* pObj, void* hTheme);
-EXHANDLE Ex_ObjCreateEx(int dwStyleEx, void* lptszClassName, void* lptszObjTitle, int dwStyle, int x, int y, int width, int height, EXHANDLE hParent, int nID, int dwTextFormat, size_t lParam, void* hTheme, void* lpfnMsgProc);
+void _obj_create_scrollbar(HWND hWnd, wnd_s* pWnd, obj_s* pObj, EXHANDLE hObj, theme_s* hTheme);
+void _obj_theme_load_color_font(wnd_s* pWnd, obj_s* pObj, theme_s* hTheme);
+EXHANDLE Ex_ObjCreateEx(int dwStyleEx, void* lptszClassName, void* lptszObjTitle, int dwStyle, int x, int y, int width, int height, EXHANDLE hParent, int nID, int dwTextFormat, size_t lParam, theme_s* hTheme, void* lpfnMsgProc);
 EXHANDLE Ex_ObjCreate(void* lptszClassName, void* lptszObjTitle, int dwStyle, int x, int y, int width, int height, EXHANDLE hParent);
 void _obj_visable(HWND hWnd, EXHANDLE hObj, obj_s* pObj, bool fVisable);
 void _obj_disable(HWND hWnd, EXHANDLE hObj, obj_s* pObj, bool fDisable);
@@ -309,8 +304,8 @@ size_t Ex_ObjGetText(EXHANDLE hObj, void* lpString, size_t nMaxCount);
 size_t Ex_ObjGetTextLength(EXHANDLE hObj);
 void _obj_drawbackground(obj_s* pObj, EXHANDLE hCanvas, RECT rcPaint);
 bool Ex_ObjDrawBackgroundProc(EXHANDLE hObj, EXHANDLE hCanvas, void* lprcPaint);
-bool Ex_ObjBeginPaint(EXHANDLE hObj, void* lpPS);
-bool Ex_ObjEndPaint(EXHANDLE hObj, void* lpPS);
+bool Ex_ObjBeginPaint(EXHANDLE hObj, paintstruct_s* lpPS);
+bool Ex_ObjEndPaint(EXHANDLE hObj, paintstruct_s* lpPS);
 EXHANDLE Ex_ObjGetObj(EXHANDLE hObj, int nCmd);
 EXHANDLE _obj_getobjfromidorname(wnd_s* pWnd, int idorname);
 EXHANDLE Ex_ObjGetFromName(EXHANDLE hExDuiOrhObj, void* lpName);

@@ -1,9 +1,7 @@
 #pragma once
 
 #include "help_ex.h"
-#include "Object_ex.h"
-#include "Hook_ex.h"
-#include "Matrix_ex.h"
+
 #pragma comment(lib, "imm32.lib")
 
 #define EMV_HEXDUI 0
@@ -66,8 +64,8 @@ struct wnd_s
 	EXHANDLE objChildLast_;
 	EXHANDLE hLayout_;
 	int dwFlags_;
-	void* lpBackgroundImage_;
-	void* hTheme_;
+	bkgimg_s* lpBackgroundImage_;
+	theme_s* hTheme_;
 
 	EXHANDLE objTrackPrev_;
 	EXHANDLE objTrack_;
@@ -83,15 +81,15 @@ struct wnd_s
 	int dwTrackContext_;
 	wnd_s* pMenuTrackWnd_;
 
-	void* ti_auto_;
-	void* ti_track_;
+	ti_s* ti_auto_;
+	ti_s* ti_track_;
 
-	void* lpMsgParams_;
-	void* lpMenuParams_;
+	mbp_s* lpMsgParams_;
+	menu_s* lpMenuParams_;
 
 	void* pfnMsgProc_;
 	EXHANDLE hExDuiParent_;
-	void* hTableObjects_;
+	hashtable_s* hTableObjects_;
 	void* pJSObj_;
 	void* pSysObj_;
 
@@ -145,9 +143,9 @@ size_t Ex_WndMsgLoop();
 HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName, int x, int y, int width, int height, int dwStyle, int dwStyleEx);
 void _wnd_recalcclient(wnd_s* pWnd, HWND hWnd, int width, int height);
 bool _wnd_wm_stylechanging(wnd_s* pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam);
-void _wnd_loadtheme(wnd_s* pWnd, HWND hWnd, void* hTheme);
+void _wnd_loadtheme(wnd_s* pWnd, HWND hWnd, theme_s* hTheme);
 void _wnd_calc_captionrect(wnd_s* pWnd, RECT* rcCaption);
-int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, void* hTheme, LPARAM lParam, void* lpfnMsgProc);
+int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, theme_s* hTheme, LPARAM lParam, void* lpfnMsgProc);
 void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam);
 int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int pObj, int uMsg, WPARAM wParam, LPARAM lParam);
@@ -155,7 +153,7 @@ size_t CALLBACK _wnd_tooltips_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM
 size_t CALLBACK _wnd_shadow_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void _wnd_dx_unint(wnd_s* pWnd);
 void _wnd_dx_init(wnd_s* pWnd);
-EXHANDLE _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, EXHANDLE objLast, int x, int y, int* hitCode, void** pObjMouse);
+EXHANDLE _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, EXHANDLE objLast, int x, int y, int* hitCode, obj_s** pObjMouse);
 int _wnd_wm_nchittest_sizebox(int width, int height, int x, int y);
 int _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam);
 void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, int dwStyle);
@@ -207,5 +205,5 @@ size_t Ex_DUIGetLong(EXHANDLE hExDui, int nIndex);
 size_t Ex_DUISetLong(EXHANDLE hExDui, int nIndex, size_t dwNewlong);
 bool Ex_DUIShowWindowEx(EXHANDLE hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags, int uEasing, WPARAM wParam, LPARAM lParam);
 bool Ex_DUIShowWindow(EXHANDLE hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags);
-EXHANDLE Ex_DUIBindWindowEx(HWND hWnd, void* hTheme, int dwStyle, LPARAM lParam, void* lpfnMsgProc);
-EXHANDLE Ex_DUIBindWindow(HWND hWnd, void* hTheme, int dwStyle);
+EXHANDLE Ex_DUIBindWindowEx(HWND hWnd, theme_s* hTheme, int dwStyle, LPARAM lParam, void* lpfnMsgProc);
+EXHANDLE Ex_DUIBindWindow(HWND hWnd, theme_s* hTheme, int dwStyle);

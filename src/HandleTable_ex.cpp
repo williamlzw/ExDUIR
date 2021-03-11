@@ -1,11 +1,11 @@
 #include "HandelTable_ex.h"
 
-void* _handle_init()
+mempool_s* _handle_init()
 {
 	return MemPool_Create(65536, sizeof(void*), 内存池标记_禁止超出最大数量);
 }
 
-bool _handle_uninit(void* hTable)
+bool _handle_uninit(mempool_s* hTable)
 {
 	bool ret = MemPool_Destroy(hTable);
 	hTable = 0;

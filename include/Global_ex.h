@@ -1,10 +1,5 @@
 #pragma once
 #include "help_ex.h"
-#include "Font_ex.h"
-#include "Canvas_ex.h"
-#include "Class_Static_SysLink_ex.h"
-#include "Class_SysButton_Page_ex.h"
-#include "Class_Scrollbar_ex.h"
 
 void pfnDefaultFreeData(void* dwData);
 void Ex_SetLastError(int nError);

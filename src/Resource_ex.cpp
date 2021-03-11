@@ -63,7 +63,7 @@ void* _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 {
 	void* retPtr = nullptr;
 	size_t retLen = 0;
-	void* tableFiles = nullptr;
+	hashtable_s* tableFiles = nullptr;
 	_bin_uncompress(lpData, dwDataLen, 0, 0, &retPtr, &retLen);
 	if (retLen > 0)
 	{
@@ -135,7 +135,7 @@ void* Ex_ResLoadFromFile(void* lptszFile)
 	return ret;
 }
 
-void Ex_ResFree(void* hRes)
+void Ex_ResFree(hashtable_s* hRes)
 {
 	if (hRes != 0)
 	{
@@ -143,7 +143,7 @@ void Ex_ResFree(void* hRes)
 	}
 }
 
-bool Ex_ResGetFileFromAtom(void* hRes, int atomPath, void** lpFile, size_t* dwFileLen)
+bool Ex_ResGetFileFromAtom(hashtable_s* hRes, int atomPath, void** lpFile, size_t* dwFileLen)
 {
 	void* pData = nullptr;
 	if (HashTable_Get(hRes, atomPath, (size_t*)&pData))
@@ -157,7 +157,7 @@ bool Ex_ResGetFileFromAtom(void* hRes, int atomPath, void** lpFile, size_t* dwFi
 	return *dwFileLen > 0;
 }
 
-bool Ex_ResGetFile(void* hRes, void* lpwzPath, void** lpFile, size_t* dwFileLen)
+bool Ex_ResGetFile(hashtable_s* hRes, void* lpwzPath, void** lpFile, size_t* dwFileLen)
 {
 	return Ex_ResGetFileFromAtom(hRes, Ex_Atom((LPCWSTR)lpwzPath), lpFile, dwFileLen);
 }

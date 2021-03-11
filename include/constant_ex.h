@@ -1073,6 +1073,21 @@ typedef EXHANDLE HEXMATRIX;		// 矩阵句柄
 
 struct wnd_s;
 struct obj_s;
+struct font_s;
+struct ti_s;
+struct classtable_s;
+struct si_s;
+struct img_s;
+struct bkgimg_s;
+struct matrix_s;
+struct mempool_s;
+struct hashtable_s;
+struct theme_s;
+struct entry_s;
+struct layout_s;
+struct array_s;
+struct mbp_s;
+struct menu_s;
 
 struct EXDATA
 {

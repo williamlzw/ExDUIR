@@ -3,7 +3,7 @@
 void _static_paint(EXHANDLE hObj, obj_s* pObj)
 {
 	paintstruct_s ps;
-	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
+	if (Ex_ObjBeginPaint(hObj, (paintstruct_s*)&ps))
 	{
 		Ex_ThemeDrawControl(ps.hTheme_, ps.hCanvas_, 0, 0, ps.width_, ps.height_, ATOM_STATIC, ATOM_NORMAL, 255);
 		void* lpText = pObj->pstrTitle_;
@@ -12,7 +12,7 @@ void _static_paint(EXHANDLE hObj, obj_s* pObj)
 			_canvas_drawtextex(ps.hCanvas_, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)lpText, -1, ps.dwTextFormat_, ps.t_left_, ps.t_top_, ps.t_right_, ps.t_bottom_,
 				pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
 		}
-		Ex_ObjEndPaint(hObj, (void*)&ps);
+		Ex_ObjEndPaint(hObj, (paintstruct_s*)&ps);
 	}
 }
 

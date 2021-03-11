@@ -13,3 +13,6 @@
 /x64/
 /Debug/
 /Release/
+/msvc/dll/x64/
+/msvc/libexdui/x64/
+/msvc/test/x64/

@@ -2,11 +2,11 @@
 
 bool _path_destroy(EXHANDLE hPath)
 {
-	void* pPath = nullptr;
+	path_s* pPath = nullptr;
 	int nError = 0;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		void* pGeometry = ((path_s*)pPath)->pGeometry_;
+		void* pGeometry = pPath->pGeometry_;
 		((ID2D1PathGeometry*)pGeometry)->Release();
 		RtlZeroMemory(pPath, sizeof(path_s));
 		Ex_MemFree(pPath);
@@ -17,18 +17,18 @@ bool _path_destroy(EXHANDLE hPath)
 
 bool _path_reset(EXHANDLE hPath)
 {
-	void* pPath = nullptr;
+	path_s* pPath = nullptr;
 	int nError = 0;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		void* pGeometry = ((path_s*)pPath)->pGeometry_;
+		void* pGeometry = pPath->pGeometry_;
 		((ID2D1PathGeometry*)pGeometry)->Release();
 		RtlZeroMemory(pPath, sizeof(path_s));
 		obj_s* pObj = nullptr;
 		nError = ((ID2D1Factory*)g_Ri.pD2Dfactory)->CreatePathGeometry((ID2D1PathGeometry**)&pObj);
 		if (nError == 0)
 		{
-			((path_s*)pPath)->pGeometry_ = pObj;
+			pPath->pGeometry_ = pObj;
 		}
 	}
 	return nError == 0;
@@ -37,14 +37,14 @@ bool _path_reset(EXHANDLE hPath)
 bool _path_create(int dwFlags, EXHANDLE* hPath)
 {
 	int nError = 0;
-	void* pPath = Ex_MemAlloc(sizeof(path_s));
+	path_s* pPath = (path_s*)Ex_MemAlloc(sizeof(path_s));
 	if (pPath != 0)
 	{
 		*hPath = _handle_create(HT_PATH, pPath, &nError);
 		if (*hPath != 0)
 		{
 			nError = _path_reset(*hPath);
-			((path_s*)pPath)->dwFlags_ = dwFlags;
+			pPath->dwFlags_ = dwFlags;
 			if (nError != 0)
 			{
 				_path_destroy(*hPath);
@@ -67,10 +67,10 @@ bool _path_getbounds(EXHANDLE hPath, void* lpBounds)
 		nError = ERROR_EX_MEMORY_BADPTR;
 	}
 	else {
-		void* pPath = nullptr;
-		if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+		path_s* pPath = nullptr;
+		if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 		{
-			void* pGeometry = ((path_s*)pPath)->pGeometry_;
+			void* pGeometry = pPath->pGeometry_;
 			nError = ((ID2D1PathGeometry*)pGeometry)->GetBounds(NULL, (D2D1_RECT_F*)lpBounds);
 		}
 	}
@@ -81,20 +81,20 @@ bool _path_getbounds(EXHANDLE hPath, void* lpBounds)
 bool _path_open(EXHANDLE hPath)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		if ((((path_s*)pPath)->dwFlags_ & epf_bOpened) == epf_bOpened)
+		if ((pPath->dwFlags_ & epf_bOpened) == epf_bOpened)
 		{
 			_path_reset(hPath);
 		}
-		void* pGeometry = ((path_s*)pPath)->pGeometry_;
+		void* pGeometry = pPath->pGeometry_;
 		void* pSink = nullptr;
 		nError = ((ID2D1PathGeometry*)pGeometry)->Open((ID2D1GeometrySink**)&pSink);
 		if (nError == 0)
 		{
-			((path_s*)pPath)->pObj_ = pSink;
-			((path_s*)pPath)->dwFlags_ = ((path_s*)pPath)->dwFlags_ | epf_bOpened;
+			pPath->pObj_ = pSink;
+			pPath->dwFlags_ = pPath->dwFlags_ | epf_bOpened;
 		}
 	}
 	Ex_SetLastError(nError);
@@ -104,12 +104,12 @@ bool _path_open(EXHANDLE hPath)
 bool _path_close(EXHANDLE hPath)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		if ((((path_s*)pPath)->dwFlags_ & epf_bOpened) == epf_bOpened)
+		if ((pPath->dwFlags_ & epf_bOpened) == epf_bOpened)
 		{
-			void* pSink = ((path_s*)pPath)->pObj_;
+			void* pSink = pPath->pObj_;
 			((ID2D1GeometrySink*)pSink)->Close();
 			((ID2D1GeometrySink*)pSink)->Release();
 		}
@@ -121,10 +121,10 @@ bool _path_close(EXHANDLE hPath)
 bool _path_beginfigure(EXHANDLE hPath)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		void* pSink = ((path_s*)pPath)->pObj_;
+		void* pSink = pPath->pObj_;
 		((ID2D1GeometrySink*)pSink)->BeginFigure({ 0,0 }, D2D1_FIGURE_BEGIN_FILLED);
 	}
 	Ex_SetLastError(nError);
@@ -134,10 +134,10 @@ bool _path_beginfigure(EXHANDLE hPath)
 bool _path_endfigure(EXHANDLE hPath, bool fCloseFigure)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		void* pSink = ((path_s*)pPath)->pObj_;
+		void* pSink = pPath->pObj_;
 		((ID2D1GeometrySink*)pSink)->EndFigure(fCloseFigure == true ? D2D1_FIGURE_END_CLOSED : D2D1_FIGURE_END_OPEN);
 	}
 	Ex_SetLastError(nError);
@@ -147,11 +147,11 @@ bool _path_endfigure(EXHANDLE hPath, bool fCloseFigure)
 bool _path_hittest(EXHANDLE hPath, float x, float y)
 {
 	int nError = 0;
-	void* pPath = nullptr;
+	path_s* pPath = nullptr;
 	BOOL ret = false;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		void* pGeometry = ((path_s*)pPath)->pGeometry_;
+		void* pGeometry = pPath->pGeometry_;
 		((ID2D1PathGeometry*)pGeometry)->FillContainsPoint({ x,y }, NULL, 0, &ret);
 	}
 	Ex_SetLastError(nError);
@@ -161,10 +161,10 @@ bool _path_hittest(EXHANDLE hPath, float x, float y)
 bool _path_addline(EXHANDLE hPath, float x1, float y1, float x2, float y2)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		if (!((((path_s*)pPath)->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
+		if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
 		{
 			if (g_Li.DpiX > 1)
 			{
@@ -174,7 +174,7 @@ bool _path_addline(EXHANDLE hPath, float x1, float y1, float x2, float y2)
 				y2 = y2 * g_Li.DpiX;
 			}
 		}
-		void* pSink = ((path_s*)pPath)->pObj_;
+		void* pSink = pPath->pObj_;
 		((ID2D1GeometrySink*)pSink)->AddLine({ x1,y1 });
 		((ID2D1GeometrySink*)pSink)->AddLine({ x2,y2 });
 	}
@@ -185,10 +185,10 @@ bool _path_addline(EXHANDLE hPath, float x1, float y1, float x2, float y2)
 bool _path_addarc(EXHANDLE hPath, float x1, float y1, float x2, float y2, float radiusX, float radiusY, bool fClockwise)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		if (!((((path_s*)pPath)->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
+		if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
 		{
 			if (g_Li.DpiX > 1)
 			{
@@ -198,7 +198,7 @@ bool _path_addarc(EXHANDLE hPath, float x1, float y1, float x2, float y2, float 
 				y2 = y2 * g_Li.DpiX;
 			}
 		}
-		void* pSink = ((path_s*)pPath)->pObj_;
+		void* pSink = pPath->pObj_;
 		((ID2D1GeometrySink*)pSink)->AddLine({ x1,y1 });
 		D2D1_ARC_SEGMENT arc = {};
 		arc.point.x = x2;
@@ -215,10 +215,10 @@ bool _path_addarc(EXHANDLE hPath, float x1, float y1, float x2, float y2, float 
 bool _path_addrect(EXHANDLE hPath, float left, float top, float right, float bottom)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		if (!((((path_s*)pPath)->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
+		if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
 		{
 			if (g_Li.DpiX > 1)
 			{
@@ -228,7 +228,7 @@ bool _path_addrect(EXHANDLE hPath, float left, float top, float right, float bot
 				bottom = bottom * g_Li.DpiX;
 			}
 		}
-		void* pSink = ((path_s*)pPath)->pObj_;
+		void* pSink = pPath->pObj_;
 		((ID2D1GeometrySink*)pSink)->AddLine({ left,top });
 		((ID2D1GeometrySink*)pSink)->AddLine({ right,top });
 		((ID2D1GeometrySink*)pSink)->AddLine({ right,bottom });
@@ -242,10 +242,10 @@ bool _path_addrect(EXHANDLE hPath, float left, float top, float right, float bot
 bool _path_addroundedrect(EXHANDLE hPath, float left, float top, float right, float bottom, float radiusTopLeft, float radiusTopRight, float radiusBottomLeft, float radiusBottomRight)
 {
 	int nError = 0;
-	void* pPath = nullptr;
-	if (_handle_validate(hPath, HT_PATH, &pPath, &nError))
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (void**)&pPath, &nError))
 	{
-		void* pObj = ((path_s*)pPath)->pObj_;
+		void* pObj = pPath->pObj_;
 		if (radiusTopLeft == 0)//左上->右上
 		{
 			_path_addline(hPath, left, top, right - radiusTopRight, top);

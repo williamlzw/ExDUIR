@@ -5,21 +5,13 @@
 #include <algorithm>
 #include <Windows.h>
 
-
 #include "help_ex.h"
-
-
-//#include "Global_ex.h"
-//#include "Array_ex.h"
-//#include "Resource_ex.h"
-//#include "Gdiplusdll_ex.h"
-
 
 
 void 测试哈希表()
 {
 	auto aptr = LocalAlloc(64, sizeof(void*));
-	auto table = HashTable_Create(17, &pfnDefaultFreeData);
+	hashtable_s* table = HashTable_Create(17, &pfnDefaultFreeData);
 	auto aptr2 = LocalAlloc(64, sizeof(void*));
 	HashTable_Set(table, 1, (size_t)aptr);
 	HashTable_Set(table, 8, (size_t)aptr2);
@@ -83,7 +75,7 @@ void 测试子程序()
 	
 }
 
-bool 枚举数组(void* pArray,int nIndex,void* pvItem,int nType,size_t pvParam)
+bool 枚举数组(array_s* pArray,int nIndex,void* pvItem,int nType,size_t pvParam)
 {
 	std::cout << "句柄:"<<pArray << std::endl;
 	std::cout << "索引:" << nIndex << std::endl;
@@ -95,7 +87,7 @@ bool 枚举数组(void* pArray,int nIndex,void* pvItem,int nType,size_t pvParam)
 
 void 测试数组()
 {
-	auto aa = Array_Create(5);
+	array_s* aa = Array_Create(5);
 	Array_AddMember(aa, 6);
 	Array_SetMember(aa, 2, 3);
 	std::cout << Array_GetMember(aa, 2) << std::endl;//3

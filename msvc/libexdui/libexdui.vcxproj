@@ -62,7 +62,7 @@
     <ClInclude Include="..\..\include\HashTable_ex.h" />
     <ClInclude Include="..\..\include\help_ex.h" />
     <ClInclude Include="..\..\include\Hook_ex.h" />
-    <ClInclude Include="..\..\include\image_ex.h" />
+    <ClInclude Include="..\..\include\Image_ex.h" />
     <ClInclude Include="..\..\include\Layout_ex.h" />
     <ClInclude Include="..\..\include\Matrix_ex.h" />
     <ClInclude Include="..\..\include\MemPool_ex.h" />
@@ -71,7 +71,6 @@
     <ClInclude Include="..\..\include\Region_ex.h" />
     <ClInclude Include="..\..\include\Resource_ex.h" />
     <ClInclude Include="..\..\include\StrokeStyle_ex.h" />
-    <ClInclude Include="..\..\include\struct_ex.h" />
     <ClInclude Include="..\..\include\Theme_ex.h" />
     <ClInclude Include="..\..\include\Thread_ex.h" />
     <ClInclude Include="..\..\include\Wnd_ex.h" />

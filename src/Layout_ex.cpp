@@ -20,10 +20,10 @@ bool _layout_unregister(int nType)
 	return ret;
 }
 
-void _layout_free_info(void* hArr, int nIndex, void* pvItem, int nType)
+void _layout_free_info(array_s* hArr, int nIndex, void* pvItem, int nType)
 {
-	void* pLayout = (void*)Array_GetExtra(hArr);
-	((LayoutTwoPROC)((layout_s*)pLayout)->lpfnProc_)(ELN_UNINITCHILDPROPS, __get(pvItem, 0), (size_t)pvItem);
+	layout_s* pLayout = (layout_s*)Array_GetExtra(hArr);
+	((LayoutTwoPROC)pLayout->lpfnProc_)(ELN_UNINITCHILDPROPS, __get(pvItem, 0), (size_t)pvItem);
 	Ex_MemFree((void*)((size_t)pvItem - 16));
 }
 
@@ -37,39 +37,39 @@ EXHANDLE _layout_create(int nType, EXHANDLE hObjBind)
 		HashTable_Get(g_Li.hTableLayout, nType, &lpfnProc);
 		if (lpfnProc != 0)
 		{
-			void* pLayout = Ex_MemAlloc(sizeof(layout_s));
+			layout_s* pLayout = (layout_s*)Ex_MemAlloc(sizeof(layout_s));
 			obj_s* pObj = nullptr;
 			if (pLayout != 0)
 			{
 				if (_handle_validate(hObjBind, HT_OBJECT, (void**)&pObj, &nError))
 				{
-					((layout_s*)pLayout)->nBindType_ = HT_OBJECT;
+					pLayout->nBindType_ = HT_OBJECT;
 				}
 				else if (_handle_validate(hObjBind, HT_DUI, (void**)&pObj, &nError))
 				{
-					((layout_s*)pLayout)->nBindType_ = HT_DUI;
+					pLayout->nBindType_ = HT_DUI;
 				}
 				else {
 					nError = ERROR_EX_INVALID_OBJECT;
 				}
 				if (nError == 0)
 				{
-					((layout_s*)pLayout)->nType_ = nType;
-					((layout_s*)pLayout)->fUpdateable_ = true;
-					((layout_s*)pLayout)->lpfnProc_ = (void*)lpfnProc;
-					((layout_s*)pLayout)->hBind_ = hObjBind;
+					pLayout->nType_ = nType;
+					pLayout->fUpdateable_ = true;
+					pLayout->lpfnProc_ = (void*)lpfnProc;
+					pLayout->hBind_ = hObjBind;
 					int nCount = ((LayoutThreePROC)lpfnProc)(NULL, ELN_GETPROPSCOUNT, NULL, NULL);
 					void* pInfo = (void*)((size_t)Ex_MemAlloc((nCount + (size_t)4) * (size_t)4) + (size_t)16);
-					((layout_s*)pLayout)->lpLayoutInfo_ = pInfo;
+					pLayout->lpLayoutInfo_ = pInfo;
 					((LayoutThreePROC)lpfnProc)(NULL, ELN_INITPROPS, NULL, (size_t)pInfo);
 					nCount = ((LayoutThreePROC)lpfnProc)(NULL, ELN_GETCHILDPROPCOUNT, NULL, NULL);
-					((layout_s*)pLayout)->cbInfoLen_ = (nCount + 5) * 4;
-					void* hArr = Array_Create(0);
+					pLayout->cbInfoLen_ = (nCount + 5) * 4;
+					array_s* hArr = Array_Create(0);
 					Array_BindEvent(hArr, 数组事件_删除成员, &_layout_free_info);
 					Array_SetExtra(hArr, (size_t)pLayout);
-					((layout_s*)pLayout)->hArrChildrenInfo_ = hArr;
+					pLayout->hArrChildrenInfo_ = hArr;
 					hLayout = _handle_create(HT_LAYOUT, pLayout, &nError);
-					((layout_s*)pLayout)->hLayout_ = hLayout;
+					pLayout->hLayout_ = hLayout;
 					((wnd_s*)pObj)->hLayout_ = hLayout;
 				}
 				else {
@@ -112,13 +112,13 @@ EXHANDLE _layout_get_parent_layout(EXHANDLE hObj)
 bool _layout_destory(EXHANDLE hLayout)
 {
 	int nError = 0;
-	void* pLayout = nullptr;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	layout_s* pLayout = nullptr;
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		void* lpfnProc = ((layout_s*)pLayout)->lpfnProc_;
-		((LayoutTwoPROC)lpfnProc)(ELN_UNINITPROPS, 0, (size_t)((layout_s*)pLayout)->lpLayoutInfo_);
-		Array_Destroy(((layout_s*)pLayout)->hArrChildrenInfo_);
-		Ex_MemFree((void*)((size_t)((layout_s*)pLayout)->lpLayoutInfo_ - 16));
+		void* lpfnProc = pLayout->lpfnProc_;
+		((LayoutTwoPROC)lpfnProc)(ELN_UNINITPROPS, 0, (size_t)pLayout->lpLayoutInfo_);
+		Array_Destroy(pLayout->hArrChildrenInfo_);
+		Ex_MemFree((void*)((size_t)pLayout->lpLayoutInfo_ - 16));
 		Ex_MemFree(pLayout);
 		_handle_destroy(hLayout, &nError);
 	}
@@ -130,16 +130,16 @@ bool _layout_enum_find_obj(void* hArr, int nIndex, void* pvItem, int nType, void
 	return ((void*)__get(pvItem, 0) == pvParam);
 }
 
-void* _layout_get_child(void* pLayout, EXHANDLE hObj)
+void* _layout_get_child(layout_s* pLayout, EXHANDLE hObj)
 {
-	auto hObjP = ((layout_s*)pLayout)->hBind_;
+	auto hObjP = pLayout->hBind_;
 	EXHANDLE hExDUI = 0;
 	void* pInfo = nullptr;
 	if (Ex_ObjGetParentEx(hObj, &hExDUI) == hObjP)
 	{
 		if (hExDUI == hObjP)
 		{
-			void* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
+			array_s* hArr = pLayout->hArrChildrenInfo_;
 			int nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
 			if (nIndex > 0)
 			{
@@ -153,13 +153,13 @@ void* _layout_get_child(void* pLayout, EXHANDLE hObj)
 bool _layout_update(EXHANDLE hLayout)
 {
 	int nError = 0;
-	void* pLayout = nullptr;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	layout_s* pLayout = nullptr;
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		if (((layout_s*)pLayout)->fUpdateable_)
+		if (pLayout->fUpdateable_)
 		{
-			void* lpfnProc = ((layout_s*)pLayout)->lpfnProc_;
-			((LayoutThreePROC)lpfnProc)(pLayout, ELN_UPDATE, ((layout_s*)pLayout)->hBind_, 0);
+			void* lpfnProc = pLayout->lpfnProc_;
+			((LayoutThreePROC)lpfnProc)(pLayout, ELN_UPDATE, pLayout->hBind_, 0);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -169,11 +169,11 @@ bool _layout_update(EXHANDLE hLayout)
 int _layout_gettype(EXHANDLE hLayout)
 {
 	int nError = 0;
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int nType = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		nType = ((layout_s*)pLayout)->nType_;
+		nType = pLayout->nType_;
 	}
 	Ex_SetLastError(nError);
 	return nType;
@@ -182,11 +182,11 @@ int _layout_gettype(EXHANDLE hLayout)
 bool _layout_enableupdate(EXHANDLE hLayout, bool fUpdateable)
 {
 	int nError = 0;
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int nType = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		((layout_s*)pLayout)->fUpdateable_ = fUpdateable;
+		pLayout->fUpdateable_ = fUpdateable;
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -195,13 +195,13 @@ bool _layout_enableupdate(EXHANDLE hLayout, bool fUpdateable)
 size_t _layout_notify(EXHANDLE hLayout, int nEvent, void* wParam, void* lParam)
 {
 	int nError = 0;
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int ret = 1;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		if (((layout_s*)pLayout)->fUpdateable_)
+		if (pLayout->fUpdateable_)
 		{
-			void* lpfnProc = ((layout_s*)pLayout)->lpfnProc_;
+			void* lpfnProc = pLayout->lpfnProc_;
 			ret = ((LayoutThreePROC)lpfnProc)(pLayout, nEvent, (size_t)wParam, (size_t)lParam);
 		}
 	}
@@ -212,20 +212,20 @@ size_t _layout_notify(EXHANDLE hLayout, int nEvent, void* wParam, void* lParam)
 bool _layout_table_setinfo(EXHANDLE hLayout, void* aRowHeight, int cRows, void* aCellWidth, int cCells)
 {
 	int nError = 0;
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int ret = 1;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		if (((layout_s*)pLayout)->nType_ == ELT_TABLE)
+		if (pLayout->nType_ == ELT_TABLE)
 		{
-			void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
-			void* hArr = (void*)__get(pInfo, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(void*));
+			void* pInfo = pLayout->lpLayoutInfo_;
+			array_s* hArr = (array_s*)__get(pInfo, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(void*));
 			Array_Redefine(hArr, cRows, false);
 			for (int i = 0; i < cRows; i++)
 			{
 				Array_SetMember(hArr, i + 1, __get(aRowHeight, i * sizeof(void*)));
 			}
-			hArr = (void*)__get(pInfo, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(void*));
+			hArr = (array_s*)__get(pInfo, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(void*));
 			Array_Redefine(hArr, cCells, false);
 			for (int i = 0; i < cRows; i++)
 			{
@@ -242,23 +242,23 @@ bool _layout_table_setinfo(EXHANDLE hLayout, void* aRowHeight, int cRows, void* 
 
 bool _layout_setchildprop(EXHANDLE hLayout, EXHANDLE hObj, int dwPropID, size_t pvValue)
 {
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
 		if (hObj != 0)
 		{
-			void* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
+			array_s* hArr = pLayout->hArrChildrenInfo_;
 			size_t nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
 			void* pInfo = nullptr;
 			if (nIndex == 0)
 			{
-				pInfo = Ex_MemAlloc(((layout_s*)pLayout)->cbInfoLen_);
+				pInfo = Ex_MemAlloc(pLayout->cbInfoLen_);
 				if (pInfo != 0)
 				{
 					pInfo = (void*)((size_t)pInfo + 16);
 					__set_int(pInfo, 0, hObj);
-					((LayoutThreePROC)((layout_s*)pLayout)->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
+					((LayoutThreePROC)pLayout->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
 					nIndex = Array_AddMember(hArr, (size_t)pInfo);
 				}
 			}
@@ -267,7 +267,7 @@ bool _layout_setchildprop(EXHANDLE hLayout, EXHANDLE hObj, int dwPropID, size_t 
 			}
 			if (pInfo != 0)
 			{
-				if (((LayoutThreePROC)((layout_s*)pLayout)->lpfnProc_)(pLayout, ELN_CHECKCHILDPROPVALUE, MAKELONG(nIndex, dwPropID), pvValue) == 0)
+				if (((LayoutThreePROC)pLayout->lpfnProc_)(pLayout, ELN_CHECKCHILDPROPVALUE, MAKELONG(nIndex, dwPropID), pvValue) == 0)
 				{
 					__set(pInfo, dwPropID * sizeof(void*), pvValue);
 				}
@@ -286,11 +286,11 @@ bool _layout_setchildprop(EXHANDLE hLayout, EXHANDLE hObj, int dwPropID, size_t 
 
 bool _layout_getchildprop(EXHANDLE hLayout, EXHANDLE hObj, int dwPropID, size_t* pvValue)
 {
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		void* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
+		array_s* hArr = pLayout->hArrChildrenInfo_;
 		size_t nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
 		void* pInfo = nullptr;
 		if (nIndex > 0)
@@ -300,7 +300,7 @@ bool _layout_getchildprop(EXHANDLE hLayout, EXHANDLE hObj, int dwPropID, size_t*
 		if (pInfo != 0)
 		{
 			dwPropID = dwPropID * sizeof(void*);
-			if (dwPropID >= -16 && dwPropID < ((layout_s*)pLayout)->cbInfoLen_)
+			if (dwPropID >= -16 && dwPropID < pLayout->cbInfoLen_)
 			{
 				*pvValue = __get(pInfo, dwPropID);
 			}
@@ -318,12 +318,12 @@ bool _layout_getchildprop(EXHANDLE hLayout, EXHANDLE hObj, int dwPropID, size_t*
 
 bool _layout_setprop(EXHANDLE hLayout, int dwPropID, size_t pvValue)
 {
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
-		void* lpfnProc = ((layout_s*)pLayout)->lpfnProc_;
+		void* pInfo = pLayout->lpLayoutInfo_;
+		void* lpfnProc = pLayout->lpfnProc_;
 		if (((LayoutThreePROC)lpfnProc)(pLayout, ELN_CHECKCHILDPROPVALUE, dwPropID, pvValue) == 0)
 		{
 			if (dwPropID > 0)
@@ -339,12 +339,12 @@ bool _layout_setprop(EXHANDLE hLayout, int dwPropID, size_t pvValue)
 
 size_t _layout_getprop(EXHANDLE hLayout, int dwPropID)
 {
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int nError = 0;
 	size_t ret = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
+		void* pInfo = pLayout->lpLayoutInfo_;
 		if (dwPropID > 0)
 		{
 			dwPropID = dwPropID - 1;
@@ -357,11 +357,11 @@ size_t _layout_getprop(EXHANDLE hLayout, int dwPropID)
 
 bool _layout_absolute_setedge(EXHANDLE hLayout, EXHANDLE hObjChild, int dwEdge, int dwType, size_t nValue)
 {
-	void* pLayout = nullptr;
+	layout_s* pLayout = nullptr;
 	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, &pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
 	{
-		if (((layout_s*)pLayout)->nType_ == ELT_ABSOLUTE)
+		if (pLayout->nType_ == ELT_ABSOLUTE)
 		{
 			dwEdge = (dwEdge + 1) / 2;
 			if (dwEdge >= 1 && dwEdge <= 8)

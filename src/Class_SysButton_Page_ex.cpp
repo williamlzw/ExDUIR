@@ -5,7 +5,7 @@ size_t _sysbutton_paint(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 	paintstruct_s ps;
 	int atomClass = 0;
 	int atomState = 0;
-	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
+	if (Ex_ObjBeginPaint(hObj, (paintstruct_s*)&ps))
 	{
 		if ((ps.dwStyle_ & EWS_BUTTON_CLOSE) != 0)
 		{
@@ -86,7 +86,7 @@ size_t _sysbutton_paint(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 					DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_WORD_ELLIPSIS, left, ps.t_top_, ps.t_right_, ps.t_bottom_, pObj->dwShadowSize_, 0, 0, 0);
 			}
 		}
-		Ex_ObjEndPaint(hObj, (void*)&ps);
+		Ex_ObjEndPaint(hObj, (paintstruct_s*)&ps);
 	}
 	return 0;
 }
@@ -94,19 +94,19 @@ size_t _sysbutton_paint(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 void _sysbutton_remove_proc(obj_s* pObj, int width, int height)
 {
 	EXHANDLE sObj = pObj->objChildFirst_;
-	void* psobj = nullptr;
+	obj_s* psobj = nullptr;
 	int nError = 0;
 	bool bReCalced = false;
 	int nOffset = 0;
-	while (_handle_validate(sObj, HT_OBJECT, &psobj, &nError))
+	while (_handle_validate(sObj, HT_OBJECT, (void**)&psobj, &nError))
 	{
 		if (!bReCalced)
 		{
 			bReCalced = true;
-			nOffset = width - ((obj_s*)psobj)->right_;
+			nOffset = width - psobj->right_;
 		}
-		Ex_ObjSetPos(sObj, 0, ((obj_s*)psobj)->left_ + nOffset, EOP_DEFAULT, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
-		sObj = ((obj_s*)psobj)->objNext_;
+		Ex_ObjSetPos(sObj, 0, psobj->left_ + nOffset, EOP_DEFAULT, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+		sObj = psobj->objNext_;
 	}
 }
 
@@ -259,9 +259,9 @@ size_t _sysbutton_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t
 size_t _page_paint(EXHANDLE hObj)
 {
 	paintstruct_s ps;
-	if (Ex_ObjBeginPaint(hObj, (void*)&ps))
+	if (Ex_ObjBeginPaint(hObj, (paintstruct_s*)&ps))
 	{
-		Ex_ObjEndPaint(hObj, (void*)&ps);
+		Ex_ObjEndPaint(hObj, (paintstruct_s*)&ps);
 	}
 	return 0;
 }

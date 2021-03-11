@@ -1,7 +1,6 @@
 #pragma once
 #include "help_ex.h"
-#include "Global_ex.h"
-#include "DirectX_ex.h"
+
 
 #define EFF_DISABLEDPISCALE 1
 

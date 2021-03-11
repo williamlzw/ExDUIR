@@ -16,7 +16,7 @@ struct mbp_s
 
 struct menu_s
 {
-	size_t hMenu_;
+	void* hMenu_;
 	int uFlags_;
 	int x_;
 	int y_;

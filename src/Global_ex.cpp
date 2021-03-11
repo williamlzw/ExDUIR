@@ -1,7 +1,4 @@
 #include "Global_ex.h"
-#include "help_ex.h"
-#include "Wnd_ex.h"
-
 
 void pfnDefaultFreeData(void* dwData)
 {

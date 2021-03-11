@@ -17,14 +17,14 @@ void pfnDefaultFreeFont(void* dwData)
 
 bool _font_destroy(void* hFont)
 {
-	size_t pFont = 0;
-	if (HashTable_Get(g_Li.hTableFont, (size_t)hFont, &pFont))
+	font_s* pFont = nullptr;
+	if (HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t*)&pFont))
 	{
 		if (pFont != 0)
 		{
-			if (InterlockedExchangeAdd((size_t*)&(((font_s*)pFont)->dwCount_), -1) == 1)
+			if (InterlockedExchangeAdd((size_t*)&(pFont->dwCount_), -1) == 1)
 			{
-				pfnDefaultFreeFont((void*)pFont);
+				pfnDefaultFreeFont(pFont);
 				HashTable_Remove(g_Li.hTableFont, (size_t)hFont);
 			}
 		}
@@ -82,37 +82,37 @@ void* _font_createfromlogfont_ex(void* lpLogfont, int flags)
 		((LOGFONT*)lpLogfont)->lfHeight = ((LOGFONT*)lpLogfont)->lfHeight * g_Li.DpiY;
 	}
 	int hFont = Crc32_Addr((UCHAR*)lpLogfont, sizeof(LOGFONT));
-	void* pFont = nullptr;
-	size_t pFonta = 0;
+	font_s* pFont = nullptr;
+	font_s* pFonta = 0;
 
-	if (HashTable_Get(g_Li.hTableFont, hFont, &pFonta))
+	if (HashTable_Get(g_Li.hTableFont, hFont, (size_t*)&pFonta))
 	{
 
-		pFont = (void*)pFonta;
+		pFont = pFonta;
 		if (pFont != 0)
 		{
-			InterlockedExchangeAdd((size_t*)&(((font_s*)pFont)->dwCount_), 1);
+			InterlockedExchangeAdd((size_t*)&(pFont->dwCount_), 1);
 		}
 	}
 	else
 	{
-		pFont = Ex_MemAlloc(sizeof(font_s));
+		pFont = (font_s*)Ex_MemAlloc(sizeof(font_s));
 		if (pFont != 0)
 		{
 			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
-			((font_s*)pFont)->dwFlags_ = flags;
-			((font_s*)pFont)->dwCount_ = 1;
-			CopyMemory(&((font_s*)pFont)->font_, lpLogfont, sizeof(LOGFONT));
+			pFont->dwFlags_ = flags;
+			pFont->dwCount_ = 1;
+			CopyMemory(&pFont->font_, lpLogfont, sizeof(LOGFONT));
 
-			UINT lfItalic = ((font_s*)pFont)->font_.lfItalic;
+			UINT lfItalic = pFont->font_.lfItalic;
 
 			if (lfItalic != 0)
 			{
 				lfItalic = 2;
 			}
-			((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextFormat(((font_s*)pFont)->font_.lfFaceName, NULL,
-				(DWRITE_FONT_WEIGHT)((font_s*)pFont)->font_.lfWeight, (DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
-				(FLOAT)(-((font_s*)pFont)->font_.lfHeight), (WCHAR*)g_Ri.pLocalName, (IDWriteTextFormat**)&(((font_s*)pFont)->pObj_));
+			((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextFormat(pFont->font_.lfFaceName, NULL,
+				(DWRITE_FONT_WEIGHT)pFont->font_.lfWeight, (DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
+				(FLOAT)(-pFont->font_.lfHeight), (WCHAR*)g_Ri.pLocalName, (IDWriteTextFormat**)&(pFont->pObj_));
 		}
 		else
 		{
@@ -130,23 +130,23 @@ void* _font_createfromlogfont(void* lpLogfont)
 
 bool _font_getlogfont(void* hFont, void* lpLogFont)
 {
-	size_t pFont = 0;
-	HashTable_Get(g_Li.hTableFont, (size_t)hFont, &pFont);
+	font_s* pFont = 0;
+	HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t*)&pFont);
 	if (pFont != 0 && lpLogFont != 0)
 	{
-		RtlMoveMemory(lpLogFont, &(((font_s*)pFont)->font_.lfHeight), sizeof(LOGFONT));
+		RtlMoveMemory(lpLogFont, &(pFont->font_.lfHeight), sizeof(LOGFONT));
 	}
 	return pFont != 0;
 }
 
 void* _font_getcontext(void* hFont)
 {
-	size_t pFont = 0;
+	font_s* pFont = 0;
 	void* ret = nullptr;
-	HashTable_Get(g_Li.hTableFont, (size_t)hFont, &pFont);
+	HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t*)&pFont);
 	if (pFont != 0)
 	{
-		ret = ((font_s*)pFont)->pObj_;
+		ret = pFont->pObj_;
 	}
 	return ret;
 }

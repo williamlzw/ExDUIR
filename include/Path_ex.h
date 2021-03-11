@@ -1,6 +1,6 @@
 #pragma once
 #include "help_ex.h"
-#include "DirectX_ex.h"
+
 
 #define epf_bOpened 2147483648
 #define EPF_DISABLESCALE 1

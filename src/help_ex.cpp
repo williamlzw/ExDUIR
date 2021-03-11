@@ -555,11 +555,11 @@ HRESULT IDropTarget_DragOver(void* thisptr, int grfKeyState, int x, int y, int* 
 {
 	wnd_s* pWnd = (wnd_s*)__get(thisptr, sizeof(wnd_s*));
 	_wnd_wm_nchittest(pWnd, pWnd->hWnd_, MAKELONG(x, y));
-	void* phit = nullptr;
+	obj_s* phit = nullptr;
 	int nError = 0;
-	if (_handle_validate(pWnd->objHittest_, HT_OBJECT, &phit, &nError))
+	if (_handle_validate(pWnd->objHittest_, HT_OBJECT, (void**)&phit, &nError))
 	{
-		if (((((obj_s*)phit)->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
+		if (((phit->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
 		{
 			return S_OK;
 		}

@@ -80,7 +80,7 @@ int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<s
 	return nCount;
 }
 
-bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> atomFiles, std::vector<void*> lpFiles, std::vector<UCHAR> dwFileProps, void* aryCorlors)
+bool _theme_fillclasses(hashtable_s* pTableFiles, hashtable_s* pTableClass, std::vector<int> atomFiles, std::vector<void*> lpFiles, std::vector<UCHAR> dwFileProps, void* aryCorlors)
 {
 	std::vector<int> aryAtomKey;
 	std::vector<size_t> arylpValue;
@@ -143,13 +143,13 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 							}
 						}
 						else {
-							void* pClass = Ex_MemAlloc(sizeof(classtable_s));
+							classtable_s* pClass = (classtable_s*)Ex_MemAlloc(sizeof(classtable_s));
 							if (pClass != 0)
 							{
-								void* pTableProp = HashTable_Create(GetNearestPrime(nCount), &pfnDefaultFreeData);
+								hashtable_s* pTableProp = HashTable_Create(GetNearestPrime(nCount), &pfnDefaultFreeData);
 								if (pTableProp != 0)
 								{
-									((classtable_s*)pClass)->tableProps_ = pTableProp;
+									pClass->tableProps_ = pTableProp;
 									HashTable_Set(pTableClass, atomClass, (size_t)pClass);
 									for (int i = 0; i < nCount; i++)
 									{
@@ -167,10 +167,10 @@ bool _theme_fillclasses(void* pTableFiles, void* pTableClass, std::vector<int> a
 													{
 														if (dwFileProps[ii] == EPDF_PNGBITS)
 														{
-															((classtable_s*)pClass)->hImage_ = _img_createfrompngbits(lpFiles[ii]);
+															pClass->hImage_ = _img_createfrompngbits(lpFiles[ii]);
 														}
 														else {
-															((classtable_s*)pClass)->hImage_ = _img_createfrommemory((void*)((size_t)lpFiles[ii] + 4), __get_int(lpFiles[ii], 0));
+															pClass->hImage_ = _img_createfrommemory((void*)((size_t)lpFiles[ii] + 4), __get_int(lpFiles[ii], 0));
 														}
 														break;
 													}
@@ -230,9 +230,9 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 	{
 		if (!IsBadReadPtr(g_Li.aryThemes[i], sizeof(theme_s)))
 		{
-			if (((theme_s*)g_Li.aryThemes[i])->crcTheme_ == crc)
+			if (g_Li.aryThemes[i]->crcTheme_ == crc)
 			{
-				InterlockedExchangeAdd((long*)&(((theme_s*)g_Li.aryThemes[i])->loadCount_), 1);
+				InterlockedExchangeAdd((long*)&(g_Li.aryThemes[i]->loadCount_), 1);
 				if (bDefault)
 				{
 					g_Li.hThemeDefault = g_Li.aryThemes[i];
@@ -241,7 +241,7 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 			}
 		}
 	}
-	void* hTheme = Ex_MemAlloc(sizeof(theme_s));
+	theme_s* hTheme = (theme_s *)Ex_MemAlloc(sizeof(theme_s));
 
 	int nError = 0;
 	std::vector<int> atomFiles;
@@ -256,10 +256,10 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 		if (_theme_unpack(lpData, dwDataLen, lpKey, dwKeyLen, &atomFiles, &lpFiles, &dwFileProps))
 		{
 
-			void* pTableFiles = HashTable_Create(GetNearestPrime(atomFiles.size()), pfnDefaultFreeData);
+			hashtable_s* pTableFiles = HashTable_Create(GetNearestPrime(atomFiles.size()), pfnDefaultFreeData);
 			if (pTableFiles != 0)
 			{
-				void* pTableClass = HashTable_Create(27, &_theme_freeclass);
+				hashtable_s* pTableClass = HashTable_Create(27, &_theme_freeclass);
 				if (pTableClass != 0)
 				{
 					void* aryColors = Ex_MemAlloc(sizeof(colors_s));
@@ -269,11 +269,11 @@ void* Ex_ThemeLoadFromMemory(void* lpData, size_t dwDataLen, void* lpKey, size_t
 					}
 					if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors))
 					{
-						((theme_s*)hTheme)->tableFiles_ = pTableFiles;
-						((theme_s*)hTheme)->loadCount_ = 1;
-						((theme_s*)hTheme)->crcTheme_ = crc;
-						((theme_s*)hTheme)->tableClass_ = pTableClass;
-						((theme_s*)hTheme)->aryColors_ = aryColors;
+						hTheme->tableFiles_ = pTableFiles;
+						hTheme->loadCount_ = 1;
+						hTheme->crcTheme_ = crc;
+						hTheme->tableClass_ = pTableClass;
+						hTheme->aryColors_ = aryColors;
 						g_Li.aryThemes.push_back(hTheme);
 						if (bDefault)
 						{
@@ -308,22 +308,22 @@ void* Ex_ThemeLoadFromFile(void* lptszFile, void* lpKey, size_t dwKeyLen, bool b
 	return ret;
 }
 
-bool Ex_ThemeDrawControlEx(void* hTheme, EXHANDLE hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+bool Ex_ThemeDrawControlEx(theme_s* hTheme, EXHANDLE hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
 	int atomClass, int atomSrcRect, int atomBackgroundRepeat, int atomBackgroundPositon, int atomBackgroundGrid, int atomBackgroundFlags, int dwAlpha)
 {
 	bool ret = false;
 	if (hTheme == 0 || hCanvas == 0 || atomClass == 0 || atomSrcRect == 0 || dwAlpha == 0) return false;
-	void* pTheme = ((theme_s*)hTheme)->tableClass_;
+	hashtable_s* pTheme = hTheme->tableClass_;
 	if (pTheme != 0)
 	{
-		void* pClass = 0;
+		classtable_s* pClass = 0;
 		HashTable_Get(pTheme, atomClass, (size_t*)&pClass);
 		if (pClass != 0)
 		{
-			EXHANDLE hImg = ((classtable_s*)pClass)->hImage_;
+			EXHANDLE hImg = pClass->hImage_;
 			if (hImg != 0)
 			{
-				void* pProp = ((classtable_s*)pClass)->tableProps_;
+				hashtable_s* pProp = pClass->tableProps_;
 				if (pProp != 0)
 				{
 					void* pSrcRect = nullptr;
@@ -376,26 +376,26 @@ bool Ex_ThemeDrawControlEx(void* hTheme, EXHANDLE hCanvas, float dstLeft, float 
 	return ret;
 }
 
-bool Ex_ThemeDrawControl(void* hTheme, EXHANDLE hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
+bool Ex_ThemeDrawControl(theme_s* hTheme, EXHANDLE hCanvas, float dstLeft, float dstTop, float dstRight, float dstBottom,
 	int atomClass, int atomSrcRect, int dwAlpha)
 {
 	return Ex_ThemeDrawControlEx(hTheme, hCanvas, dstLeft, dstTop, dstRight, dstBottom, atomClass, atomSrcRect, ATOM_BACKGROUND_REPEAT, ATOM_BACKGROUND_POSITION, ATOM_BACKGROUND_GRID, ATOM_BACKGROUND_FLAGS, dwAlpha);
 }
 
-void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
+void* Ex_ThemeGetValuePtr(theme_s* hTheme, int atomClass, int atomProp)
 {
 	void* pData = nullptr;
 	if (hTheme != 0)
 	{
-		void* pTableClass = ((theme_s*)hTheme)->tableClass_;
+		hashtable_s* pTableClass = hTheme->tableClass_;
 		if (pTableClass != 0)
 		{
-			void* pClass = nullptr;
+			classtable_s* pClass = nullptr;
 			if (HashTable_Get(pTableClass, atomClass, (size_t*)&pClass))
 			{
 				if (pClass != 0)
 				{
-					void* ptableProps = ((classtable_s*)pClass)->tableProps_;
+					hashtable_s* ptableProps = pClass->tableProps_;
 					if (ptableProps != 0)
 					{
 						HashTable_Get(ptableProps, atomProp, (size_t*)&pData);
@@ -407,28 +407,28 @@ void* Ex_ThemeGetValuePtr(void* hTheme, int atomClass, int atomProp)
 	return pData;
 }
 
-int Ex_ThemeGetColor(void* hTheme, int nIndex)
+int Ex_ThemeGetColor(theme_s* hTheme, int nIndex)
 {
 	int ret = 0;
 	if (hTheme != 0)
 	{
 		if (nIndex > -1 && nIndex < 11)
 		{
-			void* pColors = ((theme_s*)hTheme)->aryColors_;
+			void* pColors = hTheme->aryColors_;
 			ret = __get_int(pColors, (nIndex - 1) * 4);
 		}
 	}
 	return ret;
 }
 
-bool Ex_ThemeFree(void* hTheme)
+bool Ex_ThemeFree(theme_s* hTheme)
 {
 	bool ret = false;
 	if (!IsBadReadPtr(hTheme, sizeof(theme_s)))
 	{
-		if (((theme_s*)hTheme)->crcTheme_ != 0 && ((theme_s*)hTheme)->loadCount_ != 0 && ((theme_s*)hTheme)->tableFiles_ != 0 && ((theme_s*)hTheme)->tableClass_ != 0)
+		if (hTheme->crcTheme_ != 0 && hTheme->loadCount_ != 0 && hTheme->tableFiles_ != 0 && hTheme->tableClass_ != 0)
 		{
-			auto i = InterlockedExchangeAdd((long*)&((theme_s*)hTheme)->loadCount_, -1);
+			auto i = InterlockedExchangeAdd((long*)&hTheme->loadCount_, -1);
 			ret = true;
 			if (i == 1)
 			{
@@ -440,9 +440,9 @@ bool Ex_ThemeFree(void* hTheme)
 						break;
 					}
 				}
-				HashTable_Destroy(((theme_s*)hTheme)->tableFiles_);
-				HashTable_Destroy(((theme_s*)hTheme)->tableClass_);
-				Ex_MemFree(((theme_s*)hTheme)->aryColors_);
+				HashTable_Destroy(hTheme->tableFiles_);
+				HashTable_Destroy(hTheme->tableClass_);
+				Ex_MemFree(hTheme->aryColors_);
 				Ex_MemFree(hTheme);
 			}
 		}

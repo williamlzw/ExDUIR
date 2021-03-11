@@ -27,12 +27,12 @@ void _brush_setcolor(void* hBrush, int argb)
 
 void* _brush_createfromimg(EXHANDLE hImg)
 {
-	void* pImg = nullptr;
+	img_s* pImg = nullptr;
 	int nError = 0;
 	ID2D1BitmapBrush* hBrush = nullptr;
-	if (_handle_validate(hImg, HT_IMAGE, &pImg, &nError))
+	if (_handle_validate(hImg, HT_IMAGE, (void**)&pImg, &nError))
 	{
-		void* pObj = ((img_s*)pImg)->pObj_;
+		void* pObj = pImg->pObj_;
 		ID2D1Bitmap* pBitmap = nullptr;
 		auto ret = ((ID2D1DeviceContext*)g_Ri.pD2DDeviceContext)->CreateBitmapFromWicBitmap((IWICBitmapSource*)pObj, &pBitmap);
 		if (ret == 0)
@@ -58,10 +58,10 @@ void* _brush_createfromimg(EXHANDLE hImg)
 
 void* _brush_createfromcanvas(EXHANDLE hCanvas)
 {
-	void* pCanvas = nullptr;
+	canvas_s* pCanvas = nullptr;
 	int nError = 0;
 	ID2D1BitmapBrush* hBrush = nullptr;
-	if (_handle_validate(hCanvas, HT_CANVAS, &pCanvas, &nError))
+	if (_handle_validate(hCanvas, HT_CANVAS, (void**)&pCanvas, &nError))
 	{
 		void* pContext = _cv_context(pCanvas);
 		D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
@@ -74,7 +74,7 @@ void* _brush_createfromcanvas(EXHANDLE hCanvas)
 	return (void*)hBrush;
 }
 
-void _brush_settransform(void* hBrush, void* matrix)
+void _brush_settransform(void* hBrush, matrix_s* matrix)
 {
 	((ID2D1BitmapBrush*)hBrush)->SetTransform(*(D2D1_MATRIX_3X2_F*)matrix);
 }
