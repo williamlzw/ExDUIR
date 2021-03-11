@@ -3033,7 +3033,17 @@ bool Ex_TrackPopupMenu(void* hMenu, int uFlags, int x, int y, int nReserved, siz
 	wnd_s* pWnd = nullptr;
 	if (_wnd_getfromhandle(handle, &hWnd, &pWnd))
 	{
-		pWnd->lpMenuParams_->hMenu_ = hMenu;
+	    menu_s menu{};
+	    menu.hMenu_ = hMenu;
+	    menu.uFlags_ = uFlags;
+	    menu.x_ = x;
+	    menu.y_ = y;
+	    menu.nReserved_ = nReserved;
+	    menu.handle_ = handle;
+	    menu.lpRC_ = lpRC;
+	    menu.pfnCallback_ = pfnCallback;
+        menu.dwFlags_ = dwFlags;
+		pWnd->lpMenuParams_ = &menu;
 	}
 	bool ret = TrackPopupMenu((HMENU)hMenu, uFlags, x, y, nReserved, hWnd, (RECT*)lpRC);
 	return ret;
