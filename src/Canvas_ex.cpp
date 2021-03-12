@@ -7,7 +7,9 @@ bool _canvas_destroy(EXHANDLE hCanvas)
 	if (_handle_validate(hCanvas, HT_CANVAS, (void**)&pCanvas, &nError))
 	{
 		void* bmp = _cv_dx_bmp(pCanvas);
-		((ID2D1Bitmap1*)bmp)->Release();
+		if (bmp) {
+			((ID2D1Bitmap1*)bmp)->Release();
+		}
 		Ex_MemFree(pCanvas);
 		_handle_destroy(hCanvas, &nError);
 	}
@@ -670,7 +672,7 @@ bool _canvas_getsize(EXHANDLE hCanvas, int* width, int* height)
 	return nError == 0;
 }
 
-bool _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText, DWORD dwLen, DWORD dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight, void** ppLayout, int* nError)
+bool _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText, DWORD dwLen, DWORD dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, int* lpWidth, int* lpHeight, void** ppLayout, int* nError)
 {
 	obj_s* pObj = pFont->pObj_;
 	if (layoutWidth < 0) layoutWidth = 0;
@@ -749,13 +751,13 @@ bool _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText,
 	}
 	if (lpWidth != 0)
 	{
-		__set_float(lpWidth, 0, iWidth);
-		__set_float(lpWidth, 0, iHeight);
+		__set_int(lpWidth, 0, iWidth);
+		__set_int(lpWidth, 0, iHeight);
 	}
 	return *nError == 0;
 }
 
-bool _canvas_calctextsize(EXHANDLE hCanvas, void* hFont, LPCWSTR lpwzText, DWORD dwLen, DWORD dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, void* lpWidth, void* lpHeight)
+bool _canvas_calctextsize(EXHANDLE hCanvas, void* hFont, LPCWSTR lpwzText, DWORD dwLen, DWORD dwDTFormat, LPARAM lParam, float layoutWidth, float layoutHeight, int* lpWidth, int* lpHeight)
 {
 	int nError = 0;
 	if (dwLen == -1)
@@ -815,7 +817,7 @@ bool _canvas_drawtextex(EXHANDLE hCanvas, void* hFont, int crText, LPCWSTR lpwzT
 			{
 				if (bottom > top && right > left)
 				{
-					float iWidth, iHeight;
+					int iWidth, iHeight;
 					void* pLayout = nullptr;
 					if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, right - left, bottom - top, &iWidth, &iHeight, &pLayout, &nError))
 					{

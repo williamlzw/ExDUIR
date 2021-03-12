@@ -244,8 +244,8 @@ bool _obj_autosize(obj_s* pObj, EXHANDLE hObj, int* width, int* height)
 		if (iWidth < 0) iWidth = 0;
 		if (iHeight < 0) iHeight = 0;
 		void* ptitle = pObj->pstrTitle_;
-		float w = 0;
-		float h = 0;
+		int w = 0;
+		int h = 0;
 		if (ptitle != 0)
 		{
 			_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, (LPCWSTR)ptitle, -1, pObj->dwTextFormat_, NULL, iWidth, iHeight, &w, &h);

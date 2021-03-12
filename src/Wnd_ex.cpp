@@ -567,7 +567,7 @@ void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR 
 
 int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
 {
-	auto nType = LOWORD(lParam);
+    INT16 nType = LOWORD(lParam);
 	int ret = 0;
 	if (nType == EMT_OBJECT)//组件消息
 	{

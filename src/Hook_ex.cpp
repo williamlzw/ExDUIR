@@ -11,7 +11,7 @@ LRESULT CALLBACK _hook_proc(int code, size_t wParam, size_t lParam)
 
 LRESULT _hook_oncreate(int code, HWND hWnd, size_t lParam)
 {
-	auto lpcs = ((CBT_CREATEWND*)(void*)lParam)->lpcs;
+	auto lpcs = ((CBT_CREATEWND*)lParam)->lpcs;
 	auto atomClass = (int)(lpcs->lpszClass);
 	auto hParent = lpcs->hwndParent;
 
@@ -251,7 +251,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 	EXHANDLE hObj = 0;
 	obj_s* pObj = nullptr;
 	int nError = 0;
-	for (size_t i = aryID.size(); i > 1; i--)
+	for (int i = aryID.size() - 1; i >= 0; i--)
 	{
 		hObj = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, &nError);
 		if (hObj != 0)
