@@ -67,9 +67,9 @@ int _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, int nID, int nCode
 {
 	auto pfnMsgProc = pWnd->pfnMsgProc_;
 	int ret = 1;
-	if (pfnMsgProc != 0)
+	if (pfnMsgProc)
 	{
-		((MsgPROC)pfnMsgProc)(hWnd, pWnd->hexdui_, WM_NOTIFY, nID, &hObj, &ret);
+		pfnMsgProc(hWnd, pWnd->hexdui_, WM_NOTIFY, nID, &hObj, &ret);
 	}
 	return ret;
 }
@@ -627,11 +627,11 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	wnd_s* pWnd = (wnd_s*)__get_int(pData, 21);
 #endif
 
-	void* pfnMsgProc = pWnd->pfnMsgProc_;
+	MsgPROC pfnMsgProc = pWnd->pfnMsgProc_;
 	if (pfnMsgProc != 0)
 	{
 		int ret = 0;
-		if (((MsgPROC)pfnMsgProc)(hWnd, pWnd->hexdui_, uMsg, wParam, (void*)lParam, &ret) != 0)
+		if (pfnMsgProc(hWnd, pWnd->hexdui_, uMsg, wParam, (void*)lParam, &ret) != 0)
 		{
 			return ret;
 		}
@@ -956,7 +956,7 @@ size_t CALLBACK _wnd_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return CallWindowProcW((WNDPROC)pOld, hWnd, uMsg, wParam, lParam);
 }
 
-int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, theme_s* hTheme, LPARAM lParam, void* lpfnMsgProc)
+int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, theme_s* hTheme, LPARAM lParam, MsgPROC lpfnMsgProc)
 {
 
 	ShowWindow(hWnd, 0);
@@ -3027,7 +3027,7 @@ void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, void* hMenu)
 	}
 }
 
-bool Ex_TrackPopupMenu(void* hMenu, int uFlags, int x, int y, int nReserved, size_t handle, void* lpRC, void* pfnCallback, int dwFlags)
+bool Ex_TrackPopupMenu(void* hMenu, int uFlags, int x, int y, int nReserved, size_t handle, void* lpRC, MsgPROC pfnCallback, int dwFlags)
 {
 	HWND hWnd = 0;
 	wnd_s* pWnd = nullptr;
@@ -3049,7 +3049,7 @@ bool Ex_TrackPopupMenu(void* hMenu, int uFlags, int x, int y, int nReserved, siz
 	return ret;
 }
 
-int Ex_MessageBoxEx(size_t handle, void* lpText, void* lpCaption, int uType, void* lpCheckBox, bool* lpCheckBoxChecked, int dwMilliseconds, int dwFlags, void* lpfnMsgProc)
+int Ex_MessageBoxEx(size_t handle, void* lpText, void* lpCaption, int uType, void* lpCheckBox, bool* lpCheckBoxChecked, int dwMilliseconds, int dwFlags, MsgPROC lpfnMsgProc)
 {
     HWND hWnd = 0;
     wnd_s* pWnd = nullptr;
@@ -3326,7 +3326,7 @@ bool Ex_DUIShowWindow(EXHANDLE hExDui, int nCmdShow, int dwTimer, int dwFrames, 
 	return Ex_DUIShowWindowEx(hExDui, nCmdShow, dwTimer, dwFrames, dwFlags, 0, 0, 0);
 }
 
-EXHANDLE Ex_DUIBindWindowEx(HWND hWnd, theme_s* hTheme, int dwStyle, LPARAM lParam, void* lpfnMsgProc)
+EXHANDLE Ex_DUIBindWindowEx(HWND hWnd, theme_s* hTheme, int dwStyle, LPARAM lParam, MsgPROC lpfnMsgProc)
 {
 	int nError = 0;
 	wnd_s* pWnd = nullptr;

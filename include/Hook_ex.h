@@ -11,7 +11,7 @@ struct mbp_s
 	void* lpCheckBoxChecked_;
 	int dwMilliseconds_;
 	int dwFlags_;
-	void* lpfnNotifyCallback_;
+	MsgPROC lpfnNotifyCallback_;
 };
 
 struct menu_s
@@ -23,7 +23,7 @@ struct menu_s
 	int nReserved_;
 	size_t handle_;
 	void* lpRC_;
-	void* pfnCallback_;
+	MsgPROC pfnCallback_;
 	int dwFlags_;
 };
 

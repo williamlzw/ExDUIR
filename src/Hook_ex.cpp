@@ -84,7 +84,7 @@ void _menu_init(HWND hWnd)
 			SetWindowLongPtrW(hWnd, -20, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 			SetClassLongPtrW(hWnd, -26, 1 | 2 | 8);
 			int dwStyle = EWS_MENU | EWS_NOINHERITBKG | EWS_ESCEXIT | EWS_FULLSCREEN;
-			void* pfnCallback = nullptr;
+			MsgPROC pfnCallback = nullptr;
 			if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s)))
 			{
 				if (((lpMenuParams->dwFlags_ & EMNF_NOSHADOW) == EMNF_NOSHADOW))

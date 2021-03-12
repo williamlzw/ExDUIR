@@ -11,8 +11,11 @@
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME																	//声明一个函数指针变量
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule,#NAME)	
 
-
 #include "constant_ex.h"
+
+typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
+typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
+
 #include "Array_ex.h"
 #include "Thread_ex.h"
 #include "HashTable_ex.h"
@@ -40,9 +43,6 @@
 #include "Class_Static_SysLink_ex.h"
 #include "Class_SysButton_Page_ex.h"
 #include "Class_Scrollbar_ex.h"
-
-typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
-typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 
 #define ExGetB(rgb)			(LOBYTE(rgb))
 #define ExGetG(rgb)			(LOBYTE(((WORD)(rgb)) >> 8))

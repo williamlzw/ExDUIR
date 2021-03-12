@@ -87,7 +87,7 @@ struct wnd_s
 	mbp_s* lpMsgParams_;
 	menu_s* lpMenuParams_;
 
-	void* pfnMsgProc_;
+	MsgPROC pfnMsgProc_;
 	EXHANDLE hExDuiParent_;
 	hashtable_s* hTableObjects_;
 	void* pJSObj_;
@@ -145,7 +145,7 @@ void _wnd_recalcclient(wnd_s* pWnd, HWND hWnd, int width, int height);
 bool _wnd_wm_stylechanging(wnd_s* pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam);
 void _wnd_loadtheme(wnd_s* pWnd, HWND hWnd, theme_s* hTheme);
 void _wnd_calc_captionrect(wnd_s* pWnd, RECT* rcCaption);
-int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, theme_s* hTheme, LPARAM lParam, void* lpfnMsgProc);
+int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, theme_s* hTheme, LPARAM lParam, MsgPROC lpfnMsgProc);
 void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam);
 int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int pObj, int uMsg, WPARAM wParam, LPARAM lParam);
@@ -192,8 +192,8 @@ bool _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, size_t* iI
 bool _wnd_menu_item_callback(HWND hWnd, EXHANDLE hObj, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult);
 bool _wnd_menu_callback_test(HWND hWnd, EXHANDLE hExDui, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult);
 void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, void* hMenu);
-bool Ex_TrackPopupMenu(void* hMenu, int uFlags, int x, int y, int nReserved, size_t handle, void* lpRC, void* pfnCallback, int dwFlags);
-int Ex_MessageBoxEx(size_t handle, void* lpText, void* lpCaption, int uType, void* lpCheckBox, bool* lpCheckBoxChecked, int dwMilliseconds, int dwFlags, void* lpfnMsgProc);
+bool Ex_TrackPopupMenu(void* hMenu, int uFlags, int x, int y, int nReserved, size_t handle, void* lpRC, MsgPROC pfnCallback, int dwFlags);
+int Ex_MessageBoxEx(size_t handle, void* lpText, void* lpCaption, int uType, void* lpCheckBox, bool* lpCheckBoxChecked, int dwMilliseconds, int dwFlags, MsgPROC lpfnMsgProc);
 int Ex_MessageBox(size_t handle, void* lpText, void* lpCaption, int uType, int dwFlags);
 bool Ex_DUISetBlur(EXHANDLE hExDui, float fDeviation);
 bool Ex_DUITrayIconPopup(EXHANDLE hExDui, void* lpwzInfo, void* lpwzInfoTitle, int dwInfoFlags);
@@ -205,5 +205,5 @@ size_t Ex_DUIGetLong(EXHANDLE hExDui, int nIndex);
 size_t Ex_DUISetLong(EXHANDLE hExDui, int nIndex, size_t dwNewlong);
 bool Ex_DUIShowWindowEx(EXHANDLE hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags, int uEasing, WPARAM wParam, LPARAM lParam);
 bool Ex_DUIShowWindow(EXHANDLE hExDui, int nCmdShow, int dwTimer, int dwFrames, int dwFlags);
-EXHANDLE Ex_DUIBindWindowEx(HWND hWnd, theme_s* hTheme, int dwStyle, LPARAM lParam, void* lpfnMsgProc);
+EXHANDLE Ex_DUIBindWindowEx(HWND hWnd, theme_s* hTheme, int dwStyle, LPARAM lParam, MsgPROC lpfnMsgProc);
 EXHANDLE Ex_DUIBindWindow(HWND hWnd, theme_s* hTheme, int dwStyle);

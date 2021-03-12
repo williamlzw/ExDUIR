@@ -156,7 +156,11 @@ std::vector<UCHAR> 整数到字节数组(int value)
 	return ret;
 }
 
-
+size_t msgProc(HWND, EXHANDLE handle, int, size_t, void*, void*)
+{
+	std::cout << "hExDui:" << handle << std::endl;
+	return 0;
+}
 
 void 测试窗口()
 {
@@ -179,7 +183,7 @@ void 测试窗口()
 	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
 	if (hWnd != 0)
 	{
-		size_t hExDui = Ex_DUIBindWindow(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON);
+		size_t hExDui = Ex_DUIBindWindowEx(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, msgProc);
 		std::cout << "hExDui:" << hExDui << std::endl;
 		Ex_DUISetLong(hExDui, EWL_CRBKG, -100630528);//-97900239
 		LPCWSTR class_name = L"static";
