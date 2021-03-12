@@ -1859,7 +1859,7 @@ int _wnd_destroy(HWND hWnd, wnd_s* pWnd)
 
 	//bkgimginfo
 	KillTimer(hWnd, (size_t)pWnd + TIMER_BKG_INHERIT);
-	_obj_backgroundimage_clear(hWnd, pWnd);
+	_obj_backgroundimage_clear(hWnd, (obj_base*)pWnd);
 	_font_destroy(pWnd->hFont_Menu_);
 	
 	bool bMainWnd = ((pWnd->dwStyle_ & EWS_MAINWINDOW) == EWS_MAINWINDOW);

@@ -16,7 +16,7 @@
 struct wnd_s
 {
 	union {
-		struct obj_base base;
+		obj_base base;
 		struct {
 			EXHANDLE hexdui_;
 			EXHANDLE objChildFirst_;

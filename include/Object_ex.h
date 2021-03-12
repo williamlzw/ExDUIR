@@ -58,7 +58,7 @@ struct class_s
 struct obj_s
 {
 	union {
-		struct obj_base base;
+		obj_base base;
 		struct {
 			EXHANDLE hObj_;
 			EXHANDLE objChildFirst_;
@@ -289,7 +289,7 @@ void _obj_notify_brothers(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_
 int Ex_ObjDispatchMessage(EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam);
 int _obj_dispatchnotify(HWND hWnd, obj_s* pObj, EXHANDLE hObj, int nID, int nCode, size_t wParam, size_t lParam);
 int Ex_ObjDispatchNotify(EXHANDLE hObj, int nCode, size_t wParam, size_t lParam);
-void _obj_backgroundimage_clear(HWND hWnd, void* pObj);
+void _obj_backgroundimage_clear(HWND hWnd, obj_base* pObj);
 void _obj_destroy(EXHANDLE hObj, obj_s* pObj, int* nError);
 EXHANDLE _obj_create_init(HWND hWnd, wnd_s* pWnd, int atomClass, void* pfnMsgProc, obj_s** pObj, int* nError);
 void _obj_create_proc(int* nError, bool fScale, theme_s* hTheme, obj_s* pObj, int dwStyleEx, int atomClass, void* lpszName, int dwStyle, int x, int y, int width, int height, EXHANDLE hParent, int nID, int atomName, size_t lParam, int dwTextFormat);

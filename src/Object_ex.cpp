@@ -1595,15 +1595,10 @@ int Ex_ObjDispatchNotify(EXHANDLE hObj, int nCode, size_t wParam, size_t lParam)
 	return ret;
 }
 
-void _obj_backgroundimage_clear(HWND hWnd, void* pObj)
+void _obj_backgroundimage_clear(HWND hWnd, obj_base* pObj)
 {
-	void* dwTmp = 0;
-	if (((obj_s*)pObj)->pWnd_) {
-		dwTmp = ((obj_s*)pObj)->lpBackgroundImage_;
-	}
-	else {
-		dwTmp = ((wnd_s*)pObj)->lpBackgroundImage_;
-	}
+	void* dwTmp = pObj->lpBackgroundImage_;
+
 
 	if (dwTmp != 0)
 	{
@@ -1611,7 +1606,7 @@ void _obj_backgroundimage_clear(HWND hWnd, void* pObj)
 		_img_destroy(((bkgimg_s*)dwTmp)->hImage_);
 		_struct_destroyfromaddr(dwTmp, offsetof(bkgimg_s, lpDelay_));
 		_struct_destroyfromaddr(dwTmp, offsetof(bkgimg_s, lpGrid_));
-		_struct_destroyfromaddr(pObj, offsetof(obj_s, lpBackgroundImage_));
+		_struct_destroyfromaddr(pObj, offsetof(obj_base, lpBackgroundImage_));
 	}
 }
 
@@ -1655,7 +1650,7 @@ void _obj_destroy(EXHANDLE hObj, obj_s* pObj, int* nError)
 	//timer
 	KillTimer(hWnd, (UINT_PTR)((size_t)pObj + TIMER_OBJECT));
 	//backgroundinfo
-	_obj_backgroundimage_clear(hWnd, pObj);
+	_obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
 	_obj_z_clear(hObj, pObj, 0, 0);
 	//清理子组件
 	EXHANDLE sObj = pObj->objChildFirst_;
@@ -2619,8 +2614,8 @@ bool Ex_ObjGetBackgroundImage(EXHANDLE handle, void* lpBackgroundImage)
 void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	KillTimer(hWnd, idEvent);
-	obj_s* pObj = (obj_s*)(idEvent - TIMER_BKG);
-	void* lpBI = ((wnd_s*)pObj)->lpBackgroundImage_;
+	obj_base* pObj = (obj_base*)(idEvent - TIMER_BKG);
+	void* lpBI = pObj->lpBackgroundImage_;
 	if (lpBI != 0)
 	{
 		void* pDelay = ((bkgimg_s*)lpBI)->lpDelay_;
@@ -2638,7 +2633,7 @@ void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent,
 			if (((pObj->dwFlags_ & EOF_OBJECT) == EOF_OBJECT))
 			{
 				int nError = 0;
-				_obj_invalidaterect(pObj, 0, &nError);
+				_obj_invalidaterect((obj_s*)pObj, 0, &nError);
 			}
 			else {
 				_wnd_redraw_bkg(hWnd, (wnd_s*)pObj, 0, true, false);
@@ -2653,7 +2648,7 @@ bool _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, void* lpImage, int dwImage
 {
 	if (dwImageLen == 0)
 	{
-		_obj_backgroundimage_clear(hWnd, pObj);
+		_obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
 		return true;
 	}
 	else {
