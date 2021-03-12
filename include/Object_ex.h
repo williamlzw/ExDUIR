@@ -57,14 +57,18 @@ struct class_s
 
 struct obj_s
 {
-	struct obj_base base;
-	EXHANDLE hObj_;
-	EXHANDLE objChildFirst_;
-	EXHANDLE objChildLast_;
-	EXHANDLE hLayout_;
-	int dwFlags_;
-	bkgimg_s* lpBackgroundImage_;
-	theme_s* hTheme_;
+	union {
+		struct obj_base base;
+		struct {
+			EXHANDLE hObj_;
+			EXHANDLE objChildFirst_;
+			EXHANDLE objChildLast_;
+			EXHANDLE hLayout_;
+			int dwFlags_;
+			bkgimg_s* lpBackgroundImage_;
+			theme_s* hTheme_;
+		};
+	};
 
 	wnd_s* pWnd_;
 
@@ -231,8 +235,8 @@ struct si_s
 int Ex_ObjRegister(LPCWSTR lptszClassName, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, int dwFlags, ClsPROC pfnObjProc);
 void _obj_register(int atomClass, int dwStyle, int dwStyleEx, int dwTextFormat, int cbObjExtra, void* hCursor, ClsPROC pfnObjProc, int dwFlags, int* nError);
 EXHANDLE Ex_ObjLayoutGet(EXHANDLE handle);
-void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, void** pParent);
-void _obj_z_set_before_topmost(EXHANDLE objChildFirst, void* pObjChildFirst, EXHANDLE objChildLast, obj_s* pObjChildLast, EXHANDLE hObj, obj_s* pObj, void* pParent);
+void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, obj_base** pParent);
+void _obj_z_set_before_topmost(EXHANDLE objChildFirst, void* pObjChildFirst, EXHANDLE objChildLast, obj_s* pObjChildLast, EXHANDLE hObj, obj_s* pObj, obj_base* pParent);
 void _obj_z_set(EXHANDLE hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, UINT flags, int* nError);
 bool _obj_autosize(obj_s* pObj, EXHANDLE hObj, int* width, int* height);
 size_t _obj_sendmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved);

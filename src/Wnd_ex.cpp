@@ -2396,7 +2396,6 @@ bool _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam)
 
 void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, WPARAM wParam, LPARAM lParam)
 {
-	
 	if (!((pWnd->dwFlags_ & EWF_bTrackObject) == EWF_bTrackObject))
 	{
 		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & (EWF_bLeftTrack | EWF_bRightTrack | EWF_bMidTrack));

@@ -15,15 +15,18 @@
 
 struct wnd_s
 {
-	struct obj_base base;
-	EXHANDLE hexdui_;
-	EXHANDLE objChildFirst_;
-	EXHANDLE objChildLast_;
-	EXHANDLE hLayout_;
-	int dwFlags_;
-	bkgimg_s* lpBackgroundImage_;
-	theme_s* hTheme_;
-
+	union {
+		struct obj_base base;
+		struct {
+			EXHANDLE hexdui_;
+			EXHANDLE objChildFirst_;
+			EXHANDLE objChildLast_;
+			EXHANDLE hLayout_;
+			int dwFlags_;
+			bkgimg_s* lpBackgroundImage_;
+			theme_s* hTheme_;
+		};// 方便使用base里的成员
+	};
 	UPDATELAYEREDWINDOWINFO ulwi_;
 	/*int ulwi_cbsize_;
 	void* ulwi_hdcDest_;
