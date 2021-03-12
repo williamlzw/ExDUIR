@@ -74,10 +74,10 @@ void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, obj_base** pPar
 	EXHANDLE objNext = pObj->objNext_;
 	//修复父层组件链表
 	if (pParent) {
-		if (((obj_s*)pParent)->objChildFirst_ == hObj)
-			((obj_s*)pParent)->objChildFirst_ = objNext;
-		if (((obj_s*)pParent)->objChildLast_ == hObj)
-			((obj_s*)pParent)->objChildLast_ = objPrev;
+		if ((*pParent)->objChildFirst_ == hObj)
+			(*pParent)->objChildFirst_ = objNext;
+		if ((*pParent)->objChildLast_ == hObj)
+			(*pParent)->objChildLast_ = objPrev;
 	}
 
 	//修复兄弟层组件链表
