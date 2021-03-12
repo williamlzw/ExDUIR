@@ -8,9 +8,16 @@ bool _img_destroy(EXHANDLE hImg)
 	if (_handle_validate(hImg, HT_IMAGE, (void**)&pImage, &nError))
 	{
 		void* pObj = pImage->pObj_;
-		((IWICBitmap*)pObj)->Release();
+		if (pObj)
+		{
+			((IWICBitmap*)pObj)->Release();
+		}
+		
 		void* pWicDecoder = pImage->pWicDecoder_;
-		((IWICBitmapDecoder*)pWicDecoder)->Release();
+		if (pWicDecoder)
+		{
+			((IWICBitmapDecoder*)pWicDecoder)->Release();
+		}
 		Ex_MemFree(pImage);
 		_handle_destroy(hImg, &nError);
 	}
