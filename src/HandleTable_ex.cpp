@@ -36,9 +36,10 @@ EXHANDLE _handle_create(int nType, void* dwData, int *nError)
 	return ret;
 }
 
-bool _handle_destroy(EXHANDLE handle, int* nError)
+bool _handle_destroy(EXHANDLE handle, int* pError)
 {
 	bool ret = false;
+	int nError = 0;
 	if ((handle && 3) == 0)
 	{
 		EXHANDLE nIndex = (handle << 12) >> 14;
@@ -50,22 +51,26 @@ bool _handle_destroy(EXHANDLE handle, int* nError)
 				ret = MemPool_Free(g_Li.hHandles, lpAddress);
 			}
 			else {
-				*nError = ERROR_EX_MEMPOOL_BADPTR;
+				nError = ERROR_EX_MEMPOOL_BADPTR;
 			}
 		}
 		else {
-			*nError = ERROR_EX_HANDLE_BADINDEX;
+			nError = ERROR_EX_HANDLE_BADINDEX;
 		}
 	}
 	else {
-		*nError = ERROR_EX_HANDLE_UNSUPPORTED_TYPE;
+		nError = ERROR_EX_HANDLE_UNSUPPORTED_TYPE;
+	}
+	if (pError) {
+		*pError = nError;
 	}
 	return ret;
 }
 
-bool _handle_validate(EXHANDLE handle, int type, void** dwData, int* nError)
+bool _handle_validate(EXHANDLE handle, int type, void** dwData, int* pError)
 {
 	bool ret = false;
+	int nError = 0;
 	if (handle != 0)
 	{
 
@@ -81,20 +86,23 @@ bool _handle_validate(EXHANDLE handle, int type, void** dwData, int* nError)
 					ret = (*dwData != 0);
 				}
 				else {
-					*nError = ERROR_EX_MEMPOOL_INVALIDBLOCK;
+					nError = ERROR_EX_MEMPOOL_INVALIDBLOCK;
 				}
 			}
 			else {
-				*nError = ERROR_EX_MEMPOOL_BADPTR;
+				nError = ERROR_EX_MEMPOOL_BADPTR;
 			}
 		}
 		else {
-			*nError = ERROR_EX_MEMPOOL_BADINDEX;
+			nError = ERROR_EX_MEMPOOL_BADINDEX;
 		}
 	}
 	else {
 
-		*nError = ERROR_EX_HANDLE_INVALID;
+		nError = ERROR_EX_HANDLE_INVALID;
+	}
+	if (pError) {
+		*pError = nError;
 	}
 	return ret;
 }

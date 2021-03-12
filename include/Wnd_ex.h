@@ -15,8 +15,15 @@
 
 struct wnd_s
 {
-	void* wnd = 0; // 标记是wnd对象还是obj对象，obj对象为非0
-	//TODO:	size_t ulwi_; UPDATELAYEREDWINDOWINFO
+	struct obj_base base;
+	EXHANDLE hexdui_;
+	EXHANDLE objChildFirst_;
+	EXHANDLE objChildLast_;
+	EXHANDLE hLayout_;
+	int dwFlags_;
+	bkgimg_s* lpBackgroundImage_;
+	theme_s* hTheme_;
+
 	UPDATELAYEREDWINDOWINFO ulwi_;
 	/*int ulwi_cbsize_;
 	void* ulwi_hdcDest_;
@@ -59,13 +66,6 @@ struct wnd_s
 	wnd_s* pMenuHostWnd_;
 
 	float fBlur_;
-	EXHANDLE hexdui_;
-	EXHANDLE objChildFirst_;
-	EXHANDLE objChildLast_;
-	EXHANDLE hLayout_;
-	int dwFlags_;
-	bkgimg_s* lpBackgroundImage_;
-	theme_s* hTheme_;
 
 	EXHANDLE objTrackPrev_;
 	EXHANDLE objTrack_;

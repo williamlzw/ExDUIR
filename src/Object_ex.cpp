@@ -56,13 +56,19 @@ EXHANDLE Ex_ObjLayoutGet(EXHANDLE handle)
 void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, void** pParent)
 {
 	//逆序,顶部->底部
-	*hParent = pObj->objParent_;
+	if (hParent) {
+		*hParent = pObj->objParent_;
+	}
 	int nError = 0;
 	
-	if (!_handle_validate(*hParent, HT_OBJECT, pParent, &nError))
+	if (!_handle_validate(pObj->objParent_, HT_OBJECT, pParent, &nError))
 	{
-		*hParent = 0;
-		*pParent = pObj->pWnd_;
+		if (hParent) {
+			*hParent = 0;
+		}
+		if (pParent) {
+			*pParent = pObj->pWnd_;
+		}
 	}
 	
 	
@@ -70,10 +76,13 @@ void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, void** pParent)
 	EXHANDLE objPrev = pObj->objPrev_;
 	EXHANDLE objNext = pObj->objNext_;
 	//修复父层组件链表
-	if (((obj_s*)pParent)->objChildFirst_ == hObj)
-		((obj_s*)pParent)->objChildFirst_ = objNext;
-	if (((obj_s*)pParent)->objChildLast_ == hObj)
-		((obj_s*)pParent)->objChildLast_ = objPrev;
+	if (pParent) {
+		if (((obj_s*)pParent)->objChildFirst_ == hObj)
+			((obj_s*)pParent)->objChildFirst_ = objNext;
+		if (((obj_s*)pParent)->objChildLast_ == hObj)
+			((obj_s*)pParent)->objChildLast_ = objPrev;
+	}
+
 	//修复兄弟层组件链表
 	obj_s* pNext = nullptr;
 	obj_s* pPrev = nullptr;
@@ -83,7 +92,7 @@ void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, void** pParent)
 	}
 	if (_handle_validate(objPrev, HT_OBJECT, (void**)&pPrev, &nError))
 	{
-		pNext->objNext_ = objNext;
+		pPrev->objNext_ = objNext;
 	}
 	pObj->objNext_ = 0;
 	pObj->objPrev_ = 0;
@@ -125,6 +134,7 @@ void _obj_z_set_before_topmost(EXHANDLE objChildFirst, void* pObjChildFirst, EXH
 				}
 				else 
 				{
+					tmp = pObjPrev->objNext_;
 					pObjPrev->objNext_ = hObj;
 					pObj->objNext_ = tmp;
 					pObj->objPrev_ = objPrev;

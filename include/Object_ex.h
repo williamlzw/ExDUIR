@@ -57,7 +57,17 @@ struct class_s
 
 struct obj_s
 {
+	struct obj_base base;
+	EXHANDLE hObj_;
+	EXHANDLE objChildFirst_;
+	EXHANDLE objChildLast_;
+	EXHANDLE hLayout_;
+	int dwFlags_;
+	bkgimg_s* lpBackgroundImage_;
+	theme_s* hTheme_;
+
 	wnd_s* pWnd_;
+
 	int left_; //组件相对位置
 	int top_;
 	int right_;
@@ -90,13 +100,6 @@ struct obj_s
 	int crVisted_;
 	int crShadow_;
 	int dwShadowSize_;
-	EXHANDLE hObj_;
-	EXHANDLE objChildFirst_;
-	EXHANDLE objChildLast_;
-	EXHANDLE hLayout_;
-	int dwFlags_;
-	bkgimg_s* lpBackgroundImage_;
-	theme_s* hTheme_;
 
 	int minmax_reserved_1_;
 	int minmax_reserved_2_;

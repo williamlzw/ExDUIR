@@ -1089,6 +1089,19 @@ struct array_s;
 struct mbp_s;
 struct menu_s;
 
+struct obj_base {
+	union {
+		EXHANDLE hexdui_;
+		EXHANDLE hObj_;
+	};
+	EXHANDLE objChildFirst_;
+	EXHANDLE objChildLast_;
+	EXHANDLE hLayout_;
+	int dwFlags_;
+	bkgimg_s* lpBackgroundImage_;
+	theme_s* hTheme_;
+};
+
 struct EXDATA
 {
 
