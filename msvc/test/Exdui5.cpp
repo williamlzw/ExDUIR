@@ -158,7 +158,6 @@ std::vector<UCHAR> 整数到字节数组(int value)
 
 size_t msgProc(HWND, EXHANDLE handle, int, size_t, void*, void*)
 {
-	std::cout << "hExDui:" << handle << std::endl;
 	return 0;
 }
 
@@ -192,9 +191,14 @@ void 测试窗口()
 		std::vector<char> imgdata;
 		Ex_ReadFile(L".\\00000.jpg", &imgdata);
 		Ex_ObjSetBackgroundImage(img, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
+
+		EXHANDLE imga = Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, EOS_VISIBLE, 50, 150, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
+
+		//Ex_ReadFile(L".\\00000.jpg", &imgdata);
+		Ex_ObjSetBackgroundImage(imga, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
 		LPCWSTR text = L"testa";
 		LPCWSTR cap = L"testb";
-		Ex_MessageBoxEx(hExDui, (void*)text, (void*)cap, 0, 0, 0, 0, 0, 0);
+		//Ex_MessageBoxEx(hExDui, (void*)text, (void*)cap, 0, 0, 0, 0, 0, 0);
 		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
 	}
 	Ex_WndMsgLoop();
