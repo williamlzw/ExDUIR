@@ -82,8 +82,11 @@ bool _handle_validate(EXHANDLE handle, int type, void** dwData, int* pError)
 			{
 				if (MemPool_AddressIsUsed(pData))
 				{
-					*dwData = (void*)__get(pData, 0);
-					ret = (*dwData != 0);
+					void* tmp = (void*)__get(pData, 0);
+					if (dwData) {
+						*dwData = tmp;
+					}
+					ret = (tmp != 0);
 				}
 				else {
 					nError = ERROR_EX_MEMPOOL_INVALIDBLOCK;
