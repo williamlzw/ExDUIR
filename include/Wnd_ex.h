@@ -65,8 +65,11 @@ struct wnd_s
 	void* nID_;
 	void* lpIDropTarget_;
 
-	size_t lParam_;
-	wnd_s* pMenuHostWnd_;
+	union {
+		size_t lParam_;
+		wnd_s* pMenuHostWnd_;
+	};
+
 
 	float fBlur_;
 
