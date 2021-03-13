@@ -69,7 +69,7 @@ size_t _button_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t l
 	}
 	else if (uMsg == BM_SETCHECK)
 	{
-		if ((pObj->dwStyle_ & (按钮风格_单选按钮, 按钮风格_复选按钮)) != 0)
+		if ((pObj->dwStyle_ & (按钮风格_单选按钮 | 按钮风格_复选按钮)) != 0)
 		{
 			if ((pObj->dwStyle_ & 按钮风格_单选按钮) == 按钮风格_单选按钮)
 			{
