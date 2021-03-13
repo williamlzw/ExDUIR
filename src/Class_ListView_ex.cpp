@@ -158,7 +158,7 @@ void _lv_rectfromiitem(obj_s* pObj, listview_s* pOwner, int iItem, bool bHView, 
 	listview_s lv;
 	RtlMoveMemory(&lv, pOwner, sizeof(listview_s));
 	RECT rcClient{ 0 };
-	RtlMoveMemory(&rcClient, pObj + offsetof(obj_s, c_left_), 16);
+	RtlMoveMemory(&rcClient, (void*)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
 	int nWidth = lv.width_item_ + lv.width_split_;
 	int nHeight = lv.height_item_ + lv.height_split_;
 	if (bHView)
@@ -195,7 +195,7 @@ int _lv_itemfrompos(obj_s* pObj, listview_s* pOwner, int x, int y, int* offsetPo
 		listview_s lv;
 		RECT rcClient{ 0 };
 		RtlMoveMemory(&lv, pOwner, sizeof(listview_s));
-		RtlMoveMemory(&rcClient, pObj + offsetof(obj_s, c_left_), 16);
+		RtlMoveMemory(&rcClient, (void*)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
 		int nWidth = lv.width_item_ + lv.width_split_;
 		int nHeight = lv.height_item_ + lv.height_split_;
 		int realleft = 0;
@@ -270,7 +270,7 @@ bool _lv_queryitemstate(void* lpItems, int iItem, int dwState)
 void _lv_getsbvalue(obj_s* pObj, listview_s* pOwner, bool bHSB, EXHANDLE* hSB, int* oPos, int* nLine, int* nPage, int* nView)
 {
 	RECT rcClient{ 0 };
-	RtlMoveMemory(&rcClient, pObj + offsetof(obj_s, c_left_), 16);
+	RtlMoveMemory(&rcClient, (void*)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
 	if (bHSB)
 	{
 		*oPos = pOwner->nOffsetX_;
@@ -572,7 +572,7 @@ size_t _lv_showitem(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int iItem, bool bChec
 			return 0;
 		}
 	}
-	void* lprc = pObj + offsetof(obj_s, c_left_);
+	void* lprc =(void*) ((size_t)pObj + offsetof(obj_s, c_left_));
 	bool bHView = ((pObj->dwStyle_ & 列表风格_横向列表) == 列表风格_横向列表);
 	RECT rcItem{ 0 };
 	_lv_rectfromiitem(pObj, pOwner, iItem, bHView, &rcItem);

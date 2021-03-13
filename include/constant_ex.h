@@ -1072,47 +1072,6 @@ typedef EXHANDLE HEXPATH;		// 路径句柄
 typedef LPVOID HEXMATRIX;		// 矩阵句柄
 
 
-struct wnd_s;
-struct obj_s;
-struct font_s;
-struct ti_s;
-struct classtable_s;
-struct si_s;
-struct img_s;
-struct bkgimg_s;
-struct matrix_s;
-struct mempool_s;
-struct hashtable_s;
-struct theme_s;
-struct entry_s;
-struct layout_s;
-struct array_s;
-struct mbp_s;
-struct menu_s;
-struct sli_s;
-struct slb_s;
-struct paintstruct_s;
-struct mempoolmsg_s;
-
-struct obj_base {
-	union {
-		EXHANDLE hexdui_;
-		EXHANDLE hObj_;
-	};
-	EXHANDLE objChildFirst_;
-	EXHANDLE objChildLast_;
-	EXHANDLE hLayout_;
-	int dwFlags_;
-	bkgimg_s* lpBackgroundImage_;
-	theme_s* hTheme_;
-};
-
-struct EXDATA
-{
-
-	LPBYTE ptr;		// 数据指针
-	size_t len;		// 数据长度
-};
 struct EX_NMHDR
 {
 	HEXOBJ	hObjFrom;			// 0	组件句柄
@@ -1228,7 +1187,7 @@ struct EX_TREEVIEW_INSERTINFO {
 	DWORD dwStyle;					// 风格
 	BOOL fUpdateLater;				// 是否暂不更新(统一用TVM_UPDATE更新)
 };
-struct TREEVIEW_NODEITEM
+struct EX_TREEVIEW_NODEITEM
 {
 	INT nID;						// ID
 	LPCWSTR wzText;					// 文本

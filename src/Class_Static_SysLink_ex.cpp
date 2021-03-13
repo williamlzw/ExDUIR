@@ -114,7 +114,7 @@ void _syslink_leavecheck(obj_s* pObj, sli_s* pOwner)
 			{
 				lpLastBlock->dwFlags_ = lpLastBlock->dwFlags_ - (lpLastBlock->dwFlags_ & slbf_hover);
 				int nError = 0;
-				_obj_invalidaterect(pObj, lpLastBlock + offsetof(slb_s, rc_left_), &nError);
+				_obj_invalidaterect(pObj, (void*)((size_t)lpLastBlock + offsetof(slb_s, rc_left_)), &nError);
 			}
 		}
 		pOwner->lpHitBlock_ = 0;

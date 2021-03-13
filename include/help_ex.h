@@ -6,12 +6,75 @@
 #include <string>
 #include <Windows.h>
 
+template <class Ty>//这里实现了 int long float double  unsigned int/... 等等
+static void pt(std::wstring& str, Ty v)
+{
+	str.append(std::to_wstring(v) + L"\r\n");
+}
+static void pt(std::wstring& str, std::wstring s)//这个是 文本型 
+{
+	str.append(s + L"\r\n");
+}
+static void pt(std::wstring& str, const wchar_t* s)//这个是 L"" 
+{
+	str.append(s); str.append(L"\r\n");
+}
+//可以无限重载自定义类型的 调试输出  输出内容格式可以自定义   
+//下面的字节集调试输出例子 是用vector自封的数组  输出结果 跟易语言调试输出字节集一样的效果
+// static void pt(std::wstring & str, 字节集 s)
+// {
+	// str.append(L"字节集:" + 长整数到文本(s.取字节数()) + L"{" + 字节集_字节集到文本(s) + L"}");
+// }
+
+//调试输出 支持 无限参数!  任意类型!  (没有的可以在上面重载方法自定义)
+template <class... T>
+static void 调试输出(T...args) {
+	std::wstring str = L"";
+	std::initializer_list<int>{ (pt(str, std::forward<T>(args)), 0)...};
+	OutputDebugString(str.c_str());
+	//OutputDebugString(L"\r\n");
+}
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME					//定义一个API函数类型,并声明
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME																	//声明一个函数指针变量
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule,#NAME)	
 
 #include "constant_ex.h"
+
+struct wnd_s;
+struct obj_s;
+struct font_s;
+struct ti_s;
+struct classtable_s;
+struct si_s;
+struct img_s;
+struct bkgimg_s;
+struct matrix_s;
+struct mempool_s;
+struct hashtable_s;
+struct theme_s;
+struct entry_s;
+struct layout_s;
+struct array_s;
+struct mbp_s;
+struct menu_s;
+struct sli_s;
+struct slb_s;
+struct paintstruct_s;
+struct mempoolmsg_s;
+
+struct obj_base {
+	union {
+		EXHANDLE hexdui_;
+		EXHANDLE hObj_;
+	};
+	EXHANDLE objChildFirst_;
+	EXHANDLE objChildLast_;
+	EXHANDLE hLayout_;
+	int dwFlags_;
+	bkgimg_s* lpBackgroundImage_;
+	theme_s* hTheme_;
+};
 
 typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
 typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);

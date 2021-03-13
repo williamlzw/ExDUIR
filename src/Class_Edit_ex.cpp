@@ -542,7 +542,7 @@ void CALLBACK _edit_timer_caret(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dw
         pOwner->flags_ = pOwner->flags_ | (eef_bShowCaret | eef_bCaretContext);
         pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & eef_bCaretShowed);
     }
-    _obj_invalidaterect(pObj, pOwner + offsetof(edit_s, rcCaret_left_), 0);
+    _obj_invalidaterect(pObj, (void*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), 0);
 }
 
 void
