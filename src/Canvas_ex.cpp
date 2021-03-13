@@ -21,7 +21,7 @@ bool _md_create(void* pData, size_t offsetDc, size_t offsetBmp, size_t offsetBit
 	if (width <= 0) width = 1;
 	if (height <= 0) height = 1;
 	HDC mDc = CreateCompatibleDC(0);
-	BITMAPINFO bi;
+	BITMAPINFO bi = { 0 };
 	bool ret = false;
 	if (mDc != 0)
 	{

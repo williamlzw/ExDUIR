@@ -95,11 +95,11 @@ public:
     //@cmember Show the caret
     BOOL TxShowCaret(BOOL fShow) {
         if (fShow) {
-            m_pOwner->flags_ |= eef_bShowCaret;
+            FLAGS_ADD(m_pOwner->flags_, eef_bShowCaret);
             ShowCaret(_obj_gethWnd(m_pOwner->pObj_));
         }
         else {
-            m_pOwner->flags_ &= ~eef_bShowCaret;
+            FLAGS_DEL(m_pOwner->flags_, eef_bShowCaret);
             HideCaret(_obj_gethWnd(m_pOwner->pObj_));
         }
         return TRUE;
@@ -310,23 +310,23 @@ void _edit_init(HWND hWnd, EXHANDLE hObj, obj_s *pObj) {
         pOwner->hCanvasCaret_ = _canvas_createfromobj(hObj, 0, 0, 0, &nError);
         pOwner->crCaret_ = ExRGBA(0, 0, 0, 255);
 
-        _struct_createfromaddr(pOwner, offsetof(edit_s, prctext_), 16, &nError);
-        _struct_createfromaddr(pOwner, offsetof(edit_s, prcinset_), 16, &nError);
+        _struct_createfromaddr(pOwner, offsetof(edit_s, prctext_), sizeof(RECT), &nError);
+        _struct_createfromaddr(pOwner, offsetof(edit_s, prcinset_), sizeof(RECT), &nError);
         _edit_setppf(pObj, pOwner);
         _edit_setpropbits(pObj, pOwner);
 
         _edit_size(hWnd, hObj, pObj);
 
-        TextHost *pTextHost = new TextHost(pOwner);
+        TextHost * pITH = new TextHost(pOwner);
 
         CTSFunc CreateTextServicesL = NULL;
         CreateTextServicesL = (CTSFunc) GetProcAddress(g_Ri.hRiched20, "CreateTextServices");
-        if (pTextHost != 0) {
+        if (pITH != 0) {
             IUnknown *pIUnk = nullptr;
-            if (CreateTextServicesL(NULL, pTextHost, &pIUnk) == 0) {
+            if (CreateTextServicesL(NULL, pITH, &pIUnk) == 0) {
                 ITextServices *pITS = nullptr;
                 pIUnk->QueryInterface(IID_ITextServicesA, (void **) &pITS);
-                pOwner->ith_ = pTextHost;
+                pOwner->ith_ = pITH;
                 pOwner->its_ = pITS;
                 pITS->OnTxInPlaceActivate(0);
                 LRESULT ret;
@@ -346,22 +346,15 @@ void _edit_unint(obj_s *pObj) {
         _canvas_destroy(pOwner->hCanvasCaret_);
         ((ITextServices *) pOwner->its_)->Release();
         ((ITextHost *) pOwner->ith_)->Release();
-        _struct_destroyfromaddr(pOwner, offsetof(edit_s, ith_));
+        delete pOwner->ith_;
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, pcf_));
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, ppf_));
-        _struct_destroyfromaddr(pOwner, offsetof(edit_s, ith_));
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, prctext_));
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, prcinset_));
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, pBanner_));
         _md_destroy(pOwner, offsetof(edit_s, mDc_), offsetof(edit_s, hBmp_), offsetof(edit_s, pBits_));
         _struct_destroyfromaddr(pObj, offsetof(obj_s, dwOwnerData_));
     }
-}
-
-void *ITextHost_Create(obj_s *pObj, edit_s *pOwner) {
-    void *lpITH = Ex_MemAlloc(8);
-    __set(lpITH, 4, (size_t) pOwner);
-    return lpITH;
 }
 
 void _edit_setpcf(obj_s *pObj, edit_s *pOwner, int height) {
@@ -467,7 +460,7 @@ void _edit_setpropbits(obj_s *pObj, edit_s *pOwner) {
         dwProperty = dwProperty | TXTBIT_DISABLEDRAG;
     }
     if ((dwStyle & 编辑框风格_只读) != 0) {
-        dwProperty = dwProperty | TXTBIT_DISABLEDRAG;
+        dwProperty = dwProperty | TXTBIT_READONLY;
     }
     if ((dwStyle & 编辑框风格_密码输入) != 0) {
         dwProperty = dwProperty | TXTBIT_USEPASSWORD;
@@ -502,10 +495,7 @@ void _edit_size(HWND hWnd, EXHANDLE hObj, obj_s *pObj) {
                    &nError)) {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                __set_char((void *) ((size_t) pOwner->pBits_ + i * height + j * 4), 0, 0);
-                __set_char((void *) ((size_t) pOwner->pBits_ + i * height + j * 4 + 1), 1, 0);
-                __set_char((void *) ((size_t) pOwner->pBits_ + i * height + j * 4 + 2), 2, 0);
-                __set_char((void *) ((size_t) pOwner->pBits_ + i * height + j * 4 + 3), 3, 255);
+                ((int*)pOwner->pBits_)[i * height + j] = ExRGBA(0, 0, 0, 255);
             }
         }
     }
@@ -819,6 +809,8 @@ size_t _edit_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lPa
             pOwner->crBanner_ = lParam;
         }
         return 0;
+    } else if (uMsg == WM_NCCREATE || uMsg == WM_NCCALCSIZE) {
+        //拦截这两个消息
     } else {
         LRESULT ret = _edit_sendmessage(pObj, uMsg, wParam, lParam, &bFree);
         if (bFree) {

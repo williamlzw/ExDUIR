@@ -55,8 +55,7 @@ typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 #define ExGetA(rgb)			(LOBYTE((rgb)>>24))
 #define ExRGB(r,g,b)        ((int)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((INT)(BYTE)(b))<<16)))
 #define ExRGBA(r,g,b,a)		((int)(RGB(b,g,r)|(a<<24)))
-#define ExARGB(r,g,b)		ExRGBA(r,g,b,0xFF)
-#define ExARGB2RGB(argb)    argb & 0xFFFFFF
+#define ExARGB2RGB(argb)    (argb & 0xFFFFFF)
 
 #define FLAGS_CHECK(a,b) (((a)&(b)) == (b))
 #define FLAGS_ADD(a,b) (a |= (b))
