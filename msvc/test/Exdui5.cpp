@@ -161,6 +161,56 @@ size_t msgProc(HWND, EXHANDLE handle, int, size_t, void*, void*)
 	return 0;
 }
 
+bool list_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam, int* lpResult)
+{
+	if (uMsg == WM_NOTIFY)
+	{
+		EX_NMHDR ni{ 0 };
+		RtlMoveMemory(&ni, (void*)lParam, sizeof(EX_NMHDR));
+		if (hObj == ni.hObjFrom)
+		{
+			if (ni.nCode == NM_CALCSIZE)
+			{
+				__set_int((void*)ni.lParam, 4, 25);
+				*lpResult = 1;
+				return true;
+			}
+			else if (ni.nCode == NM_CUSTOMDRAW)
+			{
+				EX_CUSTOMDRAW cd{ 0 };
+				RtlMoveMemory(&cd, (void*)ni.lParam, sizeof(EX_CUSTOMDRAW));
+				if (cd.iItem > 0 && cd.iItem <= 100)
+				{
+					int crItemBkg = 0;
+					if ((cd.dwState & 状态_选择) != 0)
+					{
+						crItemBkg = ExRGB2ARGB(16777215,255);
+					}
+					else if ((cd.dwState & 状态_点燃) != 0)
+					{
+						crItemBkg = ExRGB2ARGB(16777215, 150);
+					}
+					if (crItemBkg != 0)
+					{
+						void* hBrush = _brush_create(crItemBkg);
+						_canvas_fillrect(cd.hCanvas, hBrush, cd.rcDraw.left, cd.rcDraw.top, cd.rcDraw.right, cd.rcDraw.bottom);
+						_brush_destroy(hBrush);
+					}
+					_canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 180), L"你好123", -1, DT_SINGLELINE | DT_VCENTER, cd.rcDraw.left + 10, cd.rcDraw.top, cd.rcDraw.right, cd.rcDraw.bottom);
+				}
+				*lpResult = 1;
+				return true;
+			}
+			else if (ni.nCode == LVN_ITEMCHANGED)
+			{
+				std::cout << "change" << std::endl;
+			}
+		}
+	}
+
+	return false;
+}
+
 void 测试窗口()
 {
 	auto a= LODWORD(3);
@@ -174,7 +224,7 @@ void 测试窗口()
 	std::vector<char> data;
 	Ex_ReadFile(L".\\Default.ext", &data);
 	
-	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE, 0, 0, data.data(), data.size(), 0, 0);
+	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_DEBUG, 0, 0, data.data(), data.size(), 0, 0);
 	LPCWSTR classa = L"Ex_DirectUI";
 	auto aa = Ex_WndRegisterClass(classa, 0, 0, 0);
 	
@@ -182,23 +232,35 @@ void 测试窗口()
 	HWND hWnd = Ex_WndCreate(0, classa, title, 0, 0, 400, 300, 0, 0);
 	if (hWnd != 0)
 	{
-		size_t hExDui = Ex_DUIBindWindowEx(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, msgProc);
+		size_t hExDui = Ex_DUIBindWindowEx(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON , 0, msgProc);
 		std::cout << "hExDui:" << hExDui << std::endl;
 		Ex_DUISetLong(hExDui, EWL_CRBKG, -100630528);//-97900239
-		LPCWSTR class_name = L"checkbutton";
-		LPCWSTR title_button = L"test";
-		EXHANDLE img = Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, -1, 50, 50, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
+		//单选框选择框
+		LPCWSTR class_checkbutton = L"checkbutton";
+		LPCWSTR title = L"test";
+		EXHANDLE checkbutton = Ex_ObjCreateEx(-1, (void*)class_checkbutton, (void*)title, -1, 10, 30, 50, 20, hExDui, 0, DT_VCENTER, 0, 0, NULL);
+
+		LPCWSTR class_radiobutton = L"radiobutton";
+		EXHANDLE radiobuttona = Ex_ObjCreateEx(-1, (void*)class_radiobutton, (void*)title, -1, 10, 60, 50, 20, hExDui, 0, DT_VCENTER, 0, 0, NULL);
+		EXHANDLE radiobuttonb = Ex_ObjCreateEx(-1, (void*)class_radiobutton, (void*)title, -1, 70, 60, 50, 20, hExDui, 0, DT_VCENTER, 0, 0, NULL);
+		//标签
+		LPCWSTR class_label = L"static";
+		EXHANDLE label = Ex_ObjCreateEx(-1, (void*)class_label, NULL, -1, 10, 90, 100, 30, hExDui, 0, DT_VCENTER, 0, 0, NULL);
 		std::vector<char> imgdata;
 		Ex_ReadFile(L".\\00000.jpg", &imgdata);
-		//Ex_ObjSetBackgroundImage(img, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
+		Ex_ObjSetBackgroundImage(label, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
 
-		EXHANDLE imga = Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, -1, 50, 150, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
+		//编辑框
+		//LPCWSTR class_edit = L"edit";
+		//EXHANDLE edit = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, (void*)class_edit, (void*)title, EOS_VISIBLE | 编辑框风格_密码输入, 10, 130, 100, 30, hExDui, 0, DT_VCENTER, 0, 0, NULL);
 
-		//Ex_ReadFile(L".\\00000.jpg", &imgdata);
-		//Ex_ObjSetBackgroundImage(imga, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
-		LPCWSTR text = L"testa";
-		LPCWSTR cap = L"testb";
-		//Ex_MessageBoxEx(hExDui, (void*)text, (void*)cap, 0, 0, 0, 0, 0, 0);
+
+		//列表框
+		LPCWSTR class_list = L"listview";
+		EXHANDLE listview = Ex_ObjCreateEx(-1, (void*)class_list, (void*)title, EOS_VISIBLE | 列表风格_横向列表, 130, 30, 500, 500, hExDui, 0, DT_VCENTER, 0, 0, NULL);
+		Ex_ObjSendMessage(listview, LVM_SETITEMCOUNT, 1000, 1000);
+		//信息框
+		//Ex_MessageBoxEx(hExDui, (void*)title, (void*)title, 0, 0, 0, 0, 0, 0);
 		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
 	}
 	Ex_WndMsgLoop();
