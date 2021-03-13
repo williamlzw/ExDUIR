@@ -407,9 +407,10 @@ int _obj_baseproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wPara
 	void* subClass = pObj->pfnSubClass_;
 	if (subClass != 0)
 	{
-		int ret = 1;
-		((ClsPROC)subClass)(hWnd, hObj, uMsg, wParam, lParam, (obj_s*)&ret);
-		return ret;
+		int ret = 0;
+		if (((ClsPROC)subClass)(hWnd, hObj, uMsg, wParam, lParam, (obj_s*)&ret)) {
+			return ret;
+		}
 	}
 	if (uMsg == WM_NCHITTEST)
 	{

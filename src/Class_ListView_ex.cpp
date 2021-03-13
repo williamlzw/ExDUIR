@@ -796,7 +796,7 @@ size_t _lv_size(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 
 	int iWidth = 0;
 	int iHeight = 0;
-	_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, L"s", 1, 0, 0, rcClient.right, rcClient.bottom, &iWidth, &iHeight);
+	_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, L"S", 1, 0, 0, rcClient.right, rcClient.bottom, &iWidth, &iHeight);
 	if (bHView)
 	{
 		iWidth = Ex_Scale(60);

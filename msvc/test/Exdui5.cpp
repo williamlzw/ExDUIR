@@ -161,7 +161,7 @@ size_t msgProc(HWND, EXHANDLE handle, int, size_t, void*, void*)
 	return 0;
 }
 
-bool list_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam, int* lpResult)
+BOOL list_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam, int* lpResult)
 {
 	if (uMsg == WM_NOTIFY)
 	{
@@ -257,7 +257,7 @@ void 测试窗口()
 
 		//列表框
 		LPCWSTR class_list = L"listview";
-		EXHANDLE listview = Ex_ObjCreateEx(-1, (void*)class_list, (void*)title, EOS_VISIBLE | 列表风格_横向列表, 130, 30, 500, 500, hExDui, 0, DT_VCENTER, 0, 0, NULL);
+		EXHANDLE listview = Ex_ObjCreateEx(-1, (void*)class_list, (void*)title, EOS_VISIBLE | 列表风格_横向列表, 130, 30, 500, 500, hExDui, 0, DT_VCENTER, 0, 0, list_proc);
 		Ex_ObjSendMessage(listview, LVM_SETITEMCOUNT, 1000, 1000);
 		//信息框
 		//Ex_MessageBoxEx(hExDui, (void*)title, (void*)title, 0, 0, 0, 0, 0, 0);
