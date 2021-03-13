@@ -7,10 +7,10 @@
 #define 滚动条点击类型_页面区域2 4
 #define 滚动条点击类型_调节按钮2 5
 
-size_t _sb_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj);
+size_t _sb_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam, obj_s* pObj);
 void _sb_init(obj_s* pObj);
 void _sb_uninit(obj_s* pObj);
-size_t _sb_parentnotify(HWND hWnd, obj_s* pObj, size_t wParam, size_t lParam, int uMsg, bool bDispatch);
+size_t _sb_parentnotify(HWND hWnd, obj_s* pObj, size_t wParam, size_t lParam, UINT uMsg, bool bDispatch);
 int _sb_pos2point(HWND hWnd, obj_s* pObj, si_s* psi, int* nPos, bool bVert, int* cxy);
 EXHANDLE _sb_getscroll(obj_s* pObj, int nBar);
 void _sb_calcthumb(HWND hWnd, obj_s* pObj, si_s* psi, bool bVScroll);

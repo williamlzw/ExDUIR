@@ -141,7 +141,7 @@ void _object_init()
 	_obj_register(ATOM_PAGE, EOS_VISIBLE, EOS_EX_TRANSPARENT, 0, 0, 0, &_page_proc, 0, &nError);
 	_obj_register(ATOM_STATIC, EOS_VISIBLE, EOS_EX_TRANSPARENT, DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE, 0, 0, &_static_proc, 0, &nError);
 	_obj_register(ATOM_SCROLLBAR, 滚动条风格_右底对齐 | 滚动条风格_控制按钮 | EOS_VISIBLE, 0, 0, 0, 0, &_sb_proc, 0, &nError);
-
+	_obj_register(ATOM_BUTTON, EOS_VISIBLE | 按钮风格_文本偏移, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_CENTER | DT_SINGLELINE, 0, 0, &_button_proc, 0, &nError);
 }
 
 float Ex_Scale(float n)//OK

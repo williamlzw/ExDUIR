@@ -45,7 +45,7 @@ LRESULT _hook_oncreate(int code, HWND hWnd, size_t lParam)
 	return CallNextHookEx((HHOOK)g_Li.hHookMsgBox, code, (WPARAM)hWnd, lParam);
 }
 
-size_t _menu_proc(void* pData, int uMsg, size_t wParam, size_t lParam)
+size_t _menu_proc(void* pData, UINT uMsg, size_t wParam, size_t lParam)
 {
 #if defined(_M_IX86)
 	HWND hWnd = (HWND)__get_int(pData, 13);
@@ -256,7 +256,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 		hObj = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, &nError);
 		if (hObj != 0)
 		{
-			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_BUTTON, aryText.data(), -1, left, top, 80, 24, 0, ~aryID[i], 0, aryID[i], -1);
+			_obj_create_proc(&nError, true, hTheme, pObj, -1, ATOM_BUTTON, (void*)aryText[i].c_str(), -1, left, top, 80, 24, 0, ~aryID[i], 0, aryID[i], -1);
 			pObj->dwFlags_ = pObj->dwFlags_ | eof_bMsgBoxControl;
 			_obj_create_done(hWnd, pWnd, hObj, pObj);
 			if (aryID[i] == iDef) _obj_setfocus(hWnd, pWnd, hObj, pObj, true);

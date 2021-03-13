@@ -110,7 +110,7 @@ void _sysbutton_remove_proc(obj_s* pObj, int width, int height)
 	}
 }
 
-size_t _sysbutton_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
+size_t _sysbutton_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam, obj_s* pObj)
 {
 	int nError = 0;
 	if (uMsg == WM_NCCREATE)
@@ -266,7 +266,7 @@ size_t _page_paint(EXHANDLE hObj)
 	return 0;
 }
 
-void _page_onvscrollbar(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam)
+void _page_onvscrollbar(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	auto nCode = LOWORD(wParam);
 	int oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
@@ -310,7 +310,7 @@ void _page_onvscrollbar(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t 
 	Ex_ObjSetPos(pObj->objChildFirst_, 0, EOP_DEFAULT, (-nPos), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
 }
 
-size_t _page_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
+size_t _page_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam, obj_s* pObj)
 {
 	if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL)
 	{

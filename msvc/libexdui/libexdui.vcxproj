@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\src\Array_ex.cpp" />
     <ClCompile Include="..\..\src\Brush_ex.cpp" />
     <ClCompile Include="..\..\src\Canvas_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_Buttom_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Scrollbar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Static_SysLink_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SysButton_Page_ex.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="..\..\include\Array_ex.h" />
     <ClInclude Include="..\..\include\Brush_ex.h" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
+    <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h" />
     <ClInclude Include="..\..\include\Class_Static_SysLink_ex.h" />
     <ClInclude Include="..\..\include\Class_SysButton_Page_ex.h" />

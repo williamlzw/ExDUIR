@@ -1,6 +1,6 @@
 #include "Class_Scrollbar_ex.h"
 
-size_t _sb_parentnotify(HWND hWnd, obj_s* pObj, size_t wParam, size_t lParam, int uMsg, bool bDispatch)
+size_t _sb_parentnotify(HWND hWnd, obj_s* pObj, size_t wParam, size_t lParam, UINT uMsg, bool bDispatch)
 {
 	EXHANDLE hParent = pObj->objParent_;
 	obj_s* lpParent = nullptr;
@@ -653,7 +653,7 @@ void _sb_set_wArrows(EXHANDLE hSB, int wArrows, bool fRedraw)
 	}
 }
 
-size_t _sb_proc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam, obj_s* pObj)
+size_t _sb_proc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam, obj_s* pObj)
 {
 	int nError = 0;
 	if (uMsg == WM_CREATE)

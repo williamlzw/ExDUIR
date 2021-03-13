@@ -43,6 +43,7 @@ typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 #include "Class_Static_SysLink_ex.h"
 #include "Class_SysButton_Page_ex.h"
 #include "Class_Scrollbar_ex.h"
+#include "Class_Button_Item_ex.h"
 
 #define ExGetB(rgb)			(LOBYTE(rgb))
 #define ExGetG(rgb)			(LOBYTE(((WORD)(rgb)) >> 8))

@@ -264,22 +264,26 @@ bool _obj_autosize(obj_s* pObj, EXHANDLE hObj, int* width, int* height)
 	return ret;
 }
 
-size_t _obj_sendmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved)
+size_t _obj_sendmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, int dwReserved)
 {
+	//TODO: 未释放
 	auto p = MemPool_Alloc(g_Li.hMemPoolMsg, false);
-	size_t ret = 0;
+	bool ret = false;
+
 	if (p != 0)
 	{
 		RtlMoveMemory(p, &pObj, 16 + sizeof(void*));
-		ret = SendMessageW(hWnd, g_Li.dwMessage, (WPARAM)p, MAKELONG(EMT_OBJECT, 0));
+		ret = SendMessageW(hWnd, g_Li.dwMessage, (WPARAM)pObj, MAKELONG(EMT_OBJECT, 0));
 	}
 	return ret;
 }
 
-bool _obj_postmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved)
+bool _obj_postmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, int dwReserved)
 {
+	//TODO: 未释放
 	auto p = MemPool_Alloc(g_Li.hMemPoolMsg, false);
 	bool ret = false;
+
 	if (p != 0)
 	{
 		RtlMoveMemory(p, &pObj, 16 + sizeof(void*));
@@ -288,7 +292,7 @@ bool _obj_postmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wP
 	return ret;
 }
 
-int _obj_wm_nchittest(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam)
+int _obj_wm_nchittest(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	int ret = HTTRANSPARENT;
 	if (!((pObj->dwStyleEx_ & EOS_EX_TRANSPARENT) == EOS_EX_TRANSPARENT))
@@ -392,7 +396,7 @@ bool Ex_ObjSetFocus(EXHANDLE hObj)
 	return nError == 0;
 }
 
-int _obj_baseproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam)
+int _obj_baseproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	pObj->dwFlags_ = pObj->dwFlags_ | eof_bUserProcessesed;
 	void* subClass = pObj->pfnSubClass_;
@@ -512,7 +516,7 @@ void _obj_updatewindowpostion(obj_s* pObj, void* lpWRC, bool fChild)
 	}
 }
 
-size_t Ex_ObjSendMessage(EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam)
+size_t Ex_ObjSendMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	int nError = 0;
 	obj_s* pObj = nullptr;
@@ -1458,7 +1462,7 @@ void _obj_scroll_repostion(HWND hWnd, EXHANDLE hObj, bool fDispatch)
 	}
 }
 
-int _obj_msgproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam)
+int _obj_msgproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	int nError = 0;
 	if (uMsg == WM_MOVE)
@@ -1499,7 +1503,7 @@ int _obj_msgproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam,
 	return _obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
 }
 
-void _obj_notify_brothers(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, bool bBypassSelf, bool bSameClass)
+void _obj_notify_brothers(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, bool bBypassSelf, bool bSameClass)
 {
 	void* pObjEntry = nullptr;
 	EXHANDLE hParent = pObj->objParent_;
@@ -1542,7 +1546,7 @@ void _obj_notify_brothers(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_
 	}
 }
 
-int Ex_ObjDispatchMessage(EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam)
+int Ex_ObjDispatchMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	int nError = 0;
 	obj_s* pObj = nullptr;
@@ -1975,10 +1979,9 @@ void _obj_theme_load_color_font(wnd_s* pWnd, obj_s* pObj, theme_s* hTheme)
 						size_t dwTmp = 0;
 						for (size_t index = 0; index < g_Li.aryColorsAtom.size(); index++)
 						{
-							auto i = g_Li.aryColorsAtom[index];
-							if (HashTable_Get(pProp, i, &dwTmp))
+							if (HashTable_Get(pProp, g_Li.aryColorsAtom[index], &dwTmp))
 							{
-								__set(pObj, i, __get((void*)dwTmp, 0));
+								__set(pObj, g_Li.aryColorsOffset[index], __get((void*)dwTmp, 0));
 							}
 						}
 						if (HashTable_Get(pProp, ATOM_PADDING_TEXT, &dwTmp))
@@ -3190,7 +3193,7 @@ int Ex_ObjGetUIState(EXHANDLE hObj)
 	return ret;
 }
 
-size_t Ex_ObjDefProc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam)
+size_t Ex_ObjDefProc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	obj_s* pObj = nullptr;
 	int nError = 0;

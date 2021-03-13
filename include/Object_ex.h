@@ -3,7 +3,7 @@
 
 
 typedef int(*EnumPROC)(size_t, size_t);
-typedef size_t(*ClsPROC)(HWND, EXHANDLE, int, size_t, size_t, obj_s*);
+typedef size_t(*ClsPROC)(HWND, EXHANDLE, UINT, size_t, size_t, obj_s*);
 
 #define eof_bUserProcessesed 1
 #define eof_bMsgBoxControl 2
@@ -239,9 +239,9 @@ void _obj_z_clear(EXHANDLE hObj, obj_s* pObj, EXHANDLE* hParent, obj_base** pPar
 void _obj_z_set_before_topmost(EXHANDLE objChildFirst, void* pObjChildFirst, EXHANDLE objChildLast, obj_s* pObjChildLast, EXHANDLE hObj, obj_s* pObj, obj_base* pParent);
 void _obj_z_set(EXHANDLE hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, UINT flags, int* nError);
 bool _obj_autosize(obj_s* pObj, EXHANDLE hObj, int* width, int* height);
-size_t _obj_sendmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved);
-bool _obj_postmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, int dwReserved);
-int _obj_wm_nchittest(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam);
+size_t _obj_sendmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, int dwReserved);
+bool _obj_postmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, int dwReserved);
+int _obj_wm_nchittest(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam);
 void _obj_killfocus(EXHANDLE hObj, obj_s* pObj, bool bDispatch);
 void _obj_killfocus_real(obj_s* pObj, EXHANDLE hObj, EXHANDLE objFocus);
 bool Ex_ObjKillFocus(EXHANDLE hObj);
@@ -249,12 +249,12 @@ HWND _obj_gethWnd(obj_s* pObj);
 bool _obj_setfocus(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, obj_s* pObj, bool bDispatch);
 void _obj_setfocus_real(HWND hWnd, obj_s* pObj, EXHANDLE hObj, EXHANDLE lstObj);
 bool Ex_ObjSetFocus(EXHANDLE hObj);
-int _obj_baseproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam);
+int _obj_baseproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam);
 void _obj_setchildrenpostion(obj_s* pObj, int x, int y);
 void _obj_update(obj_s* pObj, bool fUpdateWindow);
 void _obj_updatewindowpostion(obj_s* pObj, void* lpWRC, bool fChild);
-size_t Ex_ObjSendMessage(EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam);
-bool Ex_ObjPostMessage(EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam);
+size_t Ex_ObjSendMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam);
+bool Ex_ObjPostMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam);
 bool Ex_ObjDestroy(EXHANDLE hObj);
 bool _obj_z_compositedcheck(void* prc, EXHANDLE objLast, EXHANDLE objStop, void* lpsrcInsert);
 void _obj_compostied_all(EXHANDLE objEntry);
@@ -284,9 +284,9 @@ void _obj_scroll_updatepostion(EXHANDLE hSB, obj_s* pSB, bool bVScroll, int cLef
 void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x, int y, int width, int height, int flags, int* nError);
 bool Ex_ObjSetPos(EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x, int y, int width, int height, int flags);
 void _obj_scroll_repostion(HWND hWnd, EXHANDLE hObj, bool fDispatch);
-int _obj_msgproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam);
-void _obj_notify_brothers(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, size_t wParam, size_t lParam, bool bBypassSelf, bool bSameClass);
-int Ex_ObjDispatchMessage(EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam);
+int _obj_msgproc(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam);
+void _obj_notify_brothers(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, bool bBypassSelf, bool bSameClass);
+int Ex_ObjDispatchMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam);
 int _obj_dispatchnotify(HWND hWnd, obj_s* pObj, EXHANDLE hObj, int nID, int nCode, size_t wParam, size_t lParam);
 int Ex_ObjDispatchNotify(EXHANDLE hObj, int nCode, size_t wParam, size_t lParam);
 void _obj_backgroundimage_clear(HWND hWnd, obj_base* pObj);
@@ -343,7 +343,7 @@ bool Ex_ObjMove(EXHANDLE hObj, int x, int y, int width, int height, bool bRepain
 void _obj_setuistate(obj_s* pObj, int dwState, bool fRemove, void* lprcUpdate, bool fRedraw, int* nError);
 bool Ex_ObjSetUIState(EXHANDLE hObj, int dwState, bool fRemove, void* lprcRedraw, bool fRedraw);
 int Ex_ObjGetUIState(EXHANDLE hObj);
-size_t Ex_ObjDefProc(HWND hWnd, EXHANDLE hObj, int uMsg, size_t lParam, size_t wParam);
+size_t Ex_ObjDefProc(HWND hWnd, EXHANDLE hObj, UINT uMsg, size_t lParam, size_t wParam);
 bool Ex_ObjScrollGetInfo(EXHANDLE hObj, int nBar, void* lpnMin, void* lpnMax, void* lpnPos, void* lpnTrackPos);
 int Ex_ObjScrollGetPos(EXHANDLE hObj, int nBar);
 int Ex_ObjScrollSetPos(EXHANDLE hObj, int nBar, int nPos, bool bRedraw);

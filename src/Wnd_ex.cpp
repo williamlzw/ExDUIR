@@ -565,7 +565,7 @@ void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR 
 	}
 }
 
-int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
+int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     INT16 nType = LOWORD(lParam);
 	int ret = 0;
@@ -599,7 +599,7 @@ int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lP
 	return ret;
 }
 
-int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int data, int uMsg, WPARAM wParam, LPARAM lParam)
+int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int data, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	int ret = 0;
 	if (MemPool_AddressIsUsed(lpData))
@@ -2394,7 +2394,7 @@ bool _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam)
 	return ret;
 }
 
-void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, obj_s* pObj, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (!((pWnd->dwFlags_ & EWF_bTrackObject) == EWF_bTrackObject))
 	{
@@ -2492,7 +2492,7 @@ void _wnd_wm_captionchange(HWND hWnd, wnd_s* pWnd)
 	_wnd_obj_untrack(hWnd, pWnd, false);
 }
 
-void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	EXHANDLE hObj;
 	
@@ -2561,7 +2561,7 @@ void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lPara
 	}
 }
 
-void _wnd_wm_menucontext(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_menucontext(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	EXHANDLE objHittest = pWnd->objHittest_;
 	obj_s* pObj = nullptr;
@@ -2575,7 +2575,7 @@ void _wnd_wm_menucontext(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM
 	}
 }
 
-void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	EXHANDLE objHittest = pWnd->objHittest_;
 	obj_s* pObj = nullptr;
@@ -2603,7 +2603,7 @@ void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM 
 	}
 }
 
-void _wnd_wm_command(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_command(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	
 	if (((pWnd->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
@@ -2674,7 +2674,7 @@ void _wnd_obj_settabstop(HWND hWnd, wnd_s* pWnd, EXHANDLE objLastFocus)
 	}
 }
 
-void _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, int uMsg, WPARAM wParam, LPARAM lParam)
+void _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	EXHANDLE objFocus = pWnd->objFocus_;
 	obj_s* pObj = nullptr;
@@ -2860,7 +2860,7 @@ void _wnd_menu_updatecurrent(wnd_s* pWnd)
 	}
 }
 
-bool _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, size_t* iItem)
+bool _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, size_t* iItem)
 {
 	*iItem = -1;
 	POINT pt;
@@ -2887,12 +2887,12 @@ bool _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, int uMsg, WPARAM wParam, size_t* iI
 	return ret;
 }
 
-bool _wnd_menu_item_callback(HWND hWnd, EXHANDLE hObj, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
+bool _wnd_menu_item_callback(HWND hWnd, EXHANDLE hObj, UINT uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
 {
 	return false;
 }
 
-bool _wnd_menu_callback_test(HWND hWnd, EXHANDLE hExDui, int uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
+bool _wnd_menu_callback_test(HWND hWnd, EXHANDLE hExDui, UINT uMsg, WPARAM wParam, LPARAM lParam, void** lpResult)
 {
 	if (uMsg == WM_INITMENUPOPUP)
 	{

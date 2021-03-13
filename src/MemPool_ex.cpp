@@ -110,7 +110,7 @@ BOOL MemPool_AddressIsUsed(void* lpAddress)
 	BOOL ret = false;
 	if (lpAddress > 0)
 	{
-		entry_s* pEntry = (entry_s*)((size_t)lpAddress - sizeof(mempoolheader_s));
+		mempoolheader_s* pEntry = (mempoolheader_s*)((size_t)lpAddress - sizeof(mempoolheader_s));
 		ret = ((((mempoolheader_s*)pEntry)->dwFlags & mpbf_used) == mpbf_used);
 	}
 	return ret;
