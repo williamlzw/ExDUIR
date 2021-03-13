@@ -185,20 +185,20 @@ void 测试窗口()
 		size_t hExDui = Ex_DUIBindWindowEx(hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, msgProc);
 		std::cout << "hExDui:" << hExDui << std::endl;
 		Ex_DUISetLong(hExDui, EWL_CRBKG, -100630528);//-97900239
-		LPCWSTR class_name = L"button";
+		LPCWSTR class_name = L"checkbutton";
 		LPCWSTR title_button = L"test";
-		EXHANDLE img = Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, EOS_VISIBLE, 50, 50, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
+		EXHANDLE img = Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, -1, 50, 50, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
 		std::vector<char> imgdata;
 		Ex_ReadFile(L".\\00000.jpg", &imgdata);
-		Ex_ObjSetBackgroundImage(img, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
+		//Ex_ObjSetBackgroundImage(img, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
 
-		EXHANDLE imga = Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, EOS_VISIBLE, 50, 150, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
+		EXHANDLE imga = Ex_ObjCreateEx(-1, (void*)class_name, (void*)title_button, -1, 50, 150, 100, 30, hExDui, 0, DT_CENTER, 0, 0, NULL);
 
 		//Ex_ReadFile(L".\\00000.jpg", &imgdata);
-		Ex_ObjSetBackgroundImage(imga, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
+		//Ex_ObjSetBackgroundImage(imga, imgdata.data(), imgdata.size(), 0, 0, 0, 0, 0, 255, true);
 		LPCWSTR text = L"testa";
 		LPCWSTR cap = L"testb";
-		Ex_MessageBoxEx(hExDui, (void*)text, (void*)cap, 0, 0, 0, 0, 0, 0);
+		//Ex_MessageBoxEx(hExDui, (void*)text, (void*)cap, 0, 0, 0, 0, 0, 0);
 		Ex_DUIShowWindow(hExDui, 5, 0, 0, 0);
 	}
 	Ex_WndMsgLoop();

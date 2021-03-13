@@ -151,7 +151,7 @@ void _wnd_calc_captionrect(wnd_s* pWnd, RECT* rcCaption);
 int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, theme_s* hTheme, LPARAM lParam, MsgPROC lpfnMsgProc);
 void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int pObj, UINT uMsg, WPARAM wParam, LPARAM lParam);
+int _wnd_dispatch_msg_obj(HWND hWnd, mempoolmsg_s* lpData, obj_s* pObj, UINT uMsg, WPARAM wParam, LPARAM lParam);
 size_t CALLBACK _wnd_tooltips_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam);
 size_t CALLBACK _wnd_shadow_proc(void* pData, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void _wnd_dx_unint(wnd_s* pWnd);

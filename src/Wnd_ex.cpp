@@ -571,7 +571,7 @@ int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, LPARAM l
 	int ret = 0;
 	if (nType == EMT_OBJECT)//组件消息
 	{
-		ret = _wnd_dispatch_msg_obj(hWnd, (obj_s*)wParam, 0, 0, 0, 0);
+		ret = _wnd_dispatch_msg_obj(hWnd, (mempoolmsg_s*)wParam, 0, 0, 0, 0);
 	}
 	else if (nType == EMT_DUI)//窗体消息
 	{
@@ -599,16 +599,18 @@ int _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, UINT uMsg, WPARAM wParam, LPARAM l
 	return ret;
 }
 
-int _wnd_dispatch_msg_obj(HWND hWnd, obj_s* lpData, int data, UINT uMsg, WPARAM wParam, LPARAM lParam)
+int _wnd_dispatch_msg_obj(HWND hWnd, mempoolmsg_s* lpData, obj_s* pObj, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	int ret = 0;
 	if (MemPool_AddressIsUsed(lpData))
 	{
-		//RtlMoveMemory(pObj, lpData, 20);
-		if (lpData != 0)
+		pObj = lpData->pObj;
+		uMsg = lpData->uMsg;
+		wParam = lpData->wParam;
+		lParam = lpData->lParam;
+		if (pObj)
 		{
-			EXHANDLE hObj = lpData->hObj_;
-			ret = _obj_msgproc(hWnd, hObj, lpData, uMsg, wParam, lParam);
+			ret = _obj_msgproc(hWnd, pObj->hObj_, pObj, uMsg, wParam, lParam);
 		}
 		MemPool_Free(g_Li.hMemPoolMsg, lpData);
 	}

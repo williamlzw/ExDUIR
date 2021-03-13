@@ -1091,6 +1091,7 @@ struct menu_s;
 struct sli_s;
 struct slb_s;
 struct paintstruct_s;
+struct mempoolmsg_s;
 
 struct obj_base {
 	union {

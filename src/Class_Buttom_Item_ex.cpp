@@ -266,7 +266,7 @@ void _item_draw(obj_s* pObj, paintstruct_s ps, int crColor, void* lpText)
 	mii.cbSize = sizeof(MENUITEMINFO);
 	mii.fMask = MIIM_STATE | MIIM_FTYPE | MIIM_DATA | MIIM_SUBMENU;
 	size_t nID = pObj->lParam_;
-	RECT rcItem;
+	RECT rcItem = { 0 };
 	RECT rcPadding;
 	RECT rcSub;
 	rcItem.right = ps.width_;
@@ -306,7 +306,7 @@ void _item_draw(obj_s* pObj, paintstruct_s ps, int crColor, void* lpText)
 			else {
 				alpha = 128;
 				int crColor = _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL);
-				*(&crColor + 3) = alpha;
+				*(((char*)&crColor) + 3) = alpha;
 			}
 			if (mii.hSubMenu != 0)
 			{
@@ -363,7 +363,7 @@ void _item_draw(obj_s* pObj, paintstruct_s ps, int crColor, void* lpText)
 				{
 					if (!fHover)
 					{
-						*(&crColor + 3) = 128;
+						*(((char*)&crColor) + 3) = 128;
 					}
 					_canvas_drawtextex(ps.hCanvas_, hFont, crColor, (LPCWSTR)lpText, -1, ps.dwTextFormat_ | DT_RIGHT, ps.t_left_, ps.t_top_, ps.t_right_, ps.t_bottom_, 0, 0, 0, 0);
 				}

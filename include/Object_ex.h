@@ -43,6 +43,14 @@ typedef size_t(*ClsPROC)(HWND, EXHANDLE, UINT, size_t, size_t, obj_s*);
 #define EWF_bDestroyWindow 134217728
 #define EWF_bSizeMoving 268435456
 
+struct mempoolmsg_s {
+	obj_s* pObj;
+	UINT uMsg;
+	size_t wParam;
+	size_t lParam;
+	int dwReserved;
+};
+
 struct class_s
 {
 	int dwFlags_;

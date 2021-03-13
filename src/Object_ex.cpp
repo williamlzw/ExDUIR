@@ -266,27 +266,32 @@ bool _obj_autosize(obj_s* pObj, EXHANDLE hObj, int* width, int* height)
 
 size_t _obj_sendmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, int dwReserved)
 {
-	//TODO: 未释放
-	auto p = MemPool_Alloc(g_Li.hMemPoolMsg, false);
-	bool ret = false;
-
+	mempoolmsg_s* p = (mempoolmsg_s *)MemPool_Alloc(g_Li.hMemPoolMsg, false);
+	size_t ret = 0;
 	if (p != 0)
 	{
-		RtlMoveMemory(p, &pObj, 16 + sizeof(void*));
-		ret = SendMessageW(hWnd, g_Li.dwMessage, (WPARAM)pObj, MAKELONG(EMT_OBJECT, 0));
+		p->pObj = pObj;
+		p->uMsg = uMsg;
+		p->wParam = wParam;
+		p->lParam = lParam;
+		p->dwReserved = dwReserved;
+		ret = SendMessageW(hWnd, g_Li.dwMessage, (WPARAM)p, MAKELONG(EMT_OBJECT, 0));
 	}
 	return ret;
 }
 
 bool _obj_postmessage(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t wParam, size_t lParam, int dwReserved)
 {
-	//TODO: 未释放
-	auto p = MemPool_Alloc(g_Li.hMemPoolMsg, false);
+	mempoolmsg_s* p = (mempoolmsg_s*)MemPool_Alloc(g_Li.hMemPoolMsg, false);
 	bool ret = false;
 
 	if (p != 0)
 	{
-		RtlMoveMemory(p, &pObj, 16 + sizeof(void*));
+		p->pObj = pObj;
+		p->uMsg = uMsg;
+		p->wParam = wParam;
+		p->lParam = lParam;
+		p->dwReserved = dwReserved;
 		ret = PostMessageW(hWnd, g_Li.dwMessage, (WPARAM)p, MAKELONG(EMT_OBJECT, 0));
 	}
 	return ret;
@@ -528,7 +533,7 @@ size_t Ex_ObjSendMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam)
 	return ret;
 }
 
-bool Ex_ObjPostMessage(EXHANDLE hObj, int uMsg, size_t wParam, size_t lParam)
+bool Ex_ObjPostMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam)
 {
 	int nError = 0;
 	obj_s* pObj = nullptr;
@@ -702,9 +707,9 @@ bool _obj_makeupinvalidaterect(wnd_s* pWnd, obj_s* pObj, void* prc)
 	
 	if (((pWnd->dwFlags_ & EWF_bCompositedCheck) == EWF_bCompositedCheck))
 	{
-		void* ppObja = MemPool_Alloc(g_Li.hMemPoolMsg, true);
-		_obj_z_compositedcheck(prc, pWnd->objChildLast_, pObj->hObj_, ppObj);
-		MemPool_Free(g_Li.hMemPoolMsg, ppObj);
+		void* ppObj1 = MemPool_Alloc(g_Li.hMemPoolMsg, true);
+		_obj_z_compositedcheck(prc, pWnd->objChildLast_, pObj->hObj_, ppObj1);
+		MemPool_Free(g_Li.hMemPoolMsg, ppObj1);
 	}
 	return true;
 }
