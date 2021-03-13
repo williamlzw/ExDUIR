@@ -216,7 +216,7 @@ void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation, void* lprc,
 
 void _dx_cliprect(void* pDeviceContext, float left, float top, float right, float bottom)
 {
-	D2D1_RECT_F rect = {};
+	D2D1_RECT_F rect = {0};
 	rect.left = left;
 	rect.top = top;
 	rect.right = right;
@@ -231,7 +231,7 @@ void _dx_resetclip(void* pDeviceContext)
 
 void _dx_drawbitmaprect(void* pDeviceContext, void* pBitmap, float dstLeft, float dstTop, float dstRight, float dstBottom, int dwAlpha)
 {
-	D2D1_RECT_F rect = {};
+	D2D1_RECT_F rect = {0};
 	rect.left = dstLeft;
 	rect.top = dstTop;
 	rect.right = dstRight;
@@ -241,12 +241,12 @@ void _dx_drawbitmaprect(void* pDeviceContext, void* pBitmap, float dstLeft, floa
 
 void _dx_drawbitmaprectrect(void* pDeviceContext, void* pBitmap, float dstLeft, float dstTop, float dstRight, float dstBottom, float srcLeft, float srcTop, float srcRight, float srcBottom, int dwAlpha)
 {
-	D2D1_RECT_F rect = {};
+	D2D1_RECT_F rect = {0};
 	rect.left = dstLeft;
 	rect.top = dstTop;
 	rect.right = dstRight;
 	rect.bottom = dstBottom;
-	D2D1_RECT_F rect2 = {};
+	D2D1_RECT_F rect2 = {0};
 	rect2.left = srcLeft;
 	rect2.top = srcTop;
 	rect2.right = srcRight;
@@ -264,10 +264,10 @@ void _dx_drawimage(void* pDeviceContext, img_s* pImage, float left, float top, i
 
 void _dx_drawimage_ex(void* pDeviceContext, img_s* pImage, float dstLeft, float dstTop, float srcLeft, float srcTop, float srcRight, float srcBottom, int mode)
 {
-	D2D1_POINT_2F point = {};
+	D2D1_POINT_2F point = {0};
 	point.x = dstLeft;
 	point.y = dstTop;
-	D2D1_RECT_F rect = {};
+	D2D1_RECT_F rect = {0};
 	rect.left = srcLeft;
 	rect.top = srcTop;
 	rect.right = srcRight;
@@ -280,7 +280,7 @@ void _dx_bmp_copyfrom(void** pDestBitmap, void* pSrcBitmap, int dX, int dY, int 
 	D2D1_POINT_2U point = { 0 };
 	point.x = dX;
 	point.y = dY;
-	D2D1_RECT_U rect = {};
+	D2D1_RECT_U rect = {0};
 	rect.left = srcLeft;
 	rect.top = srcTop;
 	rect.right = srcRight;

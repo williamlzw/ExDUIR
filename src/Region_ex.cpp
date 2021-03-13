@@ -20,7 +20,7 @@ void* _rgn_createfromroundrect(float left, float top, float right, float bottom,
 		nError = ((ID2D1Factory*)g_Ri.pD2Dfactory)->CreateRectangleGeometry(&rect, (ID2D1RectangleGeometry**)&hgn);
 	}
 	else {
-		D2D1_ROUNDED_RECT rrect = {};
+		D2D1_ROUNDED_RECT rrect = {0};
 		rrect.rect = { left,top,right,bottom };
 		rrect.radiusX = radiusX;
 		rrect.radiusY = radiusY;

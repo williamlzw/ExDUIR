@@ -298,7 +298,7 @@ void _page_onvscrollbar(HWND hWnd, EXHANDLE hObj, obj_s* pObj, UINT uMsg, size_t
 	}
 	else if (nCode == SB_BOTTOM)
 	{
-		RECT rect;
+		RECT rect{ 0 };
 		Ex_ObjGetRect(pObj->objChildFirst_, &rect);
 		nPos = rect.bottom - rect.top - height;
 	}

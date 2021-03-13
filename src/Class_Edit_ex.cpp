@@ -673,7 +673,7 @@ size_t _edit_paint(EXHANDLE hObj, obj_s *pObj) {
         }
 
         if (pITS != 0) {
-            RECT rcTmp;
+            RECT rcTmp { 0 };
             IntersectRect(&rcTmp, (RECT *) &ps.t_left_, (RECT *) &ps.p_left_);
             void *mDc = (void *) __get(ps.dwOwnerData_, offsetof(edit_s, mDc_));
             void *hDc = _canvas_getdc(ps.hCanvas_);

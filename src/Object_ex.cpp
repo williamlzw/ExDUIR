@@ -526,7 +526,7 @@ size_t Ex_ObjSendMessage(EXHANDLE hObj, UINT uMsg, size_t wParam, size_t lParam)
 	int nError = 0;
 	obj_s* pObj = nullptr;
 	size_t ret = 0;
-	while (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 	{
 		ret = _obj_sendmessage(_obj_gethWnd(pObj), hObj, pObj, uMsg, wParam, lParam, 0);
 	}
@@ -1266,7 +1266,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x
 		pObj->c_right_ = np.rgrc[2].right;
 		pObj->c_bottom_ = np.rgrc[2].bottom;
 
-		RECT rcOld;
+		RECT rcOld{ 0 };
 		//更新窗口位置
 		rcOld.left = pObj->w_left_;
 		rcOld.top = pObj->w_top_;
@@ -1400,7 +1400,7 @@ void _obj_scroll_repostion(HWND hWnd, EXHANDLE hObj, bool fDispatch)
 	WORD xyz = NULL;
 	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 	{
-		RECT rcClient;
+		RECT rcClient{ 0 };
 		rcClient.left = pObj->c_left_;
 		rcClient.top = pObj->c_top_;
 		rcClient.right = pObj->c_right_;
@@ -1623,7 +1623,7 @@ void _obj_destroy(EXHANDLE hObj, obj_s* pObj, int* nError)
 {
 	HWND hWnd = _obj_gethWnd(pObj);
 	wnd_s* pWnd = pObj->pWnd_;
-	RECT rc;
+	RECT rc{ 0 };
 	rc.left = pObj->w_left_;
 	rc.top = pObj->w_top_;
 	rc.right = pObj->w_right_;
@@ -1777,7 +1777,7 @@ void _obj_create_proc(int* nError, bool fScale, theme_s* hTheme, obj_s* pObj, in
 		}
 	}
 
-	RECT rcObj;
+	RECT rcObj{ 0 };
 	rcObj.left = x;
 	rcObj.top = y;
 	rcObj.right = x + width;
@@ -2266,7 +2266,7 @@ void _obj_drawbackground(obj_s* pObj, EXHANDLE hCanvas, RECT rcPaint)
 
 bool Ex_ObjDrawBackgroundProc(EXHANDLE hObj, EXHANDLE hCanvas, void* lprcPaint)
 {
-	RECT rcPaint = {};
+	RECT rcPaint = {0};
 	obj_s* pObj = nullptr;
 	int nError = 0;
 	bool ret = false;
@@ -2287,7 +2287,7 @@ bool Ex_ObjBeginPaint(EXHANDLE hObj, paintstruct_s* lpPS)
 	obj_s* pObj = nullptr;
 	int nError = 0;
 	EXHANDLE hCanvas = 0;
-	RECT rcPaint = {};
+	RECT rcPaint = {0};
 	bool ret = false;
 	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
 	{
@@ -2343,7 +2343,7 @@ bool Ex_ObjEndPaint(EXHANDLE hObj, paintstruct_s* lpPS)
 	obj_s* pObj = nullptr;
 	int nError = 0;
 	EXHANDLE hCanvas = 0;
-	RECT rcPaint = {};
+	RECT rcPaint = {0};
 	bool ret = false;
 	void* hBrush = nullptr;
 	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))

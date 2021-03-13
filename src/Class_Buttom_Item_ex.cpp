@@ -266,9 +266,9 @@ void _item_draw(obj_s* pObj, paintstruct_s ps, int crColor, void* lpText)
 	mii.cbSize = sizeof(MENUITEMINFO);
 	mii.fMask = MIIM_STATE | MIIM_FTYPE | MIIM_DATA | MIIM_SUBMENU;
 	size_t nID = pObj->lParam_;
-	RECT rcItem = { 0 };
-	RECT rcPadding;
-	RECT rcSub;
+	RECT rcItem  { 0 };
+	RECT rcPadding  { 0 };
+	RECT rcSub  { 0 };
 	rcItem.right = ps.width_;
 	rcItem.bottom = ps.height_;
 	int atomProp = 0;

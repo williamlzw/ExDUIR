@@ -186,7 +186,7 @@ void _sb_nccalcsize(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 		cx = LOBYTE(lcxy1);
 		cy = HIBYTE(lcxy1);
 	}
-	RECT rcClient;
+	RECT rcClient{ 0 };
 	rcClient.left = pObj->c_left_;
 	rcClient.top = pObj->c_top_;
 	rcClient.right = pObj->c_right_;
@@ -272,7 +272,7 @@ int _sb_point2pos(si_s* psi, int x, int y, bool bVert, bool bCheckPos)
 void _sb_nchittest(obj_s* pObj, int x, int y)
 {
 	si_s* psi = (si_s*)_obj_pOwner(pObj);
-	RECT rc;
+	RECT rc{ 0 };
 	rc.left = psi->rcArrow1_left_;
 	rc.top = psi->rcArrow1_top_;
 	rc.right = psi->rcArrow1_right_;
@@ -289,7 +289,7 @@ void _sb_nchittest(obj_s* pObj, int x, int y)
 		}
 	}
 	else {
-		RECT rc1;
+		RECT rc1{ 0 };
 		rc1.left = psi->rcArrow2_left_;
 		rc1.top = psi->rcArrow2_top_;
 		rc1.right = psi->rcArrow2_right_;
@@ -304,7 +304,7 @@ void _sb_nchittest(obj_s* pObj, int x, int y)
 		else {
 			if (psi->wArrows_ != ESB_DISABLE_BOTH)
 			{
-				RECT rcThumb;
+				RECT rcThumb{ 0 };
 				rcThumb.left = psi->rcThumb_left_;
 				rcThumb.top = psi->rcThumb_top_;
 				rcThumb.right = psi->rcThumb_right_;
@@ -314,7 +314,7 @@ void _sb_nchittest(obj_s* pObj, int x, int y)
 					httype = 滚动条点击类型_滚动条;
 				}
 				else {
-					RECT rcRegion;
+					RECT rcRegion{ 0 };
 					rcRegion.left = psi->rcRegion_left_;
 					rcRegion.top = psi->rcRegion_top_;
 					rcRegion.right = psi->rcRegion_right_;
@@ -557,7 +557,7 @@ int _sb_paint(EXHANDLE hObj, obj_s* pObj)
 					}
 				}
 			}
-			RECT rcSrc;
+			RECT rcSrc{ 0 };
 			rcSrc.left = ((si_s*)ps.dwOwnerData_)->rcArrow1_left_;
 			rcSrc.top = ((si_s*)ps.dwOwnerData_)->rcArrow1_top_;
 			rcSrc.right = ((si_s*)ps.dwOwnerData_)->rcArrow1_right_;
@@ -582,7 +582,7 @@ int _sb_paint(EXHANDLE hObj, obj_s* pObj)
 					}
 				}
 			}
-			RECT rcSrc;
+			RECT rcSrc{ 0 };
 			rcSrc.left = ((si_s*)ps.dwOwnerData_)->rcArrow2_left_;
 			rcSrc.top = ((si_s*)ps.dwOwnerData_)->rcArrow2_top_;
 			rcSrc.right = ((si_s*)ps.dwOwnerData_)->rcArrow2_right_;
@@ -592,7 +592,7 @@ int _sb_paint(EXHANDLE hObj, obj_s* pObj)
 		}
 		if (bHover || (ps.dwStyle_ & EOS_DISABLENOSCROLL) != 0)
 		{
-			RECT rcRegion;
+			RECT rcRegion{ 0 };
 			rcRegion.left = ((si_s*)ps.dwOwnerData_)->rcRegion_left_;
 			rcRegion.top = ((si_s*)ps.dwOwnerData_)->rcRegion_top_;
 			rcRegion.right = ((si_s*)ps.dwOwnerData_)->rcRegion_right_;
@@ -600,7 +600,7 @@ int _sb_paint(EXHANDLE hObj, obj_s* pObj)
 			int alpha = ((((si_s*)ps.dwOwnerData_)->wArrows_ & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH) ? 128 : 255;
 			Ex_ThemeDrawControl(ps.hTheme_, ps.hCanvas_, rcRegion.left, rcRegion.top, rcRegion.right, rcRegion.bottom, atomClass, ATOM_RECT, alpha);
 		}
-		RECT rcThumb;
+		RECT rcThumb{ 0 };
 		rcThumb.left = ((si_s*)ps.dwOwnerData_)->rcThumb_left_;
 		rcThumb.top = ((si_s*)ps.dwOwnerData_)->rcThumb_top_;
 		rcThumb.right = ((si_s*)ps.dwOwnerData_)->rcThumb_right_;

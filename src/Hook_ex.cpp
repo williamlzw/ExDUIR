@@ -232,7 +232,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, size_t wParam, size_t lParam)
 	maxHeight = Ex_Scale(__get_int(pValue, 4)) + Ex_Scale(__get_int(pValue, 12)) + maxHeight + Ex_Scale(15) * 2;
 	if (maxHeight < Ex_Scale(140)) maxHeight = Ex_Scale(140);
 	if (maxWidth < Ex_Scale(220)) maxWidth = Ex_Scale(220);
-	RECT rcWindow;
+	RECT rcWindow{ 0 };
 	GetWindowRect(hWnd, &rcWindow);
 	int left = rcWindow.right - rcWindow.left;
 	int top = rcWindow.bottom - rcWindow.top;

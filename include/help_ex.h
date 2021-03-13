@@ -47,6 +47,7 @@ typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 #include "Class_Scrollbar_ex.h"
 #include "Class_Button_Item_ex.h"
 #include "Class_Edit_ex.h"
+#include "Class_ListView_ex.h"
 
 
 #define ExGetB(rgb)			(LOBYTE(rgb))
@@ -56,6 +57,7 @@ typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 #define ExRGB(r,g,b)        ((int)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((INT)(BYTE)(b))<<16)))
 #define ExRGBA(r,g,b,a)		((int)(RGB(b,g,r)|(a<<24)))
 #define ExARGB2RGB(argb)    (argb & 0xFFFFFF)
+#define ExRGB2ARGB(rgb,a)    ((int)(rgb|(a<<24)))
 
 #define FLAGS_CHECK(a,b) (((a)&(b)) == (b))
 #define FLAGS_ADD(a,b) (a |= (b))

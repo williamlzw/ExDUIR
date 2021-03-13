@@ -131,6 +131,7 @@ void Ex_UnInit()
 	_handle_uninit(g_Li.hHandles);
 	HashTable_Destroy(g_Li.hTableClass);
 	Thread_DeleteCriticalSection(g_Li.csError);
+	FreeLibrary(g_Ri.hRiched20);
 	CoUninitialize();
 }
 
@@ -145,6 +146,7 @@ void _object_init()
 	_obj_register(ATOM_BUTTON, EOS_VISIBLE | 按钮风格_文本偏移, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_CENTER | DT_SINGLELINE, 0, 0, &_button_proc, 0, &nError);
 	_obj_register(ATOM_CHECKBUTTON, EOS_VISIBLE | 按钮风格_复选按钮, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, &_button_proc, 0, &nError);
 	_obj_register(ATOM_RADIOBUTTON, EOS_VISIBLE | 按钮风格_单选按钮, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, &_button_proc, 0, &nError);
+	_obj_register(ATOM_LISTVIEW, EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE, 0, 0, &_lv_proc, 0, &nError);
 	_obj_register(ATOM_ITEM, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, &_item_proc, 0, &nError);
 
 }
