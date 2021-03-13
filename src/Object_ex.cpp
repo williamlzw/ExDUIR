@@ -1019,7 +1019,7 @@ void _obj_reset_path(obj_s* pObj, int left, int top, int right, int bottom, int 
 	}
 }
 
-si_s* _obj_pOwner(obj_s* pObj)
+void* _obj_pOwner(obj_s* pObj)
 {
 	return pObj->dwOwnerData_;
 }
@@ -1411,7 +1411,7 @@ void _obj_scroll_repostion(HWND hWnd, EXHANDLE hObj, bool fDispatch)
 			hVSB = pObj->objVScroll_;
 			if (_handle_validate(hVSB, HT_OBJECT, (void**)&pVSB, &nError))
 			{
-				psi = _obj_pOwner(pVSB);
+				psi = (si_s*)_obj_pOwner(pVSB);
 				if (psi != 0)
 				{
 					xyz = HIWORD(psi->xyz_);
@@ -1436,7 +1436,7 @@ void _obj_scroll_repostion(HWND hWnd, EXHANDLE hObj, bool fDispatch)
 			hHSB = pObj->objHScroll_;
 			if (_handle_validate(hHSB, HT_OBJECT, (void**)&pHSB, &nError))
 			{
-				psi = _obj_pOwner(pHSB);
+				psi = (si_s*)_obj_pOwner(pHSB);
 				if (psi != 0)
 				{
 					xyz = HIWORD(psi->xyz_);
@@ -1806,11 +1806,11 @@ void _obj_create_proc(int* nError, bool fScale, theme_s* hTheme, obj_s* pObj, in
 	if (((class_s*)pCls)->atomName_ == ATOM_PAGE)
 	{
 
-		pObj->canvas_obj_ = _canvas_createfrompWnd(pWnd, 1, 1, flags, nError);
+		pObj->canvas_obj_ = _canvas_createfrompwnd(pWnd, 1, 1, flags, nError);
 	}
 	else {
 
-		pObj->canvas_obj_ = _canvas_createfrompWnd(pWnd, rcObj.right - rcObj.left, rcObj.bottom - rcObj.top, flags, nError);
+		pObj->canvas_obj_ = _canvas_createfrompwnd(pWnd, rcObj.right - rcObj.left, rcObj.bottom - rcObj.top, flags, nError);
 	}
 	//初始化其它数据
 
@@ -3390,7 +3390,7 @@ bool Ex_ObjScrollGetInfo(EXHANDLE hObj, int nBar, void* lpnMin, void* lpnMax, vo
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (void**)&pSB, &nError))
 		{
-			si_s* psi = _obj_pOwner(pSB);
+			si_s* psi = (si_s*)_obj_pOwner(pSB);
 			if (psi == 0)
 			{
 				nError = ERROR_EX_INVALID_OBJECT;

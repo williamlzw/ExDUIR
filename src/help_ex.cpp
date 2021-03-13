@@ -43,6 +43,11 @@ void* Ex_MemAlloc(size_t dwSize, int dwFlags)
 	//return LocalAlloc(dwFlags, dwSize);
 }
 
+int DtoHimetric(int d, int PerInchc)
+{
+	return MulDiv(d, 2540, PerInchc);
+}
+
 size_t __get(void* lpAddr, size_t offset)
 {
 	size_t a = (size_t)lpAddr + offset;

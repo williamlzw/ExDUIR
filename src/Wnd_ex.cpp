@@ -1092,10 +1092,10 @@ int _wnd_create(EXHANDLE hExDui, wnd_s* pWnd, HWND hWnd, int dwStyle, theme_s* h
 	w1 = rcWindow.right - rcWindow.left;
 	h1 = rcWindow.bottom - rcWindow.top;
 
-	pWnd->canvas_display_ = _canvas_createfrompWnd(pWnd, w1, h1, CVF_GDI_COMPATIBLE, &nError);
+	pWnd->canvas_display_ = _canvas_createfrompwnd(pWnd, w1, h1, CVF_GDI_COMPATIBLE, &nError);
 
 
-	pWnd->canvas_bkg_ = _canvas_createfrompWnd(pWnd, w1, h1, 0, &nError);
+	pWnd->canvas_bkg_ = _canvas_createfrompwnd(pWnd, w1, h1, 0, &nError);
 
 
 	if (nError == 0)
@@ -2202,7 +2202,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 			}
 			_obj_setpos_org(pParnet, objParent, 0, EOP_DEFAULT, EOP_DEFAULT, EOP_DEFAULT, height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_EX_NODPISCALE, 0);
 			height = height - 1;
-			Ex_objScrollshow(objPP, SB_VERT, height - heightParent > 0);
+			Ex_ObjScrollShow(objPP, SB_VERT, height - heightParent > 0);
 			Ex_ObjScrollSetInfo(objPP, SB_VERT, SIF_RANGE | SIF_PAGE, 0, height - heightParent, heightParent, 0, true);
 		}
 	}
@@ -2278,7 +2278,7 @@ void _wnd_paint_shadow(wnd_s* pWnd, bool bUpdateRgn, bool bFlush)
 				if (hDC != 0)
 				{
 					int nError = 0;
-					EXHANDLE cvShadow = _canvas_createfrompWnd(pWnd, sz.cx, sz.cy, CVF_GDI_COMPATIBLE, &nError);
+					EXHANDLE cvShadow = _canvas_createfrompwnd(pWnd, sz.cx, sz.cy, CVF_GDI_COMPATIBLE, &nError);
 					if (cvShadow != 0)
 					{
 						

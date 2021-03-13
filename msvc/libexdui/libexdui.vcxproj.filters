@@ -96,6 +96,9 @@
     <ClCompile Include="..\..\src\Class_Buttom_Item_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Class_Edit_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -180,6 +183,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_Edit_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

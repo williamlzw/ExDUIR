@@ -18,7 +18,10 @@ struct canvas_s
 	int c_bottom_;
 };
 
+bool _md_create(void* pData, size_t offsetDc, size_t offsetBmp, size_t offsetBits, int width, int height, int* nError);
+bool _md_destroy(void* pData, size_t OffsetDc, size_t OffsetBmp, size_t OffsetBits);
 bool _canvas_destroy(EXHANDLE hCanvas);
+EXHANDLE _canvas_createfromobj(EXHANDLE hObj, int uWidth, int uHeight, int dwFlags, int* nError);
 void _canvas_recreate(canvas_s* pCanvas, int width, int height, int* nError);
 bool _canvas_resize(EXHANDLE hCanvas, int width, int height);
 void _canvas_init(int* nError);
@@ -59,7 +62,7 @@ bool _canvas_drawtextex(EXHANDLE hCanvas, void* hFont, int crText, LPCWSTR lpwzT
 bool _canvas_drawtext(EXHANDLE hCanvas, void* hFont, int crText, LPCWSTR lpwzText, int dwLen, int dwDTFormat, float left, float top, float right, float bottom);
 bool _canvas_blur(EXHANDLE hCanvas, float fDeviation, void* lprc);
 bool _canvas_rotate_hue(EXHANDLE hCanvas, float fAngle);
-EXHANDLE _canvas_createfrompWnd(wnd_s* pWnd, int width, int height, int dwFlags, int* nError);
+EXHANDLE _canvas_createfrompwnd(wnd_s* pWnd, int width, int height, int dwFlags, int* nError);
 void* _canvas_getdc_ex(canvas_s* pCanvas, int* nError);
 void* _canvas_getdc(EXHANDLE hCanvas);
 void _canvas_releasedc_ex(canvas_s* pCanvas, int* nError);

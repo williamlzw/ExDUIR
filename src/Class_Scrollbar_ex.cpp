@@ -101,7 +101,7 @@ void _sb_calcthumb(HWND hWnd, obj_s* pObj, si_s* psi, bool bVScroll)
 
 int _sb_realsetinfo(HWND hWnd, EXHANDLE hObj, obj_s* pObj, int Mask, int nMin, int nMax, int nPage, int nPos, bool bRedraw)
 {
-	si_s* psi = _obj_pOwner(pObj);
+	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	if ((Mask & SIF_POS) != 0)
 	{
 		psi->nPos_ = nPos;
@@ -174,7 +174,7 @@ void _sb_uninit(obj_s* pObj)
 
 void _sb_nccalcsize(HWND hWnd, EXHANDLE hObj, obj_s* pObj)
 {
-	si_s* psi = _obj_pOwner(pObj);
+	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	bool bVScroll = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条);
 	int xyz = psi->xyz_;
 	auto hcxy = HIWORD(xyz);
@@ -271,7 +271,7 @@ int _sb_point2pos(si_s* psi, int x, int y, bool bVert, bool bCheckPos)
 
 void _sb_nchittest(obj_s* pObj, int x, int y)
 {
-	si_s* psi = _obj_pOwner(pObj);
+	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	RECT rc;
 	rc.left = psi->rcArrow1_left_;
 	rc.top = psi->rcArrow1_top_;
@@ -358,7 +358,7 @@ void _sb_mousemove(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, int x, 
 {
 	if (wParam != 0)
 	{
-		si_s* psi = _obj_pOwner(pObj);
+		si_s* psi = (si_s*)_obj_pOwner(pObj);
 		if (psi->httype_ == 滚动条点击类型_滚动条)
 		{
 			int lstPos = psi->nTrackPos_;
@@ -379,7 +379,7 @@ void _sb_mousemove(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, int x, 
 void CALLBACK _sb_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	obj_s* pObj = (obj_s*)(idEvent - TIMER_SCROLLBAR);
-	si_s* psi = _obj_pOwner(pObj);
+	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	int nTrack;
 	if (psi->httype_ == 滚动条点击类型_调节按钮1)
 	{
@@ -408,7 +408,7 @@ void CALLBACK _sb_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 
 void _sb_lbuttondown(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t lParam)
 {
-	si_s* psi = _obj_pOwner(pObj);
+	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	int httype = psi->httype_;
 	int nError = 0;
 	_obj_setuistate(pObj, 状态_按下, false, 0, true, &nError);
@@ -458,7 +458,7 @@ void _sb_lbuttonup(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t lParam)
 {
 	int nError = 0;
 	_obj_setuistate(pObj, 状态_按下, true, 0, true, &nError);
-	si_s* psi = _obj_pOwner(pObj);
+	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	psi->nTrackPos_ = 0;
 	KillTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR);
 }
@@ -472,7 +472,7 @@ void _sb_oncommand(HWND hWnd, EXHANDLE hObj, obj_s* pObj, size_t wParam, size_t 
 	if (wParam == 4100)
 	{
 		pWnd = pObj->pWnd_;
-		si_s* psi = _obj_pOwner(pObj);
+		si_s* psi = (si_s*)_obj_pOwner(pObj);
 		int nTrackPosOffset = psi->nTrackPosOffset_;
 		psi->nTrackPosOffset_ = 0;
 		nPos = _sb_point2pos(psi, LOWORD(nTrackPosOffset) - pObj->w_left_ - pWnd->left_, HIWORD(nTrackPosOffset) - pObj->w_top_ - pWnd->top_, ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条), true);
@@ -516,7 +516,7 @@ void _sb_oncontextmenu(EXHANDLE hObj, obj_s* pObj, size_t lParam)
 {
 	void* hMenu = ((pObj->dwStyle_ & 滚动条风格_垂直滚动条) == 滚动条风格_垂直滚动条) ? g_Li.hMenuVS : g_Li.hMenuHS;
 	hMenu = GetSubMenu((HMENU)hMenu, 0);
-	si_s* psi = _obj_pOwner(pObj);
+	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	psi->nTrackPosOffset_ = lParam;
 	int wEnable = ((psi->wArrows_ & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH) ? 1026 : 1024;
 	EnableMenuItem((HMENU)hMenu, 0, wEnable);//滚动至此
@@ -634,7 +634,7 @@ void _sb_set_wArrows(EXHANDLE hSB, int wArrows, bool fRedraw)
 	int nError = 0;
 	if (_handle_validate(hSB, HT_OBJECT, (void**)&pSB, &nError))
 	{
-		si_s* psi = _obj_pOwner(pSB);
+		si_s* psi = (si_s*)_obj_pOwner(pSB);
 		if (psi != 0)
 		{
 			psi->wArrows_ = wArrows;

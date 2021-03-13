@@ -287,7 +287,7 @@ EXHANDLE Ex_ObjGetParentEx(EXHANDLE hObj, EXHANDLE* phExDUI);
 size_t Ex_ObjGetLong(EXHANDLE hObj, int nIndex);
 size_t Ex_ObjSetLong(EXHANDLE hObj, int nIndex, size_t dwNewLong);
 void _obj_reset_path(obj_s* pObj, int left, int top, int right, int bottom, int nOffset);
-si_s* _obj_pOwner(obj_s* pObj);
+void* _obj_pOwner(obj_s* pObj);
 void _obj_scroll_updatepostion(EXHANDLE hSB, obj_s* pSB, bool bVScroll, int cLeft, int cTop, int cRight, int cBottom, bool fDispatch);
 void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x, int y, int width, int height, int flags, int* nError);
 bool Ex_ObjSetPos(EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x, int y, int width, int height, int flags);

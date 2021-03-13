@@ -52,7 +52,7 @@ BOOL Ex_Init(HINSTANCE hInstance, int dwGlobalFlags, HCURSOR hDefaultCursor, LPC
 	g_Li.aryColorsAtom = { ATOM_BACKGROUND_COLOR, ATOM_COLOR_BACKGROUND, ATOM_BORDER_COLOR, ATOM_COLOR_BORDER, ATOM_COLOR, ATOM_COLOR_NORMAL, ATOM_COLOR_HOVER, ATOM_COLOR_DOWN, ATOM_COLOR_FOCUS, ATOM_COLOR_CHECKED, ATOM_COLOR_SELECTED, ATOM_COLOR_HOT, ATOM_COLOR_VISTED, ATOM_COLOR_SHADOW };
 	g_Li.aryColorsOffset = { offsetof(obj_s, crBackground_), offsetof(obj_s, crBackground_), offsetof(obj_s, crBorder_), offsetof(obj_s, crBorder_), offsetof(obj_s, crNormal_), offsetof(obj_s, crNormal_), offsetof(obj_s, crHover_), offsetof(obj_s, crDown_), offsetof(obj_s, crFocus_), offsetof(obj_s, crChecked_), offsetof(obj_s, crSelected_), offsetof(obj_s, crHot_), offsetof(obj_s, crVisted_), offsetof(obj_s, crShadow_) };
 	g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
-	
+	g_Ri.hRiched20 = LoadLibraryW(L"msftedit.dll");
 
 	auto i = Ex_MemAlloc(64);
 	int len;
@@ -141,6 +141,7 @@ void _object_init()
 	_obj_register(ATOM_PAGE, EOS_VISIBLE, EOS_EX_TRANSPARENT, 0, 0, 0, &_page_proc, 0, &nError);
 	_obj_register(ATOM_STATIC, EOS_VISIBLE, EOS_EX_TRANSPARENT, DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE, 0, 0, &_static_proc, 0, &nError);
 	_obj_register(ATOM_SCROLLBAR, 滚动条风格_右底对齐 | 滚动条风格_控制按钮 | EOS_VISIBLE, 0, 0, 0, 0, &_sb_proc, 0, &nError);
+	_obj_register(ATOM_EDIT, EOS_VISIBLE, EOS_EX_COMPOSITED | EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE, 0, LoadCursorW(0, MAKEINTRESOURCEW(32513)), &_edit_proc, ECF_D2D_GDI_COMPATIBLE, &nError);
 	_obj_register(ATOM_BUTTON, EOS_VISIBLE | 按钮风格_文本偏移, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_CENTER | DT_SINGLELINE, 0, 0, &_button_proc, 0, &nError);
 	_obj_register(ATOM_CHECKBUTTON, EOS_VISIBLE | 按钮风格_复选按钮, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, &_button_proc, 0, &nError);
 	_obj_register(ATOM_RADIOBUTTON, EOS_VISIBLE | 按钮风格_单选按钮, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, &_button_proc, 0, &nError);

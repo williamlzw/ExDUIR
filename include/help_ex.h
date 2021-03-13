@@ -16,6 +16,8 @@
 typedef BOOL(*UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
 typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 
+
+
 #include "Array_ex.h"
 #include "Thread_ex.h"
 #include "HashTable_ex.h"
@@ -44,6 +46,8 @@ typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 #include "Class_SysButton_Page_ex.h"
 #include "Class_Scrollbar_ex.h"
 #include "Class_Button_Item_ex.h"
+#include "Class_Edit_ex.h"
+
 
 #define ExGetB(rgb)			(LOBYTE(rgb))
 #define ExGetG(rgb)			(LOBYTE(((WORD)(rgb)) >> 8))
@@ -52,10 +56,11 @@ typedef size_t(*MsgPROC)(HWND, EXHANDLE, int, size_t, void*, void*);
 #define ExRGB(r,g,b)        ((int)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((INT)(BYTE)(b))<<16)))
 #define ExRGBA(r,g,b,a)		((int)(RGB(b,g,r)|(a<<24)))
 #define ExARGB(r,g,b)		ExRGBA(r,g,b,0xFF)
+#define ExARGB2RGB(argb)    argb & 0xFFFFFF
 
-#define FLAG_CHECK(a,b) ((a)&(b)) == (b)
-#define FLAG_ADD(a,b) a |= | (b)
-#define FLAG_DEL(a,b)  a &= ~(b)
+#define FLAGS_CHECK(a,b) (((a)&(b)) == (b))
+#define FLAGS_ADD(a,b) (a |= (b))
+#define FLAGS_DEL(a,b)  (a &= ~(b))
 
 #define HT_DUI 1
 #define HT_OBJECT 2
@@ -343,9 +348,9 @@ struct LOCALINFO
 	UpdateLayeredWindowIndirectPROC pfnUpdateLayeredWindowIndirect;
 	void* lpLogFontDefault;
 	theme_s* hThemeDefault;
-	void* hMenuVS;
-	void* hMenuHS;
-	void* hMenuEdit;
+	HMENU hMenuVS;
+	HMENU hMenuHS;
+	HMENU hMenuEdit;
 	void* hHookMsgBox;
 	mempool_s* hHandles;
 	std::vector<theme_s*> aryThemes;
@@ -382,6 +387,8 @@ struct RENDERINFO
 	float bp_dpiy;
 	int bp_bitmapOptions;
 	void* bp_colorContext;
+
+	HMODULE hRiched20;
 };
 
 extern LOCALINFO g_Li;
@@ -395,6 +402,7 @@ struct ARGB_s
 	int a;
 };
 
+int DtoHimetric(int d, int PerInchc);
 void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
 bool Ex_MemFree(void* hMem);
 void* Ex_MemAlloc(size_t dwSize, int dwFlags = LMEM_ZEROINIT);

@@ -178,7 +178,9 @@ BOOL HashTable_Remove(hashtable_s* hTable, size_t hKey)
 				}
 				InterlockedExchangeAdd((size_t*)&hTable->dwCount, -1);
 				HashTablePROC pfn = hTable->pfnDelete;
-				pfn((void*)pEntry->dwValue);
+				if (pfn) {
+					pfn((void*)pEntry->dwValue);
+				}
 				Ex_MemFree((HANDLE)pEntry);
 				ret = true;
 				break;

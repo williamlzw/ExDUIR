@@ -16,6 +16,68 @@ bool _canvas_destroy(EXHANDLE hCanvas)
 	return nError == 0;
 }
 
+bool _md_create(void* pData, size_t offsetDc, size_t offsetBmp, size_t offsetBits, int width, int height, int* nError)
+{
+	if (width <= 0) width = 1;
+	if (height <= 0) height = 1;
+	HDC mDc = CreateCompatibleDC(0);
+	BITMAPINFO bi;
+	bool ret = false;
+	if (mDc != 0)
+	{
+		bi.bmiHeader.biSize = sizeof(BITMAPINFO);
+		bi.bmiHeader.biBitCount = 32;
+		bi.bmiHeader.biPlanes = 1;
+		bi.bmiHeader.biWidth = width;
+		bi.bmiHeader.biHeight = -height;
+		bi.bmiHeader.biSizeImage = width * height * bi.bmiHeader.biBitCount / 8;
+		void* lpBits;
+		HBITMAP hBmp = CreateDIBSection(mDc, &bi, DIB_RGB_COLORS, &lpBits, 0, 0);
+		if (hBmp != 0)
+		{
+			DeleteObject(SelectObject(mDc, hBmp));
+			_md_destroy(pData, offsetDc, offsetBmp, offsetBits);
+			__set(pData, offsetDc, (size_t)mDc);
+			__set(pData, offsetBmp, (size_t)hBmp);
+			__set(pData, offsetBits, (size_t)lpBits);
+			ret = true;
+		}
+		else {
+			DeleteDC(mDc);
+			*nError = GetLastError();
+		}
+	}
+	return ret;
+}
+
+bool _md_destroy(void* pData, size_t OffsetDc, size_t OffsetBmp, size_t OffsetBits)
+{
+	HDC mDc = (HDC)__get(pData, OffsetDc);
+	bool ret = false;
+	if (mDc != 0)
+	{
+		DeleteObject((HGDIOBJ)__get(pData, OffsetBmp));
+		DeleteDC(mDc);
+		__set(pData, OffsetDc, 0);
+		__set(pData, OffsetBmp, 0);
+		__set(pData, OffsetBits, 0);
+		ret = true;
+	}
+	return ret;
+}
+
+EXHANDLE _canvas_createfromobj(EXHANDLE hObj, int uWidth, int uHeight, int dwFlags, int* nError)
+{
+	obj_s* pObj = nullptr;
+	EXHANDLE hCanvas = 0;
+	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, nError))
+	{
+		hCanvas = _canvas_createfrompwnd(pObj->pWnd_, uWidth, uHeight, 0, nError);
+	}
+	Ex_SetLastError(*nError);
+	return hCanvas;
+}
+
 void _canvas_recreate(canvas_s* pCanvas, int width, int height, int* nError)
 {
 
@@ -863,7 +925,7 @@ bool _canvas_rotate_hue(EXHANDLE hCanvas, float fAngle)
 	return nError == 0;
 }
 
-EXHANDLE _canvas_createfrompWnd(wnd_s* pWnd, int width, int height, int dwFlags, int* nError)
+EXHANDLE _canvas_createfrompwnd(wnd_s* pWnd, int width, int height, int dwFlags, int* nError)
 {
 	canvas_s* pCanvas = (canvas_s*)Ex_MemAlloc(sizeof(canvas_s));
 	EXHANDLE hCanvas = 0;
