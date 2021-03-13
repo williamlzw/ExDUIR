@@ -3517,7 +3517,7 @@ void _sb_show(EXHANDLE hSB, bool fShow)
 	}
 }
 
-bool Ex_objScrollshow(EXHANDLE hObj, int wBar, bool fShow)
+bool Ex_ObjScrollShow(EXHANDLE hObj, int wBar, bool fShow)
 {
 	obj_s* pObj = nullptr;
 	int nError = 0;

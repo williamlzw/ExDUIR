@@ -135,7 +135,7 @@ Ex_ObjScrollGetInfo
 Ex_ObjScrollGetPos
 Ex_ObjScrollGetTrackPos
 Ex_ObjScrollGetRange
-;Ex_ObjScrollShow
+Ex_ObjScrollShow
 Ex_ObjScrollEnable
 
 ;Ex_ObjEnableIME
