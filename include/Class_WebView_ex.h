@@ -67,7 +67,6 @@ class WebView //: public ICoreWebView2
 public:
 	WebView(webview_s* pOwner);
 	std::wstring GetURL();
-	HRESULT NavigateTo(LPWSTR url);
 	HRESULT Navigate(LPWSTR url);
 	HRESULT DisablePopups();
 	HRESULT DisableDevelopper();

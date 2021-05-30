@@ -25,7 +25,6 @@ HRESULT WebView::InitializeWebView()
 		Microsoft::WRL::Callback<ICoreWebView2CreateCoreWebView2EnvironmentCompletedHandler>(
 			this, &WebView::OnCreateEnvironmentCompleted)
 		.Get());
-
 	return hr;
 };
 
@@ -84,21 +83,16 @@ HRESULT WebView::OnCreateCoreWebView2ControllerCompleted(HRESULT result, ICoreWe
 	{
 		return hr;
 	}
-	if FAILED(hr = ResizeToClientArea())
-	{
-		return hr;
-	}
+	
 	return hr;
 };
 
 HRESULT WebView::RegisterEventHandlers()
 {
 	HRESULT hr;
-
 	hr = m_webview2imp->m_webView->add_NavigationCompleted(Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
 		this, &WebView::OnNavigationCompletedEvent).Get(), &m_navigationCompletedToken);
 	output(L"add_NavigationCompleted", hr);
-
 	hr = m_webview2imp->m_webView->add_NavigationStarting(Microsoft::WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(
 		this, &WebView::OnNavigationStartingEvent).Get(), &m_navigationStartingToken);
 	output(L"add_NavigationStarting", hr);
@@ -108,7 +102,11 @@ HRESULT WebView::RegisterEventHandlers()
 		Microsoft::WRL::Callback<ICoreWebView2WebResourceRequestedEventHandler>(
 			this, &WebView::OnWebResourceRequestedEvent).Get(), &m_webresourcerequestedToken);
 	output(L"add_WebResourceRequested", hr);
-
+	if FAILED(hr = ResizeToClientArea())
+	{
+		return hr;
+	}
+	hr = m_webview2imp->m_webController->put_IsVisible(TRUE);
 	hr = m_webview2imp->m_webView->Navigate(L"https://www.baidu.com");
 	output(L"Navigate", hr);
 	if (m_CreateCompleted)
@@ -149,7 +147,7 @@ HRESULT WebView::OnNavigationStartingEvent(ICoreWebView2* sender,
 	ICoreWebView2NavigationStartingEventArgs* args)
 {
 	output(L"OnNavigationStartingEvent");
-	PWSTR uri;
+	PWSTR uri{ nullptr };
 	args->get_Uri(&uri);
 	const std::wstring source(uri);
 	CoTaskMemFree(uri);
@@ -196,8 +194,7 @@ HRESULT WebView::ResizeToClientArea()
 	HRESULT hr = S_OK;
 	if (m_webview2imp && m_webview2imp->m_webController)
 	{
-		RECT bounds;
-		GetClientRect(m_pOwner->hWnd_, &bounds);
+		RECT bounds{ m_pOwner->pObj_->left_,m_pOwner->pObj_->top_,m_pOwner->pObj_->right_,m_pOwner->pObj_->bottom_ };
 		hr = m_webview2imp->m_webController->put_Bounds(bounds);
 	}
 	return (hr);
@@ -205,10 +202,10 @@ HRESULT WebView::ResizeToClientArea()
 
 std::wstring WebView::GetURL()
 {
-	std::wstring url;
+	std::wstring url = L"";
 	if (m_webview2imp && m_webview2imp->m_webView)
 	{
-		PWSTR uri;
+		PWSTR uri{ nullptr };
 		m_webview2imp->m_webView->get_Source(&uri);
 		url = uri;
 		CoTaskMemFree(uri);
@@ -216,7 +213,7 @@ std::wstring WebView::GetURL()
 	return url;
 }
 
-HRESULT WebView::NavigateTo(LPWSTR url)
+HRESULT WebView::Navigate(LPWSTR url)
 {
 	if (m_webview2imp && m_webview2imp->m_webView && url)
 	{
@@ -229,25 +226,12 @@ HRESULT WebView::NavigateTo(LPWSTR url)
 			else
 				surl = L"http://" + surl;
 		}
-		return(m_webview2imp->m_webView->Navigate(surl.c_str()));
-	}
-	else
-	{
-		return E_INVALIDARG;
-	}
-}
-
-HRESULT WebView::Navigate(LPWSTR url)
-{
-	if (m_webview2imp &&  m_webview2imp->m_webView && url)
-	{
-		auto hr = NavigateTo(url);
-		CHECK_FAILURE(hr);
+		auto hr = m_webview2imp->m_webView->Navigate(surl.c_str());
 		return hr;
 	}
 	else
 	{
-		return E_FAIL;
+		return E_INVALIDARG;
 	}
 }
 
@@ -286,7 +270,6 @@ void WebView::CloseWebView()
 		m_webview2imp->m_webView = nullptr;
 		m_webview2imp->m_webController->Close();
 		m_webview2imp->m_webController = nullptr;
-		
 	}
 }
 
@@ -351,7 +334,8 @@ void _webview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	if (width <= 0) width = 1;
 	if (height <= 0) height = 1;
 	int nError = 0;
-	if (_md_create(pOwner, offsetof(webview_s, mDc_), offsetof(webview_s, hBmp_), offsetof(webview_s, pBits_), width, height,
+	if (_md_create(pOwner, offsetof(webview_s, mDc_), offsetof(webview_s, hBmp_),
+		offsetof(webview_s, pBits_), width, height,
 		&nError)) {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
@@ -382,7 +366,8 @@ size_t _webview_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 			HDC hDc = _canvas_getdc(ps.hCanvas);
 			output(L"绘画PPPPPPPPPPPPPPPPPPPPP", (size_t)hDc, (size_t)mDc);
 			if (hDc != 0) {
-				BitBlt(hDc, ps.p_left, ps.p_top, ps.p_right - ps.p_left, ps.p_bottom - ps.p_top, mDc, 0, 0, SRCPAINT);
+				BitBlt(hDc, ps.p_left, ps.p_top, ps.p_right - ps.p_left, 
+					ps.p_bottom - ps.p_top, mDc, 0, 0, SRCPAINT);
 				output(L"绘画PPPPPPPPPPPPPPPPPPPPP", ps.p_left, ps.p_top, ps.p_right, ps.p_bottom);
 				//StretchBlt(hDc, ps.p_left, ps.p_top, ps.p_right, ps.p_bottom,
 					//mDc, 0, 0, ps.p_right - ps.p_left, ps.p_bottom - ps.p_top, SRCPAINT);
