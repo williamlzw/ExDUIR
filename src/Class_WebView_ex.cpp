@@ -13,12 +13,17 @@ WebView::WebView(webview_s* pOwner) {
 	InitializeWebView();
 };
 
+
 HRESULT WebView::InitializeWebView()
 {
 	m_webview2imp = std::make_unique<WebView2Impl>();
+	HRESULT hr = DCompositionCreateDevice2(nullptr, IID_PPV_ARGS(&m_webview2imp->m_dcompDevice));
+	if (!SUCCEEDED(hr))
+	{
+		return hr;
+	}
 	auto options = Microsoft::WRL::Make<CoreWebView2EnvironmentOptions>();
-	HRESULT hr = options->put_AllowSingleSignOnUsingOSPrimaryAccount(
-		(m_pOwner->pObj_->dwStyle_ & EWVS_AADSSOENABLED) == 0 ? TRUE : FALSE);
+	hr = options->put_AllowSingleSignOnUsingOSPrimaryAccount(TRUE);
 	hr = options->put_Language(L"zh-cn");
 	hr = CreateCoreWebView2EnvironmentWithOptions(
 		nullptr, L"./userdata", options.Get(),
@@ -28,6 +33,26 @@ HRESULT WebView::InitializeWebView()
 	return hr;
 };
 
+HRESULT WebView::DCompositionCreateDevice2(IUnknown* renderingDevice, REFIID riid, void** ppv)
+{
+	HRESULT hr = E_FAIL;
+	static decltype(::DCompositionCreateDevice2)* fnCreateDCompDevice2 = nullptr;
+	if (fnCreateDCompDevice2 == nullptr)
+	{
+		HMODULE hmod = ::LoadLibraryEx(L"dcomp.dll", nullptr, 0);
+		if (hmod != nullptr)
+		{
+			fnCreateDCompDevice2 = reinterpret_cast<decltype(::DCompositionCreateDevice2)*>(
+				::GetProcAddress(hmod, "DCompositionCreateDevice2"));
+		}
+	}
+	if (fnCreateDCompDevice2 != nullptr)
+	{
+		hr = fnCreateDCompDevice2(renderingDevice, riid, ppv);
+	}
+	return hr;
+}
+
 HRESULT WebView::OnCreateEnvironmentCompleted(
 	HRESULT result, ICoreWebView2Environment* environment)
 {
@@ -35,17 +60,13 @@ HRESULT WebView::OnCreateEnvironmentCompleted(
 	{
 		if (m_webview2imp.get())
 		{
-			result = environment->QueryInterface(IID_ICoreWebView2Environment3, 
-				(void**)&m_webview2imp->m_webViewEnvironment);
-			if (FAILED(result))
-			{
-				return result;
-			}
-
-			result = m_webview2imp->m_webViewEnvironment->CreateCoreWebView2Controller(
+			m_webview2imp->m_webViewEnvironment = environment;
+			ICoreWebView2Environment3* webViewEnvironment3 = nullptr;
+			m_webview2imp->m_webViewEnvironment->QueryInterface(&webViewEnvironment3);
+			result = webViewEnvironment3->CreateCoreWebView2CompositionController(
 				m_pOwner->hWnd_,
 				Microsoft::WRL::Callback<
-				ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
+				ICoreWebView2CreateCoreWebView2CompositionControllerCompletedHandler>(
 					this,
 					&WebView::OnCreateCoreWebView2ControllerCompleted).Get());
 
@@ -54,16 +75,15 @@ HRESULT WebView::OnCreateEnvironmentCompleted(
 	return result;
 };
 
-HRESULT WebView::OnCreateCoreWebView2ControllerCompleted(HRESULT result, ICoreWebView2Controller* controller)
+HRESULT WebView::OnCreateCoreWebView2ControllerCompleted(HRESULT result, ICoreWebView2CompositionController* controller)
 {
 	HRESULT hr = S_OK;
 	if (result != S_OK || controller == nullptr)
 	{
 		return E_INVALIDARG;
 	}
-
-	m_webview2imp->m_webController = controller;
-	hr = controller->get_CoreWebView2(&m_webview2imp->m_webView);
+	controller->QueryInterface(&m_webview2imp->m_webController);
+	hr = m_webview2imp->m_webController->get_CoreWebView2(&m_webview2imp->m_webView);
 
 	if (FAILED(hr))
 	{
@@ -92,23 +112,18 @@ HRESULT WebView::RegisterEventHandlers()
 	HRESULT hr;
 	hr = m_webview2imp->m_webView->add_NavigationCompleted(Microsoft::WRL::Callback<ICoreWebView2NavigationCompletedEventHandler>(
 		this, &WebView::OnNavigationCompletedEvent).Get(), &m_navigationCompletedToken);
-	output(L"add_NavigationCompleted", hr);
 	hr = m_webview2imp->m_webView->add_NavigationStarting(Microsoft::WRL::Callback<ICoreWebView2NavigationStartingEventHandler>(
 		this, &WebView::OnNavigationStartingEvent).Get(), &m_navigationStartingToken);
-	output(L"add_NavigationStarting", hr);
 	hr = m_webview2imp->m_webView->AddWebResourceRequestedFilter(L"*", COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL);
-	output(L"AddWebResourceRequestedFilter", hr);
 	hr = m_webview2imp->m_webView->add_WebResourceRequested(
 		Microsoft::WRL::Callback<ICoreWebView2WebResourceRequestedEventHandler>(
 			this, &WebView::OnWebResourceRequestedEvent).Get(), &m_webresourcerequestedToken);
-	output(L"add_WebResourceRequested", hr);
 	if FAILED(hr = ResizeToClientArea())
 	{
 		return hr;
 	}
 	hr = m_webview2imp->m_webController->put_IsVisible(TRUE);
 	hr = m_webview2imp->m_webView->Navigate(L"https://www.baidu.com");
-	output(L"Navigate", hr);
 	if (m_CreateCompleted)
 	{
 		m_CreateCompleted();
@@ -364,11 +379,10 @@ size_t _webview_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 
 			HDC mDc = ((webview_s*)ps.dwOwnerData)->mDc_;
 			HDC hDc = _canvas_getdc(ps.hCanvas);
-			output(L"绘画PPPPPPPPPPPPPPPPPPPPP", (size_t)hDc, (size_t)mDc);
 			if (hDc != 0) {
-				BitBlt(hDc, ps.p_left, ps.p_top, ps.p_right - ps.p_left, 
-					ps.p_bottom - ps.p_top, mDc, 0, 0, SRCPAINT);
-				output(L"绘画PPPPPPPPPPPPPPPPPPPPP", ps.p_left, ps.p_top, ps.p_right, ps.p_bottom);
+				output(BitBlt(hDc, ps.p_left, ps.p_top, ps.p_right - ps.p_left,
+					ps.p_bottom - ps.p_top, mDc, 0, 0, SRCCOPY));
+				output(L"paint_PPPPPPPPPPPPPPPPPPPPP", ps.p_left, ps.p_top, ps.p_right, ps.p_bottom);
 				//StretchBlt(hDc, ps.p_left, ps.p_top, ps.p_right, ps.p_bottom,
 					//mDc, 0, 0, ps.p_right - ps.p_left, ps.p_bottom - ps.p_top, SRCPAINT);
 				_canvas_releasedc(ps.hCanvas);
@@ -390,7 +404,7 @@ LRESULT CALLBACK _webview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			_webview_init(hWnd, hObj, pObj);
 		}
 		else if (uMsg == WM_SIZE) {
-			_webview_size(hWnd, hObj, pObj);
+			//_webview_size(hWnd, hObj, pObj);
 		}
 		else if (uMsg == WM_PAINT) {
 			return _webview_paint(hWnd, hObj, pObj);
@@ -416,7 +430,6 @@ LRESULT CALLBACK _webview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			webview_s* pOwner = (webview_s*)_obj_pOwner(pObj);
 			((WebView*)pOwner->iWv_)->m_url = (LPWSTR)wParam;
 			auto hr = ((WebView*)pOwner->iWv_)->Navigate((LPWSTR)wParam);
-			output(GetErrorMessage(hr),hr);
 		}
 		else if (uMsg == WM_DESTROY) {
 			_webview_unint(pObj);

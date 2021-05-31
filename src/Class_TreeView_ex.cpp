@@ -524,6 +524,8 @@ void _tv_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
 			}
 			_canvas_drawtext(ps->hCanvas, pObj->hFont_, _obj_getcolor(pObj, 2), item->lpTitle, -1, 4 | 0 | 32, rect.right + Ex_Scale(5), ps->rcPaint.top, ps->rcPaint.right, ps->rcPaint.bottom);
 		}
+
+
 	}
 }
 

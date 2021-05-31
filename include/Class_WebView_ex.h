@@ -3,6 +3,7 @@
 #include <functional>
 #include <map>
 #include <wrl/event.h>
+#include <dcomp.h>
 #include "WebView2ExperimentalEnvironmentOptions.h"
 #include "WebView2.h"
 
@@ -24,12 +25,11 @@ struct webview_s
 	int			height_;
 };
 
-// 浏览框风格_允许使用操作系统主帐户单点登录
-#define EWVS_AADSSOENABLED 1
+
 // 浏览框风格_允许全屏
-#define EWVS_FULLSCREENALLOWED 2
+#define EWVS_FULLSCREENALLOWED 1
 // 浏览框风格_弹出窗口
-#define EWVS_POPUPWINDOW 4
+#define EWVS_POPUPWINDOW 2
 
 // 消息_浏览框_创建完毕
 #define EWVM_CREATECOMPLETED	30000
@@ -60,6 +60,7 @@ public:
 	ICoreWebView2Controller* m_webController = nullptr;
 	ICoreWebView2* m_webView = nullptr;
 	ICoreWebView2Settings* m_webSettings = nullptr;
+	IDCompositionDevice* m_dcompDevice = nullptr;
 };
 
 class WebView //: public ICoreWebView2
@@ -86,9 +87,10 @@ private:
 	BOOL m_containsFullscreenElement = FALSE;
 	BOOL m_isNavigating = FALSE;
 	HRESULT InitializeWebView();
+	HRESULT DCompositionCreateDevice2(IUnknown* renderingDevice, REFIID riid, void** ppv);
 	HRESULT OnCreateEnvironmentCompleted(
 		HRESULT result, ICoreWebView2Environment* environment);
-	HRESULT OnCreateCoreWebView2ControllerCompleted(HRESULT result, ICoreWebView2Controller* controller);
+	HRESULT OnCreateCoreWebView2ControllerCompleted(HRESULT result, ICoreWebView2CompositionController* controller);
 	HRESULT OnNavigationCompletedEvent(ICoreWebView2* sender,
 		ICoreWebView2NavigationCompletedEventArgs* args);
 	HRESULT OnNavigationStartingEvent(ICoreWebView2* sender,

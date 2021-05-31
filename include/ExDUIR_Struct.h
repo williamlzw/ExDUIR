@@ -1156,6 +1156,7 @@
 #define ExARGB2RGB(argb)    ExRGB((BYTE)(argb>>16),(BYTE)(argb>>8),(BYTE)(argb))
 #define ExRGB2ARGB(rgb,a)   ((EXARGB)(BYTE(ExGetR(rgb))<<16 | BYTE(ExGetG(rgb))<<8 | BYTE(ExGetB(rgb)) | (a<<24)))
 
+
 typedef UINT8	CHANNEL;		//通道
 typedef COLORREF EXARGB;		// 颜色
 typedef INT EXATOM;				// 原子号
