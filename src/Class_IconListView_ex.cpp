@@ -20,7 +20,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			return 1;
 		}
 	}
-	else if (uMsg == LVM_INSERTITEMA)//插入表项 lParam 为表项信息,wParam为是否立即重画,返回索引
+	else if (uMsg == LVM_INSERTITEM)//插入表项 lParam 为表项信息,wParam为是否立即重画,返回索引
 	{
 		size_t ret = 0;
 		if (lParam != 0)
@@ -81,18 +81,18 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONUP)//当鼠标左键按下放开时 更新控件按下状态并重画
 	{
-		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ILVS_BUTTON) != 0)//当前得是按钮列表状态
+		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & EILVS_BUTTON) != 0)//当前得是按钮列表状态
 		{
-			Ex_ObjSetUIState(hObj, STATE_DOWN, uMsg == WM_LBUTTONUP, 0, true);
+			Ex_ObjSetUIState(hObj, STATE_DOWN, uMsg == WM_LBUTTONUP, 0, TRUE);
 			Ex_ObjPostMessage(hObj, LVM_SETSELECTIONMARK, 0, 0);
 		}
 	}
 	else if (uMsg == ILVM_SETITEMSIZE)//设置表项尺寸
 	{
-		int width = LOWORD(lParam);
+		INT width = LOWORD(lParam);
 		if (width < 10) width = 10;
 		Ex_ObjSetLong(hObj, _ilv_nWidth, Ex_Scale(width));
-		int height = HIWORD(lParam);
+		INT height = HIWORD(lParam);
 		if (height < 10) height = 10;
 		Ex_ObjSetLong(hObj, _ilv_nHeight, Ex_Scale(height));
 		RECT rc{ 0 };
@@ -100,7 +100,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjDispatchMessage(hObj, WM_SIZE, 0, MAKELONG(rc.right - rc.left, rc.bottom - rc.top));
 		return 0;
 	}
-	return Ex_ObjCallProc(m_pfnListView_icon, hWnd, hObj, uMsg, wParam, lParam, 0);
+	return Ex_ObjCallProc(m_pfnListView_icon, hWnd, hObj, uMsg, wParam, lParam);
 }
 
 void _IconListView_Register()
@@ -108,10 +108,10 @@ void _IconListView_Register()
 	EX_CLASSINFO clsInfo{ 0 };
 	Ex_ObjGetClassInfoEx(L"ListView", &clsInfo);
 	m_pfnListView_icon = clsInfo.pfnClsProc;
-	Ex_ObjRegister(L"IconListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyle, clsInfo.dwTextFormat, 4 *sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _IconListView_Proc);
+	Ex_ObjRegister(L"IconListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 4 *sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _IconListView_Proc);
 }
 
-EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, int nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, int nType)
+EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType)
 {
 	EX_ICONLISTVIEW_ITEMINFO* pItemInfo = (EX_ICONLISTVIEW_ITEMINFO*)Ex_MemAlloc(sizeof(EX_ICONLISTVIEW_ITEMINFO));
 	pItemInfo->pwzText = copytstr(pvItem->pwzText, lstrlenW(pvItem->pwzText));
@@ -120,9 +120,9 @@ EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, int nIndex,
 	return pItemInfo;
 }
 
-void _IconListView_OnArrDelete(array_s* pArray, int nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, int nType)
+void _IconListView_OnArrDelete(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType)
 {
-	Ex_MemFree((void*)pvItem->pwzText);
+	Ex_MemFree((LPVOID)pvItem->pwzText);
 	Ex_MemFree(pvItem);
 }
 
@@ -143,46 +143,46 @@ void _IconListView_Uninit(HEXOBJ hObj)
 	Array_Destroy(pArray);
 }
 
-bool _IconListView_OnNotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
+BOOL _IconListView_OnNotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
 {
 	EX_NMHDR ni{ 0 };
-	RtlMoveMemory(&ni, (void*)lParam, sizeof(EX_NMHDR));
+	RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 	if (ni.hObjFrom == hObj)
 	{
 		if (ni.nCode == NM_CALCSIZE)
 		{
-			__set_int((void*)ni.lParam, 0, Ex_ObjGetLong(hObj, _ilv_nWidth));
-			__set_int((void*)ni.lParam, 4, Ex_ObjGetLong(hObj, _ilv_nHeight));
-			return true;
+			__set_int((LPVOID)ni.lParam, 0, Ex_ObjGetLong(hObj, _ilv_nWidth));
+			__set_int((LPVOID)ni.lParam, 4, Ex_ObjGetLong(hObj, _ilv_nHeight));
+			return TRUE;
 		}
 		else if (ni.nCode == NM_CUSTOMDRAW)
 		{
 			return _IconListView_OnDrawItem(hObj, (EX_CUSTOMDRAW*)ni.lParam);
 		}
 	}
-	return false;
+	return FALSE;
 }
 
-bool _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
+BOOL _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 {
 	array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, _ilv_pArray);
 	if (Array_GetCount(pArray) >= cdr->iItem && cdr->iItem > 0)//如果索引在范围内
 	{
-		void* hImageList = (void*)Ex_ObjGetLong(hObj, _ilv_hImageList);
+		LPVOID hImageList = (LPVOID)Ex_ObjGetLong(hObj, _ilv_hImageList);
 		EX_ICONLISTVIEW_ITEMINFO* pItemInfo = (EX_ICONLISTVIEW_ITEMINFO*)Array_GetMember(pArray, cdr->iItem);
-		int nWidthIcon = 0;
-		int nHeightIcon =0;
+		INT nWidthIcon = 0;
+		INT nHeightIcon =0;
 		if (hImageList && pItemInfo ->nImageIndex!= 0)//列表设置了图片组且当前表象图标索引不为0
 		{
 			_imglist_size(hImageList, &nWidthIcon, &nHeightIcon);
 		}
-		float nWidthText = 0;
-		float nHeightText = 0;
+		FLOAT nWidthText = 0;
+		FLOAT nHeightText = 0;
 		if (pItemInfo->pwzText != 0)
 		{
 			_canvas_calctextsize(cdr->hCanvas, Ex_ObjGetFont(hObj), pItemInfo->pwzText, -1, Ex_ObjGetLong(hObj, EOL_TEXTFORMAT), 0, cdr->rcPaint.right - cdr->rcPaint.left, cdr->rcPaint.bottom - cdr->rcPaint.top, &nWidthText, &nHeightText);
 		}
-		float nHeightTotal = nHeightIcon + Ex_Scale(3) + nHeightText;
+		FLOAT nHeightTotal = nHeightIcon + Ex_Scale(3) + nHeightText;
 
 		//本矩形是宽度占满,高度为文本、图标高度的矩形
 		RECT rcIconAndText;
@@ -193,8 +193,8 @@ bool _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 
 		//设置剪辑区(防止图标过大、文本过长超出表项)
 		_canvas_cliprect(cdr->hCanvas, cdr->rcPaint.left, cdr->rcPaint.top, cdr->rcPaint.right, cdr->rcPaint.bottom);
-		void* hBrush = 0;
-		if ((cdr->dwStyle & ILVS_BUTTON) != 0)//如果是按钮状态,则处理背景
+		LPVOID hBrush = 0;
+		if ((cdr->dwStyle & EILVS_BUTTON) != 0)//如果是按钮状态,则处理背景
 		{
 			
 
@@ -213,7 +213,7 @@ bool _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 			}
 		}
 
-		_canvas_setimageantialias(cdr->hCanvas, true);
+		_canvas_setimageantialias(cdr->hCanvas, TRUE);
 		if (hImageList != 0 && pItemInfo->nImageIndex != 0)//列表设置了图片组且当前表象图标索引不为0
 		{
 			_imglist_draw(hImageList, pItemInfo->nImageIndex, cdr->hCanvas, rcIconAndText.left, rcIconAndText.top, rcIconAndText.right, rcIconAndText.top + nHeightIcon, 255);
@@ -225,5 +225,5 @@ bool _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 		}
 		_canvas_resetclip(cdr->hCanvas);//重置剪辑区
 	}
-	return (cdr->dwStyle & ILVS_BUTTON) != 0;// 如果不是按钮列表状态，则表项选中、点燃的状态交给列表框绘制
+	return (cdr->dwStyle & EILVS_BUTTON) != 0;// 如果不是按钮列表状态，则表项选中、点燃的状态交给列表框绘制
 }

@@ -2,8 +2,8 @@
 #include "help_ex.h"
 #include "ExDUIR_Func.h"
 
-typedef size_t(*EasingPROC)(double, int, int, void*, void*);
-typedef size_t(*EasingPROC2)(void*, double, double,void*, int, size_t, size_t, size_t, size_t);
+typedef size_t(*EasingPROC)(DOUBLE, INT, INT, LPVOID, LPVOID);
+typedef size_t(*EasingPROC2)(LPVOID, DOUBLE, DOUBLE,LPVOID, INT, size_t, size_t, size_t, size_t);
 
 struct EX_EASING
 {
@@ -28,55 +28,55 @@ struct EX_EASING
 
 struct easinghead_s
 {
-	int type_;
-	float dv_;
-	int node_count_;
-	int node_start_;
+	INT type_;
+	FLOAT dv_;
+	INT node_count_;
+	INT node_start_;
 };
 
-void _easing_curve_free(void* pCurveInfo);
+void _easing_curve_free(LPVOID pCurveInfo);
 
 void _easing_progress(HEXEASING pEasing);
-int _easing_calc(void* lpEasingProc, int nType, void* pEasingContext, int nStart, int nStop, double nProgress, double* nCurrent);
-void _easing_calc_line(double nProgress, double* nCurrent, std::vector<std::vector<float>> aNodes, int nCount, void* param);
-void _easing_calc_curve(double nProgress, int nStart, int nStop, double* nCurrent, size_t param);
-void _easing_calc_bezier(double nProgress, double* nCurrent, std::vector<std::vector<float>> aNodes, int nCount, void* param);
-void _easing_calc_Bspline(double nProgress, double* nCurrent, std::vector<std::vector<float>> aNodes, int nCount, void* param);
-void _easing_calc_Linear(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InQuad(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutQuad(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutQuad(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InCubic(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutCubic(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutCubic(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InQuart(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutQuart(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutQuart(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InQuint(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutQuint(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutQuint(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InSine(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutSine(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutSine(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InExpo(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutExpo(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutExpo(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InCirc(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutCirc(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutCirc(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InBounce(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutBounce(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutBounce(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-double _easing_calc_getOutBounce(double nStart, double nStop, double nProgress);
-double _easing_calc_getInBounce(double nStart, double nStop, double nProgress);
-void _easing_calc_InBack(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutBack(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutBack(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InElastic(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_OutElastic(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_InOutElastic(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-double _easing_calc_asin(double v);
-void _easing_calc_Clerp(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_Spring(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
-void _easing_calc_Punch(double nProgress, int nStart, int nStop, double* nCurrent, void* param);
+INT _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE* nCurrent);
+void _easing_calc_line(DOUBLE nProgress, DOUBLE* nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param);
+void _easing_calc_curve(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, size_t param);
+void _easing_calc_bezier(DOUBLE nProgress, DOUBLE* nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param);
+void _easing_calc_Bspline(DOUBLE nProgress, DOUBLE* nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param);
+void _easing_calc_Linear(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+DOUBLE _easing_calc_getOutBounce(DOUBLE nStart, DOUBLE nStop, DOUBLE nProgress);
+DOUBLE _easing_calc_getInBounce(DOUBLE nStart, DOUBLE nStop, DOUBLE nProgress);
+void _easing_calc_InBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_OutElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_InOutElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+DOUBLE _easing_calc_asin(DOUBLE v);
+void _easing_calc_Clerp(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_Spring(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
+void _easing_calc_Punch(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param);
 

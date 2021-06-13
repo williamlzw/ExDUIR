@@ -13,19 +13,19 @@ void _groupbox_paint(HEXOBJ hObj, obj_s* pObj)
 		_canvas_clear(ps.hCanvas, 0);
 		LPCWSTR lpText = pObj->pstrTitle_;
 		RECT rcText{};
-		float radius = Ex_ObjGetLong(hObj, GROUPBOX_RADIUS);
-		float textoffset = Ex_ObjGetLong(hObj, GROUPBOX_TEXT_OFFSET);
+		FLOAT radius = Ex_ObjGetLong(hObj, GROUPBOX_RADIUS);
+		FLOAT textoffset = Ex_ObjGetLong(hObj, GROUPBOX_TEXT_OFFSET);
 		if (textoffset == 0)
 			textoffset = 10;
 
-		float strokewidth = Ex_ObjGetLong(hObj, GROUPBOX_STROKEWIDTH);
+		FLOAT strokewidth = Ex_ObjGetLong(hObj, GROUPBOX_STROKEWIDTH);
 		if (strokewidth == 0)
 			strokewidth = 2;
 
 		HEXBRUSH hBrush = _brush_create(0);
 		if (lpText)
 		{
-			float retWidth, retHeight;
+			FLOAT retWidth, retHeight;
 			_canvas_calctextsize(ps.hCanvas, pObj->hFont_, lpText, -1, ps.dwTextFormat, 0, ps.width, ps.height, &retWidth, &retHeight);
 			rcText.right = retWidth;
 			rcText.bottom = retHeight;
@@ -42,14 +42,14 @@ void _groupbox_paint(HEXOBJ hObj, obj_s* pObj)
 		ps.p_top += strokewidth;
 		ps.p_left += strokewidth;
 
-		_path_beginfigure2(hPath, static_cast<float>(ps.p_left + textoffset + rcText.right + 5 + radius), static_cast<float>(ps.p_top + rcText.bottom / 2));
-		_path_addarc(hPath, static_cast<float>(ps.p_right - radius), static_cast<float>(ps.p_top + rcText.bottom / 2), static_cast<float>(ps.p_right), static_cast<float>(ps.p_top + rcText.bottom / 2 + radius), radius, radius, true);
-		_path_addarc(hPath, static_cast<float>(ps.p_right), static_cast<float>(ps.p_bottom - radius), static_cast<float>(ps.p_right - radius), static_cast<float>(ps.p_bottom), radius, radius, true);
-		_path_addarc(hPath, static_cast<float>(ps.p_left + radius), static_cast<float>(ps.p_bottom), static_cast<float>(ps.p_left), static_cast<float>(ps.p_bottom - radius), radius, radius, true);
-		_path_addarc(hPath, static_cast<float>(ps.p_left), static_cast<float>(ps.p_top + rcText.bottom / 2 + radius), static_cast<float>(ps.p_left + radius), static_cast<float>(ps.p_top + rcText.bottom / 2), radius, radius, true);
-		_path_addline(hPath, static_cast<float>(ps.p_left + radius), static_cast<float>(ps.p_top + rcText.bottom / 2), static_cast<float>(ps.t_left + radius + textoffset - 5), static_cast<float>(ps.p_top + rcText.bottom / 2));
+		_path_beginfigure2(hPath, static_cast<FLOAT>(ps.p_left + textoffset + rcText.right + 5 + radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2));
+		_path_addarc(hPath, static_cast<FLOAT>(ps.p_right - radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2), static_cast<FLOAT>(ps.p_right), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2 + radius), radius, radius, TRUE);
+		_path_addarc(hPath, static_cast<FLOAT>(ps.p_right), static_cast<FLOAT>(ps.p_bottom - radius), static_cast<FLOAT>(ps.p_right - radius), static_cast<FLOAT>(ps.p_bottom), radius, radius, TRUE);
+		_path_addarc(hPath, static_cast<FLOAT>(ps.p_left + radius), static_cast<FLOAT>(ps.p_bottom), static_cast<FLOAT>(ps.p_left), static_cast<FLOAT>(ps.p_bottom - radius), radius, radius, TRUE);
+		_path_addarc(hPath, static_cast<FLOAT>(ps.p_left), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2 + radius), static_cast<FLOAT>(ps.p_left + radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2), radius, radius, TRUE);
+		_path_addline(hPath, static_cast<FLOAT>(ps.p_left + radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2), static_cast<FLOAT>(ps.t_left + radius + textoffset - 5), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2));
 
-		_path_endfigure(hPath, false);
+		_path_endfigure(hPath, FALSE);
 		_path_close(hPath);
 
 		_canvas_drawpath(ps.hCanvas, hPath, hBrush, strokewidth, D2D1_DASH_STYLE::D2D1_DASH_STYLE_SOLID);
@@ -61,9 +61,9 @@ void _groupbox_paint(HEXOBJ hObj, obj_s* pObj)
 
 LRESULT CALLBACK _groupbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		switch (uMsg)
 		{

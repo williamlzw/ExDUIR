@@ -3,7 +3,7 @@
 
 BOOL _layout_register(INT nType, LayoutPROC lpfnLayoutProc)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (!HashTable_IsExist(g_Li.hTableLayout, nType))
 	{
 		ret = HashTable_Set(g_Li.hTableLayout, nType, (size_t)lpfnLayoutProc);
@@ -13,7 +13,7 @@ BOOL _layout_register(INT nType, LayoutPROC lpfnLayoutProc)
 
 BOOL _layout_unregister(INT nType)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (!HashTable_IsExist(g_Li.hTableLayout, nType))
 	{
 		ret = HashTable_Remove(g_Li.hTableLayout, nType);
@@ -21,17 +21,17 @@ BOOL _layout_unregister(INT nType)
 	return ret;
 }
 
-void _layout_free_info(array_s* hArr, int nIndex, void* pvItem, int nType)
+void _layout_free_info(array_s* hArr, INT nIndex, LPVOID pvItem, INT nType)
 {
 	layout_s* pLayout = (layout_s*)Array_GetExtra(hArr);
 	((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_UNINITCHILDPROPS, __get(pvItem, 0), (size_t)pvItem);
-	Ex_MemFree((void*)((size_t)pvItem - 4 * sizeof(size_t)));
+	Ex_MemFree((LPVOID)((size_t)pvItem - 4 * sizeof(size_t)));
 }
 
 HEXLAYOUT _layout_create(INT nType, EXHANDLE hObjBind)
 {
 	HEXLAYOUT hLayout = 0;
-	int nError = 0;
+	INT nError = 0;
 	if (nType > 0 && hObjBind != 0)
 	{
 		size_t lpfnProc = 0;
@@ -42,11 +42,11 @@ HEXLAYOUT _layout_create(INT nType, EXHANDLE hObjBind)
 			obj_s* pObj = nullptr;
 			if (pLayout != 0)
 			{
-				if (_handle_validate(hObjBind, HT_OBJECT, (void**)&pObj, &nError))
+				if (_handle_validate(hObjBind, HT_OBJECT, (LPVOID*)&pObj, &nError))
 				{
 					pLayout->nBindType_ = HT_OBJECT;
 				}
-				else if (_handle_validate(hObjBind, HT_DUI, (void**)&pObj, &nError))
+				else if (_handle_validate(hObjBind, HT_DUI, (LPVOID*)&pObj, &nError))
 				{
 					pLayout->nBindType_ = HT_DUI;
 				}
@@ -56,11 +56,11 @@ HEXLAYOUT _layout_create(INT nType, EXHANDLE hObjBind)
 				if (nError == 0)
 				{
 					pLayout->nType_ = nType;
-					pLayout->fUpdateable_ = true;
-					pLayout->lpfnProc_ = (void*)lpfnProc;
+					pLayout->fUpdateable_ = TRUE;
+					pLayout->lpfnProc_ = (LPVOID)lpfnProc;
 					pLayout->hBind_ = hObjBind;
-					int nCount = ((LayoutPROC)lpfnProc)(pLayout, ELN_GETPROPSCOUNT, NULL, NULL);
-					void* pInfo = (void*)((size_t)Ex_MemAlloc((nCount + (size_t)4) * sizeof(size_t)) + (size_t)4 * sizeof(size_t));//padding
+					INT nCount = ((LayoutPROC)lpfnProc)(pLayout, ELN_GETPROPSCOUNT, NULL, NULL);
+					LPVOID pInfo = (LPVOID)((size_t)Ex_MemAlloc((nCount + (size_t)4) * sizeof(size_t)) + (size_t)4 * sizeof(size_t));//padding
 					pLayout->lpLayoutInfo_ = pInfo;
 					((LayoutPROC)lpfnProc)(pLayout, ELN_INITPROPS, NULL, (size_t)pInfo);
 					nCount = ((LayoutPROC)lpfnProc)(pLayout, ELN_GETCHILDPROPCOUNT, NULL, NULL);
@@ -94,15 +94,15 @@ HEXLAYOUT _layout_create(INT nType, EXHANDLE hObjBind)
 
 HEXLAYOUT _layout_get_parent_layout(HEXOBJ hObj)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
 	HEXLAYOUT hLayoutParent = 0;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		EXHANDLE hObj = pObj->objParent_;
 		if (hObj == 0)
 		{
-			auto pWnd = pObj->pWnd_;
+			wnd_s* pWnd = pObj->pWnd_;
 			hObj = pWnd->hexdui_;
 		}
 		hLayoutParent = Ex_ObjLayoutGet(hObj);
@@ -112,14 +112,14 @@ HEXLAYOUT _layout_get_parent_layout(HEXOBJ hObj)
 
 BOOL _layout_destroy(HEXLAYOUT hLayout)
 {
-	int nError = 0;
+	INT nError = 0;
 	layout_s* pLayout = nullptr;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
-		void* lpfnProc = pLayout->lpfnProc_;
+		LPVOID lpfnProc = pLayout->lpfnProc_;
 		((LayoutPROC)lpfnProc)(pLayout, ELN_UNINITPROPS, 0, (size_t)pLayout->lpLayoutInfo_);
 		Array_Destroy(pLayout->hArrChildrenInfo_);
-		Ex_MemFree((void*)((size_t)pLayout->lpLayoutInfo_ - 4 * sizeof(size_t)));
+		Ex_MemFree((LPVOID)((size_t)pLayout->lpLayoutInfo_ - 4 * sizeof(size_t)));
 		Ex_MemFree(pLayout);
 		nError = 0;
 		_handle_destroy(hLayout, &nError);
@@ -128,23 +128,23 @@ BOOL _layout_destroy(HEXLAYOUT hLayout)
 	return nError == 0;
 }
 
-bool _layout_enum_find_obj(void* hArr, int nIndex, void* pvItem, int nType, size_t pvParam)
+BOOL _layout_enum_find_obj(LPVOID hArr, INT nIndex, LPVOID pvItem, INT nType, size_t pvParam)
 {
 	return (__get(pvItem, 0) == pvParam);
 }
 
-void* _layout_get_child(layout_s* pLayout, HEXOBJ hObj)
+LPVOID _layout_get_child(layout_s* pLayout, HEXOBJ hObj)
 {
-	auto hObjP = pLayout->hBind_;
+	EXHANDLE hObjP = pLayout->hBind_;
 	HEXDUI hExDUI = 0;
-	void* pInfo = nullptr;
+	LPVOID pInfo = nullptr;
 	if (Ex_ObjGetParentEx(hObj, &hExDUI) == hObjP || hExDUI == hObjP)
 	{
 		array_s* hArr = pLayout->hArrChildrenInfo_;
-		int nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
+		INT nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
 		if (nIndex > 0)
 		{
-			pInfo = (void*)Array_GetMember(hArr, nIndex);
+			pInfo = (LPVOID)Array_GetMember(hArr, nIndex);
 		}
 	}
 	return pInfo;
@@ -152,13 +152,13 @@ void* _layout_get_child(layout_s* pLayout, HEXOBJ hObj)
 
 BOOL _layout_update(HEXLAYOUT hLayout)
 {
-	int nError = 0;
+	INT nError = 0;
 	layout_s* pLayout = nullptr;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		if (pLayout->fUpdateable_)
 		{
-			void* lpfnProc = pLayout->lpfnProc_;
+			LPVOID lpfnProc = pLayout->lpfnProc_;
 			((LayoutPROC)lpfnProc)(pLayout, ELN_UPDATE, pLayout->hBind_, 0);
 		}
 	}
@@ -168,10 +168,10 @@ BOOL _layout_update(HEXLAYOUT hLayout)
 
 INT _layout_gettype(HEXLAYOUT hLayout)
 {
-	int nError = 0;
+	INT nError = 0;
 	layout_s* pLayout = nullptr;
-	int nType = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nType = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		nType = pLayout->nType_;
 	}
@@ -181,10 +181,10 @@ INT _layout_gettype(HEXLAYOUT hLayout)
 
 BOOL _layout_enableupdate(HEXLAYOUT hLayout, BOOL fUpdateable)
 {
-	int nError = 0;
+	INT nError = 0;
 	layout_s* pLayout = nullptr;
-	int nType = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nType = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		pLayout->fUpdateable_ = fUpdateable;
 	}
@@ -194,14 +194,14 @@ BOOL _layout_enableupdate(HEXLAYOUT hLayout, BOOL fUpdateable)
 
 LRESULT _layout_notify(HEXLAYOUT hLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	layout_s* pLayout = nullptr;
 	LRESULT ret = 1;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		if (pLayout->fUpdateable_)
 		{
-			void* lpfnProc = pLayout->lpfnProc_;
+			LPVOID lpfnProc = pLayout->lpfnProc_;
 			ret = ((LayoutPROC)lpfnProc)(pLayout, nEvent, (size_t)wParam, (size_t)lParam);
 		}
 	}
@@ -211,23 +211,23 @@ LRESULT _layout_notify(HEXLAYOUT hLayout, INT nEvent, WPARAM wParam, LPARAM lPar
 
 BOOL _layout_table_setinfo(HEXLAYOUT hLayout, INT* aRowHeight, INT cRows, INT* aCellWidth, INT cCells)
 {
-	int nError = 0;
+	INT nError = 0;
 	layout_s* pLayout = nullptr;
-	int ret = 1;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT ret = 1;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		if (pLayout->nType_ == ELT_TABLE)
 		{
-			void* pInfo = pLayout->lpLayoutInfo_;
-			array_s* hArr = (array_s*)__get(pInfo, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(void*));
-			Array_Redefine(hArr, cRows, false);
-			for (int i = 1; i <= cRows; i++)
+			LPVOID pInfo = pLayout->lpLayoutInfo_;
+			array_s* hArr = (array_s*)__get(pInfo, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(LPVOID));
+			Array_Redefine(hArr, cRows, FALSE);
+			for (INT i = 1; i <= cRows; i++)
 			{
 				Array_SetMember(hArr, i, aRowHeight[i - 1]);
 			}
-			hArr = (array_s*)__get(pInfo, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(void*));
-			Array_Redefine(hArr, cCells, false);
-			for (int i = 1; i <= cCells; i++)
+			hArr = (array_s*)__get(pInfo, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(LPVOID));
+			Array_Redefine(hArr, cCells, FALSE);
+			for (INT i = 1; i <= cCells; i++)
 			{
 				Array_SetMember(hArr, i, aCellWidth[i - 1]);
 			}
@@ -243,27 +243,27 @@ BOOL _layout_table_setinfo(HEXLAYOUT hLayout, INT* aRowHeight, INT cRows, INT* a
 BOOL _layout_setchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t pvValue)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		if (hObj != 0)
 		{
 			array_s* hArr = pLayout->hArrChildrenInfo_;
 			size_t nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
-			void* pInfo = nullptr;
+			LPVOID pInfo = nullptr;
 			if (nIndex == 0)
 			{
 				pInfo = Ex_MemAlloc(pLayout->cbInfoLen_);
 				if (pInfo != 0)
 				{
-					pInfo = (void*)((size_t)pInfo + 4 * sizeof(size_t));
+					pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
 					__set(pInfo, 0, hObj);
 					((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
 					nIndex = Array_AddMember(hArr, (size_t)pInfo);
 				}
 			}
 			else {
-				pInfo = (void*)Array_GetMember(hArr, nIndex);
+				pInfo = (LPVOID)Array_GetMember(hArr, nIndex);
 			}
 			if (pInfo != 0)
 			{
@@ -289,19 +289,19 @@ BOOL _layout_setchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t p
 BOOL _layout_getchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t* pvValue)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		array_s* hArr = pLayout->hArrChildrenInfo_;
 		size_t nIndex = Array_Emum(hArr, &_layout_enum_find_obj, hObj);
-		void* pInfo = nullptr;
+		LPVOID pInfo = nullptr;
 		if (nIndex > 0)
 		{
-			pInfo = (void*)Array_GetMember(hArr, nIndex);
+			pInfo = (LPVOID)Array_GetMember(hArr, nIndex);
 		}
 		if (pInfo != 0)
 		{
-			dwPropID = dwPropID * sizeof(void*);
+			dwPropID = dwPropID * sizeof(LPVOID);
 			if (dwPropID >= -16 && dwPropID < pLayout->cbInfoLen_)
 			{
 				*pvValue = __get(pInfo, dwPropID);
@@ -321,11 +321,11 @@ BOOL _layout_getchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t* 
 BOOL _layout_setprop(HEXLAYOUT hLayout, INT dwPropID, size_t pvValue)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
-		void* pInfo = pLayout->lpLayoutInfo_;
-		void* lpfnProc = pLayout->lpfnProc_;
+		LPVOID pInfo = pLayout->lpLayoutInfo_;
+		LPVOID lpfnProc = pLayout->lpfnProc_;
 		if (((LayoutPROC)lpfnProc)(pLayout, ELN_CHECKCHILDPROPVALUE, dwPropID, pvValue) == 0)
 		{
 			if (dwPropID > 0)
@@ -342,11 +342,11 @@ BOOL _layout_setprop(HEXLAYOUT hLayout, INT dwPropID, size_t pvValue)
 size_t _layout_getprop(HEXLAYOUT hLayout, INT dwPropID)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
+	INT nError = 0;
 	size_t ret = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
-		void* pInfo = pLayout->lpLayoutInfo_;
+		LPVOID pInfo = pLayout->lpLayoutInfo_;
 		if (dwPropID > 0)
 		{
 			dwPropID = dwPropID - 1;
@@ -360,8 +360,8 @@ size_t _layout_getprop(HEXLAYOUT hLayout, INT dwPropID)
 BOOL _layout_absolute_setedge(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT dwEdge, INT dwType, size_t nValue)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		if (pLayout->nType_ == ELT_ABSOLUTE)
 		{
@@ -383,7 +383,7 @@ BOOL _layout_absolute_setedge(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT dwEdge, I
 	return nError == 0;
 }
 
-void _layout_move_margin(HEXOBJ hObj, RECT* lpObjRc, void* lpMargin, int dwLockFlags, int dwOrgFlags)
+void _layout_move_margin(HEXOBJ hObj, RECT* lpObjRc, LPVOID lpMargin, INT dwLockFlags, INT dwOrgFlags)
 {
 	RECT rcObj = *lpObjRc;
 	RECT rcMargin{ 0 };
@@ -447,7 +447,7 @@ void _layout_move_margin(HEXOBJ hObj, RECT* lpObjRc, void* lpMargin, int dwLockF
 		rcObj.bottom = EOP_DEFAULT;
 	}
 	
-	Ex_ObjMove(hObj, rcObj.left, rcObj.top, rcObj.right, rcObj.bottom, false);
+	Ex_ObjMove(hObj, rcObj.left, rcObj.top, rcObj.right, rcObj.bottom, FALSE);
 }
 
 LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
@@ -462,11 +462,11 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 	}
 	else if (nEvent == ELN_INITCHILDPROPS)
 	{
-		__set((void*)lParam, ELCP_LINEAR_SIZE * sizeof(size_t), -1);
+		__set((LPVOID)lParam, ELCP_LINEAR_SIZE * sizeof(size_t), -1);
 	}
 	else if (nEvent == ELN_CHECKCHILDPROPVALUE)
 	{
-		int nSize = HIWORD(wParam);
+		INT nSize = HIWORD(wParam);
 		if (nSize == ELN_CHECKCHILDPROPVALUE)
 		{
 			return (lParam< ELCP_LINEAR_ALGIN_FILL || lParam>ELCP_LINEAR_ALIGN_RIGHT_BOTTOM);
@@ -482,10 +482,10 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 		else {
 			Ex_DUIGetClientRect(wParam, &rcClient);
 		}
-		void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
+		LPVOID pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
 		array_s* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
-		int nDAlign = __get(pInfo, (ELP_LINEAR_DALIGN - 1) * sizeof(size_t));
-		bool fVertical = __get(pInfo, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
+		INT nDAlign = __get(pInfo, (ELP_LINEAR_DALIGN - 1) * sizeof(size_t));
+		BOOL fVertical = __get(pInfo, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
 		rcClient.left = rcClient.left + __get(pInfo, ELP_PADDING_LEFT * sizeof(size_t));
 		rcClient.top = rcClient.top + __get(pInfo, ELP_PADDING_TOP * sizeof(size_t));
 		rcClient.right = rcClient.right - __get(pInfo, ELP_PADDING_RIGHT * sizeof(size_t));
@@ -497,23 +497,23 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 		rcObj.left = rcClient.left;
 		rcObj.top = rcClient.top;
 		std::vector<RECT> arrRect;
-		std::vector<int> arrOrg;
+		std::vector<INT> arrOrg;
 		if (nDAlign != 0 && Array_GetCount(hArr) > 0)
 		{
 			arrRect.resize(Array_GetCount(hArr));
 			arrOrg.resize(Array_GetCount(hArr));
 		}
-		for (int i = 1; i <= Array_GetCount(hArr); i++)
+		for (INT i = 1; i <= Array_GetCount(hArr); i++)
 		{
-			int orgFlags = 0;
-			void* pInfo = (void*)Array_GetMember(hArr, i);
+			INT orgFlags = 0;
+			LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
 			HEXOBJ hObj = __get(pInfo, 0);
 			if (hObj == 0) continue;
-			int nSize = __get(pInfo, ELCP_LINEAR_SIZE * sizeof(size_t));
+			INT nSize = __get(pInfo, ELCP_LINEAR_SIZE * sizeof(size_t));
 			RECT rcTmp{ 0 };
 			Ex_ObjGetRect(hObj, &rcTmp);
-			int w = rcTmp.right - rcTmp.left;
-			int h = rcTmp.bottom - rcTmp.top;
+			INT w = rcTmp.right - rcTmp.left;
+			INT h = rcTmp.bottom - rcTmp.top;
 			if (nSize < 0)
 			{
 				if (fVertical)
@@ -524,7 +524,7 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 					nSize = w;
 				}
 			}
-			int nFill = __get(pInfo, ELCP_LINEAR_ALIGN * sizeof(size_t));
+			INT nFill = __get(pInfo, ELCP_LINEAR_ALIGN * sizeof(size_t));
 			orgFlags = 0;
 			if (fVertical)
 			{
@@ -575,7 +575,7 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 			}
 			if (nDAlign == 0)
 			{
-				_layout_move_margin(hObj, &rcObj, (void*)((size_t)pInfo - 4 * sizeof(size_t)), fVertical ? 5 : 10, orgFlags);
+				_layout_move_margin(hObj, &rcObj, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), fVertical ? 5 : 10, orgFlags);
 			}
 			else {
 				rcObj.left = rcObj.left + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
@@ -595,13 +595,13 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 		}
 		if (Array_GetCount(hArr) > 0 && arrRect.size() > 0)
 		{
-			void* pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
-			int nDAlign = __get(pInfo, (ELP_LINEAR_DALIGN - 1) * sizeof(size_t));
-			int w = 0;
-			int h = 0;
+			LPVOID pInfo = ((layout_s*)pLayout)->lpLayoutInfo_;
+			INT nDAlign = __get(pInfo, (ELP_LINEAR_DALIGN - 1) * sizeof(size_t));
+			INT w = 0;
+			INT h = 0;
 			if (fVertical)
 			{
-				int nSize = arrRect[arrRect.size() - 1].bottom - arrRect[0].top;
+				INT nSize = arrRect[arrRect.size() - 1].bottom - arrRect[0].top;
 				h = 5;
 				if (nDAlign == 2)//bottom
 				{
@@ -616,7 +616,7 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 				}
 			}
 			else {
-				int nSize = arrRect[arrRect.size() - 1].right - arrRect[0].left;
+				INT nSize = arrRect[arrRect.size() - 1].right - arrRect[0].left;
 				h = 10;
 				if (nDAlign == 2)//right
 				{
@@ -630,9 +630,9 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 					w = 0;
 				}
 			}
-			for (int i = 1; i <= Array_GetCount(hArr); i++)
+			for (INT i = 1; i <= Array_GetCount(hArr); i++)
 			{
-				void* pInfo = (void*)Array_GetMember(hArr, i);
+				LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
 				RECT rcObj = arrRect[i - 1];
 				if (fVertical)
 				{
@@ -641,7 +641,7 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
 				else {
 					OffsetRect(&rcObj, w, 0);
 				}
-				_layout_move_margin(__get(pInfo, 0), &rcObj, (void*)((size_t)pInfo - 4 * sizeof(size_t)), 15, arrOrg[i - 1]);
+				_layout_move_margin(__get(pInfo, 0), &rcObj, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, arrOrg[i - 1]);
 			}
 		}
 	}
@@ -660,7 +660,7 @@ LRESULT CALLBACK __layout_flow_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
 	}
 	else if (nEvent == ELN_INITCHILDPROPS)
 	{
-		__set((void*)lParam, ELCP_FLOW_SIZE * sizeof(size_t), -1);
+		__set((LPVOID)lParam, ELCP_FLOW_SIZE * sizeof(size_t), -1);
 	}
 	else if (nEvent == ELN_UPDATE)
 	{
@@ -672,9 +672,9 @@ LRESULT CALLBACK __layout_flow_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
 		else {
 			Ex_DUIGetClientRect(wParam, &rcClient);
 		}
-		void* pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
+		LPVOID pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
 		array_s* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
-		bool fVertical = __get(pInfoa, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
+		BOOL fVertical = __get(pInfoa, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
 		rcClient.left = rcClient.left + __get(pInfoa, ELP_PADDING_LEFT * sizeof(size_t));
 		rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
 		rcClient.right = rcClient.right - __get(pInfoa, ELP_PADDING_RIGHT * sizeof(size_t));
@@ -683,13 +683,13 @@ LRESULT CALLBACK __layout_flow_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
 		rcObj.left = rcClient.left;
 		rcObj.top = rcClient.top;
 
-		int nMaxSize = 0;
-		for (int i = 1; i <= Array_GetCount(hArr); i++)
+		INT nMaxSize = 0;
+		for (INT i = 1; i <= Array_GetCount(hArr); i++)
 		{
-			void* pInfo = (void*)Array_GetMember(hArr, i);
+			LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
 			HEXOBJ hObj = (HEXOBJ)__get(pInfo, 0);
 			if (hObj == 0 || !Ex_ObjIsVisible(hObj)) continue;
-			int nSize = __get(pInfo, ELCP_LINEAR_SIZE * sizeof(size_t));
+			INT nSize = __get(pInfo, ELCP_LINEAR_SIZE * sizeof(size_t));
 			RECT rcTmp{ 0 };
 			Ex_ObjGetRect(hObj, &rcTmp);
 			if (nSize < 0)
@@ -727,7 +727,7 @@ LRESULT CALLBACK __layout_flow_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
 					nMaxSize = 0;
 				}
 			}
-			_layout_move_margin(hObj, &rcObj, (void*)((size_t)pInfo - 4 * sizeof(size_t)), 0, 0);
+			_layout_move_margin(hObj, &rcObj, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 0, 0);
 			if (fVertical)
 			{
 				if (rcObj.right - rcObj.left > nMaxSize)
@@ -769,24 +769,24 @@ LRESULT CALLBACK __layout_page_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
 		else {
 			Ex_DUIGetClientRect(wParam, &rcClient);
 		}
-		void* pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
+		LPVOID pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
 		array_s* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
-		bool fVertical = __get(pInfoa, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
+		BOOL fVertical = __get(pInfoa, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
 		rcClient.left = rcClient.left + __get(pInfoa, ELP_PADDING_LEFT * sizeof(size_t));
 		rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
 		rcClient.right = rcClient.right - __get(pInfoa, ELP_PADDING_RIGHT * sizeof(size_t));
 		rcClient.bottom = rcClient.bottom - __get(pInfoa, ELP_PADDING_BOTTOM * sizeof(size_t));
-		int nCurrentPage = __get(pInfoa, (ELP_PAGE_CURRENT - 1) * sizeof(size_t));
-		for (int i = 1; i <= Array_GetCount(hArr); i++)
+		INT nCurrentPage = __get(pInfoa, (ELP_PAGE_CURRENT - 1) * sizeof(size_t));
+		for (INT i = 1; i <= Array_GetCount(hArr); i++)
 		{
-			void* pInfo = (void*)Array_GetMember(hArr, i);
+			LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
 			HEXOBJ hObj = (HEXOBJ)__get(pInfo, 0);
 			if (hObj == 0) continue;
 			if (i == nCurrentPage)//疑问
 			{
 				if (__get(pInfo, ELCP_PAGE_FILL * sizeof(size_t)) != 0)
 				{
-					_layout_move_margin(hObj, &rcClient, (void*)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
+					_layout_move_margin(hObj, &rcClient, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
 				}
 			}
 			Ex_ObjShow(hObj, i == nCurrentPage);
@@ -816,18 +816,18 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
 	}
 	else if (nEvent == ELN_INITPROPS)
 	{
-		__set((void*)lParam, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t), (size_t)Array_Create(0));
-		__set((void*)lParam, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t), (size_t)Array_Create(0));
+		__set((LPVOID)lParam, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t), (size_t)Array_Create(0));
+		__set((LPVOID)lParam, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t), (size_t)Array_Create(0));
 	}
 	else if (nEvent == ELN_INITCHILDPROPS)
 	{
-		__set((void*)lParam, ELCP_TABLE_ROW_SPAN * sizeof(size_t), 1);
-		__set((void*)lParam, ELCP_TABLE_CELL_SPAN * sizeof(size_t), 1);
+		__set((LPVOID)lParam, ELCP_TABLE_ROW_SPAN * sizeof(size_t), 1);
+		__set((LPVOID)lParam, ELCP_TABLE_CELL_SPAN * sizeof(size_t), 1);
 	}
 	else if (nEvent == ELN_UNINITPROPS)
 	{
-		Array_Destroy((array_s*)__get((void*)lParam, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t)));
-		Array_Destroy((array_s*)__get((void*)lParam, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t)));
+		Array_Destroy((array_s*)__get((LPVOID)lParam, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t)));
+		Array_Destroy((array_s*)__get((LPVOID)lParam, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t)));
 	}
 	else if (nEvent == ELN_UPDATE)
 	{
@@ -839,7 +839,7 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
 		else {
 			Ex_DUIGetClientRect(wParam, &rcClient);
 		}
-		void* pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
+		LPVOID pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
 		array_s* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
 		array_s* hArrRows = (array_s*)__get(pInfoa, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t));
 		array_s* hArrCells = (array_s*)__get(pInfoa, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t));
@@ -848,32 +848,32 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
 		rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
 		rcClient.right = rcClient.right - __get(pInfoa, ELP_PADDING_RIGHT * sizeof(size_t));
 		rcClient.bottom = rcClient.bottom - __get(pInfoa, ELP_PADDING_BOTTOM * sizeof(size_t));
-		std::vector < std::vector<RECT>> aRects;
+		std::vector<std::vector<RECT>> aRects;
 		RECT rcTmp{ 0 };
 		if (Array_GetCount(hArrRows) > 0 && Array_GetCount(hArrCells) > 0)
 		{
 			aRects.resize(Array_GetCount(hArrRows));
-			for (int index = 0; index < aRects.size(); index++)
+			for (INT index = 0; index < aRects.size(); index++)
 			{
 				aRects[index].resize(Array_GetCount(hArrCells));
 			}
 			rcTmp.top = rcClient.top;
-			for (int i = 1; i <= Array_GetCount(hArrRows); i++)
+			for (INT i = 1; i <= Array_GetCount(hArrRows); i++)
 			{
 				rcTmp.left = rcClient.left;
 				rcTmp.bottom = Array_GetMember(hArrRows, i);
 				if (rcTmp.bottom < 0)
 				{
-					rcTmp.bottom = (rcClient.bottom - rcClient.top) * (float)abs(rcTmp.bottom) / 100;
+					rcTmp.bottom = (rcClient.bottom - rcClient.top) * (FLOAT)abs(rcTmp.bottom) / 100;
 				}
-				for (int j = 1; j <= Array_GetCount(hArrCells); j++)
+				for (INT j = 1; j <= Array_GetCount(hArrCells); j++)
 				{
 					aRects[i - 1][j - 1].left = rcTmp.left;
 					aRects[i - 1][j - 1].top = rcTmp.top;
 					rcTmp.right = Array_GetMember(hArrCells, j);
 					if (rcTmp.right < 0)
 					{
-						rcTmp.right = (rcClient.right - rcClient.left) * (float)abs(rcTmp.right) / 100;
+						rcTmp.right = (rcClient.right - rcClient.left) * (FLOAT)abs(rcTmp.right) / 100;
 					}
 					aRects[i - 1][j - 1].right = aRects[i - 1][j - 1].left + rcTmp.right;
 					aRects[i - 1][j - 1].bottom = aRects[i - 1][j - 1].top + rcTmp.bottom;
@@ -886,9 +886,9 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
 			Ex_SetLastError(ERROR_EX_LAYOUT_INVALID);
 			return -1;
 		}
-		for (int i = 1; i <= Array_GetCount(hArr); i++)
+		for (INT i = 1; i <= Array_GetCount(hArr); i++)
 		{
-			void* pInfo = (void*)Array_GetMember(hArr, i);
+			LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
 			HEXOBJ hObj = __get(pInfo, 0);
 			if (hObj == 0) continue;
 			rcTmp.left = __get(pInfo, ELCP_TABLE_CELL * sizeof(size_t));
@@ -945,7 +945,7 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
 			rcClient.top = aRects[rcTmp.top - 1][rcTmp.left - 1].top;
 			rcClient.right = aRects[rcTmp.bottom - 1][rcTmp.right - 1].right;
 			rcClient.bottom = aRects[rcTmp.bottom - 1][rcTmp.right - 1].bottom;
-			_layout_move_margin(hObj, &rcClient, (void*)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
+			_layout_move_margin(hObj, &rcClient, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
 		}
 	}
 	return 0;
@@ -966,11 +966,11 @@ LRESULT CALLBACK __layout_relative_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 		if (Ex_ObjIsValidate(lParam) && LOWORD(wParam) > 0)
 		{
 			array_s* pChildrenInfo = ((layout_s*)pLayout)->hArrChildrenInfo_;
-			void* pInfo = (void*)Array_GetMember(pChildrenInfo, LOWORD(wParam));
+			LPVOID pInfo = (LPVOID)Array_GetMember(pChildrenInfo, LOWORD(wParam));
 			HEXOBJ hObj = __get(pInfo, 0);
-			int dwPropID = HIWORD(wParam);
-			void* pInfoOther = _layout_get_child((layout_s*)pLayout, lParam);
-			bool nRet = false;
+			INT dwPropID = HIWORD(wParam);
+			LPVOID pInfoOther = _layout_get_child((layout_s*)pLayout, lParam);
+			BOOL nRet = FALSE;
 
 			if (hObj != 0 && dwPropID > 0 && pInfoOther != 0)
 			{
@@ -995,7 +995,7 @@ LRESULT CALLBACK __layout_relative_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 					nRet = __get(pInfoOther, dwPropID * sizeof(size_t)) != hObj;
 				}
 			}
-			return  nRet ? 0 : 1;
+			return  nRet==TRUE ? FALSE : TRUE;
 		}
 	}
 	else if (nEvent == ELN_UPDATE)
@@ -1005,9 +1005,9 @@ LRESULT CALLBACK __layout_relative_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 	return 0;
 }
 
-void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArrObjs, LPARAM lParam)
+void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hArrObjs, LPARAM lParam)
 {
-	int Prime = GetNearestPrime(Array_GetCount(hArrObjs));
+	INT Prime = GetNearestPrime(Array_GetCount(hArrObjs));
 	EX_HASHTABLE* hHashPosInfos = HashTable_Create(Prime, &pfnDefaultFreeData);
 	EXHANDLE hObjParent = ((layout_s*)pLayout)->hBind_;
 	RECT rcClient{ 0 };
@@ -1022,33 +1022,33 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 	rcClient.top = rcClient.top + __get(pLayoutInfo, ELP_PADDING_TOP * sizeof(size_t));
 	rcClient.right = rcClient.right - __get(pLayoutInfo, ELP_PADDING_RIGHT * sizeof(size_t));
 	rcClient.bottom = rcClient.bottom - __get(pLayoutInfo, ELP_PADDING_BOTTOM * sizeof(size_t));
-	std::vector<int> Infos(3);
-	for (int i = 1; i <= Array_GetCount(hArrObjs); i++)
+	std::vector<INT> Infos(3);
+	for (INT i = 1; i <= Array_GetCount(hArrObjs); i++)
 	{
-		void* pInfo = (void*)Array_GetMember(hArrObjs, i);
+		LPVOID pInfo = (LPVOID)Array_GetMember(hArrObjs, i);
 		HEXOBJ hObj = (HEXOBJ)__get(pInfo, 0);
 		if (hObj == 0) continue;
 		RECT rcObj{ 0 };
 		Ex_ObjGetRect(hObj, &rcObj);
 		
-		void* pPosInfo = Ex_MemAlloc(4 * 3 * sizeof(size_t) + sizeof(size_t) + sizeof(size_t));//多一个放pInfo和orgFlags
+		LPVOID pPosInfo = Ex_MemAlloc(4 * 3 * sizeof(size_t) + sizeof(size_t) + sizeof(size_t));//多一个放pInfo和orgFlags
 		//[是否确定/类型/句柄或坐标]*4个边界,确定以后一定是坐标
 		//处理无法确定四边的情况
-		bool fNoPosInfoH = true;
-		for (int j = 1; j <= 10; j += 2)
+		BOOL fNoPosInfoH = TRUE;
+		for (INT j = 1; j <= 10; j += 2)
 		{
 			if (__get(pInfo, j * sizeof(size_t)) != 0)
 			{
-				fNoPosInfoH = false;
+				fNoPosInfoH = FALSE;
 				break;
 			}
 		}
-		bool fNoPosInfoV = true;
-		for (int j = 2; j <= 10; j += 2)
+		BOOL fNoPosInfoV = TRUE;
+		for (INT j = 2; j <= 10; j += 2)
 		{
 			if (__get(pInfo, j * sizeof(size_t)) != 0)
 			{
-				fNoPosInfoV = false;
+				fNoPosInfoV = FALSE;
 				break;
 			}
 		}
@@ -1058,34 +1058,34 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 			__set(pPosInfo, 0, 1);
 			__set(pPosInfo, sizeof(size_t), 0);
 			__set(pPosInfo, 2 * sizeof(size_t), rcObj.left + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t)));
-			__set((void*)((size_t)pPosInfo + 6 * sizeof(size_t)), 0, 1);
-			__set((void*)((size_t)pPosInfo + 6 * sizeof(size_t)), sizeof(size_t), 0);
-			__set((void*)((size_t)pPosInfo + 6 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.right + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t)));
+			__set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), 0, 1);
+			__set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), sizeof(size_t), 0);
+			__set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.right + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t)));
 		}
 		if (fNoPosInfoV)
 		{
 
-			__set((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), 0, 1);
-			__set((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t), 0);
-			__set((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.top + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)));
+			__set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 0, 1);
+			__set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t), 0);
+			__set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.top + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)));
 			
-			__set((void*)((size_t)pPosInfo + 9 * sizeof(size_t)), 0, 1);
-			__set((void*)((size_t)pPosInfo + 9 * sizeof(size_t)), sizeof(size_t), 0);
-			__set((void*)((size_t)pPosInfo + 9 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.bottom + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t)));
+			__set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), 0, 1);
+			__set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), sizeof(size_t), 0);
+			__set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.bottom + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t)));
 		}
 		//rcObj暂时按左顶宽高处理
 		rcObj.right = rcObj.right - rcObj.left;
 		rcObj.bottom = rcObj.bottom - rcObj.top;
-		int orgFlags = 0;
+		INT orgFlags = 0;
 		//预处理边界定位信息
 
 		HEXDUI hExDUI = 0;
-		if (fNoPosInfoH == false)
+		if (fNoPosInfoH == FALSE)
 		{	//左边界处理
 			Infos[0] = 1;
 			if (__get(pInfo, ELCP_RELATIVE_LEFT_ALIGN_OF * sizeof(size_t)) != 0)
 			{
-				int dwValue = __get(pInfo, ELCP_RELATIVE_LEFT_ALIGN_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_LEFT_ALIGN_OF * sizeof(size_t));
 				Infos[1] = ELCP_RELATIVE_LEFT_ALIGN_OF;
 				HEXDUI hExDUI = 0;
 				if (dwValue == -1)//相对父
@@ -1110,7 +1110,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 				orgFlags = orgFlags | 4;
 			}
 			else {
-				int dwValue = __get(pInfo, ELCP_RELATIVE_RIGHT_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_RIGHT_OF * sizeof(size_t));
 				HEXDUI hExDUI = 0;
 				if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI)//同层组件
 				{
@@ -1132,7 +1132,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 
 			if (__get(pInfo, ELCP_RELATIVE_RIGHT_ALIGN_OF * sizeof(size_t)) != 0)
 			{
-				int dwValue = __get(pInfo, ELCP_RELATIVE_RIGHT_ALIGN_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_RIGHT_ALIGN_OF * sizeof(size_t));
 				Infos[1] = ELCP_RELATIVE_RIGHT_ALIGN_OF;
 				HEXDUI hExDUI = 0;
 				if (dwValue == -1)//相对父
@@ -1157,7 +1157,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 				orgFlags = orgFlags | 4;
 			}
 			else {
-				int dwValue = __get(pInfo, ELCP_RELATIVE_LEFT_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_LEFT_OF * sizeof(size_t));
 				HEXDUI hExDUI = 0;
 				if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI)//同层组件
 				{
@@ -1171,18 +1171,18 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					Infos[2] = rcObj.right;
 				}
 			}
-			__set((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0, Infos[0]);
-			__set((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-			__set((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+			__set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0, Infos[0]);
+			__set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
+			__set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
 
 		}
-		if (fNoPosInfoV == false)
+		if (fNoPosInfoV == FALSE)
 		{
 			//上边界处理
 			Infos[0] = 1;
 			if (__get(pInfo, ELCP_RELATIVE_TOP_ALIGN_OF * sizeof(size_t)) != 0)
 			{
-				int dwValue = __get(pInfo, ELCP_RELATIVE_TOP_ALIGN_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_TOP_ALIGN_OF * sizeof(size_t));
 				Infos[1] = ELCP_RELATIVE_TOP_ALIGN_OF;
 				HEXDUI hExDUI = 0;
 				if (dwValue == -1)//相对父
@@ -1207,7 +1207,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 				orgFlags = orgFlags | 8;
 			}
 			else {
-				int dwValue = __get(pInfo, ELCP_RELATIVE_BOTTOM_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_BOTTOM_OF * sizeof(size_t));
 				HEXDUI hExDUI = 0;
 				if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI)//同层组件
 				{
@@ -1222,15 +1222,15 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					Infos[2] = rcObj.bottom;
 				}
 			}
-			__set((void*)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 0, Infos[0]);
-			__set((void*)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-			__set((void*)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+			__set((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 0, Infos[0]);
+			__set((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
+			__set((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
 
 			//下边界处理
 			Infos[0] = 1;
 			if (__get(pInfo, ELCP_RELATIVE_BOTTOM_ALIGN_OF * sizeof(size_t)) != 0)
 			{
-				int dwValue = __get(pInfo, ELCP_RELATIVE_BOTTOM_ALIGN_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_BOTTOM_ALIGN_OF * sizeof(size_t));
 				Infos[1] = ELCP_RELATIVE_BOTTOM_ALIGN_OF;
 				HEXDUI hExDUI = 0;
 				if (dwValue == -1)//相对父
@@ -1255,7 +1255,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 				orgFlags = orgFlags | 8;
 			}
 			else {
-				int dwValue = __get(pInfo, ELCP_RELATIVE_TOP_OF * sizeof(size_t));
+				INT dwValue = __get(pInfo, ELCP_RELATIVE_TOP_OF * sizeof(size_t));
 				HEXDUI hExDUI = 0;
 				if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI)//同层组件
 				{
@@ -1269,28 +1269,28 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					Infos[2] = rcObj.bottom;
 				}
 			}
-			__set((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0, Infos[0]);
-			__set((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-			__set((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+			__set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0, Infos[0]);
+			__set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
+			__set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
 		}
 		__set(pPosInfo, 12 * sizeof(size_t), (size_t)pInfo);
 		__set(pPosInfo, 12 * sizeof(size_t) + sizeof(size_t), orgFlags);
 		HashTable_Set(hHashPosInfos, hObj, (size_t)pPosInfo);
 	}
 
-	for (int index = 0; index < 5; index++)
+	for (INT index = 0; index < 5; index++)
 	{
-		int cNoLockObj = HashTable_GetCounts(hHashPosInfos);
-		for (int i = 1; i <= Array_GetCount(hArrObjs); i++)
+		INT cNoLockObj = HashTable_GetCounts(hHashPosInfos);
+		for (INT i = 1; i <= Array_GetCount(hArrObjs); i++)
 		{
-			void* pInfo = (void*)Array_GetMember(hArrObjs, i);
+			LPVOID pInfo = (LPVOID)Array_GetMember(hArrObjs, i);
 			HEXOBJ hObj = __get(pInfo, 0);
-			void* pPosInfo = nullptr;
+			LPVOID pPosInfo = nullptr;
 			HashTable_Get(hHashPosInfos, hObj, (size_t*)&pPosInfo);
 			if (pPosInfo != 0)
 			{
 				//找能确定的点
-				if (__get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 0), 0) == 0)
+				if (__get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 0), 0) == 0)
 				{
 					Infos[0] = __get(pPosInfo, 0);
 					Infos[1] = __get(pPosInfo, sizeof(size_t));
@@ -1298,7 +1298,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 
 					if (Infos[1] == ELCP_RELATIVE_RIGHT_OF)
 					{
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 2 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1310,7 +1310,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					}
 					else if (Infos[1] == ELCP_RELATIVE_LEFT_ALIGN_OF)
 					{
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 0 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1333,15 +1333,15 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					__set(pPosInfo, 2 * sizeof(size_t), Infos[2]);
 
 				}
-				if (__get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 1), 0) == 0)
+				if (__get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 1), 0) == 0)
 				{
-					Infos[0] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), 0);
-					Infos[1] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t));
-					Infos[2] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t));
+					Infos[0] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 0);
+					Infos[1] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t));
+					Infos[2] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t));
 
 					if (Infos[1] == ELCP_RELATIVE_BOTTOM_OF)
 					{
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 3 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1353,7 +1353,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					}
 					else if (Infos[1] == ELCP_RELATIVE_TOP_ALIGN_OF)
 					{
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 1 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1371,19 +1371,19 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 							Infos[0] = 1;
 						}
 					}
-					__set((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), 0, Infos[0]);
-					__set((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-					__set((void*)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+					__set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 0, Infos[0]);
+					__set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
+					__set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
 				}
-				if (__get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 0) == 0)
+				if (__get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 0) == 0)
 				{
-					Infos[0] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 0);
-					Infos[1] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), sizeof(size_t));
-					Infos[2] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 2 * sizeof(size_t));
+					Infos[0] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 0);
+					Infos[1] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), sizeof(size_t));
+					Infos[2] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 2 * sizeof(size_t));
 
 					if (Infos[1] == ELCP_RELATIVE_LEFT_OF)
 					{
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 0 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1396,7 +1396,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					else if (Infos[1] == ELCP_RELATIVE_RIGHT_ALIGN_OF)
 					{
 
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 2 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1414,20 +1414,20 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 							Infos[0] = 1;
 						}
 					}
-					__set((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0, Infos[0]);
-					__set((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-					__set((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+					__set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0, Infos[0]);
+					__set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
+					__set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
 
 				}
-				if (__get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 0) == 0)
+				if (__get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 0) == 0)
 				{
-					Infos[0] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 0);
-					Infos[1] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), sizeof(size_t));
-					Infos[2] = __get((void*)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 2 * sizeof(size_t));
+					Infos[0] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 0);
+					Infos[1] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), sizeof(size_t));
+					Infos[2] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 2 * sizeof(size_t));
 
 					if (Infos[1] == ELCP_RELATIVE_TOP_OF)
 					{
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 1 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1439,7 +1439,7 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 					}
 					else if (Infos[1] == ELCP_RELATIVE_BOTTOM_ALIGN_OF)
 					{
-						void* pInfoOther = nullptr;
+						LPVOID pInfoOther = nullptr;
 						if (HashTable_Get(hHashPosInfos, Infos[2], (size_t*)&pInfoOther))
 						{
 							if (__get(pInfoOther, 3 * 3 * sizeof(size_t)) != 0)//已经锁定了
@@ -1457,9 +1457,9 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 							Infos[0] = 1;
 						}
 					}
-					__set((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0, Infos[0]);
-					__set((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-					__set((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+					__set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0, Infos[0]);
+					__set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
+					__set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
 
 				}
 				if (__get(pInfo, 0) != 0 && __get(pInfo, 3 * sizeof(size_t)) != 0 && __get(pInfo, 6 * sizeof(size_t)) != 0 && __get(pInfo, 9 * sizeof(size_t)) != 0)//已经确定整个组件了
@@ -1480,46 +1480,46 @@ void _layout_relative_update(layout_s* pLayout, void* pLayoutInfo, array_s* hArr
 	std::vector<size_t> pInfos;
 	std::vector<size_t> hObjs;
 	HashTable_GetAllKeysAndValues(hHashPosInfos, hObjs, pInfos);
-	for (int i = 0; i < hObjs.size(); i++)
+	for (INT i = 0; i < hObjs.size(); i++)
 	{
 		HEXOBJ hObj = hObjs[i];
-		void* pPosInfo = (void*)pInfos[i];
-		void* pInfo = (void*)__get(pPosInfo, 12 * sizeof(size_t));
-		int orgFlags = __get(pPosInfo, 12 * sizeof(size_t) + sizeof(size_t));
+		LPVOID pPosInfo = (LPVOID)pInfos[i];
+		LPVOID pInfo = (LPVOID)__get(pPosInfo, 12 * sizeof(size_t));
+		INT orgFlags = __get(pPosInfo, 12 * sizeof(size_t) + sizeof(size_t));
 		RECT rcObj{ 0 };
 		Ex_ObjGetRect(hObj, &rcObj);
 		
 		RECT rcTmp{ 0 };
-		if (__get((void*)((size_t)pPosInfo + 0 * 3 * sizeof(size_t)), 0) == 0)
+		if (__get((LPVOID)((size_t)pPosInfo + 0 * 3 * sizeof(size_t)), 0) == 0)
 		{
 			rcTmp.left = rcObj.left;
 		}
 		else {
-			rcTmp.left = __get((void*)((size_t)pPosInfo + 0 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
+			rcTmp.left = __get((LPVOID)((size_t)pPosInfo + 0 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
 		}
-		if (__get((void*)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 0) == 0)
+		if (__get((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 0) == 0)
 		{
 			rcTmp.top = rcObj.top;
 		}
 		else {
-			rcTmp.top = __get((void*)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
+			rcTmp.top = __get((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
 		}
-		if (__get((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0) == 0)
+		if (__get((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0) == 0)
 		{
 			rcTmp.right = rcTmp.left + rcObj.right - rcObj.left;
 		}
 		else {
-			rcTmp.right = __get((void*)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
+			rcTmp.right = __get((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
 		}
-		if (__get((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0) == 0)
+		if (__get((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0) == 0)
 		{
 			rcTmp.bottom = rcTmp.top + rcObj.bottom - rcObj.top;
 		}
 		else {
-			rcTmp.bottom = __get((void*)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
+			rcTmp.bottom = __get((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
 		}
 		
-		_layout_move_margin(hObj, &rcTmp, (void*)((size_t)pInfo - 4 * sizeof(size_t)), 15, orgFlags);
+		_layout_move_margin(hObj, &rcTmp, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, orgFlags);
 		
 	}
 	HashTable_Destroy(hHashPosInfos);
@@ -1553,7 +1553,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 		else {
 			Ex_DUIGetClientRect(wParam, &rcClient);
 		}
-		void* pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
+		LPVOID pInfoa = ((layout_s*)pLayout)->lpLayoutInfo_;
 		array_s* hArr = ((layout_s*)pLayout)->hArrChildrenInfo_;
 		rcClient.left = rcClient.left + __get(pInfoa, ELP_PADDING_LEFT * sizeof(size_t));
 		rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
@@ -1562,23 +1562,23 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 		SIZE szClient{ 0 };
 		szClient.cx = rcClient.right - rcClient.left;
 		szClient.cy = rcClient.bottom - rcClient.top;
-		for (int i = 1; i <= Array_GetCount(hArr); i++)
+		for (INT i = 1; i <= Array_GetCount(hArr); i++)
 		{
-			void* pInfo = (void*)Array_GetMember(hArr, i);
+			LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
 			HEXOBJ hObj = __get(pInfo, 0);
 			if (hObj == 0) continue;
 			RECT rcTmp{ 0 };
 			Ex_ObjGetRect(hObj, &rcTmp);
-			int ary1 = 0;
-			int ary2 = 0;
-			int ary3 = 0;
-			int ary4 = 0;
-			int nType = __get(pInfo, ELCP_ABSOLUTE_WIDTH_TYPE * sizeof(size_t));
-			int tmp = __get(pInfo, ELCP_ABSOLUTE_WIDTH * sizeof(size_t));
+			INT ary1 = 0;
+			INT ary2 = 0;
+			INT ary3 = 0;
+			INT ary4 = 0;
+			INT nType = __get(pInfo, ELCP_ABSOLUTE_WIDTH_TYPE * sizeof(size_t));
+			INT tmp = __get(pInfo, ELCP_ABSOLUTE_WIDTH * sizeof(size_t));
 			SIZE szObj{ 0 };
 			if (nType == ELCP_ABSOLUTE_TYPE_PS)
 			{
-				szObj.cx = (float)tmp / 100 * szClient.cx;
+				szObj.cx = (FLOAT)tmp / 100 * szClient.cx;
 			}
 			else if (nType == ELCP_ABSOLUTE_TYPE_PX)
 			{
@@ -1591,7 +1591,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 			tmp = __get(pInfo, ELCP_ABSOLUTE_HEIGHT * sizeof(size_t));
 			if (nType == ELCP_ABSOLUTE_TYPE_PS)
 			{
-				szObj.cy = (float)tmp / 100 * szClient.cy;
+				szObj.cy = (FLOAT)tmp / 100 * szClient.cy;
 			}
 			else if (nType == ELCP_ABSOLUTE_TYPE_PX)
 			{
@@ -1602,7 +1602,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 			}
 
 			RECT rcObj{ 0 };
-			for (int index = 0; index < 5; index++)
+			for (INT index = 0; index < 5; index++)
 			{
 				if (ary1 == 0)
 				{
@@ -1611,7 +1611,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 					tmp = __get(pInfo, ELCP_ABSOLUTE_LEFT * sizeof(size_t));
 					if (nType == ELCP_ABSOLUTE_TYPE_PS)
 					{
-						rcObj.left = rcClient.left + (float)tmp / 100 * szClient.cx;
+						rcObj.left = rcClient.left + (FLOAT)tmp / 100 * szClient.cx;
 					}
 					else if (nType == ELCP_ABSOLUTE_TYPE_PX)
 					{
@@ -1632,7 +1632,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 					tmp = __get(pInfo, ELCP_ABSOLUTE_TOP * sizeof(size_t));
 					if (nType == ELCP_ABSOLUTE_TYPE_PS)
 					{
-						rcObj.top = rcClient.top + (float)tmp / 100 * szClient.cy;
+						rcObj.top = rcClient.top + (FLOAT)tmp / 100 * szClient.cy;
 					}
 					else if (nType == ELCP_ABSOLUTE_TYPE_PX)
 					{
@@ -1653,7 +1653,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 					tmp = __get(pInfo, ELCP_ABSOLUTE_RIGHT * sizeof(size_t));
 					if (nType == ELCP_ABSOLUTE_TYPE_PS)
 					{
-						rcObj.right = rcClient.right - (float)tmp / 100 * szClient.cx;
+						rcObj.right = rcClient.right - (FLOAT)tmp / 100 * szClient.cx;
 					}
 					else if (nType == ELCP_ABSOLUTE_TYPE_PX)
 					{
@@ -1674,7 +1674,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 					tmp = __get(pInfo, ELCP_ABSOLUTE_BOTTOM * sizeof(size_t));
 					if (nType == ELCP_ABSOLUTE_TYPE_PS)
 					{
-						rcObj.bottom = rcClient.bottom - (float)tmp / 100 * szClient.cy;
+						rcObj.bottom = rcClient.bottom - (FLOAT)tmp / 100 * szClient.cy;
 					}
 					else if (nType == ELCP_ABSOLUTE_TYPE_PX)
 					{
@@ -1714,8 +1714,8 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 			tmp = __get(pInfo, ELCP_ABSOLUTE_OFFSET_H * sizeof(size_t));
 			if (nType == ELCP_ABSOLUTE_TYPE_PS)
 			{
-				rcObj.left = rcObj.left + (float)tmp / 100 * szClient.cx;
-				rcObj.right = rcObj.right + (float)tmp / 100 * szClient.cx;
+				rcObj.left = rcObj.left + (FLOAT)tmp / 100 * szClient.cx;
+				rcObj.right = rcObj.right + (FLOAT)tmp / 100 * szClient.cx;
 			}
 			else if (nType == ELCP_ABSOLUTE_TYPE_PX)
 			{
@@ -1724,16 +1724,16 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 			}
 			else if (nType == ELCP_ABSOLUTE_TYPE_OBJPS)
 			{
-				rcObj.left = rcObj.left + (float)tmp / 100 * szObj.cx;
-				rcObj.right = rcObj.right + (float)tmp / 100 * szObj.cx;
+				rcObj.left = rcObj.left + (FLOAT)tmp / 100 * szObj.cx;
+				rcObj.right = rcObj.right + (FLOAT)tmp / 100 * szObj.cx;
 			}
 
 			nType = __get(pInfo, ELCP_ABSOLUTE_OFFSET_V_TYPE * sizeof(size_t));
 			tmp = __get(pInfo, ELCP_ABSOLUTE_OFFSET_V * sizeof(size_t));
 			if (nType == ELCP_ABSOLUTE_TYPE_PS)
 			{
-				rcObj.top = rcObj.top + (float)tmp / 100 * szClient.cy;
-				rcObj.bottom = rcObj.bottom + (float)tmp / 100 * szClient.cy;
+				rcObj.top = rcObj.top + (FLOAT)tmp / 100 * szClient.cy;
+				rcObj.bottom = rcObj.bottom + (FLOAT)tmp / 100 * szClient.cy;
 				
 			}
 			else if (nType == ELCP_ABSOLUTE_TYPE_PX)
@@ -1743,18 +1743,18 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 			}
 			else if (nType == ELCP_ABSOLUTE_TYPE_OBJPS)
 			{
-				rcObj.top = rcObj.top + (float)tmp / 100 * szObj.cy;
-				rcObj.bottom = rcObj.bottom + (float)tmp / 100 * szObj.cy;
+				rcObj.top = rcObj.top + (FLOAT)tmp / 100 * szObj.cy;
+				rcObj.bottom = rcObj.bottom + (FLOAT)tmp / 100 * szObj.cy;
 			}
 			
-			_layout_move_margin(hObj, &rcObj, (void*)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
+			_layout_move_margin(hObj, &rcObj, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
 		}
 	}
 	else if (nEvent == ELN_CHECKCHILDPROPVALUE)
 	{
 		array_s* pChildrenInfo = ((layout_s*)pLayout)->hArrChildrenInfo_;
-		void* pInfo = (void*)Array_GetMember(pChildrenInfo, LOWORD(wParam));
-		int nType = HIWORD(wParam);
+		LPVOID pInfo = (LPVOID)Array_GetMember(pChildrenInfo, LOWORD(wParam));
+		INT nType = HIWORD(wParam);
 		if (nType % 2 == 1 && nType >= ELCP_ABSOLUTE_LEFT && nType <= ELCP_ABSOLUTE_OFFSET_V)
 		{
 			if (__get(pInfo, (nType + 1) * sizeof(size_t)) == ELCP_ABSOLUTE_TYPE_UNKNOWN)
@@ -1770,11 +1770,11 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	void* pInfo = nullptr;
+	INT nError = 0;
+	LPVOID pInfo = nullptr;
 	obj_s* pObj = NULL;
-	bool fIsChild = false;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	BOOL fIsChild = FALSE;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		if (hObj != 0)
 		{
@@ -1782,15 +1782,15 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
 			{
 				if (Ex_ObjGetParent(hObj) == pLayout->hBind_)
 				{
-					fIsChild = true;
+					fIsChild = TRUE;
 				}
 			}
 			else {
-				if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+				if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 				{
 					if (pObj->objParent_ == 0 && pObj->pWnd_->hexdui_ == pLayout->hBind_)
 					{
-						fIsChild = true;
+						fIsChild = TRUE;
 					}
 				}
 			}
@@ -1807,7 +1807,7 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
 						pInfo = Ex_MemAlloc(pLayout->cbInfoLen_);
 						if (pInfo != 0)
 						{
-							pInfo = (void*)((size_t)pInfo + 4 * sizeof(size_t));
+							pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
 							__set(pInfo, 0, hObj);
 							((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
 							nIndex = Array_AddMember(hArr, (size_t)pInfo);
@@ -1833,13 +1833,13 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
 BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, INT* nCount)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		array_s* hArr = pLayout->hArrChildrenInfo_;
 		EXHANDLE hObj = pLayout->hBind_;
-		void* pObj = nullptr;
-		if (_handle_validate(hObj, pLayout->nBindType_, (void**)&pObj, &nError))
+		LPVOID pObj = nullptr;
+		if (_handle_validate(hObj, pLayout->nBindType_, (LPVOID*)&pObj, &nError))
 		{
 			*nCount = 0;
 			if (pLayout->nBindType_ == HT_OBJECT)
@@ -1850,17 +1850,17 @@ BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, I
 				hObj = fDesc ? ((wnd_s*)pObj)->objChildLast_ : ((wnd_s*)pObj)->objChildFirst_;
 			}
 			obj_s* pObj2 = nullptr;
-			while (_handle_validate(hObj, HT_OBJECT, (void**)&pObj2, &nError))
+			while (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj2, &nError))
 			{
 				EXATOM clsAtom = pObj2->pCls_->atomName;
 				if ((dwObjClassATOM == 0 || dwObjClassATOM == clsAtom) && clsAtom != ATOM_SYSBUTTON)
 				{
 					if (_layout_get_child(pLayout, hObj) == 0)
 					{
-						void* pInfo = Ex_MemAlloc(pLayout->cbInfoLen_);
+						LPVOID pInfo = Ex_MemAlloc(pLayout->cbInfoLen_);
 						if (pInfo)
 						{
-							pInfo = (void*)((size_t)pInfo + 4 * sizeof(size_t));
+							pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
 							__set(pInfo, 0, hObj);
 							((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
 							Array_AddMember(hArr, (size_t)pInfo);
@@ -1882,19 +1882,19 @@ BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, I
 BOOL _layout_deletechildren(HEXLAYOUT hLayout, EXATOM dwObjClassATOM)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		array_s* hArr = pLayout->hArrChildrenInfo_;
 		if (hArr != 0)
 		{
 			if (dwObjClassATOM != 0)
 			{
-				for (int i = Array_GetCount(hArr); i >= 1; i--)
+				for (INT i = Array_GetCount(hArr); i >= 1; i--)
 				{
-					void* pInfo = (void*)Array_GetMember(hArr, i);
+					LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
 					obj_s* pObj = nullptr;
-					if (_handle_validate(__get(pInfo, 0), HT_OBJECT, (void**)&pObj, &nError))
+					if (_handle_validate(__get(pInfo, 0), HT_OBJECT, (LPVOID*)&pObj, &nError))
 					{
 						if (dwObjClassATOM == pObj->pCls_->atomName)
 						{
@@ -1918,8 +1918,8 @@ BOOL _layout_deletechildren(HEXLAYOUT hLayout, EXATOM dwObjClassATOM)
 BOOL _layout_deletechild(HEXLAYOUT hLayout, HEXOBJ hObj)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		array_s* hArr = pLayout->hArrChildrenInfo_;
 		if (hArr != 0)
@@ -1941,14 +1941,14 @@ BOOL _layout_deletechild(HEXLAYOUT hLayout, HEXOBJ hObj)
 BOOL _layout_getchildproplist(HEXLAYOUT hLayout, HEXOBJ hObj, LPVOID* lpProps)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		array_s* hArr = pLayout->hArrChildrenInfo_;
 		size_t nIndex = Array_Emum(hArr, _layout_enum_find_obj, hObj);
 		if (nIndex > 0)
 		{
-			*lpProps = (void*)Array_GetMember(hArr, nIndex);
+			*lpProps = (LPVOID)Array_GetMember(hArr, nIndex);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -1958,9 +1958,9 @@ BOOL _layout_getchildproplist(HEXLAYOUT hLayout, HEXOBJ hObj, LPVOID* lpProps)
 LPVOID _layout_getproplist(HEXLAYOUT hLayout)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	void* pInfo = nullptr;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	LPVOID pInfo = nullptr;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		pInfo = pLayout->lpLayoutInfo_;
 	}
@@ -1971,9 +1971,9 @@ LPVOID _layout_getproplist(HEXLAYOUT hLayout)
 BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT tTop, INT tRight, INT tBottom, INT tWidth, INT tHeight)
 {
 	layout_s* pLayout = nullptr;
-	int nError = 0;
-	void* pInfo = nullptr;
-	if (_handle_validate(hLayout, HT_LAYOUT, (void**)&pLayout, &nError))
+	INT nError = 0;
+	LPVOID pInfo = nullptr;
+	if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError))
 	{
 		RECT rcClient{ 0 };
 		if (pLayout->nType_ == ELT_ABSOLUTE)
@@ -1985,7 +1985,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 			else {
 				Ex_DUIGetClientRect(pLayout->hBind_, &rcClient);
 			}
-			void* pInfo = pLayout->lpLayoutInfo_;
+			LPVOID pInfo = pLayout->lpLayoutInfo_;
 			rcClient.left = rcClient.left + __get(pInfo, ELP_PADDING_LEFT * sizeof(size_t));
 			rcClient.top = rcClient.top + __get(pInfo, ELP_PADDING_TOP * sizeof(size_t));
 			rcClient.right = rcClient.right - __get(pInfo, ELP_PADDING_RIGHT * sizeof(size_t));
@@ -2003,7 +2003,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 			}
 			else if (tLeft == 2)//比例锁
 			{
-				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT, (float)rcObj.left / szClient.cx * 100);
+				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT, (FLOAT)rcObj.left / szClient.cx * 100);
 				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT_TYPE, ELCP_ABSOLUTE_TYPE_PS);
 			}
 			else {
@@ -2018,7 +2018,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 			}
 			else if (tTop == 2)//比例锁
 			{
-				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP, (float)rcObj.top / szClient.cy * 100);
+				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP, (FLOAT)rcObj.top / szClient.cy * 100);
 				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP_TYPE, ELCP_ABSOLUTE_TYPE_PS);
 			}
 			else {
@@ -2033,7 +2033,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 			}
 			else if (tRight == 2)//比例锁
 			{
-				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT, (float)(rcClient.right - rcObj.right) / szClient.cx * 100);
+				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT, (FLOAT)(rcClient.right - rcObj.right) / szClient.cx * 100);
 				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT_TYPE, ELCP_ABSOLUTE_TYPE_PS);
 			}
 			else {
@@ -2048,7 +2048,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 			}
 			else if (tBottom == 2)//比例锁
 			{
-				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM, (float)(rcClient.bottom - rcObj.bottom) / szClient.cy * 100);
+				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM, (FLOAT)(rcClient.bottom - rcObj.bottom) / szClient.cy * 100);
 				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM_TYPE, ELCP_ABSOLUTE_TYPE_PS);
 			}
 			else {
@@ -2063,7 +2063,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 			}
 			else if (tWidth == 2)//比例锁
 			{
-				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH, (float)(rcObj.right - rcObj.left) / szClient.cx * 100);
+				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH, (FLOAT)(rcObj.right - rcObj.left) / szClient.cx * 100);
 				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH_TYPE, ELCP_ABSOLUTE_TYPE_PS);
 			}
 			else {
@@ -2078,7 +2078,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 			}
 			else if (tHeight == 2)//比例锁
 			{
-				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT, (float)(rcObj.bottom - rcObj.top) / szClient.cy * 100);
+				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT, (FLOAT)(rcObj.bottom - rcObj.top) / szClient.cy * 100);
 				_layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT_TYPE, ELCP_ABSOLUTE_TYPE_PS);
 			}
 			else {

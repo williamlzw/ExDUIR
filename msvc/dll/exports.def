@@ -6,10 +6,11 @@ EXPORTS
 ;----------------------------------------
 Ex_Init
 Ex_UnInit
+Ex_Atom
 Ex_GetLastError
 Ex_LoadImageFromMemory
-;Ex_FreeBuffer
-;Ex_AllocBuffer
+Ex_FreeBuffer
+Ex_AllocBuffer
 Ex_Scale
 ;F2I
 ;I2F
@@ -136,11 +137,10 @@ Ex_ObjScrollShow
 Ex_ObjScrollEnable
 Ex_ObjEnableIME
 Ex_ObjSetIMEState
-
 Ex_ObjDisableTranslateSpaceAndEnterToClick
 Ex_ObjEnablePaintingMsg
-;Ex_ObjGetDropString
-
+Ex_ObjGetDropString
+Ex_ObjCheckDropFormat
 
 ;----------------------------------------
 ;theme
@@ -234,6 +234,7 @@ _canvas_flush
 _canvas_drawcanvas
 _canvas_getsize
 _canvas_drawtext
+_canvas_drawtext2
 _canvas_drawtextex
 _canvas_calctextsize
 _canvas_getdc
@@ -323,13 +324,14 @@ _path_reset
 _path_getbounds
 _path_open
 _path_close
-_path_beginfigure
 _path_endfigure
 _path_hittest
 _path_addline
 _path_addrect
 _path_addroundedrect
+_path_beginfigure
 _path_beginfigure2
+_path_beginfigure3
 _path_addarc2
 _path_addarc3
 

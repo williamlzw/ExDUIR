@@ -22,13 +22,13 @@ struct EX_HASHTABLE
 };
 
 EX_HASHTABLE* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete = nullptr);
-bool HashTable_Clear(EX_HASHTABLE* hTable);
-bool HashTable_Destroy(EX_HASHTABLE* hTable);
+BOOL HashTable_Clear(EX_HASHTABLE* hTable);
+BOOL HashTable_Destroy(EX_HASHTABLE* hTable);
 size_t HashTable_GetPos(size_t Key, size_t counts);
 void HashTable_ReHash(EX_HASHTABLE* hTable);
-bool HashTable_Set(EX_HASHTABLE* hTable, size_t hKey, size_t dwValue);
-bool HashTable_Get(EX_HASHTABLE* hTable, size_t hKey, size_t* dwValue);
-bool HashTable_Remove(EX_HASHTABLE* hTable, size_t hKey);
-bool HashTable_IsExist(EX_HASHTABLE* hTable, size_t hKey);
+BOOL HashTable_Set(EX_HASHTABLE* hTable, size_t hKey, size_t dwValue);
+BOOL HashTable_Get(EX_HASHTABLE* hTable, size_t hKey, size_t* dwValue);
+BOOL HashTable_Remove(EX_HASHTABLE* hTable, size_t hKey);
+BOOL HashTable_IsExist(EX_HASHTABLE* hTable, size_t hKey);
 size_t HashTable_GetCounts(EX_HASHTABLE* hTable);
 size_t HashTable_GetAllKeysAndValues(EX_HASHTABLE* hTable, std::vector<size_t>& aryKey, std::vector<size_t>& aryValue);

@@ -1,65 +1,65 @@
 #include "Array_ex.h"
 
-void* Array_MoveMember(void* pData, int nCount, int nSize, int nNewCount)
+LPVOID Array_MoveMember(LPVOID pData, INT nCount, INT nSize, INT nNewCount)
 {
-	void* pNewData = Ex_MemAlloc(2 * sizeof(size_t) + nSize * sizeof(void*));
-	int nMoveBytes = 0;
+	LPVOID pNewData = Ex_MemAlloc(2 * sizeof(size_t) + nSize * sizeof(LPVOID));
+	INT nMoveBytes = 0;
 	if (pData != 0 && nCount != 0 && nSize != 0)
 	{
 		if (nSize < nCount)
 		{
-			nMoveBytes = nSize * sizeof(void*);
+			nMoveBytes = nSize * sizeof(LPVOID);
 		}
 		else {
-			nMoveBytes = nCount * sizeof(void*);
+			nMoveBytes = nCount * sizeof(LPVOID);
 		}
-		RtlMoveMemory((void*)((size_t)pNewData + 2 * sizeof(size_t)), pData, nMoveBytes);
+		RtlMoveMemory((LPVOID)((size_t)pNewData + 2 * sizeof(size_t)), pData, nMoveBytes);
 	}
-	return (void*)((size_t)pNewData + 2 * sizeof(size_t));
+	return (LPVOID)((size_t)pNewData + 2 * sizeof(size_t));
 }
 
-bool Array_IsLegal(array_s* pArray, size_t nIndex)
+BOOL Array_IsLegal(array_s* pArray, size_t nIndex)
 {
-	if ((pArray == 0) || IsBadReadPtr(pArray, sizeof(array_s))) return false;
+	if ((pArray == 0) || IsBadReadPtr(pArray, sizeof(array_s))) return FALSE;
 	if (nIndex != 0)
 	{
 		size_t nCount = pArray->nCount_;
-		if (nIndex <= 0 || nIndex > nCount) return false;
+		if (nIndex <= 0 || nIndex > nCount) return FALSE;
 	}
-	return true;
+	return TRUE;
 }
 
-bool Array_Resize(array_s* pArray, int nCount, bool fGrowCount)
+BOOL Array_Resize(array_s* pArray, INT nCount, BOOL fGrowCount)
 {
-	if (!Array_IsLegal(pArray)) return false;
-	void* pData = pArray->lpData_;
+	if (!Array_IsLegal(pArray)) return FALSE;
+	LPVOID pData = pArray->lpData_;
 	if (fGrowCount) nCount = nCount + pArray->nCount_;
-	int nSize = pArray->nSize_;
+	INT nSize = pArray->nSize_;
 	if (nSize <= 0) nSize = 1;
-	float flGrow = pArray->flGrow_;
-	if (flGrow <= eaf_growthfactor) flGrow = (float)eaf_growthfactor;
-	while (nSize >= (int)(flGrow * nSize))
+	FLOAT flGrow = pArray->flGrow_;
+	if (flGrow <= eaf_growthfactor) flGrow = (FLOAT)eaf_growthfactor;
+	while (nSize >= (INT)(flGrow * nSize))
 	{
-		flGrow = flGrow + (float)0.1;
+		flGrow = flGrow + (FLOAT)0.1;
 	}
-	void* pNewData = nullptr;
+	LPVOID pNewData = nullptr;
 	if (nSize != nCount)
 	{
 		if (nSize < nCount)
 		{
-			nSize = (int)(nSize * flGrow);
+			nSize = (INT)(nSize * flGrow);
 			while (nSize < nCount)
 			{
-				nSize = (int)(nSize * flGrow);
+				nSize = (INT)(nSize * flGrow);
 			}
 			pNewData = Array_MoveMember(pData, pArray->nCount_, nSize, nCount);
 		}
 		else {
-			if ((int)(nSize / flGrow) > nCount)
+			if ((INT)(nSize / flGrow) > nCount)
 			{
-				while ((int)(nSize / flGrow) > nCount)
+				while ((INT)(nSize / flGrow) > nCount)
 				{
-					nSize = (int)(nSize / flGrow);
+					nSize = (INT)(nSize / flGrow);
 				}
 				pNewData = Array_MoveMember(pData, pArray->nCount_, nSize, nCount);
 			}
@@ -70,7 +70,7 @@ bool Array_Resize(array_s* pArray, int nCount, bool fGrowCount)
 		pArray->nSize_ = nSize;
 		if (pData != 0)
 		{
-			Ex_MemFree((void*)((size_t)pData - 2 * sizeof(size_t)));
+			Ex_MemFree((LPVOID)((size_t)pData - 2 * sizeof(size_t)));
 		}
 		pArray->lpData_ = pNewData;
 	}
@@ -78,198 +78,203 @@ bool Array_Resize(array_s* pArray, int nCount, bool fGrowCount)
 	pData = pArray->lpData_;
 	if (pData != 0)
 	{
-		__set((void*)((size_t)pData - 2 * sizeof(size_t)), 0, 1);
-		__set((void*)((size_t)pData - sizeof(size_t)), 0, nCount);
+		__set((LPVOID)((size_t)pData - 2 * sizeof(size_t)), 0, 1);
+		__set((LPVOID)((size_t)pData - sizeof(size_t)), 0, nCount);
 	}
-	return true;
+	return TRUE;
 }
 
-size_t Array_Compare(array_s* pArray, size_t index1, size_t value1, size_t index2, size_t value2, int nType, int reasen)
+size_t Array_Compare(array_s* pArray, size_t index1, size_t value1, size_t index2, size_t value2, INT nType, INT reasen)
 {
 	return value2 - value1;
 }
 
-size_t Array_SetEvent(array_s* pArray, int nEvent, size_t index1, size_t pvValue, size_t index2, int reasen)
+LONG_PTR Array_SetEvent(array_s* pArray, INT nEvent, LONG_PTR index1, size_t pvValue, LONG_PTR index2, INT reasen)
 {
 	if (nEvent <= 0 || nEvent > 5) return 0;
-	void* lpfnCbk = (void*)__get(pArray, offsetof(array_s, event_onAppend_) + (nEvent - 1) * sizeof(void*));
+	LPVOID lpfnCbk = (LPVOID)__get(pArray, offsetof(array_s, event_onAppend_) + (nEvent - 1) * sizeof(LPVOID));
 
 	if (lpfnCbk == 0) return 0;
 	if (pArray->fDisableEvent_ != 0 && nEvent != eae_comparemember) return 0;
-	int nCount = pArray->nCount_;
+	INT nCount = pArray->nCount_;
 	if (index1 <= 0 || index1 > nCount)
 	{
-		if ((nEvent == eae_addmember && index1 != (nCount + 1)) || (nEvent == eae_comparemember && index1 != 0)) return 0;
+		if (nEvent == eae_addmember && index1 != (nCount + 1) || nEvent == eae_comparemember && index1 != 0) return 0;
 	}
-	auto pData = pArray->lpData_;
-	auto nType = pArray->nType_;
+	LPVOID pData = pArray->lpData_;
+	size_t nType = pArray->nType_;
 	if (pvValue == 0)
 	{
-		pvValue = __get(pData, (index1 - 1) * sizeof(void*));
+		pvValue = __get(pData, (index1 - 1) * sizeof(LPVOID));
 	}
 	if (nEvent == eae_comparemember)
 	{
 		if (index2 <= 0 || index2 > nCount) return 0;
-		return ((ArrayComparePROC)lpfnCbk)(pArray, index1, pvValue, index2, __get(pData, (index2 - 1) * sizeof(void*)), nType, reasen);
+		return ((ArrayComparePROC)lpfnCbk)(pArray, index1, pvValue, index2, __get(pData, (index2 - 1) * sizeof(LPVOID)), nType, reasen);
 	}
 	else {
 		return ((ArrayPROC)lpfnCbk)(pArray, index1, pvValue, nType);
 	}
 }
 
-array_s* Array_Create(int count)
+array_s* Array_Create(INT count)
 {
 	array_s* pArray = (array_s*)Ex_MemAlloc(sizeof(array_s));
-	pArray->flGrow_ = (float)eaf_growthfactor;
+	pArray->flGrow_ = (FLOAT)eaf_growthfactor;
 	pArray->event_onCompare_ = &Array_Compare;
-	void* pData = Ex_MemAlloc(3 * sizeof(size_t));
-	pArray->lpData_ = (void*)((size_t)pData + 2 * sizeof(size_t));
+	LPVOID pData = Ex_MemAlloc(3 * sizeof(size_t));
+	pArray->lpData_ = (LPVOID)((size_t)pData + 2 * sizeof(size_t));
 	pArray->nSize_ = 1;
-	Array_Resize(pArray, count, false);
+	Array_Resize(pArray, count, FALSE);
 	return pArray;
 }
 
-bool Array_Destroy(array_s* pArray)
+BOOL Array_Destroy(array_s* pArray)
 {
-	if (Array_IsLegal(pArray) == false) return false;
-	for (int index = 1; index <= pArray->nCount_; index++)
+	if (Array_IsLegal(pArray) == FALSE) return FALSE;
+	for (INT index = 1; index <= pArray->nCount_; index++)
 	{
 		Array_SetEvent(pArray, eae_delmember, index);
 	}
-	auto pData = pArray->lpData_;
-	if (pData != 0) Ex_MemFree((void*)((size_t)pData - 2 * sizeof(size_t)));
+	LPVOID pData = pArray->lpData_;
+	if (pData != 0) Ex_MemFree((LPVOID)((size_t)pData - 2 * sizeof(size_t)));
 	Ex_MemFree(pArray);
-	return true;
+	return TRUE;
 }
 
 size_t Array_AddMember(array_s* pArray, size_t value, size_t index)
 {
-	if (Array_IsLegal(pArray) == false) return 0;
-	auto nCount = pArray->nCount_;
+	if (Array_IsLegal(pArray) == FALSE) return 0;
+	INT nCount = pArray->nCount_;
 	if (index <= 0) index = nCount + 1;
 	if (index <= 0 || index > nCount + 1) return 0;
-	Array_Resize(pArray, 1, true);
-	auto pData = pArray->lpData_;
-	if (nCount > 0) RtlMoveMemory((void*)((size_t)pData + index * sizeof(void*)), (void*)((size_t)pData + (index - 1) * sizeof(void*)), (nCount - index + 1) * sizeof(void*));
-	auto pRet = Array_SetEvent(pArray, eae_addmember, index, value);
+	Array_Resize(pArray, 1, TRUE);
+	LPVOID pData = pArray->lpData_;
+	if (nCount > 0) RtlMoveMemory((LPVOID)((size_t)pData + index * sizeof(LPVOID)), (LPVOID)((size_t)pData + (index - 1) * sizeof(LPVOID)), (nCount - index + 1) * sizeof(LPVOID));
+	LONG_PTR pRet = Array_SetEvent(pArray, eae_addmember, index, value);
 	if (pRet == 0) pRet = value;
-	__set(pData, (index - 1) * sizeof(void*), pRet);
+	__set(pData, (index - 1) * sizeof(LPVOID), pRet);
 	return index;
 }
 
-bool Array_DelMember(array_s* pArray, size_t index)
+BOOL Array_DelMember(array_s* pArray, size_t index)
 {
-	if (Array_IsLegal(pArray) == false) return false;
+	if (Array_IsLegal(pArray) == FALSE) return FALSE;
 	Array_SetEvent(pArray, eae_delmember, index);
-	auto pData = pArray->lpData_;
-	auto nCount = pArray->nCount_;
-	RtlMoveMemory((void*)((size_t)pData + (index - 1) * sizeof(void*)), (void*)((size_t)pData + index * sizeof(void*)), (nCount - index) * sizeof(void*));
-	Array_Resize(pArray, -1, true);
-	return true;
+	LPVOID pData = pArray->lpData_;
+	INT nCount = pArray->nCount_;
+	RtlMoveMemory((LPVOID)((size_t)pData + (index - 1) * sizeof(LPVOID)), (LPVOID)((size_t)pData + index * sizeof(LPVOID)), (nCount - index) * sizeof(LPVOID));
+	Array_Resize(pArray, -1, TRUE);
+	return TRUE;
 }
 
-bool Array_Redefine(array_s* pArray, int size, bool beKeep)
+BOOL Array_Redefine(array_s* pArray, INT size, BOOL beKeep)
 {
-	if (Array_IsLegal(pArray) == false) return false;
-	auto nCount = pArray->nCount_;
-	auto nStart = beKeep ? size + 1 : 1;
+	if (Array_IsLegal(pArray) == FALSE) return FALSE;
+	INT nCount = pArray->nCount_;
+	INT nStart = beKeep ? size + 1 : 1;
 	if (nStart <= nCount)
 	{
-		for (int index = nStart; index <= nCount; index++)
+		for (INT index = nStart; index <= nCount; index++)
 		{
 			Array_SetEvent(pArray, eae_delmember, index);
 		}
 	}
-	Array_Resize(pArray, size, false);
-	if (beKeep) RtlZeroMemory(pArray->lpData_, size * sizeof(void*));
-	return true;
+	Array_Resize(pArray, size, FALSE);
+	if (beKeep == FALSE) RtlZeroMemory(pArray->lpData_, size * sizeof(LPVOID));
+	return TRUE;
 }
 
-bool Array_Clear(array_s* pArray)
+BOOL Array_Clear(array_s* pArray)
 {
-	return Array_Redefine(pArray, 0, false);
+	return Array_Redefine(pArray, 0, FALSE);
 }
 
-int Array_GetCount(array_s* pArray)
+INT Array_GetCount(array_s* pArray)
 {
-	if (Array_IsLegal(pArray) == false) return 0;
+	if (Array_IsLegal(pArray) == FALSE) return 0;
 	return pArray->nCount_;
 }
 
-bool Array_SetMember(array_s* pArray, size_t index, size_t value)
+BOOL Array_SetMember(array_s* pArray, size_t index, size_t value)
 {
-	if (Array_IsLegal(pArray) == false) return false;
-	auto pvItem = Array_SetEvent(pArray, eae_setmember, index, value);
+	if (Array_IsLegal(pArray) == FALSE) return FALSE;
+	LONG_PTR pvItem = Array_SetEvent(pArray, eae_setmember, index, value);
 	if (pvItem == 0) pvItem = value;
-	__set(pArray->lpData_, (index - 1) * sizeof(void*), pvItem);
-	return true;
+	__set(pArray->lpData_, (index - 1) * sizeof(LPVOID), pvItem);
+	return TRUE;
 }
 
 size_t Array_GetMember(array_s* pArray, size_t index)
 {
-	if (Array_IsLegal(pArray, index) == false) return false;
-	auto pvItem = Array_SetEvent(pArray, eae_getmember, index);
+	if (Array_IsLegal(pArray, index) == FALSE) return 0;
+	LONG_PTR pvItem = Array_SetEvent(pArray, eae_getmember, index);
 
-	if (pvItem == 0) pvItem = __get(pArray->lpData_, (index - 1) * sizeof(void*));
+	if (pvItem == 0) pvItem = __get(pArray->lpData_, (index - 1) * sizeof(LPVOID));
 	return pvItem;
 }
 
-void* Array_BindEvent(array_s* pArray, int event, void* fun)
+LPVOID Array_BindEvent(array_s* pArray, INT event, LPVOID fun)
 {
-	if (Array_IsLegal(pArray) == false) return 0;
+	if (Array_IsLegal(pArray) == FALSE) return 0;
 	if (event <= 0 || event > 5) return 0;
-	auto lpfnOld = __get(pArray, offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(void*));
-	if (fun == 0 && event == eae_comparemember) fun = &Array_Compare;
+	size_t lpfnOld = __get(pArray, offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(LPVOID));
+	if (fun == nullptr && event == eae_comparemember)
+	{
+		fun = &Array_Compare;
 
-	__set(pArray, offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(void*), (size_t)fun);
-	return (void*)lpfnOld;
+	}
+
+	__set(pArray, offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(LPVOID), (size_t)fun);
+	return (LPVOID)lpfnOld;
 }
 
-bool Array_SetExtra(array_s* pArray, size_t extra)
+BOOL Array_SetExtra(array_s* pArray, size_t extra)
 {
-	if (Array_IsLegal(pArray) == false) return false;
-	pArray->lParam_ = (void*)extra;
-	return true;
+	if (Array_IsLegal(pArray) == FALSE) return FALSE;
+	pArray->lParam_ = (LPVOID)extra;
+	return TRUE;
 }
 
 size_t Array_GetExtra(array_s* pArray)
 {
-	if (Array_IsLegal(pArray) == false) return false;
+	if (Array_IsLegal(pArray) == FALSE) return 0;
 	return (size_t)pArray->lParam_;
 }
 
-bool Array_SetType(array_s* pArray, int type)
+BOOL Array_SetType(array_s* pArray, size_t type)
 {
-	if (Array_IsLegal(pArray) == false) return false;
+	if (Array_IsLegal(pArray) == FALSE) return FALSE;
 	pArray->nType_ = type;
-	return true;
+	return TRUE;
 }
 
-bool Array_Sort(array_s* pArray, bool fDesc)
+BOOL Array_Sort(array_s* pArray, BOOL fDesc)
 {
-	if (Array_IsLegal(pArray) == false) return false;
-	if (pArray->nCount_ <= 1) return true;
+	if (Array_IsLegal(pArray) == FALSE) return FALSE;
+	if (pArray->nCount_ <= 1) return TRUE;
 	Array_SortProcess(pArray, fDesc, 0, pArray->nCount_ - 1);
-	return true;
+	return TRUE;
 }
 
-bool Array_CompareResult(array_s* pArray, size_t nIndex, size_t mid, bool fDesc)
+BOOL Array_CompareResult(array_s* pArray, LONG_PTR nIndex, size_t mid, BOOL fDesc)
 {
-	size_t order = Array_SetEvent(pArray, eae_comparemember, 0, mid, nIndex + 1, eacy_sort);
-	bool ret = order != 0 ? true : false;
+	LONG_PTR reta = Array_SetEvent(pArray, eae_comparemember, 0, mid, nIndex + 1, eacy_sort);
+	BOOL ret = (reta < 0);
 	return ret == fDesc;
 }
 
-void Array_SortProcess(array_s* pArray, bool fDesc, size_t nStart, size_t nEnd)
+void Array_SortProcess(array_s* pArray, BOOL fDesc, LONG_PTR nStart, LONG_PTR nEnd)
 {
-	int nLeft = nStart;
-	int nRight = nEnd;
+	LONG_PTR nLeft = nStart;
+	LONG_PTR nRight = nEnd;
+
 	if (nLeft >= nRight)
 	{
 		return;
 	}
-	void* pData = pArray->lpData_;
-	size_t mid = __get(pData, nLeft * sizeofarrayitem);//mid为左侧第一个数(可以是中间任意一个)
+	LPVOID pData = pArray->lpData_;
+	LONG_PTR mid = __get(pData, nLeft * sizeof(size_t));//mid为左侧第一个数(可以是中间任意一个)
 	while (nLeft < nRight)
 	{
 		while (Array_CompareResult(pArray, nRight, mid, fDesc) && nRight > nLeft)//从右找第一个和mid逆序的数
@@ -278,51 +283,54 @@ void Array_SortProcess(array_s* pArray, bool fDesc, size_t nStart, size_t nEnd)
 		}
 		if (nRight > nLeft)//找到则换掉
 		{
-			__set(pData, nLeft * sizeofarrayitem, __get(pData, nRight * sizeofarrayitem));
+			__set(pData, nLeft * sizeof(size_t), __get(pData, nRight * sizeof(size_t)));
 			nLeft = nLeft + 1;
 		}
-		while (Array_CompareResult(pArray, nLeft, mid, fDesc) == false && nRight > nLeft)//从左侧找第一个和mid逆序的数
+
+		while (Array_CompareResult(pArray, nLeft, mid, fDesc) == FALSE && nRight > nLeft)//从左侧找第一个和mid逆序的数
 		{
 			nLeft = nLeft + 1;
 		}
 		if (nRight > nLeft)//找到则换掉
 		{
-			__set(pData, nRight * sizeofarrayitem, __get(pData, nLeft * sizeofarrayitem));
+			__set(pData, nRight * sizeof(size_t), __get(pData, nLeft * sizeof(size_t)));
 			nRight = nRight - 1;
 		}
 	}
-	__set(pData, nLeft * sizeofarrayitem, mid);// 确定出mid的位置
+
+	__set(pData, nLeft * sizeof(size_t), mid);// 确定出mid的位置
+
 	Array_SortProcess(pArray, fDesc, nStart, nLeft - 1);
 	Array_SortProcess(pArray, fDesc, nLeft + 1, nEnd);
 }
 
-int Array_GetType(array_s* pArray)
+size_t Array_GetType(array_s* pArray)
 {
-	if (Array_IsLegal(pArray) == false) return false;
+	if (Array_IsLegal(pArray) == FALSE) return 0;
 	return pArray->nType_;
 }
 
-size_t Array_Emum(array_s* pArray, void* fun, size_t pvParam, bool reverse)
+size_t Array_Emum(array_s* pArray, LPVOID fun, size_t pvParam, BOOL reverse)
 {
-	if (Array_IsLegal(pArray) == false) return 0;
+	if (Array_IsLegal(pArray) == FALSE) return 0;
 	if (fun == 0) return 0;
-	auto nCount = pArray->nCount_;
-	auto nType = pArray->nType_;
-	auto pData = pArray->lpData_;
+	INT nCount = pArray->nCount_;
+	size_t nType = pArray->nType_;
+	LPVOID pData = pArray->lpData_;
 	if (reverse)
 	{
-		for (int index = nCount; index >= 1; index--)
+		for (INT index = nCount; index >= 1; index--)
 		{
-			if (((ArrayEnumPROC)fun)(pArray, index, (void*)__get(pData, (index - 1) * sizeof(void*)), nType, pvParam))
+			if (((ArrayEnumPROC)fun)(pArray, index, (LPVOID)__get(pData, (index - 1) * sizeof(LPVOID)), nType, pvParam))
 			{
 				return index;
 			}
 		}
 	}
 	else {
-		for (int index = 1; index <= nCount; index++)
+		for (INT index = 1; index <= nCount; index++)
 		{
-			if (((ArrayEnumPROC)fun)(pArray, index, (void*)__get(pData, (index - 1) * sizeof(void*)), nType, pvParam))
+			if (((ArrayEnumPROC)fun)(pArray, index, (LPVOID)__get(pData, (index - 1) * sizeof(LPVOID)), nType, pvParam))
 			{
 				return index;
 			}

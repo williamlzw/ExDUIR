@@ -1,42 +1,42 @@
 #include "Format_ex.h"
 
-EXATOM _fmt_getatom(void* lpValue, void** lpValueOffset)
+EXATOM _fmt_getatom(LPVOID lpValue, LPVOID* lpValueOffset)
 {
 	EXATOM atomSrc = 0;
-	*lpValueOffset = wcschr((wchar_t*)lpValue, '(');//(
+	*lpValueOffset = wcschr((WCHAR*)lpValue, '(');//(
 	if (*lpValueOffset != 0)
 	{
 		size_t len = (size_t)(*lpValueOffset) - (size_t)lpValue;
-		void* pAtom = Ex_MemAlloc(len + 2);
+		LPVOID pAtom = Ex_MemAlloc(len + 2);
 		if (pAtom != 0)
 		{
 			RtlMoveMemory(pAtom, lpValue, len);
 			atomSrc = Ex_Atom((LPCWSTR)pAtom);
 			Ex_MemFree(pAtom);
-			*lpValueOffset = (void*)((size_t)*lpValueOffset + 2);
+			*lpValueOffset = (LPVOID)((size_t)*lpValueOffset + 2);
 		}
 	}
 	return atomSrc;
 }
 
-int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
+INT _fmt_intary_ex(LPVOID lpValue, LPVOID* lpAry, INT nMax, BOOL fPercentFlags)
 {
-	auto dwLen = lstrlenW((LPCWSTR)lpValue) + 1;
-	auto dwLenTemp = dwLen * 2;
+	INT dwLen = lstrlenW((LPCWSTR)lpValue) + 1;
+	INT dwLenTemp = dwLen * 2;
 	_wstr_deletechar(lpValue, &dwLenTemp, 32);//删除空格
 
 	if (nMax == 0) nMax = dwLen;
-	int nCount = 0;
-	std::vector<int> aryTmp;
+	INT nCount = 0;
+	std::vector<INT> aryTmp;
 	aryTmp.resize(nMax);
-	aryTmp[nCount] = _wtoi((wchar_t*)lpValue);
-	lpValue = wcschr((wchar_t*)lpValue, ',');//,
+	aryTmp[nCount] = _wtoi((WCHAR*)lpValue);
+	lpValue = wcschr((WCHAR*)lpValue, ',');//,
 	size_t dwFlags = 0;
 	if (fPercentFlags)
 	{
 		if (lpValue != 0)
 		{
-			auto wchar = __get_wchar(lpValue, -2);
+			WCHAR wchar = __get_wchar(lpValue, -2);
 			if (wchar == 37)
 			{
 				_bit_add(&dwFlags, 0);
@@ -45,22 +45,22 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 	}
 	while (lpValue != 0 && nCount < nMax - 1)
 	{
-		lpValue = (void*)((size_t)lpValue + 2);
+		lpValue = (LPVOID)((size_t)lpValue + 2);
 		nCount = nCount + 1;
-		aryTmp[nCount] = _wtoi((wchar_t*)lpValue);
+		aryTmp[nCount] = _wtoi((WCHAR*)lpValue);
 		if (fPercentFlags)
 		{
-			auto tmp = wcschr((wchar_t*)lpValue, ',');
+			wchar_t* tmp = wcschr((WCHAR*)lpValue, ',');
 			if (tmp != 0)
 			{
-				auto wchar = __get_wchar(tmp, -2);
+				WCHAR wchar = __get_wchar(tmp, -2);
 				if (wchar == 37)
 				{
 					_bit_add(&dwFlags, nCount);
 				}
 			}
 			else {
-				if (wcschr((wchar_t*)lpValue, 37) != 0)
+				if (wcschr((WCHAR*)lpValue, 37) != 0)
 				{
 
 					_bit_add(&dwFlags, nCount);
@@ -69,7 +69,7 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 			lpValue = tmp;
 		}
 		else {
-			lpValue = wcschr((wchar_t*)lpValue, ',');
+			lpValue = wcschr((WCHAR*)lpValue, ',');
 		}
 	}
 	*lpAry = Ex_MemAlloc((nCount + 2) * 4);
@@ -85,13 +85,13 @@ int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags)
 	return nCount;
 }
 
-int _fmt_intary(void* lpValue, void* lpAry, int nMaxCount, bool fZero, void* lpdwPercentFlags)
+INT _fmt_intary(LPVOID lpValue, LPVOID lpAry, INT nMaxCount, BOOL fZero, LPVOID lpdwPercentFlags)
 {
-	int nCount = 0;
+	INT nCount = 0;
 	if (nMaxCount > 0)
 	{
 		if (fZero) RtlZeroMemory(lpAry, nMaxCount * 4);
-		void* pbuffer = nullptr;
+		LPVOID pbuffer = nullptr;
 		nCount = _fmt_intary_ex(lpValue, &pbuffer, nMaxCount, lpdwPercentFlags != 0);
 		if (pbuffer != 0)
 		{
@@ -106,38 +106,38 @@ int _fmt_intary(void* lpValue, void* lpAry, int nMaxCount, bool fZero, void* lpd
 	return nCount;
 }
 
-bool _fmt_color(void* lpValue, void* lpColor)
+BOOL _fmt_color(LPVOID lpValue, LPVOID lpColor)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (lpColor != 0)
 	{
-		ret = true;
-		void* lpValueOffset = nullptr;
+		ret = TRUE;
+		LPVOID lpValueOffset = nullptr;
 		ARGB_s p;
-		int atomSrc = _fmt_getatom(lpValue, &lpValueOffset);
+		INT atomSrc = _fmt_getatom(lpValue, &lpValueOffset);
 		if (atomSrc == 0)
 		{
-			__set_int(lpColor, 0, _wtoi((wchar_t*)lpValue));
+			__set_int(lpColor, 0, _wtoi((WCHAR*)lpValue));
 		}
 		else if ((atomSrc == ATOM_RGB) || (atomSrc == ATOM_RGBA))
 		{
 			p.a = 255;
-			_fmt_intary(lpValueOffset, &p, 4, false, NULL);
+			_fmt_intary(lpValueOffset, &p, 4, FALSE, NULL);
 			__set_int(lpColor, 0, ExARGB(p.r, p.g, p.b, p.a));
 		}
 		else {
-			ret = false;
+			ret = FALSE;
 		}
 	}
 	return ret;
 }
 
-void* _fmt_int(void* lpValue, void* lpdwPercentFlags)
+LPVOID _fmt_int(LPVOID lpValue, LPVOID lpdwPercentFlags)
 {
-	auto Value = (void*)_wtoi((const wchar_t*)lpValue);
+	LPVOID Value = (LPVOID)_wtoi((const WCHAR*)lpValue);
 	if (lpdwPercentFlags != 0)
 	{
-		if (wcschr((wchar_t*)Value, (wchar_t)37) != 0)
+		if (wcschr((WCHAR*)Value, (WCHAR)37) != 0)
 		{
 			__set_int(lpdwPercentFlags, 0, 1);
 		}
@@ -145,26 +145,26 @@ void* _fmt_int(void* lpValue, void* lpdwPercentFlags)
 	return Value;
 }
 
-bool _fmt_getvalue(void** lpValue, int atomDest)
+BOOL _fmt_getvalue(LPVOID* lpValue, INT atomDest)
 {
-	void* lpValueOffset = nullptr;
+	LPVOID lpValueOffset = nullptr;
 	EXATOM atomSrc = 0;
-	bool ret = false;
+	BOOL ret = FALSE;
 	atomSrc = _fmt_getatom(*lpValue, &lpValueOffset);
 	if (atomSrc == atomDest)
 	{
 		*lpValue = lpValueOffset;
-		ret = true;
+		ret = TRUE;
 	}
 	return ret;
 }
 
-bool _fmt_bin(HEXRES hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpFreeBuffer)
+BOOL _fmt_bin(HEXRES hRes, LPVOID lpValue, LPVOID* lpBin, size_t* lpLen, BOOL* lpFreeBuffer)
 {
-	bool ret = true;
-	*lpFreeBuffer = false;
-	void* lpValueOffset = nullptr;
-	int atomSrc = _fmt_getatom(lpValue, &lpValueOffset);
+	BOOL ret = TRUE;
+	*lpFreeBuffer = FALSE;
+	LPVOID lpValueOffset = nullptr;
+	INT atomSrc = _fmt_getatom(lpValue, &lpValueOffset);
 	if (atomSrc != 0)
 	{
 		__set_char(lpValueOffset, lstrlenW((LPCWSTR)lpValueOffset) * 2 - 2, 0);
@@ -174,11 +174,8 @@ bool _fmt_bin(HEXRES hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpF
 		}
 		else if (atomSrc == ATOM_FILE)
 		{
-			std::wstring str;
-			str.resize(lstrlenW((LPCWSTR)lpValueOffset));
-			RtlMoveMemory((void*)str.data(), lpValueOffset, lstrlenW((LPCWSTR)lpValueOffset));
-			std::vector<char> data;
-			Ex_ReadFile(str.c_str(), &data);
+			std::vector<CHAR> data;
+			Ex_ReadFile((LPCWSTR)lpValueOffset, &data);
 			*lpLen = data.size();
 			if (*lpLen > 0)
 			{
@@ -186,15 +183,15 @@ bool _fmt_bin(HEXRES hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpF
 				if (*lpBin != 0)
 				{
 					RtlMoveMemory(*lpBin, data.data(), *lpLen);
-					*lpFreeBuffer = true;
+					*lpFreeBuffer = TRUE;
 				}
 			}
 			else {
-				ret = false;
+				ret = FALSE;
 			}
 		}
 		else {
-			ret = false;
+			ret = FALSE;
 		}
 	}
 	return ret;

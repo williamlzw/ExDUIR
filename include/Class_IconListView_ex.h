@@ -17,9 +17,9 @@
 
 LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _IconListView_Register();
-EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, int nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, int nType);
-void _IconListView_OnArrDelete(array_s* pArray, int nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, int nType);
+EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType);
+void _IconListView_OnArrDelete(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType);
 void _IconListView_Init(HEXOBJ hObj);
 void _IconListView_Uninit(HEXOBJ hObj);
-bool _IconListView_OnNotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam);
-bool _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr);
+BOOL _IconListView_OnNotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam);
+BOOL _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr);

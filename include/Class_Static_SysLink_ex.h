@@ -5,23 +5,23 @@
 struct sli_s
 {
 	slb_s* lpHitBlock_;
-	int nCount_;
-	void* lpBlocks_;
+	INT nCount_;
+	LPVOID lpBlocks_;
 };
 
 struct slb_s
 {
-	int dwFlags_;
-	int dwID_;
+	INT dwFlags_;
+	INT dwID_;
 	LPCWSTR szText_;
 	LPCWSTR szUrl_;
 	LPCWSTR szToolTips_;
-	int rc_left_;
-	int rc_top_;
-	int rc_right_;
-	int rc_bottom_;
+	INT rc_left_;
+	INT rc_top_;
+	INT rc_right_;
+	INT rc_bottom_;
 	HEXFONT hFont_;
-	int crText_;
+	INT crText_;
 };
 
 #define slbf_focus 1

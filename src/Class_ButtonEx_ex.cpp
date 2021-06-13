@@ -77,23 +77,23 @@ LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	}
 	case WM_MOUSEHOVER:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
 		break;
 	}
 	case  WM_MOUSELEAVE:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
 		break;
 	}
 	case WM_LBUTTONDOWN:
 	{
 		SetCursor(LoadCursorW(0, IDC_HAND));
-		Ex_ObjSetUIState(hObj, STATE_DOWN, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
 		break;
 	}
 	case WM_LBUTTONUP:
 	{
-		Ex_ObjSetUIState(hObj, STATE_DOWN, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
 		break;
 	}
 	case WM_MOUSEMOVE:
@@ -134,7 +134,7 @@ LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 }
 
 
-int _ButtonEx_paint(HEXOBJ hObj)
+INT _ButtonEx_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量
@@ -144,18 +144,18 @@ int _ButtonEx_paint(HEXOBJ hObj)
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		_canvas_setantialias(ps.hCanvas, true);
-		_canvas_setimageantialias(ps.hCanvas, true);
+		_canvas_setantialias(ps.hCanvas, TRUE);
+		_canvas_setimageantialias(ps.hCanvas, TRUE);
 		_canvas_settextantialiasmode(ps.hCanvas, 1);
 
-		int			crBkg = Ex_ObjGetProp(hObj, 1);
-		int			crBorder = Ex_ObjGetProp(hObj, 4);
+		INT			crBkg = Ex_ObjGetProp(hObj, 1);
+		INT			crBorder = Ex_ObjGetProp(hObj, 4);
 		EXARGB		crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
-		auto		Radius = (float)Ex_ObjGetProp(hObj, 9);
-		auto		strokeWidth = (float)Ex_ObjGetProp(hObj, 10);
-		auto		nIconPosition = Ex_ObjGetProp(hObj, 11);
+		FLOAT		Radius = (FLOAT)Ex_ObjGetProp(hObj, 9);
+		FLOAT		strokeWidth = (FLOAT)Ex_ObjGetProp(hObj, 10);
+		size_t		nIconPosition = Ex_ObjGetProp(hObj, 11);
 		HEXIMAGE	hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, 0);
-		bool		m_IsDraw = false;
+		BOOL		m_IsDraw = FALSE;
 
 		if ((ps.dwState & STATE_DOWN) == STATE_DOWN)
 		{
@@ -164,7 +164,7 @@ int _ButtonEx_paint(HEXOBJ hObj)
 			crBkg = Ex_ObjGetProp(hObj, 3);
 			crBorder = Ex_ObjGetProp(hObj, 6);
 			OffsetRect((LPRECT)&ps.t_left, 2, 2);
-			m_IsDraw = false;
+			m_IsDraw = FALSE;
 		}
 		else if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
 		{
@@ -172,37 +172,37 @@ int _ButtonEx_paint(HEXOBJ hObj)
 			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_HOVER);
 			crBkg = Ex_ObjGetProp(hObj, 2);
 			crBorder = Ex_ObjGetProp(hObj, 5);
-			m_IsDraw = true;
+			m_IsDraw = TRUE;
 		}
 		/* 设置背景画刷 */
 		HEXBRUSH	hBrush = _brush_create(crBkg);
 		/*填充背景*/
 		if (Radius == 0) {
-			_canvas_fillrect(ps.hCanvas, hBrush, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom);
+			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom);
 		}
 		else {
-			_canvas_fillroundedrect(ps.hCanvas, hBrush, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom, Ex_Scale(Radius), Ex_Scale(Radius));
+			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom, Ex_Scale(Radius), Ex_Scale(Radius));
 		}
 
 		/*没有普通底色就填充渐变底色*/
 		if (crBkg == 0)
 		{
-			HEXBRUSH	linearhBrush = _brush_createlinear(0, 0, (float)ps.p_right, 0, Ex_ObjGetProp(hObj, 14), Ex_ObjGetProp(hObj, 15));
+			HEXBRUSH	linearhBrush = _brush_createlinear(0, 0, (FLOAT)ps.p_right, 0, Ex_ObjGetProp(hObj, 14), Ex_ObjGetProp(hObj, 15));
 			if (Radius == 0) {
-				_canvas_fillrect(ps.hCanvas, linearhBrush, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom);
+				_canvas_fillrect(ps.hCanvas, linearhBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom);
 			}
 			else {
-				_canvas_fillroundedrect(ps.hCanvas, linearhBrush, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom, Ex_Scale(Radius), Ex_Scale(Radius));
+				_canvas_fillroundedrect(ps.hCanvas, linearhBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom, Ex_Scale(Radius), Ex_Scale(Radius));
 			}
 			_brush_destroy(linearhBrush);
 
 			if (m_IsDraw && Ex_ObjGetProp(hObj, 14) != 0 && Ex_ObjGetProp(hObj, 15) != 0) {/*覆盖一层半透明色作为点燃色*/
 				_brush_setcolor(hBrush, ExARGB(255, 255, 255, 50));
 				if (Radius == 0) {
-					_canvas_fillrect(ps.hCanvas, hBrush, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom);
+					_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom);
 				}
 				else {
-					_canvas_fillroundedrect(ps.hCanvas, hBrush, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom, Ex_Scale(Radius), Ex_Scale(Radius));
+					_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom, Ex_Scale(Radius), Ex_Scale(Radius));
 				}
 			}
 		}
@@ -210,17 +210,17 @@ int _ButtonEx_paint(HEXOBJ hObj)
 		/*没有普通边框色就填充渐变边框色*/
 		if (crBorder == 0) {
 			_brush_destroy(hBrush);
-			hBrush = _brush_createlinear(0, 0, (float)ps.p_right, 0, Ex_ObjGetProp(hObj, 12), Ex_ObjGetProp(hObj, 13));
+			hBrush = _brush_createlinear(0, 0, (FLOAT)ps.p_right, 0, Ex_ObjGetProp(hObj, 12), Ex_ObjGetProp(hObj, 13));
 		}
 		else {
 			_brush_setcolor(hBrush, crBorder);
 		}
 		/* 描绘边框 */
 		if (Radius == 0) {
-			_canvas_drawrect(ps.hCanvas, hBrush, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom, Ex_Scale(strokeWidth), D2D1_DASH_STYLE_SOLID);
+			_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom, Ex_Scale(strokeWidth), D2D1_DASH_STYLE_SOLID);
 		}
 		else {
-			_canvas_drawroundedrect(ps.hCanvas, hBrush, (float)ps.p_left + Ex_Scale(strokeWidth), (float)ps.p_top + Ex_Scale(strokeWidth), (float)ps.p_right - Ex_Scale(strokeWidth), (float)ps.p_bottom - Ex_Scale(strokeWidth), Ex_Scale(Radius) - Ex_Scale(strokeWidth), Ex_Scale(Radius) - Ex_Scale(strokeWidth), Ex_Scale(strokeWidth), D2D1_DASH_STYLE_SOLID);
+			_canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + Ex_Scale(strokeWidth), (FLOAT)ps.p_top + Ex_Scale(strokeWidth), (FLOAT)ps.p_right - Ex_Scale(strokeWidth), (FLOAT)ps.p_bottom - Ex_Scale(strokeWidth), Ex_Scale(Radius) - Ex_Scale(strokeWidth), Ex_Scale(Radius) - Ex_Scale(strokeWidth), Ex_Scale(strokeWidth), D2D1_DASH_STYLE_SOLID);
 		}
 
 
@@ -233,37 +233,37 @@ int _ButtonEx_paint(HEXOBJ hObj)
 			if (pRect == 0)
 			{
 				/* 拉伸绘制 */
-				_canvas_drawimagerect(ps.hCanvas, hImage, (float)ps.p_left, (float)ps.p_top, (float)ps.p_right, (float)ps.p_bottom, 255);
+				_canvas_drawimagerect(ps.hCanvas, hImage, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom, 255);
 			}
 			else
 			{
-				int nImageWidth = NULL;
-				int nImageHeight = NULL;
+				INT nImageWidth = NULL;
+				INT nImageHeight = NULL;
 				_img_getsize(hImage, &nImageWidth, &nImageHeight);
 				/* 九宫绘制 */
 				_canvas_drawimagefromgrid(ps.hCanvas,
 					hImage,
-					(float)ps.p_left,
-					(float)ps.p_top,
-					(float)ps.p_right,
-					(float)ps.p_bottom,
+					(FLOAT)ps.p_left,
+					(FLOAT)ps.p_top,
+					(FLOAT)ps.p_right,
+					(FLOAT)ps.p_bottom,
 					0,
 					0,
-					(float)nImageWidth,
-					(float)nImageHeight,
-					(float)pRect->left,
-					(float)pRect->top,
-					(float)pRect->right,
-					(float)pRect->bottom,
+					(FLOAT)nImageWidth,
+					(FLOAT)nImageHeight,
+					(FLOAT)pRect->left,
+					(FLOAT)pRect->top,
+					(FLOAT)pRect->right,
+					(FLOAT)pRect->bottom,
 					0,
 					255);
 			}
 		}
 
 		/* 计算文本尺寸 */
-		float nTextWidth = NULL;
-		float nTextHeight = NULL;
-		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (float)ps.width, (float)ps.height, &nTextWidth, &nTextHeight);
+		FLOAT nTextWidth = NULL;
+		FLOAT nTextHeight = NULL;
+		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.width, (FLOAT)ps.height, &nTextWidth, &nTextHeight);
 
 
 	   /* 图标 */
@@ -311,7 +311,7 @@ int _ButtonEx_paint(HEXOBJ hObj)
 			}
 
 			/* 绘制图标 */
-			_canvas_drawimage(ps.hCanvas, hImage, (float)rcimg.left, (float)rcimg.top, 255);
+			_canvas_drawimage(ps.hCanvas, hImage, (FLOAT)rcimg.left, (FLOAT)rcimg.top, 255);
 			/* 绘制文字 */
 			_canvas_drawtext(ps.hCanvas,
 				Ex_ObjGetFont(hObj),
@@ -319,10 +319,10 @@ int _ButtonEx_paint(HEXOBJ hObj)
 				(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 				-1,
 				Ex_ObjGetLong(hObj, EOL_TEXTFORMAT),
-				(float)rctext.left,
-				(float)rctext.top,
-				(float)rctext.right,
-				(float)rctext.bottom);
+				(FLOAT)rctext.left,
+				(FLOAT)rctext.top,
+				(FLOAT)rctext.right,
+				(FLOAT)rctext.bottom);
 		}
 		else
 		{
@@ -332,10 +332,10 @@ int _ButtonEx_paint(HEXOBJ hObj)
 				(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 				-1,
 				Ex_ObjGetLong(hObj, EOL_TEXTFORMAT),
-				(float)ps.t_left,
-				(float)ps.t_top,
-				(float)ps.t_right,
-				(float)ps.t_bottom);
+				(FLOAT)ps.t_left,
+				(FLOAT)ps.t_top,
+				(FLOAT)ps.t_right,
+				(FLOAT)ps.t_bottom);
 		}
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);

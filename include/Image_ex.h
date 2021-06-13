@@ -24,42 +24,42 @@ struct EX_APNG_THUNK {
 	UINT y_offset;// 垂直偏移
 	USHORT delay_num;// 为这一帧显示时间的以秒为单位的分子
 	USHORT delay_den;// 为这一帧显示时间以秒为单位的分母
-	char dispose_op;// 处理方式
-	char blend_op;// 混合模式
+	CHAR dispose_op;// 处理方式
+	CHAR blend_op;// 混合模式
 };
 #pragma pack()
 
 struct img_s
 {
-	int dwFlags_;
-	void* pObj_;
-	int nMaxFrames_;
-	int nCurFrame_;
-	void* pWicDecoder_;
+	INT dwFlags_;
+	LPVOID pObj_;
+	INT nMaxFrames_;
+	INT nCurFrame_;
+	LPVOID pWicDecoder_;
 	EX_APNG_THUNK** lpFrames_;
-	void* lpHeader_;
-	void* pPrev_;
-	int p_x_;
-	int p_y_;
-	int p_w_;
-	int p_h_;
+	LPVOID lpHeader_;
+	IWICBitmap* pPrev_;
+	INT p_x_;
+	INT p_y_;
+	INT p_w_;
+	INT p_h_;
 };
 
 
-HEXIMAGE _img_init(void* pObj, int curframe, int frames, void* pDecoder, int* nError);
-bool _img_createfrompngbits(void* lpmem, HEXIMAGE* dstImg);
-void* _img_createfromstream_init(void* lpData, int dwLen, int* nError);
-void* _img_getcontext(HEXIMAGE hImage);
-void _apng_drawframe(img_s* pImage, int nIndex);
-int _apng_thunk_getlength(void* lpMem);
-bool _apng_thunk_getnext(void* lpMem, int* nPos, int dwThunkType, EX_APNG_THUNK** lpThunk, int* dwThunkLen);
-void _apng_int(HEXIMAGE hImage, void* lpStream);
-bool _apng_getframedelay(img_s* pImg, int* lpDelay, int nFrames);
-HEXIMAGE _wic_create(int width, int height, GUID pFormat, int* nError);
-HEXIMAGE _wic_init_from_decoder(void* pDecoder, int* nError);
-void _wic_savetobin(void* pBitmap, void** lpBin, size_t* len, int* nError);
-void _wic_drawframe(img_s* pImg, void* pFrame, int* nError, D2D1_RECT_F* dest = NULL);
-void* _wic_convert(void* pBitmap, bool bFreeOld, int* nError);
-void* _wic_selectactiveframe(void* pDecoder, int nIndex, int* nError, D2D1_RECT_F* dest);
-EXARGB _wic_getpixel(void* pBitmap, int x, int y, int* nError);
-bool _wic_getframedelay(void* pDecoder, int* lpDelay, int nCount, int* nError);
+HEXIMAGE _img_init(LPVOID pObj, INT curframe, INT frames, LPVOID pDecoder, INT* nError);
+BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE* dstImg);
+LPSTREAM _img_createfromstream_init(LPVOID lpData, INT dwLen, INT* nError);
+LPVOID _img_getcontext(HEXIMAGE hImage);
+void _apng_drawframe(img_s* pImage, INT nIndex);
+INT _apng_thunk_getlength(LPVOID lpMem);
+BOOL _apng_thunk_getnext(LPVOID lpMem, INT* nPos, INT dwThunkType, EX_APNG_THUNK** lpThunk, INT* dwThunkLen);
+void _apng_int(HEXIMAGE hImage, LPVOID lpStream);
+BOOL _apng_getframedelay(img_s* pImg, INT* lpDelay, INT nFrames);
+HEXIMAGE _wic_create(INT width, INT height, GUID pFormat, INT* nError);
+HEXIMAGE _wic_init_from_decoder(LPVOID pDecoder, INT* nError);
+void _wic_savetobin(LPVOID pBitmap, LPVOID* lpBin, size_t* len, INT* nError);
+void _wic_drawframe(img_s* pImg, LPVOID pFrame, INT* nError, D2D1_RECT_F* dest = NULL);
+LPVOID _wic_convert(LPVOID pBitmap, BOOL bFreeOld, INT* nError);
+LPVOID _wic_selectactiveframe(LPVOID pDecoder, INT nIndex, INT* nError, D2D1_RECT_F* dest);
+EXARGB _wic_getpixel(LPVOID pBitmap, INT x, INT y, INT* nError);
+BOOL _wic_getframedelay(LPVOID pDecoder, INT* lpDelay, INT nCount, INT* nError);

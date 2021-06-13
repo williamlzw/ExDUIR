@@ -5,7 +5,7 @@ EX_HASHTABLE* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete)
 	EX_HASHTABLE* hTable = (EX_HASHTABLE*)LocalAlloc(LMEM_ZEROINIT, sizeof(EX_HASHTABLE));
 	if (hTable != 0) {
 		if (dwBound <= 0) dwBound = 11;
-		void* pTable = (void*)Ex_MemAlloc(dwBound * sizeof(void*));
+		LPVOID pTable = (LPVOID)Ex_MemAlloc(dwBound * sizeof(LPVOID));
 		if (pTable != 0)
 		{
 			hTable->pfnDelete = pfnDelete;
@@ -21,37 +21,37 @@ EX_HASHTABLE* HashTable_Create(size_t dwBound, HashTablePROC pfnDelete)
 	return hTable;
 }
 
-bool HashTable_Clear(EX_HASHTABLE* hTable)
+BOOL HashTable_Clear(EX_HASHTABLE* hTable)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (hTable != nullptr) {
 		HashTablePROC pfnCbk = hTable->pfnDelete;
-		void* pTable = hTable->pTable;
+		LPVOID pTable = hTable->pTable;
 		size_t dwBound = hTable->dwBound;
 		if (pTable != nullptr) {
 			for (size_t i = 0; i < dwBound; i++) {
-				entry_s* pEntry = (entry_s*)__get(pTable, i * sizeof(void*));
+				entry_s* pEntry = (entry_s*)__get(pTable, i * sizeof(LPVOID));
 				while (pEntry != nullptr)
 				{
 					entry_s* tmp = pEntry;
 					pEntry = pEntry->pEntry;
 					if (pfnCbk != 0) {
-						pfnCbk((void*)tmp->dwValue);
+						pfnCbk((LPVOID)tmp->dwValue);
 					}
 					Ex_MemFree((HANDLE)tmp);
 				}
 			}
-			RtlZeroMemory(pTable, dwBound * sizeof(void*));
+			RtlZeroMemory(pTable, dwBound * sizeof(LPVOID));
 			InterlockedExchange((size_t*)&(hTable->dwCount), 0);
-			ret = true;
+			ret = TRUE;
 		}
 	}
 	return ret;
 }
 
-bool HashTable_Destroy(EX_HASHTABLE* hTable)
+BOOL HashTable_Destroy(EX_HASHTABLE* hTable)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (hTable != nullptr)
 	{
 		ret = HashTable_Clear(hTable);
@@ -71,19 +71,19 @@ size_t HashTable_GetPos(size_t Key, size_t counts)
 
 void HashTable_ReHash(EX_HASHTABLE* hTable)
 {
-	void* oldTable = hTable->pTable;
+	LPVOID oldTable = hTable->pTable;
 	size_t oldBound = hTable->dwBound;
 	size_t newBound = oldBound * 2 + 1;
-	void* newTable = (void*)LocalAlloc(LMEM_ZEROINIT, newBound * sizeof(void*));
+	LPVOID newTable = (LPVOID)LocalAlloc(LMEM_ZEROINIT, newBound * sizeof(LPVOID));
 	for (size_t i = 0; i < oldBound; i++)
 	{
-		entry_s* pEntry = (entry_s*)__get(oldTable, i * sizeof(void*));
+		entry_s* pEntry = (entry_s*)__get(oldTable, i * sizeof(LPVOID));
 		while (pEntry != nullptr)
 		{
-			void* oEntry = pEntry;
+			LPVOID oEntry = pEntry;
 			pEntry = ((entry_s*)oEntry)->pEntry;
 			size_t nPos = HashTable_GetPos(((entry_s*)oEntry)->hKey, newBound);
-			((entry_s*)oEntry)->pEntry = (entry_s *)__set(newTable, nPos * sizeof(void*), (size_t)oEntry);
+			((entry_s*)oEntry)->pEntry = (entry_s *)__set(newTable, nPos * sizeof(LPVOID), (size_t)oEntry);
 		}
 	}
 	hTable->pTable = newTable;
@@ -92,21 +92,21 @@ void HashTable_ReHash(EX_HASHTABLE* hTable)
 	Ex_MemFree(oldTable);
 }
 
-bool HashTable_Set(EX_HASHTABLE* hTable, size_t hKey, size_t dwValue)
+BOOL HashTable_Set(EX_HASHTABLE* hTable, size_t hKey, size_t dwValue)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (hTable != nullptr)
 	{
 		size_t nPos = 0;
 		nPos = HashTable_GetPos(hKey, hTable->dwBound);
-		void* pTable = hTable->pTable;
-		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(void*));
+		LPVOID pTable = hTable->pTable;
+		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(LPVOID));
 		while (pEntry != nullptr)
 		{
 			if (pEntry->hKey == hKey) {
 				pEntry->dwValue = dwValue;
 				//InterlockedExchange((size_t*)&(pEntry->dwValue), (size_t)dwValue);
-				return true;
+				return TRUE;
 			}
 			pEntry = pEntry->pEntry;
 		}
@@ -120,31 +120,31 @@ bool HashTable_Set(EX_HASHTABLE* hTable, size_t hKey, size_t dwValue)
 		pEntry->hKey = hKey;
 		pEntry->dwValue = dwValue;
 
-		auto aa = InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry);
+		auto aa = InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(LPVOID)), (size_t)pEntry);
 		pEntry->pEntry = (entry_s*)aa;
 
 		hTable->dwCount = hTable->dwCount + 1;
 
-		ret = true;
+		ret = TRUE;
 	}
 	return ret;
 }
 
-bool HashTable_Get(EX_HASHTABLE* hTable, size_t hKey, size_t* dwValue)
+BOOL HashTable_Get(EX_HASHTABLE* hTable, size_t hKey, size_t* dwValue)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (hTable != 0)
 	{
 		size_t nPos = 0;
 		nPos = HashTable_GetPos(hKey, hTable->dwBound);
-		void* pTable = hTable->pTable;
-		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(void*));
+		LPVOID pTable = hTable->pTable;
+		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(LPVOID));
 		while (pEntry != 0)
 		{
 			if (pEntry->hKey == hKey)
 			{
 				*dwValue = pEntry->dwValue;
-				ret = true;
+				ret = TRUE;
 				break;
 			}
 			pEntry = pEntry->pEntry;
@@ -153,15 +153,15 @@ bool HashTable_Get(EX_HASHTABLE* hTable, size_t hKey, size_t* dwValue)
 	return ret;
 }
 
-bool HashTable_Remove(EX_HASHTABLE* hTable, size_t hKey)
+BOOL HashTable_Remove(EX_HASHTABLE* hTable, size_t hKey)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (hTable != nullptr)
 	{
 		size_t nPos = 0;
 		nPos = HashTable_GetPos(hKey, hTable->dwBound);
-		void* pTable = hTable->pTable;
-		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(void*));
+		LPVOID pTable = hTable->pTable;
+		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(LPVOID));
 		entry_s* prev = nullptr;
 		while (pEntry != nullptr)
 		{
@@ -173,15 +173,15 @@ bool HashTable_Remove(EX_HASHTABLE* hTable, size_t hKey)
 				}
 				else
 				{
-					InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(void*)), (size_t)pEntry->pEntry);
+					InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(LPVOID)), (size_t)pEntry->pEntry);
 				}
 				InterlockedExchangeAdd((size_t*)&hTable->dwCount, -1);
 				HashTablePROC pfn = hTable->pfnDelete;
 				if (pfn) {
-					pfn((void*)pEntry->dwValue);
+					pfn((LPVOID)pEntry->dwValue);
 				}
 				Ex_MemFree((HANDLE)pEntry);
-				ret = true;
+				ret = TRUE;
 				break;
 			}
 			prev = pEntry;
@@ -191,21 +191,21 @@ bool HashTable_Remove(EX_HASHTABLE* hTable, size_t hKey)
 	return ret;
 }
 
-bool HashTable_IsExist(EX_HASHTABLE* hTable, size_t hKey)
+BOOL HashTable_IsExist(EX_HASHTABLE* hTable, size_t hKey)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (hTable != nullptr)
 	{
 		size_t nPos = 0;
 		nPos = HashTable_GetPos(hKey, hTable->dwBound);
-		void* pTable = hTable->pTable;
-		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(void*));
-		void* prev = nullptr;
+		LPVOID pTable = hTable->pTable;
+		entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(LPVOID));
+		LPVOID prev = nullptr;
 		while (pEntry != nullptr)
 		{
 			if (pEntry->hKey == hKey)
 			{
-				ret = true;
+				ret = TRUE;
 				break;
 			}
 			pEntry = pEntry->pEntry;
@@ -228,7 +228,7 @@ size_t HashTable_GetAllKeysAndValues(EX_HASHTABLE* hTable, std::vector<size_t>& 
 	size_t dwCount = 0;
 	if (hTable != nullptr)
 	{
-		void* pTable = hTable->pTable;
+		LPVOID pTable = hTable->pTable;
 		size_t dwBound = hTable->dwBound;
 		dwCount = hTable->dwCount;
 		if (pTable != nullptr && dwCount > 0)
@@ -238,7 +238,7 @@ size_t HashTable_GetAllKeysAndValues(EX_HASHTABLE* hTable, std::vector<size_t>& 
 			size_t ii = 0;
 			for (size_t i = 0; i < dwBound; i++)
 			{
-				entry_s* pEntry = (entry_s*)__get(pTable, i * sizeof(void*));
+				entry_s* pEntry = (entry_s*)__get(pTable, i * sizeof(LPVOID));
 				while (pEntry != nullptr)
 				{
 					aryKey[ii] = pEntry->hKey;

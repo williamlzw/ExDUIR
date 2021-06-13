@@ -16,20 +16,20 @@ struct mempoolheader_s
 struct mempool_s
 {
 	HANDLE hHeap;
-	void* pBase;
+	LPVOID pBase;
 	mempoolheader_s* pEntry;
 	size_t nBlockSize;
 	size_t nMax;
 	size_t dwFlags;
-	void* cs;
+	LPVOID cs;
 };
 
 mempool_s* MemPool_Create(size_t nMax, size_t dwSize, size_t dwFlags);
-bool MemPool_Destroy(mempool_s* hMemPool);
-void* MemPool_GetFreeEntry(mempool_s* hMemPool);
-void* MemPool_GetNextEntry(mempool_s* hMemPool, entry_s* pEntry);
-size_t MemPool_GetIndexFromAddrsss(mempool_s* hMemPool, void* lpAddress);
-void* MemPool_GetAddressFromIndex(mempool_s* hMemPool, size_t nIndex);
-bool MemPool_AddressIsUsed(void* lpAddress);
-void* MemPool_Alloc(mempool_s* hMemPool, bool fZero);
-bool MemPool_Free(mempool_s* hMemPool, void* lpAddress);
+BOOL MemPool_Destroy(mempool_s* hMemPool);
+LPVOID MemPool_GetFreeEntry(mempool_s* hMemPool);
+LPVOID MemPool_GetNextEntry(mempool_s* hMemPool, entry_s* pEntry);
+size_t MemPool_GetIndexFromAddrsss(mempool_s* hMemPool, LPVOID lpAddress);
+LPVOID MemPool_GetAddressFromIndex(mempool_s* hMemPool, size_t nIndex);
+BOOL MemPool_AddressIsUsed(LPVOID lpAddress);
+LPVOID MemPool_Alloc(mempool_s* hMemPool, BOOL fZero);
+BOOL MemPool_Free(mempool_s* hMemPool, LPVOID lpAddress);

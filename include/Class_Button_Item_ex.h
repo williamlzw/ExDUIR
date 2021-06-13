@@ -2,7 +2,7 @@
 #include "help_ex.h"
 
 void _Button_regsiter();
-int _button_getprop(int state, bool fRadio, EXATOM atom_src, EXATOM atom_check, EXATOM atom_half);
+INT _button_getprop(INT state, BOOL fRadio, EXATOM atom_src, EXATOM atom_check, EXATOM atom_half);
 void _button_paint(HEXOBJ hObj, obj_s* pObj);
 LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _Item_regsiter();

@@ -2,20 +2,20 @@
 
 mempool_s* _handle_init()
 {
-	return MemPool_Create(65536, sizeof(void*), mpbs_maximum);
+	return MemPool_Create(65536, sizeof(LPVOID), mpbs_maximum);
 }
 
-bool _handle_uninit(mempool_s* hTable)
+BOOL _handle_uninit(mempool_s* hTable)
 {
-	bool ret = MemPool_Destroy(hTable);
+	BOOL ret = MemPool_Destroy(hTable);
 	hTable = 0;
 	return ret;
 }
 
-EXHANDLE _handle_create(int nType, void* dwData, int *nError)
+EXHANDLE _handle_create(INT nType, LPVOID dwData, INT *nError)
 {
 	EXHANDLE ret = 0;
-	void* lpAddr = MemPool_Alloc(g_Li.hHandles, false);
+	LPVOID lpAddr = MemPool_Alloc(g_Li.hHandles, FALSE);
 	if (lpAddr)
 	{
 		__set(lpAddr, 0, (size_t)dwData);
@@ -36,16 +36,16 @@ EXHANDLE _handle_create(int nType, void* dwData, int *nError)
 	return ret;
 }
 
-bool _handle_destroy(EXHANDLE handle, int* pError)
+BOOL _handle_destroy(EXHANDLE handle, INT* pError)
 {
-	bool ret = false;
-	int nError = 0;
+	BOOL ret = FALSE;
+	INT nError = 0;
 	if ((handle && 3) == 0)
 	{
 		EXHANDLE nIndex = (handle << 12) >> 14;
 		if (nIndex > 0 && nIndex < 65537)
 		{
-			void* lpAddress = MemPool_GetAddressFromIndex(g_Li.hHandles, nIndex);
+			LPVOID lpAddress = MemPool_GetAddressFromIndex(g_Li.hHandles, nIndex);
 			if (lpAddress != 0)
 			{
 				ret = MemPool_Free(g_Li.hHandles, lpAddress);
@@ -67,22 +67,22 @@ bool _handle_destroy(EXHANDLE handle, int* pError)
 	return ret;
 }
 
-bool _handle_validate(EXHANDLE handle, int type, void** dwData, int* pError)
+BOOL _handle_validate(EXHANDLE handle, INT type, LPVOID* dwData, INT* pError)
 {
-	bool ret = false;
-	int nError = 0;
+	BOOL ret = FALSE;
+	INT nError = 0;
 	if (handle != 0)
 	{
 
 		EXHANDLE nIndex = (handle - (44 << 24) - (type << 18)) >> 2;
 		if (nIndex > 0 && nIndex < 65537)
 		{
-			void* pData = MemPool_GetAddressFromIndex(g_Li.hHandles, nIndex);
+			LPVOID pData = MemPool_GetAddressFromIndex(g_Li.hHandles, nIndex);
 			if (pData != 0)
 			{
 				if (MemPool_AddressIsUsed(pData))
 				{
-					void* tmp = (void*)__get(pData, 0);
+					LPVOID tmp = (LPVOID)__get(pData, 0);
 					if (dwData) {
 						*dwData = tmp;
 					}

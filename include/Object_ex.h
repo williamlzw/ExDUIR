@@ -13,7 +13,8 @@
 #define eof_bMenuItem			(1U << 3)
 #define eof_bPath				(1U << 4)
 #define eof_bPathByRoundedrect	(1U << 5)
-
+#define eof_bDown				(1U << 10)
+#define eof_bUp				(1U << 11)
 #define eof_bSendSizeMoveMsgs	(1U << 14)
 #define eof_bNeedRedraw			(1U << 15)
 #define eof_bCanRedraw			(1U << 16)
@@ -69,7 +70,7 @@ struct EX_EVENT_HANDLER {
 };
 
 struct EX_EVENT_HANDLER_TABLE {
-	int len;
+	INT len;
 	EX_EVENT_HANDLER handler[1];
 };
 
@@ -81,7 +82,7 @@ struct mempoolmenumsg_s {
 	INT uMsg;
 	WPARAM wParam;
 	LPARAM lParam;
-	int dwReserved;
+	INT dwReserved;
 };
 
 struct mempoolmsg_s {
@@ -89,7 +90,7 @@ struct mempoolmsg_s {
 	INT uMsg;
 	WPARAM wParam;
 	LPARAM lParam;
-	int dwReserved;
+	INT dwReserved;
 };
 
 
@@ -110,58 +111,58 @@ struct obj_s
 
 	wnd_s* pWnd_;
 
-	int left_; //组件相对位置
-	int top_;
-	int right_;
-	int bottom_;
-	int c_left_; //客户区位置
-	int c_top_;
-	int c_right_;
-	int c_bottom_;
-	int w_left_; //组件窗口位置
-	int w_top_;
-	int w_right_;
-	int w_bottom_;
-	int d_left_;//脏区域
-	int d_top_;
-	int d_right_;
-	int d_bottom_;
-	int t_left_;//文本偏移矩形
-	int t_top_;
-	int t_right_;
-	int t_bottom_;
-	int crBackground_;
-	int crBorder_;
-	int crNormal_;
-	int crHover_;
-	int crDown_;
-	int crFocus_;
-	int crChecked_;
-	int crSelected_;
-	int crHot_;
-	int crVisted_;
-	int crShadow_;
-	int dwShadowSize_;
+	INT left_; //组件相对位置
+	INT top_;
+	INT right_;
+	INT bottom_;
+	INT c_left_; //客户区位置
+	INT c_top_;
+	INT c_right_;
+	INT c_bottom_;
+	INT w_left_; //组件窗口位置
+	INT w_top_;
+	INT w_right_;
+	INT w_bottom_;
+	INT d_left_;//脏区域
+	INT d_top_;
+	INT d_right_;
+	INT d_bottom_;
+	INT t_left_;//文本偏移矩形
+	INT t_top_;
+	INT t_right_;
+	INT t_bottom_;
+	INT crBackground_;
+	INT crBorder_;
+	INT crNormal_;
+	INT crHover_;
+	INT crDown_;
+	INT crFocus_;
+	INT crChecked_;
+	INT crSelected_;
+	INT crHot_;
+	INT crVisted_;
+	INT crShadow_;
+	INT dwShadowSize_;
 
-	int minmax_reserved_1_;
-	int minmax_reserved_2_;
-	int minmax_maxsize_width_;
-	int minmax_maxsize_height_;
-	int minmax_maxpostion_width_;
-	int minmax_maxpostion_height_;
-	int minmax_mintracksize_width_;
-	int minmax_mintracksize_height_;
-	int minmax_maxtracksize_width_;
-	int minmax_maxtracksize_height_;
+	INT minmax_reserved_1_;
+	INT minmax_reserved_2_;
+	INT minmax_maxsize_width_;
+	INT minmax_maxsize_height_;
+	INT minmax_maxpostion_width_;
+	INT minmax_maxpostion_height_;
+	INT minmax_mintracksize_width_;
+	INT minmax_mintracksize_height_;
+	INT minmax_maxtracksize_width_;
+	INT minmax_maxtracksize_height_;
 
 	HEXPATH hPath_Window_;
 	HEXPATH hPath_Client_;
-	int radius_unit_;
-	int radius_topleft_;
-	int radius_topright_;
-	int radius_bottomright_;
-	int radius_bottomleft_;
-	int nPropCount_;
+	INT radius_unit_;
+	INT radius_topleft_;
+	INT radius_topright_;
+	INT radius_bottomright_;
+	INT radius_bottomleft_;
+	INT nPropCount_;
 	HEXOBJ objNext_;
 	HEXOBJ objPrev_;
 	HEXOBJ objNextTabstop_;
@@ -171,44 +172,43 @@ struct obj_s
 	LPCWSTR pstrTips_;
 	EXHANDLE pObjJS_;
 	EX_HASHTABLE* hTableJsEvents_;
-	int dwState_;
-	void* dwOwnerData_;
+	INT dwState_;
+	LPVOID dwOwnerData_;
 	HEXCANVAS canvas_obj_;
-	void* dwUserData_;
-	int dwStyleEx_;
+	LPVOID dwUserData_;
+	INT dwStyleEx_;
 	HEXFONT hFont_;
 	EXATOM atomName_;
-	void* hCursor_;
-	int dwStyle_;
+	HCURSOR hCursor_;
+	INT dwStyle_;
 	EX_HASHTABLE* pPropListEntry_;
 	EX_CLASSINFO* pCls_;
 	ClsPROC pfnClsProc_;
-	int id_;
-	int dwTextFormat_;
-	void* hRgbSizebox_;
+	INT id_;
+	INT dwTextFormat_;
 	EXHANDLE objParent_;
 	LPARAM lParam_;
-	int dwAlphaDisable_;
-	int dwAlpha_;
+	INT dwAlphaDisable_;
+	INT dwAlpha_;
 	MsgPROC pfnSubClass_;
-	bool fHUE_;
-	float fBlur_;
-	int nodeid_;
+	FLOAT fHUE_;
+	FLOAT fBlur_;
+	INT nodeid_;
 	size_t extraData_[1]; // 组件附加数据，必须放在末尾
 };
 
 
 struct ti_s
 {
-	int cbSize_;
-	int uFlags_;
+	INT cbSize_;
+	INT uFlags_;
 	HWND hWnd_;
-	void* uId_;
-	int rect_left_;
-	int rect_top_;
-	int rect_right_;
-	int rect_bottom_;
-	int hinst_;
+	LPVOID uId_;
+	INT rect_left_;
+	INT rect_top_;
+	INT rect_right_;
+	INT rect_bottom_;
+	INT hinst_;
 	LPCWSTR lpszText_;
 	LPARAM lParam_;
 };
@@ -221,85 +221,85 @@ struct classtable_s
 
 struct si_s
 {
-	int xyz_;
-	int httype_;
-	int nMin_;
-	int nMax_;
-	int nPage_;
-	int nPos_;
-	int nTrackPos_;
-	int nTrackPosOffset_;
-	int rcRegion_left_;
-	int rcRegion_top_;
-	int rcRegion_right_;
-	int rcRegion_bottom_;
-	int rcArrow1_left_;
-	int rcArrow1_top_;
-	int rcArrow1_right_;
-	int rcArrow1_bottom_;
-	int rcArrow2_left_;
-	int rcArrow2_top_;
-	int rcArrow2_right_;
-	int rcArrow2_bottom_;
-	int rcThumb_left_;
-	int rcThumb_top_;
-	int rcThumb_right_;
-	int rcThumb_bottom_;
-	int wArrows_;
+	INT xyz_;
+	INT httype_;
+	INT nMin_;
+	INT nMax_;
+	INT nPage_;
+	INT nPos_;
+	INT nTrackPos_;
+	INT nTrackPosOffset_;
+	INT rcRegion_left_;
+	INT rcRegion_top_;
+	INT rcRegion_right_;
+	INT rcRegion_bottom_;
+	INT rcArrow1_left_;
+	INT rcArrow1_top_;
+	INT rcArrow1_right_;
+	INT rcArrow1_bottom_;
+	INT rcArrow2_left_;
+	INT rcArrow2_top_;
+	INT rcArrow2_right_;
+	INT rcArrow2_bottom_;
+	INT rcThumb_left_;
+	INT rcThumb_top_;
+	INT rcThumb_right_;
+	INT rcThumb_bottom_;
+	INT wArrows_;
 };
 
-size_t _obj_dispatchnotify(HWND hWnd, obj_s* pObj, HEXOBJ hObj, int nID, int nCode, WPARAM wParam, LPARAM lParam);
-void _obj_register(EXATOM atomClass, INT dwStyle, INT dwStyleEx, INT dwTextFormat, DWORD cbObjExtra, HCURSOR hCursor, ClsPROC pfnClsProc, DWORD dwFlags, int* nError);
+size_t _obj_dispatchnotify(HWND hWnd, obj_s* pObj, HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void _obj_register(EXATOM atomClass, INT dwStyle, INT dwStyleEx, INT dwTextFormat, DWORD cbObjExtra, HCURSOR hCursor, ClsPROC pfnClsProc, DWORD dwFlags, INT* nError);
 void _obj_z_clear(HEXOBJ hObj, obj_s* pObj, EXHANDLE* hParent, obj_base** pParent);
-void _obj_z_set_before_topmost(EXHANDLE objChildFirst, void* pObjChildFirst, EXHANDLE objChildLast, obj_s* pObjChildLast, EXHANDLE hObj, obj_s* pObj, obj_base* pParent);
-void _obj_z_set(HEXOBJ hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, UINT flags, int* nError);
-bool _obj_autosize(obj_s* pObj, HEXOBJ hObj, int* width, int* height);
-size_t _obj_sendmessage(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, int dwReserved);
-bool _obj_postmessage(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, int dwReserved);
-int _obj_wm_nchittest(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _obj_killfocus(HEXOBJ hObj, obj_s* pObj, bool bDispatch);
+void _obj_z_set_before_topmost(EXHANDLE objChildFirst, LPVOID pObjChildFirst, EXHANDLE objChildLast, obj_s* pObjChildLast, EXHANDLE hObj, obj_s* pObj, obj_base* pParent);
+void _obj_z_set(HEXOBJ hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, UINT flags, INT* nError);
+BOOL _obj_autosize(obj_s* pObj, HEXOBJ hObj, INT* width, INT* height);
+size_t _obj_sendmessage(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, INT dwReserved);
+BOOL _obj_postmessage(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, INT dwReserved);
+INT _obj_wm_nchittest(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+void _obj_killfocus(HEXOBJ hObj, obj_s* pObj, BOOL bDispatch);
 void _obj_killfocus_real(obj_s* pObj, HEXOBJ hObj, HEXOBJ objFocus);
 HWND _obj_gethWnd(obj_s* pObj);
-bool _obj_setfocus(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, bool bDispatch);
+BOOL _obj_setfocus(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, BOOL bDispatch);
 void _obj_setfocus_real(HWND hWnd, obj_s* pObj, HEXOBJ hObj, HEXOBJ lstObj);
 size_t _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _obj_setchildrenpostion(obj_s* pObj, int x, int y);
-void _obj_update(obj_s* pObj, bool fUpdateWindow);
-void _obj_updatewindowpostion(obj_s* pObj, void* lpWRC, bool fChild);
-bool _obj_z_compositedcheck(void* prc, EXHANDLE objLast, EXHANDLE objStop, void* lpsrcInsert);
+void _obj_setchildrenpostion(obj_s* pObj, INT x, INT y);
+void _obj_update(obj_s* pObj, BOOL fUpdateWindow);
+void _obj_updatewindowpostion(obj_s* pObj, LPVOID lpWRC, BOOL fChild);
+BOOL _obj_z_compositedcheck(LPVOID prc, EXHANDLE objLast, EXHANDLE objStop, LPVOID lpsrcInsert);
 void _obj_compostied_all(HEXOBJ objEntry);
-bool _obj_makeupinvalidaterect(wnd_s* pWnd, obj_s* pObj, void* prc);
-void _obj_invalidaterect(obj_s* pObj, RECT* lpRect, int* nError);
-void _obj_reset_path(obj_s* pObj, int left, int top, int right, int bottom, int nOffset);
-void* _obj_pOwner(obj_s* pObj);
-void _obj_scroll_updatepostion(HEXOBJ hSB, obj_s* pSB, bool bVScroll, int cLeft, int cTop, int cRight, int cBottom, bool fDispatch);
-void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, int x, int y, int width, int height, int flags, int* nError);
-void _obj_scroll_repostion(HWND hWnd, HEXOBJ hObj, bool fDispatch);
+BOOL _obj_makeupinvalidaterect(wnd_s* pWnd, obj_s* pObj, LPVOID prc);
+void _obj_invalidaterect(obj_s* pObj, RECT* lpRect, INT* nError);
+void _obj_reset_path(obj_s* pObj, INT left, INT top, INT right, INT bottom, INT nOffset);
+LPVOID _obj_pOwner(obj_s* pObj);
+void _obj_scroll_updatepostion(HEXOBJ hSB, obj_s* pSB, BOOL bVScroll, INT cLeft, INT cTop, INT cRight, INT cBottom, BOOL fDispatch);
+void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x, INT y, INT width, INT height, INT flags, INT* nError);
+void _obj_scroll_repostion(HWND hWnd, HEXOBJ hObj, BOOL fDispatch);
 size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _obj_notify_brothers(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, bool bBypassSelf, bool bSameClass);
+void _obj_notify_brothers(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, BOOL bBypassSelf, BOOL bSameClass);
 void _obj_backgroundimage_clear(HWND hWnd, obj_base* pObj);
-void _obj_destroy(HEXOBJ hObj, obj_s* pObj, int* nError);
-HEXOBJ _obj_create_init(HWND hWnd, wnd_s* pWnd, EXATOM atomClass, MsgPROC pfnMsgProc, obj_s** pObj, int* nError);
-void _obj_create_proc(int* nError, bool fScale, HEXTHEME hTheme, obj_s* pObj, int dwStyleEx, EXATOM atomClass, LPCWSTR lpszName, int dwStyle, int x, int y, int width, int height, EXHANDLE hParent, int nID, EXATOM atomName, LPARAM lParam, int dwTextFormat);
+void _obj_destroy(HEXOBJ hObj, obj_s* pObj, INT* nError);
+HEXOBJ _obj_create_init(HWND hWnd, wnd_s* pWnd, EXATOM atomClass, MsgPROC pfnMsgProc, obj_s** pObj, INT* nError);
+void _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, INT dwStyleEx, EXATOM atomClass, LPCWSTR lpszName, INT dwStyle, INT x, INT y, INT width, INT height, EXHANDLE hParent, INT nID, EXATOM atomName, LPARAM lParam, INT dwTextFormat);
 void _obj_create_done(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj);
 void _obj_create_scrollbar(HWND hWnd, wnd_s* pWnd, obj_s* pObj, HEXOBJ hObj, HEXTHEME hTheme);
 void _obj_theme_load_color_font(wnd_s* pWnd, obj_s* pObj, HEXTHEME hTheme);
-void _obj_visable(HWND hWnd, HEXOBJ hObj, obj_s* pObj, bool fVisable);
-void _obj_disable(HWND hWnd, HEXOBJ hObj, obj_s* pObj, bool fDisable);
-EXARGB _obj_getcolor(obj_s* pObj, int nIndex);
-bool _obj_setfont(obj_s* pObj, HEXFONT hFont, bool fredraw);
+void _obj_visable(HWND hWnd, HEXOBJ hObj, obj_s* pObj, BOOL fVisable);
+void _obj_disable(HWND hWnd, HEXOBJ hObj, obj_s* pObj, BOOL fDisable);
+EXARGB _obj_getcolor(obj_s* pObj, INT nIndex);
+BOOL _obj_setfont(obj_s* pObj, HEXFONT hFont, BOOL fredraw);
 void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint);
-HEXOBJ _obj_getobjfromidorname(wnd_s* pWnd, int idorname);
-void CALLBACK _obj_backgroundimage_timer(HWND hWnd, INT uMsg, UINT_PTR idEvent, DWORD dwTime);
-bool _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, void* lpImage, int dwImageLen, int x, int y, int dwRepeat, RECT* lpGrid, int dwFlags, int dwAlpha, int* nError);
-void _obj_backgroundimage_frames(HWND hWnd, obj_s* pObj, bool bResetFrame, bool bPlayFrames, bool fUpdate, int* nError);
-void _obj_setradius(HEXOBJ hObj, obj_s* pObj, float topleft, float topright, float bottomright, float bottomleft, bool fUpdate, int* nError);
-void _obj_tooltips_popup(wnd_s* pWnd, LPCWSTR lpTitle, LPCWSTR lpText, int x, int y, int dwTime, int nIcon, bool fShow);
+HEXOBJ _obj_getobjfromidorname(wnd_s* pWnd, INT idorname);
+void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
+BOOL _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, LPVOID lpImage, INT dwImageLen, INT x, INT y, INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError);
+void _obj_backgroundimage_frames(HWND hWnd, obj_s* pObj, BOOL bResetFrame, BOOL bPlayFrames, BOOL fUpdate, INT* nError);
+void _obj_setradius(HEXOBJ hObj, obj_s* pObj, FLOAT topleft, FLOAT topright, FLOAT bottomright, FLOAT bottomleft, BOOL fUpdate, INT* nError);
+void _obj_tooltips_popup(wnd_s* pWnd, LPCWSTR lpTitle, LPCWSTR lpText, INT x, INT y, INT dwTime, INT nIcon, BOOL fShow);
 void _obj_setuistate(obj_s* pObj, DWORD dwState, BOOL fRemove, RECT* lprcUpdate, BOOL fRedraw, INT* nError);
-void _sb_show(HEXOBJ hSB, bool fShow);
-size_t _obj_setExtraLong(obj_s* pObj, int nIndex, size_t dwNewLong);
-size_t _obj_getExtraLong(obj_s* pObj, int nIndex);
-void* _obj_getExtraPtr(obj_s* pObj, int nIndex);
-bool _obj_queryExtra(obj_s* pObj, int nIndex, size_t flags);
-void _obj_addExtra(obj_s* pObj, int nIndex, size_t flags);
-void _obj_delExtra(obj_s* pObj, int nIndex, size_t flags);
+void _sb_show(HEXOBJ hSB, BOOL fShow);
+size_t _obj_setExtraLong(obj_s* pObj, INT nIndex, size_t dwNewLong);
+size_t _obj_getExtraLong(obj_s* pObj, INT nIndex);
+LPVOID _obj_getExtraPtr(obj_s* pObj, INT nIndex);
+BOOL _obj_queryExtra(obj_s* pObj, INT nIndex, size_t flags);
+void _obj_addExtra(obj_s* pObj, INT nIndex, size_t flags);
+void _obj_delExtra(obj_s* pObj, INT nIndex, size_t flags);

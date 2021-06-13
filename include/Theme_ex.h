@@ -5,17 +5,17 @@
 
 struct colors_s
 {
-	int BACKGROUND;
-	int BORDER;
-	int TEXT_NORMAL;
-	int TEXT_HOVER;
-	int TEXT_DOWN;
-	int TEXT_FOCUS;
-	int TEXT_CHECKED;
-	int TEXT_SELECT;
-	int TEXT_HOT;
-	int TEXT_VISTED;
-	int TEXT_SHADOW;
+	INT BACKGROUND;
+	INT BORDER;
+	INT TEXT_NORMAL;
+	INT TEXT_HOVER;
+	INT TEXT_DOWN;
+	INT TEXT_FOCUS;
+	INT TEXT_CHECKED;
+	INT TEXT_SELECT;
+	INT TEXT_HOT;
+	INT TEXT_VISTED;
+	INT TEXT_SHADOW;
 };
 
 struct EX_THEME
@@ -27,7 +27,7 @@ struct EX_THEME
 	LPVOID aryColors;
 };
 
-bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen, std::vector<int>* atomFiles, std::vector<void*>* lpFiles, std::vector<UCHAR>* dwFileProps);
-int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<size_t>* artItems2);
-bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, std::vector<int> atomFiles, std::vector<void*> lpFiles, std::vector<UCHAR> dwFileProps, void* aryCorlors);
-void _theme_freeclass(void* pClass);
+BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen, std::vector<INT>* atomFiles, std::vector<LPVOID>* lpFiles, std::vector<UCHAR>* dwFileProps);
+INT _theme_fillitems(LPVOID lpContent, std::vector<INT>* artItems1, std::vector<size_t>* artItems2);
+BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, std::vector<INT> atomFiles, std::vector<LPVOID> lpFiles, std::vector<UCHAR> dwFileProps, LPVOID aryCorlors);
+void _theme_freeclass(LPVOID pClass);

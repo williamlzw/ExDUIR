@@ -23,9 +23,9 @@ void _static_paint(HEXOBJ hObj, obj_s* pObj)
 
 LRESULT CALLBACK _static_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (uMsg == WM_PAINT)
 		{
@@ -41,9 +41,9 @@ LRESULT CALLBACK _static_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
 LRESULT CALLBACK _syslink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (uMsg == WM_NCHITTEST)
 		{
@@ -59,7 +59,7 @@ LRESULT CALLBACK _syslink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 		}
 		else if (uMsg == WM_CREATE)
 		{
-			int nError = 0;
+			INT nError = 0;
 			_struct_createfromaddr(pObj, offsetof(obj_s, dwOwnerData_), sizeof(sli_s), &nError);
 		}
 		else if (uMsg == WM_DESTROY)
@@ -85,15 +85,15 @@ LRESULT CALLBACK _syslink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 
 size_t _syslink_hittest(obj_s* pObj, WPARAM wParam, LPARAM lParam)
 {
-	int x = LOWORD(lParam);
-	int y = HIWORD(lParam);
+	INT x = LOWORD(lParam);
+	INT y = HIWORD(lParam);
 	sli_s* pOwner = (sli_s*)_obj_pOwner(pObj);
-	int nBlock = pOwner->nCount_;
-	void* lpBlocks = pOwner->lpBlocks_;
-	void* lpLastBlock = pOwner->lpHitBlock_;
+	INT nBlock = pOwner->nCount_;
+	LPVOID lpBlocks = pOwner->lpBlocks_;
+	LPVOID lpLastBlock = pOwner->lpHitBlock_;
 	if (nBlock > 0 && lpBlocks != nullptr)
 	{
-		for (int i = 0; i < nBlock; i++)
+		for (INT i = 0; i < nBlock; i++)
 		{
 			size_t lpCurBlock = (size_t)lpBlocks + i * sizeof(slb_s);
 			POINT point = { x,y };
@@ -106,7 +106,7 @@ size_t _syslink_hittest(obj_s* pObj, WPARAM wParam, LPARAM lParam)
 					if ((((slb_s*)lpCurBlock)->dwFlags_ & slbf_type_link) == slbf_type_link)
 					{
 						((slb_s*)lpCurBlock)->dwFlags_ = ((slb_s*)lpCurBlock)->dwFlags_ | slbf_hover;
-						int nError = 0;
+						INT nError = 0;
 						_obj_invalidaterect(pObj, NULL, &nError);
 					}
 				}
@@ -128,7 +128,7 @@ void _syslink_leavecheck(obj_s* pObj, sli_s* pOwner)
 			if ((lpLastBlock->dwFlags_ & slbf_hover) == slbf_hover)
 			{
 				lpLastBlock->dwFlags_ = lpLastBlock->dwFlags_ - (lpLastBlock->dwFlags_ & slbf_hover);
-				int nError = 0;
+				INT nError = 0;
 				_obj_invalidaterect(pObj, (RECT*)((size_t)lpLastBlock + offsetof(slb_s, rc_left_)), &nError);
 			}
 		}
@@ -172,17 +172,17 @@ void _syslink_paint(HEXOBJ hObj, obj_s* pObj)
 	if (Ex_ObjBeginPaint(hObj, ps))
 	{
 		sli_s* pOwner = (sli_s*)_obj_pOwner(pObj);
-		int nCount = pOwner->nCount_;
-		void* lpBlocks = pOwner->lpBlocks_;
+		INT nCount = pOwner->nCount_;
+		LPVOID lpBlocks = pOwner->lpBlocks_;
 		HEXCANVAS hCanvas = ps->hCanvas;
 		HEXTHEME hTheme = ps->hTheme;
 		if (nCount > 0)
 		{
-			for (int i = 0; i < nCount; i++)
+			for (INT i = 0; i < nCount; i++)
 			{
 				size_t index = i * sizeof(slb_s);
 				HEXFONT hFont = pObj->hFont_;
-				int crText = _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL);
+				INT crText = _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL);
 				if (__query(lpBlocks,index+offsetof(slb_s,dwFlags_), slbf_type_link))
 				{
 					if (__query(lpBlocks, index + offsetof(slb_s, dwFlags_), slbf_hover))
@@ -207,27 +207,27 @@ void _syslink_freeblocks(obj_s* pObj)
 	sli_s* pOwner = (sli_s*)_obj_pOwner(pObj);
 	if (pOwner != 0)
 	{
-		int nBlocks = pOwner->nCount_;
-		void* lpBlocks = pOwner->lpBlocks_;
+		INT nBlocks = pOwner->nCount_;
+		LPVOID lpBlocks = pOwner->lpBlocks_;
 		if (lpBlocks != nullptr && nBlocks > 0)
 		{
-			for (int i = 0; i < nBlocks; i++)
+			for (INT i = 0; i < nBlocks; i++)
 			{
 				size_t index = i * sizeof(slb_s);
 				LPCWSTR lpwzText=((slb_s*)((size_t)lpBlocks + index))->szText_;
 				if (lpwzText != 0)
 				{
-					Ex_MemFree((void*)lpwzText);
+					Ex_MemFree((LPVOID)lpwzText);
 				}
 				LPCWSTR lpwzUrl = ((slb_s*)((size_t)lpBlocks + index))->szUrl_;
 				if (lpwzUrl != 0)
 				{
-					Ex_MemFree((void*)lpwzUrl);
+					Ex_MemFree((LPVOID)lpwzUrl);
 				}
 				LPCWSTR lpwzToolTips = ((slb_s*)((size_t)lpBlocks + index))->szToolTips_;
 				if (lpwzToolTips != 0)
 				{
-					Ex_MemFree((void*)lpwzToolTips);
+					Ex_MemFree((LPVOID)lpwzToolTips);
 				}
 				_font_destroy(((slb_s*)((size_t)lpBlocks + index))->hFont_);
 			}

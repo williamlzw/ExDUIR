@@ -4,17 +4,17 @@ HRESULT DropTarget::QueryInterface(
 	/* [in] */ REFIID riid,
 	/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR* __RPC_FAR* ppvObject)
 {
-	return E_NOINTERFACE;
+	return S_OK;
 };
 
 ULONG DropTarget::AddRef(void)
 {
-	return E_NOINTERFACE;
+	return S_OK;
 };
 
 ULONG DropTarget::Release(void)
 {
-	return E_NOINTERFACE;
+	return S_OK;
 };
 
 DropTarget::DropTarget(wnd_s* pWnd)
@@ -38,11 +38,12 @@ HRESULT DropTarget::DragOver(
 {
 	_wnd_wm_nchittest(m_pWnd, m_pWnd->hWnd_, MAKELONG(pt.x, pt.y));
 	obj_s* phit = nullptr;
-	int nError = 0;
-	if (_handle_validate(m_pWnd->objHittest_, HT_OBJECT, (void**)&phit, &nError))
+	INT nError = 0;
+	if (_handle_validate(m_pWnd->objHittest_, HT_OBJECT, (LPVOID*)&phit, &nError))
 	{
 		if (((phit->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
 		{
+			
 			return S_OK;
 		}
 	}
@@ -65,28 +66,40 @@ HRESULT DropTarget::Drop(
 	_wnd_wm_nchittest(m_pWnd, hWnd, MAKELONG(pt.x, pt.y));
 	HEXOBJ hObj = m_pWnd->objHittest_;
 	obj_s* pObj = nullptr;
-	int nError = 0;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	INT nError = 0;
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (((pObj->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
 		{
-			FORMATETC cFmt;
-			cFmt.cfFormat = 15;
-			cFmt.ptd = 0;
-			cFmt.dwAspect = 1;
-			cFmt.lindex = -1;
-			cFmt.tymed = 1;
-			if (((IDataObject*)pDataObj)->QueryGetData(&cFmt) == 0)
+			EX_DROPINFO dropinfo;
+			dropinfo.pDataObject = pDataObj;
+			dropinfo.grfKeyState = grfKeyState;
+			dropinfo.x = pt.x;
+			dropinfo.y = pt.y;
+			DWORD retEffect = Ex_ObjSendMessage(hObj, WM_EX_DROP, 0, (LPARAM)&dropinfo);
+			*pdwEffect = retEffect;
+			if ((pObj->dwStyleEx_ & EOS_EX_ACCEPTFILES) == EOS_EX_ACCEPTFILES)
 			{
-				STGMEDIUM stgMedium = { 0 };
-				if (((IDataObject*)pDataObj)->GetData(&cFmt, &stgMedium) == 0)
+				FORMATETC cFmt;
+				cFmt.cfFormat = CF_HDROP;
+				cFmt.ptd = 0;
+				cFmt.dwAspect = DVASPECT_CONTENT;
+				cFmt.lindex = -1;
+				cFmt.tymed = TYMED_HGLOBAL;
+				if (pDataObj->QueryGetData(&cFmt) == 0)
 				{
-					void* hDrop = stgMedium.hBitmap;
-					_obj_baseproc(hWnd, hObj, pObj, WM_DROPFILES, (size_t)hDrop, 0);
-					if (stgMedium.hMetaFilePict == 0)
+					STGMEDIUM stgMedium = { 0 };
+					if (pDataObj->GetData(&cFmt, &stgMedium) == 0)
 					{
-						GlobalFree(hDrop);
+						LPVOID hDrop = stgMedium.hBitmap;
+						retEffect = _obj_baseproc(hWnd, hObj, pObj, WM_DROPFILES, (size_t)hDrop, 0);
+						*pdwEffect = retEffect;
+						if (stgMedium.hMetaFilePict == 0)
+						{
+							GlobalFree(hDrop);
+						}
 					}
+					ReleaseStgMedium(&stgMedium);
 				}
 			}
 		}

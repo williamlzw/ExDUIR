@@ -1,6 +1,6 @@
 #include "Class_Win10Loading_ex.h"
 
-float Round_Coordinates[2][720];/*圆上坐标*/
+FLOAT Round_Coordinates[2][720];/*圆上坐标*/
 
 void _Win10_Loading_register() {
 	WCHAR wzCls[] = L"Win10Loading";
@@ -16,26 +16,26 @@ LRESULT CALLBACK _Win10_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ELDS_LINE) != ELDS_LINE)
 		{
 			RECT rc = { 0 };
-			int r = NULL;/*半径*/
+			INT r = NULL;/*半径*/
 			/*获取用户矩形*/
 			Ex_ObjGetClientRect(hObj, &rc);
 
 			if ((rc.right - rc.left) < (rc.bottom - rc.top))
 			{
-				r = (int)(rc.right - rc.left) / 3;
+				r = (INT)(rc.right - rc.left) / 3;
 			}
 			else
 			{
-				r = (int)(rc.bottom - rc.top) / 3;
+				r = (INT)(rc.bottom - rc.top) / 3;
 			}
 
-			float a = 90;/*角度*/
-			const double pi = 3.1415926f;
-			for (int i = 0; i < 720; i++)
+			FLOAT a = 90;/*角度*/
+			const DOUBLE pi = 3.1415926f;
+			for (INT i = 0; i < 720; i++)
 			{
 				a = a + 1;
-				Round_Coordinates[0][i] = (float)(r * cos(a * pi / 180));
-				Round_Coordinates[1][i] = (float)(r * sin(a * pi / 180));
+				Round_Coordinates[0][i] = (FLOAT)(r * cos(a * pi / 180));
+				Round_Coordinates[1][i] = (FLOAT)(r * sin(a * pi / 180));
 			}
 		}
 		Ex_ObjSetTimer(hObj, 1);
@@ -64,7 +64,7 @@ LRESULT CALLBACK _Win10_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-int _Win10_Loading_paint(HEXOBJ hObj)
+INT _Win10_Loading_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量
@@ -84,61 +84,61 @@ int _Win10_Loading_paint(HEXOBJ hObj)
 		HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(ThemeColor, 255));
 		if ((ps.dwStyle & ELDS_LINE) == ELDS_LINE)
 		{
-			static	float i = NULL;
-			float n = NULL;
-			float a;
+			static	FLOAT i = NULL;
+			FLOAT n = NULL;
+			FLOAT a;
 
-			i = (float)(i + 0.005);
+			i = (FLOAT)(i + 0.005);
 			if (i > 1 + 0.3)
 			{
 				i = 0;
 			}
 			a = i;
 
-			for (int j = 0; j < 6; j++)
+			for (INT j = 0; j < 6; j++)
 			{
-				n = (float)(4 * (i - 0.5) * (i - 0.5) * (i - 0.5) + 0.5 + i) / 2;
-				i = (float)(i - 0.045);
-				_canvas_fillellipse(ps.hCanvas, hBrush, (float)(ps.width * n), (float)(ps.height * 3 / 5), (float)Ex_Scale(3), (float)Ex_Scale(3));
+				n = (FLOAT)(4 * (i - 0.5) * (i - 0.5) * (i - 0.5) + 0.5 + i) / 2;
+				i = (FLOAT)(i - 0.045);
+				_canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)(ps.width * n), (FLOAT)(ps.height * 3 / 5), (FLOAT)Ex_Scale(3), (FLOAT)Ex_Scale(3));
 			}
 			i = a;
 		}
 		else
 		{
-			static	float i = NULL;
-			float n = NULL;
-			float a;
+			static	FLOAT i = NULL;
+			FLOAT n = NULL;
+			FLOAT a;
 
-			i = (float)(i + 0.01);
+			i = (FLOAT)(i + 0.01);
 			if (i > 3.2)
 			{
 				i = 0;
 			}
 			a = i;
 
-			for (int j = 1; j <= 5; j++)
+			for (INT j = 1; j <= 5; j++)
 			{
 				if (i <= 1)
 				{
-					n = (float)(4 * (i - 0.5) * (i - 0.5) * (i - 0.5) + 0.5 + i) / 2;
+					n = (FLOAT)(4 * (i - 0.5) * (i - 0.5) * (i - 0.5) + 0.5 + i) / 2;
 				}
 
 				if (i > 1)
 				{
 					i = i - 1;
-					n = (float)((4 * (i - 0.5) * (i - 0.5) * (i - 0.5) + 0.5 + i) / 2 + 1);
+					n = (FLOAT)((4 * (i - 0.5) * (i - 0.5) * (i - 0.5) + 0.5 + i) / 2 + 1);
 					i = i + 1;
 				}
-				i = (float)(i - 0.1);
+				i = (FLOAT)(i - 0.1);
 
-				if ((int)(360 * n) > 0 && (int)(360 * n) < 720)
+				if ((INT)(360 * n) > 0 && (INT)(360 * n) < 720)
 				{
 					_canvas_fillellipse(ps.hCanvas,
 						hBrush,
-						(float)((ps.width - Round_Coordinates[0][(int)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[0][(int)(360 * n)])),
-						(float)((ps.height - Round_Coordinates[1][(int)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[1][(int)(360 * n)])),
-						(float)Ex_Scale(3),
-						(float)Ex_Scale(3));
+						(FLOAT)((ps.width - Round_Coordinates[0][(INT)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[0][(INT)(360 * n)])),
+						(FLOAT)((ps.height - Round_Coordinates[1][(INT)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[1][(INT)(360 * n)])),
+						(FLOAT)Ex_Scale(3),
+						(FLOAT)Ex_Scale(3));
 				}
 			}
 			i = a;
@@ -150,10 +150,10 @@ int _Win10_Loading_paint(HEXOBJ hObj)
 			(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 			-1,
 			DT_BOTTOM | DT_VCENTER | DT_CENTER | DT_SINGLELINE,
-			(float)ps.t_left,
-			(float)(ps.height * 3 / 5),
-			(float)ps.t_right,
-			(float)ps.t_bottom);
+			(FLOAT)ps.t_left,
+			(FLOAT)(ps.height * 3 / 5),
+			(FLOAT)ps.t_right,
+			(FLOAT)ps.t_bottom);
 		_brush_destroy(hBrush);
 
 		Ex_ObjEndPaint(hObj, &ps);

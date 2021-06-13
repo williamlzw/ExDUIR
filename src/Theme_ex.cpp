@@ -1,62 +1,62 @@
 ﻿#include "Theme_ex.h"
 
-bool _theme_unpack(void* lpData, size_t dwDataLen, void* lpKey, size_t dwKeyLen, std::vector<int>* atomFiles, std::vector<void*>* lpFiles, std::vector<UCHAR>* dwFileProps)
+BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen, std::vector<INT>* atomFiles, std::vector<LPVOID>* lpFiles, std::vector<UCHAR>* dwFileProps)
 {
-	void* retPtr = nullptr;
+	LPVOID retPtr = nullptr;
 	size_t retLen = 0;
-	bool ret = false;
+	BOOL ret = FALSE;
 	_bin_uncompress(lpData, dwDataLen, 0, 0, &retPtr, &retLen);
 
 	if (retLen > 0)
 	{
 		if (__get_unsignedchar(retPtr, 0) == EPDF_THEME)
 		{
-			int count = __get_int(retPtr, 1);
+			INT count = __get_int(retPtr, 1);
 			if (count > 0)
 			{
 				(*atomFiles).resize(count);
 				(*lpFiles).resize(count);
 				(*dwFileProps).resize(count);
-				retPtr = (void*)((size_t)retPtr + 5);
-				for (int i = 0; i < count; i++)
+				retPtr = (LPVOID)((size_t)retPtr + 5);
+				for (INT i = 0; i < count; i++)
 				{
 					UCHAR prop = __get_unsignedchar(retPtr, 4);
-					int len = __get_int(retPtr, 5) + 4;
+					INT len = __get_int(retPtr, 5) + 4;
 					if (len > 4)
 					{
 
-						void* tmp = Ex_MemAlloc(len + 2);
+						LPVOID tmp = Ex_MemAlloc(len + 2);
 						if (tmp != 0)
 						{
 
 							(*atomFiles)[i] = __get_int(retPtr, 0);
 							(*lpFiles)[i] = tmp;
 							(*dwFileProps)[i] = prop;
-							RtlMoveMemory(tmp, (void*)((size_t)retPtr + 5), len);
+							RtlMoveMemory(tmp, (LPVOID)((size_t)retPtr + 5), len);
 						}
 					}
-					retPtr = (void*)((size_t)retPtr + 5 + len);
+					retPtr = (LPVOID)((size_t)retPtr + 5 + len);
 				}
-				ret = true;
+				ret = TRUE;
 			}
 		}
 	}
 	return ret;
 }
 
-int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<size_t>* artItems2)
+INT _theme_fillitems(LPVOID lpContent, std::vector<INT>* artItems1, std::vector<size_t>* artItems2)
 {
-	auto iOffset1 = wcschr((wchar_t*)lpContent, '\n');
-	int nCount = 0;
+	auto iOffset1 = wcschr((WCHAR*)lpContent, '\n');
+	INT nCount = 0;
 	while (iOffset1 != 0)
 	{
-		iOffset1 = (wchar_t*)((size_t)iOffset1 + 2);
+		iOffset1 = (WCHAR*)((size_t)iOffset1 + 2);
 		auto iOffset2 = wcschr(iOffset1, '\r');
 		if (iOffset2 != 0)
 		{
 			__set_wchar(iOffset2, 0, 0);
 		}
-		wchar_t c = __get_wchar(iOffset1, 0);
+		WCHAR c = __get_wchar(iOffset1, 0);
 		if (c != ';')//;
 		{
 			auto iSplit = wcschr(iOffset1, '=');//=
@@ -65,7 +65,7 @@ int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<s
 				__set_wchar(iSplit, 0, 0);
 				auto dwLen = (size_t)iSplit - (size_t)iOffset1;
 				(*artItems1)[nCount] = Crc32_Addr(iOffset1, dwLen);
-				(*artItems2)[nCount] = (size_t)(wchar_t*)((size_t)iSplit + 2);
+				(*artItems2)[nCount] = (size_t)(WCHAR*)((size_t)iSplit + 2);
 				nCount = nCount + 1;
 			}
 		}
@@ -74,18 +74,18 @@ int _theme_fillitems(void* lpContent, std::vector<int>* artItems1, std::vector<s
 			break;
 		}
 		else {
-			iOffset1 = wcschr((wchar_t*)((size_t)iOffset2 + 2), '\n');
+			iOffset1 = wcschr((WCHAR*)((size_t)iOffset2 + 2), '\n');
 		}
 	}
 	return nCount;
 }
 
-bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, std::vector<int> atomFiles, std::vector<void*> lpFiles, std::vector<UCHAR> dwFileProps, void* aryCorlors)
+BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, std::vector<INT> atomFiles, std::vector<LPVOID> lpFiles, std::vector<UCHAR> dwFileProps, LPVOID aryCorlors)
 {
-	std::vector<int> aryAtomKey;
+	std::vector<INT> aryAtomKey;
 	std::vector<size_t> arylpValue;
-	bool ret = false;
-	for (int i = 0; i < atomFiles.size(); i++)
+	BOOL ret = FALSE;
+	for (INT i = 0; i < atomFiles.size(); i++)
 	{
 		HashTable_Set(pTableFiles, atomFiles[i], (size_t)lpFiles[i]);
 	}
@@ -93,18 +93,18 @@ bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 	size_t lpFile = 0;
 	if (HashTable_Get(pTableFiles, atomINI, &lpFile))
 	{
-		void* retPtr = nullptr;
+		LPVOID retPtr = nullptr;
 		size_t retLen = 0;
-		ANY2W((void*)(lpFile + 4), __get_int((void*)lpFile, 0), &retPtr, &retLen);
+		ANY2W((LPVOID)(lpFile + 4), __get_int((LPVOID)lpFile, 0), &retPtr, &retLen);
 		CharLowerW((LPWSTR)retPtr);
 		aryAtomKey.resize(32);
 		arylpValue.resize(32);
-		auto iClassStart = wcschr((wchar_t*)retPtr, '[');
-		void* lpValue = nullptr;
-		int Value;
+		auto iClassStart = wcschr((WCHAR*)retPtr, '[');
+		LPVOID lpValue = nullptr;
+		INT Value;
 		while (iClassStart != 0)
 		{
-			iClassStart = (wchar_t*)((size_t)iClassStart + 2);
+			iClassStart = (WCHAR*)((size_t)iClassStart + 2);
 			auto iClassEnd = wcschr(iClassStart, ']');
 			if (iClassEnd == 0)
 			{
@@ -112,7 +112,7 @@ bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 			}
 			else {
 				__set_wchar(iClassEnd, 0, 0);
-				auto iContentStart = (wchar_t*)((size_t)iClassEnd + 2);
+				auto iContentStart = (WCHAR*)((size_t)iClassEnd + 2);
 				auto iContentEnd = wcschr(iContentStart, '[');
 				if (iContentEnd != 0)
 				{
@@ -122,16 +122,16 @@ bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 				if (dwLen > 0)
 				{
 					EXATOM atomClass = Crc32_Addr(iClassStart, dwLen);
-					int nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
+					INT nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
 					if (nCount > 0)
 					{
 						if (atomClass == ATOM_COLOR)
 						{
-							for (int i = 0; i < nCount; i++)
+							for (INT i = 0; i < nCount; i++)
 							{
-								if (_fmt_color((void*)arylpValue[i], &Value))
+								if (_fmt_color((LPVOID)arylpValue[i], &Value))
 								{
-									for (int ii = 0; ii < g_Li.aryColorsAtom.size(); ii++)
+									for (INT ii = 0; ii < g_Li.aryColorsAtom.size(); ii++)
 									{
 										if (g_Li.aryColorsAtom[ii] == aryAtomKey[i])
 										{
@@ -151,17 +151,17 @@ bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 								{
 									pClass->tableProps_ = pTableProp;
 									HashTable_Set(pTableClass, atomClass, (size_t)pClass);
-									for (int i = 0; i < nCount; i++)
+									for (INT i = 0; i < nCount; i++)
 									{
-										auto wchar = __get_wchar((void*)arylpValue[i], 0);
+										auto wchar = __get_wchar((LPVOID)arylpValue[i], 0);
 										if (wchar == 34)//"
 										{
 											arylpValue[i] = arylpValue[i] + 2;
 											dwLen = (lstrlenW((LPCWSTR)arylpValue[i]) - 1) * 2;
 											if (aryAtomKey[i] == ATOM_BACKGROUND_IMAGE)
 											{
-												int atomProp = Crc32_Addr((void*)arylpValue[i], dwLen);
-												for (int ii = 0; ii < atomFiles.size(); ii++)
+												INT atomProp = Crc32_Addr((LPVOID)arylpValue[i], dwLen);
+												for (INT ii = 0; ii < atomFiles.size(); ii++)
 												{
 													if (atomProp == atomFiles[ii])
 													{
@@ -170,7 +170,7 @@ bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 															_img_createfrompngbits(lpFiles[ii],&pClass->hImage_);
 														}
 														else {
-															 _img_createfrommemory((void*)((size_t)lpFiles[ii] + 4), __get_int(lpFiles[ii], 0), &pClass->hImage_);
+															 _img_createfrommemory((LPVOID)((size_t)lpFiles[ii] + 4), __get_int(lpFiles[ii], 0), &pClass->hImage_);
 														}
 														break;
 													}
@@ -178,22 +178,22 @@ bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 												continue;
 											}
 											else {
-												void* lpValueaa = Ex_MemAlloc(dwLen + 2);
-												RtlMoveMemory(lpValueaa, (void*)arylpValue[i], dwLen);
+												LPVOID lpValueaa = Ex_MemAlloc(dwLen + 2);
+												RtlMoveMemory(lpValueaa, (LPVOID)arylpValue[i], dwLen);
 
 												HashTable_Set(pTableProp, aryAtomKey[i], (size_t)lpValueaa);
 											}
 										}
 										else {
-											EXATOM atomProp = _fmt_getatom((void*)arylpValue[i], &lpValue);
-											void* lpValuea = nullptr;
+											EXATOM atomProp = _fmt_getatom((LPVOID)arylpValue[i], &lpValue);
+											LPVOID lpValuea = nullptr;
 											if (atomProp == ATOM_RGB || atomProp == ATOM_RGBA)
 											{
 												lpValuea = Ex_MemAlloc(4);
-												_fmt_color((void*)arylpValue[i], lpValuea);
+												_fmt_color((LPVOID)arylpValue[i], lpValuea);
 											}
 											else {
-												_fmt_intary_ex((void*)arylpValue[i], &lpValuea, 0, true);
+												_fmt_intary_ex((LPVOID)arylpValue[i], &lpValuea, 0, TRUE);
 											}
 											HashTable_Set(pTableProp, (size_t)aryAtomKey[i], (size_t)lpValuea);
 										}
@@ -206,12 +206,12 @@ bool _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 				iClassStart = iContentEnd;
 			}
 		}
-		ret = true;
+		ret = TRUE;
 	}
 	return ret;
 }
 
-void _theme_freeclass(void* pClass)
+void _theme_freeclass(LPVOID pClass)
 {
 	if (pClass != 0)
 	{
@@ -224,9 +224,9 @@ void _theme_freeclass(void* pClass)
 HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen, BOOL bDefault)
 {
 	if (lpData == 0 || dwDataLen == 0) return 0;
-	int crc = Crc32_Addr(lpData, dwDataLen);
+	INT crc = Crc32_Addr(lpData, dwDataLen);
 	if (crc == 0) return 0;
-	for (int i = 0; i < g_Li.aryThemes.size(); i++)
+	for (INT i = 0; i < g_Li.aryThemes.size(); i++)
 	{
 		if (!IsBadReadPtr(g_Li.aryThemes[i], sizeof(EX_THEME)))
 		{
@@ -243,9 +243,9 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 	}
 	HEXTHEME hTheme = (HEXTHEME)Ex_MemAlloc(sizeof(EX_THEME));
 
-	int nError = 0;
-	std::vector<int> atomFiles;
-	std::vector<void*> lpFiles;
+	INT nError = 0;
+	std::vector<INT> atomFiles;
+	std::vector<LPVOID> lpFiles;
 	std::vector<UCHAR> dwFileProps;
 
 	if (hTheme == 0)
@@ -262,10 +262,10 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 				EX_HASHTABLE* pTableClass = HashTable_Create(27, &_theme_freeclass);
 				if (pTableClass != 0)
 				{
-					void* aryColors = Ex_MemAlloc(sizeof(colors_s));
+					LPVOID aryColors = Ex_MemAlloc(sizeof(colors_s));
 					if (g_Li.hThemeDefault != 0)
 					{
-						RtlMoveMemory(aryColors, (void*)__get(g_Li.hThemeDefault, offsetof(EX_THEME, aryColors)), sizeof(colors_s));
+						RtlMoveMemory(aryColors, (LPVOID)__get(g_Li.hThemeDefault, offsetof(EX_THEME, aryColors)), sizeof(colors_s));
 					}
 					if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors))
 					{
@@ -295,14 +295,12 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 
 HEXTHEME Ex_ThemeLoadFromFile(LPCWSTR lptszFile, LPVOID lpKey, size_t dwKeyLen, BOOL bDefault)
 {
-	int dwLen = lstrlenW(lptszFile);
+	INT dwLen = lstrlenW(lptszFile);
 	HEXTHEME ret = nullptr;
 	if (dwLen > 0)
 	{
-		std::vector<char> data;
-		std::wstring wstr;
-		wstr += lptszFile;
-		Ex_ReadFile(wstr.c_str(), &data);
+		std::vector<CHAR> data;
+		Ex_ReadFile(lptszFile, &data);
 		ret = Ex_ThemeLoadFromMemory(data.data(), data.size(), lpKey, dwKeyLen, bDefault);
 	}
 	return ret;
@@ -334,15 +332,15 @@ BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FL
 						{
 							return FALSE;
 						}
-						void* pFlags = nullptr;
-						int dwFlags = 0;
+						LPVOID pFlags = nullptr;
+						INT dwFlags = 0;
 						HashTable_Get(pProp, atomBackgroundFlags, (size_t*)&pFlags);
 						if (pFlags != 0)
 						{
 							dwFlags = __get_int(pFlags, 0);
 						}
-						void* pPosition = nullptr;
-						int x = 0, y = 0;
+						LPVOID pPosition = nullptr;
+						INT x = 0, y = 0;
 						HashTable_Get(pProp, atomBackgroundPositon, (size_t*)&pPosition);
 						if (pPosition != 0)
 						{
@@ -357,14 +355,14 @@ BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FL
 								dwFlags = dwFlags | BIF_POSITION_Y_PERCENT;
 							}
 						}
-						void* pRepeat = nullptr;
-						int dwRepeat = 0;
+						LPVOID pRepeat = nullptr;
+						INT dwRepeat = 0;
 						HashTable_Get(pProp, atomBackgroundRepeat, (size_t*)&pRepeat);
 						if (pRepeat != 0)
 						{
 							dwRepeat = __get_int(pRepeat, 0);
 						}
-						void* pGird = nullptr;
+						LPVOID pGird = nullptr;
 						HashTable_Get(pProp, atomBackgroundGrid, (size_t*)&pGird);
 						RECTF rect = { dstLeft, dstTop, dstRight, dstBottom };
 						ret = _canvas_drawimagefrombkgimg_ex(hCanvas, hImg, x, y, dwRepeat, pGird, dwFlags, dwAlpha, pSrcRect, &rect);
@@ -414,7 +412,7 @@ EXARGB Ex_ThemeGetColor(HEXTHEME hTheme, INT nIndex)
 	{
 		if (nIndex > -1 && nIndex < 11)
 		{
-			void* pColors = ((EX_THEME*)hTheme)->aryColors;
+			LPVOID pColors = ((EX_THEME*)hTheme)->aryColors;
 			ret = __get_int(pColors, (nIndex - 1) * 4);
 		}
 	}
@@ -432,7 +430,7 @@ BOOL Ex_ThemeFree(HEXTHEME hTheme)
 			ret = TRUE;
 			if (i == 1)
 			{
-				for (int ii = 0; ii < g_Li.aryThemes.size(); ii++)
+				for (INT ii = 0; ii < g_Li.aryThemes.size(); ii++)
 				{
 					if (g_Li.aryThemes[ii] == hTheme)
 					{

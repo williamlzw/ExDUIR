@@ -49,22 +49,22 @@ LRESULT CALLBACK _RadioButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	case WM_MOUSEHOVER:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
 		break;
 	}
 	case  WM_MOUSELEAVE:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
 		break;
 	}
 	case WM_LBUTTONDOWN:
 	{
-		Ex_ObjSetUIState(hObj, STATE_DOWN, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
 		break;
 	}
 	case WM_LBUTTONUP:
 	{
-		Ex_ObjSetUIState(hObj, STATE_DOWN, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
 		break;
 	}
 	case EOL_EX_PROPS:
@@ -80,10 +80,10 @@ LRESULT CALLBACK _RadioButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	default:
 		break;
 	}
-	return(Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam, 0));
+	return(Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam));
 }
 
-int _RadioButtonEx_paint(HEXOBJ hObj)
+INT _RadioButtonEx_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量
@@ -112,9 +112,9 @@ int _RadioButtonEx_paint(HEXOBJ hObj)
 			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 4));
 		}
 		/* 计算文本尺寸 */
-		float nTextWidth = NULL;
-		float nTextHeight = NULL;
-		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (float)ps.width, (float)ps.height, &nTextWidth, &nTextHeight);
+		FLOAT nTextWidth = NULL;
+		FLOAT nTextHeight = NULL;
+		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.width, (FLOAT)ps.height, &nTextWidth, &nTextHeight);
 
 
 		/* 定义单选框圆角矩形 */
@@ -123,7 +123,7 @@ int _RadioButtonEx_paint(HEXOBJ hObj)
 		rcBlock.right = rcBlock.left + (long)nTextHeight;
 		rcBlock.bottom = (ps.height + (long)nTextHeight) / 2;
 		/* 绘制边框[GDI模式下，圆角度需要缩减一像素] */
-		_canvas_drawroundedrect(ps.hCanvas, hBrush, (float)rcBlock.left, (float)rcBlock.top, (float)rcBlock.right, (float)rcBlock.bottom, nTextHeight / 2 - 1, nTextHeight / 2 - 1, 1, D2D1_DASH_STYLE_SOLID);
+		_canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, nTextHeight / 2 - 1, nTextHeight / 2 - 1, 1, D2D1_DASH_STYLE_SOLID);
 
 		/* 定义选中色 */
 		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 1));
@@ -136,8 +136,8 @@ int _RadioButtonEx_paint(HEXOBJ hObj)
 			rcBlock.top = rcBlock.top + (long)Ex_Scale(3);
 			rcBlock.right = rcBlock.right - (long)Ex_Scale(3);
 			rcBlock.bottom = rcBlock.bottom - (long)Ex_Scale(3);
-			float nRadius = nTextHeight / 2 - Ex_Scale(3);
-			_canvas_fillroundedrect(ps.hCanvas, hBrush, (float)rcBlock.left, (float)rcBlock.top, (float)rcBlock.right, (float)rcBlock.bottom, nRadius, nRadius);
+			FLOAT nRadius = nTextHeight / 2 - Ex_Scale(3);
+			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, nRadius, nRadius);
 		}
 
 		/* 绘制组件文本 */
@@ -147,10 +147,10 @@ int _RadioButtonEx_paint(HEXOBJ hObj)
 			(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 			-1,
 			DT_LEFT | DT_VCENTER,
-			(float)ps.t_left + nTextHeight + Ex_Scale(7),
-			(float)ps.t_top,
-			(float)ps.t_right,
-			(float)ps.t_bottom);
+			(FLOAT)ps.t_left + nTextHeight + Ex_Scale(7),
+			(FLOAT)ps.t_top,
+			(FLOAT)ps.t_right,
+			(FLOAT)ps.t_bottom);
 
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);

@@ -31,7 +31,7 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 		if (nCode == NM_CUSTOMDRAW)
 		{
 			EX_PAINTSTRUCT2 ecd{ 0 };
-			RtlMoveMemory(&ecd, (void*)lParam, sizeof(EX_PAINTSTRUCT2));
+			RtlMoveMemory(&ecd, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT2));
 			EXARGB crBkg = 0;
 			if ((ecd.dwState & STATE_DOWN) != 0)
 			{
@@ -111,7 +111,7 @@ void test_label(HWND hWnd)
 	HEXDUI hExDui_label = Ex_DUIBindWindowEx(hWnd_label, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_label, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ label = Ex_ObjCreateEx(-1, L"static", NULL, -1, 10, 30, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
-	std::vector<char> imgdata;
+	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/Loading.png", &imgdata);
 	Ex_ObjSetBackgroundImage(label, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
 	EX_BACKGROUNDIMAGEINFO bkg{ 0 };
@@ -200,10 +200,10 @@ void test_edit(HWND hWnd)
 {
 	HWND hWnd_edit = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试编辑框", 0, 0, 600, 300, 0, 0);
 	HEXDUI hExDui_edit = Ex_DUIBindWindowEx(hWnd_edit, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
-	Ex_DUISetLong(hExDui_edit, EWL_CRBKG, ExARGB(150, 150, 150, 200));
+	Ex_DUISetLong(hExDui_edit, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 	HEXOBJ edit = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", L"背景图片编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 30, 150, 30, hExDui_edit, 0, DT_VCENTER, 0, 0, NULL);
-	std::vector<char> imgdata;
+	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
 	Ex_ObjSetBackgroundImage(edit, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_DEFAULT, 255, TRUE);
 	HEXOBJ edit2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, hExDui_edit, 0, DT_SINGLELINE, 0, 0, NULL);
@@ -212,7 +212,7 @@ void test_edit(HWND hWnd)
 	HEXOBJ edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n", EOS_VISIBLE | EOS_VSCROLL, 180, 30, 150, 200, hExDui_edit, 0, DT_VCENTER, 0, 0, NULL);
 	HEXOBJ edit6 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", NULL, EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL | EES_RICHTEXT, 360, 30, 200, 200, hExDui_edit, 0, DT_LEFT | DT_TOP, 0, 0, NULL);
 
-	std::vector<char> rtf;
+	std::vector<CHAR> rtf;
 	Ex_ReadFile(L"res/test.rtf", &rtf);
 	Ex_ObjSendMessage(edit6, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
 
@@ -220,7 +220,6 @@ void test_edit(HWND hWnd)
 	Ex_ObjSetColor(edit_transparent, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
 	Ex_ObjSetColor(edit_transparent, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
 	Ex_ObjSetRadius(edit_transparent, 10, 10, 10, 0, FALSE);
-
 	Ex_DUIShowWindow(hExDui_edit, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -235,7 +234,7 @@ void test_menubutton(HWND hWnd)
 		HEXLAYOUT hLayout = _layout_create(ELT_LINEAR, hObjMenuBar);
 		HMENU hMenu = LoadMenuW(GetModuleHandleW(0), (LPWSTR)IDR_MENU1);
 		if (hMenu) {
-			for (int i = 0; i < GetMenuItemCount(hMenu); i++) {
+			for (INT i = 0; i < GetMenuItemCount(hMenu); i++) {
 				WCHAR wzText[256];
 				GetMenuStringW(hMenu, i, wzText, 256, MF_BYPOSITION);
 				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObjMenuBar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, 0);
@@ -257,7 +256,7 @@ void test_custombkg(HWND hWnd)
 {
 	HWND hWnd_custombkg = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"", 0, 0, 175, 200, 0, 0);
 	HEXDUI hExDui_custombkg = Ex_DUIBindWindowEx(hWnd_custombkg, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW, 0, 0);
-	std::vector<char> imgdata;
+	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/custombkg.png", &imgdata);
 	RECT grid = { 45,40,15,15 };
 	Ex_ObjSetBackgroundImage(hExDui_custombkg, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, &grid, BIF_DEFAULT, 220, TRUE);
@@ -272,19 +271,19 @@ LRESULT CALLBACK OnListMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	if (uMsg == WM_NOTIFY)
 	{
 		EX_NMHDR ni{ 0 };
-		RtlMoveMemory(&ni, (void*)lParam, sizeof(EX_NMHDR));
+		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 		if (hObj == ni.hObjFrom)
 		{
 			if (ni.nCode == NM_CALCSIZE)
 			{
-				__set_int((void*)ni.lParam, 4, 25);//改变项目高度
+				__set_int((LPVOID)ni.lParam, 4, 25);//改变项目高度
 				*lpResult = 1;
 				return 1;
 			}
 			else if (ni.nCode == NM_CUSTOMDRAW)
 			{
 				EX_CUSTOMDRAW cd{ 0 };
-				RtlMoveMemory(&cd, (void*)ni.lParam, sizeof(EX_CUSTOMDRAW));
+				RtlMoveMemory(&cd, (LPVOID)ni.lParam, sizeof(EX_CUSTOMDRAW));
 				if (cd.iItem > 0 && cd.iItem <= 100)
 				{
 					EXARGB crItemBkg = 0;
@@ -318,7 +317,7 @@ LRESULT CALLBACK OnListMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	{
 		for (auto index : m_list_item_info)
 		{
-			Ex_MemFree((void*)index.text);//复制的文本要销毁
+			Ex_FreeBuffer((LPVOID)index.text);//复制的文本要销毁
 		}
 	}
 	return 0;
@@ -349,15 +348,15 @@ void test_listview(HWND hWnd)
 	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
-	HEXOBJ listview = Ex_ObjCreateEx(EOS_EX_COMPOSITED, L"listview", NULL, EOS_VISIBLE | ELS_VERTICALLIST | EOS_VSCROLL, 30, 30, 150, 150, hExDui_listview, 0, -1, 0, 0, OnListMsgProc);
+	HEXOBJ listview = Ex_ObjCreateEx(EOS_EX_COMPOSITED, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST | EOS_VSCROLL, 30, 30, 150, 150, hExDui_listview, 0, -1, 0, 0, OnListMsgProc);
 	Ex_ObjSetColor(listview, COLOR_EX_BACKGROUND, ExARGB(255, 255, 255, 150), TRUE);
-	const int itemCount = 100;
+	const INT itemCount = 100;
 	m_list_item_info.resize(itemCount);
-	for (int index = 0; index < m_list_item_info.size(); index++)
+	for (INT index = 0; index < m_list_item_info.size(); index++)
 	{
 		m_list_item_info[index].color = ExRGB2ARGB(Random(0, 16777215), 255);
 		auto str = L"列表项" + std::to_wstring(index);
-		m_list_item_info[index].text = copytstr(str.c_str(), str.length());
+		m_list_item_info[index].text = StrDupW(str.c_str());
 		m_list_item_info[index].depth = index % 5;
 	}
 	Ex_ObjSendMessage(listview, LVM_SETITEMCOUNT, itemCount, itemCount);
@@ -387,11 +386,11 @@ void test_groupbox(HWND hWnd)
 std::vector<HEXOBJ> m_hObj_Navbtn(4);
 HEXOBJ m_hObj_PageContainer;
 std::vector<HEXOBJ> m_hObj_Page(4);
-int m_nCurIndex = 1;
+INT m_nCurIndex = 1;
 
-size_t OnPageEasing(void* pEasing, double nProgress, double nCurrent, void* pEasingContext, int nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
+size_t OnNavButtonPageEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
 {
-	for (int i = 0; i < m_hObj_Page.size(); i++)
+	for (INT i = 0; i < m_hObj_Page.size(); i++)
 	{
 		Ex_ObjSetPos(m_hObj_Page[i], 0, i * 760 - nCurrent, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 	}
@@ -399,12 +398,12 @@ size_t OnPageEasing(void* pEasing, double nProgress, double nCurrent, void* pEas
 }
 
 
-LRESULT CALLBACK OnNavBtnCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OnNavButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (lParam != 0)
 	{
-		int nIndex = Ex_ObjGetLong(hObj, EOL_LPARAM);
-		HEXEASING pEasing = _easing_create(ET_InOutQuart, 0, ES_SINGLE | ES_THREAD | ES_CALLFUNCTION, (size_t)OnPageEasing, 200, 20, EES_PLAY, m_nCurIndex * 760, nIndex * 760, nIndex, 0, 0, 0);
+		INT nIndex = Ex_ObjGetLong(hObj, EOL_LPARAM);
+		HEXEASING pEasing = _easing_create(ET_InOutQuart, 0, ES_SINGLE | ES_THREAD | ES_CALLFUNCTION, (size_t)OnNavButtonPageEasing, 200, 20, EES_PLAY, m_nCurIndex * 760, nIndex * 760, nIndex, 0, 0, 0);
 		m_nCurIndex = nIndex;
 	}
 	return 0;
@@ -415,7 +414,7 @@ void test_navbutton(HWND hWnd)
 	HWND hWnd_navbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试选项卡", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(hWnd_navbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
 	HEXIMAGE hImage = 0;
-	for (int i = 0; i < 4; i++)
+	for (INT i = 0; i < 4; i++)
 	{
 		auto str = L"Tab" + std::to_wstring(i);
 		m_hObj_Navbtn[i] = Ex_ObjCreate(L"NavButton", str.c_str(), -1, 20 + i * 85, 40, 80, 80, hExDui_navbutton);
@@ -430,10 +429,10 @@ void test_navbutton(HWND hWnd)
 		Ex_ObjSendMessage(m_hObj_Navbtn[i], BM_SETIMAGE, 2, hImg);
 		Ex_ObjInvalidateRect(m_hObj_Navbtn[i], 0);
 		Ex_ObjSetLong(m_hObj_Navbtn[i], EOL_LPARAM, i);
-		Ex_ObjHandleEvent(m_hObj_Navbtn[i], NM_CHECK, OnNavBtnCheckEvent);
+		Ex_ObjHandleEvent(m_hObj_Navbtn[i], NM_CHECK, OnNavButtonCheckEvent);
 	}
 	m_hObj_PageContainer = Ex_ObjCreate(L"page", 0, -1, 20, 120, 760, 600 - 120 - 20, hExDui_navbutton);
-	for (int i = 0; i < 4; i++)
+	for (INT i = 0; i < 4; i++)
 	{
 		auto str = L"页面" + std::to_wstring(i);
 		m_hObj_Page[i] = Ex_ObjCreateEx(-1, L"static", str.c_str(), -1, 760 * i, 0, 760, 600 - 120 - 20, m_hObj_PageContainer, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
@@ -602,7 +601,7 @@ void test_flow(HWND hWnd)
 	_layout_setprop(hLayout, ELP_PADDING_BOTTOM, 30);
 
 	HEXOBJ hObj = 0;
-	for (int i = 0; i < 20; i++)
+	for (INT i = 0; i < 20; i++)
 	{
 		hObj = Ex_ObjCreate(L"Static", L"test", -1, 0, 0, Random(50, 150), Random(50, 150), hExDui_flow);
 		Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
@@ -629,13 +628,13 @@ void test_table(HWND hWnd)
 	_layout_setprop(hLayout, ELP_PADDING_TOP, 30);
 	_layout_setprop(hLayout, ELP_PADDING_RIGHT, 10);
 	_layout_setprop(hLayout, ELP_PADDING_BOTTOM, 10);
-	int row[4] = { 50,-30,75,-20 };//4行,正数为像素,负数为百分比
-	int cell[3] = { 100,75,-50 };//3列,正数为像素,负数为百分比
+	INT row[4] = { 50,-30,75,-20 };//4行,正数为像素,负数为百分比
+	INT cell[3] = { 100,75,-50 };//3列,正数为像素,负数为百分比
 	HEXOBJ hObj = 0;
 	_layout_table_setinfo(hLayout, row, 4, cell, 3);
-	for (int i = 1; i <= 4; i++)
+	for (INT i = 1; i <= 4; i++)
 	{
-		for (int j = 1; j <= 3; j++)
+		for (INT j = 1; j <= 3; j++)
 		{
 			auto str = std::to_wstring(i) + L"," + std::to_wstring(j);
 			hObj = Ex_ObjCreateEx(-1, L"static", (LPCWSTR)str.c_str(), -1, 0, 0, 200, 150, hExDui_table, 0, DT_VCENTER, 0, 0, 0);
@@ -694,25 +693,25 @@ HWND m_hWnd_ani = 0;
 HEXDUI m_hExDui_ani = 0;
 HEXEASING m_easing3 = nullptr;
 
-LRESULT CALLBACK OnAniWinMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnAniWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
 {
 	if (uMsg == WM_CLOSE)
 	{
-		AniShow(false);
+		AniShow(FALSE);
 	}
 	return 0;
 }
 
-size_t CALLBACK OnAniEasing(void* pEasing, double nProgress, double nCurrent, void* pEasingContext, int nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
+size_t CALLBACK OnAniEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
 {
-	int index = nCurrent * 255;
+	INT index = nCurrent * 255;
 	Ex_DUISetLong(m_hExDui_ani, EWL_CRBKG, ExARGB(150, 150, 150, index));
 	Ex_DUISetLong(m_hExDui_ani, EWL_ALPHA, index);
 	SetWindowPos((HWND)Ex_DUIGetLong(m_hExDui_ani, EWL_HWND), 0, p1 + p2 * nCurrent, p3 + p4 * nCurrent, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
 	return 0;
 }
 
-void AniShow(bool fShow)
+void AniShow(BOOL fShow)
 {
 	Ex_DUISetLong(m_hExDui_ani, EWL_CRBKG, ExARGB(150, 150, 150, fShow ? 0 : 255));
 	Ex_DUISetLong(m_hExDui_ani, EWL_ALPHA, fShow ? 0 : 255);
@@ -724,13 +723,13 @@ void AniShow(bool fShow)
 	Ex_DUIShowWindow(m_hExDui_ani, fShow ? SW_SHOW : SW_HIDE, 0, 0, 0);
 }
 
-size_t CALLBACK OnBtnEasing(void* pEasing, double nProgress, double nCurrent, void* pEasingContext, int nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
+size_t CALLBACK OnBtnEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
 {
 	Ex_ObjSetPos(p1, 0, 0, 0, nCurrent, 50, SWP_NOMOVE | SWP_NOZORDER);
 	return 0;
 }
 
-size_t CALLBACK OnBtnEasing4(void* pEasing, double nProgress, double nCurrent, void* pEasingContext, int nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
+size_t CALLBACK OnBtnEasing4(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
 {
 	RECT rc{ 0 };
 	GetWindowRect(m_hWnd_ani, &rc);
@@ -756,7 +755,7 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
 		else if (nCode == NM_EASING)
 		{
 			EX_EASINGINFO pEasingInfo{ 0 };
-			RtlMoveMemory(&pEasingInfo, (void*)lParam, sizeof(EX_EASINGINFO));
+			RtlMoveMemory(&pEasingInfo, (LPVOID)lParam, sizeof(EX_EASINGINFO));
 			Ex_ObjSetPos(hObj, 0, 0, 0, pEasingInfo.nCurrent, 50, SWP_NOMOVE | SWP_NOZORDER);
 		}
 	}
@@ -779,7 +778,7 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
 		else if (nCode == NM_EASING)
 		{
 			EX_EASINGINFO pEasingInfo{ 0 };
-			RtlMoveMemory(&pEasingInfo, (void*)lParam, sizeof(EX_EASINGINFO));
+			RtlMoveMemory(&pEasingInfo, (LPVOID)lParam, sizeof(EX_EASINGINFO));
 			Ex_ObjSetPos(hObj, 0, 0, 0, pEasingInfo.nCurrent, 50, SWP_NOMOVE | SWP_NOZORDER);
 		}
 	}
@@ -796,7 +795,7 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
 void test_ani(HWND hWnd)
 {
 	m_hWnd_ani = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试缓动窗口", 0, 0, 400, 300, 0, 0);
-	m_hExDui_ani = Ex_DUIBindWindowEx(m_hWnd_ani, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_SIZEABLE | EWS_TITLE | EWS_HASICON, 0, OnAniWinMsgProc);
+	m_hExDui_ani = Ex_DUIBindWindowEx(m_hWnd_ani, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_SIZEABLE | EWS_TITLE | EWS_HASICON, 0, OnAniWndMsgProc);
 	HEXOBJ hObj1 = Ex_ObjCreateEx(-1, L"button", L"点击就动1次", -1, 10, 40, 120, 50, m_hExDui_ani, 10001, DT_VCENTER | DT_CENTER, 0, 0, NULL);
 	HEXOBJ hObj2 = Ex_ObjCreateEx(-1, L"button", L"来回", -1, 10, 100, 120, 50, m_hExDui_ani, 10002, DT_VCENTER | DT_CENTER, 0, 0, NULL);
 	HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"button", L"点击动/停", -1, 10, 160, 120, 50, m_hExDui_ani, 10003, DT_VCENTER | DT_CENTER, 0, 0, NULL);
@@ -809,12 +808,12 @@ void test_ani(HWND hWnd)
 	Ex_ObjHandleEvent(hObj3, NM_DESTROY, OnAniButtonEvent);
 	Ex_ObjHandleEvent(hObj4, NM_CLICK, OnAniButtonEvent);
 	m_easing3 = _easing_create(ET_InOutCirc, 0, ES_CYCLE | ES_BACKANDFORTH | ES_THREAD | ES_DISPATCHNOTIFY, hObj3, 200, 20, EES_PAUSE, 150, 300, 0, 0, 0, 0);
-	AniShow(true);
+	AniShow(TRUE);
 }
 
 
 
-LRESULT CALLBACK OnCustomRedrawWinMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
 {
 	if (uMsg == WM_ERASEBKGND)
 	{
@@ -834,10 +833,11 @@ LRESULT CALLBACK OnCustomRedrawWinMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 
 void test_customredraw(HWND hWnd)
 {
+	//异型窗口采用重画背景形式，才不会产生锯齿。用于需要圆角，不规则图形的窗口。
 	HWND hWnd_customredraw = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"", 0, 0, 300, 200, 0, 0);
-	HEXDUI hExDui_customredraw = Ex_DUIBindWindowEx(hWnd_customredraw, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW, 0, OnCustomRedrawWinMsgProc);
+	HEXDUI hExDui_customredraw = Ex_DUIBindWindowEx(hWnd_customredraw, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW, 0, OnCustomRedrawWndMsgProc);
 	Ex_DUISetLong(hExDui_customredraw, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_ObjCreateEx(EOS_EX_TOPMOST, L"sysbutton", L"", EOS_VISIBLE | EWS_BUTTON_CLOSE, (300 - 32) / 2, (200 - 32) / 2, 32, 32, hExDui_customredraw, 0, 0, 0, 0, NULL);
+	Ex_ObjCreateEx(EOS_EX_TOPMOST, L"sysbutton", L"", EOS_VISIBLE | EWS_BUTTON_CLOSE, (300 - 32) / 2, (200 - 32) / 2, 32, 32, hExDui_customredraw, 0, 0, 0, 0, NULL);//改变标题栏按钮位置
 
 	Ex_DUIShowWindow(hExDui_customredraw, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -854,7 +854,7 @@ void test_messagebox(HWND hWnd)
 
 
 
-LRESULT CALLBACK OnColorbuttonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OnColorButtonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_MOUSEHOVER)
 	{
@@ -904,8 +904,8 @@ LRESULT CALLBACK OnColorbuttonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 		EX_PAINTSTRUCT2 ps;
 		if (Ex_ObjBeginPaint(hObj, &ps))
 		{
-			int crText = 0;
-			int crBkg = 0;
+			INT crText = 0;
+			INT crBkg = 0;
 			if ((ps.dwState & STATE_DOWN) == STATE_DOWN)
 			{
 				crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_DOWN);
@@ -944,7 +944,7 @@ void test_colorbutton(HWND hWnd)
 	HWND hWnd_colorbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试自定义按钮", 0, 0, 200, 150, 0, 0);
 	HEXDUI hExDui_colorbutton = Ex_DUIBindWindowEx(hWnd_colorbutton, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_colorbutton, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_ObjRegister(L"colorbutton", EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, DT_SINGLELINE | DT_CENTER | DT_VCENTER, 4 * sizeof(size_t), 0, 0, OnColorbuttonProc);
+	Ex_ObjRegister(L"colorbutton", EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, DT_SINGLELINE | DT_CENTER | DT_VCENTER, 4 * sizeof(size_t), 0, 0, OnColorButtonProc);
 	HEXOBJ hObj = Ex_ObjCreateEx(-1, L"colorbutton", L"colorbutton", -1, 50, 50, 100, 50, hExDui_colorbutton, 0, -1, 0, 0, NULL);
 	if (hObj != 0)
 	{
@@ -963,7 +963,9 @@ void test_colorbutton(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_colorbutton, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnListEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+HEXOBJ m_hReportListView;
+
+LRESULT CALLBACK OnReportListViewEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode == LVN_ITEMCHANGED)
 	{
@@ -972,7 +974,7 @@ LRESULT CALLBACK OnListEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPA
 	}
 	else if (nCode == RLVN_COLUMNCLICK)
 	{
-		auto str = L"你点击了第" + std::to_wstring(wParam) + L"项";
+		auto str = L"你点击了第" + std::to_wstring(wParam) + L"列";
 		output(str);
 	}
 	else if (nCode == NM_CLICK)
@@ -985,7 +987,7 @@ LRESULT CALLBACK OnListEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPA
 	else if (nCode == RLVN_DELETE_ITEM)
 	{
 		EX_REPORTLIST_ROWINFO row{ 0 };
-		RtlMoveMemory(&row, (void*)lParam, sizeof(EX_REPORTLIST_ROWINFO));
+		RtlMoveMemory(&row, (LPVOID)lParam, sizeof(EX_REPORTLIST_ROWINFO));
 		if (row.hImage != 0)//如果有图片，则销毁
 		{
 			_img_destroy(row.hImage);
@@ -994,16 +996,22 @@ LRESULT CALLBACK OnListEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPA
 	return 0;
 }
 
+LRESULT CALLBACK OnReportListViewButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	Ex_ObjSendMessage(m_hReportListView, LVM_DELETECOLUMN, 1, 2);
+	return 0;
+}
+
 void test_reportlistview(HWND hWnd)
 {
-	HWND hWnd_reportlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 300, 0, 0);
+	HWND hWnd_reportlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_reportlistview = Ex_DUIBindWindowEx(hWnd_reportlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_reportlistview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", -1, 25, 50, 350, 225, hExDui_reportlistview, 0, -1, 0, 0, NULL);
-	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
-	Ex_ObjSetColor(hObj, COLOR_EX_BORDER, ExRGB2ARGB(12632256, 100), FALSE);
-	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOT, ExRGB2ARGB(16777215, 250), FALSE);
-	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(12632256, 50), FALSE);
+	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", -1, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGB2ARGB(12632256, 100), FALSE);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOT, ExRGB2ARGB(16777215, 250), FALSE);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(12632256, 50), FALSE);
 
 	EX_REPORTLIST_COLUMNINFO col = { 0 };
 	col.wzText = L"第一列";
@@ -1011,58 +1019,63 @@ void test_reportlistview(HWND hWnd)
 	col.crText = ExRGB2ARGB(255, 255);
 	col.dwStyle = 0;
 	col.dwTextFormat = DT_LEFT;
-	Ex_ObjSendMessage(hObj, LVM_INSERTCOLUMNA, 0, (size_t)&col);
+	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
-	col.wzText = L"第二列";
+	col.wzText = L"固定列宽";
 	col.nWidth = 110;
 	col.crText = ExRGB2ARGB(16711680, 255);
 	col.dwStyle = ERLV_CS_LOCKWIDTH;
 	col.dwTextFormat = DT_LEFT;
-	Ex_ObjSendMessage(hObj, LVM_INSERTCOLUMNA, 0, (size_t)&col);
+	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
 	col.wzText = L"居中可点击";
 	col.nWidth = 100;
 	col.crText = ExRGB2ARGB(65535, 255);
 	col.dwStyle = ERLV_CS_CLICKABLE;
 	col.dwTextFormat = DT_CENTER | DT_VCENTER;
-	Ex_ObjSendMessage(hObj, LVM_INSERTCOLUMNA, 0, (size_t)&col);
+	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
 	col.wzText = L"可排序";
 	col.nWidth = 60;
 	col.crText = ExRGB2ARGB(16777215, 255);
 	col.dwStyle = ERLV_CS_CLICKABLE | ERLV_CS_SORTABLE;
 	col.dwTextFormat = DT_RIGHT | DT_VCENTER;
-	Ex_ObjSendMessage(hObj, LVM_INSERTCOLUMNA, 0, (size_t)&col);
+	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
 	EX_REPORTLIST_ROWINFO row = { 0 };
 	EX_REPORTLIST_ITEMINFO item = { 0 };
-	for (int i = 1; i <= 100; i++)
+	for (INT i = 1; i <= 100; i++)
 	{
 		//先插入表项
-		row.lParam = i;
-		item.iRow = Ex_ObjSendMessage(hObj, LVM_INSERTITEMA, 0, (size_t)&row);
+		row.lParam = i+1;
+		item.iRow = Ex_ObjSendMessage(m_hReportListView, LVM_INSERTITEM, 0, (size_t)&row);
 		//先插入表项
 		item.iCol = 1;
-		item.wzText = L"第一列";
-		Ex_ObjSendMessage(hObj, LVM_SETITEMA, 0, (size_t)&item);//wParam为是否立即更新
+		std::wstring wstr = L"第" + std::to_wstring(i) + L"项";
+		item.wzText = wstr.c_str();
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 
 		item.iCol = 2;
 		item.wzText = L"第二列";
-		Ex_ObjSendMessage(hObj, LVM_SETITEMA, 0, (size_t)&item);//wParam为是否立即更新
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 
 		item.iCol = 3;
 		item.wzText = L"第三列";
-		Ex_ObjSendMessage(hObj, LVM_SETITEMA, 0, (size_t)&item);//wParam为是否立即更新
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 
 		item.iCol = 4;
-		auto str = std::to_wstring(Random(0, 1000));
+		auto str = std::to_wstring(Random(0,1000));
 		item.wzText = str.c_str();
-		Ex_ObjSendMessage(hObj, LVM_SETITEMA, 0, (size_t)&item);//wParam为是否立即更新
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 	}
-	Ex_ObjSendMessage(hObj, LVM_UPDATE, 0, 0);//整体更新,以加快绘制速度
-	Ex_ObjHandleEvent(hObj, LVN_ITEMCHANGED, OnListEvent);
-	Ex_ObjHandleEvent(hObj, RLVN_COLUMNCLICK, OnListEvent);
-	Ex_ObjHandleEvent(hObj, NM_CLICK, OnListEvent);
+	Ex_ObjSendMessage(m_hReportListView, LVM_UPDATE, 0, 0);//整体更新,以加快绘制速度
+	Ex_ObjHandleEvent(m_hReportListView, LVN_ITEMCHANGED, OnReportListViewEvent);
+	Ex_ObjHandleEvent(m_hReportListView, RLVN_COLUMNCLICK, OnReportListViewEvent);
+	Ex_ObjHandleEvent(m_hReportListView, NM_CLICK, OnReportListViewEvent);
+
+	HEXOBJ hButton = Ex_ObjCreate(L"button", L"删除列", -1, 20, 330, 100, 30, hExDui_reportlistview);
+	Ex_ObjHandleEvent(hButton, NM_CLICK, OnReportListViewButtonEvent);
+
 
 	Ex_DUIShowWindow(hExDui_reportlistview, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -1089,13 +1102,13 @@ void test_iconlistview(HWND hWnd)
 	HWND hWnd_iconlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试图标列表", 0, 0, 500, 300, 0, 0);
 	HEXDUI hExDui_iconlistview = Ex_DUIBindWindowEx(hWnd_iconlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, OnIconWndMsgProc);
 
-	m_hObj_ListView_icon = Ex_ObjCreateEx(-1, L"iconlistview", L"iconlistview", EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL | ILVS_BUTTON, 25, 50, 450, 225, hExDui_iconlistview, 0, -1, 0, 0, NULL);
+	m_hObj_ListView_icon = Ex_ObjCreateEx(-1, L"iconlistview", L"iconlistview", EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL | EILVS_BUTTON, 25, 50, 450, 225, hExDui_iconlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSendMessage(m_hObj_ListView_icon, ILVM_SETITEMSIZE, 0, MAKELONG(70, 75));//设置表项尺寸为70,75
 	//创建添加图片组信息
 
 	m_hImageList_icon = _imglist_create(36, 36);
-	std::vector<char> imgdata;
-	for (int i = 1; i <= 3; i++)
+	std::vector<CHAR> imgdata;
+	for (INT i = 1; i <= 3; i++)
 	{
 		auto str = L"./icon/" + std::to_wstring(i) + L".png";
 		Ex_ReadFile(str.c_str(), &imgdata);
@@ -1105,14 +1118,14 @@ void test_iconlistview(HWND hWnd)
 	Ex_ObjSendMessage(m_hObj_ListView_icon, LVM_SETIMAGELIST, 0, (size_t)m_hImageList_icon);
 	EX_ICONLISTVIEW_ITEMINFO ilvi{ 0 };
 
-	for (int i = 1; i <= 1000; i++)
+	for (INT i = 1; i <= 1000; i++)
 	{
 		ilvi.nIndex = i;
 		auto str = L"第" + std::to_wstring(i) + L"项";
 		ilvi.pwzText = str.c_str();
 		ilvi.nImageIndex = i % 3;
 		if (ilvi.nImageIndex == 0) ilvi.nImageIndex = 3;
-		Ex_ObjSendMessage(m_hObj_ListView_icon, LVM_INSERTITEMA, 0, (size_t)&ilvi);
+		Ex_ObjSendMessage(m_hObj_ListView_icon, LVM_INSERTITEM, 0, (size_t)&ilvi);
 	}
 	Ex_ObjSendMessage(m_hObj_ListView_icon, LVM_UPDATE, 0, 0);
 
@@ -1196,7 +1209,7 @@ void test_treelistview(HWND hWnd)
 }
 
 
-LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnMatrixWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
 {
 	if (uMsg == WM_PAINT)
 	{
@@ -1226,7 +1239,7 @@ void test_matrix(HWND hWnd)
 	HEXDUI hExDui_matrix = Ex_DUIBindWindowEx(hWnd_matrix, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_matrix, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	LPCWSTR ckass_static = L"static";
-	HEXOBJ treeview = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, ckass_static, L"fasdf", -1, 50, 50, 200, 200, hExDui_matrix, 0, DT_VCENTER, 0, 0, OnMatrixMsgProc);
+	HEXOBJ treeview = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, ckass_static, L"fasdf", -1, 50, 50, 200, 200, hExDui_matrix, 0, DT_VCENTER, 0, 0, OnMatrixWndMsgProc);
 	Ex_DUIShowWindow(hExDui_matrix, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -1235,8 +1248,6 @@ void test_buttonex(HWND hWnd)
 	HWND hWnd_buttonex = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试扩展按钮", 0, 0, 300, 300, 0, 0);
 	HEXDUI hExDui_buttonex = Ex_DUIBindWindowEx(hWnd_buttonex, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_buttonex, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-
-
 	LPCWSTR ATOM_ButtonEx = L"ButtonEx";
 	HEXOBJ BtnExObj = Ex_ObjCreate(ATOM_ButtonEx, L"☏直角纯色按钮", -1, 50, 50, 100, 30, hExDui_buttonex);
 	EXARGB ThemeColor = RGB(76, 175, 80);
@@ -1461,10 +1472,10 @@ size_t CALLBACK OnMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 {
 	if (uMsg == WM_ERASEBKGND)
 	{
-		if (__get((void*)lParam, 0) == wParam)
+		if (__get((LPVOID)lParam, 0) == wParam)
 		{
 			EX_PAINTSTRUCT2 ps{ 0 };
-			RtlMoveMemory(&ps, (void*)lParam, sizeof(EX_PAINTSTRUCT2));
+			RtlMoveMemory(&ps, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT2));
 			if (ps.height > 10)
 			{
 				if ((ps.dwState & STATE_HOVER) != 0)
@@ -1515,7 +1526,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, 70, hExDUI, -3, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_TRANSPARENT | EOS_EX_TOPMOST, L"Static", 0, EOS_VISIBLE, 0, 0, 45, 38, hExDUI, 0, -1, 0, 0, 0);
-			std::vector<char> data;
+			std::vector<CHAR> data;
 			Ex_ReadFile(L"custommenu/Icon.png", &data);
 			Ex_ObjSetBackgroundImage(hObj, data.data(), data.size(), 0, 0, BIR_NO_REPEAT, 0, 0, 255, TRUE);
 			rc.top = rc.top + 75;
@@ -1535,7 +1546,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 
 		}
 		HEXOBJ hObjfind = Ex_ObjFind(hExDUI, 0, L"Item", 0);
-		int t = rc.top;
+		INT t = rc.top;
 		RECT rcObj{ 0 };
 		while (hObjfind != 0)
 		{
@@ -1612,7 +1623,7 @@ LRESULT CALLBACK On_SideButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		if (wParam == 1001)//wParam表示事件对象的ID，1001最里层按钮
 		{
 			EX_NMHDR ni{ 0 };
-			RtlMoveMemory(&ni, (void*)lParam, sizeof(EX_NMHDR));
+			RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 			if (ni.nCode == NM_CLICK)
 			{
 				std::wstring str;
@@ -1626,14 +1637,14 @@ LRESULT CALLBACK On_SideButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	return 0;
 }
 
-LRESULT CALLBACK On_ParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
 {
 	if (uMsg == WM_NOTIFY)
 	{
 		if (wParam == 1001)//wParam表示事件对象的ID，1001最里层按钮
 		{
 			EX_NMHDR ni{ 0 };
-			RtlMoveMemory(&ni, (void*)lParam, sizeof(EX_NMHDR));
+			RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 			if (ni.nCode == NM_CLICK)
 			{
 				if (Ex_MessageBox(hObj, L"按钮直接父控件收到了单击事件，是否拦截？", 0, MB_YESNO, 0) == IDYES)//选择是
@@ -1647,7 +1658,7 @@ LRESULT CALLBACK On_ParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 	return 0;
 }
 
-LRESULT CALLBACK On_EventButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnEventButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
 {
 	if (uMsg == WM_EX_LCLICK)//左键单击消息,拦截这条则不会触发任何事件
 	{
@@ -1656,7 +1667,7 @@ LRESULT CALLBACK On_EventButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 	else if (uMsg == WM_NOTIFY)
 	{
 		EX_NMHDR ni{ 0 };
-		RtlMoveMemory(&ni, (void*)lParam, sizeof(EX_NMHDR));
+		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 		if (ni.hObjFrom == hObj)
 		{
 			if (ni.nCode == NM_CLICK)
@@ -1668,7 +1679,7 @@ LRESULT CALLBACK On_EventButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 	return 0;
 }
 
-LRESULT CALLBACK On_EventButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OnEventButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode == NM_CLICK)
 	{
@@ -1684,7 +1695,7 @@ LRESULT CALLBACK OnEventWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wP
 		if (wParam == 1001)//wParam表示事件对象的ID，1001最里层按钮
 		{
 			EX_NMHDR ni{ 0 };
-			RtlMoveMemory(&ni, (void*)lParam, sizeof(EX_NMHDR));
+			RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 			if (ni.nCode == NM_CLICK)
 			{
 				Ex_MessageBox(hExDui, L"按钮所属窗口收到了单击事件", 0, 0, 0);
@@ -1714,14 +1725,14 @@ void test_event(HWND hWnd)
 		if (button_inside != 0)
 		{
 			Ex_ObjSetColor(button_inside, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), TRUE);
-			HEXOBJ button_parent = Ex_ObjCreateEx(-1, L"Static", L"按钮直接父控件", -1, 10, 20, 310, 160, button_inside, 0, DT_SINGLELINE, 0, 0, On_ParentButtonMsgProc);
+			HEXOBJ button_parent = Ex_ObjCreateEx(-1, L"Static", L"按钮直接父控件", -1, 10, 20, 310, 160, button_inside, 0, DT_SINGLELINE, 0, 0, OnParentButtonMsgProc);
 			if (button_parent != 0)
 			{
 				Ex_ObjSetColor(button_parent, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 100), TRUE);
-				HEXOBJ button = Ex_ObjCreateEx(-1, L"button", L"按钮", -1, 10, 20, 200, 100, button_parent, 1001, -1, 0, 0, On_EventButtonMsgProc);
+				HEXOBJ button = Ex_ObjCreateEx(-1, L"button", L"按钮", -1, 10, 20, 200, 100, button_parent, 1001, -1, 0, 0, OnEventButtonMsgProc);
 				if (button != 0)
 				{
-					Ex_ObjHandleEvent(button, NM_CLICK, On_EventButtonEvent);
+					Ex_ObjHandleEvent(button, NM_CLICK, OnEventButtonEvent);
 					Ex_ObjEnableEventBubble(button, TRUE);// 启用控件的事件冒泡，事件冒泡是指事件将根据父控件逐层传递至窗口
 				}
 			}
@@ -1752,7 +1763,7 @@ void test_loading(HWND hWnd)
 
 HEXOBJ	m_hObj_soliderbar;
 
-LRESULT CALLBACK OnBPosChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OnSoliderBarPosChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	std::wstring t = L"我是滑块条,你可以尝试拖动我喔,当前值是：" + std::to_wstring(lParam);
 	Ex_ObjSetText(m_hObj_soliderbar, t.c_str(), TRUE);
@@ -1769,22 +1780,22 @@ void test_soliderbar(HWND hWnd)
 	HEXOBJ m_SoliderBarEx = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, -1, 80, 50, 250, 20, hExDui_soliderbar);
 
 	Ex_ObjSetColor(m_SoliderBarEx, COLOR_EX_BACKGROUND, ExARGB(0, 136, 255, 250), TRUE);
-	Ex_ObjHandleEvent(m_SoliderBarEx, SBN_VALUE, OnBPosChangeEvent);
+	Ex_ObjHandleEvent(m_SoliderBarEx, SBN_VALUE, OnSoliderBarPosChangeEvent);
 
 	HEXOBJ m_SoliderBarEx2 = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, EOS_VISIBLE | ESBS_VERTICAL, 50, 60, 20, 100, hExDui_soliderbar);
 	Ex_ObjSetColor(m_SoliderBarEx2, COLOR_EX_BACKGROUND, ExARGB(100, 136, 255, 250), TRUE);
-	Ex_ObjHandleEvent(m_SoliderBarEx2, SBN_VALUE, OnBPosChangeEvent);
+	Ex_ObjHandleEvent(m_SoliderBarEx2, SBN_VALUE, OnSoliderBarPosChangeEvent);
 	Ex_ObjSetLong(m_SoliderBarEx2, SBL_BLOCK_POINT, 1);
 
 	HEXOBJ m_SoliderBarEx3 = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, EOS_VISIBLE | ESBS_VERTICAL, 350, 60, 20, 100, hExDui_soliderbar);
 	Ex_ObjSetColor(m_SoliderBarEx3, COLOR_EX_BACKGROUND, ExARGB(100, 136, 255, 250), TRUE);
-	Ex_ObjHandleEvent(m_SoliderBarEx3, SBN_VALUE, OnBPosChangeEvent);
+	Ex_ObjHandleEvent(m_SoliderBarEx3, SBN_VALUE, OnSoliderBarPosChangeEvent);
 	Ex_ObjSetColor(m_SoliderBarEx3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 125), TRUE);/*滑块条底色*/
 	Ex_ObjSetColor(m_SoliderBarEx3, COLOR_EX_TEXT_CHECKED, ExARGB(200, 16, 25, 250), TRUE);/*滑块条走过的颜色*/
 
 	HEXOBJ m_SoliderBarEx4 = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, -1, 80, 150, 250, 20, hExDui_soliderbar);
 	Ex_ObjSetColor(m_SoliderBarEx4, COLOR_EX_BACKGROUND, ExARGB(0, 136, 255, 250), TRUE);
-	Ex_ObjHandleEvent(m_SoliderBarEx4, SBN_VALUE, OnBPosChangeEvent);
+	Ex_ObjHandleEvent(m_SoliderBarEx4, SBN_VALUE, OnSoliderBarPosChangeEvent);
 	Ex_ObjSetLong(m_SoliderBarEx4, SBL_BLOCK_POINT, 1);
 
 	m_hObj_soliderbar = Ex_ObjCreate(L"static", L"我是滑块条,你可以尝试拖动我喔,当前值是：", -1, 80, 80, 300, 30, hExDui_soliderbar);
@@ -1800,7 +1811,7 @@ void test_rotateimgbox(HWND hWnd)
 	WCHAR	ImageBoxCls[] = L"RotateImageBox";
 	HEXOBJ	ImageBoxobj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, ImageBoxCls, NULL, EOS_VISIBLE | SRIBS_ROTATE, 50, 50, 100, 100, hExDui_rotateimgbox, 0, -1, 0, 0, 0);
 
-	std::vector<char> imgdata;
+	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/rotateimgbox.jpg", &imgdata);
 	Ex_ObjSetBackgroundImage(ImageBoxobj, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
 	Ex_ObjSetRadius(ImageBoxobj, 50, 50, 50, 50, TRUE);
@@ -1808,7 +1819,7 @@ void test_rotateimgbox(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_rotateimgbox, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK On_DragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
 {
 	if (uMsg == WM_LBUTTONDOWN)
 	{
@@ -1862,16 +1873,16 @@ LRESULT CALLBACK On_DragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 void test_dragobj(HWND hWnd)
 {
-	HWND hWnd_dragobj = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试拖曳", 0, 0, 500, 500, 0, 0);
+	HWND hWnd_dragobj = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试拖动组件", 0, 0, 500, 500, 0, 0);
 	HEXDUI hExDui_dragobj = Ex_DUIBindWindowEx(hWnd_dragobj, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_dragobj, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	WCHAR	Cls[] = L"static";
-	WCHAR	title[] = L"我可以拖曳";
-	HEXOBJ	hObj1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, Cls, title, EOS_VISIBLE | EOS_BORDER, 25, 35, 250, 250, hExDui_dragobj, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0, On_DragMsgProc);
+	WCHAR	title[] = L"我可以拖动";
+	HEXOBJ	hObj1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, Cls, title, EOS_VISIBLE | EOS_BORDER, 25, 35, 250, 250, hExDui_dragobj, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0, OnDragMsgProc);
 	if (hObj1 != 0)
 	{
 		Ex_ObjSetColor(hObj1, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
-		HEXOBJ	hObj2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, Cls, title, EOS_VISIBLE | EOS_BORDER, 25, 35, 150, 150, hObj1, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0, On_DragMsgProc);
+		HEXOBJ	hObj2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, Cls, title, EOS_VISIBLE | EOS_BORDER, 25, 35, 150, 150, hObj1, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0, OnDragMsgProc);
 		if (hObj2 != 0)
 		{
 			Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16722680, 100), TRUE);
@@ -1880,42 +1891,54 @@ void test_dragobj(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_dragobj, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-HEXOBJ	m_hObjWebView;
 
-void On_NavigationCompletedProc()
+LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
 {
-	output(L"On_NavigationCompletedProc");
-}
-
-void On_CreateCompletedProc()
-{
-	output(L"On_CreateCompletedProc");
-	WCHAR	url[] = L"https://www.baidu.com";
-	Ex_ObjSendMessage(m_hObjWebView, EWVM_NAVIGATION, (WPARAM)url, 0);
-}
-
-LRESULT CALLBACK ON_WebViewButonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
-{
-	WCHAR	url[] = L"https://www.baidu.com";
-	Ex_ObjSendMessage(m_hObjWebView, EWVM_NAVIGATION, (WPARAM)url, 0);
+	if (uMsg == WM_EX_DROP)//先触发本消息
+	{
+		EX_DROPINFO di{ 0 };
+		RtlMoveMemory(&di, (LPVOID)lParam, sizeof(EX_DROPINFO));
+		if (Ex_ObjCheckDropFormat(hObj, di.pDataObject, CF_UNICODETEXT) || Ex_ObjCheckDropFormat(hObj, di.pDataObject, CF_TEXT))//判断是不是文本
+		{
+			INT len = Ex_ObjGetDropString(hObj, di.pDataObject, 0, 0);
+			if (len > 0)
+			{
+				std::wstring str;
+				str.resize(len * 2 + 2);
+				Ex_ObjGetDropString(hObj, di.pDataObject, (LPWSTR)str.c_str(), len + 1);
+				output(L"接收到文本拖拽:", str);
+				*lpResult = DROPEFFECT_COPY;//按复制模式处理
+				return 1;
+			}
+		}
+	}
+	else if (uMsg == WM_DROPFILES)//若上面未处理,且控件拥有#EOS_EX_ACCEPTFILES风格,则继续触发本消息
+	{
+		UINT fileNumber = DragQueryFileW((HDROP)wParam, 0xFFFFFFFF, NULL, 0);
+		for (int index = 0; index < fileNumber; index++)
+		{
+			UINT fileNameLength = DragQueryFileW((HDROP)wParam, index, NULL, 0);
+			if (fileNameLength)
+			{
+				std::wstring fileName;
+				fileName.resize(fileNameLength);
+				DragQueryFileW((HDROP)wParam, index, (LPWSTR)fileName.c_str(), fileNameLength + 2);
+				output(L"接收到文件拖拽:",fileName);
+			}
+		}
+		*lpResult = DROPEFFECT_LINK;//按建立快捷方式处理
+		return 1;
+	}
 	return 0;
 }
 
-
-void test_webview(HWND hWnd)
+void test_dropobj(HWND hWnd)
 {
-	HWND hWnd_webview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试浏览框", 0, 0, 700, 600, 0, 0);
-	HEXDUI hExDui_webview = Ex_DUIBindWindowEx(hWnd_webview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
-	Ex_DUISetLong(hExDui_webview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-
-	HEXOBJ	hObjButton = Ex_ObjCreate(L"button", L"测试", -1, 25, 30, 100, 30, hExDui_webview);
-	Ex_ObjHandleEvent(hObjButton, NM_CLICK, ON_WebViewButonEvent);
-
-	WCHAR	Cls[] = L"webview";
-	m_hObjWebView = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, Cls, NULL, EOS_VISIBLE, 25, 80, 650, 500, hExDui_webview, 0, 0, 0, 0, 0);
-	Ex_ObjSendMessage(m_hObjWebView, EWVM_CREATECOMPLETED, (WPARAM)On_CreateCompletedProc, 0);
-	Ex_ObjSendMessage(m_hObjWebView, EWVM_NAVIGATIONCOMPLETED, (WPARAM)On_NavigationCompletedProc, 0);
-
-
-	Ex_DUIShowWindow(hExDui_webview, SW_SHOWNORMAL, 0, 0, 0);
+	HWND hWnd_dropobj = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试接收拖曳信息", 0, 0, 300, 300, 0, 0);
+	HEXDUI hExDui_dropobj = Ex_DUIBindWindowEx(hWnd_dropobj, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON , 0, 0);
+	Ex_DUISetLong(hExDui_dropobj, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	WCHAR	Cls[] = L"static";
+	WCHAR	title[] = L"拖拽文本、文件到这里";
+	HEXOBJ	hObj1 = Ex_ObjCreateEx(EOS_EX_DRAGDROP | EOS_EX_ACCEPTFILES, Cls, title, EOS_VISIBLE | EOS_BORDER, 25, 25, 250, 250, hExDui_dropobj, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0, OnDropObjDataMsgProc);
+	Ex_DUIShowWindow(hExDui_dropobj, SW_SHOWNORMAL, 0, 0, 0);
 }

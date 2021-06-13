@@ -47,22 +47,22 @@ LRESULT CALLBACK _CheckButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	case WM_MOUSEHOVER:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
 		break;
 	}
 	case  WM_MOUSELEAVE:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
 		break;
 	}
 	case WM_LBUTTONDOWN:
 	{
-		Ex_ObjSetUIState(hObj, STATE_DOWN, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
 		break;
 	}
 	case WM_LBUTTONUP:
 	{
-		Ex_ObjSetUIState(hObj, STATE_DOWN, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
 		break;
 	}
 	case EOL_EX_PROPS:
@@ -78,10 +78,10 @@ LRESULT CALLBACK _CheckButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	default:
 		break;
 	}
-	return(Ex_ObjCallProc(m_pfnCheckButtonProc, hWnd, hObj, uMsg, wParam, lParam,0));
+	return(Ex_ObjCallProc(m_pfnCheckButtonProc, hWnd, hObj, uMsg, wParam, lParam));
 }
 
-int _CheckButtonEx_paint(HEXOBJ hObj)
+INT _CheckButtonEx_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量
@@ -109,9 +109,9 @@ int _CheckButtonEx_paint(HEXOBJ hObj)
 			_brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, 4));
 		}
 		/* 计算文本尺寸 */
-		float nTextWidth = NULL;
-		float nTextHeight = NULL;
-		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (float)ps.width, (float)ps.height, &nTextWidth, &nTextHeight);
+		FLOAT nTextWidth = NULL;
+		FLOAT nTextHeight = NULL;
+		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.width, (FLOAT)ps.height, &nTextWidth, &nTextHeight);
 
 
 		/* 定义选择框矩形 */
@@ -120,7 +120,7 @@ int _CheckButtonEx_paint(HEXOBJ hObj)
 		rcBlock.right = rcBlock.left + (long)nTextHeight;
 		rcBlock.bottom = (ps.height + (long)nTextHeight) / 2;
 		/* 绘制边框 */
-		_canvas_drawrect(ps.hCanvas, hBrush, (float)rcBlock.left, (float)rcBlock.top, (float)rcBlock.right, (float)rcBlock.bottom, 1, D2D1_DASH_STYLE_SOLID);
+		_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, 1, D2D1_DASH_STYLE_SOLID);
 
 		/* 定义选中色 */
 		EXARGB CHECKCLR = (EXARGB)Ex_ObjGetProp(hObj, 1);
@@ -135,7 +135,7 @@ int _CheckButtonEx_paint(HEXOBJ hObj)
 			rcBlock.top = rcBlock.top + (long)Ex_Scale(2);
 			rcBlock.right = rcBlock.right - (long)Ex_Scale(2);
 			rcBlock.bottom = rcBlock.bottom - (long)Ex_Scale(2);
-			_canvas_fillrect(ps.hCanvas, hBrush, (float)rcBlock.left, (float)rcBlock.top, (float)rcBlock.right, (float)rcBlock.bottom);
+			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom);
 		}
 		else if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
 		{
@@ -147,7 +147,7 @@ int _CheckButtonEx_paint(HEXOBJ hObj)
 				L"✔",
 				-1,
 				DT_CENTER | DT_VCENTER,
-				(float)rcBlock.left, (float)rcBlock.top, (float)rcBlock.right, (float)rcBlock.bottom);
+				(FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom);
 		}
 
 		/* 绘制组件文本 */
@@ -157,10 +157,10 @@ int _CheckButtonEx_paint(HEXOBJ hObj)
 			(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 			-1,
 			DT_LEFT | DT_VCENTER,
-			(float)ps.t_left + nTextHeight + Ex_Scale(7),
-			(float)ps.t_top,
-			(float)ps.t_right,
-			(float)ps.t_bottom);
+			(FLOAT)ps.t_left + nTextHeight + Ex_Scale(7),
+			(FLOAT)ps.t_top,
+			(FLOAT)ps.t_right,
+			(FLOAT)ps.t_bottom);
 
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);

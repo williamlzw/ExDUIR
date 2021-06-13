@@ -60,7 +60,7 @@ BOOL _matrix_translate(HEXMATRIX pMatrix, FLOAT offsetX, FLOAT offsetY)
 	{
 		D2D1::Matrix3x2F mx_index;
 		_matrix_init(&mx_index, pMatrix);
-		auto mx = D2D1::Matrix3x2F::Translation(offsetX, offsetY);
+		D2D1::Matrix3x2F mx = D2D1::Matrix3x2F::Translation(offsetX, offsetY);
 		D2D1::Matrix3x2F mx_mix = mx * mx_index;
 		_matrix_update(mx_mix, pMatrix);
 		ret = TRUE;
@@ -75,7 +75,7 @@ BOOL _matrix_rotate(HEXMATRIX pMatrix, FLOAT fAngle)
 	{
 		D2D1::Matrix3x2F mx_index;
 		_matrix_init(&mx_index, pMatrix);
-		auto mx = D2D1::Matrix3x2F::Rotation(fAngle);
+		D2D1::Matrix3x2F mx = D2D1::Matrix3x2F::Rotation(fAngle);
 		D2D1::Matrix3x2F mx_mix = mx * mx_index;
 		_matrix_update(mx_mix, pMatrix);
 		ret = TRUE;
@@ -90,7 +90,7 @@ BOOL _matrix_scale(HEXMATRIX pMatrix, FLOAT scaleX, FLOAT scaleY)
 	{
 		D2D1::Matrix3x2F mx_index;
 		_matrix_init(&mx_index, pMatrix);
-		auto mx = D2D1::Matrix3x2F::Scale(scaleX, scaleY);
+		D2D1::Matrix3x2F mx = D2D1::Matrix3x2F::Scale(scaleX, scaleY);
 		D2D1::Matrix3x2F mx_mix = mx * mx_index;
 		_matrix_update(mx_mix, pMatrix);
 		ret = TRUE;

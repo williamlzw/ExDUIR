@@ -23,7 +23,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		}
 		else if ((ps.dwStyle & EWS_BUTTON_MAX) != 0)
 		{
-			if (_wnd_querystyle(hWnd, WS_MAXIMIZE, false))
+			if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
 			{
 				atomClass = ATOM_SYSBUTTON_RESTORE;
 			}
@@ -33,7 +33,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		}
 		else if ((ps.dwStyle & EWS_BUTTON_MIN) != 0)
 		{
-			if (_wnd_querystyle(hWnd, WS_MINIMIZE, false))
+			if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
 			{
 				atomClass = ATOM_SYSBUTTON_RESTORE;
 			}
@@ -70,14 +70,14 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 			atomState = ATOM_NORMAL;
 		}
 
-		int left;
+		INT left;
 		Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, atomClass, atomState, 255);
 		if ((ps.dwStyle & EWS_TITLE) != 0)
 		{
 			left = ps.t_left;
 			if (((pObj->pWnd_->dwStyle_ & EWS_HASICON) == EWS_HASICON))
 			{
-				HICON hicon = (HICON)_wnd_geticonhandle(hWnd, false);
+				HICON hicon = (HICON)_wnd_geticonhandle(hWnd, FALSE);
 				if (hicon != 0)
 				{
 					HEXIMAGE hImg = 0;
@@ -102,18 +102,18 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	return 0;
 }
 
-void  _sysbutton_remove_proc(obj_s* pObj, int width, int height)
+void  _sysbutton_remove_proc(obj_s* pObj, INT width, INT height)
 {
 	HEXOBJ sObj = pObj->objChildFirst_;
 	obj_s* psobj = nullptr;
-	int nError = 0;
-	bool bReCalced = false;
-	int nOffset = 0;
-	while (_handle_validate(sObj, HT_OBJECT, (void**)&psobj, &nError))
+	INT nError = 0;
+	BOOL bReCalced = FALSE;
+	INT nOffset = 0;
+	while (_handle_validate(sObj, HT_OBJECT, (LPVOID*)&psobj, &nError))
 	{
 		if (!bReCalced)
 		{
-			bReCalced = true;
+			bReCalced = TRUE;
 			nOffset = width - psobj->right_;
 		}
 		Ex_ObjSetPos(sObj, 0, psobj->left_ + nOffset, EOP_DEFAULT, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
@@ -123,9 +123,9 @@ void  _sysbutton_remove_proc(obj_s* pObj, int width, int height)
 
 LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (uMsg == WM_NCCREATE)
 		{
@@ -149,7 +149,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		}
 		else if (uMsg == WM_NCHITTEST)
 		{
-			auto ret = pObj->dwStyle_;
+			INT ret = pObj->dwStyle_;
 			if ((ret & EWS_TITLE) != 0)
 			{
 				if ((ret & EWS_HASICON) != 0)
@@ -171,11 +171,11 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 			LPCWSTR ret = nullptr;
 			if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 			{
-				_obj_setuistate(pObj, STATE_HOVER, false, 0, true, &nError);
+				_obj_setuistate(pObj, STATE_HOVER, FALSE, 0, TRUE, &nError);
 				if (((pObj->dwStyle_ & EWS_BUTTON_MAX) == EWS_BUTTON_MAX))
 				{
-					Ex_MemFree((void*)pObj->pstrTips_);
-					if (_wnd_querystyle(hWnd, WS_MAXIMIZE, false))
+					Ex_MemFree((LPVOID)pObj->pstrTips_);
+					if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
 					{
 						ret = copytstr(g_Li.lpstr_res_max, lstrlenW(g_Li.lpstr_res_max));
 					}
@@ -186,8 +186,8 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 				}
 				else if (((pObj->dwStyle_ & EWS_BUTTON_MIN) == EWS_BUTTON_MIN))
 				{
-					Ex_MemFree((void*)pObj->pstrTips_);
-					if (_wnd_querystyle(hWnd, WS_MINIMIZE, false))
+					Ex_MemFree((LPVOID)pObj->pstrTips_);
+					if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
 					{
 						ret = copytstr(g_Li.lpstr_res_min, lstrlenW(g_Li.lpstr_res_min));
 					}
@@ -202,26 +202,26 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		{
 			if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 			{
-				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, true, 0, true, &nError);
+				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
 			}
 		}
 		else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN)
 		{
 			if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 			{
-				_obj_setuistate(pObj, STATE_DOWN, false, 0, true, &nError);
+				_obj_setuistate(pObj, STATE_DOWN, FALSE, 0, TRUE, &nError);
 			}
 		}
 		else if (uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONUP)
 		{
 			if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 			{
-				_obj_setuistate(pObj, STATE_DOWN, true, 0, true, &nError);
+				_obj_setuistate(pObj, STATE_DOWN, TRUE, 0, TRUE, &nError);
 			}
 		}
 		else if (uMsg == WM_EX_LCLICK)
 		{
-			int ret = pObj->dwStyle_;
+			INT ret = pObj->dwStyle_;
 			if ((ret & EWS_BUTTON_CLOSE) != 0)
 			{
 				if (((pObj->pWnd_->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
@@ -230,30 +230,30 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 				}
 				else {
 					PostMessageW(hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
-					_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, true, 0, true, &nError);
+					_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
 				}
 			}
 			else if ((ret & EWS_BUTTON_MAX) != 0)
 			{
-				if (_wnd_querystyle(hWnd, WS_MAXIMIZE, false))
+				if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
 				{
 					SendMessageW(hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
 				}
 				else {
 					SendMessageW(hWnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 				}
-				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, true, 0, true, &nError);
+				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
 			}
 			else if ((ret & EWS_BUTTON_MIN) != 0)
 			{
-				if (_wnd_querystyle(hWnd, WS_MINIMIZE, false))
+				if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
 				{
 					SendMessageW(hWnd, WM_SYSCOMMAND, SC_RESTORE, 0);
 				}
 				else {
 					SendMessageW(hWnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
 				}
-				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, true, 0, true, &nError);
+				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
 			}
 		}
 		else if (uMsg == WM_SETFOCUS)
@@ -283,10 +283,10 @@ size_t _page_paint(HEXOBJ hObj)
 
 void _page_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	auto nCode = LOWORD(wParam);
-	int oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
-	int height = pObj->c_bottom_ - pObj->c_top_;
-	int nPos = 0;
+	INT nCode = LOWORD(wParam);
+	INT oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
+	INT height = pObj->c_bottom_ - pObj->c_top_;
+	INT nPos = 0;
 	if (nCode == SB_THUMBPOSITION)
 	{
 		nPos = oPos;
@@ -321,16 +321,16 @@ void _page_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wP
 	{
 		return;
 	}
-	nPos = Ex_ObjScrollSetPos(hObj, SB_VERT, nPos, true);
+	nPos = Ex_ObjScrollSetPos(hObj, SB_VERT, nPos, TRUE);
 	Ex_ObjSetPos(pObj->objChildFirst_, 0, EOP_DEFAULT, (-nPos), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
 }
 
 
 LRESULT CALLBACK _page_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL)
 		{

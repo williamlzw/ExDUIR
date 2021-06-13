@@ -3,16 +3,16 @@
 
 struct ARGB_s
 {
-	int r;
-	int g;
-	int b;
-	int a;
+	INT r;
+	INT g;
+	INT b;
+	INT a;
 };
 
-EXATOM _fmt_getatom(void* lpValue, void** lpValueOffset);
-int _fmt_intary_ex(void* lpValue, void** lpAry, int nMax, bool fPercentFlags);
-int _fmt_intary(void* lpValue, void* lpAry, int nMaxCount, bool fZero, void* lpdwPercentFlags);
-bool _fmt_color(void* lpValue, void* lpColor);
-void* _fmt_int(void* lpValue, void* lpdwPercentFlags);
-bool _fmt_getvalue(void** lpValue, int atomDest);
-bool _fmt_bin(HEXRES hRes, void* lpValue, void** lpBin, size_t* lpLen, bool* lpFreeBuffer);
+EXATOM _fmt_getatom(LPVOID lpValue, LPVOID* lpValueOffset);
+INT _fmt_intary_ex(LPVOID lpValue, LPVOID* lpAry, INT nMax, BOOL fPercentFlags);
+INT _fmt_intary(LPVOID lpValue, LPVOID lpAry, INT nMaxCount, BOOL fZero, LPVOID lpdwPercentFlags);
+BOOL _fmt_color(LPVOID lpValue, LPVOID lpColor);
+LPVOID _fmt_int(LPVOID lpValue, LPVOID lpdwPercentFlags);
+BOOL _fmt_getvalue(LPVOID* lpValue, INT atomDest);
+BOOL _fmt_bin(HEXRES hRes, LPVOID lpValue, LPVOID* lpBin, size_t* lpLen, BOOL* lpFreeBuffer);

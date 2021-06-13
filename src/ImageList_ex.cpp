@@ -1,5 +1,4 @@
-﻿#include "help_ex.h"
-#include "ImageList_ex.h"
+﻿#include "ImageList_ex.h"
 
 
 BOOL _imglist_del(HEXIMAGELIST hImageList, size_t nIndex) {
@@ -26,16 +25,16 @@ BOOL _imglist_destroy(HEXIMAGELIST hImageList)
 
 BOOL _imglist_draw(HEXIMAGELIST hImageList, size_t nIndex, HEXCANVAS hCanvas, INT nLeft, INT nTop, INT nRight, INT nBottom, DWORD nAlpha)
 {
-    bool ret = 0;
+    BOOL ret = FALSE;
     HEXIMAGE hImg = 0;
-    int nSize;
+    INT nSize;
 
     hImg = Array_GetMember((array_s*)hImageList, nIndex);
     nSize = Array_GetExtra((array_s*)hImageList);
     if (hImg)
     {
-        int nWidth = nRight - nLeft;
-        int nHeight = nBottom - nTop;
+        INT nWidth = nRight - nLeft;
+        INT nHeight = nBottom - nTop;
         ret = _canvas_drawimagerect(hCanvas, hImg, nLeft + (nWidth - LOWORD(nSize)) / 2, nTop + (nHeight - HIWORD(nSize)) / 2, nLeft + (nWidth - LOWORD(nSize)) / 2 + LOWORD(nSize), nTop + (nHeight - HIWORD(nSize)) / 2 + HIWORD(nSize), nAlpha);
     }
     return ret;
@@ -72,7 +71,7 @@ BOOL _imglist_setimage(HEXIMAGELIST hImageList, size_t nIndex, HEXIMAGE hImg)
 
 BOOL _imglist_size(HEXIMAGELIST hImageList, INT* pWidth, INT* pHeight)
 {
-    int nSize = Array_GetExtra((array_s*)hImageList);
+    INT nSize = Array_GetExtra((array_s*)hImageList);
     BOOL ret = FALSE;
     if (nSize)
     {
@@ -104,14 +103,14 @@ size_t _imglist_addimage(HEXIMAGELIST hImageList, HEXIMAGE hImg, size_t nIndex)
     return ret;
 }
 
-HEXIMAGE _imglist_array_addmember(array_s* hArr, size_t nIndex, void* pvItem, int nType)
+HEXIMAGE _imglist_array_addmember(array_s* hArr, size_t nIndex, LPVOID pvItem, INT nType)
 {
     HEXIMAGE dst = 0;
     _img_scale((HEXIMAGE)pvItem, LOWORD(nType), HIWORD(nType), &dst);
     return dst;
 }
 
-int _imglist_array_delmember(array_s* hArr, size_t nIndex, void* pvItem, int nType)
+INT _imglist_array_delmember(array_s* hArr, size_t nIndex, LPVOID pvItem, INT nType)
 {
     return _img_destroy((HEXIMAGE)pvItem);
 }

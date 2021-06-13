@@ -1,51 +1,12 @@
 #pragma once
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <string>
 #include <Windows.h>
-
 #include "olectl.h"
 #pragma comment(lib, "OleAut32.lib")
-
-
-#define GDIPVER 0x110   /*定义高版本的GDI+(1.1)*/
-#include "gdiplus.h"
-#pragma comment(lib, "Gdiplus.lib") /*链接GDIPlus库*/
-using namespace Gdiplus; /*使用Gdiplus命名空间*/
-using namespace DllExports;
-
-template <class Ty>//这里实现了 int long float double  unsigned int/... 等等
-static void pt(std::wstring& str, Ty v)
-{
-	str.append(std::to_wstring(v) + L" ");
-}
-static void pt(std::wstring& str, std::wstring s)//这个是 文本型 
-{
-	str.append(s + L" ");
-}
-static void pt(std::wstring& str, const wchar_t* s)//这个是 L"" 
-{
-	str.append(s); 
-	str.append(L" ");
-}
-//可以无限重载自定义类型的 调试输出  输出内容格式可以自定义   
-//下面的字节集调试输出例子 是用vector自封的数组  输出结果 跟易语言调试输出字节集一样的效果
-// static void pt(std::wstring & str, 字节集 s)
-// {
-	// str.append(L"字节集:" + 长整数到文本(s.取字节数()) + L"{" + 字节集_字节集到文本(s) + L"}");
-// }
-
-//调试输出 支持 无限参数!  任意类型!  (没有的可以在上面重载方法自定义)
-template <class... T>
-static void output(T...args) {
-	std::wstring str = L"";
-	std::initializer_list<int>{ (pt(str, std::forward<T>(args)), 0)...};
-	str.append(L"\r\n");
-	OutputDebugStringW(str.c_str());
-}
 
 //断言
 #ifndef _DEBUG
@@ -62,10 +23,6 @@ static void output(T...args) {
 				)
 	#endif
 #endif
-
-#define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME					//定义一个API函数类型,并声明
-#define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME																	//声明一个函数指针变量
-#define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule,#NAME)	
 
 #include "ExDUIR_Struct.h"
 
@@ -94,8 +51,8 @@ struct EX_EVENT_HANDLER_TABLE;
 struct EX_APNG_THUNK;
 
 
-typedef bool(CALLBACK* UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
-typedef int(CALLBACK* EnumPROC)(size_t, size_t);
+typedef BOOL(CALLBACK* UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
+typedef INT(CALLBACK* EnumPROC)(size_t, size_t);
 
 
 struct obj_base {
@@ -106,7 +63,7 @@ struct obj_base {
 	HEXOBJ objChildFirst_;
 	HEXOBJ objChildLast_;
 	HEXLAYOUT hLayout_;
-	int dwFlags_;
+	INT dwFlags_;
 	EX_BACKGROUNDIMAGEINFO* lpBackgroundImage_;
 	HEXTHEME hTheme_;
 };
@@ -225,7 +182,7 @@ struct obj_base {
 #define ATOM_ARROW2_HOVER -1250549992
 #define ATOM_ARROW2_DOWN  91886425
 
-#define ATOM_REPORTLISTVIEW -2110221007
+#define ATOM_REPORTLISTVIEW	-2110221007
 #define ATOM_REPORTLISTVIEW_HEAD 1379019209
 #define ATOM_STATIC 1404034966
 #define ATOM_SYSBUTTON 612196532
@@ -368,7 +325,7 @@ struct obj_base {
 #include "Class_Win10Loading_ex.h"
 #include "Class_SoliderBar_ex.h"
 #include "Class_RotateImageBox_ex.h"
-#include "Class_WebView_ex.h"
+
 
 struct LOCALINFO
 {
@@ -414,25 +371,15 @@ struct LOCALINFO
 
 struct RENDERINFO
 {
-	LPVOID hToken;
 	LPVOID pLocalName;
-	LPVOID pDWriteFactory;
-	LPVOID pWICFactory;
-	LPVOID pD2Dfactory;
-	LPVOID pD2DDevice;
-	LPVOID pD2DDeviceContext;
-	LPVOID pGDIInterop;
-
-	LPVOID pEffectGaussianBlur;
-	LPVOID pEffectHueRotation;
-
-	INT bp_format;
-	INT bp_alphaMode;
-	FLOAT bp_dpix;
-	FLOAT bp_dpiy;
-	INT bp_bitmapOptions;
-	LPVOID bp_colorContext;
-
+	IDWriteFactory* pDWriteFactory;
+	IWICImagingFactory* pWICFactory;
+	ID2D1Factory1* pD2Dfactory;
+	ID2D1Device* pD2DDevice;
+	ID2D1DeviceContext* pD2DDeviceContext;
+	ID2D1GdiInteropRenderTarget* pGDIInterop;
+	ID2D1Effect* pEffectGaussianBlur;
+	ID2D1Effect* pEffectHueRotation;
 	HMODULE hRiched20;
 };
 
@@ -468,42 +415,45 @@ typedef struct ICONIMAGE
 } ICONIMAGE, * LPICONIMAGE;
 
 
-int DtoHimetric(int d, int PerInchc);
-void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
-bool Ex_MemFree(void* hMem);
-void* Ex_MemAlloc(size_t dwSize, int dwFlags = LMEM_ZEROINIT);
-void* Ex_MemReAlloc(void* hMem, size_t dwSizes);
+INT DtoHimetric(INT d, INT PerInchc);
+LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
+DOUBLE  GetSysDpi();
+BOOL Ex_MemFree(LPVOID hMem);
+LPVOID Ex_MemAlloc(size_t dwSize, INT dwFlags = LMEM_ZEROINIT);
+LPVOID Ex_MemReAlloc(LPVOID hMem, size_t dwSizes);
 
-char __get_char(void* lpAddr, size_t offset);
-UCHAR __get_unsignedchar(void* lpAddr, size_t offset);
-wchar_t __get_wchar(void* lpAddr, size_t offset);
-void __set_char(void* lpAddr, size_t offset, char value);
-void __set_unsignedchar(void* lpAddr, size_t offset, UCHAR value);
-void __set_wchar(void* lpAddr, size_t offset, wchar_t value);
+CHAR __get_char(LPVOID lpAddr, size_t offset);
+UCHAR __get_unsignedchar(LPVOID lpAddr, size_t offset);
+WCHAR __get_wchar(LPVOID lpAddr, size_t offset);
+void __set_char(LPVOID lpAddr, size_t offset, CHAR value);
+void __set_unsignedchar(LPVOID lpAddr, size_t offset, UCHAR value);
+void __set_wchar(LPVOID lpAddr, size_t offset, WCHAR value);
 void _bit_add(size_t* dwValue, size_t index);
 void _bit_del(size_t* dwValue, size_t index);
 void _bit_not(size_t* dwValue, size_t index);
-bool _bit_test(size_t* dwValue, size_t index);
-void* __ptr_ins(void** ptr, int nCount, int* nIndexInsert, int cbBlock, void* pNewItem);
-void* __ptr_del(void** ptr, int nCount, int nIndex, int cbBlock);
-void* __ptr_index(void* ptr, int nCount, int nIndex, int cbBlock);
-void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar);
-void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int dwLen);
-void U2W_Addr(void* lpUTF8, int dwLen, void** retPtr, size_t* retLen);
-void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen);
-void PrintArray(unsigned char* data, int len);
+BOOL _bit_test(size_t* dwValue, size_t index);
+LPVOID __ptr_ins(LPVOID* ptr, INT nCount, INT* nIndexInsert, INT cbBlock, LPVOID pNewItem);
+LPVOID __ptr_del(LPVOID* ptr, INT nCount, INT nIndex, INT cbBlock);
+LPVOID __ptr_index(LPVOID ptr, INT nCount, INT nIndex, INT cbBlock);
+void _wstr_deletechar(LPVOID lpstr, INT* dwsize, WCHAR wchar);
+void A2W_Addr(LPVOID lpszString, LPVOID* retPtr, size_t* retLen, INT CodePage, INT dwLen);
+
+void U2W_Addr(LPVOID lpUTF8, INT dwLen, LPVOID* retPtr, size_t* retLen);
+void ANY2W(LPVOID pAddr, size_t dwLen, LPVOID* retPtr, size_t* retLen);
+void PrintArray(UCHAR* data, INT len);
 std::vector<std::wstring> ws_split(const std::wstring& str, const std::wstring& delim);
 
-int GetNearestPrime(int value);
+INT GetNearestPrime(INT value);
 
-void _struct_destroyfromaddr(void* lpAddr, size_t Offset);
-void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int* nError);
+void _struct_destroyfromaddr(LPVOID lpAddr, size_t Offset);
+LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT* nError);
 
-void RC4(void* dest, size_t dstlen, const void* pwd, size_t pwdlen);
-UINT Crc32_Addr(void* buf, UINT nLength);
-void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset);
+void RC4(LPVOID dest, size_t dstlen, const LPVOID pwd, size_t pwdlen);
+UINT Crc32_Addr(LPVOID buf, UINT nLength);
+LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT* nOffset);
 
 
-std::wstring GetErrorMessage(DWORD error);
-LPCWSTR copytstr(LPCWSTR lptstr, int len);
-int wstr_compare(LPCWSTR wstr1, LPCWSTR wstr2, bool caseSensitive);
+LPCWSTR GetErrorMessage(DWORD error);
+LPCWSTR copytstr(LPCWSTR lptstr, INT len);
+INT wstr_compare(LPCWSTR wstr1, LPCWSTR wstr2, BOOL caseSensitive);
+std::wstring a2w(std::string str);

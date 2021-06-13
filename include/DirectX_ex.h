@@ -14,31 +14,27 @@
 #include "help_ex.h"
 
 
-
-#define CVC_DX_D2DCONTEXT 1
-#define CVC_DX_D2DBITMAP 2
-
-bool _dx_init(int* nError);
+BOOL _dx_init(INT* nError);
 void _dx_uninit();
-void* _dx_get_gdiInterop(void* prt);
-void* _dx_createbitmap(void* pDeviceContext, int width, int height, bool fGDI, int* nError);
-void _dx_settarget(void* pDeviceContext, void* pBitmap);
-void _dx_getsize(void* pBitmap, float* width, float* height);
-void* _dx_gettarget(void* pDeviceContext);
-void _dx_begindraw(void* pDeviceContext);
-int _dx_enddraw(void* pDeviceContext);
-void _dx_flush(void* pDeviceContext);
-void _dx_clear(void* pDeviceContext, EXARGB Color);
-bool _dx_createeffect(void* pDeviceContext, IID peffectId, void** peffect, int* nError);
-void _dx_blur(void* pDeviceContext, void* pBitmap, float fDeviation, RECT* lprc, int* nError);
-void _dx_rotate_hue(void* pContext, void* pBitmap, float fAngle, int* nError);
-void _dx_cliprect(void* pDeviceContext, float left, float top, float right, float bottom);
-void _dx_resetclip(void* pDeviceContext);
-void _dx_drawbitmaprect(void* pDeviceContext, void* pBitmap, float dstLeft, float dstTop, float dstRight, float dstBottom, int dwAlpha);
-void _dx_drawbitmaprectrect(void* pDeviceContext, void* pBitmap, float dstLeft, float dstTop, float dstRight, float dstBottom, float srcLeft, float srcTop, float srcRight, float srcBottom, int dwAlpha);
-void _dx_drawimage(void* pDeviceContext, img_s* pImage, float left, float top, int mode);
-void _dx_drawimage_ex(void* pDeviceContext, img_s* pImage, float dstLeft, float dstTop, float srcLeft, float srcTop, float srcRight, float srcBottom, int mode);
-void _dx_bmp_copyfrom(void** pDestBitmap, void* pSrcBitmap, int dX, int dY, int srcLeft, int srcTop, int srcRight, int srcBottom);
-void _dx_drawframe_apng(img_s* pImage, IWICBitmap* pImgSrc, IStream* lpStream, int x, int y, BYTE dispose, BYTE blend, int nIndex);
+ID2D1GdiInteropRenderTarget* _dx_get_gdiInterop(LPVOID prt);
+LPVOID _dx_createbitmap(ID2D1DeviceContext* pDeviceContext, INT width, INT height, BOOL fGDI, INT* nError);
+void _dx_settarget(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap);
+void _dx_getsize(LPVOID pBitmap, FLOAT* width, FLOAT* height);
+LPVOID _dx_gettarget(ID2D1DeviceContext* pDeviceContext);
+void _dx_begindraw(ID2D1DeviceContext* pDeviceContext);
+INT _dx_enddraw(ID2D1DeviceContext* pDeviceContext);
+void _dx_flush(ID2D1DeviceContext* pDeviceContext);
+void _dx_clear(ID2D1DeviceContext* pDeviceContext, EXARGB Color);
+BOOL _dx_createeffect(ID2D1DeviceContext* pDeviceContext, IID peffectId, ID2D1Effect** peffect, INT* nError);
+void _dx_blur(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap, FLOAT fDeviation, RECT* lprc, INT* nError);
+void _dx_rotate_hue(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap, FLOAT fAngle, INT* nError);
+void _dx_cliprect(ID2D1DeviceContext* pDeviceContext, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+void _dx_resetclip(ID2D1DeviceContext* pDeviceContext);
+void _dx_drawbitmaprect(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom, INT dwAlpha);
+void _dx_drawbitmaprectrect(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, INT dwAlpha);
+void _dx_drawimage(ID2D1DeviceContext* pDeviceContext, img_s* pImage, FLOAT left, FLOAT top, INT mode);
+void _dx_drawimage_ex(ID2D1DeviceContext* pDeviceContext, img_s* pImage, FLOAT dstLeft, FLOAT dstTop, FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, INT mode);
+void _dx_bmp_copyfrom(LPVOID* pDestBitmap, LPVOID pSrcBitmap, INT dX, INT dY, INT srcLeft, INT srcTop, INT srcRight, INT srcBottom);
+void _dx_drawframe_apng(img_s* pImage, IWICBitmap* pImgSrc, IStream* lpStream, INT x, INT y, BYTE dispose, BYTE blend, INT nIndex);
 void ARGB2ColorF(EXARGB argb, D2D1_COLOR_F *color);
 void ColorF2ARGB(D2D1_COLOR_F color, EXARGB* argb);

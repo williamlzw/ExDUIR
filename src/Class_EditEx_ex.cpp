@@ -30,7 +30,7 @@ LRESULT CALLBACK _EditEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		/*创建时初始化控件属性*/
 	case WM_CREATE:
 	{
-		Ex_ObjSetPadding(hObj, 0, 5, 5, 5, 5, false);
+		Ex_ObjSetPadding(hObj, 0, 5, 5, 5, 5, FALSE);
 		Ex_ObjInitPropList(hObj, 9 + 1);
 		EXARGB	ThemeColor = ExARGB(76, 175, 80, 255);
 		Ex_ObjSetProp(hObj, 2, ExARGB(0, 0, 0, 100));
@@ -97,37 +97,37 @@ LRESULT CALLBACK _EditEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		RECT rc = { 0 };
 		HEXCANVAS	hCanvas = (HEXCANVAS)wParam;
 		HEXBRUSH	hbrush = _brush_create(Ex_ObjGetProp(hObj, 1));
-		bool		m_IsDraw = false;/*假为默认边框风格*/
-		auto		Radius = (float)Ex_ObjGetProp(hObj, 7);/*圆角度*/
-		auto		StrokeWidth = (float)Ex_ObjGetProp(hObj, 8);/*线宽*/
-		auto		nIconPosition = (float)Ex_ObjGetProp(hObj, 9);/*图标位置*/
+		BOOL		m_IsDraw = FALSE;/*假为默认边框风格*/
+		FLOAT		Radius = (FLOAT)Ex_ObjGetProp(hObj, 7);/*圆角度*/
+		FLOAT		StrokeWidth = (FLOAT)Ex_ObjGetProp(hObj, 8);/*线宽*/
+		FLOAT		nIconPosition = (FLOAT)Ex_ObjGetProp(hObj, 9);/*图标位置*/
 		/*获取编辑客户区矩形*/
 		Ex_ObjGetClientRect(hObj, &rc);
 		/*填充背景*/
 		if (Radius == NULL)
 		{
-			_canvas_fillrect(hCanvas, hbrush, 0, 0, Ex_Scale((float)rc.right), Ex_Scale((float)rc.bottom));
+			_canvas_fillrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right), Ex_Scale((FLOAT)rc.bottom));
 		}
 		else {
-			_canvas_fillroundedrect(hCanvas, hbrush, 0, 0, Ex_Scale((float)rc.right), Ex_Scale((float)rc.bottom), Ex_Scale(Radius), Ex_Scale(Radius));
+			_canvas_fillroundedrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right), Ex_Scale((FLOAT)rc.bottom), Ex_Scale(Radius), Ex_Scale(Radius));
 		}
 		/*计算编辑框宽高*/
-		float Width = Ex_Scale((float)(rc.right - rc.left));
-		float Height = Ex_Scale((float)(rc.bottom - rc.top));
+		FLOAT Width = Ex_Scale((FLOAT)(rc.right - rc.left));
+		FLOAT Height = Ex_Scale((FLOAT)(rc.bottom - rc.top));
 
 		/*获取图标*/
 		HEXIMAGE    hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EOL_USERDATA);
 		
 
 
-		//HEXBRUSH	hbrush_linear = _brush_createlinear(0, 0, Ex_Scale((float)rc.right), 0, crBegin, crEnd /*RGB2ARGB(8388736, 200), RGB2ARGB(16746496, 200)*/);
+		//HEXBRUSH	hbrush_linear = _brush_createlinear(0, 0, Ex_Scale((FLOAT)rc.right), 0, crBegin, crEnd /*RGB2ARGB(8388736, 200), RGB2ARGB(16746496, 200)*/);
 
 		/*定义线框正常态颜色*/
 		_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, 2));
 
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & EES_UNDERLINE) == EES_UNDERLINE)
 		{
-			m_IsDraw = true;/*下划线风格*/
+			m_IsDraw = TRUE;/*下划线风格*/
 		}
 
 
@@ -146,17 +146,17 @@ LRESULT CALLBACK _EditEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		/*绘制线框*/
 		if (m_IsDraw)
 		{
-			_canvas_drawline(hCanvas, hbrush, Ex_Scale((float)rc.left), Ex_Scale((float)rc.bottom), Ex_Scale((float)rc.right), Ex_Scale((float)rc.bottom), Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
+			_canvas_drawline(hCanvas, hbrush, Ex_Scale((FLOAT)rc.left), Ex_Scale((FLOAT)rc.bottom), Ex_Scale((FLOAT)rc.right), Ex_Scale((FLOAT)rc.bottom), Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
 		}
 		else
 		{
 			if (Radius == NULL)
 			{
-				_canvas_drawrect(hCanvas, hbrush, 0, 0, Ex_Scale((float)rc.right), Ex_Scale((float)rc.bottom), Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
+				_canvas_drawrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right), Ex_Scale((FLOAT)rc.bottom), Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
 			}
 			else
 			{
-				_canvas_drawroundedrect(hCanvas, hbrush, Ex_Scale((float)rc.left + StrokeWidth), Ex_Scale((float)rc.top + StrokeWidth), Ex_Scale((float)rc.right - StrokeWidth), Ex_Scale((float)rc.bottom - StrokeWidth), Ex_Scale(Radius - StrokeWidth), Ex_Scale(Radius - StrokeWidth), Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
+				_canvas_drawroundedrect(hCanvas, hbrush, Ex_Scale((FLOAT)rc.left + StrokeWidth), Ex_Scale((FLOAT)rc.top + StrokeWidth), Ex_Scale((FLOAT)rc.right - StrokeWidth), Ex_Scale((FLOAT)rc.bottom - StrokeWidth), Ex_Scale(Radius - StrokeWidth), Ex_Scale(Radius - StrokeWidth), Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
 			}
 		}
 
@@ -166,20 +166,20 @@ LRESULT CALLBACK _EditEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		/*绘制图标*/
 		if (NULL != hImage)
 		{
-			_canvas_setantialias(hCanvas, true);
-			_canvas_setimageantialias(hCanvas, true);
+			_canvas_setantialias(hCanvas, TRUE);
+			_canvas_setimageantialias(hCanvas, TRUE);
 			
 			if (nIconPosition == 0)
 			{
 				
-				P->left = (int)Height;
-				P->right = (int)(Width - Ex_Scale(10));
+				P->left = (INT)Height;
+				P->right = (INT)(Width - Ex_Scale(10));
 				_canvas_drawimagerect(hCanvas, hImage, Height / 4, Height / 4, Height - Height / 4, Height - Height / 4,255);
 			}
 			else if (nIconPosition >= 1)
 			{
-				P->left = (int)Ex_Scale(10);
-				P->right = (int)(Width - Height);
+				P->left = (INT)Ex_Scale(10);
+				P->right = (INT)(Width - Height);
 				_canvas_drawimagerect(hCanvas, hImage, Width - Height + Height /4, Height /4, Width - Height + Height -Height/4, Height - Height/4, 255);
 			}
 		}
@@ -190,5 +190,5 @@ LRESULT CALLBACK _EditEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	default:
 		break;
 	}
-	return(Ex_ObjCallProc(m_pfnEditExProc, hWnd, hObj, uMsg, wParam, lParam,0));
+	return(Ex_ObjCallProc(m_pfnEditExProc, hWnd, hObj, uMsg, wParam, lParam));
 }

@@ -18,8 +18,8 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		Ex_ObjSetLong(hObj, SBL_MIN, 0);
 		Ex_ObjSetLong(hObj, SBL_MAX, 100);
 		Ex_ObjSetLong(hObj, SBL_POS, 0);
-		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_CHECKED, ExARGB(255, 255, 255, 250), true);
-		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 125), true);
+		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_CHECKED, ExARGB(255, 255, 255, 250), TRUE);
+		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 125), TRUE);
 		break;
 	}
 	/*销毁时释放资源*/
@@ -34,18 +34,18 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 
 	case WM_MOUSEHOVER:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
 		break;
 	}
 	case  WM_MOUSELEAVE:
 	{
-		Ex_ObjSetUIState(hObj, STATE_HOVER, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
 		break;
 	}
 	case WM_LBUTTONDOWN:
 	{
 
-		Ex_ObjSetUIState(hObj, STATE_DOWN, false, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
 
 		tmp = (long)SoliderBar_GetValueOfThePoint(hObj, lParam);
 		tmp2 = Ex_ObjSetLong(hObj, SBL_POS, tmp);
@@ -58,7 +58,7 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	}
 	case WM_LBUTTONUP:
 	{
-		Ex_ObjSetUIState(hObj, STATE_DOWN, true, 0, true);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
 		break;
 	}
 	case WM_MOUSEMOVE:/*鼠标移动若为按下态,则更新当前位置*/
@@ -151,7 +151,7 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 }
 
 
-int _SoliderBar_paint(HEXOBJ hObj)
+INT _SoliderBar_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量
@@ -168,14 +168,14 @@ int _SoliderBar_paint(HEXOBJ hObj)
 		 */
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL));
 		Ex_ObjGetClientRect(hObj, &RC);
-		float x, y;
+		FLOAT x, y;
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ESBS_VERTICAL) == ESBS_VERTICAL)
 		{
-			_canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((float)RC.right / 2), SBL_BLOCK_SIZE, Ex_Scale((float)RC.right / 2), Ex_Scale((float)(RC.bottom)) - SBL_BLOCK_SIZE, Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
-			x = Ex_Scale((float)RC.right / 2);
+			_canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)RC.right / 2), SBL_BLOCK_SIZE, Ex_Scale((FLOAT)RC.right / 2), Ex_Scale((FLOAT)(RC.bottom)) - SBL_BLOCK_SIZE, Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
+			x = Ex_Scale((FLOAT)RC.right / 2);
 			if (Ex_ObjGetLong(hObj, SBL_BLOCK_POINT) == 1)
 			{
-				y = Ex_Scale((float)RC.bottom);
+				y = Ex_Scale((FLOAT)RC.bottom);
 			}
 			else
 			{
@@ -184,21 +184,21 @@ int _SoliderBar_paint(HEXOBJ hObj)
 		}
 		else
 		{
-			_canvas_drawline(ps.hCanvas, hBrush, SBL_BLOCK_SIZE, Ex_Scale((float)RC.bottom / 2), Ex_Scale((float)(RC.right)) - SBL_BLOCK_SIZE, Ex_Scale((float)RC.bottom / 2), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
+			_canvas_drawline(ps.hCanvas, hBrush, SBL_BLOCK_SIZE, Ex_Scale((FLOAT)RC.bottom / 2), Ex_Scale((FLOAT)(RC.right)) - SBL_BLOCK_SIZE, Ex_Scale((FLOAT)RC.bottom / 2), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
 			if (Ex_ObjGetLong(hObj, SBL_BLOCK_POINT) == 1)
 			{
-				x = Ex_Scale((float)RC.right);
+				x = Ex_Scale((FLOAT)RC.right);
 			}
 			else
 			{
 				x = SBL_BLOCK_SIZE;
 			}
-			y = Ex_Scale((float)RC.bottom / 2);
+			y = Ex_Scale((FLOAT)RC.bottom / 2);
 		}
 		_brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED));
 		SoliderBar_GetRECT(hObj, (LPARAM)&RC);
-		_canvas_fillellipse(ps.hCanvas, hBrush, Ex_Scale((float)(RC.left + RC.right)) / 2, Ex_Scale((float)(RC.top + RC.bottom)) / 2, Ex_Scale(SBL_BLOCK_SIZE), Ex_Scale(SBL_BLOCK_SIZE));
-		_canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((float)(RC.left + RC.right)) / 2, Ex_Scale((float)(RC.top + RC.bottom)) / 2, x, y, Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
+		_canvas_fillellipse(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2, Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, Ex_Scale(SBL_BLOCK_SIZE), Ex_Scale(SBL_BLOCK_SIZE));
+		_canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2, Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, x, y, Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
@@ -209,10 +209,10 @@ int _SoliderBar_paint(HEXOBJ hObj)
 void SoliderBar_GetRECT(HEXOBJ hObj, LPARAM lParam)
 {
 	RECT RC = { 0 };
-	float value = NULL;
+	FLOAT value = NULL;
 	Ex_ObjGetClientRect(hObj, &RC);
-	value = (float)(Ex_ObjGetLong(hObj, SBL_MAX) - Ex_ObjGetLong(hObj, SBL_MIN));
-	value = (float)((Ex_ObjGetLong(hObj, SBL_POS) - Ex_ObjGetLong(hObj, SBL_MIN)) / value);// ' 得到百分比
+	value = (FLOAT)(Ex_ObjGetLong(hObj, SBL_MAX) - Ex_ObjGetLong(hObj, SBL_MIN));
+	value = (FLOAT)((Ex_ObjGetLong(hObj, SBL_POS) - Ex_ObjGetLong(hObj, SBL_MIN)) / value);// ' 得到百分比
 
 	if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ESBS_VERTICAL) == ESBS_VERTICAL)
 	{
@@ -253,48 +253,48 @@ void SoliderBar_GetRECT(HEXOBJ hObj, LPARAM lParam)
 	{
 		RECT* R = (RECT*)lParam;
 		*R = RC;
-		//memcpy((void*)lParam, (const void*)&RC, (size_t)16);
+		//memcpy((LPVOID)lParam, (const LPVOID)&RC, (size_t)16);
 	}
 }
 
 /*滑块条_取点所在值*/
-float SoliderBar_GetValueOfThePoint(HEXOBJ hObj, LPARAM lParam)
+FLOAT SoliderBar_GetValueOfThePoint(HEXOBJ hObj, LPARAM lParam)
 {
 	RECT RC = { 0 };
-	float value = NULL;
+	FLOAT value = NULL;
 	Ex_ObjGetClientRect(hObj, &RC);
 
 	if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ESBS_VERTICAL) == ESBS_VERTICAL)
 	{
 		if (Ex_ObjGetLong(hObj, SBL_BLOCK_POINT) == 1)
 		{
-			value = (Ex_Scale((float)RC.bottom - SBL_BLOCK_SIZE * 2) - (short)HIWORD(lParam)) / Ex_Scale((float)RC.bottom - SBL_BLOCK_SIZE * 2);
+			value = (Ex_Scale((FLOAT)RC.bottom - SBL_BLOCK_SIZE * 2) - (short)HIWORD(lParam)) / Ex_Scale((FLOAT)RC.bottom - SBL_BLOCK_SIZE * 2);
 		}
 		else
 		{
-			value = ((short)HIWORD(lParam) - Ex_Scale(SBL_BLOCK_SIZE)) / Ex_Scale((float)RC.bottom - SBL_BLOCK_SIZE * 2);
+			value = ((short)HIWORD(lParam) - Ex_Scale(SBL_BLOCK_SIZE)) / Ex_Scale((FLOAT)RC.bottom - SBL_BLOCK_SIZE * 2);
 		}
 	}
 	else
 	{
 		if (Ex_ObjGetLong(hObj, SBL_BLOCK_POINT) == 1)
 		{
-			value = (Ex_Scale((float)RC.right - SBL_BLOCK_SIZE * 2) - (short)LOWORD(lParam)) / Ex_Scale((float)RC.right - SBL_BLOCK_SIZE * 2);
+			value = (Ex_Scale((FLOAT)RC.right - SBL_BLOCK_SIZE * 2) - (short)LOWORD(lParam)) / Ex_Scale((FLOAT)RC.right - SBL_BLOCK_SIZE * 2);
 		}
 		else
 		{
-			value = ((short)LOWORD(lParam) - Ex_Scale(SBL_BLOCK_SIZE)) / Ex_Scale((float)RC.right - SBL_BLOCK_SIZE * 2);
+			value = ((short)LOWORD(lParam) - Ex_Scale(SBL_BLOCK_SIZE)) / Ex_Scale((FLOAT)RC.right - SBL_BLOCK_SIZE * 2);
 		}
 
 	}
 	value = Ex_ObjGetLong(hObj, SBL_MIN) + value * (Ex_ObjGetLong(hObj, SBL_MAX) - Ex_ObjGetLong(hObj, SBL_MIN));// ' 得到百分比
 
-	float tmp = (float)Ex_ObjGetLong(hObj, SBL_MIN);
+	FLOAT tmp = (FLOAT)Ex_ObjGetLong(hObj, SBL_MIN);
 	if (value < tmp)
 	{
 		value = tmp;
 	}
-	tmp = (float)Ex_ObjGetLong(hObj, SBL_MAX);
+	tmp = (FLOAT)Ex_ObjGetLong(hObj, SBL_MAX);
 	if (value > tmp)
 	{
 		value = tmp;

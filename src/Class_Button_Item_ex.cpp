@@ -14,9 +14,9 @@ void _Item_regsiter()
 
 LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (uMsg == WM_PAINT)
 		{
@@ -54,32 +54,32 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		}
 		else if (uMsg == WM_MOUSEHOVER)
 		{
-			int nError = 0;
-			_obj_setuistate(pObj, STATE_HOVER, false, 0, true, &nError);
+			INT nError = 0;
+			_obj_setuistate(pObj, STATE_HOVER, FALSE, 0, TRUE, &nError);
 		}
 		else if (uMsg == WM_MOUSELEAVE)
 		{
-			int nError = 0;
-			_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, true, 0, true, &nError);
+			INT nError = 0;
+			_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
 		}
 		else if (uMsg == WM_LBUTTONDOWN)
 		{
-			int nError = 0;
-			_obj_setuistate(pObj, STATE_DOWN, false, 0, true, &nError);
+			INT nError = 0;
+			_obj_setuistate(pObj, STATE_DOWN, FALSE, 0, TRUE, &nError);
 		}
 		else if (uMsg == WM_LBUTTONUP)
 		{
-			int nError = 0;
-			_obj_setuistate(pObj, STATE_DOWN, true, 0, true, &nError);
+			INT nError = 0;
+			_obj_setuistate(pObj, STATE_DOWN, TRUE, 0, TRUE, &nError);
 		}
 		else if (uMsg == WM_SETFOCUS)
 		{
-			int nError = 0;
+			INT nError = 0;
 			_obj_invalidaterect(pObj, 0, &nError);
 		}
 		else if (uMsg == WM_KILLFOCUS)
 		{
-			int nError = 0;
+			INT nError = 0;
 			_obj_invalidaterect(pObj, 0, &nError);
 		}
 		else if (uMsg == BM_SETCHECK)
@@ -97,22 +97,22 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 					}
 					else
 					{
-						_obj_notify_brothers(hWnd, hObj, pObj, uMsg, 0, 0, true, true);
+						_obj_notify_brothers(hWnd, hObj, pObj, uMsg, 0, 0, TRUE, TRUE);
 					}
 				}
 				else
 				{
 					if ((pObj->dwStyle_ & EBS_CHECKBUTTON) == EBS_CHECKBUTTON)
 					{
-						_obj_setuistate(pObj, STATE_HALFSELECT | STATE_SELECT, true, 0, false, 0);
+						_obj_setuistate(pObj, STATE_HALFSELECT | STATE_SELECT, TRUE, 0, FALSE, 0);
 						if (wParam == 2)
 						{
-							_obj_setuistate(pObj, STATE_HALFSELECT, false, 0, true, 0);
+							_obj_setuistate(pObj, STATE_HALFSELECT, FALSE, 0, TRUE, 0);
 							return 0;
 						}
 					}
 				}
-				_obj_setuistate(pObj, STATE_CHECKED, wParam == 0, 0, true, 0);
+				_obj_setuistate(pObj, STATE_CHECKED, wParam == 0, 0, TRUE, 0);
 				_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_CHECK, wParam, lParam);
 			}
 		}
@@ -139,10 +139,10 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
 	EX_PAINTSTRUCT2 ps = { 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		bool fButton = (ps.dwStyle & (EBS_RADIOBUTTON | EBS_CHECKBUTTON)) == 0;
+		BOOL fButton = (ps.dwStyle & (EBS_RADIOBUTTON | EBS_CHECKBUTTON)) == 0;
 		EXATOM atomClass;
 		EXATOM atomProp;
-		int nIndex;
+		INT nIndex;
 		if (fButton)
 		{
 			atomClass = ATOM_BUTTON;
@@ -218,7 +218,7 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
 	}
 }
 
-int _button_getprop(int state, bool fRadio, EXATOM atom_src, EXATOM atom_check, EXATOM atom_half)
+INT _button_getprop(INT state, BOOL fRadio, EXATOM atom_src, EXATOM atom_check, EXATOM atom_half)
 {
 	EXATOM atomProp;
 	if (fRadio)
@@ -261,7 +261,7 @@ void _item_click(HWND hWnd, obj_s* pObj)
 			MENUITEMINFOW mii;
 			mii.cbSize = sizeof(MENUITEMINFOW);
 			mii.fMask = MIIM_STATE | MIIM_ID;
-			if (GetMenuItemInfoW((HMENU)pWnd->hMenuPopup_, pObj->lParam_, true, &mii))
+			if (GetMenuItemInfoW((HMENU)pWnd->hMenuPopup_, pObj->lParam_, TRUE, &mii))
 			{
 				if ((mii.fState & MFS_GRAYED) == 0)
 				{
@@ -287,13 +287,13 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 	RECT rcSub  { 0 };
 	rcItem.right = ps.width;
 	rcItem.bottom = ps.height;
-	int atomProp = 0;
-	if (GetMenuItemInfoW(hMenu, nID, true, &mii))
+	INT atomProp = 0;
+	if (GetMenuItemInfoW(hMenu, nID, TRUE, &mii))
 	{
 		if ((mii.fType & MFT_SEPARATOR) != 0)
 		{
-			void* lpPadding = pWnd->padding_separator_;
-			int tmp=0;
+			LPVOID lpPadding = pWnd->padding_separator_;
+			INT tmp=0;
 			if (lpPadding != 0)
 			{
 				RtlMoveMemory(&rcPadding, lpPadding, 16);
@@ -306,9 +306,9 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 			Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom, ATOM_ITEM, ATOM_SEPARATOR, 0, 0, 0, 0, 255);
 		}
 		else {
-			bool fHover = ((ps.dwState & STATE_HOVER) != 0 && (mii.fState & MFS_GRAYED) == 0) || ((mii.fState & MFS_HILITE) != 0 && mii.hSubMenu != 0);
+			BOOL fHover = ((ps.dwState & STATE_HOVER) != 0 && (mii.fState & MFS_GRAYED) == 0) || ((mii.fState & MFS_HILITE) != 0 && mii.hSubMenu != 0);
 
-			int alpha = 255;
+			INT alpha = 255;
 			if (fHover)
 			{
 				pObj->dwState_ = pObj->dwState_ | STATE_HOVER;
@@ -323,11 +323,11 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 			else {
 				alpha = 128;
 				crColor = _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL);
-				*(((char*)&crColor) + 3) = alpha;
+				*(((CHAR*)&crColor) + 3) = alpha;
 			}
 			if (mii.hSubMenu != 0)
 			{
-				void* lpPadding = Ex_ThemeGetValuePtr(ps.hTheme, ATOM_ITEM, ATOM_EXPAND);
+				LPVOID lpPadding = Ex_ThemeGetValuePtr(ps.hTheme, ATOM_ITEM, ATOM_EXPAND);
 				if (lpPadding != 0)
 				{
 					RtlMoveMemory(&rcPadding, lpPadding, 16);
@@ -348,12 +348,12 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 			{
 				atomProp = ATOM_RADIO;
 			}
-			void* lpPadding = Ex_ThemeGetValuePtr(ps.hTheme, ATOM_ITEM, atomProp);
+			LPVOID lpPadding = Ex_ThemeGetValuePtr(ps.hTheme, ATOM_ITEM, atomProp);
 			if (lpPadding != 0)
 			{
 				RtlMoveMemory(&rcPadding, lpPadding, 16);
 			}
-			int tmp = pObj->t_left_;
+			INT tmp = pObj->t_left_;
 			rcSub.left = rcItem.left + (tmp - (rcPadding.right - rcPadding.left)) / 2;
 			rcSub.right = rcSub.left + rcPadding.right - rcPadding.left;
 			rcSub.top = rcItem.top + (rcItem.bottom - rcItem.top - (rcPadding.bottom - rcPadding.top)) / 2;
@@ -386,7 +386,7 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 					*tmp1 = 9;
 					if (!fHover)
 					{
-						*(((char*)&crColor) + 3) = 128;
+						*(((CHAR*)&crColor) + 3) = (CHAR)128;
 					}
 					_canvas_drawtextex(ps.hCanvas, hFont, crColor, (LPCWSTR)(tmp1 + 1), -1, ps.dwTextFormat | DT_RIGHT, ps.t_left, ps.t_top, ps.t_right, ps.t_bottom, 0, 0, 0, 0);
 				}
@@ -408,8 +408,8 @@ void _item_paint(HEXOBJ hObj, obj_s* pObj)
 	EX_PAINTSTRUCT2 ps;
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		int nIndex = COLOR_EX_TEXT_NORMAL;
-		int atomProp = 0;
+		INT nIndex = COLOR_EX_TEXT_NORMAL;
+		INT atomProp = 0;
 		
 		if ((ps.dwState & STATE_HOVER) != 0)
 		{
@@ -452,9 +452,9 @@ void _item_paint(HEXOBJ hObj, obj_s* pObj)
 
 LRESULT CALLBACK _item_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (uMsg == WM_PAINT)
 		{
@@ -468,33 +468,33 @@ LRESULT CALLBACK _item_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		{
 			if ((pObj->dwFlags_ & eof_bMenuItem) == eof_bMenuItem)
 			{
-				_obj_notify_brothers(hWnd, hObj, pObj, WM_MOUSELEAVE, 0, 0, true, true);
+				_obj_notify_brothers(hWnd, hObj, pObj, WM_MOUSELEAVE, 0, 0, TRUE, TRUE);
 			}
-			_obj_setfocus(hWnd, pObj->pWnd_, hObj, pObj, true);
+			_obj_setfocus(hWnd, pObj->pWnd_, hObj, pObj, TRUE);
 		}
 		else if (uMsg == WM_MOUSELEAVE)
 		{
 			if ((pObj->dwState_ & STATE_HOVER) == STATE_HOVER)
 			{
-				_obj_killfocus(hObj, pObj, true);
-				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, true, 0, true, 0);
+				_obj_killfocus(hObj, pObj, TRUE);
+				_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, 0);
 			}
 		}
 		else if (uMsg == WM_LBUTTONDOWN)
 		{
-			_obj_setuistate(pObj, STATE_DOWN, false, 0, true, 0);
+			_obj_setuistate(pObj, STATE_DOWN, FALSE, 0, TRUE, 0);
 		}
 		else if (uMsg == WM_LBUTTONUP)
 		{
-			_obj_setuistate(pObj, STATE_HOVER, true, 0, true, 0);
+			_obj_setuistate(pObj, STATE_HOVER, TRUE, 0, TRUE, 0);
 		}
 		else if (uMsg == WM_SETFOCUS)
 		{
-			_obj_setuistate(pObj, STATE_HOVER, false, 0, true, 0);
+			_obj_setuistate(pObj, STATE_HOVER, FALSE, 0, TRUE, 0);
 		}
 		else if (uMsg == WM_KILLFOCUS)
 		{
-			_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, true, 0, true, 0);
+			_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, 0);
 		}
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);

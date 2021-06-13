@@ -44,7 +44,6 @@
     <ClCompile Include="..\..\src\Class_Switch_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SysButton_Page_ex.cpp" />
     <ClCompile Include="..\..\src\Class_TreeView_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_WebView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Win10Loading_ex.cpp" />
     <ClCompile Include="..\..\src\DirectX_ex.cpp" />
     <ClCompile Include="..\..\src\DropTarget_ex.cpp" />
@@ -96,7 +95,6 @@
     <ClInclude Include="..\..\include\Class_Switch_ex.h" />
     <ClInclude Include="..\..\include\Class_SysButton_Page_ex.h" />
     <ClInclude Include="..\..\include\Class_TreeView_ex.h" />
-    <ClInclude Include="..\..\include\Class_WebView_ex.h" />
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h" />
     <ClInclude Include="..\..\include\DropTarget_ex.h" />
     <ClInclude Include="..\..\include\ExDUIR_Struct.h" />
@@ -178,31 +176,31 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)include;$(SolutionDir)thirdparty\webview2\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)thirdparty\webview2\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\lib\</OutDir>
-    <IncludePath>$(SolutionDir)include;$(SolutionDir)thirdparty\webview2\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)thirdparty\webview2\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)thirdparty\webview2\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <LibraryPath>$(SolutionDir)thirdparty\webview2\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

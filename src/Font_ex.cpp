@@ -1,6 +1,6 @@
 #include "Font_ex.h"
 
-void pfnDefaultFreeFont(void* dwData)
+void pfnDefaultFreeFont(LPVOID dwData)
 {
 	if (IsBadReadPtr(dwData, sizeof(font_s)))
 	{
@@ -42,14 +42,14 @@ HEXFONT _font_createfromfamily(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFon
 	LOGFONTW* lpLogFont = (LOGFONTW*)Ex_MemAlloc(sizeof(LOGFONTW));
 	if (lpLogFont != nullptr)
 	{
-		int flag = 0;
+		INT flag = 0;
 		RtlMoveMemory(lpLogFont, g_Li.lpLogFontDefault, sizeof(LOGFONT));
 		if (lpwzFontFace != (LPCWSTR)-1)
 		{
 			size_t i = lstrlenW(lpwzFontFace);
 			if (i > 0)
 			{
-				RtlMoveMemory((void*)lpLogFont->lfFaceName, lpwzFontFace, i * 2 + 2);
+				RtlMoveMemory((LPVOID)lpLogFont->lfFaceName, lpwzFontFace, i * 2 + 2);
 			}
 		}
 		if (dwFontSize != -1)
@@ -62,10 +62,10 @@ HEXFONT _font_createfromfamily(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFon
 		}
 		if (dwFontStyle != -1)
 		{
-			lpLogFont->lfWeight = ((dwFontStyle & FS_BOLD) == 0 ? 400 : 700);
-			lpLogFont->lfItalic = ((dwFontStyle & FS_ITALIC) == 0 ? 0 : 1);
-			lpLogFont->lfUnderline = ((dwFontStyle & FS_UNDERLINE) == 0 ? 0 : 1);
-			lpLogFont->lfStrikeOut = ((dwFontStyle & FS_STRICKOUT) == 0 ? 0 : 1);
+			lpLogFont->lfWeight = ((dwFontStyle & EFS_BOLD) == 0 ? 400 : 700);
+			lpLogFont->lfItalic = ((dwFontStyle & EFS_ITALIC) == 0 ? 0 : 1);
+			lpLogFont->lfUnderline = ((dwFontStyle & EFS_UNDERLINE) == 0 ? 0 : 1);
+			lpLogFont->lfStrikeOut = ((dwFontStyle & EFS_STRICKOUT) == 0 ? 0 : 1);
 		}
 		ret = _font_createfromlogfont_ex(lpLogFont, flag);
 
@@ -74,7 +74,7 @@ HEXFONT _font_createfromfamily(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFon
 	return ret;
 }
 
-HEXFONT _font_createfromlogfont_ex(LOGFONTW* lpLogfont, int flags)
+HEXFONT _font_createfromlogfont_ex(LOGFONTW* lpLogfont, INT flags)
 {
 	if ((flags & EFF_DISABLEDPISCALE) == 0)
 	{
@@ -109,7 +109,7 @@ HEXFONT _font_createfromlogfont_ex(LOGFONTW* lpLogfont, int flags)
 			{
 				lfItalic = 2;
 			}
-			((IDWriteFactory*)g_Ri.pDWriteFactory)->CreateTextFormat(pFont->font_.lfFaceName, NULL,
+			g_Ri.pDWriteFactory->CreateTextFormat(pFont->font_.lfFaceName, NULL,
 				(DWRITE_FONT_WEIGHT)pFont->font_.lfWeight, (DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
 				(FLOAT)(-pFont->font_.lfHeight), (WCHAR*)g_Ri.pLocalName, (IDWriteTextFormat**)&(pFont->pObj_));
 		}
@@ -141,7 +141,7 @@ BOOL _font_getlogfont(HEXFONT hFont, LOGFONTW* lpLogFont)
 LPVOID _font_getcontext(HEXFONT hFont)
 {
 	font_s* pFont = 0;
-	void* ret = nullptr;
+	LPVOID ret = nullptr;
 	HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t*)&pFont);
 	if (pFont != 0)
 	{

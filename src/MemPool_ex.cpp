@@ -34,12 +34,12 @@ mempool_s* MemPool_Create(size_t nMax, size_t dwSize, size_t dwFlags)
 	return 0;
 }
 
-bool MemPool_Destroy(mempool_s* hMemPool)
+BOOL MemPool_Destroy(mempool_s* hMemPool)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (LocalSize(hMemPool) == sizeof(mempool_s))
 	{
-		void* hHeap = hMemPool->hHeap;
+		LPVOID hHeap = hMemPool->hHeap;
 		if (hHeap)
 		{
 			HeapDestroy(hHeap);
@@ -51,23 +51,23 @@ bool MemPool_Destroy(mempool_s* hMemPool)
 	return ret;
 }
 
-void* MemPool_GetFreeEntry(mempool_s* hMemPool)
+LPVOID MemPool_GetFreeEntry(mempool_s* hMemPool)
 {
-	void* ret = 0;
+	LPVOID ret = 0;
 	if (LocalSize(hMemPool) == sizeof(mempool_s))
 	{
 		ret = hMemPool->pEntry;
 		if (ret != 0)
 		{
-			ret = (void*)((size_t)ret + sizeof(mempoolheader_s));
+			ret = (LPVOID)((size_t)ret + sizeof(mempoolheader_s));
 		}
 	}
 	return ret;
 }
 
-void* MemPool_GetNextEntry(mempool_s* hMemPool, entry_s* pEntry)
+LPVOID MemPool_GetNextEntry(mempool_s* hMemPool, entry_s* pEntry)
 {
-	void* ret = 0;
+	LPVOID ret = 0;
 	if (LocalSize(hMemPool) == sizeof(mempool_s))
 	{
 		ret = ((mempoolheader_s*)((size_t)pEntry - sizeof(mempoolheader_s)))->pNextEntry;
@@ -75,7 +75,7 @@ void* MemPool_GetNextEntry(mempool_s* hMemPool, entry_s* pEntry)
 	return ret;
 }
 
-size_t MemPool_GetIndexFromAddrsss(mempool_s* hMemPool, void* lpAddress)
+size_t MemPool_GetIndexFromAddrsss(mempool_s* hMemPool, LPVOID lpAddress)
 {
 	size_t ret = 0;
 	if (hMemPool  && lpAddress )
@@ -88,16 +88,16 @@ size_t MemPool_GetIndexFromAddrsss(mempool_s* hMemPool, void* lpAddress)
 	return ret;
 }
 
-void* MemPool_GetAddressFromIndex(mempool_s* hMemPool, size_t nIndex)
+LPVOID MemPool_GetAddressFromIndex(mempool_s* hMemPool, size_t nIndex)
 {
-	void* ret = nullptr;
+	LPVOID ret = nullptr;
 	if (hMemPool  && nIndex > 0)
 	{
 		if ((hMemPool->dwFlags & 1) == 1)
 		{
 			if (hMemPool->nMax >= nIndex)
 			{
-				ret = (void*)((size_t)(hMemPool->pBase) + (size_t)(hMemPool->nBlockSize) * (nIndex - 1) + sizeof(mempoolheader_s));
+				ret = (LPVOID)((size_t)(hMemPool->pBase) + (size_t)(hMemPool->nBlockSize) * (nIndex - 1) + sizeof(mempoolheader_s));
 			
 			}
 		}
@@ -105,9 +105,9 @@ void* MemPool_GetAddressFromIndex(mempool_s* hMemPool, size_t nIndex)
 	return ret;
 }
 
-bool MemPool_AddressIsUsed(void* lpAddress)
+BOOL MemPool_AddressIsUsed(LPVOID lpAddress)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (lpAddress)
 	{
 		mempoolheader_s* pEntry = (mempoolheader_s*)((size_t)lpAddress - sizeof(mempoolheader_s));
@@ -116,12 +116,12 @@ bool MemPool_AddressIsUsed(void* lpAddress)
 	return ret;
 }
 
-void* MemPool_Alloc(mempool_s* hMemPool, bool fZero)
+LPVOID MemPool_Alloc(mempool_s* hMemPool, BOOL fZero)
 {
-	void* ret = nullptr;
+	LPVOID ret = nullptr;
 	if (hMemPool)
 	{
-		void* cs = hMemPool->cs;
+		LPVOID cs = hMemPool->cs;
 		Thread_EnterCriticalSection(cs);
 		size_t nBlock = hMemPool->nBlockSize;
 		mempoolheader_s* pEntry = hMemPool->pEntry;
@@ -134,7 +134,7 @@ void* MemPool_Alloc(mempool_s* hMemPool, bool fZero)
 				{
 					((mempoolheader_s*)ret)->dwSize = nBlock - sizeof(mempoolheader_s);
 
-					ret = (void*)((size_t)ret + sizeof(mempoolheader_s));
+					ret = (LPVOID)((size_t)ret + sizeof(mempoolheader_s));
 				}
 			}
 		}
@@ -144,7 +144,7 @@ void* MemPool_Alloc(mempool_s* hMemPool, bool fZero)
 			{
 				hMemPool->pEntry = ((mempoolheader_s*)pEntry)->pNextEntry;
 				((mempoolheader_s*)pEntry)->dwFlags = ((mempoolheader_s*)pEntry)->dwFlags | mpbf_used;
-				ret = (void*)((size_t)pEntry + sizeof(mempoolheader_s));
+				ret = (LPVOID)((size_t)pEntry + sizeof(mempoolheader_s));
 				if (fZero)
 				{
 					RtlZeroMemory(ret, nBlock - sizeof(mempoolheader_s));
@@ -156,12 +156,12 @@ void* MemPool_Alloc(mempool_s* hMemPool, bool fZero)
 	return ret;
 }
 
-bool MemPool_Free(mempool_s* hMemPool, void* lpAddress)
+BOOL MemPool_Free(mempool_s* hMemPool, LPVOID lpAddress)
 {
-	bool ret = false;
+	BOOL ret = FALSE;
 	if (hMemPool && lpAddress)
 	{
-		void* cs = hMemPool->cs;
+		LPVOID cs = hMemPool->cs;
 		Thread_EnterCriticalSection(cs);
 		mempoolheader_s* pEntry = (mempoolheader_s*)((size_t)lpAddress - sizeof(mempoolheader_s));
 		if (pEntry)
@@ -171,7 +171,7 @@ bool MemPool_Free(mempool_s* hMemPool, void* lpAddress)
 				((mempoolheader_s*)pEntry)->dwFlags = ((mempoolheader_s*)pEntry)->dwFlags -(((mempoolheader_s*)pEntry)->dwFlags & mpbf_used);
 				((mempoolheader_s*)pEntry)->pNextEntry = hMemPool->pEntry;
 				hMemPool->pEntry = pEntry;
-				ret = true;
+				ret = TRUE;
 			}
 		}
 		Thread_LeaveCriticalSection(cs);

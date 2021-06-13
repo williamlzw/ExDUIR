@@ -1,14 +1,14 @@
 ﻿
 #include "Resource_ex.h"
 
-void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, void** retPtr, size_t* retLen)
+void _bin_uncompress(LPVOID lpData, size_t dwSize, LPVOID lpKey, size_t dwLen, LPVOID* retPtr, size_t* retLen)
 {
-	int i = 1263556677;
-	int nError = 0;
-	void* hImg = nullptr;
+	INT i = 1263556677;
+	INT nError = 0;
+	LPVOID hImg = nullptr;
 	if (__get_int(lpData, 0) == i)
 	{
-		void* pData = Ex_MemAlloc(dwSize);
+		LPVOID pData = Ex_MemAlloc(dwSize);
 		if (pData == 0)
 		{
 			nError = ERROR_EX_MEMORY_ALLOC;
@@ -20,34 +20,41 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 				lpKey = &i;
 				dwLen = 4;
 			}
-			RC4((void*)((size_t)pData + 4), dwSize - 4, lpKey, dwLen);
+			RC4((LPVOID)((size_t)pData + 4), dwSize - 4, lpKey, dwLen);
 			__set_int(pData, 0, PNG_HEADER);
-			void* lpStream = _img_createfromstream_init(pData, dwSize, &nError);
+			LPSTREAM lpStream = _img_createfromstream_init(pData, dwSize, &nError);
 			if (nError == 0)
 			{
-				Gdiplus::Bitmap hImg((IStream*)lpStream, false);
-				Gdiplus::BitmapData pBitmapData;
-				if (hImg.LockBits(NULL, 1, 2498570, &pBitmapData) == 0)
+				IWICStream* pIWICStream = nullptr;
+				g_Ri.pWICFactory->CreateStream(&pIWICStream);
+				pIWICStream->InitializeFromIStream(lpStream);
+				IWICBitmapDecoder* pDecoder = nullptr;
+				g_Ri.pWICFactory->CreateDecoderFromStream(pIWICStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
+				IWICBitmapFrameDecode* pFrame = nullptr;
+				pDecoder->GetFrame(0, &pFrame);
+				UINT w, h;
+				pFrame->GetSize(&w, &h);
+				unsigned char* pixels = new unsigned char[w * h * 4];
+				pFrame->CopyPixels(0, w * 4, w * h * 4, pixels);
+				INT srcLen = __get_int(pixels, 0);
+				if (Crc32_Addr((LPVOID)((size_t)pixels + 8), srcLen) == __get_int(pixels, 4))
 				{
-					void* pScan0 = pBitmapData.Scan0;
-					int srcLen = __get_int(pScan0, 0);
-					//PrintArray((unsigned char*)pScan0, srcLen);
-					if (Crc32_Addr((void*)((size_t)pScan0 + 8), srcLen) == __get_int(pScan0, 4))
+					if (IsBadWritePtr(*retPtr, srcLen))
 					{
-						if (IsBadWritePtr(*retPtr, srcLen))
-						{
-							*retPtr = Ex_MemAlloc(srcLen);
-						}
-						RtlMoveMemory(*retPtr, (void*)((size_t)pScan0 + 8), srcLen);
-						*retLen = srcLen;
+						*retPtr = Ex_MemAlloc(srcLen);
 					}
-					else {
-						nError = ERROR_EX_CHECKSUM;
-					}
-					hImg.UnlockBits(&pBitmapData);
+					RtlMoveMemory(*retPtr, (LPVOID)((size_t)pixels + 8), srcLen);
+					*retLen = srcLen;
 				}
-				((LPSTREAM)lpStream)->Release();
+				else {
+					nError = ERROR_EX_CHECKSUM;
+				}
+				delete[] pixels;
+				pFrame->Release();
+				pDecoder->Release();
+				pIWICStream->Release();
 			}
+			lpStream->Release();
 			Ex_MemFree(pData);
 		}
 	}
@@ -57,9 +64,9 @@ void _bin_uncompress(void* lpData, size_t dwSize, void* lpKey, size_t dwLen, voi
 	Ex_SetLastError(nError);
 }
 
-HEXRES _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
+HEXRES _res_unpack(LPVOID lpData, size_t dwDataLen, UCHAR byteHeader)
 {
-	void* retPtr = nullptr;
+	LPVOID retPtr = nullptr;
 	size_t retLen = 0;
 	HEXRES tableFiles = nullptr;
 	_bin_uncompress(lpData, dwDataLen, 0, 0, &retPtr, &retLen);
@@ -67,28 +74,28 @@ HEXRES _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 	{
 		if (__get_unsignedchar(retPtr, 0) == byteHeader)
 		{
-			int count = __get_int(retPtr, 1);
+			INT count = __get_int(retPtr, 1);
 			if (count > 0)
 			{
 				tableFiles = HashTable_Create(GetNearestPrime(count), &pfnDefaultFreeData);
 				if (tableFiles != 0)
 				{
-					retPtr = (void*)((size_t)retPtr + 5);
-					for (int i = 0; i < count; i++)
+					retPtr = (LPVOID)((size_t)retPtr + 5);
+					for (INT i = 0; i < count; i++)
 					{
 						EXATOM atom = __get_int(retPtr, 0);
 						//UCHAR prop = __get_unsignedchar(retPtr, 4);
-						int len = __get_int(retPtr, 5) + 5;//byteProp + len + data
+						INT len = __get_int(retPtr, 5) + 5;//byteProp + len + data
 						if (len > 5)
 						{
-							void* tmp = Ex_MemAlloc(len);
+							LPVOID tmp = Ex_MemAlloc(len);
 							if (tmp != 0)
 							{
 								HashTable_Set((EX_HASHTABLE*)tableFiles, atom, (size_t)tmp);
-								RtlMoveMemory(tmp, (void*)((size_t)retPtr + 4), len);
+								RtlMoveMemory(tmp, (LPVOID)((size_t)retPtr + 4), len);
 							}
 						}
-						retPtr = (void*)((size_t)retPtr + 4 + len);
+						retPtr = (LPVOID)((size_t)retPtr + 4 + len);
 					}
 				}
 			}
@@ -99,7 +106,7 @@ HEXRES _res_unpack(void* lpData, size_t dwDataLen, UCHAR byteHeader)
 
 HEXRES Ex_ResLoadFromMemory(LPVOID lpData, size_t dwDataLen)
 {
-	int nError = 0;
+	INT nError = 0;
 	HEXRES ret = nullptr;
 	if (dwDataLen > 0)
 	{
@@ -120,14 +127,12 @@ HEXRES Ex_ResLoadFromMemory(LPVOID lpData, size_t dwDataLen)
 
 HEXRES Ex_ResLoadFromFile(LPCWSTR lptszFile)
 {
-	int dwLen = lstrlenW(lptszFile);
+	INT dwLen = lstrlenW(lptszFile);
 	HEXRES ret = nullptr;
 	if (dwLen > 0)
 	{
-		std::vector<char> data;
-		std::wstring wstr;
-		wstr += lptszFile;
-		Ex_ReadFile(wstr.c_str(), &data);
+		std::vector<CHAR> data;
+		Ex_ReadFile(lptszFile, &data);
 		ret = Ex_ResLoadFromMemory(data.data(), data.size());
 	}
 	return ret;
@@ -143,14 +148,14 @@ void Ex_ResFree(HEXRES hRes)
 
 BOOL Ex_ResGetFileFromAtom(HEXRES hRes, EXATOM atomPath, LPVOID* lpFile, size_t* dwFileLen)
 {
-	void* pData = nullptr;
-	
+	LPVOID pData = nullptr;
+
 	if (HashTable_Get((EX_HASHTABLE*)hRes, atomPath, (size_t*)&pData))
 	{
-		
+
 		if (pData != 0)
 		{
-			*lpFile = (void*)((size_t)pData + 5);
+			*lpFile = (LPVOID)((size_t)pData + 5);
 			*dwFileLen = __get_int(pData, 1);
 		}
 	}

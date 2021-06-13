@@ -1,9 +1,9 @@
 #pragma once
 #include "help_ex.h"
 
-typedef size_t(*ArrayComparePROC)(void*, size_t, size_t, size_t, size_t, int, int);
-typedef size_t(*ArrayPROC)(void*, size_t, size_t, int);
-typedef bool(*ArrayEnumPROC)(void*, int, void*, int, size_t);
+typedef LONG_PTR(*ArrayComparePROC)(LPVOID, LONG_PTR, size_t, LONG_PTR, size_t, size_t, INT);
+typedef LONG_PTR(*ArrayPROC)(LPVOID, LONG_PTR, size_t, size_t);
+typedef BOOL(*ArrayEnumPROC)(LPVOID, INT, LPVOID, size_t, size_t);
 
 //数组默认增长系数
 #define eaf_growthfactor	1.1
@@ -26,40 +26,40 @@ typedef bool(*ArrayEnumPROC)(void*, int, void*, int, size_t);
 
 struct array_s
 {
-	int nCount_;
-	int nSize_;
-	float flGrow_;
-	int nType_;
-	void* lpData_;
-	bool fDisableEvent_;
-	void* lParam_;
-	void* event_onAppend_;
-	void* event_onGet_;
-	void* event_onSet_;
-	void* event_onDelete_;
-	void* event_onCompare_;
+	INT nCount_;
+	INT nSize_;
+	FLOAT flGrow_;
+	size_t nType_;
+	LPVOID lpData_;
+	BOOL fDisableEvent_;
+	LPVOID lParam_;
+	LPVOID event_onAppend_;
+	LPVOID event_onGet_;
+	LPVOID event_onSet_;
+	LPVOID event_onDelete_;
+	LPVOID event_onCompare_;
 };
 
-size_t Array_Compare(array_s* pArray, size_t index1, size_t value1, size_t index2, size_t value2, int nType, int reasen);
-void* Array_MoveMember(void* pData, int nCount, int nSize, int nNewCount);
-bool Array_IsLegal(array_s* pArray, size_t nIndex = 0);
-bool Array_Resize(array_s* pArray, int nCount, bool fGrowCount);
-size_t Array_SetEvent(array_s* pArray, int nEvent, size_t index1, size_t pvValue = NULL, size_t index2 = 0, int reasen = 0);
-array_s* Array_Create(int count);
-bool Array_Destroy(array_s* pArray);
+size_t Array_Compare(array_s* pArray, size_t index1, size_t value1, size_t index2, size_t value2, INT nType, INT reasen);
+LPVOID Array_MoveMember(LPVOID pData, INT nCount, INT nSize, INT nNewCount);
+BOOL Array_IsLegal(array_s* pArray, size_t nIndex = 0);
+BOOL Array_Resize(array_s* pArray, INT nCount, BOOL fGrowCount);
+LONG_PTR Array_SetEvent(array_s* pArray, INT nEvent, LONG_PTR index1, size_t pvValue = NULL, LONG_PTR index2 = 0, INT reasen = 0);
+array_s* Array_Create(INT count);
+BOOL Array_Destroy(array_s* pArray);
 size_t Array_AddMember(array_s* pArray, size_t value, size_t index = 0);
-bool Array_DelMember(array_s* pArray, size_t index);
-bool Array_Redefine(array_s* pArray, int size, bool beKeep);
-bool Array_Clear(array_s* pArray);
-int Array_GetCount(array_s* pArray);
-bool Array_SetMember(array_s* pArray, size_t index, size_t value);
+BOOL Array_DelMember(array_s* pArray, size_t index);
+BOOL Array_Redefine(array_s* pArray, INT size, BOOL beKeep);
+BOOL Array_Clear(array_s* pArray);
+INT Array_GetCount(array_s* pArray);
+BOOL Array_SetMember(array_s* pArray, size_t index, size_t value);
 size_t Array_GetMember(array_s* pArray, size_t index);
-void* Array_BindEvent(array_s* pArray, int event, void* fun);
-bool Array_SetExtra(array_s* pArray, size_t extra);
+LPVOID Array_BindEvent(array_s* pArray, INT event, LPVOID fun = nullptr);
+BOOL Array_SetExtra(array_s* pArray, size_t extra);
 size_t Array_GetExtra(array_s* pArray);
-size_t Array_Emum(array_s* pArray, void* fun, size_t pvParam = NULL, bool reverse = false);
-int Array_GetType(array_s* pArray);
-bool Array_SetType(array_s* pArray, int type);
-void Array_SortProcess(array_s* pArray, bool fDesc, size_t nStart, size_t nEnd);
-bool Array_CompareResult(array_s* pArray, size_t nIndex, size_t mid, bool fDesc);
-bool Array_Sort(array_s* pArray, bool fDesc);
+size_t Array_Emum(array_s* pArray, LPVOID fun, size_t pvParam = NULL, BOOL reverse = FALSE);
+size_t Array_GetType(array_s* pArray);
+BOOL Array_SetType(array_s* pArray, size_t type);
+void Array_SortProcess(array_s* pArray, BOOL fDesc, LONG_PTR nStart, LONG_PTR nEnd);
+BOOL Array_CompareResult(array_s* pArray, LONG_PTR nIndex, size_t mid, BOOL fDesc);
+BOOL Array_Sort(array_s* pArray, BOOL fDesc);

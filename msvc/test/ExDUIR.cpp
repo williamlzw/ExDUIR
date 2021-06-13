@@ -22,7 +22,7 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
 		test_table, //114测试表格布局
 		test_combobox, //115测试组合框
 		test_ani ,//116测试缓动窗口
-		test_customredraw ,//117测试重画窗口
+		test_customredraw ,//117测试异型窗口
 		test_messagebox, //118测试信息框
 		test_colorbutton, //119测试自定义按钮
 		test_reportlistview, //120测试报表列表
@@ -36,8 +36,9 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
 		test_loading, //128测试加载动画
 		test_soliderbar, //129测试滑块条
 		test_rotateimgbox, //130测试旋转图片框
-		test_dragobj, //131测试拖曳
-		test_webview //132测试浏览框
+		test_dragobj, //131测试拖动组件
+		test_dropobj //132测试接收拖曳信息
+
 	};
 	buttonProc[nID - 101](m_hWnd);
 	return 0;
@@ -46,21 +47,22 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
 
 void test_exdui()
 {
-	std::vector<char> data;
+	std::vector<CHAR> data;
 	Ex_ReadFile(L"res/cursor.cur", &data);
-	void* hCursor = Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
+	LPVOID hCursor = Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
 	Ex_ReadFile(L"res/Default.ext", &data);
-	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_MENU_ALL , (HCURSOR)hCursor, 0, data.data(), data.size(), 0, 0);
+	Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_MENU_ALL  , (HCURSOR)hCursor, 0, data.data(), data.size(), 0, 0);
 	Ex_WndRegisterClass(L"Ex_DirectUI", 0, 0, 0);
 	m_hWnd = Ex_WndCreate(0, L"Ex_DirectUI", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
+
 	if (m_hWnd != 0)
 	{
-		HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+		HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW , 0, 0);
 
-		std::vector<char> imgdata;
+		std::vector<CHAR> imgdata;
+		//Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255,240));
 		Ex_ReadFile(L"res/bkg.png", &imgdata);
-		Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, true);
-		
+		Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
 		std::vector<HEXOBJ> buttons;
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试按钮开关", -1, 10, 30, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标签", -1, 10, 70, 100, 30, hExDui, 102, DT_VCENTER | DT_CENTER, 0, 0, NULL));
@@ -79,7 +81,7 @@ void test_exdui()
 
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试组合框", -1, 120, 30, 100, 30, hExDui, 115, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试缓动窗口", -1, 120, 70, 100, 30, hExDui, 116, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试重画窗口", -1, 120, 110, 100, 30, hExDui, 117, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试异型窗口", -1, 120, 110, 100, 30, hExDui, 117, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试消息框", -1, 120, 150, 100, 30, hExDui, 118, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试自定义按钮", -1, 120, 190, 100, 30, hExDui, 119, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试报表列表", -1, 120, 230, 100, 30, hExDui, 120, DT_VCENTER | DT_CENTER, 0, 0, NULL));
@@ -94,9 +96,10 @@ void test_exdui()
 
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试滑块条", -1, 230, 30, 100, 30, hExDui, 129, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试旋转图片框", -1, 230, 70, 100, 30, hExDui, 130, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试拖曳", -1, 230, 110, 100, 30, hExDui, 131, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试浏览框", -1, 230, 150, 100, 30, hExDui, 132, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试拖动组件", -1, 230, 110, 100, 30, hExDui, 131, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试接收拖曳", -1, 230, 150, 100, 30, hExDui, 132, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
+		
 
 		for (auto button : buttons)
 		{
@@ -109,7 +112,7 @@ void test_exdui()
 	Ex_UnInit();
 }
 
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _In_ LPWSTR wzCmd, _In_ int nCmdShow)
+INT APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _In_ LPWSTR wzCmd, _In_ INT nCmdShow)
 {
 	test_exdui();
 	return 0;

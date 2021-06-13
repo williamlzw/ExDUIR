@@ -159,9 +159,6 @@
     <ClCompile Include="..\..\src\Class_RotateImageBox_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_WebView_ex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\DropTarget_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -315,9 +312,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ExDUIR_Func.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Class_WebView_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\DropTarget_ex.h">

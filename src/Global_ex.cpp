@@ -1,7 +1,7 @@
 #include "Global_ex.h"
 
 
-void pfnDefaultFreeData(void* dwData)
+void pfnDefaultFreeData(LPVOID dwData)
 {
 	Ex_MemFree(dwData);
 }
@@ -23,8 +23,7 @@ INT Ex_GetLastError()
 
 BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme, size_t dwDefaultThemeLen, LPVOID lpDefaultI18N, size_t dwDefaultI18NLen)
 {
-	auto ret = CoInitialize(NULL);
-
+	CoInitialize(NULL);
 	g_Li.csError = Thread_InitializeCriticalSection();
 
 	g_Li.hInstance = hInstance;
@@ -62,8 +61,8 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
 	g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
 	g_Ri.hRiched20 = LoadLibraryW(L"msftedit.dll");
 
-	auto i = Ex_MemAlloc(64);
-	int len;
+	LPVOID i = Ex_MemAlloc(64);
+	INT len;
 	len = LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);
 	g_Li.lpstr_min = copytstr((LPWSTR)i, len);
 	RtlZeroMemory(i, 64);
@@ -82,15 +81,15 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
 	len = LoadStringW(g_Li.hModuleUser, 905, (LPWSTR)i, 64);
 	g_Li.lpstr_close = copytstr((LPWSTR)i, len);
 	Ex_MemFree(i);
-	int nError = 0;
+	INT nError = 0;
 	_canvas_init(&nError);
 	SetProcessDPIAware();
 
 	g_Li.DpiX = 1;
 	g_Li.DpiY = 1;
-	auto dc = GetDC(NULL);
-	g_Li.DpiX_Real = (float)GetDeviceCaps(dc, 88) / 96;
-	g_Li.DpiY_Real = (float)GetDeviceCaps(dc, 90) / 96;
+	HDC dc = GetDC(NULL);
+	g_Li.DpiX_Real = (FLOAT)GetDeviceCaps(dc, 88) / 96;
+	g_Li.DpiY_Real = (FLOAT)GetDeviceCaps(dc, 90) / 96;
 	ReleaseDC(NULL, dc);
 	if (g_Li.DpiX_Real == 1 && g_Li.DpiY_Real == 1)
 	{
@@ -107,13 +106,13 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
 	SystemParametersInfoW(31, sizeof(LOGFONTW), g_Li.lpLogFontDefault, 0);
 	if (!Flag_Query(EXGF_DPI_ENABLE))
 	{
-		g_Li.lpLogFontDefault->lfHeight = (float)g_Li.lpLogFontDefault->lfHeight / g_Li.DpiY_Real;
+		g_Li.lpLogFontDefault->lfHeight = (FLOAT)g_Li.lpLogFontDefault->lfHeight / g_Li.DpiY_Real;
 	}
 
 	_object_init();
 
 	g_Li.aryThemes.clear();
-	Ex_ThemeLoadFromMemory(lpDefaultTheme, dwDefaultThemeLen, 0, 0, true);
+	Ex_ThemeLoadFromMemory(lpDefaultTheme, dwDefaultThemeLen, 0, 0, TRUE);
 	_layout_init();
 	g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
 
@@ -125,12 +124,12 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
 void Ex_UnInit()
 {
 	UnhookWindowsHookEx((HHOOK)g_Li.hHookMsgBox);
-	Ex_MemFree((void*)g_Li.lpstr_min);
-	Ex_MemFree((void*)g_Li.lpstr_max);
-	Ex_MemFree((void*)g_Li.lpstr_res_min);
-	Ex_MemFree((void*)g_Li.lpstr_res_max);
-	Ex_MemFree((void*)g_Li.lpstr_close);
-	Ex_MemFree((void*)g_Li.lpstr_help);
+	Ex_MemFree((LPVOID)g_Li.lpstr_min);
+	Ex_MemFree((LPVOID)g_Li.lpstr_max);
+	Ex_MemFree((LPVOID)g_Li.lpstr_res_min);
+	Ex_MemFree((LPVOID)g_Li.lpstr_res_max);
+	Ex_MemFree((LPVOID)g_Li.lpstr_close);
+	Ex_MemFree((LPVOID)g_Li.lpstr_help);
 	Ex_MemFree(g_Li.lpLogFontDefault);
 	_canvas_uninit();
 	_handle_uninit(g_Li.hHandles);
@@ -170,7 +169,7 @@ void _object_init()
 	_Win10_Loading_register();
 	_SoliderBar_register();
 	_RotateImageBox_register();
-	_Webview_register();
+
 }
 
 FLOAT Ex_Scale(FLOAT n)//OK
@@ -205,7 +204,7 @@ void Ex_Sleep(INT us)
 
 EXATOM Ex_Atom(LPCWSTR lptstring)//OK
 {
-	auto len = lstrlenW(lptstring);
+	INT len = lstrlenW(lptstring);
 	EXATOM ret = 1;
 	if (len > 0)
 	{
@@ -217,6 +216,16 @@ EXATOM Ex_Atom(LPCWSTR lptstring)//OK
 	return ret;
 }
 
+LPVOID Ex_AllocBuffer(size_t dwSize)
+{
+	return Ex_MemAlloc(dwSize);
+}
+
+BOOL Ex_FreeBuffer(LPVOID lpBuffer)
+{
+	return Ex_MemFree(lpBuffer);
+}
+
 BOOL Ex_IsDxRender()
 {
 	return ((g_Li.dwFlags & EXGF_RENDER_METHOD_D2D) != 0);
@@ -224,13 +233,13 @@ BOOL Ex_IsDxRender()
 
 LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex)
 {
-	void* ret = 0;
+	LPVOID ret = 0;
 	if (!IsBadReadPtr(lpData, dwLen))
 	{
-		void* hMem = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwLen);
+		LPVOID hMem = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, dwLen);
 		if (hMem)
 		{
-			void* lpMem = GlobalLock(hMem);
+			LPVOID lpMem = GlobalLock(hMem);
 			if (lpMem)
 			{
 				RtlMoveMemory(lpMem, lpData, dwLen);
@@ -242,17 +251,17 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
 					if (s >= nIndex)
 					{
 						short type = ((ICONDIR*)lpData)->idType;
-						bool bIcon = (type == IMAGE_ICON);
-						void* offset = (void*)((size_t)lpData + 6 + (nIndex - 1) * sizeof(ICONDIRENTRY));
-						void* tmp = lpMem;
+						BOOL bIcon = (type == IMAGE_ICON);
+						LPVOID offset = (LPVOID)((size_t)lpData + 6 + (nIndex - 1) * sizeof(ICONDIRENTRY));
+						LPVOID tmp = lpMem;
 						if (!bIcon)
 						{
 							__set_short(lpMem,0, ((ICONDIRENTRY*)offset)->wBitCount);
-							tmp = (void*)((size_t)tmp + 4);
+							tmp = (LPVOID)((size_t)tmp + 4);
 						}
-						RtlMoveMemory(tmp, (void*)((size_t)lpData + ((ICONDIRENTRY*)offset)->dwImageOffset), ((ICONDIRENTRY*)offset)->dwBytesInRes);						
-						char b1 = ((ICONDIRENTRY*)offset)->bWidth;
-						char b2 = ((ICONDIRENTRY*)offset)->bHeight;
+						RtlMoveMemory(tmp, (LPVOID)((size_t)lpData + ((ICONDIRENTRY*)offset)->dwImageOffset), ((ICONDIRENTRY*)offset)->dwBytesInRes);						
+						CHAR b1 = ((ICONDIRENTRY*)offset)->bWidth;
+						CHAR b2 = ((ICONDIRENTRY*)offset)->bHeight;
 						HICON hicon = CreateIconFromResourceEx((PBYTE)lpMem, ((ICONDIRENTRY*)offset)->dwBytesInRes, bIcon, 196608, b1, b2, 0);
 						ret = CopyImage(hicon, uType, 0, 0, 4);
 					}
@@ -260,10 +269,10 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
 				}
 				else {
 					LPSTREAM lpStream;
-					if (CreateStreamOnHGlobal(hMem, false, &lpStream))
+					if (CreateStreamOnHGlobal(hMem, FALSE, &lpStream))
 					{
 						LPVOID lpObj = nullptr;
-						if (OleLoadPicture(lpStream, dwLen, true, IID_IPicture, &lpObj) == 0)
+						if (OleLoadPicture(lpStream, dwLen, TRUE, IID_IPicture, &lpObj) == 0)
 						{
 							OLE_HANDLE hImg = 0;
 							((IPicture*)lpObj)->get_Handle(&hImg);
@@ -285,17 +294,17 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
 	return ret;
 }
 
-bool Flag_Query(int dwFlag)
+BOOL Flag_Query(INT dwFlag)
 {
 	return  (g_Li.dwFlags & dwFlag) == dwFlag;
 }
 
-void Flag_Add(int dwFlag)
+void Flag_Add(INT dwFlag)
 {
 	g_Li.dwFlags = g_Li.dwFlags | dwFlag;
 }
 
-void Flag_Del(int dwFlag)
+void Flag_Del(INT dwFlag)
 {
 	g_Li.dwFlags = g_Li.dwFlags - (g_Li.dwFlags & dwFlag);
 }

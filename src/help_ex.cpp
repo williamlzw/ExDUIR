@@ -2,10 +2,10 @@
 LOCALINFO g_Li;
 RENDERINFO g_Ri;
 
-void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
+LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
 {
-	void* ret = nullptr;
-	auto hLib = GetModuleHandleW(szMod);
+	LPVOID ret = nullptr;
+	HMODULE hLib = GetModuleHandleW(szMod);
 	if (hLib == 0)
 	{
 		hLib = LoadLibraryW(szMod);
@@ -19,6 +19,30 @@ void* GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
 		ret = GetProcAddress(hLib, szApi);
 	}
 	return ret;
+}
+
+/*取系统缩放比例*/
+DOUBLE  GetSysDpi()
+{
+	HDC	desktopDc = GetDC(NULL);
+	DOUBLE	dpiA = (DOUBLE)GetDeviceCaps(desktopDc, DESKTOPHORZRES) / GetDeviceCaps(desktopDc, HORZRES);
+	DOUBLE	dpiB = (DOUBLE)GetDeviceCaps(desktopDc, LOGPIXELSX) / 0.96 / 100;
+	ReleaseDC(NULL, desktopDc);
+	if (dpiA == 1)
+	{
+		return(dpiB);
+	}
+	else if (dpiB == 1)
+	{
+		return(dpiA);
+	}
+	else if (dpiA == dpiB)
+	{
+		return(dpiA);
+	}
+	else {
+		return  1;
+	}
 }
 
 std::vector<std::wstring> ws_split(const std::wstring& str, const std::wstring& delim)
@@ -43,26 +67,26 @@ std::vector<std::wstring> ws_split(const std::wstring& str, const std::wstring& 
 
 
 
-bool Ex_MemFree(void* hMem)
+BOOL Ex_MemFree(LPVOID hMem)
 {
 	if (hMem != nullptr)
 	{
 		return HeapFree(GetProcessHeap(), 0, hMem);
 	}
-	return false;
+	return FALSE;
 }
 
-void* Ex_MemAlloc(size_t dwSize, int dwFlags)
+LPVOID Ex_MemAlloc(size_t dwSize, INT dwFlags)
 {
 	return HeapAlloc(GetProcessHeap(), 8, dwSize);
 }
 
-void* Ex_MemReAlloc(void* hMem, size_t dwSize)
+LPVOID Ex_MemReAlloc(LPVOID hMem, size_t dwSize)
 {
 	return HeapReAlloc(GetProcessHeap(), 8, hMem, dwSize);
 }
 
-int DtoHimetric(int d, int PerInchc)
+INT DtoHimetric(INT d, INT PerInchc)
 {
 	return MulDiv(d, 2540, PerInchc);
 }
@@ -91,22 +115,22 @@ SHORT __get_short(LPVOID lpAddr, size_t offset)
 	return *(SHORT*)a;
 }
 
-char __get_char(void* lpAddr, size_t offset)
+CHAR __get_char(LPVOID lpAddr, size_t offset)
 {
 	size_t a = (size_t)lpAddr + offset;
-	return *(char*)a;
+	return *(CHAR*)a;
 }
 
-UCHAR __get_unsignedchar(void* lpAddr, size_t offset)
+UCHAR __get_unsignedchar(LPVOID lpAddr, size_t offset)
 {
 	size_t a = (size_t)lpAddr + offset;
 	return *(UCHAR*)a;
 }
 
-wchar_t __get_wchar(void* lpAddr, size_t offset)
+WCHAR __get_wchar(LPVOID lpAddr, size_t offset)
 {
 	size_t a = (size_t)lpAddr + offset;
-	return *(wchar_t*)a;
+	return *(WCHAR*)a;
 }
 
 size_t __set(LPVOID lpAddr, size_t offset, size_t value)
@@ -125,10 +149,10 @@ INT __set_int(LPVOID lpAddr, size_t offset, INT value)
 	return old;
 }
 
-void __set_char(void* lpAddr, size_t offset, char value)
+void __set_char(LPVOID lpAddr, size_t offset, CHAR value)
 {
 	size_t a = (size_t)lpAddr + offset;
-	*(char*)a = value;
+	*(CHAR*)a = value;
 }
 
 SHORT __set_short(LPVOID lpAddr, size_t offset, SHORT value)
@@ -139,16 +163,16 @@ SHORT __set_short(LPVOID lpAddr, size_t offset, SHORT value)
 	return old;
 }
 
-void __set_unsignedchar(void* lpAddr, size_t offset, UCHAR value)
+void __set_unsignedchar(LPVOID lpAddr, size_t offset, UCHAR value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(UCHAR*)a = value;
 }
 
-void __set_wchar(void* lpAddr, size_t offset, wchar_t value)
+void __set_wchar(LPVOID lpAddr, size_t offset, WCHAR value)
 {
 	size_t a = (size_t)lpAddr + offset;
-	*(wchar_t*)a = value;
+	*(WCHAR*)a = value;
 }
 
 FLOAT __set_float(LPVOID lpAddr, size_t offset, FLOAT value)
@@ -208,51 +232,52 @@ void _bit_not(size_t* dwValue, size_t index/*0-31 */)//OK
 	*dwValue ^= (size_t)1 << index;
 }
 
-bool _bit_test(size_t* dwValue, size_t index/*0-31 */)//OK
+BOOL _bit_test(size_t* dwValue, size_t index/*0-31 */)//OK
 {
 	return *dwValue >> index & (size_t)1;
 }
 
-void* __ptr_ins(void** ptr, int nCount, int* nIndexInsert, int cbBlock, void* pNewItem)
+LPVOID __ptr_ins(LPVOID* ptr, INT nCount, INT* nIndexInsert, INT cbBlock, LPVOID pNewItem)
 {
-	if (cbBlock <= 0) cbBlock = 4;
+	if (cbBlock <= 0) cbBlock = sizeof(size_t);
 	if (*nIndexInsert <= 0 || *nIndexInsert > nCount + 1) *nIndexInsert = nCount + 1;
-	void* pNew = Ex_MemAlloc((nCount + 1) * cbBlock);
+	LPVOID pNew = Ex_MemAlloc((nCount + 1) * cbBlock);
 	if (pNew)
 	{
 		if (*ptr)
 		{
 			RtlMoveMemory(pNew, *ptr, (*nIndexInsert - 1) * cbBlock);
-			RtlMoveMemory((void*)((size_t)pNew + *nIndexInsert * cbBlock), (void*)((size_t)*ptr + (*nIndexInsert - 1) * cbBlock), (nCount - *nIndexInsert + 1) * cbBlock);
+			RtlMoveMemory((LPVOID)((size_t)pNew + *nIndexInsert * cbBlock), (LPVOID)((size_t)*ptr + (*nIndexInsert - 1) * cbBlock), (nCount - *nIndexInsert + 1) * cbBlock);
 			Ex_MemFree(*ptr);
 		}
 		if (pNewItem != 0)
 		{
-			RtlMoveMemory((void*)((size_t)pNew + (*nIndexInsert - 1) * cbBlock), pNewItem, cbBlock);
+			RtlMoveMemory((LPVOID)((size_t)pNew + (*nIndexInsert - 1) * cbBlock), pNewItem, cbBlock);
 		}
 	}
 	*ptr = pNew;
 	return pNew;
 }
 
-void* __ptr_index(void* ptr, int nCount, int nIndex, int cbBlock)
+LPVOID __ptr_index(LPVOID ptr, INT nCount, INT nIndex, INT cbBlock)
 {
 	if (nIndex <= 0 || nIndex > nCount) return 0;
-	if (cbBlock <= 0) cbBlock = 4;
-	return (void*)((size_t)ptr + (nIndex - 1) * cbBlock);
+	if (cbBlock <= 0) cbBlock = sizeof(size_t);
+	return (LPVOID)((size_t)ptr + (nIndex - 1) * cbBlock);
 }
 
-void* __ptr_del(void** ptr, int nCount, int nIndex, int cbBlock)
+LPVOID __ptr_del(LPVOID* ptr, INT nCount, INT nIndex, INT cbBlock)
 {
-	if (cbBlock <= 0) cbBlock = 4;
+	if (cbBlock <= 0) cbBlock = sizeof(size_t);
 	if (nIndex <= 0 || nIndex > nCount) return *ptr;
-	void* pNew = Ex_MemAlloc((nCount + 1) * cbBlock);
+	LPVOID pNew = Ex_MemAlloc(nCount  * cbBlock);
 	if (pNew)
 	{
 		if (*ptr)
 		{
 			RtlMoveMemory(pNew, *ptr, (nIndex - 1) * cbBlock);
-			RtlMoveMemory((void*)((size_t)pNew + (nIndex - 1) * cbBlock), (void*)((size_t)*ptr + nIndex * cbBlock), (nCount - nIndex) * cbBlock);
+			EX_REPORTLIST_COLUMNINFO* ptc = (EX_REPORTLIST_COLUMNINFO*)((size_t)*ptr + (nIndex - 1) * sizeof(EX_REPORTLIST_COLUMNINFO));
+			RtlMoveMemory((LPVOID)((size_t)pNew + (nIndex - 1) * cbBlock), (LPVOID)((size_t)*ptr + nIndex * cbBlock), (nCount - nIndex) * cbBlock);
 			Ex_MemFree(*ptr);
 		}
 	}
@@ -261,22 +286,22 @@ void* __ptr_del(void** ptr, int nCount, int nIndex, int cbBlock)
 }
 
 
-void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar)
+void _wstr_deletechar(LPVOID lpstr, INT* dwsize, WCHAR wchar)
 {
-	auto lpstart = lpstr;
-	auto lpend = (wchar_t*)((size_t)lpstart + *dwsize);
-	bool fMoved = false;
+	LPVOID lpstart = lpstr;
+	WCHAR* lpend = (WCHAR*)((size_t)lpstart + *dwsize);
+	BOOL fMoved = FALSE;
 	while (lpstart < lpend)
 	{
-		lpstart = wcschr((wchar_t*)lpstart, wchar);
+		lpstart = wcschr((WCHAR*)lpstart, wchar);
 		if (lpstart == 0)
 		{
 			break;
 		}
 		else {
-			lpend = (wchar_t*)((size_t)lpend - 2);
-			memmove(lpstart, (wchar_t*)((size_t)lpstart + 2), (size_t)lpend - (size_t)lpstart);
-			fMoved = true;
+			lpend = (WCHAR*)((size_t)lpend - 2);
+			memmove(lpstart, (WCHAR*)((size_t)lpstart + 2), (size_t)lpend - (size_t)lpstart);
+			fMoved = TRUE;
 		}
 	}
 	if (fMoved)
@@ -286,11 +311,11 @@ void _wstr_deletechar(void* lpstr, int* dwsize, wchar_t wchar)
 	}
 }
 
-void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int dwLen)
+void A2W_Addr(LPVOID lpszString, LPVOID* retPtr, size_t* retLen, INT CodePage, INT dwLen)
 {
 	if (CodePage == 0) CodePage = 936;
 	if (dwLen <= 0) dwLen = lstrlenA((LPCSTR)lpszString);
-	int uLen = MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, NULL, 0) * 2;
+	INT uLen = MultiByteToWideChar(CodePage, 0, (LPCCH)lpszString, dwLen, NULL, 0) * 2;
 	if (IsBadWritePtr(*retPtr, uLen + 2))
 	{
 		*retPtr = Ex_MemAlloc(uLen + 2);
@@ -302,12 +327,12 @@ void A2W_Addr(void* lpszString, void** retPtr, size_t* retLen, int CodePage, int
 	*retLen = uLen + 2;
 }
 
-void U2W_Addr(void* lpUTF8, int dwLen, void** retPtr, size_t* retLen)
+void U2W_Addr(LPVOID lpUTF8, INT dwLen, LPVOID* retPtr, size_t* retLen)
 {
 	A2W_Addr(lpUTF8, retPtr, retLen, CP_UTF8, dwLen);
 }
 
-void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
+void ANY2W(LPVOID pAddr, size_t dwLen, LPVOID* retPtr, size_t* retLen)
 {
 	if (dwLen > 2)
 	{
@@ -315,7 +340,7 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 		if (bom == -17425)//utf8-bom
 		{
 
-			U2W_Addr((void*)((size_t)pAddr + 3), dwLen - 3, retPtr, retLen);
+			U2W_Addr((LPVOID)((size_t)pAddr + 3), dwLen - 3, retPtr, retLen);
 		}
 		else if (bom == -257)//unicode
 		{
@@ -323,7 +348,7 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 			{
 				*retPtr = Ex_MemAlloc(dwLen - 2);
 			}
-			RtlMoveMemory(*retPtr, (void*)((size_t)pAddr + 2), dwLen - 2);
+			RtlMoveMemory(*retPtr, (LPVOID)((size_t)pAddr + 2), dwLen - 2);
 			*retLen = dwLen - 2;
 		}
 		else {
@@ -337,12 +362,12 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 				*retLen = dwLen;
 			}
 			else {
-				int cp = CP_UTF8;
-				int ulen = MultiByteToWideChar(cp, 8, (LPCCH)pAddr, dwLen, 0, 0);
+				INT cp = CP_UTF8;
+				INT ulen = MultiByteToWideChar(cp, 8, (LPCCH)pAddr, dwLen, 0, 0);
 				if (ulen == 0)
 				{
 					cp = 936;
-					int ulen = MultiByteToWideChar(cp, 0, (LPCCH)pAddr, dwLen, 0, 0);
+					INT ulen = MultiByteToWideChar(cp, 0, (LPCCH)pAddr, dwLen, 0, 0);
 				}
 				if (ulen > 0)
 				{
@@ -362,11 +387,28 @@ void ANY2W(void* pAddr, size_t dwLen, void** retPtr, size_t* retLen)
 	}
 }
 
-void PrintArray(unsigned char* data, int len)
+std::wstring a2w(std::string str)
+{
+	char const* szAnsi = str.c_str();
+	//预转换，得到所需空间的大小
+	int wcsLen = ::MultiByteToWideChar(CP_ACP, NULL, szAnsi, strlen(szAnsi), NULL, 0);
+	//分配空间要给'\0'留个空间，MultiByteToWideChar不会给'\0'空间
+	wchar_t* wszString = new wchar_t[wcsLen + 1];
+	//转换
+	::MultiByteToWideChar(CP_ACP, NULL, szAnsi, strlen(szAnsi), wszString, wcsLen);
+	//最后加上'\0'
+	wszString[wcsLen] = '\0';
+	std::wstring ret = wszString;
+	delete[] wszString;
+	wszString = NULL;
+	return ret;
+}
+
+void PrintArray(UCHAR* data, INT len)
 {
 	std::string str;
 	str.push_back('{');
-	for (int index = 0; index < len; index++)
+	for (INT index = 0; index < len; index++)
 	{
 		str = str + std::to_string(data[index]);
 		if (index != len - 1)
@@ -380,10 +422,10 @@ void PrintArray(unsigned char* data, int len)
 
 
 
-int GetNearestPrime(int value)
+INT GetNearestPrime(INT value)
 {
-	int prime = 0;
-	int i = 0;
+	INT prime = 0;
+	INT i = 0;
 	while (value >= prime)
 	{
 		i = i + 1;
@@ -392,7 +434,7 @@ int GetNearestPrime(int value)
 	return  prime;
 }
 
-BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<char>* retData)
+BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR>* retData)
 {
 	BOOL fOK = FALSE;
 	if (filePath != L"")
@@ -403,15 +445,12 @@ BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<char>* retData)
 		{
 			//取文件尺寸
 			DWORD nSize = GetFileSize(hFile, NULL);
-
 			if (nSize != INVALID_FILE_SIZE)
 			{
 				//申请内存
-				//std::vector<char>buffer;
 				(*retData).resize(nSize);
 				//读入文件
 				fOK = ReadFile(hFile, &(*retData)[0], nSize, &nSize, NULL);
-				//(*retData)= std::vector<char>(buffer);
 			}
 			//关闭文件
 			CloseHandle(hFile);
@@ -421,7 +460,7 @@ BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<char>* retData)
 }
 
 /* 读取RC资源 */
-BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<char>* retData)
+BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<CHAR>* retData)
 {
 	BOOL fOK = FALSE;
 	/* 检查参数有效性 */
@@ -466,20 +505,20 @@ BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<char>* retData)
 	return(fOK);
 }
 
-void _struct_destroyfromaddr(void* lpAddr, size_t Offset)
+void _struct_destroyfromaddr(LPVOID lpAddr, size_t Offset)
 {
-	auto tmp = __get(lpAddr, Offset);
-	if (tmp != 0)
+	LPVOID tmp = (LPVOID)__get(lpAddr, Offset);
+	if (tmp)
 	{
-		Ex_MemFree((void*)tmp);
+		Ex_MemFree(tmp);
 		__set(lpAddr, Offset, 0);
 	}
 }
 
-void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int* nError)
+LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT* nError)
 {
 	//TODO: x64 support
-	void* tmp = (void*)__get(lpAddr, Offset);
+	LPVOID tmp = (LPVOID)__get(lpAddr, Offset);
 	if (tmp == 0)
 	{
 		tmp = Ex_MemAlloc(sizeofstruct);
@@ -496,18 +535,18 @@ void* _struct_createfromaddr(void* lpAddr, size_t Offset, int sizeofstruct, int*
 
 
 
-void RC4(void* dst, size_t dstlen, const void* pwd, size_t pwdlen)
+void RC4(LPVOID dst, size_t dstlen, const LPVOID pwd, size_t pwdlen)
 {
 	size_t i, j, x;
-	unsigned char m[256], k[256], temp;
+	UCHAR m[256], k[256], temp;
 
 	if (pwdlen == 0)
 		return;
 
 	for (i = 0, j = 0; i < 256; ++i)
 	{
-		m[i] = (unsigned char)i;
-		k[i] = ((unsigned char*)pwd)[j];
+		m[i] = (UCHAR)i;
+		k[i] = ((UCHAR*)pwd)[j];
 		if (++j == pwdlen)
 			j = 0;
 	}
@@ -526,7 +565,7 @@ void RC4(void* dst, size_t dstlen, const void* pwd, size_t pwdlen)
 		temp = m[i];
 		m[i] = m[j];
 		m[j] = temp;
-		((unsigned char*)dst)[x] ^= m[(m[i] + m[j]) & 255];
+		((UCHAR*)dst)[x] ^= m[(m[i] + m[j]) & 255];
 	}
 }
 
@@ -565,7 +604,7 @@ const UINT32 table[] = {
 	0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
 };
 
-UINT Crc32_Addr(void* buf, UINT nLength)//OK
+UINT Crc32_Addr(LPVOID buf, UINT nLength)//OK
 {
 	if (nLength < 1) return 0xffffffff;
 
@@ -578,21 +617,21 @@ UINT Crc32_Addr(void* buf, UINT nLength)//OK
 }
 
 
-void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset)
+LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT* nOffset)
 {
-	void* ret = nullptr;
+	LPVOID ret = nullptr;
 	if ((dwFmt & DT_NOPREFIX) == 0)
 	{
-		auto lpOffset = wcschr(lpString, 38);
+		const wchar_t* lpOffset = wcschr(lpString, 38);
 		if (lpOffset != 0)
 		{
-			auto len = lstrlenW(lpString) * 2;
+			INT len = lstrlenW(lpString) * 2;
 			*nOffset = (size_t)lpOffset - (size_t)lpString;
 			ret = Ex_MemAlloc(len);
 			if (ret != 0)
 			{
 				RtlMoveMemory(ret, lpString, *nOffset);
-				RtlMoveMemory((void*)((size_t)ret + *nOffset), (void*)((size_t)lpString + *nOffset + 2), len - *nOffset - 2);
+				RtlMoveMemory((LPVOID)((size_t)ret + *nOffset), (LPVOID)((size_t)lpString + *nOffset + 2), len - *nOffset - 2);
 			}
 		}
 	}
@@ -600,10 +639,10 @@ void* prefixstring(LPCWSTR lpString, int dwFmt, int* nOffset)
 }
 
 
-std::wstring GetErrorMessage(DWORD error)
+LPCWSTR GetErrorMessage(DWORD error)
 {
-	WCHAR szBuf[256];
-	LPVOID lpMsgBuf;
+	WCHAR szBuf[512];
+	WCHAR* lpMsgBuf;
 	FormatMessageW(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM |
@@ -612,20 +651,18 @@ std::wstring GetErrorMessage(DWORD error)
 		error,
 		0,
 		(LPWSTR)&lpMsgBuf,
-		256, NULL);
-	std::wstring ret = L"";
-	swprintf_s(szBuf, L"%s", (wchar_t*)lpMsgBuf);
-	ret.append(szBuf);
-	return ret;
+		512, NULL);
+	swprintf_s(szBuf, L"%s", lpMsgBuf);
+	return (LPCWSTR)szBuf;
 }
 
-LPCWSTR copytstr(LPCWSTR lptstr, int len)
+LPCWSTR copytstr(LPCWSTR lptstr, INT len)
 {
 	if (lptstr) {
 		LPCWSTR addr = (LPCWSTR)Ex_MemAlloc(len * 2 + 2);
 		if (addr != 0)
 		{
-			RtlMoveMemory((void*)addr, lptstr, len * 2 + 2);
+			RtlMoveMemory((LPVOID)addr, lptstr, len * 2 + 2);
 		}
 		else {
 			Ex_SetLastError(ERROR_EX_MEMORY_ALLOC);
@@ -635,15 +672,16 @@ LPCWSTR copytstr(LPCWSTR lptstr, int len)
 	return NULL;
 }
 
-int wstr_compare(LPCWSTR wstr1, LPCWSTR wstr2, bool caseSensitive)
+INT wstr_compare(LPCWSTR wstr1, LPCWSTR wstr2, BOOL caseSensitive)
 {
-	int nStrlen1 = lstrlenW(wstr1) + 1;
-	int nStrlen2 = lstrlenW(wstr2) + 1;
-	for (int nIndex = 0; nIndex <= ((nStrlen1 > nStrlen2 ? nStrlen1 : nStrlen2) - 1) * 2; nIndex += 2)
+	
+	INT nStrlen1 = lstrlenW(wstr1) + 1;
+	INT nStrlen2 = lstrlenW(wstr2) + 1;
+	for (INT nIndex = 0; nIndex <= ((nStrlen1 > nStrlen2 ? nStrlen1 : nStrlen2) - 1) * 2; nIndex += 2)
 	{
-		WCHAR cha1 = *(wchar_t*)((size_t)wstr1 + nIndex);
-		WCHAR cha2 = *(wchar_t*)((size_t)wstr2 + nIndex);
-		if (caseSensitive == false)
+		WCHAR cha1 = *(WCHAR*)((size_t)wstr1 + nIndex);
+		WCHAR cha2 = *(WCHAR*)((size_t)wstr2 + nIndex);
+		if (caseSensitive == FALSE)
 		{
 			if (cha1 >= 65 && cha1 <= 90)
 			{
@@ -654,7 +692,7 @@ int wstr_compare(LPCWSTR wstr1, LPCWSTR wstr2, bool caseSensitive)
 				cha2 = cha2 + 32;
 			}
 		}
-		int nCmp = cha1 - cha2;
+		INT nCmp = cha1 - cha2;
 		if (nCmp != 0)
 		{
 			return nCmp;

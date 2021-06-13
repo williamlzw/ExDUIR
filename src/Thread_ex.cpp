@@ -1,24 +1,24 @@
 ﻿#include "Thread_ex.h"
 
-void* Thread_InitializeCriticalSection()
+LPVOID Thread_InitializeCriticalSection()
 {
 	auto addr = LocalAlloc(64, sizeof(CRITICAL_SECTION));
 	InitializeCriticalSection((LPCRITICAL_SECTION)addr);
 	return addr;
 }
 
-void Thread_DeleteCriticalSection(void* addr)
+void Thread_DeleteCriticalSection(LPVOID addr)
 {
 	DeleteCriticalSection((LPCRITICAL_SECTION)addr);
 	LocalFree(addr);
 }
 
-void Thread_EnterCriticalSection(void* addr)
+void Thread_EnterCriticalSection(LPVOID addr)
 {
 	EnterCriticalSection((LPCRITICAL_SECTION)addr);
 }
 
-void Thread_LeaveCriticalSection(void* addr)
+void Thread_LeaveCriticalSection(LPVOID addr)
 {
 	LeaveCriticalSection((LPCRITICAL_SECTION)addr);
 }

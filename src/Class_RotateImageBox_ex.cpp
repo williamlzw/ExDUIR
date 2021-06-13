@@ -32,7 +32,7 @@ LRESULT CALLBACK _RotateImageBox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & SRIBS_ROTATE) == SRIBS_ROTATE)
 		{
 			/* 创建时启用 绘图中消息*/
-			Ex_ObjEnablePaintingMsg(hObj, true);
+			Ex_ObjEnablePaintingMsg(hObj, TRUE);
 			/* 开启时钟*/
 			Ex_ObjSetTimer(hObj, 50);
 		}
@@ -50,9 +50,9 @@ LRESULT CALLBACK _RotateImageBox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		{
 			/*创建矩阵，并旋转一个角度*/
 			HEXMATRIX	mx = _matrix_create();
-			_matrix_translate(mx, (float)ps->width / 2, (float)ps->height / 2);
-			_matrix_rotate(mx, (float)Ex_ObjGetLong(hObj, EOL_USERDATA));
-			_matrix_translate(mx, (float)ps->width / (-2), (float)ps->height / (-2));
+			_matrix_translate(mx, (FLOAT)ps->width / 2, (FLOAT)ps->height / 2);
+			_matrix_rotate(mx, (FLOAT)Ex_ObjGetLong(hObj, EOL_USERDATA));
+			_matrix_translate(mx, (FLOAT)ps->width / (-2), (FLOAT)ps->height / (-2));
 			/* 设置到当前画布上*/
 			_canvas_settransform(ps->hCanvas, mx);
 			/* 设置后就可以释放了*/
@@ -90,20 +90,20 @@ LRESULT CALLBACK _RotateImageBox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 
 		/*移入则停止旋转*/
 		Ex_ObjKillTimer(hObj);
-		Ex_ObjSetUIState(hObj, STATE_HOVER, false, 0, false);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);
 		break;
 	}
 	case  WM_MOUSELEAVE:
 	{
 
 		/*移出则恢复旋转*/
-		Ex_ObjSetUIState(hObj, STATE_HOVER, true, 0, false);
+		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);
 		Ex_ObjSetTimer(hObj, 50);
 		break;
 	}
 	default:
 		break;
 	}
-	return Ex_ObjCallProc(m_pfnStaticProc, hWnd, hObj, uMsg, wParam, lParam, 0);
+	return Ex_ObjCallProc(m_pfnStaticProc, hWnd, hObj, uMsg, wParam, lParam);
 }
 

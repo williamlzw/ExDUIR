@@ -9,7 +9,7 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 {
 	menu_s* lpMenuParams;
 	wnd_s* pWnd;
-	int nError = 0;
+	INT nError = 0;
 	POINT point = { 0 };
 	obj_s* pObj;
 	obj_s* pObj2;
@@ -18,7 +18,7 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 
 	if (uMsg == 485 && LODWORD(wParam) == -1)
 	{
-		if (_handle_validate(hExDUI, HT_DUI, (void**)&pWnd, &nError))
+		if (_handle_validate(hExDUI, HT_DUI, (LPVOID*)&pWnd, &nError))
 		{
 			lpMenuParams = pWnd->lpMenuParams_;
 			if (!lpMenuParams)
@@ -37,7 +37,7 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 			{
 				return 0;
 			}
-			if (!_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+			if (!_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 			{
 				return 0;
 			}
@@ -46,7 +46,7 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 				return 0;
 			}
 			nError = 0;
-			if (!_handle_validate(lpMenuParams->handle_, HT_OBJECT, (void**)&pObj2, &nError))
+			if (!_handle_validate(lpMenuParams->handle_, HT_OBJECT, (LPVOID*)&pObj2, &nError))
 			{
 				return 0;
 			}
@@ -63,7 +63,7 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 void _menubutton_paint(HEXOBJ hObj, obj_s* pObj)
 {
 	EX_PAINTSTRUCT2 ps;
-	int nColor = 0;
+	INT nColor = 0;
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
@@ -90,9 +90,9 @@ void _menubutton_paint(HEXOBJ hObj, obj_s* pObj)
 LRESULT CALLBACK _menubutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	RECT lpRect = { 0 };
-	int nError = 0;
+	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (void**)&pObj, &nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		switch (uMsg)
 		{

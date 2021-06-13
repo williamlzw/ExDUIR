@@ -14,4 +14,4 @@
 
 void _ButtonEx_register();
 LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-int _ButtonEx_paint(HEXOBJ hObj);
+INT _ButtonEx_paint(HEXOBJ hObj);
