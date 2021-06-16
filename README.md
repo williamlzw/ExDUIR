@@ -38,7 +38,7 @@ Windows平台轻量DirectUI框架。
 * 编辑框支持富文本，支持加载RTF格式文档。
 * 窗口或组件支持接收拖曳文件或文本。
 
-## Demo (部分图片为ExDUI原版)
+## Demo
 ### demo_all:  
 ![image](https://raw.githubusercontent.com/laizewei/ExduiR/master/demo_image/demo_all.png)    
 ### demo button and switch:  
