@@ -46,9 +46,7 @@ Windows平台轻量DirectUI框架。
 ### demo buttonex:  
 ![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_buttonex.png)    
 ### demo combobox:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_combobox.png)    
-### combox:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_combox.png)    
+![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_combobox.png)       
 ### demo custom menu:  
 ![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_custommenu.png)    
 ### demo custom background:  
