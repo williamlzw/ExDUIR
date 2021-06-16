@@ -78,7 +78,7 @@ Windows平台轻量DirectUI框架。
 ### demo layout-relative:  
 ![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_layout_relative.png)    
 ### demo layout-table:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/ddemo_layout_table.png)
+![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_layout_table.png)
 ### demo listview:  
 ![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_listview.png)
 ### demo loading:  
