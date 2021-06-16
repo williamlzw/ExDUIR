@@ -29,7 +29,7 @@ LRESULT CALLBACK _RotateImageBox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		/*创建时初始化控件属性*/
 	case WM_CREATE:
 	{
-		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & SRIBS_ROTATE) == SRIBS_ROTATE)
+		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ERIBS_ROTATE) == ERIBS_ROTATE)
 		{
 			/* 创建时启用 绘图中消息*/
 			Ex_ObjEnablePaintingMsg(hObj, TRUE);

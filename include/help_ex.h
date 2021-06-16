@@ -325,6 +325,7 @@ struct obj_base {
 #include "Class_Win10Loading_ex.h"
 #include "Class_SoliderBar_ex.h"
 #include "Class_RotateImageBox_ex.h"
+#include "Class_ProgressBar_ex.h"
 
 
 struct LOCALINFO

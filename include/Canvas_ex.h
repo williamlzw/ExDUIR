@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "help_ex.h"
 #include "ExDUIR_Func.h"
 
-// »­²¼´´½¨±êÊ¶_ÖØÖÃ¼ô¼­Çø
+// ç”»å¸ƒåˆ›å»ºæ ‡è¯†_é‡ç½®å‰ªè¾‘åŒº
 #define CVF_CLIPED 2147483648
-// »­²¼´´½¨±êÊ¶_GDIºÍD2D»ìºÏ
+// ç”»å¸ƒåˆ›å»ºæ ‡è¯†_GDIå’ŒD2Dæ··åˆ
 #define CVF_GDI_COMPATIBLE	1
 
 struct canvas_s

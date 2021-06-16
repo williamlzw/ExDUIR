@@ -37,8 +37,9 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
 		test_soliderbar, //129测试滑块条
 		test_rotateimgbox, //130测试旋转图片框
 		test_dragobj, //131测试拖动组件
-		test_dropobj //132测试接收拖曳信息
-
+		test_dropobj, //132测试接收拖曳信息
+		test_progressbar, //133测试进度条
+		test_nchittest //134测试限制通知区域
 	};
 	buttonProc[nID - 101](m_hWnd);
 	return 0;
@@ -98,8 +99,8 @@ void test_exdui()
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试旋转图片框", -1, 230, 70, 100, 30, hExDui, 130, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试拖动组件", -1, 230, 110, 100, 30, hExDui, 131, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试接收拖曳", -1, 230, 150, 100, 30, hExDui, 132, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-
-		
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试进度条", -1, 230, 190, 100, 30, hExDui, 133, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试限制通知", -1, 230, 230, 100, 30, hExDui, 134, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
 		for (auto button : buttons)
 		{

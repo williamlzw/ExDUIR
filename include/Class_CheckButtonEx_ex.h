@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "help_ex.h"
 
 void _CheckButtonEx_register();

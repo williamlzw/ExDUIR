@@ -575,9 +575,8 @@ BOOL _img_scale(HEXIMAGE hImg, INT width, INT height, HEXIMAGE* phImg)
 			nError = pBitmapScaler->Initialize((IWICBitmapSource*)pObj, width, height, WICBitmapInterpolationModeLinear);
 			if (nError == 0)
 			{
-				ret = _img_init(pObj, 0, 1, NULL, &nError);
+				ret = _img_init(pBitmapScaler, 0, 1, NULL, &nError);
 			}
-			pBitmapScaler->Release();
 		}
 	}
 	Ex_SetLastError(nError);
@@ -604,9 +603,8 @@ BOOL _img_clip(HEXIMAGE hImg, INT left, INT top, INT width, INT height, HEXIMAGE
 			nError = pBitmapClipper->Initialize((IWICBitmapSource*)pObj, &rcClip);
 			if (nError == 0)
 			{
-				ret = _img_init(pObj, 0, 1, NULL, &nError);
+				ret = _img_init(pBitmapClipper, 0, 1, NULL, &nError);
 			}
-			pBitmapClipper->Release();
 		}
 	}
 	Ex_SetLastError(nError);
@@ -632,9 +630,8 @@ BOOL _img_rotateflip(HEXIMAGE hImg, INT rfType, HEXIMAGE* phImg)
 			nError = pBitmapFlipRotator->Initialize((IWICBitmapSource*)pObj, (WICBitmapTransformOptions)rfType);
 			if (nError == 0)
 			{
-				ret = _img_init(pObj, 0, 1, NULL, &nError);
+				ret = _img_init(pBitmapFlipRotator, 0, 1, NULL, &nError);
 			}
-			pBitmapFlipRotator->Release();
 		}
 	}
 	Ex_SetLastError(nError);

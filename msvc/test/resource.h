@@ -1,6 +1,6 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ ���ɵİ����ļ���
-// �� Resource.rc ʹ��
+﻿//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ 生成的包含文件。
+// 供 Resource.rc 使用
 //
 #define SW_HIDE                         0
 #define HIDE_WINDOW                     0

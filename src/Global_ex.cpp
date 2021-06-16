@@ -169,7 +169,7 @@ void _object_init()
 	_Win10_Loading_register();
 	_SoliderBar_register();
 	_RotateImageBox_register();
-
+	_ProgressBar_register();
 }
 
 FLOAT Ex_Scale(FLOAT n)//OK

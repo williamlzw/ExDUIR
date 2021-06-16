@@ -1480,7 +1480,7 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
 	std::vector<size_t> pInfos;
 	std::vector<size_t> hObjs;
 	HashTable_GetAllKeysAndValues(hHashPosInfos, hObjs, pInfos);
-	for (INT i = 0; i < hObjs.size(); i++)
+	for (size_t i = 0; i < hObjs.size(); i++)
 	{
 		HEXOBJ hObj = hObjs[i];
 		LPVOID pPosInfo = (LPVOID)pInfos[i];

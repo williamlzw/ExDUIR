@@ -73,3 +73,17 @@ BOOL _rgn_hittest(HEXRGN hRgn, FLOAT x, FLOAT y)
 	}
 	return ret;
 }
+
+HEXRGN _rgn_createfrompath(HEXPATH hPath)
+{
+	INT nError = 0;
+	path_s* pPath = nullptr;
+	HEXRGN hgn = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
+	{
+		D2D1_MATRIX_3X2_F transform = {};
+		g_Ri.pD2Dfactory->CreateTransformedGeometry(pPath->pGeometry_, transform, (ID2D1TransformedGeometry**)&hgn);
+	}
+	Ex_SetLastError(nError);
+	return hgn;
+}

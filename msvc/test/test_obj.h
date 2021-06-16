@@ -39,7 +39,7 @@ void test_checkbutton(HWND hWnd);
 
 void test_edit(HWND hWnd);
 
-LRESULT CALLBACK OnListMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
+LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
 void test_listview(HWND hWnd);
 
 void test_menubutton(HWND hWnd);
@@ -83,7 +83,7 @@ void test_iconlistview(HWND hWnd);
 
 void test_treelistview(HWND hWnd);
 
-LRESULT CALLBACK OnMatrixWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
+LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
 void test_matrix(HWND hWnd);
 
 void test_buttonex(HWND hWnd);
@@ -98,6 +98,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 LRESULT CALLBACK OnMenuButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_custommenu(HWND hWnd);
 
+LRESULT CALLBACK OnSideButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
 LRESULT CALLBACK OnParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
 LRESULT CALLBACK OnEventButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
 LRESULT CALLBACK OnEventButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
@@ -117,3 +118,8 @@ void test_dragobj(HWND hWnd);
 
 LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult);
 void test_dropobj(HWND hWnd);
+
+void test_progressbar(HWND hWnd);
+
+LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpReturn);
+void test_nchittest(HWND hWnd);

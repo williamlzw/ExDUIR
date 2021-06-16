@@ -85,7 +85,7 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 	std::vector<INT> aryAtomKey;
 	std::vector<size_t> arylpValue;
 	BOOL ret = FALSE;
-	for (INT i = 0; i < atomFiles.size(); i++)
+	for (size_t i = 0; i < atomFiles.size(); i++)
 	{
 		HashTable_Set(pTableFiles, atomFiles[i], (size_t)lpFiles[i]);
 	}
@@ -131,7 +131,7 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 							{
 								if (_fmt_color((LPVOID)arylpValue[i], &Value))
 								{
-									for (INT ii = 0; ii < g_Li.aryColorsAtom.size(); ii++)
+									for (size_t ii = 0; ii < g_Li.aryColorsAtom.size(); ii++)
 									{
 										if (g_Li.aryColorsAtom[ii] == aryAtomKey[i])
 										{
@@ -161,7 +161,7 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass, st
 											if (aryAtomKey[i] == ATOM_BACKGROUND_IMAGE)
 											{
 												INT atomProp = Crc32_Addr((LPVOID)arylpValue[i], dwLen);
-												for (INT ii = 0; ii < atomFiles.size(); ii++)
+												for (size_t ii = 0; ii < atomFiles.size(); ii++)
 												{
 													if (atomProp == atomFiles[ii])
 													{
@@ -226,7 +226,7 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 	if (lpData == 0 || dwDataLen == 0) return 0;
 	INT crc = Crc32_Addr(lpData, dwDataLen);
 	if (crc == 0) return 0;
-	for (INT i = 0; i < g_Li.aryThemes.size(); i++)
+	for (size_t i = 0; i < g_Li.aryThemes.size(); i++)
 	{
 		if (!IsBadReadPtr(g_Li.aryThemes[i], sizeof(EX_THEME)))
 		{
@@ -430,7 +430,7 @@ BOOL Ex_ThemeFree(HEXTHEME hTheme)
 			ret = TRUE;
 			if (i == 1)
 			{
-				for (INT ii = 0; ii < g_Li.aryThemes.size(); ii++)
+				for (size_t ii = 0; ii < g_Li.aryThemes.size(); ii++)
 				{
 					if (g_Li.aryThemes[ii] == hTheme)
 					{

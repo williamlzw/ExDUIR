@@ -1338,6 +1338,20 @@ BOOL _path_addarc3(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY
 
 /*
 * @fnType ExDirectUI
+* @brief _path_addbezier 路径添加贝塞尔曲线
+* @param 1  hPath                   [HEXPATH]
+* @param 2  x1                      [FLOAT]
+* @param 3  y1                      [FLOAT]
+* @param 4  x2                      [FLOAT]
+* @param 5  y2                      [FLOAT]
+* @param 6  x3                      [FLOAT]
+* @param 7  y3                      [FLOAT]
+* @return [BOOL]返回是否成功
+*/
+BOOL _path_addbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT x3, FLOAT y3);
+
+/*
+* @fnType ExDirectUI
 * @brief _path_addline 路径添加直线
 * @param 1  hPath                   [HEXPATH]
 * @param 2  x1                      [FLOAT]
@@ -1347,6 +1361,18 @@ BOOL _path_addarc3(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY
 * @return [BOOL]返回是否成功
 */
 BOOL _path_addline(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2);
+
+/*
+* @fnType ExDirectUI
+* @brief _path_addquadraticbezier 路径添加二次方贝塞尔曲线
+* @param 1  hPath                   [HEXPATH]
+* @param 2  x1                      [FLOAT]
+* @param 3  y1                      [FLOAT]
+* @param 4  x2                      [FLOAT]
+* @param 5  y2                      [FLOAT]
+* @return [BOOL]返回是否成功
+*/
+BOOL _path_addquadraticbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2);
 
 /*
 * @fnType ExDirectUI
@@ -1485,6 +1511,14 @@ BOOL _path_reset(HEXPATH hPath);
 * @return [HEXRGN]返回合并区域句柄
 */
 HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY);
+
+/*
+* @fnType ExDirectUI
+* @brief _rgn_createfrompath 区域创建自路径
+* @param 1  hPath                    [HEXPATH]
+* @return [HEXRGN]返回区域句柄
+*/
+HEXRGN _rgn_createfrompath(HEXPATH hPath);
 
 /*
 * @fnType ExDirectUI
@@ -2069,9 +2103,9 @@ HEXOBJ Ex_ObjGetFromNodeID(EXHANDLE hExDUIOrObj, INT nNodeID);
 * @brief Ex_ObjGetLong 获取组件数值
 * @param 1  hObj                    [HEXOBJ]
 * @param 2  nIndex                  [INT]                 相关常量 #EOL_
-* @return [size_t]返回组件数值
+* @return [LONG_PTR]返回组件数值
 */
-size_t Ex_ObjGetLong(HEXOBJ hObj, INT nIndex);
+LONG_PTR Ex_ObjGetLong(HEXOBJ hObj, INT nIndex);
 
 /*
 * @fnType ExDirectUI
@@ -2541,10 +2575,10 @@ BOOL Ex_ObjSetIMEState(EXHANDLE hObjOrExDui, BOOL fOpen);
 * @brief Ex_ObjSetLong 设置组件数值
 * @param 1  hObj                    [HEXOBJ]
 * @param 2  nIndex                  [INT]                 #EOL_
-* @param 3  dwNewLong               [size_t]
-* @return [size_t]返回旧数值
+* @param 3  dwNewLong               [LONG_PTR]
+* @return [LONG_PTR]返回旧数值
 */
-size_t Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, size_t dwNewLong);
+LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong);
 
 /*
 * @fnType ExDirectUI
@@ -2902,7 +2936,7 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 * @param 5  nReserved               [size_t]              0.备用
 * @param 6  handle                  [EXHANDLE]            组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认菜单弹出)
 * @param 7  lpRc                    [RECT*]               0.忽略
-* @param 8  pfnCallback             [MsgPROC]           (LRESULT)MsgProc(HWND hWnd,HEXOBJ hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpResult).
+* @param 8  pfnCallback             [MsgPROC]           (LRESULT)MsgProc(HWND hWnd,size_t hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpResult).
 * @param 9  dwFlags                 [DWORD]               相关常量 EMNF_
 * @return [BOOL]返回是否成功
 */

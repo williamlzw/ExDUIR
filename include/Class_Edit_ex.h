@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "richedit.h"
 #include "textserv.h"
 #include "DirectX_ex.h"

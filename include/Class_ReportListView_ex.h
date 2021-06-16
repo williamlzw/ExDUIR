@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "help_ex.h"
 
 #define _rlv_sizeof 9 * sizeof(size_t)
@@ -25,7 +25,7 @@ struct reportlistview_tr_s
 	DWORD dwStyle_;
 	LPARAM lParam_;
 	HEXIMAGE hImage_;
-	LPVOID pTDInfo_;		//ĞĞÎÄ±¾Êı×éĞÅÏ¢
+	LPVOID pTDInfo_;		//è¡Œæ–‡æœ¬æ•°ç»„ä¿¡æ¯
 };
 
 struct reportlistview_td_s

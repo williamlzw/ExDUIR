@@ -194,7 +194,7 @@ struct obj_s
 	FLOAT fHUE_;
 	FLOAT fBlur_;
 	INT nodeid_;
-	size_t extraData_[1]; // 组件附加数据，必须放在末尾
+	LONG_PTR extraData_[1]; // 组件附加数据，必须放在末尾
 };
 
 
@@ -297,8 +297,8 @@ void _obj_setradius(HEXOBJ hObj, obj_s* pObj, FLOAT topleft, FLOAT topright, FLO
 void _obj_tooltips_popup(wnd_s* pWnd, LPCWSTR lpTitle, LPCWSTR lpText, INT x, INT y, INT dwTime, INT nIcon, BOOL fShow);
 void _obj_setuistate(obj_s* pObj, DWORD dwState, BOOL fRemove, RECT* lprcUpdate, BOOL fRedraw, INT* nError);
 void _sb_show(HEXOBJ hSB, BOOL fShow);
-size_t _obj_setExtraLong(obj_s* pObj, INT nIndex, size_t dwNewLong);
-size_t _obj_getExtraLong(obj_s* pObj, INT nIndex);
+LONG_PTR _obj_setExtraLong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong);
+LONG_PTR _obj_getExtraLong(obj_s* pObj, INT nIndex);
 LPVOID _obj_getExtraPtr(obj_s* pObj, INT nIndex);
 BOOL _obj_queryExtra(obj_s* pObj, INT nIndex, size_t flags);
 void _obj_addExtra(obj_s* pObj, INT nIndex, size_t flags);

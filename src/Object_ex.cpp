@@ -1035,7 +1035,7 @@ EXHANDLE Ex_ObjGetParentEx(HEXOBJ hObj, HEXDUI* phExDUI)
 	return ret;
 }
 
-size_t Ex_ObjGetLong(HEXOBJ hObj, INT nIndex)
+LONG_PTR Ex_ObjGetLong(HEXOBJ hObj, INT nIndex)
 {
 	INT nError = 0;
 	obj_s* pObj = nullptr;
@@ -1045,52 +1045,52 @@ size_t Ex_ObjGetLong(HEXOBJ hObj, INT nIndex)
 			return pObj->dwAlpha_;
 		}
 		else if (nIndex == EOL_BLUR) {
-			return (size_t)pObj->fBlur_;
+			return (LONG_PTR)pObj->fBlur_;
 		}
 		else if (nIndex == EOL_CURSOR) {
-			return (size_t)pObj->hCursor_;
+			return (LONG_PTR)pObj->hCursor_;
 		}
 		else if (nIndex == EOL_EXSTYLE) {
-			return (size_t)pObj->dwStyleEx_;
+			return (LONG_PTR)pObj->dwStyleEx_;
 		}
 		else if (nIndex == EOL_HCANVAS) {
-			return (size_t)pObj->canvas_obj_;
+			return (LONG_PTR)pObj->canvas_obj_;
 		}
 		else if (nIndex == EOL_HFONT) {
-			return (size_t)pObj->hFont_;
+			return (LONG_PTR)pObj->hFont_;
 		}
 		else if (nIndex == EOL_ID) {
-			return (size_t)pObj->id_;
+			return (LONG_PTR)pObj->id_;
 		}
 		else if (nIndex == EOL_LPARAM) {
 			return pObj->lParam_;
 		}
 		else if (nIndex == EOL_LPWZTITLE) {
-			return (size_t)pObj->pstrTitle_;
+			return (LONG_PTR)pObj->pstrTitle_;
 		}
 		else if (nIndex == EOL_NODEID) {
-			return (size_t)pObj->nodeid_;
+			return (LONG_PTR)pObj->nodeid_;
 		}
 		else if (nIndex == EOL_OBJPARENT) {
-			return (size_t)pObj->objParent_;
+			return (LONG_PTR)pObj->objParent_;
 		}
 		else if (nIndex == EOL_OBJPROC) {
-			return (size_t)pObj->pfnSubClass_;
+			return (LONG_PTR)pObj->pfnSubClass_;
 		}
 		else if (nIndex == EOL_OWNER) {
-			return (size_t)pObj->dwOwnerData_;
+			return (LONG_PTR)pObj->dwOwnerData_;
 		}
 		else if (nIndex == EOL_STATE) {
-			return (size_t)pObj->dwState_;
+			return (LONG_PTR)pObj->dwState_;
 		}
 		else if (nIndex == EOL_STYLE) {
-			return (size_t)pObj->dwStyle_;
+			return (LONG_PTR)pObj->dwStyle_;
 		}
 		else if (nIndex == EOL_TEXTFORMAT) {
-			return (size_t)pObj->dwTextFormat_;
+			return (LONG_PTR)pObj->dwTextFormat_;
 		}
 		else if (nIndex == EOL_USERDATA) {
-			return (size_t)pObj->dwUserData_;
+			return (LONG_PTR)pObj->dwUserData_;
 		}
 		else if (nIndex >= 0) { // 组件额外数据
 			return _obj_getExtraLong(pObj, nIndex);
@@ -1103,24 +1103,24 @@ size_t Ex_ObjGetLong(HEXOBJ hObj, INT nIndex)
 	return 0;
 }
 
-size_t Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, size_t dwNewLong)
+LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong)
 {
 	INT nError = 0;
 	obj_s* pObj = nullptr;
-	size_t ret = 0;
+	LONG_PTR ret = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (nIndex == EOL_ALPHA)
 		{
-			ret = (size_t)pObj->dwAlpha_;
+			ret = (LONG_PTR)pObj->dwAlpha_;
 			pObj->dwAlpha_ = (INT)dwNewLong;
 		}
 		else if (nIndex == EOL_BLUR) {
-			ret = (size_t)pObj->fBlur_;
+			ret = (LONG_PTR)pObj->fBlur_;
 			pObj->fBlur_ = dwNewLong;
 		}
 		else if (nIndex == EOL_CURSOR) {
-			ret = (size_t)pObj->hCursor_;
+			ret = (LONG_PTR)pObj->hCursor_;
 			pObj->hCursor_ = (HCURSOR)dwNewLong;
 		}
 		else if (nIndex == EOL_EXSTYLE)
@@ -1132,16 +1132,16 @@ size_t Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, size_t dwNewLong)
 			}
 		}
 		else if (nIndex == EOL_HCANVAS) {
-			ret = (size_t)pObj->canvas_obj_;
+			ret = (LONG_PTR)pObj->canvas_obj_;
 			pObj->canvas_obj_ = (HEXCANVAS)dwNewLong;
 		}
 		else if (nIndex == EOL_HFONT) {
-			ret = (size_t)pObj->hFont_;
+			ret = (LONG_PTR)pObj->hFont_;
 			pObj->hFont_ = dwNewLong;
 		}
 		else if (nIndex == EOL_ID)
 		{
-			ret = (size_t)pObj->id_;
+			ret = (LONG_PTR)pObj->id_;
 			pObj->id_ = (INT)dwNewLong;
 			if (ret != 0)
 			{
@@ -1156,15 +1156,15 @@ size_t Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, size_t dwNewLong)
 			pObj->lParam_ = dwNewLong;
 		}
 		else if (nIndex == EOL_LPWZTITLE) {
-			ret = (size_t)pObj->pstrTitle_;
+			ret = (LONG_PTR)pObj->pstrTitle_;
 			pObj->pstrTitle_ = (LPCWSTR)dwNewLong;
 		}
 		else if (nIndex == EOL_NODEID) {
-			ret = (size_t)pObj->nodeid_;
+			ret = (LONG_PTR)pObj->nodeid_;
 			pObj->nodeid_ = (INT)dwNewLong;
 		}
 		else if (nIndex == EOL_OBJPARENT) {
-			ret = (size_t)pObj->objParent_;
+			ret = (LONG_PTR)pObj->objParent_;
 			pObj->objParent_ = (EXHANDLE)dwNewLong;
 		}
 		else if (nIndex == EOL_OBJPROC) {
@@ -1172,7 +1172,7 @@ size_t Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, size_t dwNewLong)
 			pObj->pfnSubClass_ = (MsgPROC)dwNewLong;
 		}
 		else if (nIndex == EOL_OWNER) {
-			ret = (size_t)pObj->dwOwnerData_;
+			ret = (LONG_PTR)pObj->dwOwnerData_;
 			pObj->dwOwnerData_ = (LPVOID)dwNewLong;
 		}
 		else if (nIndex == EOL_STATE) {
@@ -1188,11 +1188,11 @@ size_t Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, size_t dwNewLong)
 			}
 		}
 		else if (nIndex == EOL_TEXTFORMAT) {
-			ret = (size_t)pObj->dwTextFormat_;
+			ret = (LONG_PTR)pObj->dwTextFormat_;
 			pObj->dwTextFormat_ = (INT)dwNewLong;
 		}
 		else if (nIndex == EOL_USERDATA) {
-			ret = (size_t)pObj->dwUserData_;
+			ret = (LONG_PTR)pObj->dwUserData_;
 			pObj->dwUserData_ = (LPVOID)dwNewLong;
 		}
 		else if (nIndex >= 0) { // 组件额外数据
@@ -4237,19 +4237,19 @@ BOOL Ex_ObjSetFontFromFamily(HEXOBJ hObj, LPCWSTR lpszFontfamily, INT dwFontsize
 }
 
 // 设置组件附加数据
-size_t _obj_setExtraLong(obj_s* pObj, INT nIndex, size_t dwNewLong)
+LONG_PTR _obj_setExtraLong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong)
 {
 	EX_ASSERT(pObj, L"_obj_getExtraLong: error pObj: %ld", pObj);
 	EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra, L"_obj_getExtraLong: error index: %ld", nIndex);
 
-	register size_t origin;
+	LONG_PTR origin;
 	origin = pObj->extraData_[nIndex];
 	pObj->extraData_[nIndex] = dwNewLong;
 	return origin;
 }
 
 // 获取组件附加数据
-size_t _obj_getExtraLong(obj_s* pObj, INT nIndex)
+LONG_PTR _obj_getExtraLong(obj_s* pObj, INT nIndex)
 {
 
 	EX_ASSERT(pObj, L"_obj_getExtraLong: error pObj: %ld", pObj);

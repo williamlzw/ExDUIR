@@ -274,9 +274,9 @@ INT _cb_delstring(obj_s* pObj, size_t nIndex) {
 	EX_COMBOX_ITEMLIST* itemList = (EX_COMBOX_ITEMLIST*)_obj_getExtraLong(pObj, 10);
 	if (nIndex <= 0 || nIndex > len)
 		return -1;
-	Ex_MemFree((LPVOID)itemList->items[nIndex - 1].lpwzTitle);
+	//Ex_MemFree((LPVOID)itemList->items[nIndex - 1].lpwzTitle);
 	_cb_realloc(pObj, len - 1, 0, TRUE);
-	_obj_setExtraLong(pObj, 9, --len);
+	_obj_setExtraLong(pObj, 9, len - 1);
 	return len;
 }
 
@@ -316,7 +316,6 @@ void _cb_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 			if (!_obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_DROPDOWN, 0, 0)) {
 				RECT padding = { 0 };
 				RECT unknown;
-
 				LPVOID pThemePadding = Ex_ThemeGetValuePtr(pObj->hTheme_, 0x98393A3C, 0xC7D972B4);
 				if (pThemePadding) {
 					RtlMoveMemory(&padding, pThemePadding, sizeof(RECT));
@@ -379,6 +378,7 @@ void _cb_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 						Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_HOVER, _obj_getcolor(pObj, COLOR_EX_TEXT_HOVER), FALSE);
 						Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_DOWN, _obj_getcolor(pObj, COLOR_EX_TEXT_DOWN), FALSE);
 						Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_SELECT, _obj_getcolor(pObj, COLOR_EX_TEXT_SELECT), TRUE);
+						
 						_obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_POPUPLISTWINDOW, (size_t)hWndBox, hExBox);
 						Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
 					}
@@ -486,7 +486,9 @@ LRESULT CALLBACK _cb_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 			return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 		case WM_LBUTTONDOWN:
 			if (_obj_queryExtra(pObj, 0, 1) || !FLAGS_CHECK(pObj->dwStyle_, ECS_ALLOWEDIT))
+			{
 				_cb_btndown(hWnd, hObj, pObj);
+			}
 			return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 		case 4294967290:
 			_obj_invalidaterect(pObj, 0, 0);

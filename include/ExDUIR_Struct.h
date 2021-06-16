@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <vector>
 
 #pragma region engine flag constant
 // 引擎标识_启用DPI缩放
@@ -213,7 +215,7 @@
 #define EOL_NODEID	-1
 // 组件数值_父句柄
 #define EOL_OBJPARENT	-8
-// 组件数值_组件回调
+// 组件数值_组件回调 (LRESULT) CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpResult)
 #define EOL_OBJPROC	-4
 // 组件数值_控件数据
 #define EOL_OWNER	-23
@@ -982,6 +984,8 @@
 // 事件_树形框_绘制节点
 #define TVN_DRAWITEM	3099
 
+
+
 // 报表风格_绘制横线
 #define ERLS_DRAWHORIZONTALLINE	256
 // 报表风格_绘制竖线
@@ -1127,6 +1131,7 @@
 // 消息_图标列表_设置表项尺寸
 #define ILVM_SETITEMSIZE 11001
 
+#pragma region windows show flag constant
 // 窗口显示标识_显示
 #define SW_SHOW	5
 // 窗口显示标识_隐藏
@@ -1137,6 +1142,7 @@
 #define SW_SHOWMINIMIZED	2
 // 窗口显示标识_不激活
 #define SW_SHOWNOACTIVATE	4
+#pragma endregion windows show flag constant
 
 // 关联类型_子句柄
 #define GW_CHILD	5
@@ -1145,6 +1151,7 @@
 // 关联类型_下一个句柄
 #define GW_HWNDNEXT	2
 
+#pragma region messagebox return button type constant
 // 信息框返回钮_是钮
 #define IDYES	6
 // 信息框返回钮_否钮
@@ -1155,15 +1162,37 @@
 #define IDOK	1
 // 信息框返回钮_关闭钮
 #define IDCLOSE	8
+#pragma endregion messagebox return button type constant
 
-// 消息_进度条_设置进度条范围
+#pragma region progressbar long constant
+// 进度条属性_位置
+#define PBL_POS 0
+// 进度条属性_范围
+#define PBL_RANGE 1
+// 进度条属性_圆角度
+#define PBL_RADIUS 2
+// 进度条属性_背景颜色
+#define PBL_BKCOLOR 3
+// 进度条属性_前景颜色
+#define PBL_BARCOLOR 4
+#pragma endregion progressbar long constant
+
+#pragma region progressbar message constant
+// 消息_进度条_设置进度条范围  wParam范围
 #define PBM_SETRANGE	1025
-// 消息_进度条_设置进度条位置
+// 消息_进度条_设置进度条位置  wParam位置
 #define PBM_SETPOS	1026
-// 消息_进度条_获取进度条位置
-#define PBM_GETPOS	1032
 // 消息_进度条_获取进度条范围
 #define PBM_GETRANGE	1031
+// 消息_进度条_获取进度条位置
+#define PBM_GETPOS	1032
+// 消息_进度条_设置进度条颜色  wParam颜色
+#define PBM_SETBARCOLOR	1033
+// 消息_进度条_设置进度条背景颜色 wParam颜色
+#define PBM_SETBKCOLOR 8193
+// 消息_进度条_设置进度条圆角度 wParam圆角度
+#define PBM_SETRADIUS	1027
+#pragma endregion progressbar message constant
 
 // 主题包头
 #define EPDF_THEME	254
@@ -1175,43 +1204,52 @@
 #define EMNF_NOSHADOW	0x80000000
 #pragma endregion menubutton flag constant
 
+#pragma region menubutton message constant
 // 消息_菜单按钮_弹出菜单 (wParam:菜单组,lParam:菜单句柄)
 #define MBM_POPUP	103001
 // 事件_菜单按钮_弹出菜单 (wParam:菜单组,lParam:菜单句柄)
 #define MBN_POPUP	102401
+#pragma endregion menubutton message constant
 
-
-
+#pragma region win10loading style constant
 // WIN10动画加载风格_直线
 #define ELDS_LINE  110
+#pragma endregion win10loading style constant
 
+#pragma region soliderbar style constant
 // 滑块条风格_横向
 #define ESBS_HORIZONTAL 0
 // 滑块条风格_纵向
 #define ESBS_VERTICAL 1
+#pragma endregion soliderbar style constant
 
+#pragma region soliderbar message constant
 // 消息_滑块条_取当前滑块坐标
 #define SBM_GETBLOCKRECT 10010
 // 消息_滑块条_坐标转值
 #define SBM_PT2VALUE 10011
+#pragma endregion soliderbar message constant
 
+#pragma region soliderbar notify constant
 // 事件_滑块条_值改变 事件编号(lParam=值)
 #define SBN_VALUE 10010
+#pragma endregion soliderbar notify constant
 
+#pragma region soliderbar long constant
 // 滑块条属性_最小值
 #define SBL_MIN 0
 // 滑块条属性_最大值
 #define SBL_MAX 1
 // 滑块条属性_当前值
 #define SBL_POS 2
-
 // 滑块条属性_滑块圆滑动方向 设定值：1，横向风格（从右往左）|纵向风格（从下往上）
 #define SBL_BLOCK_POINT 3
 // 滑块条属性_滑块圆半径
-#define SBL_BLOCK_SIZE 5
+#define SBL_BLOCK_SIZE 4
+#pragma endregion soliderbar long constant
 
 // 旋转图片框风格_旋转
-#define SRIBS_ROTATE 1
+#define ERIBS_ROTATE 1
 
 // 分组框属性_文本左边的偏移
 #define  GROUPBOX_TEXT_OFFSET	0
@@ -1230,7 +1268,7 @@
 #define ExGetA(argb)		(LOBYTE((argb)>>24))
 #define ExRGB(r,g,b)        ((EXARGB)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((INT)(BYTE)(b))<<16)))
 #define ExRGBA(r,g,b,a)		((EXARGB)(ExRGB(b,g,r)|(a<<24)))
-#define ExARGB(r,g,b,a)		((EXARGB)(ExRGB(r,g,b)|(a<<24)))
+#define ExARGB(r,g,b,a)		((EXARGB)(ExRGB(b,g,r)|(a<<24)))
 #define ExARGB2RGB(argb)    ExRGB((BYTE)(argb>>16),(BYTE)(argb>>8),(BYTE)(argb))
 #define ExRGB2ARGB(rgb,a)   ((EXARGB)(BYTE(ExGetR(rgb))<<16 | BYTE(ExGetG(rgb))<<8 | BYTE(ExGetB(rgb)) | (a<<24)))
 

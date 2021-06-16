@@ -321,7 +321,7 @@ BOOL _path_addrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bott
 	path_s* pPath = nullptr;
 	if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
 	{
-		if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
+		if ((pPath->dwFlags_ & EPF_DISABLESCALE) != EPF_DISABLESCALE)
 		{
 			if (g_Li.DpiX > 1)
 			{
@@ -385,6 +385,64 @@ BOOL _path_addroundedrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLO
 			_path_addarc(hPath, left + radiusBottomLeft, bottom, left, bottom - radiusBottomLeft, radiusBottomLeft, radiusBottomLeft, TRUE);
 			_path_addline(hPath, left, bottom - radiusBottomLeft, left, top + radiusTopLeft);
 		}
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
+
+BOOL _path_addbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT x3, FLOAT y3)
+{
+	INT nError = 0;
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
+	{
+		if ((pPath->dwFlags_ & EPF_DISABLESCALE) != EPF_DISABLESCALE)
+		{
+			if (g_Li.DpiX > 1)
+			{
+				x1 = x1 * g_Li.DpiX;
+				y1 = y1 * g_Li.DpiX;
+				x2 = x2 * g_Li.DpiX;
+				y2 = y2 * g_Li.DpiX;
+				x3 = x3 * g_Li.DpiX;
+				y3 = y3 * g_Li.DpiX;
+			}
+		}
+		D2D1_BEZIER_SEGMENT bs = {};
+		bs.point1.x = x1;
+		bs.point1.y = y1;
+		bs.point2.x = x2;
+		bs.point2.y = y2;
+		bs.point3.x = x3;
+		bs.point3.y = y3;
+		pPath->pObj_->AddBezier(bs);
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
+
+BOOL _path_addquadraticbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2)
+{
+	INT nError = 0;
+	path_s* pPath = nullptr;
+	if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
+	{
+		if ((pPath->dwFlags_ & EPF_DISABLESCALE) != EPF_DISABLESCALE)
+		{
+			if (g_Li.DpiX > 1)
+			{
+				x1 = x1 * g_Li.DpiX;
+				y1 = y1 * g_Li.DpiX;
+				x2 = x2 * g_Li.DpiX;
+				y2 = y2 * g_Li.DpiX;
+			}
+		}
+		D2D1_QUADRATIC_BEZIER_SEGMENT bs = {};
+		bs.point1.x = x1;
+		bs.point1.y = y1;
+		bs.point2.x = x2;
+		bs.point2.y = y2;
+		pPath->pObj_->AddQuadraticBezier(bs);
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;

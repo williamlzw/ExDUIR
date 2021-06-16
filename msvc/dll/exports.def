@@ -12,8 +12,6 @@ Ex_LoadImageFromMemory
 Ex_FreeBuffer
 Ex_AllocBuffer
 Ex_Scale
-;F2I
-;I2F
 Ex_Sleep
 
 ;----------------------------------------
@@ -332,9 +330,11 @@ _path_addroundedrect
 _path_beginfigure
 _path_beginfigure2
 _path_beginfigure3
+_path_addarc
 _path_addarc2
 _path_addarc3
-
+_path_addbezier
+_path_addquadraticbezier
 
 ;----------------------------------------
 ;rgn
@@ -344,7 +344,7 @@ _rgn_createfromrect
 _rgn_createfromroundrect
 _rgn_combine
 _rgn_hittest
-;_rgn_createfrompath
+_rgn_createfrompath
 
 
 ;----------------------------------------
