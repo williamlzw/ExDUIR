@@ -443,12 +443,12 @@ BOOL Ex_ObjSetFocus(HEXOBJ hObj)
 	return nError == 0;
 }
 
-size_t _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	pObj->dwFlags_ = pObj->dwFlags_ | eof_bUserProcessesed;
 	if (pObj->pfnSubClass_ != 0)
 	{
-		size_t ret = 0;
+		LRESULT ret = 0;
 		if ((pObj->pfnSubClass_)(hWnd, hObj, uMsg, wParam, lParam, &ret)) {
 			return ret;
 		}
@@ -1771,8 +1771,6 @@ size_t _obj_dispatchnotify(HWND hWnd, obj_s* pObj, HEXOBJ hObj, INT nID, INT nCo
 {
 	nID = pObj->id_;
 	INT ret = 0;
-
-	//Ex_ObjHandleEvent
 	wnd_s* pWnd = pObj->pWnd_;
 	EX_EVENT_HANDLER_TABLE* pEventHandlerTable = NULL;
 	if (HashTable_Get(pWnd->hTableEvent_, nCode, (size_t*)&pEventHandlerTable))

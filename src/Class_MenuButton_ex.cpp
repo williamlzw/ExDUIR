@@ -5,7 +5,7 @@ void _MenuButton_regsiter()
 	Ex_ObjRegister(L"MenuButton", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _menubutton_proc);
 }
 
-LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	menu_s* lpMenuParams;
 	wnd_s* pWnd;

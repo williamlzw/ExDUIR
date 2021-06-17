@@ -63,10 +63,10 @@ BOOL _wnd_getfromhandle(size_t handle, HWND* hWnd, wnd_s** ppWnd, obj_s** ppObj,
 	return TRUE;
 }
 
-size_t _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam, obj_s* pObj)
+LRESULT _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam, obj_s* pObj)
 {
 	WinMsgPROC pfnMsgProc = pWnd->pfnMsgProc_;
-	size_t ret = 0;
+	LRESULT ret = 0;
 	if (pfnMsgProc)
 	{
 		EX_NMHDR hdr;
@@ -598,7 +598,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 	WinMsgPROC pfnMsgProc = pWnd->pfnMsgProc_;
 	if (pfnMsgProc != 0)
 	{
-		size_t ret = 0;
+		LRESULT ret = 0;
 		if (pfnMsgProc(hWnd, pWnd->hexdui_, uMsg, wParam, lParam, &ret) != 0)
 		{
 			return ret;
@@ -1902,7 +1902,7 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd)
 	{
 		_canvas_setantialias(cvBkg, TRUE);
 		_canvas_setimageantialias(cvBkg, TRUE);
-		size_t result = 0;
+		LRESULT result = 0;
 		if (!pWnd->pfnMsgProc_ || !pWnd->pfnMsgProc_(hWnd, pWnd->hexdui_, WM_ERASEBKGND, cvBkg, pWnd->hexdui_, &result))
 		{
 			if (!((pWnd->dwStyle_ & EWS_NOINHERITBKG) == EWS_NOINHERITBKG))

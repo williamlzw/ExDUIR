@@ -99,7 +99,7 @@ void test_button(HWND hWnd)
 	switchprops.COLOR_EX_BORDER_NORMAL = ExARGB(255, 255, 255, 255);
 	switchprops.Radius = 15;
 	switchprops.StrokeWidth = 1;
-	Ex_ObjSendMessage(switchObj2, EOL_EX_PROPS, 0, (LPARAM)&switchprops);
+	Ex_ObjSendMessage(switchObj2, WM_EX_PROPS, 0, (LPARAM)&switchprops);
 
 	Ex_DUIShowWindow(m_hExDui_button, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -168,7 +168,7 @@ void test_checkbutton(HWND hWnd)
 	CheckButtonExProps.COLOR_EX_BORDER_NORMAL = ExARGB(222, 222, 222, 150);
 	CheckButtonExProps.COLOR_EX_BORDER_HOVER = ExARGB(222, 222, 222, 200);
 	CheckButtonExProps.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(222, 222, 222, 250);
-	Ex_ObjSendMessage(CheckButtonObj, EOL_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
+	Ex_ObjSendMessage(CheckButtonObj, WM_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
 	Ex_ObjSendMessage(CheckButtonObj, BM_SETCHECK, 1, 0);
 
 	HEXOBJ	CheckButtonObj2 = Ex_ObjCreate(ATOM_CheckButtonEx, L"扩展复选框", -1, 10, 120, 120, 30, hExDui_checkbutton);
@@ -176,7 +176,7 @@ void test_checkbutton(HWND hWnd)
 	CheckButtonExProps.COLOR_EX_BORDER_NORMAL = ExARGB(22, 222, 222, 150);
 	CheckButtonExProps.COLOR_EX_BORDER_HOVER = ExARGB(22, 222, 222, 200);
 	CheckButtonExProps.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(222, 22, 222, 250);
-	Ex_ObjSendMessage(CheckButtonObj2, EOL_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
+	Ex_ObjSendMessage(CheckButtonObj2, WM_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
 	Ex_ObjHandleEvent(CheckButtonObj2, NM_CHECK, OnCheckButtonCheckedEvent);
 
 	HEXOBJ	CheckButtonObj3 = Ex_ObjCreate(ATOM_CheckButtonEx, L"三态选择框", -1, 10, 150, 100, 30, hExDui_checkbutton);
@@ -266,7 +266,7 @@ void test_custombkg(HWND hWnd)
 
 std::vector<LISTVIEW_ITEM> m_list_item_info;
 
-LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_NOTIFY)
 	{
@@ -323,7 +323,7 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	return 0;
 }
 
-LRESULT OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_MOUSEHOVER)
 	{
@@ -745,7 +745,7 @@ HWND m_hWnd_ani = 0;
 HEXDUI m_hExDui_ani = 0;
 HEXEASING m_easing3 = nullptr;
 
-LRESULT CALLBACK OnAniWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnAniWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_CLOSE)
 	{
@@ -865,7 +865,7 @@ void test_ani(HWND hWnd)
 
 
 
-LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_ERASEBKGND)
 	{
@@ -1136,7 +1136,7 @@ HEXOBJ m_hObj_ListView_icon = 0;
 HEXIMAGELIST m_hImageList_icon = 0;
 
 
-LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_SIZE)
 	{
@@ -1261,7 +1261,7 @@ void test_treelistview(HWND hWnd)
 }
 
 
-LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_PAINT)
 	{
@@ -1345,7 +1345,7 @@ void test_buttonex(HWND hWnd)
 	ButtonExprops.COLOR_EX_BACKGROUND_NORMAL = ExRGB2ARGB(ThemeColor, 225);
 	ButtonExprops.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(ThemeColor, 250);
 	ButtonExprops.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(ThemeColor, 200);
-	Ex_ObjSendMessage(BtnExObj, EOL_EX_PROPS, 0, (size_t)&ButtonExprops);
+	Ex_ObjSendMessage(BtnExObj, WM_EX_PROPS, 0, (size_t)&ButtonExprops);
 
 
 	HEXOBJ BtnExObj2 = Ex_ObjCreate(ATOM_ButtonEx, L"点击进入 👉", -1, 50, 100, 100, 30, hExDui_buttonex);
@@ -1354,7 +1354,7 @@ void test_buttonex(HWND hWnd)
 	ButtonExprops2.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(6182117, 255);
 	ButtonExprops2.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(4865258, 255);
 	ButtonExprops2.Radius = 15;
-	Ex_ObjSendMessage(BtnExObj2, EOL_EX_PROPS, 0, (size_t)&ButtonExprops2);
+	Ex_ObjSendMessage(BtnExObj2, WM_EX_PROPS, 0, (size_t)&ButtonExprops2);
 
 	HEXOBJ BtnExObj3 = Ex_ObjCreate(ATOM_ButtonEx, L"Metro按钮☪", -1, 50, 150, 100, 30, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops3 = { 0 };
@@ -1365,14 +1365,14 @@ void test_buttonex(HWND hWnd)
 	ButtonExprops3.COLOR_EX_BORDER_HOVER = ExARGB(0, 0, 0, 135);
 	ButtonExprops3.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(0, 0, 0, 150);
 	ButtonExprops3.StrokeWidth = 2;
-	Ex_ObjSendMessage(BtnExObj3, EOL_EX_PROPS, 0, (LPARAM)&ButtonExprops3);
+	Ex_ObjSendMessage(BtnExObj3, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops3);
 
 	HEXOBJ BtnExObj4 = Ex_ObjCreate(ATOM_ButtonEx, L"图标在左", -1, 50, 200, 100, 30, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops4 = { 0 };
 	ButtonExprops4.COLOR_EX_BACKGROUND_NORMAL = ExRGB2ARGB(10066176, 255);
 	ButtonExprops4.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(10066176, 220);
 	ButtonExprops4.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(10066176, 200);
-	Ex_ObjSendMessage(BtnExObj4, EOL_EX_PROPS, 0, (LPARAM)&ButtonExprops4);
+	Ex_ObjSendMessage(BtnExObj4, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops4);
 	Ex_ObjSetFontFromFamily(BtnExObj4, L"楷体", 16, -1, TRUE);
 	HEXIMAGE hImg;
 	_img_createfromfile(L"buttonex\\5.png", &hImg);
@@ -1400,7 +1400,7 @@ void test_buttonex(HWND hWnd)
 	ButtonExprops7.COLOR_EX_BKG_CRBegin = ExARGB(0, 173, 241, 255);
 	ButtonExprops7.COLOR_EX_BKG_CREnd = ExARGB(100, 25, 129, 255);
 	ButtonExprops7.StrokeWidth = 2;
-	Ex_ObjSendMessage(BtnExObj7, EOL_EX_PROPS, 0, (LPARAM)&ButtonExprops7);
+	Ex_ObjSendMessage(BtnExObj7, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops7);
 	Ex_ObjSetFontFromFamily(BtnExObj7, L"楷体", 16, -1, TRUE);
 
 	HEXOBJ BtnExObj8 = Ex_ObjCreate(ATOM_ButtonEx, L"线框按钮", -1, 180, 150, 100, 30, hExDui_buttonex);/*图标按钮*/
@@ -1408,7 +1408,7 @@ void test_buttonex(HWND hWnd)
 	ButtonExprops8.COLOR_EX_BRD_CRBegin = ExARGB(227, 34, 103, 255);
 	ButtonExprops8.COLOR_EX_BRD_CREnd = ExRGB2ARGB(16746496, 255);
 	ButtonExprops8.StrokeWidth = 2;
-	Ex_ObjSendMessage(BtnExObj8, EOL_EX_PROPS, 0, (LPARAM)&ButtonExprops8);
+	Ex_ObjSendMessage(BtnExObj8, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops8);
 	Ex_ObjSetColor(BtnExObj8, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(65535, 180), FALSE);
 	Ex_ObjSetColor(BtnExObj8, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(65535, 255), FALSE);
 	Ex_ObjSetColor(BtnExObj8, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(65535, 255), FALSE);
@@ -1420,7 +1420,7 @@ void test_buttonex(HWND hWnd)
 	ButtonExprops9.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(10061616, 220);
 	ButtonExprops9.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(10061616, 200);
 	ButtonExprops9.nIconPosition = 2;
-	Ex_ObjSendMessage(BtnExObj9, EOL_EX_PROPS, 0, (LPARAM)&ButtonExprops9);
+	Ex_ObjSendMessage(BtnExObj9, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops9);
 	Ex_ObjSetFontFromFamily(BtnExObj9, L"楷体", 16, -1, TRUE);
 	_img_createfromfile(L"buttonex\\4.png", &hImg);
 	Ex_ObjSendMessage(BtnExObj9, WM_SETICON, 0, (LPARAM)hImg);   /* 设置图标; */
@@ -1436,7 +1436,7 @@ void test_buttonex(HWND hWnd)
 	ButtonExprops10.StrokeWidth = 1;
 	ButtonExprops10.nIconPosition = 1;
 	ButtonExprops10.Radius = 7;
-	Ex_ObjSendMessage(BtnExObj10, EOL_EX_PROPS, 0, (LPARAM)&ButtonExprops10);
+	Ex_ObjSendMessage(BtnExObj10, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops10);
 	Ex_ObjSetFontFromFamily(BtnExObj10, L"楷体", 16, -1, TRUE);
 	_img_createfromfile(L"buttonex\\3.png", &hImg);
 	Ex_ObjSendMessage(BtnExObj10, WM_SETICON, 0, (LPARAM)hImg);   /* 设置图标; */
@@ -1493,7 +1493,7 @@ void test_editex(HWND hWnd)
 	EditExprops.Radius = 15;
 	EditExprops.StrokeWidth = 1;
 	EditExprops.nIconPosition = 1;
-	Ex_ObjSendMessage(m_SearchEdit, EOL_EX_PROPS, 0, (LPARAM)&EditExprops);
+	Ex_ObjSendMessage(m_SearchEdit, WM_EX_PROPS, 0, (LPARAM)&EditExprops);
 	_img_createfromfile(L"editex\\search_normal.png", &hImage);
 	Ex_ObjSendMessage(m_SearchEdit, WM_SETICON, 0, (LPARAM)hImage);
 
@@ -1511,7 +1511,7 @@ void test_editex(HWND hWnd)
 
 HMENU m_hMenu;
 
-LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_PAINT)
 	{
@@ -1558,7 +1558,7 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	return 0;
 }
 
-size_t CALLBACK OnMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_ERASEBKGND)
 	{
@@ -1587,7 +1587,7 @@ size_t CALLBACK OnMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	return 0;
 }
 
-LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_INITMENUPOPUP)
 	{
@@ -1706,7 +1706,7 @@ void test_custommenu(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_custommenu, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnSideButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnSideButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_NOTIFY)
 	{
@@ -1727,7 +1727,7 @@ LRESULT CALLBACK OnSideButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	return 0;
 }
 
-LRESULT CALLBACK OnParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_NOTIFY)
 	{
@@ -1748,7 +1748,7 @@ LRESULT CALLBACK OnParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 	return 0;
 }
 
-LRESULT CALLBACK OnEventButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnEventButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_EX_LCLICK)//左键单击消息,拦截这条则不会触发任何事件
 	{
@@ -1778,7 +1778,7 @@ LRESULT CALLBACK OnEventButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPar
 	return 0;
 }
 
-LRESULT CALLBACK OnEventWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnEventWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_NOTIFY)
 	{
@@ -1909,7 +1909,7 @@ void test_rotateimgbox(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_rotateimgbox, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_LBUTTONDOWN)
 	{
@@ -1982,7 +1982,7 @@ void test_dragobj(HWND hWnd)
 }
 
 
-LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult)
+LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_EX_DROP)//先触发本消息
 	{
@@ -2034,7 +2034,7 @@ void test_dropobj(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_dropobj, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnProgressBarProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpResult)
+LRESULT CALLBACK OnProgressBarProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_TIMER)
 	{
@@ -2069,7 +2069,7 @@ void test_progressbar(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpReturn)
+LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam, LRESULT* lpReturn)
 {
 	if (uMsg == WM_NCHITTEST)
 	{

@@ -262,7 +262,7 @@ void _obj_killfocus_real(obj_s* pObj, HEXOBJ hObj, HEXOBJ objFocus);
 HWND _obj_gethWnd(obj_s* pObj);
 BOOL _obj_setfocus(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, BOOL bDispatch);
 void _obj_setfocus_real(HWND hWnd, obj_s* pObj, HEXOBJ hObj, HEXOBJ lstObj);
-size_t _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _obj_setchildrenpostion(obj_s* pObj, INT x, INT y);
 void _obj_update(obj_s* pObj, BOOL fUpdateWindow);
 void _obj_updatewindowpostion(obj_s* pObj, LPVOID lpWRC, BOOL fChild);

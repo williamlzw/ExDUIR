@@ -91,57 +91,57 @@ INT DtoHimetric(INT d, INT PerInchc)
 	return MulDiv(d, 2540, PerInchc);
 }
 
-size_t __get(LPVOID lpAddr, size_t offset)
+LONG_PTR __get(LPVOID lpAddr, LONG_PTR offset)
 {
 	size_t a = (size_t)lpAddr + offset;
-	return *(size_t*)a;
+	return *(LONG_PTR*)a;
 }
 
-INT __get_int(LPVOID lpAddr, size_t offset)
+INT __get_int(LPVOID lpAddr, LONG_PTR offset)
 {
 	size_t a = (size_t)lpAddr + offset;
 	return *(INT*)a;
 }
 
-FLOAT __get_float(LPVOID lpAddr, size_t offset)
+FLOAT __get_float(LPVOID lpAddr, LONG_PTR offset)
 {
 	size_t a = (size_t)lpAddr + offset;
 	return *(FLOAT*)a;
 }
 
-SHORT __get_short(LPVOID lpAddr, size_t offset)
+SHORT __get_short(LPVOID lpAddr, LONG_PTR offset)
 {
 	size_t a = (size_t)lpAddr + offset;
 	return *(SHORT*)a;
 }
 
-CHAR __get_char(LPVOID lpAddr, size_t offset)
+CHAR __get_char(LPVOID lpAddr, LONG_PTR offset)
 {
 	size_t a = (size_t)lpAddr + offset;
 	return *(CHAR*)a;
 }
 
-UCHAR __get_unsignedchar(LPVOID lpAddr, size_t offset)
+UCHAR __get_unsignedchar(LPVOID lpAddr, LONG_PTR offset)
 {
 	size_t a = (size_t)lpAddr + offset;
 	return *(UCHAR*)a;
 }
 
-WCHAR __get_wchar(LPVOID lpAddr, size_t offset)
+WCHAR __get_wchar(LPVOID lpAddr, LONG_PTR offset)
 {
 	size_t a = (size_t)lpAddr + offset;
 	return *(WCHAR*)a;
 }
 
-size_t __set(LPVOID lpAddr, size_t offset, size_t value)
+LONG_PTR __set(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value)
 {
 	size_t* a = (size_t*)((size_t)lpAddr + offset);
-	size_t old = *a;
+	LONG_PTR old = *a;
 	*a = value;
 	return old;
 }
 
-INT __set_int(LPVOID lpAddr, size_t offset, INT value)
+INT __set_int(LPVOID lpAddr, LONG_PTR offset, INT value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	INT old = *(INT*)a;
@@ -149,13 +149,13 @@ INT __set_int(LPVOID lpAddr, size_t offset, INT value)
 	return old;
 }
 
-void __set_char(LPVOID lpAddr, size_t offset, CHAR value)
+void __set_char(LPVOID lpAddr, LONG_PTR offset, CHAR value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(CHAR*)a = value;
 }
 
-SHORT __set_short(LPVOID lpAddr, size_t offset, SHORT value)
+SHORT __set_short(LPVOID lpAddr, LONG_PTR offset, SHORT value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	SHORT old = *(SHORT*)a;
@@ -163,19 +163,19 @@ SHORT __set_short(LPVOID lpAddr, size_t offset, SHORT value)
 	return old;
 }
 
-void __set_unsignedchar(LPVOID lpAddr, size_t offset, UCHAR value)
+void __set_unsignedchar(LPVOID lpAddr, LONG_PTR offset, UCHAR value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(UCHAR*)a = value;
 }
 
-void __set_wchar(LPVOID lpAddr, size_t offset, WCHAR value)
+void __set_wchar(LPVOID lpAddr, LONG_PTR offset, WCHAR value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(WCHAR*)a = value;
 }
 
-FLOAT __set_float(LPVOID lpAddr, size_t offset, FLOAT value)
+FLOAT __set_float(LPVOID lpAddr, LONG_PTR offset, FLOAT value)
 {
 	size_t a = (size_t)lpAddr + offset;
 	FLOAT old = *(FLOAT*)a;
@@ -183,38 +183,38 @@ FLOAT __set_float(LPVOID lpAddr, size_t offset, FLOAT value)
 	return old;
 }
 
-BOOL __query(LPVOID lpAddr, size_t offset, size_t value)//OK
+BOOL __query(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value)//OK
 {
-	return (*(size_t*)((size_t)lpAddr + offset) & value) == value;
+	return (*(LONG_PTR*)((size_t)lpAddr + offset) & value) == value;
 }
 
-BOOL __query_int(LPVOID lpAddr, size_t offset, INT value)//OK
+BOOL __query_int(LPVOID lpAddr, LONG_PTR offset, INT value)//OK
 {
 	return (*(INT*)((size_t)lpAddr + offset) & value) == value;
 }
 
-void __del(LPVOID lpAddr, size_t offset, size_t value)//OK
+void __del(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value)//OK
 {
 	size_t a = (size_t)lpAddr + offset;
-	*(size_t*)a = *(size_t*)a - (*(size_t*)a & value);
+	*(LONG_PTR*)a = *(LONG_PTR*)a - (*(LONG_PTR*)a & value);
 }
 
-void __add(LPVOID lpAddr, size_t offset, size_t value)//OK
+void __add(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value)//OK
 {
 	size_t a = (size_t)lpAddr + offset;
-	*(size_t*)a = *(size_t*)a | value;
+	*(LONG_PTR*)a = *(LONG_PTR*)a | value;
 }
 
-void __addn(LPVOID lpAddr, size_t offset, size_t value)//OK
+void __addn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value)//OK
 {
 	size_t a = (size_t)lpAddr + offset;
-	*(size_t*)a = *(size_t*)a + value;
+	*(LONG_PTR*)a = *(LONG_PTR*)a + value;
 }
 
-void __subn(LPVOID lpAddr, size_t offset, size_t value)//OK
+void __subn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value)//OK
 {
 	size_t a = (size_t)lpAddr + offset;
-	*(size_t*)a = *(size_t*)a - value;
+	*(LONG_PTR*)a = *(LONG_PTR*)a - value;
 }
 
 void _bit_add(size_t* dwValue, size_t index/*0-31 */)//OK

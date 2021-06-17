@@ -1,42 +1,41 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <Windows.h>
 
 #pragma region engine flag constant
 // 引擎标识_启用DPI缩放
-#define EXGF_DPI_ENABLE	2
+#define EXGF_DPI_ENABLE	0x02
 // 引擎标识_渲染_画布不抗锯齿
-#define EXGF_RENDER_CANVAS_ALIAS	64
-// 引擎标识_渲染_使用GDI
-#define EXGF_RENDER_METHOD_GDI	128
+#define EXGF_RENDER_CANVAS_ALIAS	0x40
 // 引擎标识_渲染_使用D2D
-#define EXGF_RENDER_METHOD_D2D	256
+#define EXGF_RENDER_METHOD_D2D	0x100
 // 引擎标识_渲染_使用支持GDI交互的D2D渲染
-#define EXGF_RENDER_METHOD_D2D_GDI_COMPATIBLE	768
+#define EXGF_RENDER_METHOD_D2D_GDI_COMPATIBLE	0x300
 // 引擎标识_文本渲染_使用ClearType抗锯齿
-#define EXGF_TEXT_CLEARTYPE	1024
+#define EXGF_TEXT_CLEARTYPE	0x400
 // 引擎标识_文本渲染_抗锯齿
-#define EXGF_TEXT_ANTIALIAS	2048
+#define EXGF_TEXT_ANTIALIAS	0x800
 // 引擎标识_图像渲染_抗锯齿
-#define EXGF_IMAGE_ANTIALIAS	4096
+#define EXGF_IMAGE_ANTIALIAS	0x1000
 // 引擎标识_组件_禁用动画效果
-#define EXGF_OBJECT_DISABLEANIMATION	65536
+#define EXGF_OBJECT_DISABLEANIMATION	0x10000
 // 引擎标识_组件_显示组件边界
-#define EXGF_OBJECT_SHOWRECTBORDER	131072
+#define EXGF_OBJECT_SHOWRECTBORDER	0x20000
 // 引擎标识_组件_显示组件位置
-#define EXGF_OBJECT_SHOWPOSTION	262144
+#define EXGF_OBJECT_SHOWPOSTION	0x40000
 // 引擎标识_JS_允许JS全局对象访问文件
-#define EXGF_JS_FILE	524288
+#define EXGF_JS_FILE	0x80000
 // 引擎标识_JS_允许JS全局对象访问内存
-#define EXGF_JS_MEMORY	1048576
+#define EXGF_JS_MEMORY	0x100000
 // 引擎标识_JS_允许JS全局对象申请内存
-#define EXGF_JS_MEMORY_ALLOC	2097152
+#define EXGF_JS_MEMORY_ALLOC	0x200000
 // 引擎标识_JS_允许JS全局对象创建进程或加载DLLE
-#define EXGF_JS_PROCESS	4194304
+#define EXGF_JS_PROCESS	0x400000
 // 引擎标识_JS_允许JS全局对象访问所有资源
-#define EXGF_JS_ALL	7864320
+#define EXGF_JS_ALL	0x780000
 // 引擎标识_菜单_渲染所有菜单
-#define EXGF_MENU_ALL	8388608
+#define EXGF_MENU_ALL	0x800000
 #pragma endregion engine flag constant
 
 #pragma region resource type constant
@@ -156,26 +155,28 @@
 #pragma endregion font style constant
 
 #pragma region msg ex constant
-// 消息_扩展_XML属性分发回调 (wParam->atomPropName,lParam->lpwzPropValue>)
-#define WM_EX_XML_PROPDISPATCH	(0U - 1)
-// 消息_扩展_JS脚本分发回调 (wParam->atomPropName,lParam->dispIdMember>)
-#define WM_EX_JS_DISPATCH		(0U - 2)
+// 消息_扩展_XML属性分发回调 wParam为atomPropName,lParam为lpwzPropValue
+#define WM_EX_XML_PROPDISPATCH	-1
+// 消息_扩展_JS脚本分发回调 wParam为atomPropName,lParam为dispIdMember
+#define WM_EX_JS_DISPATCH		-2
 // 消息_扩展_左键单击组件
-#define WM_EX_LCLICK			(0U - 3)
+#define WM_EX_LCLICK			-3
 // 消息_扩展_右键单击组件
-#define WM_EX_RCLICK			(0U - 4)
+#define WM_EX_RCLICK			-4
 // 消息_扩展_中键单击组件
-#define WM_EX_MCLICK			(0U - 5)
+#define WM_EX_MCLICK			-5
 // 消息_扩展_弹出式窗口初始化完毕
-#define WM_EX_INITPOPUP			(0U - 6)
-// 消息_扩展_弹出式窗口即将销毁 (wParam=0:即将销毁.wParam=1:是否可销毁,返回1则取消销毁)
-#define WM_EX_EXITPOPUP			(0U - 7)
+#define WM_EX_INITPOPUP			-6
+// 消息_扩展_弹出式窗口即将销毁 wParam=0:即将销毁 wParam=1:是否可销毁, 返回1则取消销毁
+#define WM_EX_EXITPOPUP			-7
 // 消息_扩展_缓动	 发给控件用这个,窗口是EMT_EASING转NM_EASING
-#define WM_EX_EASING			(0U - 8)
-// 消息_扩展_控件接收到拖放 (lParam为EX_DROPINFO结构体,若处理后应当返回 DROPEFFECT_开头的常量)
-#define WM_EX_DROP				(0U - 9)
-// 消息_扩展_控件绘制中事件 (wParam为绘制进度,lParam为EX_PAINTSTRUCT指针)
-#define WM_EX_PAINTING			(0U - 10)
+#define WM_EX_EASING			-8
+// 消息_扩展_控件接收到拖放 lParam为EX_DROPINFO结构体,若处理后应当返回 DROPEFFECT_开头的常量
+#define WM_EX_DROP				-9
+// 消息_扩展_控件绘制中事件 wParam为绘制进度,lParam为EX_PAINTSTRUCT指针
+#define WM_EX_PAINTING			-10
+// 组件数值_扩展_属性消息 lParam为EX_OBJ_PROPS结构体
+#define WM_EX_PROPS	-11
 #pragma endregion msg ex constant
 
 #pragma region paint progress constant
@@ -215,7 +216,7 @@
 #define EOL_NODEID	-1
 // 组件数值_父句柄
 #define EOL_OBJPARENT	-8
-// 组件数值_组件回调 (LRESULT) CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpResult)
+// 组件数值_组件回调 LRESULT CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult)
 #define EOL_OBJPROC	-4
 // 组件数值_控件数据
 #define EOL_OWNER	-23
@@ -227,8 +228,7 @@
 #define EOL_TEXTFORMAT	-11
 // 组件数值_用户数据
 #define EOL_USERDATA	-21
-// 组件数值_扩展_属性消息
-#define EOL_EX_PROPS	-911030791
+
 #pragma endregion object long constant
 
 #pragma region object state constant
@@ -359,35 +359,35 @@
 
 #pragma region edit style constant
 // 编辑框风格_允许拖拽
-#define EES_DISABLEDRAG	1
+#define EES_DISABLEDRAG	0x01
 // 编辑框风格_密码输入
-#define EES_USEPASSWORD	2
+#define EES_USEPASSWORD	0x02
 // 编辑框风格_显示选择文本
-#define EES_HIDESELECTION	4
+#define EES_HIDESELECTION	0x04
 // 编辑框风格_丰富文本
-#define EES_RICHTEXT	8
+#define EES_RICHTEXT	0x08
 // 编辑框风格_允许鸣叫
-#define EES_ALLOWBEEP	16
+#define EES_ALLOWBEEP	0x10
 // 编辑框风格_只读
-#define EES_READONLY	32
+#define EES_READONLY	0x20
 // 编辑框风格_回车换行
-#define EES_NEWLINE	64
+#define EES_NEWLINE	0x40
 // 编辑框风格_数值输入
-#define EES_NUMERICINPUT	128
+#define EES_NUMERICINPUT	0x80
 // 编辑框风格_自动选择字符
-#define EES_AUTOWORDSEL	256
+#define EES_AUTOWORDSEL	0x100
 // 编辑框风格_禁用右键默认菜单
-#define EES_DISABLEMENU	512
+#define EES_DISABLEMENU	0x200
 // 编辑框风格_解析URL
-#define EES_PARSEURL	1024
+#define EES_PARSEURL	0x400
 // 编辑框风格_允许TAB字符
-#define EES_ALLOWTAB	2048
+#define EES_ALLOWTAB	0x800
 // 编辑框风格_总是显示提示文本
-#define EES_SHOWTIPSALWAYS	4096
+#define EES_SHOWTIPSALWAYS	0x1000
 // 编辑框风格_隐藏插入符
-#define EES_HIDDENCARET	8192
+#define EES_HIDDENCARET	0x2000
 // 编辑框风格_下划线
-#define EES_UNDERLINE 16384
+#define EES_UNDERLINE 0x4000
 #pragma endregion edit style constant
 
 #pragma region edit message constant
@@ -399,15 +399,15 @@
 
 #pragma region listview style constant
 // 列表风格_纵向列表 
-#define ELVS_VERTICALLIST	0
+#define ELVS_VERTICALLIST	0x00
 // 列表风格_横向列表
-#define ELVS_HORIZONTALLIST	1
+#define ELVS_HORIZONTALLIST	0x01
 // 列表风格_允许多选 
-#define ELVS_ALLOWMULTIPLE	8
+#define ELVS_ALLOWMULTIPLE	0x08
 // 列表风格_表项跟踪 
-#define ELVS_ITEMTRACKING	16
+#define ELVS_ITEMTRACKING	0x10
 // 列表风格_始终显示选择项
-#define ELVS_SHOWSELALWAYS	32
+#define ELVS_SHOWSELALWAYS	0x20
 #pragma endregion listview style constant
 
 #pragma region listview hit type constant
@@ -763,6 +763,7 @@
 #define ELCP_ABSOLUTE_OFFSET_V	15
 // 绝对布局属性_位置类型_垂直偏移量
 #define ELCP_ABSOLUTE_OFFSET_V_TYPE	16
+
 // 绝对布局位置类型_未知 (未设置或保持不变)
 #define ELCP_ABSOLUTE_TYPE_UNKNOWN	0
 // 绝对布局位置类型_像素
@@ -863,25 +864,25 @@
 #define ET_CURVE	51
 
 // 缓动模式_单次
-#define ES_SINGLE	1
+#define ES_SINGLE	0x01
 // 缓动模式_循环,注意自行停止
-#define ES_CYCLE		2
+#define ES_CYCLE	0x02
 // 缓动模式_多次,高位则为次数
-#define ES_MANYTIMES		4
+#define ES_MANYTIMES	0x04
 // 缓动模式_顺序
-#define ES_ORDER		8
+#define ES_ORDER	0x08
 // 缓动模式_逆序
-#define ES_REVERSE		16
+#define ES_REVERSE	0x10
 // 缓动模式_来回
-#define ES_BACKANDFORTH		32
+#define ES_BACKANDFORTH	0x20
 // 缓动模式_调用函数 pContext为回调函数,BOOL isStop Cbk(LPVOID pEasingProgress,DOUBLE nProgress,DOUBLE nCurrent,size_t pEasingContext,INT nTimesSurplus,size_t Param1,size_t Param2,size_t Param3,size_t Param4)
-#define ES_CALLFUNCTION	0
+#define ES_CALLFUNCTION	0x40
 // 缓动模式_分发消息 pContext为hObj或hExDUI, wParam:pEasing,lParam:lpEasingInfo,result:isStop
-#define ES_DISPATCHNOTIFY	128
+#define ES_DISPATCHNOTIFY	0x80
 // 缓动模式_使用线程 使用线程处理,否则在UI线程处理(过程中会阻塞输入)
-#define ES_THREAD	256
+#define ES_THREAD	0x100
 // 缓动模式_释放曲线 当使用曲线类型时生效,在结束时会自动释放曲线指针
-#define ES_RELEASECURVE	512
+#define ES_RELEASECURVE	0x200
 
 // 缓动状态_播放
 #define EES_PLAY	0
@@ -902,9 +903,9 @@
 
 
 // 树形框风格_显示加减号
-#define ETS_SHOWADDANDSUB	64
+#define ETS_SHOWADDANDSUB	0x40
 // 树形框风格_显示连接线
-#define ETS_SHOWCABLE	128
+#define ETS_SHOWCABLE	0x80
 
 // 消息_树形框_删除节点及所有子孙 (lParam为节点句柄,0或TVI_ROOT为删除所有)
 #define TVM_DELETEITEM	4353
@@ -987,18 +988,18 @@
 
 
 // 报表风格_绘制横线
-#define ERLS_DRAWHORIZONTALLINE	256
+#define ERLS_DRAWHORIZONTALLINE	0x100
 // 报表风格_绘制竖线
-#define ERLS_DRAWVERTICALLINE	512
+#define ERLS_DRAWVERTICALLINE	0x200
 // 报表风格_无表头
-#define ERLS_NOHEAD	1024
+#define ERLS_NOHEAD	0x400
 
 // 报表表头风格_可点击
-#define ERLV_CS_CLICKABLE	1
+#define ERLV_CS_CLICKABLE	0x01
 // 报表表头风格_锁定宽度
-#define ERLV_CS_LOCKWIDTH	2
+#define ERLV_CS_LOCKWIDTH	0x02
 // 报表表头风格_可排序 (前提是得可点击)
-#define ERLV_CS_SORTABLE	4
+#define ERLV_CS_SORTABLE	0x04
 
 
 #pragma region template listview message constant
@@ -1120,46 +1121,47 @@
 #define RLVM_GETHITCOL 99004
 
 // 报表表行风格_表项带检查框
-#define ERLV_RS_CHECKBOX	1
+#define ERLV_RS_CHECKBOX	0x01
 // 报表表行风格_检查框为选中状态
-#define ERLV_RS_CHECKBOX_CHECK	2
+#define ERLV_RS_CHECKBOX_CHECK	0x02
 
 
 // 图标列表风格_表项以按钮形式呈现
-#define EILVS_BUTTON 1024
+#define EILVS_BUTTON 0x400
 
 // 消息_图标列表_设置表项尺寸
 #define ILVM_SETITEMSIZE 11001
 
 #pragma region windows show flag constant
-// 窗口显示标识_显示
-#define SW_SHOW	5
 // 窗口显示标识_隐藏
 #define SW_HIDE	0
-// 窗口显示标识_最大化
-#define SW_SHOWMAXIMIZED	3
 // 窗口显示标识_最小化
 #define SW_SHOWMINIMIZED	2
+// 窗口显示标识_最大化
+#define SW_SHOWMAXIMIZED	3
 // 窗口显示标识_不激活
 #define SW_SHOWNOACTIVATE	4
+// 窗口显示标识_显示
+#define SW_SHOW	5
 #pragma endregion windows show flag constant
 
-// 关联类型_子句柄
-#define GW_CHILD	5
-// 关联类型_上一个句柄
-#define GW_HWNDPREV	3
+
 // 关联类型_下一个句柄
 #define GW_HWNDNEXT	2
+// 关联类型_上一个句柄
+#define GW_HWNDPREV	3
+// 关联类型_子句柄
+#define GW_CHILD	5
 
 #pragma region messagebox return button type constant
+// 信息框返回钮_确认钮
+#define IDOK	1
+// 信息框返回钮_取消钮
+#define IDCANCEL	2
 // 信息框返回钮_是钮
 #define IDYES	6
 // 信息框返回钮_否钮
 #define IDNO	7
-// 信息框返回钮_取消钮
-#define IDCANCEL	2
-// 信息框返回钮_确认钮
-#define IDOK	1
 // 信息框返回钮_关闭钮
 #define IDCLOSE	8
 #pragma endregion messagebox return button type constant
@@ -1213,14 +1215,14 @@
 
 #pragma region win10loading style constant
 // WIN10动画加载风格_直线
-#define ELDS_LINE  110
+#define ELDS_LINE  0x01
 #pragma endregion win10loading style constant
 
 #pragma region soliderbar style constant
 // 滑块条风格_横向
-#define ESBS_HORIZONTAL 0
+#define ESBS_HORIZONTAL 0x00
 // 滑块条风格_纵向
-#define ESBS_VERTICAL 1
+#define ESBS_VERTICAL 0x01
 #pragma endregion soliderbar style constant
 
 #pragma region soliderbar message constant
@@ -1249,7 +1251,7 @@
 #pragma endregion soliderbar long constant
 
 // 旋转图片框风格_旋转
-#define ERIBS_ROTATE 1
+#define ERIBS_ROTATE 0x01
 
 // 分组框属性_文本左边的偏移
 #define  GROUPBOX_TEXT_OFFSET	0
@@ -1257,9 +1259,6 @@
 #define  GROUPBOX_RADIUS	1
 // 分组框属性_线宽
 #define  GROUPBOX_STROKEWIDTH	2
-
-
-
 
 
 #define ExGetR(argb)		(LOBYTE(argb))
@@ -1293,8 +1292,8 @@ typedef LPVOID HEXEASING;		// 缓动句柄/指针
 typedef LPVOID HEXRES;			// 资源包句柄
 
 
-typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, size_t*);
-typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, size_t*);
+typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
+typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* ClsPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EventHandlerPROC)(HEXOBJ, INT, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EnumPropsPROC)(HEXOBJ, size_t, size_t, size_t);

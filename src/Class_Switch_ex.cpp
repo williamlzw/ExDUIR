@@ -21,7 +21,7 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		Ex_ObjSetProp(hObj, 4, ExARGB(0, 0, 0, 150));
 		break;
 	}
-	case EOL_EX_PROPS:
+	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* Switchprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjInitPropList(hObj, 8 + 1);

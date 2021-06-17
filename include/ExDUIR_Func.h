@@ -1595,7 +1595,7 @@ HEXDUI Ex_DUIBindWindow(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle);
 * @param 2  hTheme                  [HEXTHEME]            主题句柄.(值可为0)
 * @param 3  dwStyle                 [DWORD]               相关常量:#EWS_
 * @param 4  lParam                  [LPARAM]              附加参数.(值可为0)
-* @param 5  lpfnMsgProc             [WinMsgPROC]          (LRESULT)MsgProc(HWND hWnd,HEXDUI	hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpResult).
+* @param 5  lpfnMsgProc             [WinMsgPROC]          (LRESULT)MsgProc(HWND hWnd,HEXDUI	hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult).
 * @return [HEXDUI]成功返回引擎句柄,失败返回0
 */
 HEXDUI Ex_DUIBindWindowEx(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle, LPARAM lParam, WinMsgPROC lpfnMsgProc);
@@ -1857,7 +1857,7 @@ HEXOBJ Ex_ObjCreate(LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, 
 * @param 11 dwTextFormat            [INT]                 相关常量 DT_
 * @param 12 lParam                  [LPARAM]              附加参数
 * @param 13 hTheme                  [HEXTHEME]            主题句柄.0为默认
-* @param 14 lpfnMsgProc             [MsgPROC]             LRESULT CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpReturn).
+* @param 14 lpfnMsgProc             [MsgPROC]             LRESULT CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult).
 * @return [HEXOBJ]返回组件句柄
 */
 HEXOBJ Ex_ObjCreateEx(INT dwStyleEx, LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, INT x, INT y, INT width, INT height, EXHANDLE hParent, INT nID, INT dwTextFormat, LPARAM lParam, HEXTHEME hTheme, MsgPROC lpfnMsgProc);
@@ -2337,14 +2337,14 @@ BOOL Ex_ObjPostMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 /*
 * @fnType ExDirectUI
 * @brief Ex_ObjRegister 注册组件
-* @param 1  lptszClassName          [LPCWSTR]             组件类名.最大允许长度:MAX_CLASS_NAME_LEN
+* @param 1  lptszClassName          [LPCWSTR]           组件类名.最大允许长度:MAX_CLASS_NAME_LEN
 * @param 2  dwStyle                 [INT]               组件默认风格    EOS_
 * @param 3  dwStyleEx               [INT]               组件默认扩展风格 EOS_EX
 * @param 4  dwTextFormat            [INT]               相关常量 DT_
-* @param 5  cbObjExtra              [DWORD]                 组件额外分配字节数(值可为0)
-* @param 6  hCursor                 [HCURSOR]             组件默认鼠标指针句柄(值可为0)
+* @param 5  cbObjExtra              [DWORD]             组件额外分配字节数(值可为0)
+* @param 6  hCursor                 [HCURSOR]           组件默认鼠标指针句柄(值可为0)
 * @param 7  dwFlags                 [INT]               类标志 #ECF_(值可为0)
-* @param 8  pfnObjProc              [ClsPROC]			  组件默认回调
+* @param 8  pfnObjProc              [ClsPROC]			组件默认回调 LRESULT CALLBACK ClsPROC(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 * @return [EXATOM] 成功返回组件类名原子,失败返回0
 */
 EXATOM Ex_ObjRegister(LPCWSTR lptszClassName, INT dwStyle, INT dwStyleEx, INT dwTextFormat, DWORD cbObjExtra, HCURSOR hCursor, INT dwFlags, ClsPROC pfnObjProc);
@@ -2936,7 +2936,7 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 * @param 5  nReserved               [size_t]              0.备用
 * @param 6  handle                  [EXHANDLE]            组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认菜单弹出)
 * @param 7  lpRc                    [RECT*]               0.忽略
-* @param 8  pfnCallback             [MsgPROC]           (LRESULT)MsgProc(HWND hWnd,size_t hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,size_t* lpResult).
+* @param 8  pfnCallback             [MsgPROC]           (LRESULT)MsgProc(HWND hWnd,size_t hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult).
 * @param 9  dwFlags                 [DWORD]               相关常量 EMNF_
 * @return [BOOL]返回是否成功
 */
@@ -3000,7 +3000,7 @@ WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCUR
 * @param 2  offset                    [size_t]		偏移
 * @return [size_t]返回值
 */
-size_t __get(LPVOID lpAddr, size_t offset);
+LONG_PTR __get(LPVOID lpAddr, LONG_PTR offset);
 
 /*
 * @fnType ExDirectUI
@@ -3009,7 +3009,7 @@ size_t __get(LPVOID lpAddr, size_t offset);
 * @param 2  offset                    [size_t]		偏移
 * @return [INT]返回值
 */
-INT __get_int(LPVOID lpAddr, size_t offset);
+INT __get_int(LPVOID lpAddr, LONG_PTR offset);
 
 /*
 * @fnType ExDirectUI
@@ -3018,7 +3018,7 @@ INT __get_int(LPVOID lpAddr, size_t offset);
 * @param 2  offset                    [size_t]		偏移
 * @return [FLOAT]返回值
 */
-FLOAT __get_float(LPVOID lpAddr, size_t offset);
+FLOAT __get_float(LPVOID lpAddr, LONG_PTR offset);
 
 /*
 * @fnType ExDirectUI
@@ -3027,7 +3027,7 @@ FLOAT __get_float(LPVOID lpAddr, size_t offset);
 * @param 2  offset                    [size_t]		偏移
 * @return [SHORT]返回值
 */
-SHORT __get_short(LPVOID lpAddr, size_t offset);
+SHORT __get_short(LPVOID lpAddr, LONG_PTR offset);
 
 /*
 * @fnType ExDirectUI
@@ -3037,7 +3037,7 @@ SHORT __get_short(LPVOID lpAddr, size_t offset);
 * @param 3  value                     [size_t]		值
 * @return [size_t]返回旧值
 */
-size_t __set(LPVOID lpAddr, size_t offset, size_t value);
+LONG_PTR __set(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value);
 
 /*
 * @fnType ExDirectUI
@@ -3047,7 +3047,7 @@ size_t __set(LPVOID lpAddr, size_t offset, size_t value);
 * @param 3  value					  [FLOAT]		值
 * @return [FLOAT]返回旧值
 */
-FLOAT __set_float(LPVOID lpAddr, size_t offset, FLOAT value);
+FLOAT __set_float(LPVOID lpAddr, LONG_PTR offset, FLOAT value);
 
 /*
 * @fnType ExDirectUI
@@ -3057,7 +3057,7 @@ FLOAT __set_float(LPVOID lpAddr, size_t offset, FLOAT value);
 * @param 3  value                     [INT]		值
 * @return [INT]返回旧值
 */
-INT __set_int(LPVOID lpAddr, size_t offset, INT value);
+INT __set_int(LPVOID lpAddr, LONG_PTR offset, INT value);
 
 /*
 * @fnType ExDirectUI
@@ -3067,7 +3067,7 @@ INT __set_int(LPVOID lpAddr, size_t offset, INT value);
 * @param 3  value                     [INT]		值
 * @return [SHORT]返回旧值
 */
-SHORT __set_short(LPVOID lpAddr, size_t offset, SHORT value);
+SHORT __set_short(LPVOID lpAddr, LONG_PTR offset, SHORT value);
 
 /*
 * @fnType ExDirectUI
@@ -3077,7 +3077,7 @@ SHORT __set_short(LPVOID lpAddr, size_t offset, SHORT value);
 * @param 3  value                     [size_t]		查询值
 * @return [BOOL]返回是否存在
 */
-BOOL __query(LPVOID lpAddr, size_t offset, size_t value);
+BOOL __query(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value);
 
 /*
 * @fnType ExDirectUI
@@ -3087,7 +3087,7 @@ BOOL __query(LPVOID lpAddr, size_t offset, size_t value);
 * @param 3  value                     [INT]		查询值
 * @return [BOOL]返回是否存在
 */
-BOOL __query_int(LPVOID lpAddr, size_t offset, INT value);
+BOOL __query_int(LPVOID lpAddr, LONG_PTR offset, INT value);
 
 /*
 * @fnType ExDirectUI
@@ -3097,7 +3097,7 @@ BOOL __query_int(LPVOID lpAddr, size_t offset, INT value);
 * @param 3  value                     [size_t]		删除值
 * @return [void]
 */
-void __del(LPVOID lpAddr, size_t offset, size_t value);
+void __del(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value);
 
 /*
 * @fnType ExDirectUI
@@ -3107,7 +3107,7 @@ void __del(LPVOID lpAddr, size_t offset, size_t value);
 * @param 3  value                     [size_t]		添加值
 * @return [void]
 */
-void __add(LPVOID lpAddr, size_t offset, size_t value);
+void __add(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value);
 
 /*
 * @fnType ExDirectUI
@@ -3117,7 +3117,7 @@ void __add(LPVOID lpAddr, size_t offset, size_t value);
 * @param 3  value                     [size_t]		添加值
 * @return [void]
 */
-void __addn(LPVOID lpAddr, size_t offset, size_t value);
+void __addn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value);
 
 /*
 * @fnType ExDirectUI
@@ -3127,4 +3127,4 @@ void __addn(LPVOID lpAddr, size_t offset, size_t value);
 * @param 3  value                     [size_t]		减少值
 * @return [void]
 */
-void __subn(LPVOID lpAddr, size_t offset, size_t value);
+void __subn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value);

@@ -423,12 +423,12 @@ BOOL Ex_MemFree(LPVOID hMem);
 LPVOID Ex_MemAlloc(size_t dwSize, INT dwFlags = LMEM_ZEROINIT);
 LPVOID Ex_MemReAlloc(LPVOID hMem, size_t dwSizes);
 
-CHAR __get_char(LPVOID lpAddr, size_t offset);
-UCHAR __get_unsignedchar(LPVOID lpAddr, size_t offset);
-WCHAR __get_wchar(LPVOID lpAddr, size_t offset);
-void __set_char(LPVOID lpAddr, size_t offset, CHAR value);
-void __set_unsignedchar(LPVOID lpAddr, size_t offset, UCHAR value);
-void __set_wchar(LPVOID lpAddr, size_t offset, WCHAR value);
+CHAR __get_char(LPVOID lpAddr, LONG_PTR offset);
+UCHAR __get_unsignedchar(LPVOID lpAddr, LONG_PTR offset);
+WCHAR __get_wchar(LPVOID lpAddr, LONG_PTR offset);
+void __set_char(LPVOID lpAddr, LONG_PTR offset, CHAR value);
+void __set_unsignedchar(LPVOID lpAddr, LONG_PTR offset, UCHAR value);
+void __set_wchar(LPVOID lpAddr, LONG_PTR offset, WCHAR value);
 void _bit_add(size_t* dwValue, size_t index);
 void _bit_del(size_t* dwValue, size_t index);
 void _bit_not(size_t* dwValue, size_t index);

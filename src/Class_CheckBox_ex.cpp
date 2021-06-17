@@ -73,7 +73,7 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		break;
 	}
 
-	case EOL_EX_PROPS:
+	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* checkboxprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjInitPropList(hObj, 3 + 1);

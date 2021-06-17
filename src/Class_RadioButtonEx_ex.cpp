@@ -67,7 +67,7 @@ LRESULT CALLBACK _RadioButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
 		break;
 	}
-	case EOL_EX_PROPS:
+	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* RadioButtonExprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjInitPropList(hObj, 4 + 1);

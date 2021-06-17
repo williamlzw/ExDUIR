@@ -72,7 +72,7 @@ INT _cb_addstring(obj_s* pObj, LPCWSTR lpTitle) {
 	return _cb_insertstring(pObj, size + 1, lpTitle);
 }
 
-size_t _cb_getitemdata(obj_s* pObj, size_t nIndex) {
+LONG_PTR _cb_getitemdata(obj_s* pObj, size_t nIndex) {
 	if (nIndex <= 0 || nIndex > _obj_getExtraLong(pObj, 9))
 	{
 		return -1;
@@ -80,7 +80,7 @@ size_t _cb_getitemdata(obj_s* pObj, size_t nIndex) {
 	return ((EX_COMBOX_ITEMLIST*)_obj_getExtraLong(pObj, 10))->items[nIndex - 1].data;
 }
 
-INT _cb_setitemdata(obj_s* pObj, size_t nIndex, size_t data) {
+INT _cb_setitemdata(obj_s* pObj, size_t nIndex, LONG_PTR data) {
 	if (nIndex <= 0 || nIndex > _obj_getExtraLong(pObj, 9))
 	{
 		return -1;
@@ -280,7 +280,7 @@ INT _cb_delstring(obj_s* pObj, size_t nIndex) {
 	return len;
 }
 
-LRESULT CALLBACK _cb_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wParam, LPARAM lParam, size_t* lpResult) {
+LRESULT CALLBACK _cb_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult) {
 	if (uMsg == WM_NOTIFY) {
 		EX_NMHDR* msg = (EX_NMHDR*)lParam;
 		if (msg->nCode == NM_CALCSIZE && hDUI == msg->hObjFrom) {

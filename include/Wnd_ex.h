@@ -140,7 +140,7 @@ struct wnd_s
 
 
 BOOL _wnd_getfromhandle(size_t handle, HWND* hWnd = NULL, wnd_s** pWnd = NULL, obj_s** pObj = NULL, BOOL* isObject = NULL, INT* nError = NULL);
-size_t _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam, obj_s* pObj);
+LRESULT _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam, obj_s* pObj);
 void _wnd_redraw_bkg(HWND hWnd, wnd_s* pWnd, LPVOID lpRect, BOOL bRedrawBkg, BOOL bUpdate);
 LRESULT _wnd_defaultproc(HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL _wnd_querystyle(HWND hWnd, INT dwStyle, BOOL bExStyle);
