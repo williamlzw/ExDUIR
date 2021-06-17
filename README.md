@@ -54,54 +54,54 @@ Windows平台轻量DirectUI框架。
 ### demo drag obj:  
 ![image](demo_image/demo_drag_obj.png)    
 ### demo drop and drag:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_dropdrag.png)    
+![image](demo_image/demo_dropdrag.png)    
 ### demo easing: 
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_easing.png)    
+![image](demo_image/demo_easing.png)    
 ### demo edit and richedit:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_edit_richedit.png)   
+![image](demo_image/demo_edit_richedit.png)   
 ### demo editex:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_editex.png)    
+![image](demo_image/demo_editex.png)    
 ### demo groupbox:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_groupbox.png)    
+![image](demo_image/demo_groupbox.png)    
 ### demo iconlistview:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_iconlistview.png)      
+![image](demo_image/demo_iconlistview.png)      
 ### demo irregular shape window:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_irregular_shape_window.png)    
+![image](demo_image/demo_irregular_shape_window.png)    
 ### demo label and background:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_label_background.png)   
+![image](demo_image/demo_label_background.png)   
 ### demo layout-absolute:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_layout_absolute.png)    
+![image](demo_image/demo_layout_absolute.png)    
 ### demo layout-flow:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_layout_flow.png)    
+![image](demo_image/demo_layout_flow.png)    
 ### demo layout-linear:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_layout_linear.png)    
+![image](demo_image/demo_layout_linear.png)    
 ### demo layout-relative:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_layout_relative.png)    
+![image](demo_image/demo_layout_relative.png)    
 ### demo layout-table:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_layout_table.png)
+![image](demo_image/demo_layout_table.png)
 ### demo listview:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_listview.png)
+![image](demo_image/demo_listview.png)
 ### demo loading:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_loading.png)
+![image](demo_image/demo_loading.png)
 ### demo matrix:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_matrix.png)
+![image](demo_image/demo_matrix.png)
 ### demo menubutton:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_menubutton.png)
+![image](demo_image/demo_menubutton.png)
 ### demo messagebox:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_messagebox.png)
+![image](demo_image/demo_messagebox.png)
 ### demo navbutton:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_navbutton.png)
+![image](demo_image/demo_navbutton.png)
 ### demo nchitest:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_nchitest.png)
+![image](demo_image/demo_nchitest.png)
 ### demo progressbar:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_progressbar.png)
+![image](demo_image/demo_progressbar.png)
 ### demo radio and checkbox:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_radio_checkbox.png)
+![image](demo_image/demo_radio_checkbox.png)
 ### demo reportlistview:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_reportlistview.png)
+![image](demo_image/demo_reportlistview.png)
 ### demo rotatebox:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_rotatebox.png)
+![image](demo_image/demo_rotatebox.png)
 ### demo sliderbar:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_sliderbar.png)
+![image](demo_image/demo_sliderbar.png)
 ### demo treeview:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_treeview.png)
+![image](demo_image/demo_treeview.png)
