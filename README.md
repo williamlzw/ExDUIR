@@ -42,17 +42,17 @@ Windows平台轻量DirectUI框架。
 ### demo_all:  
 ![image](demo_image/demo_all.png)    
 ### demo button and switch:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_button_switch.png)    
+![image](demo_image/demo_button_switch.png)    
 ### demo buttonex:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_buttonex.png)    
+![image](demo_image/demo_buttonex.png)    
 ### demo combobox:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_combobox.png)       
+![image](demo_image/demo_combobox.png)       
 ### demo custom menu:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_custommenu.png)    
+![image](demo_image/demo_custommenu.png)    
 ### demo custom background:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_custombackground.png)    
+![image](demo_image/demo_custombackground.png)    
 ### demo drag obj:  
-![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_drag_obj.png)    
+![image](demo_image/demo_drag_obj.png)    
 ### demo drop and drag:  
 ![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_dropdrag.png)    
 ### demo easing: 
