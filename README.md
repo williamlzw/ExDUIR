@@ -40,7 +40,7 @@ Windows平台轻量DirectUI框架。
 
 ## Demo
 ### demo_all:  
-![image](https://raw.githubusercontent.com/laizewei/ExduiR/master/demo_image/demo_all.png)    
+![image](demo_image/demo_all.png)    
 ### demo button and switch:  
 ![image](https://raw.githubusercontent.com/laizewei/Exdui4.1R/master/demo_image/demo_button_switch.png)    
 ### demo buttonex:  
