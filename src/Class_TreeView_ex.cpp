@@ -296,7 +296,7 @@ EX_TREEVIEW_NODEITEM* _tv_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIEW_NODE
 	EX_TREEVIEW_NODEITEM* item = (EX_TREEVIEW_NODEITEM*)Ex_MemAlloc(sizeof(EX_TREEVIEW_NODEITEM));
 	if (item) {
 		if (_tv_inititem(pObj, item, parent, insertAfter)) {
-			item->lpTitle = copytstr(wzTitle, lstrlenW(wzTitle));
+			item->lpTitle = StrDupW(wzTitle);
 			item->fExpand = fExpand;
 			item->nID = nID;
 		}
@@ -689,7 +689,7 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 				itemInfo->lpTitle = tmp;
 			}
 			else {
-				itemInfo->lpTitle = copytstr(itemInfo->lpTitle, lstrlenW(itemInfo->lpTitle));
+				itemInfo->lpTitle = StrDupW(itemInfo->lpTitle);
 			}
 			_tv_updateitem(pObj);
 			return TRUE;
@@ -699,7 +699,7 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 	case TVM_SETITEMTEXTW:
 		if (wParam) {
 			Ex_MemFree((LPVOID)((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle);
-			((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle = copytstr((LPCWSTR)lParam, lstrlenW((LPCWSTR)lParam));
+			((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle = StrDupW((LPCWSTR)lParam);
 			_tv_updateitem(pObj);
 			return TRUE;
 		}

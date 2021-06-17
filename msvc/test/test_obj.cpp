@@ -2109,3 +2109,85 @@ void test_nchittest(HWND hWnd)
 
 	Ex_DUIShowWindow(hExDui_nchittest, SW_SHOWNORMAL, 0, 0, 0);
 }
+
+std::vector<HEXOBJ> m_dialog_button(3);
+std::vector<HEXOBJ> m_dialog_edit(2);
+
+LRESULT CALLBACK OnDialogButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == NM_CLICK)
+	{
+		if (hObj == m_dialog_button[0])
+		{
+			OPENFILENAMEW file_info{ 0 };
+			file_info.lStructSize = sizeof(OPENFILENAMEW);
+			file_info.hwndOwner = 0;
+			file_info.lpstrFilter = L"Picture File(*.bmp,*.jpg)\0*.bmp;*.jpg;\0\0";
+			file_info.nFilterIndex = 1;
+			WCHAR szFile[256];
+			file_info.lpstrFile = szFile;
+			file_info.nMaxFile = sizeof(szFile);
+			file_info.lpstrTitle = L"打开";
+			file_info.nMaxFileTitle = sizeof(file_info.lpstrTitle);
+			file_info.Flags= OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
+			if (GetOpenFileNameW(&file_info))
+			{
+				Ex_ObjSetText(m_dialog_edit[0], (LPCWSTR)file_info.lpstrFile, TRUE);
+			}
+		}
+		else if (hObj == m_dialog_button[1])
+		{
+			OPENFILENAMEW file_info{ 0 };
+			file_info.lStructSize = sizeof(OPENFILENAMEW);
+			file_info.hwndOwner = 0;
+			file_info.lpstrFilter = L"Picture File(*.bmp,*.jpg)\0*.bmp;*.jpg;\0\0";
+			file_info.nFilterIndex = 1;
+			WCHAR szFile[256];
+			file_info.lpstrFile = szFile;
+			file_info.nMaxFile = sizeof(szFile);
+			file_info.lpstrTitle = L"打开";
+			file_info.nMaxFileTitle = sizeof(file_info.lpstrTitle);
+			file_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
+			if (GetOpenFileNameW(&file_info))
+			{
+				Ex_ObjSetText(m_dialog_edit[1], (LPCWSTR)file_info.lpstrFile, TRUE);
+			}
+		}
+		else if (hObj == m_dialog_button[2])
+		{
+			auto text_length1 = Ex_ObjGetTextLength(m_dialog_edit[0]);
+			std::wstring str1;
+			str1.resize(text_length1 * 2 + 2);
+			Ex_ObjGetText(m_dialog_edit[0], str1.c_str(), text_length1 * 2);
+			
+			auto text_length2 = Ex_ObjGetTextLength(m_dialog_edit[1]);
+			std::wstring str2;
+			str2.resize(text_length2 * 2 + 2);
+			Ex_ObjGetText(m_dialog_edit[1], str2.c_str(), text_length2 * 2);
+
+			output(str1);
+			output(str2);
+		}
+	}
+	return 0;
+}
+
+void test_dialog(HWND hWnd)
+{
+	HWND hWnd_dialog = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试打开对话框", 0, 0, 400, 200, 0, 0);
+	HEXDUI hExDui_dialog = Ex_DUIBindWindowEx(hWnd_dialog, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_dialog, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	m_dialog_button[0]= Ex_ObjCreate( L"button", L"按钮1", -1, 10, 50, 100, 30, hExDui_dialog);
+	Ex_ObjHandleEvent(m_dialog_button[0], NM_CLICK, OnDialogButtonEvent);
+	m_dialog_edit[0] = Ex_ObjCreate(L"edit", L"", -1, 110, 50, 250, 30, hExDui_dialog);
+
+	m_dialog_button[1] = Ex_ObjCreate(L"button", L"按钮2", -1, 10, 90, 100, 30, hExDui_dialog);
+	Ex_ObjHandleEvent(m_dialog_button[1], NM_CLICK, OnDialogButtonEvent);
+	m_dialog_edit[1] = Ex_ObjCreate(L"edit", L"", -1, 110, 90, 250, 30, hExDui_dialog);
+
+	m_dialog_button[2] = Ex_ObjCreate(L"button", L"按钮3", -1, 10, 130, 100, 30, hExDui_dialog);
+	Ex_ObjHandleEvent(m_dialog_button[2], NM_CLICK, OnDialogButtonEvent);
+
+
+	Ex_DUIShowWindow(hExDui_dialog, SW_SHOWNORMAL, 0, 0, 0);
+}

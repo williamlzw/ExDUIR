@@ -164,7 +164,7 @@ LRESULT CALLBACK _rlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 		{
 			RtlMoveMemory(ptr, (LPVOID)lParam, sizeof(EX_REPORTLIST_COLUMNINFO));
 			LPCWSTR old = ptr->wzText;
-			ptr->wzText = copytstr(((EX_REPORTLIST_COLUMNINFO*)lParam)->wzText, lstrlenW(((EX_REPORTLIST_COLUMNINFO*)lParam)->wzText));
+			ptr->wzText = StrDupW(((EX_REPORTLIST_COLUMNINFO*)lParam)->wzText);
 			Ex_MemFree((LPVOID)old);
 			ret = 1;
 		}
@@ -181,7 +181,7 @@ LRESULT CALLBACK _rlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 		if (ptr != 0)
 		{
 			LPCWSTR old = ptr->wzText;
-			ptr->wzText = copytstr((LPCWSTR)lParam, lstrlenW((LPCWSTR)lParam));
+			ptr->wzText = StrDupW((LPCWSTR)lParam);
 			Ex_MemFree((LPVOID)old);
 			ret = 1;
 		}
@@ -753,7 +753,7 @@ INT _rlv_tc_ins(HEXOBJ hObj, EX_REPORTLIST_COLUMNINFO* pInsertInfo)
 	INT nIndexInsert = pInsertInfo->nInsertIndex;
 	LPVOID pNew = __ptr_ins(&pTCs, nCount, &nIndexInsert, sizeof(EX_REPORTLIST_COLUMNINFO), pInsertInfo);
 	EX_REPORTLIST_COLUMNINFO* ptc = (EX_REPORTLIST_COLUMNINFO*)((size_t)pNew + (nIndexInsert - 1) * sizeof(EX_REPORTLIST_COLUMNINFO));
-	ptc->wzText = copytstr(pInsertInfo->wzText, lstrlenW(pInsertInfo->wzText));
+	ptc->wzText = StrDupW(pInsertInfo->wzText);
 	ptc->nInsertIndex = 0;
 	if (ptc->dwTextFormat == 0)
 	{
@@ -925,7 +925,7 @@ void _rlv_td_setText(HEXOBJ hObj, INT nIndexTR, INT nIndexTC, LPCWSTR wzText)
 	if (pTD != 0)
 	{
 		LPCWSTR wzText_ = pTD->wzText_;
-		pTD->wzText_ = copytstr(wzText, lstrlenW(wzText));
+		pTD->wzText_ = StrDupW(wzText);
 		Ex_MemFree((LPVOID)wzText_);
 	}
 }

@@ -114,7 +114,7 @@ void _IconListView_Register()
 EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType)
 {
 	EX_ICONLISTVIEW_ITEMINFO* pItemInfo = (EX_ICONLISTVIEW_ITEMINFO*)Ex_MemAlloc(sizeof(EX_ICONLISTVIEW_ITEMINFO));
-	pItemInfo->pwzText = copytstr(pvItem->pwzText, lstrlenW(pvItem->pwzText));
+	pItemInfo->pwzText = StrDupW(pvItem->pwzText);
 	pItemInfo->nIndex = pvItem->nIndex;
 	pItemInfo->nImageIndex = pvItem->nImageIndex;
 	return pItemInfo;

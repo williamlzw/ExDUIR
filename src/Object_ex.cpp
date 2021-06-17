@@ -2079,7 +2079,7 @@ void _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, IN
 	pObj->dwTextFormat_ = dwTextFormat;
 	pObj->lParam_ = lParam;
 	pObj->hTheme_ = hTheme;
-	pObj->pstrTitle_ = copytstr(lpszName, lstrlenW(lpszName));
+	pObj->pstrTitle_ = StrDupW(lpszName);
 	if ((dwStyleEx & EOS_EX_BLUR) != 0)
 	{
 		pObj->fBlur_ = 15.f;
@@ -2487,7 +2487,7 @@ BOOL Ex_ObjSetFont(HEXOBJ hObj, HEXFONT hFont, BOOL fRedraw)
 
 BOOL Ex_ObjSetText(HEXOBJ hObj, LPCWSTR lpString, BOOL fRedraw)
 {
-	return Ex_ObjSendMessage(hObj, WM_SETTEXT, fRedraw = TRUE ? 1 : 0, (size_t)lpString) == 0;
+	return Ex_ObjSendMessage(hObj, WM_SETTEXT, fRedraw, (size_t)lpString) == 0;
 }
 
 size_t Ex_ObjGetText(HEXOBJ hObj, LPCWSTR lpString, size_t nMaxCount)
@@ -3255,7 +3255,7 @@ BOOL Ex_ObjTooltipsSetText(HEXOBJ hObj, LPCWSTR lpString)
 	{
 		if (lpString != 0)
 		{
-			lpNew = copytstr(lpString, lstrlenW(lpString));
+			lpNew = StrDupW(lpString);
 		}
 		LPCWSTR lpTips = pObj->pstrTips_;
 		pObj->pstrTips_ = lpNew;
@@ -3623,7 +3623,7 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
 			size_t tmp = NULL;
 			if (!IsBadWritePtr((LPVOID)lParam, wParam))
 			{
-				tmp = lstrlenW(pObj->pstrTitle_) * 2;
+				tmp = lstrlenW(pObj->pstrTitle_) * 2 + 2;
 				if (tmp > wParam) tmp = wParam;
 				RtlMoveMemory((LPVOID)lParam, pObj->pstrTitle_, tmp);
 			}
@@ -3635,18 +3635,17 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
 		}
 		else if (uMsg == WM_SETTEXT)
 		{
-			ret = (size_t)(pObj->pstrTitle_);
-			if (ret != lParam)
+			if (pObj->pstrTitle_ != (LPCWSTR)lParam)
 			{
-				if (ret != 0)
+				if (pObj->pstrTitle_)
 				{
-					Ex_MemFree((LPVOID)ret);
+					Ex_MemFree((LPVOID)pObj->pstrTitle_);
 				}
-				if (lParam != 0)
+				if ((LPCWSTR)lParam != L"")
 				{
-					pObj->pstrTitle_ = copytstr((LPCWSTR)lParam, lstrlenW((LPCWSTR)lParam));
+					pObj->pstrTitle_ = StrDupW((LPCWSTR)lParam);
 				}
-
+				
 				if (((pObj->dwStyleEx_ & EOS_EX_AUTOSIZE) == EOS_EX_AUTOSIZE))
 				{
 					pObj->dwFlags_ = pObj->dwFlags_ - (pObj->dwFlags_ & eof_bAutosized);

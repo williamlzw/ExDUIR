@@ -132,15 +132,15 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 			LPCWSTR ret = nullptr;
 			if (((pObj->dwStyle_ & EWS_BUTTON_MIN) == EWS_BUTTON_MIN))
 			{
-				ret = copytstr(g_Li.lpstr_min, lstrlenW(g_Li.lpstr_min));
+				ret = StrDupW(g_Li.lpstr_min);
 			}
 			else if (((pObj->dwStyle_ & EWS_BUTTON_CLOSE) == EWS_BUTTON_CLOSE))
 			{
-				ret = copytstr(g_Li.lpstr_close, lstrlenW(g_Li.lpstr_close));
+				ret = StrDupW(g_Li.lpstr_close);
 			}
 			else if (((pObj->dwStyle_ & EWS_BUTTON_HELP) == EWS_BUTTON_HELP))
 			{
-				ret = copytstr(g_Li.lpstr_help, lstrlenW(g_Li.lpstr_help));
+				ret = StrDupW(g_Li.lpstr_help);
 			}
 			if (ret != 0)
 			{
@@ -177,10 +177,10 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 					Ex_MemFree((LPVOID)pObj->pstrTips_);
 					if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
 					{
-						ret = copytstr(g_Li.lpstr_res_max, lstrlenW(g_Li.lpstr_res_max));
+						ret = StrDupW(g_Li.lpstr_res_max);
 					}
 					else {
-						ret = copytstr(g_Li.lpstr_max, lstrlenW(g_Li.lpstr_max));
+						ret = StrDupW(g_Li.lpstr_max);
 					}
 					pObj->pstrTips_ = ret;
 				}
@@ -189,10 +189,10 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 					Ex_MemFree((LPVOID)pObj->pstrTips_);
 					if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
 					{
-						ret = copytstr(g_Li.lpstr_res_min, lstrlenW(g_Li.lpstr_res_min));
+						ret = StrDupW(g_Li.lpstr_res_min);
 					}
 					else {
-						ret = copytstr(g_Li.lpstr_min, lstrlenW(g_Li.lpstr_min));
+						ret = StrDupW(g_Li.lpstr_min);
 					}
 					pObj->pstrTips_ = ret;
 				}

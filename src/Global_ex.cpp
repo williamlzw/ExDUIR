@@ -64,22 +64,22 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
 	LPVOID i = Ex_MemAlloc(64);
 	INT len;
 	len = LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);
-	g_Li.lpstr_min = copytstr((LPWSTR)i, len);
+	g_Li.lpstr_min = StrDupW((LPWSTR)i);
 	RtlZeroMemory(i, 64);
 	len = LoadStringW(g_Li.hModuleUser, 901, (LPWSTR)i, 64);
-	g_Li.lpstr_max = copytstr((LPWSTR)i, len);
+	g_Li.lpstr_max = StrDupW((LPWSTR)i);
 	RtlZeroMemory(i, 64);
 	len = LoadStringW(g_Li.hModuleUser, 902, (LPWSTR)i, 64);
-	g_Li.lpstr_res_min = copytstr((LPWSTR)i, len);
+	g_Li.lpstr_res_min = StrDupW((LPWSTR)i);
 	RtlZeroMemory(i, 64);
 	len = LoadStringW(g_Li.hModuleUser, 903, (LPWSTR)i, 64);
-	g_Li.lpstr_res_max = copytstr((LPWSTR)i, len);
+	g_Li.lpstr_res_max = StrDupW((LPWSTR)i);
 	RtlZeroMemory(i, 64);
 	len = LoadStringW(g_Li.hModuleUser, 904, (LPWSTR)i, 64);
-	g_Li.lpstr_help = copytstr((LPWSTR)i, len);
+	g_Li.lpstr_help = StrDupW((LPWSTR)i);
 	RtlZeroMemory(i, 64);
 	len = LoadStringW(g_Li.hModuleUser, 905, (LPWSTR)i, 64);
-	g_Li.lpstr_close = copytstr((LPWSTR)i, len);
+	g_Li.lpstr_close = StrDupW((LPWSTR)i);
 	Ex_MemFree(i);
 	INT nError = 0;
 	_canvas_init(&nError);
@@ -208,8 +208,8 @@ EXATOM Ex_Atom(LPCWSTR lptstring)//OK
 	EXATOM ret = 1;
 	if (len > 0)
 	{
-		LPWSTR buff = (LPWSTR)copytstr(lptstring, len);
-		CharLowerW((LPWSTR)buff);
+		PWSTR buff = (PWSTR)StrDupW(lptstring);
+		CharLowerW(buff);
 		ret = Crc32_Addr((UCHAR*)buff, len * 2);
 		Ex_MemFree(buff);
 	}

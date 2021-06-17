@@ -123,3 +123,6 @@ void test_progressbar(HWND hWnd);
 
 LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_nchittest(HWND hWnd);
+
+LRESULT CALLBACK OnDialogButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_dialog(HWND hWnd);

@@ -63,7 +63,7 @@ INT _cb_insertstring(obj_s* pObj, size_t nIndex, LPCWSTR lpTitle) {
 	}
 	EX_COMBOX_ITEMLIST* items = _cb_realloc(pObj, size, nIndex, FALSE);
 	_obj_setExtraLong(pObj, 9, size);
-	items->items[nIndex - 1].lpwzTitle = copytstr(lpTitle, lstrlenW(lpTitle));
+	items->items[nIndex - 1].lpwzTitle = StrDupW(lpTitle);
 	return nIndex;
 }
 

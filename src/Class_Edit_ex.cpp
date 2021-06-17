@@ -870,7 +870,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		else if (uMsg == EM_SETCUEBANNER) {
 			edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 			pOwner->crBanner_ = wParam;
-			pOwner->pBanner_ = copytstr((LPCWSTR)lParam, lstrlenW((LPCWSTR)lParam));
+			pOwner->pBanner_ = StrDupW((LPCWSTR)lParam);
 			_obj_invalidaterect(pObj, 0, &nError);
 			return 0;
 		}

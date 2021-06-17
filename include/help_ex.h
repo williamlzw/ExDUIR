@@ -7,6 +7,8 @@
 #include <Windows.h>
 #include "olectl.h"
 #pragma comment(lib, "OleAut32.lib")
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
 
 //断言
 #ifndef _DEBUG
