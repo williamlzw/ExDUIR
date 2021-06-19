@@ -3,19 +3,19 @@
 ClsPROC m_pfnListView_icon;
 
 
-LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_CREATE)
 	{
-		_IconListView_Init(hObj);
+		_iconlistview_init(hObj);
 	}
 	else if (uMsg == WM_DESTROY)
 	{
-		_IconListView_Uninit(hObj);
+		_iconlistview_uninit(hObj);
 	}
 	else if (uMsg == WM_NOTIFY)
 	{
-		if (_IconListView_OnNotify(hObj, wParam, lParam))
+		if (_iconlistview_onnotify(hObj, wParam, lParam))
 		{
 			return 1;
 		}
@@ -25,7 +25,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		size_t ret = 0;
 		if (lParam != 0)
 		{
-			ret = Array_AddMember((array_s*)Ex_ObjGetLong(hObj, _ilv_pArray), lParam, ((EX_ICONLISTVIEW_ITEMINFO*)lParam)->nIndex);
+			ret = Array_AddMember((array_s*)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY), lParam, ((EX_ICONLISTVIEW_ITEMINFO*)lParam)->nIndex);
 		}
 		if (ret != 0 && wParam != 0)//当插入成功且wParam不为0时重画控件
 		{
@@ -35,7 +35,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == LVM_DELETEITEM)//删除表项 wParam为是否立即重画，lParam为删除的索引
 	{
-		array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, _ilv_pArray);
+		array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
 		size_t ret = 0;
 		if (Array_GetCount(pArray) >= lParam)
 		{
@@ -49,7 +49,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == LVM_DELETEALLITEMS)//删除全部表项
 	{
-		array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, _ilv_pArray);
+		array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
 		Array_Clear(pArray);
 		if (wParam != 0)
 		{
@@ -59,7 +59,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == LVM_UPDATE)//更新列表
 	{
-		array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, _ilv_pArray);
+		array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
 		if (Ex_ObjSendMessage(hObj, LVM_GETITEMCOUNT, 0, 0) != Array_GetCount(pArray))//如果表项数不同则更新表项数
 		{
 			Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, Array_GetCount(pArray), 1);
@@ -67,7 +67,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == LVM_SETIMAGELIST)//设置列表图片组 wParam为是否立即重画，lParam为图片组句柄
 	{
-		Ex_ObjSetLong(hObj, _ilv_hImageList, lParam);
+		Ex_ObjSetLong(hObj, EILVL_HIMAGELIST, lParam);
 		
 		if (wParam != 0)
 		{
@@ -77,7 +77,7 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == LVM_GETIMAGELIST)//获取图片组
 	{
-		return Ex_ObjGetLong(hObj, _ilv_hImageList);
+		return Ex_ObjGetLong(hObj, EILVL_HIMAGELIST);
 	}
 	else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONUP)//当鼠标左键按下放开时 更新控件按下状态并重画
 	{
@@ -91,10 +91,10 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	{
 		INT width = LOWORD(lParam);
 		if (width < 10) width = 10;
-		Ex_ObjSetLong(hObj, _ilv_nWidth, Ex_Scale(width));
+		Ex_ObjSetLong(hObj, EILVL_WIDTH, Ex_Scale(width));
 		INT height = HIWORD(lParam);
 		if (height < 10) height = 10;
-		Ex_ObjSetLong(hObj, _ilv_nHeight, Ex_Scale(height));
+		Ex_ObjSetLong(hObj, EILVL_HEIGHT, Ex_Scale(height));
 		RECT rc{ 0 };
 		Ex_ObjGetRect(hObj, &rc);
 		Ex_ObjDispatchMessage(hObj, WM_SIZE, 0, MAKELONG(rc.right - rc.left, rc.bottom - rc.top));
@@ -103,15 +103,15 @@ LRESULT CALLBACK _IconListView_Proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	return Ex_ObjCallProc(m_pfnListView_icon, hWnd, hObj, uMsg, wParam, lParam);
 }
 
-void _IconListView_Register()
+void _iconlistview_register()
 {
 	EX_CLASSINFO clsInfo{ 0 };
 	Ex_ObjGetClassInfoEx(L"ListView", &clsInfo);
 	m_pfnListView_icon = clsInfo.pfnClsProc;
-	Ex_ObjRegister(L"IconListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 4 *sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _IconListView_Proc);
+	Ex_ObjRegister(L"IconListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 4 *sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _iconlistview_proc);
 }
 
-EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType)
+EX_ICONLISTVIEW_ITEMINFO* _iconlistview_onarrappend(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType)
 {
 	EX_ICONLISTVIEW_ITEMINFO* pItemInfo = (EX_ICONLISTVIEW_ITEMINFO*)Ex_MemAlloc(sizeof(EX_ICONLISTVIEW_ITEMINFO));
 	pItemInfo->pwzText = StrDupW(pvItem->pwzText);
@@ -120,30 +120,30 @@ EX_ICONLISTVIEW_ITEMINFO* _IconListView_OnArrAppend(array_s* pArray, INT nIndex,
 	return pItemInfo;
 }
 
-void _IconListView_OnArrDelete(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType)
+void _iconlistview_onarrdelete(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType)
 {
 	Ex_MemFree((LPVOID)pvItem->pwzText);
 	Ex_MemFree(pvItem);
 }
 
-void _IconListView_Init(HEXOBJ hObj)
+void _iconlistview_init(HEXOBJ hObj)
 {
-	Ex_ObjSetLong(hObj, _ilv_nWidth, Ex_Scale(90));
-	Ex_ObjSetLong(hObj, _ilv_nHeight, Ex_Scale(100));
+	Ex_ObjSetLong(hObj, EILVL_WIDTH, Ex_Scale(90));
+	Ex_ObjSetLong(hObj, EILVL_HEIGHT, Ex_Scale(100));
 	array_s* pArray = Array_Create(0);
-	Array_BindEvent(pArray, eae_addmember, _IconListView_OnArrAppend);
-	Array_BindEvent(pArray, eae_delmember, _IconListView_OnArrDelete);
-	Ex_ObjSetLong(hObj, _ilv_pArray, (size_t)pArray);
-	Ex_ObjSetLong(hObj, _ilv_hImageList, 0);
+	Array_BindEvent(pArray, eae_addmember, _iconlistview_onarrappend);
+	Array_BindEvent(pArray, eae_delmember, _iconlistview_onarrdelete);
+	Ex_ObjSetLong(hObj, EILVL_ITEMARRAY, (size_t)pArray);
+	Ex_ObjSetLong(hObj, EILVL_HIMAGELIST, 0);
 }
 
-void _IconListView_Uninit(HEXOBJ hObj)
+void _iconlistview_uninit(HEXOBJ hObj)
 {
-	array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, _ilv_pArray);
+	array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
 	Array_Destroy(pArray);
 }
 
-BOOL _IconListView_OnNotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
+BOOL _iconlistview_onnotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
 {
 	EX_NMHDR ni{ 0 };
 	RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
@@ -151,24 +151,24 @@ BOOL _IconListView_OnNotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
 	{
 		if (ni.nCode == NM_CALCSIZE)
 		{
-			__set_int((LPVOID)ni.lParam, 0, Ex_ObjGetLong(hObj, _ilv_nWidth));
-			__set_int((LPVOID)ni.lParam, 4, Ex_ObjGetLong(hObj, _ilv_nHeight));
+			__set_int((LPVOID)ni.lParam, 0, Ex_ObjGetLong(hObj, EILVL_WIDTH));
+			__set_int((LPVOID)ni.lParam, 4, Ex_ObjGetLong(hObj, EILVL_HEIGHT));
 			return TRUE;
 		}
 		else if (ni.nCode == NM_CUSTOMDRAW)
 		{
-			return _IconListView_OnDrawItem(hObj, (EX_CUSTOMDRAW*)ni.lParam);
+			return _iconlistview_ondrawitem(hObj, (EX_CUSTOMDRAW*)ni.lParam);
 		}
 	}
 	return FALSE;
 }
 
-BOOL _IconListView_OnDrawItem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
+BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 {
-	array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, _ilv_pArray);
+	array_s* pArray = (array_s*)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
 	if (Array_GetCount(pArray) >= cdr->iItem && cdr->iItem > 0)//如果索引在范围内
 	{
-		LPVOID hImageList = (LPVOID)Ex_ObjGetLong(hObj, _ilv_hImageList);
+		LPVOID hImageList = (LPVOID)Ex_ObjGetLong(hObj, EILVL_HIMAGELIST);
 		EX_ICONLISTVIEW_ITEMINFO* pItemInfo = (EX_ICONLISTVIEW_ITEMINFO*)Array_GetMember(pArray, cdr->iItem);
 		INT nWidthIcon = 0;
 		INT nHeightIcon =0;

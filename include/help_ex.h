@@ -276,6 +276,11 @@ struct obj_base {
 //条目风格_分隔符
 #define EMIS_SEPARATOR 2
 
+// 菜单按钮消息_选择项目
+#define MN_SELECTITEM 485
+// 菜单按钮消息_按下项目
+#define MN_DOWNITEM 123321
+
 #include "ExDUIR_Func.h"
 
 #include "Array_ex.h"

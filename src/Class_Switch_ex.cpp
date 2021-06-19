@@ -1,6 +1,6 @@
 #include "Class_switch_ex.h"
 
-void _Switch_register()
+void _switch_register()
 {
 	Ex_ObjRegister(L"Switch", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, NULL, NULL, NULL, _switch_proc);
 }

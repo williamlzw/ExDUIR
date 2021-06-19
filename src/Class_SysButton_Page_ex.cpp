@@ -1,11 +1,11 @@
 #include "Class_SysButton_Page_ex.h"
 
-void _SysButton_register()
+void _sysbutton_register()
 {
 	Ex_ObjRegister(L"SysButton", EOS_VISIBLE, EOS_EX_TOPMOST, 0, 0, 0, 0, _sysbutton_proc);
 }
 
-void _Page_register()
+void _page_register()
 {
 	Ex_ObjRegister(L"Page", EOS_VISIBLE, EOS_EX_TRANSPARENT, 0, 0, 0, 0, _page_proc);
 }

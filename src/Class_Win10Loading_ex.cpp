@@ -2,12 +2,12 @@
 
 FLOAT Round_Coordinates[2][720];/*圆上坐标*/
 
-void _Win10_Loading_register() {
+void _win10_loading_register() {
 	WCHAR wzCls[] = L"Win10Loading";
-	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, NULL, NULL, NULL, _Win10_Loading_proc);
+	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, NULL, NULL, NULL, _win10_loading_proc);
 }
 
-LRESULT CALLBACK _Win10_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
@@ -49,7 +49,7 @@ LRESULT CALLBACK _Win10_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	case WM_PAINT:
 	{
-		return _Win10_Loading_paint(hObj);
+		return _win10_loading_paint(hObj);
 	}
 	case WM_TIMER:
 	{
@@ -64,7 +64,7 @@ LRESULT CALLBACK _Win10_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-INT _Win10_Loading_paint(HEXOBJ hObj)
+INT _win10_loading_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量

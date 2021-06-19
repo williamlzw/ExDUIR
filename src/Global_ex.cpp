@@ -144,32 +144,32 @@ void Ex_UnInit()
 
 void _object_init()
 {
-	_SysButton_register();
-	_Page_register();
-	_Static_register();
-	_Button_regsiter();
-	_Item_regsiter();
-	_Scrollbar_register();
-	_Edit_register();
-	_ListView_regsiter();
-	_MenuButton_regsiter();
-	_ComboBox_regsiter();
-	_GroupBox_regsiter();
-	_ReportListView_regsiter();
-	_IconListView_Register();
-	_TreeView_register();
-	_Navbtn_register();
-	_ButtonEx_register();
-	_EditEx_register();
-	_CheckButtonEx_register();
-	_RadioButtonEx_register();
-	_Checkbox_register();
-	_Switch_register();
-	_Mosaic_Loading_register();
-	_Win10_Loading_register();
-	_SoliderBar_register();
-	_RotateImageBox_register();
-	_ProgressBar_register();
+	_sysbutton_register();
+	_page_register();
+	_static_register();
+	_button_regsiter();
+	_item_regsiter();
+	_scrollbar_register();
+	_edit_register();
+	_listview_regsiter();
+	_menubutton_regsiter();
+	_combobox_regsiter();
+	_groupbox_regsiter();
+	_reportlistview_regsiter();
+	_iconlistview_register();
+	_treeview_register();
+	_navbtn_register();
+	_buttonex_register();
+	_editex_register();
+	_checkbuttonex_register();
+	_radiobuttonex_register();
+	_checkbox_register();
+	_switch_register();
+	_mosaic_loading_register();
+	_win10_loading_register();
+	_soliderbar_register();
+	_rotateimagebox_register();
+	_progressbar_register();
 }
 
 FLOAT Ex_Scale(FLOAT n)//OK

@@ -1,11 +1,11 @@
 #include "Class_ListView_ex.h"
 
-void _ListView_regsiter()
+void _listview_regsiter()
 {
-	Ex_ObjRegister(L"ListView", EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 0, 0, 0, _lv_proc);
+	Ex_ObjRegister(L"ListView", EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 0, 0, 0, _listview_proc);
 }
 
-void _lv_setitemstate(LPVOID lpItems, INT iItem, INT dwState, BOOL bRemove)
+void _listview_setitemstate(LPVOID lpItems, INT iItem, INT dwState, BOOL bRemove)
 {
 	INT offset = (iItem - 1) * 4;
 	if (bRemove)
@@ -17,7 +17,7 @@ void _lv_setitemstate(LPVOID lpItems, INT iItem, INT dwState, BOOL bRemove)
 	}
 }
 
-void _lv_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT* lpRcClient)
+void _listview_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT* lpRcClient)
 {
 	HEXOBJ hHSB= pObj->objHScroll_;
 	HEXOBJ hVSB= pObj->objVScroll_;
@@ -100,7 +100,7 @@ void _lv_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT* lpRcC
 	}
 }
 
-void _lv_updateviewindex(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, BOOL bHView, RECT* lpRcClient)
+void _listview_updateviewindex(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, BOOL bHView, RECT* lpRcClient)
 {
 	listview_s lv;
 	RtlMoveMemory(&lv, pOwner, sizeof(listview_s));
@@ -142,22 +142,22 @@ void _lv_updateviewindex(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, BOOL bHVi
 	pOwner->index_end_ = iEnd;
 }
 
-BOOL _lv_checkitem(listview_s* pOwner, INT iItem)
+BOOL _listview_checkitem(listview_s* pOwner, INT iItem)
 {
 	return iItem > 0 && pOwner->count_items_ >= iItem;
 }
 
-BOOL _lv_checkitem_view(listview_s* pOwner, INT iItem)
+BOOL _listview_checkitem_view(listview_s* pOwner, INT iItem)
 {
 	BOOL ret = FALSE;
-	if (_lv_checkitem(pOwner, iItem))
+	if (_listview_checkitem(pOwner, iItem))
 	{
 		ret = iItem >= pOwner->index_start_ && iItem <= pOwner->index_end_;
 	}
 	return ret;
 }
 
-void _lv_rectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bHView, RECT* rcItem)
+void _listview_rectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bHView, RECT* rcItem)
 {
 	INT i = iItem - 1;
 	listview_s lv;
@@ -179,15 +179,15 @@ void _lv_rectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bHView, 
 	(*rcItem).bottom = (*rcItem).top + lv.height_item_;
 }
 
-void _lv_lprectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bHView, RECT* lpRc)
+void _listview_lprectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bHView, RECT* lpRc)
 {
 	if (lpRc == 0) return;
 	RECT rcItem{ 0 };
-	_lv_rectfromiitem(pObj, pOwner, iItem, bHView, &rcItem);
+	_listview_rectfromiitem(pObj, pOwner, iItem, bHView, &rcItem);
 	RtlMoveMemory(lpRc, &rcItem, 16);
 }
 
-INT _lv_itemfrompos(obj_s* pObj, listview_s* pOwner, INT x, INT y, INT* offsetPosX, INT* offsetPosY)
+INT _listview_itemfrompos(obj_s* pObj, listview_s* pOwner, INT x, INT y, INT* offsetPosX, INT* offsetPosY)
 {
 	*offsetPosX = 0;
 	*offsetPosY = 0;
@@ -262,17 +262,17 @@ INT _lv_itemfrompos(obj_s* pObj, listview_s* pOwner, INT x, INT y, INT* offsetPo
 	return uItem;
 }
 
-INT _lv_getitemstate(LPVOID lpItems, INT iItem)
+INT _listview_getitemstate(LPVOID lpItems, INT iItem)
 {
 	return __get_int(lpItems, (iItem - 1) * 4);
 }
 
-BOOL _lv_queryitemstate(LPVOID lpItems, INT iItem, INT dwState)
+BOOL _listview_queryitemstate(LPVOID lpItems, INT iItem, INT dwState)
 {
 	return __query(lpItems, (iItem - 1) * 4, dwState);
 }
 
-void _lv_getsbvalue(obj_s* pObj, listview_s* pOwner, BOOL bHSB, HEXOBJ* hSB, INT* oPos, INT* nLine, INT* nPage, INT* nView)
+void _listview_getscrollbarvalue(obj_s* pObj, listview_s* pOwner, BOOL bHSB, HEXOBJ* hSB, INT* oPos, INT* nLine, INT* nPage, INT* nView)
 {
 	RECT rcClient{ 0 };
 	RtlMoveMemory(&rcClient, (LPVOID)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
@@ -293,7 +293,7 @@ void _lv_getsbvalue(obj_s* pObj, listview_s* pOwner, BOOL bHSB, HEXOBJ* hSB, INT
 	}
 }
 
-INT _lv_checkpos(INT nPos, INT nView, INT nPage)
+INT _listview_checkpos(INT nPos, INT nView, INT nPage)
 {
 	if (nPos > nView - nPage)
 	{
@@ -303,28 +303,28 @@ INT _lv_checkpos(INT nPos, INT nView, INT nPage)
 	return nPos;
 }
 
-void _lv_item_changestate(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LPVOID lpItems, INT iItem, INT state, BOOL bRemove, INT nEvent, WPARAM wParam, LPARAM lParam)
+void _listview_item_changestate(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LPVOID lpItems, INT iItem, INT state, BOOL bRemove, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-	_lv_setitemstate(lpItems, iItem, state, bRemove);
-	_lv_redrawitem(pObj, pOwner, iItem);
+	_listview_setitemstate(lpItems, iItem, state, bRemove);
+	_listview_redrawitem(pObj, pOwner, iItem);
 	if (nEvent != 0)
 	{
 		_obj_dispatchnotify(hWnd, pObj, hObj, 0, nEvent, wParam, lParam);
 	}
 }
 
-void _lv_redrawitem(obj_s* pObj, listview_s* pOwner, INT iItem)
+void _listview_redrawitem(obj_s* pObj, listview_s* pOwner, INT iItem)
 {
-	if (_lv_checkitem_view(pOwner, iItem))
+	if (_listview_checkitem_view(pOwner, iItem))
 	{
 		RECT rcItem{ 0 };
 		INT nError = 0;
-		_lv_rectfromiitem(pObj, pOwner, iItem, (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST, &rcItem);
+		_listview_rectfromiitem(pObj, pOwner, iItem, (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST, &rcItem);
 		_obj_invalidaterect(pObj, &rcItem, &nError);
 	}
 }
 
-size_t _lv_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, LPARAM lParam)
+size_t _listview_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, LPARAM lParam)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	BOOL bHView = (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST;
@@ -341,7 +341,7 @@ size_t _lv_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, LPARAM 
 	pOwner->index_track_start_ = 0;
 	pOwner->index_track_end_ = 0;
 	pOwner->count_selects_ = 0;
-	_lv_updatesbvalue(hObj, pObj, pOwner, (RECT*)&pObj->c_left_);
+	_listview_updatesbvalue(hObj, pObj, pOwner, (RECT*)&pObj->c_left_);
 	INT nPosX = 0;
 	INT nPosY = 0;
 	INT nPage = 0;
@@ -350,10 +350,10 @@ size_t _lv_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, LPARAM 
 	if ((lParam & 2) != 0)//LVSICF_NOSCROLL
 	{
 		HEXOBJ hSB = 0;
-		_lv_getsbvalue(pObj, pOwner, TRUE, &hSB, &nPosX, &nLine, &nPage, &nView);
-		nPosX = _lv_checkpos(nPosX, nView, nPage);
-		_lv_getsbvalue(pObj, pOwner, FALSE, &hSB, &nPosY, &nLine, &nPage, &nView);
-		nPosY = _lv_checkpos(nPosY, nView, nPage);
+		_listview_getscrollbarvalue(pObj, pOwner, TRUE, &hSB, &nPosX, &nLine, &nPage, &nView);
+		nPosX = _listview_checkpos(nPosX, nView, nPage);
+		_listview_getscrollbarvalue(pObj, pOwner, FALSE, &hSB, &nPosY, &nLine, &nPage, &nView);
+		nPosY = _listview_checkpos(nPosY, nView, nPage);
 	}
 	else {
 		nPosX = 0;
@@ -363,13 +363,13 @@ size_t _lv_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, LPARAM 
 	pOwner->nOffsetY_ = nPosY;
 	Ex_ObjScrollSetPos(hObj, SB_HORZ, nPosX, TRUE);
 	Ex_ObjScrollSetPos(hObj, SB_VERT, nPosY, TRUE);
-	_lv_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
+	_listview_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
 	INT nError = 0;
 	_obj_invalidaterect(pObj, 0, &nError);
 	return 0;
 }
 
-void _lv_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+void _listview_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	INT nCode = LOWORD(wParam);
@@ -380,7 +380,7 @@ void _lv_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wPar
 	INT nPage = 0;
 	INT nLine = 0;
 	INT nView = 0;
-	_lv_getsbvalue(pObj, pOwner, bHScoll, &hSB, &oPos, &nLine, &nPage, &nView);
+	_listview_getscrollbarvalue(pObj, pOwner, bHScoll, &hSB, &oPos, &nLine, &nPage, &nView);
 	INT nPos = 0;
 	if (nCode == SB_THUMBPOSITION)
 	{
@@ -415,7 +415,7 @@ void _lv_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wPar
 			return;
 		}
 	}
-	nPos = _lv_checkpos(nPos, nView, nPage);
+	nPos = _listview_checkpos(nPos, nView, nPage);
 	if (nPos != oPos)
 	{
 		if (bHScoll)
@@ -429,13 +429,13 @@ void _lv_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wPar
 		{
 			Ex_ObjScrollSetPos(hSB, SB_CTL, nPos, TRUE);
 		}
-		_lv_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
+		_listview_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
 		INT nError = 0;
 		_obj_invalidaterect(pObj, 0, &nError);
 	}
 }
 
-void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam)
+void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	INT x = LOWORD(lParam);
@@ -443,18 +443,18 @@ void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, 
 	LPVOID lpItems = pOwner->lpItems_;
 	INT ox = 0;
 	INT oy = 0;
-	INT iCur = _lv_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
+	INT iCur = _listview_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
 	
-	BOOL vCur = _lv_checkitem(pOwner, iCur);
+	BOOL vCur = _listview_checkitem(pOwner, iCur);
 	if (vCur)
 	{
-		if (_lv_queryitemstate(lpItems, iCur, STATE_DISABLE))
+		if (_listview_queryitemstate(lpItems, iCur, STATE_DISABLE))
 		{
 			return;
 		}
 	}
 	INT iSelect = pOwner->index_select_;
-	BOOL vSelect = _lv_checkitem(pOwner, iSelect);
+	BOOL vSelect = _listview_checkitem(pOwner, iSelect);
 	INT nCount = pOwner->count_items_;
 	BOOL bSingleSel = !((pObj->dwStyle_ & ELVS_ALLOWMULTIPLE) == ELVS_ALLOWMULTIPLE);
 	BOOL bShowAllwasy = ((pObj->dwStyle_ & ELVS_SHOWSELALWAYS) == ELVS_SHOWSELALWAYS);
@@ -482,7 +482,7 @@ void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, 
 			{
 				if (!((pObj->dwStyle_ & ELVS_SHOWSELALWAYS) == ELVS_SHOWSELALWAYS) || vCur)
 				{
-					_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iSelect, STATE_SELECT, TRUE, 0, 0, 0);
+					_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iSelect, STATE_SELECT, TRUE, 0, 0, 0);
 					nSelects = nSelects - 1;
 				}
 				else {
@@ -493,7 +493,7 @@ void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, 
 		else {
 			if ((iKey & 1) == 0)// ctrl没有按下,则取消所有选择
 			{
-				_lv_reselect(hWnd, hObj, pObj, pOwner,0,FALSE);
+				_listview_reselect(hWnd, hObj, pObj, pOwner,0,FALSE);
 			}
 		}
 		uMsg = 0;
@@ -501,7 +501,7 @@ void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, 
 		{
 			if (bSingleSel && !vSelect)
 			{
-				_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, uMsg, iCur, iSelect);
+				_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, uMsg, iCur, iSelect);
 				nSelects = nSelects + 1;
 			}
 			else {
@@ -511,11 +511,11 @@ void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, 
 					INT nStep = iCur > iSelect ? 1 : -1;
 					for (INT i = iSelect; i != iCur; i = i + nStep)
 					{
-						if (!_lv_queryitemstate(lpItems, i, STATE_SELECT))
+						if (!_listview_queryitemstate(lpItems, i, STATE_SELECT))
 						{
-							if (!_lv_queryitemstate(lpItems, i, STATE_DISABLE))
+							if (!_listview_queryitemstate(lpItems, i, STATE_DISABLE))
 							{
-								_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, FALSE,i == iCur ? uMsg : 0, i, iSelect);
+								_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, FALSE,i == iCur ? uMsg : 0, i, iSelect);
 								nSelects = nSelects + 1;
 							}
 						}
@@ -524,7 +524,7 @@ void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, 
 					return;
 				}
 				else {
-					_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, uMsg, iCur, iSelect);
+					_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, uMsg, iCur, iSelect);
 				}
 			}
 		}
@@ -537,7 +537,7 @@ void _lv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, 
 	}
 }
 
-size_t _lv_reselect(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bShow)
+size_t _listview_reselect(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bShow)
 {
 	INT nCount = pOwner->count_selects_;
 	LPVOID lpItems = pOwner->lpItems_;
@@ -546,36 +546,36 @@ size_t _lv_reselect(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, INT
 		INT nSelect = pOwner->count_items_;
 		for (INT i = 1; i < nCount + 1; i++)
 		{
-			if (_lv_queryitemstate(lpItems, i, STATE_SELECT))
+			if (_listview_queryitemstate(lpItems, i, STATE_SELECT))
 			{
-				_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, TRUE, 0, 0, 0);
+				_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, TRUE, 0, 0, 0);
 			}
 		}
 		pOwner->count_selects_ = 0;
 	}
 	if (iItem >= 0)
 	{
-		if (_lv_checkitem(pOwner, iItem))
+		if (_listview_checkitem(pOwner, iItem))
 		{
 			nCount = pOwner->index_select_;
 			pOwner->index_select_ = iItem;
 			pOwner->count_selects_ = 1;
-			_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iItem, STATE_SELECT, FALSE, LVN_ITEMCHANGED, iItem, nCount);
+			_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iItem, STATE_SELECT, FALSE, LVN_ITEMCHANGED, iItem, nCount);
 			if (bShow)
 			{
-				_lv_showitem(hWnd, hObj, pObj, iItem, FALSE);
+				_listview_showitem(hWnd, hObj, pObj, iItem, FALSE);
 			}
 		}
 	}
 	return 0;
 }
 
-size_t _lv_showitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT iItem, BOOL bCheck)
+size_t _listview_showitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT iItem, BOOL bCheck)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	if (bCheck)
 	{
-		if (!_lv_checkitem(pOwner, iItem))
+		if (!_listview_checkitem(pOwner, iItem))
 		{
 			return 0;
 		}
@@ -583,14 +583,14 @@ size_t _lv_showitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT iItem, BOOL bCheck)
 	RECT* lprc =(RECT*) ((size_t)pObj + offsetof(obj_s, c_left_));
 	BOOL bHView = ((pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST);
 	RECT rcItem{ 0 };
-	_lv_rectfromiitem(pObj, pOwner, iItem, bHView, &rcItem);
+	_listview_rectfromiitem(pObj, pOwner, iItem, bHView, &rcItem);
 	OffsetRect(&rcItem, -lprc->left, -lprc->top);
 	HEXOBJ hSB = 0;
 	INT oPos = 0;
 	INT nPage = 0;
 	INT nLine = 0;
 	INT nView = 0;
-	_lv_getsbvalue(pObj, pOwner, bHView, &hSB, &oPos, &nLine, &nPage, &nView);
+	_listview_getscrollbarvalue(pObj, pOwner, bHView, &hSB, &oPos, &nLine, &nPage, &nView);
 	INT nPos = 0;
 	if (bHView)
 	{
@@ -623,7 +623,7 @@ size_t _lv_showitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT iItem, BOOL bCheck)
 			}
 		}
 	}
-	nPos = _lv_checkpos(nPos, nView, nPage);
+	nPos = _listview_checkpos(nPos, nView, nPage);
 	if (bHView)
 	{
 		pOwner->nOffsetX_ = nPos;
@@ -635,25 +635,25 @@ size_t _lv_showitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT iItem, BOOL bCheck)
 	{
 		Ex_ObjScrollSetPos(hSB, SB_CTL, nPos, TRUE);
 	}
-	_lv_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
+	_listview_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
 	INT nError = 0;
 	_obj_invalidaterect(pObj, 0, &nError);
 	return 0;
 }
 
-void _lv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
+void _listview_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	LPVOID lpItems = pOwner->lpItems_;
 	INT iLast = pOwner->index_mouse_;
-	if (_lv_checkitem(pOwner, iLast))
+	if (_listview_checkitem(pOwner, iLast))
 	{
-		_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0, 0, 0);
+		_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0, 0, 0);
 		pOwner->index_mouse_ = 0;
 	}
 }
 
-void _lv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam)
+void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam)
 {
 	INT x = LOWORD(lParam);
 	INT y = HIWORD(lParam);
@@ -661,11 +661,11 @@ void _lv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lP
 	LPVOID lpItems = pOwner->lpItems_;
 	INT iSelect = pOwner->index_select_;
 	INT iLast = pOwner->index_mouse_;
-	BOOL vLast = _lv_checkitem(pOwner, iLast);
+	BOOL vLast = _listview_checkitem(pOwner, iLast);
 	INT ox = 0;
 	INT oy = 0;
-	INT iCur = _lv_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
-	BOOL vCur = _lv_checkitem(pOwner, iCur);
+	INT iCur = _listview_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
+	BOOL vCur = _listview_checkitem(pOwner, iCur);
 	INT iHitTest = LVHT_NOWHERE;
 	INT tmp = 0;
 	if (vCur)
@@ -687,18 +687,18 @@ void _lv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lP
 				{
 					if (iSelect != 0)
 					{
-						_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iSelect, STATE_SELECT, TRUE, 0, 0, 0);
+						_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iSelect, STATE_SELECT, TRUE, 0, 0, 0);
 					}
 					pOwner->index_select_ = iCur;
 				}
 				if (vCur)
 				{
-					if (_lv_queryitemstate(lpItems, iCur, STATE_DISABLE))
+					if (_listview_queryitemstate(lpItems, iCur, STATE_DISABLE))
 					{
 						iCur = 0;
 					}
 					else {
-						_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, LVN_HOTTRACK, iCur, iSelect);
+						_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, LVN_HOTTRACK, iCur, iSelect);
 					}
 				}
 				_obj_dispatchnotify(hWnd, pObj, hObj, 0, LVN_ITEMCHANGED, iCur, iSelect);
@@ -710,16 +710,16 @@ void _lv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lP
 			{
 				if (vLast)
 				{
-					_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0, 0, 0);
+					_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0, 0, 0);
 				}
 				if (vCur)
 				{
-					if (_lv_queryitemstate(lpItems, iCur, STATE_DISABLE))
+					if (_listview_queryitemstate(lpItems, iCur, STATE_DISABLE))
 					{
 						iCur = 0;
 					}
 					else {
-						_lv_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_HOVER, FALSE, 0, 0, 0);
+						_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_HOVER, FALSE, 0, 0, 0);
 					}
 				}
 			}
@@ -728,13 +728,13 @@ void _lv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lP
 	pOwner->index_mouse_ = iCur;
 }
 
-void _lv_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, EX_PAINTSTRUCT2 ps, INT iItem, RECT rcClip, RECT rcItem)
+void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, EX_PAINTSTRUCT2 ps, INT iItem, RECT rcClip, RECT rcItem)
 {
 	INT atomRect = 0;
 	EX_CUSTOMDRAW ecd;
 	ecd.hTheme = ps.hTheme;
 	ecd.hCanvas = ps.hCanvas;
-	ecd.dwState = _lv_getitemstate(pOwner->lpItems_, iItem);
+	ecd.dwState = _listview_getitemstate(pOwner->lpItems_, iItem);
 	ecd.dwStyle = ps.dwStyle;
 	ecd.rcPaint.left = rcItem.left;
 	ecd.rcPaint.top = rcItem.top;
@@ -769,7 +769,7 @@ void _lv_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, EX_PA
 	}
 }
 
-size_t _lv_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
+size_t _listview_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 {
 	EX_PAINTSTRUCT2 ps;
 	if (Ex_ObjBeginPaint(hObj, &ps))
@@ -780,14 +780,14 @@ size_t _lv_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		BOOL bHView = (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST;
 		for (INT i = iStart; i < iEnd; i++)
 		{
-			if (_lv_checkitem_view(pOwner, i))
+			if (_listview_checkitem_view(pOwner, i))
 			{
 				RECT rcItem{ 0 };
-				_lv_rectfromiitem(pObj, pOwner, i, bHView, &rcItem);
+				_listview_rectfromiitem(pObj, pOwner, i, bHView, &rcItem);
 				RECT rcClip{ 0 };
 				if (IntersectRect(&rcClip, (RECT*)&ps.p_left, &rcItem))
 				{
-					_lv_drawitem(hWnd, hObj, pObj, pOwner, ps, i, rcClip, rcItem);
+					_listview_drawitem(hWnd, hObj, pObj, pOwner, ps, i, rcClip, rcItem);
 				}
 			}
 		}
@@ -796,7 +796,7 @@ size_t _lv_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	return 0;
 }
 
-size_t _lv_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
+size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	BOOL bHView = (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST;
@@ -828,12 +828,12 @@ size_t _lv_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	pOwner->width_split_ = Ex_Scale(1);
 	pOwner->height_split_ = Ex_Scale(1);
 	_obj_dispatchnotify(hWnd, pObj, hObj, pObj->id_, NM_CALCSIZE, 0, (size_t)pOwner + offsetof(listview_s, width_item_));
-	_lv_updatesbvalue(hObj, pObj, pOwner, lpRcClient);
-	_lv_updateviewindex(hObj, pObj, pOwner, bHView, lpRcClient);
+	_listview_updatesbvalue(hObj, pObj, pOwner, lpRcClient);
+	_listview_updateviewindex(hObj, pObj, pOwner, bHView, lpRcClient);
 	return 0;
 }
 
-LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _listview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	INT nError = 0;
 	obj_s* pObj = nullptr;
@@ -850,19 +850,19 @@ LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == WM_SIZE)
 		{
-			_lv_size(hWnd, hObj, pObj);
+			_listview_size(hWnd, hObj, pObj);
 		}
 		else if (uMsg == WM_PAINT)
 		{
-			return _lv_paint(hWnd, hObj, pObj);
+			return _listview_paint(hWnd, hObj, pObj);
 		}
 		else if (uMsg == WM_MOUSELEAVE)
 		{
-			_lv_mouseleave(hWnd, hObj, pObj);
+			_listview_mouseleave(hWnd, hObj, pObj);
 		}
 		else if (uMsg == WM_MOUSEMOVE)
 		{
-			_lv_mousemove(hWnd, hObj, pObj, wParam, lParam);
+			_listview_mousemove(hWnd, hObj, pObj, wParam, lParam);
 		}
 		else if (uMsg == LVM_HITTEST)
 		{
@@ -870,7 +870,7 @@ LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN)
 		{
-			_lv_btndown(hWnd, hObj, pObj, uMsg, wParam, lParam);
+			_listview_btndown(hWnd, hObj, pObj, uMsg, wParam, lParam);
 		}
 		else if (uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONUP)
 		{
@@ -878,32 +878,32 @@ LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL)
 		{
-			_lv_onvscrollbar(hWnd, hObj, pObj, uMsg, wParam, lParam);
+			_listview_onvscrollbar(hWnd, hObj, pObj, uMsg, wParam, lParam);
 		}
 		else if (uMsg == LVM_SETITEMCOUNT)
 		{
-			return _lv_setitemcount(hWnd, hObj, pObj, wParam, lParam);
+			return _listview_setitemcount(hWnd, hObj, pObj, wParam, lParam);
 		}
 		else if (uMsg == LVM_DELETEALLITEMS)
 		{
-			return _lv_setitemcount(hWnd, hObj, pObj, 0, 0);
+			return _listview_setitemcount(hWnd, hObj, pObj, 0, 0);
 		}
 		else if (uMsg == LVM_ENSUREVISIBLE)
 		{
-			return _lv_showitem(hWnd, hObj, pObj, lParam, TRUE);
+			return _listview_showitem(hWnd, hObj, pObj, lParam, TRUE);
 		}
 		else if (uMsg == LVM_GETITEMSTATE)
 		{
 			lParam = 0;
-			if (_lv_checkitem((listview_s*)_obj_pOwner(pObj), wParam))
+			if (_listview_checkitem((listview_s*)_obj_pOwner(pObj), wParam))
 			{
-				lParam = _lv_getitemstate(((listview_s*)_obj_pOwner(pObj))->lpItems_, wParam);
+				lParam = _listview_getitemstate(((listview_s*)_obj_pOwner(pObj))->lpItems_, wParam);
 			}
 			return lParam;
 		}
 		else if (uMsg == LVM_SETITEMSTATE)
 		{
-			_lv_lvm_setitemstate(pObj, (listview_s*)_obj_pOwner(pObj), wParam, lParam);
+			_listview_lvm_setitemstate(pObj, (listview_s*)_obj_pOwner(pObj), wParam, lParam);
 		}
 		else if (uMsg == LVM_GETCOUNTPERPAGE)
 		{
@@ -915,9 +915,9 @@ LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == LVM_GETITEMRECT)
 		{
-			if (_lv_checkitem((listview_s*)_obj_pOwner(pObj), wParam))
+			if (_listview_checkitem((listview_s*)_obj_pOwner(pObj), wParam))
 			{
-				_lv_lprectfromiitem(pObj, (listview_s*)_obj_pOwner(pObj), wParam, (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST, (RECT*)lParam);
+				_listview_lprectfromiitem(pObj, (listview_s*)_obj_pOwner(pObj), wParam, (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST, (RECT*)lParam);
 			}
 		}
 		else if (uMsg == LVM_GETSELECTEDCOUNT)
@@ -930,7 +930,7 @@ LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == LVM_SETSELECTIONMARK)
 		{
-			return _lv_reselect(hWnd, hObj, pObj, (listview_s*)_obj_pOwner(pObj), lParam, wParam != 0);
+			return _listview_reselect(hWnd, hObj, pObj, (listview_s*)_obj_pOwner(pObj), lParam, wParam != 0);
 		}
 		else if (uMsg == LVM_GETTOPINDEX)
 		{
@@ -944,7 +944,7 @@ LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		{
 			for (INT i = wParam; i < lParam; i++)
 			{
-				_lv_redrawitem(pObj, (listview_s*)_obj_pOwner(pObj), i);
+				_listview_redrawitem(pObj, (listview_s*)_obj_pOwner(pObj), i);
 			}
 			return 0;
 		}
@@ -958,9 +958,9 @@ LRESULT CALLBACK _lv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-void _lv_lvm_setitemstate(obj_s* pObj, listview_s* pOwner, INT iItem, INT dwState)
+void _listview_lvm_setitemstate(obj_s* pObj, listview_s* pOwner, INT iItem, INT dwState)
 {
-	if (_lv_checkitem(pOwner, iItem))
+	if (_listview_checkitem(pOwner, iItem))
 	{
 		if (iItem == pOwner->index_select_)
 		{
@@ -971,6 +971,6 @@ void _lv_lvm_setitemstate(obj_s* pObj, listview_s* pOwner, INT iItem, INT dwStat
 		}
 		LPVOID lpItems = pOwner->lpItems_;
 		__set_int(lpItems, (iItem - 1) * 4, dwState);
-		_lv_redrawitem(pObj, pOwner, iItem);
+		_listview_redrawitem(pObj, pOwner, iItem);
 	}
 }

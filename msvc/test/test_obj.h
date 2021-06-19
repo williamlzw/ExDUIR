@@ -47,7 +47,7 @@ void test_custombkg(HWND hWnd);
 void test_combobox(HWND hWnd);
 void test_groupbox(HWND hWnd);
 void test_messagebox(HWND hWnd);
-void test_colorbutton(HWND hWnd);
+
 
 
 size_t OnNavButtonPageEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4);
@@ -70,9 +70,27 @@ void test_ani(HWND hWnd);
 LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_customredraw(HWND hWnd);
 
+class ColorButton2
+{
+public:
+	void Create(EXHANDLE handle, INT left, INT top, INT width, INT height, LPCWSTR title = NULL, INT style = -1, INT styleEx = -1, INT nID = NULL, INT dwTextFormat = -1, LPARAM lParam = NULL, MsgPROC lpMsgProc = NULL);
+	void SetBkgNormalColor(EXARGB color,BOOL redraw);
+	void SetBkgHoverColor(EXARGB color, BOOL redraw);
+	void SetBkgDownColor(EXARGB color, BOOL redraw);
+	void SetBkgFocusColor(EXARGB color, BOOL redraw);
+	void SetTextHoverColor(EXARGB color, BOOL redraw);
+	void SetTextDownColor(EXARGB color, BOOL redraw);
+	void SetTextFocusColor(EXARGB color, BOOL redraw);
+	void SetRadius(FLOAT topleft, FLOAT topright, FLOAT bottomright, FLOAT bottomleft,BOOL redraw);
+
+private:
+	HEXOBJ mhObj;
+};
 
 LRESULT CALLBACK OnColorButtonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void test_colorbutton(HWND hWnd);
+
+
 
 LRESULT CALLBACK OnReportListViewEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_reportlistview(HWND hWnd);
@@ -115,10 +133,10 @@ void test_rotateimgbox(HWND hWnd);
 LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_dragobj(HWND hWnd);
 
-
 LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_dropobj(HWND hWnd);
 
+LRESULT CALLBACK OnProgressBarProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_progressbar(HWND hWnd);
 
 LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);

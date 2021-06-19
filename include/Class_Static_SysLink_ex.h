@@ -31,7 +31,7 @@ struct slb_s
 #define slbf_type_link 16
 #define slbf_type_enter 32
 
-void _Static_register();
+void _static_register();
 void _static_paint(HEXOBJ hObj, obj_s* pObj);
 LRESULT CALLBACK _static_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _syslink_leavecheck(obj_s* pObj, sli_s* pOwner);

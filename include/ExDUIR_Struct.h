@@ -934,11 +934,11 @@
 // 消息_树形框_保证显示 (lParam为显示的节点句柄)
 #define TVM_ENSUREVISIBLE	4372
 // 消息_树形框_插入节点 (lParam为 EX_TREEVIEW_ITEMINFO 指针，tzText为Unicode)
-#define TVM_INSERTITEMW	4402
+#define TVM_INSERTITEM	4352
 // 消息_树形框_取节点信息 (wParam为节点句柄,lParam为 EX_TREEVIEW_ITEMINFO 指针，tzText为Unicode)
-#define TVM_GETITEMW	4414
+#define TVM_GETITEM	4364
 // 消息_树形框_设置节点信息 (wParam为节点句柄,lParam为 EX_TREEVIEW_ITEMINFO 指针)
-#define TVM_SETITEMW	4415
+#define TVM_SETITEM	4365
 // 消息_树形框_更新树形框
 #define TVM_UPDATE	4499
 // 消息_树形框_设置行高 (lParam为新行高)
@@ -1473,8 +1473,8 @@ struct EX_TREEVIEW_NODEITEM {
 	INT						nID;					//项目ID
 	LPCWSTR					lpTitle;				//项目标题
 	LPARAM					lParam;					//项目附加参数
-	INT						nImageIndex;			//收缩图片索引
-	INT						nImageIndexExpand;		//扩展图片索引
+	DWORD						nImageIndex;			//收缩图片索引
+	DWORD						nImageIndexExpand;		//扩展图片索引
 	BOOL					fExpand;				//是否展开
 	DWORD					dwStyle;				//风格
 	INT						nDepth;					//层次

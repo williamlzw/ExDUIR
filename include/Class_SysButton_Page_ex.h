@@ -1,8 +1,8 @@
 #pragma once
 #include "help_ex.h"
 
-void _SysButton_register();
-void _Page_register();
+void _sysbutton_register();
+void _page_register();
 size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
 void _sysbutton_remove_proc(obj_s* pObj, INT width, INT height);
 LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

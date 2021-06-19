@@ -2,7 +2,7 @@
 
 ClsPROC m_pfnStaticProc;/*控件基类的消息回调函数*/
 
-void _RotateImageBox_register()
+void _rotateimagebox_register()
 {
 	EX_CLASSINFO	pClsInfoStatic;
 
@@ -18,11 +18,11 @@ void _RotateImageBox_register()
 
 	/* 3、注册新控件*/
 	WCHAR	newwzCls[] = L"RotateImageBox";
-	Ex_ObjRegister(newwzCls, pClsInfoStatic.dwStyle, pClsInfoStatic.dwStyleEx, pClsInfoStatic.dwTextFormat, NULL, pClsInfoStatic.hCursor, pClsInfoStatic.dwFlags, _RotateImageBox_proc);
+	Ex_ObjRegister(newwzCls, pClsInfoStatic.dwStyle, pClsInfoStatic.dwStyleEx, pClsInfoStatic.dwTextFormat, NULL, pClsInfoStatic.hCursor, pClsInfoStatic.dwFlags, _rotateimagebox_proc);
 }
 
 
-LRESULT CALLBACK _RotateImageBox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{

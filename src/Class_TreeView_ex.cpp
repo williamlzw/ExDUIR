@@ -3,7 +3,7 @@
 ClsPROC _tv_lpfn;
 
 
-EX_TREEVIEW_NODEITEM* _tv_getlastitem(EX_TREEVIEW_NODEITEM* item) {
+EX_TREEVIEW_NODEITEM* _treeview_getlastitem(EX_TREEVIEW_NODEITEM* item) {
 	EX_TREEVIEW_NODEITEM* last = item;
 	while (item) {
 		last = item;
@@ -12,27 +12,27 @@ EX_TREEVIEW_NODEITEM* _tv_getlastitem(EX_TREEVIEW_NODEITEM* item) {
 	return last;
 }
 
-INT _tv_itemcount(EX_TREEVIEW_NODEITEM* item, INT* pCount) {
+INT _treeview_itemcount(EX_TREEVIEW_NODEITEM* item, INT* pCount) {
 	while (item) {
 		(*pCount)++;
 		if (item->fExpand) {
-			_tv_itemcount(item->pChildFirst, pCount);
+			_treeview_itemcount(item->pChildFirst, pCount);
 		}
 		item = item->pNext;
 	}
 	return *pCount;
 }
 
-void _tv_calcsize(obj_s* pObj, EX_NMHDR* nm) {
+void _treeview_calcsize(obj_s* pObj, EX_NMHDR* nm) {
 	RECT* rect;
 	rect = (RECT*)nm->lParam;
-	if (_obj_getExtraLong(pObj, 7) > rect->left) {
-		rect->left = _obj_getExtraLong(pObj, 7);
+	if (_obj_getExtraLong(pObj, ETVL_LEFT) > rect->left) {
+		rect->left = _obj_getExtraLong(pObj, ETVL_LEFT);
 	}
-	rect->top = _obj_getExtraLong(pObj, 6);
+	rect->top = _obj_getExtraLong(pObj, ETVL_ITEMHEIGHT);
 }
 
-EX_TREEVIEW_NODEITEM* _tv_getnextvisibleitem(EX_TREEVIEW_NODEITEM* item) {
+EX_TREEVIEW_NODEITEM* _treeview_getnextvisibleitem(EX_TREEVIEW_NODEITEM* item) {
 	EX_TREEVIEW_NODEITEM* ret = NULL;
 	if (item) {
 		if (item->fExpand) {
@@ -55,9 +55,9 @@ EX_TREEVIEW_NODEITEM* _tv_getnextvisibleitem(EX_TREEVIEW_NODEITEM* item) {
 	return ret;
 }
 
-EX_TREEVIEW_NODEITEM* _tv_getnextitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT type) {
+EX_TREEVIEW_NODEITEM* _treeview_getnextitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT type) {
 	if (type == TVGN_ROOT) {
-		return (EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0);
+		return (EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM);
 	}
 	else if (item) {
 		if (type == TVGN_PREVIOUS) {
@@ -73,14 +73,14 @@ EX_TREEVIEW_NODEITEM* _tv_getnextitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, I
 			return item->pParent;
 		}
 		else if (type == TVGN_NEXTVISIBLE) {
-			return _tv_getnextvisibleitem(item);
+			return _treeview_getnextvisibleitem(item);
 		}
 	}
 	return NULL;
 }
 
 
-INT _tv_getitemindex(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
+INT _treeview_getitemindex(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
 	INT height = 0;
 	if (item) {
 		height = 1;
@@ -96,13 +96,13 @@ INT _tv_getitemindex(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
 		if (tmp) {
 			if (!tmp->fExpand)
 				return 0;
-			height += _tv_getitemindex(pObj, tmp);
+			height += _treeview_getitemindex(pObj, tmp);
 		}
 	}
 	return height;
 }
 
-EX_TREEVIEW_NODEITEM* _tv_getitembyindex(EX_TREEVIEW_NODEITEM* item, INT index, INT* childIndex) {
+EX_TREEVIEW_NODEITEM* _treeview_getitembyindex(EX_TREEVIEW_NODEITEM* item, INT index, INT* childIndex) {
 	if (index <= 0) {
 		return 0;
 	}
@@ -115,7 +115,7 @@ EX_TREEVIEW_NODEITEM* _tv_getitembyindex(EX_TREEVIEW_NODEITEM* item, INT index, 
 		}
 		(*childIndex)++;
 		if (item->fExpand) {
-			EX_TREEVIEW_NODEITEM* tmp = _tv_getitembyindex(item->pChildFirst, index, childIndex);
+			EX_TREEVIEW_NODEITEM* tmp = _treeview_getitembyindex(item->pChildFirst, index, childIndex);
 			if (tmp) {
 				return tmp;
 			}
@@ -125,12 +125,12 @@ EX_TREEVIEW_NODEITEM* _tv_getitembyindex(EX_TREEVIEW_NODEITEM* item, INT index, 
 	return NULL;
 }
 
-INT _tv_getvisiblecount(EX_TREEVIEW_NODEITEM* item, BOOL expand) {
+INT _treeview_getvisiblecount(EX_TREEVIEW_NODEITEM* item, BOOL expand) {
 	INT count = 0;
 	while (item) {
 		count++;
 		if (!expand || item->fExpand) {
-			count += _tv_getvisiblecount(item->pChildFirst, expand);
+			count += _treeview_getvisiblecount(item->pChildFirst, expand);
 		}
 		item = item->pNext;
 	}
@@ -138,7 +138,7 @@ INT _tv_getvisiblecount(EX_TREEVIEW_NODEITEM* item, BOOL expand) {
 }
 
 
-void _tv_deleteitemlink(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
+void _treeview_deleteitemlink(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
 	if (item) {
 		EX_TREEVIEW_NODEITEM* next = item->pNext;
 		EX_TREEVIEW_NODEITEM* prev = item->pPrev;
@@ -156,30 +156,30 @@ void _tv_deleteitemlink(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
 			if (parent) {
 				parent->pChildFirst = next;
 			}
-			else if ((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0) == item) {
-				_obj_setExtraLong(pObj, 0, (size_t)next);
+			else if ((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM) == item) {
+				_obj_setExtraLong(pObj, ETVL_NODEITEM, (size_t)next);
 			}
 		}
 	}
 }
 
-void _tv_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pWidth) {
+void _treeview_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pWidth) {
 	INT imgWidth = 0;
 	if (item) {
-		if (_obj_getExtraLong(pObj, 5)) {
-			_imglist_size((LPVOID)_obj_getExtraLong(pObj, 5), &imgWidth, NULL);
+		if (_obj_getExtraLong(pObj, ETVL_HIMAGELIST)) {
+			_imglist_size((LPVOID)_obj_getExtraLong(pObj, ETVL_HIMAGELIST), &imgWidth, NULL);
 			imgWidth = Ex_Scale(10) + imgWidth;
 		}
 		if (pObj->canvas_obj_) {
 			while (item) {
 				if (item->fExpand && item->pChildFirst) {
-					_tv_calcitemmaxwidth(pObj, item->pChildFirst, pWidth);
+					_treeview_calcitemmaxwidth(pObj, item->pChildFirst, pWidth);
 					item = item->pNext;
 				}
 				else {
 					FLOAT width = 0;
 					if (_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, item->lpTitle, -1, 32, 0, 0, 0, &width, NULL)) {
-						width += item->nDepth * _obj_getExtraLong(pObj, 4) + imgWidth + Ex_Scale(35);
+						width += item->nDepth * _obj_getExtraLong(pObj, ETVL_INDENT) + imgWidth + Ex_Scale(35);
 						if (FLAGS_CHECK(pObj->dwStyle_, 64)) {
 							width += Ex_Scale(20);
 						}
@@ -194,18 +194,18 @@ void _tv_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pWidth) 
 	}
 }
 
-void _tv_updateitem(obj_s* pObj) {
-	INT currentWidth = _obj_getExtraLong(pObj, 7);
-	EX_TREEVIEW_NODEITEM* root = (EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0);
+void _treeview_updateitem(obj_s* pObj) {
+	INT currentWidth = _obj_getExtraLong(pObj, ETVL_LEFT);
+	EX_TREEVIEW_NODEITEM* root = (EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM);
 	INT width = 0;
-	_tv_calcitemmaxwidth(pObj, root, &width);
+	_treeview_calcitemmaxwidth(pObj, root, &width);
 	if (currentWidth != width) {
-		_obj_setExtraLong(pObj, 7, width);
+		_obj_setExtraLong(pObj, ETVL_LEFT, width);
 		_obj_sendmessage(_obj_gethWnd(pObj), pObj->hObj_, pObj, WM_SIZE, 0, MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
 	}
 }
 
-BOOL _tv_expanditem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
+BOOL _treeview_expanditem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
 	BOOL result = FALSE;
 	if (item) {
 		EX_TREEVIEW_NODEITEM* tmp = item->pParent;
@@ -220,7 +220,7 @@ BOOL _tv_expanditem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item) {
 	return result;
 }
 
-BOOL _tv_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM* parent, EX_TREEVIEW_NODEITEM* insertAfter) {
+BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM* parent, EX_TREEVIEW_NODEITEM* insertAfter) {
 	EX_TREEVIEW_NODEITEM* next = NULL;
 	EX_TREEVIEW_NODEITEM* prev = NULL;
 	if (!item) {
@@ -235,16 +235,16 @@ BOOL _tv_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM*
 			parent->pChildFirst = item;
 		}
 		else {
-			next = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, 0, (size_t)item);
+			next = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, ETVL_NODEITEM, (size_t)item);
 		}
 		prev = item->pPrev;
 	}
 	else if ((size_t)insertAfter == TVI_LAST || !insertAfter || (size_t)insertAfter == TVI_SORT) {
 		if (parent) {
-			prev = _tv_getlastitem(parent->pChildFirst);
+			prev = _treeview_getlastitem(parent->pChildFirst);
 		}
 		else {
-			prev = _tv_getlastitem((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0));
+			prev = _treeview_getlastitem((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM));
 		}
 		if (prev) {
 			next = prev->pNext;
@@ -254,7 +254,7 @@ BOOL _tv_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM*
 			parent->pChildFirst = item;
 		}
 		else {
-			next = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, 0, (size_t)item);
+			next = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, ETVL_NODEITEM, (size_t)item);
 		}
 	}
 	else {
@@ -292,10 +292,10 @@ BOOL _tv_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM*
 	return TRUE;
 }
 
-EX_TREEVIEW_NODEITEM* _tv_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIEW_NODEITEM* parent, EX_TREEVIEW_NODEITEM* insertAfter, INT nID, BOOL fExpand) {
+EX_TREEVIEW_NODEITEM* _treeview_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIEW_NODEITEM* parent, EX_TREEVIEW_NODEITEM* insertAfter, INT nID, BOOL fExpand) {
 	EX_TREEVIEW_NODEITEM* item = (EX_TREEVIEW_NODEITEM*)Ex_MemAlloc(sizeof(EX_TREEVIEW_NODEITEM));
 	if (item) {
-		if (_tv_inititem(pObj, item, parent, insertAfter)) {
+		if (_treeview_inititem(pObj, item, parent, insertAfter)) {
 			item->lpTitle = StrDupW(wzTitle);
 			item->fExpand = fExpand;
 			item->nID = nID;
@@ -308,21 +308,21 @@ EX_TREEVIEW_NODEITEM* _tv_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIEW_NODE
 	return item;
 }
 
-void _tv_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child , BOOL dellink ) {
+void _treeview_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child , BOOL dellink ) {
 	if (item) {
 		if (dellink) {
-			_tv_deleteitemlink(pObj, item);
+			_treeview_deleteitemlink(pObj, item);
 		}
 		if (child) {
 			EX_TREEVIEW_NODEITEM* child = item->pChildFirst;
 			while (child) {
 				EX_TREEVIEW_NODEITEM* tmp = child->pNext;
-				_tv_freeitem(pObj, child, TRUE, FALSE);
+				_treeview_freeitem(pObj, child, TRUE, FALSE);
 				child = tmp;
 			}
 		}
 		_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, pObj->hObj_, pObj->id_, TVN_DELETEITEM, 0, (size_t)item);
-		_tv_updateitem(pObj);
+		_treeview_updateitem(pObj);
 		if (item->lpTitle) {
 			Ex_MemFree((LPVOID)item->lpTitle);
 		}
@@ -330,7 +330,7 @@ void _tv_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child , BOOL del
 	}
 }
 
-EX_TREEVIEW_NODEITEM* _tv_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item, BOOL widechar) {
+EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item, BOOL widechar) {
 	LPCWSTR title;
 	if (!widechar) {
 		A2W_Addr((LPVOID)item->tzText, (LPVOID*)&title, 0, 0, 0);
@@ -338,35 +338,35 @@ EX_TREEVIEW_NODEITEM* _tv_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item, 
 	else {
 		title = item->tzText;
 	}
-	EX_TREEVIEW_NODEITEM* tvitem = _tv_newitem(pObj, title, item->itemParent, item->itemInsertAfter, item->nID, FALSE);
+	EX_TREEVIEW_NODEITEM* tvitem = _treeview_newitem(pObj, title, item->itemParent, item->itemInsertAfter, item->nID, FALSE);
 	if (tvitem) {
 		tvitem->lParam = item->lParam;
 		tvitem->nImageIndex = item->nImageIndex;
 		tvitem->nImageIndexExpand = item->nImageIndexExpand;
 		tvitem->fExpand = item->fExpand;
 		tvitem->dwStyle = item->dwStyle;
-		_tv_updateitem(pObj);
+		_treeview_updateitem(pObj);
 		if (!item->fUpdateLater) {
 			INT tmp = 0;
-			INT count = _tv_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0), &tmp);
+			INT count = _treeview_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM), &tmp);
 			_obj_sendmessage(_obj_gethWnd(pObj), pObj->hObj_, pObj, LVM_SETITEMCOUNT, count, 2, 0);
 		}
 	}
 	return tvitem;
 }
 
-EX_TREEVIEW_NODEITEM* _tv_getnodefromindex(obj_s* pObj, INT index) {
+EX_TREEVIEW_NODEITEM* _treeview_getnodefromindex(obj_s* pObj, INT index) {
 	listview_s* list = (listview_s*)_obj_pOwner(pObj);
 	if (index >= list->index_start_ && index <= list->index_end_) {
-		return (EX_TREEVIEW_NODEITEM*)Array_GetMember((array_s*)_obj_getExtraLong(pObj, 1), index - list->index_start_ + 1);
+		return (EX_TREEVIEW_NODEITEM*)Array_GetMember((array_s*)_obj_getExtraLong(pObj, ETVL_ITEMARRAY), index - list->index_start_ + 1);
 	}
 	return NULL;
 }
 
-BOOL _tv_generatelist(obj_s* pObj, BOOL bForce) {
+BOOL _treeview_generatelist(obj_s* pObj, BOOL bForce) {
 	listview_s* list = (listview_s*)_obj_pOwner(pObj);
-	if (_obj_getExtraLong(pObj, 2) != list->index_start_ || _obj_getExtraLong(pObj, 3) != list->index_end_ || bForce) {
-		array_s* pArray = (array_s*)_obj_getExtraLong(pObj, 1);
+	if (_obj_getExtraLong(pObj, ETVL_INDEXSTART) != list->index_start_ || _obj_getExtraLong(pObj, ETVL_INDEXEND) != list->index_end_ || bForce) {
+		array_s* pArray = (array_s*)_obj_getExtraLong(pObj, ETVL_ITEMARRAY);
 		INT len = list->index_end_ - list->index_start_;
 		if (len) {
 			len++;
@@ -375,9 +375,9 @@ BOOL _tv_generatelist(obj_s* pObj, BOOL bForce) {
 		else {
 			Array_Resize(pArray, 0, 0);
 		}
-		EX_TREEVIEW_NODEITEM* root = (EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0);
+		EX_TREEVIEW_NODEITEM* root = (EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM);
 		INT tmp = 0;
-		EX_TREEVIEW_NODEITEM* item = _tv_getitembyindex(root, list->index_start_, &tmp);
+		EX_TREEVIEW_NODEITEM* item = _treeview_getitembyindex(root, list->index_start_, &tmp);
 		if (!item) {
 			return FALSE;
 		}
@@ -388,19 +388,19 @@ BOOL _tv_generatelist(obj_s* pObj, BOOL bForce) {
 				break;
 			}
 			Array_SetMember(pArray, i, (size_t)item);
-			item = _tv_getnextvisibleitem(item);
+			item = _treeview_getnextvisibleitem(item);
 		}
-		_obj_setExtraLong(pObj, 2, list->index_start_);
-		_obj_setExtraLong(pObj, 3, list->index_end_);
+		_obj_setExtraLong(pObj, ETVL_INDEXSTART, list->index_start_);
+		_obj_setExtraLong(pObj, ETVL_INDEXEND, list->index_end_);
 		return TRUE;
 	}
 	return FALSE;
 }
 
-void _tv_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
+void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
 	EX_CUSTOMDRAW* ps = (EX_CUSTOMDRAW*)lParam->lParam;
 	listview_s* pList = (listview_s*)_obj_pOwner(pObj);
-	array_s* pArray = (array_s*)_obj_getExtraLong(pObj, 1);
+	array_s* pArray = (array_s*)_obj_getExtraLong(pObj, ETVL_ITEMARRAY);
 	INT index = ps->iItem - pList->index_start_ + 1;
 	EX_TREEVIEW_NODEITEM* item = (EX_TREEVIEW_NODEITEM*)Array_GetMember(pArray, index);
 	_canvas_setantialias(ps->hCanvas, 0);
@@ -408,7 +408,7 @@ void _tv_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
 		ps->iItemParam = (size_t)item; // TODO: x64
 		if (!_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, pObj->hObj_, pObj->id_, TVN_DRAWITEM, index, (size_t)ps)) {
 			RECT rect;
-			rect.left = ps->rcPaint.left + Ex_Scale(5) + item->nDepth * _obj_getExtraLong(pObj, 4);
+			rect.left = ps->rcPaint.left + Ex_Scale(5) + item->nDepth * _obj_getExtraLong(pObj, ETVL_INDENT);
 			rect.right = rect.left + Ex_Scale(8);
 			rect.top = (ps->rcPaint.bottom + ps->rcPaint.top - Ex_Scale(8)) / 2;
 			rect.bottom = (ps->rcPaint.bottom + ps->rcPaint.top + Ex_Scale(8)) / 2;
@@ -474,7 +474,7 @@ void _tv_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
 				while (parent && tmp) {
 					if (tmp->pParent) {
 						if (tmp->pParent->pNext) {
-							INT left = ps->rcPaint.left + Ex_Scale(9) + tmp->pParent->nDepth * _obj_getExtraLong(pObj, 4);
+							INT left = ps->rcPaint.left + Ex_Scale(9) + tmp->pParent->nDepth * _obj_getExtraLong(pObj, ETVL_INDENT);
 							_canvas_drawline(ps->hCanvas, brush,
 								left,
 								rect.top,
@@ -514,7 +514,7 @@ void _tv_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
 			if (!nImageIndex) {
 				nImageIndex = item->nImageIndex;
 			}
-			LPVOID imageList = (LPVOID)_obj_getExtraLong(pObj, 5);
+			LPVOID imageList = (LPVOID)_obj_getExtraLong(pObj, ETVL_HIMAGELIST);
 			if (imageList) {
 				if (nImageIndex) {
 					rect.left = rect.right + Ex_Scale(5);
@@ -529,10 +529,10 @@ void _tv_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
 	}
 }
 
-EX_TREEVIEW_NODEITEM* _tv_hittest(obj_s* pObj, POINT pt, INT* pType) {
+EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType) {
 	listview_s* pList = (listview_s*)_obj_pOwner(pObj);
 	INT cur = pList->index_mouse_ - pList->index_start_ + 1;
-	array_s* pArray = (array_s*)_obj_getExtraLong(pObj, 1);
+	array_s* pArray = (array_s*)_obj_getExtraLong(pObj, ETVL_ITEMARRAY);
 
 	EX_TREEVIEW_NODEITEM* pItem = NULL;
 
@@ -546,14 +546,14 @@ EX_TREEVIEW_NODEITEM* _tv_hittest(obj_s* pObj, POINT pt, INT* pType) {
 			pt.y -= rect.top;
 			RECT tmp = { 0 };
 			tmp.left = rect.left;
-			tmp.right = rect.left + pItem->nDepth * _obj_getExtraLong(pObj, 4) + 5;
+			tmp.right = rect.left + pItem->nDepth * _obj_getExtraLong(pObj, ETVL_INDENT) + 5;
 			tmp.top = rect.top;
 			tmp.bottom = rect.bottom;
 			if (PtInRect(&tmp, pt)) {
 				hitType = 8;
 			}
 			else {
-				tmp.left = Ex_Scale(5) + pItem->nDepth * _obj_getExtraLong(pObj, 4);
+				tmp.left = Ex_Scale(5) + pItem->nDepth * _obj_getExtraLong(pObj, ETVL_INDENT);
 				tmp.right = tmp.left + Ex_Scale(8);
 				tmp.top = (rect.bottom - rect.top - Ex_Scale(8)) / 2;
 				tmp.bottom = (rect.bottom - rect.top + Ex_Scale(8)) / 2;
@@ -602,7 +602,7 @@ EX_TREEVIEW_NODEITEM* _tv_hittest(obj_s* pObj, POINT pt, INT* pType) {
 }
 
 
-LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
 	obj_s* pObj = NULL;
 	INT nError;
 	if (!_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
@@ -614,84 +614,74 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		if (hObj == ((EX_NMHDR*)lParam)->hObjFrom) {
 			INT nCode = ((EX_NMHDR*)lParam)->nCode;
 			if (nCode == NM_CALCSIZE) {
-				_tv_calcsize(pObj, (EX_NMHDR*)lParam);
+				_treeview_calcsize(pObj, (EX_NMHDR*)lParam);
 				break;
 			}
 			if (nCode == NM_CUSTOMDRAW) {
-				_tv_generatelist(pObj, FALSE);
-				_tv_drawitem(pObj, (EX_NMHDR*)lParam);
+				_treeview_generatelist(pObj, FALSE);
+				_treeview_drawitem(pObj, (EX_NMHDR*)lParam);
 			}
 		}
 		break;
 	case WM_CREATE:
-		_obj_setExtraLong(pObj, 4, Ex_Scale(10));
-		_obj_setExtraLong(pObj, 6, Ex_Scale(20));
-		_obj_setExtraLong(pObj, 1, (size_t)Array_Create(0));
+		_obj_setExtraLong(pObj, ETVL_INDENT, Ex_Scale(10));
+		_obj_setExtraLong(pObj, ETVL_ITEMHEIGHT, Ex_Scale(20));
+		_obj_setExtraLong(pObj, ETVL_ITEMARRAY, (size_t)Array_Create(0));
 		break;
 	case WM_DESTROY:
 	{
-		Array_Destroy((array_s*)_obj_getExtraLong(pObj, 1));
-		EX_TREEVIEW_NODEITEM* pItem = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, 0, 0);
+		Array_Destroy((array_s*)_obj_getExtraLong(pObj, ETVL_ITEMARRAY));
+		EX_TREEVIEW_NODEITEM* pItem = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, ETVL_NODEITEM, 0);
 		while (pItem) {
 			EX_TREEVIEW_NODEITEM* next = pItem->pNext;
-			_tv_freeitem(pObj, pItem, TRUE, FALSE);
+			_treeview_freeitem(pObj, pItem, TRUE, FALSE);
 			pItem = next;
 		}
-		LPVOID hImgList = (LPVOID)_obj_getExtraLong(pObj, 5);
+		LPVOID hImgList = (LPVOID)_obj_getExtraLong(pObj, ETVL_HIMAGELIST);
 		if (hImgList) {
 			_imglist_destroy(hImgList);
 		}
 		break;
 	}
-	case TVM_INSERTITEMW:
-	case 4352: // 这个应该是 TVM_INSERTITEMA
-		return (size_t)_tv_insertitem(pObj, (EX_TREEVIEW_INSERTINFO*)lParam, uMsg == TVM_INSERTITEMW);
+	case TVM_INSERTITEM:
+		return (size_t)_treeview_insertitem(pObj, (EX_TREEVIEW_INSERTINFO*)lParam, uMsg == TVM_INSERTITEM);
 	case TVM_DELETEITEM:
 	{
 		BOOL bDeleted = FALSE;
 		if (lParam == TVI_ROOT || !lParam) {
-			EX_TREEVIEW_NODEITEM* pItem = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, 0, 0);
+			EX_TREEVIEW_NODEITEM* pItem = (EX_TREEVIEW_NODEITEM*)_obj_setExtraLong(pObj, ETVL_NODEITEM, 0);
 			while (pItem) {
 				EX_TREEVIEW_NODEITEM* next = pItem->pNext;
-				_tv_freeitem(pObj, pItem, TRUE, FALSE);
+				_treeview_freeitem(pObj, pItem, TRUE, FALSE);
 				pItem = next;
 				bDeleted = TRUE;
 			}
 		}
 		else {
-			_tv_freeitem(pObj, (EX_TREEVIEW_NODEITEM*)lParam, TRUE, TRUE);
+			_treeview_freeitem(pObj, (EX_TREEVIEW_NODEITEM*)lParam, TRUE, TRUE);
 			bDeleted = TRUE;
 		}
 		if (bDeleted && wParam) {
 			INT tmp = 0;
-			INT count = _tv_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0), &tmp);
+			INT count = _treeview_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM), &tmp);
 			_obj_sendmessage(_obj_gethWnd(pObj), hObj, pObj, LVM_SETITEMCOUNT, count, 2, 0);
-			_tv_generatelist(pObj, TRUE);
+			_treeview_generatelist(pObj, TRUE);
 		}
 		return bDeleted;
 	}
-	case TVM_GETITEMW:
-	case 4364:
+	case TVM_GETITEM:
 		if (wParam) {
-			RtlMoveMemory((LPVOID)lParam, (LPVOID)wParam, 28);
+			RtlMoveMemory((LPVOID)lParam, (LPVOID)wParam, sizeof(EX_TREEVIEW_ITEMINFO));
 			return TRUE;
 		}
 		return FALSE;
-	case TVM_SETITEMW:
-	case 4365: // lParam is EX_TREEVIEW_ITEMINFO
+	case TVM_SETITEM: // lParam is EX_TREEVIEW_ITEMINFO
 	{
 		if (wParam) {
-			RtlMoveMemory((LPVOID)wParam, (LPVOID)lParam, 28);
+			RtlMoveMemory((LPVOID)wParam, (LPVOID)lParam, sizeof(EX_TREEVIEW_ITEMINFO));
 			EX_TREEVIEW_NODEITEM* itemInfo = (EX_TREEVIEW_NODEITEM*)wParam;
-			if (uMsg == 4365) {
-				LPCWSTR tmp = NULL;
-				A2W_Addr((LPVOID)itemInfo->lpTitle, (LPVOID*)&tmp, 0, 0, 0);
-				itemInfo->lpTitle = tmp;
-			}
-			else {
-				itemInfo->lpTitle = StrDupW(itemInfo->lpTitle);
-			}
-			_tv_updateitem(pObj);
+			itemInfo->lpTitle = StrDupW(itemInfo->lpTitle);
+			_treeview_updateitem(pObj);
 			return TRUE;
 		}
 		return FALSE;
@@ -700,7 +690,7 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		if (wParam) {
 			Ex_MemFree((LPVOID)((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle);
 			((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle = StrDupW((LPCWSTR)lParam);
-			_tv_updateitem(pObj);
+			_treeview_updateitem(pObj);
 			return TRUE;
 		}
 		return FALSE;
@@ -714,13 +704,13 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		BOOL result = FALSE;
 		if (lParam) {
 			INT count = 0;
-			result = _tv_expanditem(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
+			result = _treeview_expanditem(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
 			if (result) {
 				INT tmp = 0;
-				count = _tv_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0), &tmp);
+				count = _treeview_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM), &tmp);
 				_obj_baseproc(hWnd, hObj, pObj, LVM_SETITEMCOUNT, count, 0);
 			}
-			count = _tv_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
+			count = _treeview_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
 			if (count > 0) {
 				return _obj_baseproc(hWnd, hObj, pObj, LVM_ENSUREVISIBLE, 0, count);
 			}
@@ -736,11 +726,11 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 					pItem->fExpand = wParam;
 					Ex_ObjDispatchNotify(hObj, TVN_ITEMEXPANDED, wParam, lParam);
 					INT tmp = 0;
-					INT count = _tv_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0), &tmp);
-					_tv_generatelist(pObj, TRUE);
-					_tv_updateitem(pObj);
+					INT count = _treeview_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM), &tmp);
+					_treeview_generatelist(pObj, TRUE);
+					_treeview_updateitem(pObj);
 					_obj_baseproc(hWnd, hObj, pObj, LVM_SETITEMCOUNT, count, 2);
-					count = _tv_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
+					count = _treeview_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
 					_obj_baseproc(hWnd, hObj, pObj, LVM_ENSUREVISIBLE, count, 0);
 				}
 			}
@@ -750,7 +740,7 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 	case TVM_SELECTITEM:
 	{
 		if (lParam) {
-			INT count = _tv_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
+			INT count = _treeview_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
 			_obj_baseproc(hWnd, hObj, pObj, LVM_SETSELECTIONMARK, 1, count);
 		}
 		else {
@@ -760,7 +750,7 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 	}
 	case TVM_GETITEMRECT:
 	{
-		INT count = _tv_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)wParam);
+		INT count = _treeview_getitemindex(pObj, (EX_TREEVIEW_NODEITEM*)wParam);
 		if (count > 0) {
 			_obj_baseproc(hWnd, hObj, pObj, LVM_GETITEMRECT, count, lParam);
 			return TRUE;
@@ -768,32 +758,32 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		return FALSE;
 	}
 	case TVM_GETNEXTITEM:
-		return (size_t)_tv_getnextitem(pObj, (EX_TREEVIEW_NODEITEM*)lParam, wParam);
+		return (size_t)_treeview_getnextitem(pObj, (EX_TREEVIEW_NODEITEM*)lParam, wParam);
 	case TVM_GETCOUNT:
 	case TVM_GETVISIBLECOUNT:
-		return _tv_getvisiblecount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0), FALSE);
+		return _treeview_getvisiblecount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM), FALSE);
 	case TVM_GETINDENT:
-		return _obj_getExtraLong(pObj, 4) / g_Li.DpiX;
+		return _obj_getExtraLong(pObj, ETVL_INDENT) / g_Li.DpiX;
 	case TVM_SETINDENT:
-		_obj_setExtraLong(pObj, 4, Ex_Scale(wParam));
-		_tv_updateitem(pObj);
-		_tv_generatelist(pObj, TRUE);
+		_obj_setExtraLong(pObj, ETVL_INDENT, Ex_Scale(wParam));
+		_treeview_updateitem(pObj);
+		_treeview_generatelist(pObj, TRUE);
 		Ex_ObjInvalidateRect(hObj, 0);
 		break;
 	case TVM_UPDATE:
 	{
 		INT tmp = 0;
-		INT count = _tv_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, 0), &tmp);
+		INT count = _treeview_itemcount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM), &tmp);
 		_obj_sendmessage(hWnd, hObj, pObj, LVM_SETITEMCOUNT, count, 2, 0);
-		_tv_generatelist(pObj, TRUE);
+		_treeview_generatelist(pObj, TRUE);
 		return NULL;
 	}
 	case TVM_HITTEST:
-		return (size_t)_tv_hittest(pObj, { LOWORD(lParam), HIWORD(lParam) }, (INT*)wParam);
+		return (size_t)_treeview_hittest(pObj, { LOWORD(lParam), HIWORD(lParam) }, (INT*)wParam);
 	case WM_LBUTTONDOWN:
 	{
 		INT hitType = 0;
-		EX_TREEVIEW_NODEITEM* pItem = _tv_hittest(pObj, { LOWORD(lParam), HIWORD(lParam) }, &hitType);
+		EX_TREEVIEW_NODEITEM* pItem = _treeview_hittest(pObj, { LOWORD(lParam), HIWORD(lParam) }, &hitType);
 		if (pItem && hitType == 64) {
 			_obj_baseproc(hWnd, hObj, pObj, TVM_EXPAND, !pItem->fExpand, (size_t)pItem);
 		}
@@ -801,7 +791,7 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 	}
 	case TVM_SETIMAGELIST:
 	{
-		LPVOID pImgList = (LPVOID)_obj_setExtraLong(pObj, 5, lParam);
+		LPVOID pImgList = (LPVOID)_obj_setExtraLong(pObj, ETVL_HIMAGELIST, lParam);
 		if (pImgList) {
 			_imglist_destroy(pImgList);
 		}
@@ -809,35 +799,35 @@ LRESULT CALLBACK _tv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		{
 			INT height = 0;
 			_imglist_size((LPVOID)lParam, NULL, &height);
-			_obj_setExtraLong(pObj, 6, height);
-			_tv_updateitem(pObj);
+			_obj_setExtraLong(pObj, ETVL_ITEMHEIGHT, height);
+			_treeview_updateitem(pObj);
 			_obj_sendmessage(hWnd, hObj, pObj, WM_SIZE, 0, MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
 		}
 		Ex_ObjInvalidateRect(hObj, 0);
 		return NULL;
 	}
 	case TVM_GETIMAGELIST:
-		return _obj_getExtraLong(pObj, 6);
+		return _obj_getExtraLong(pObj, ETVL_HIMAGELIST);
 	case TVM_SETITEMHEIGHT:
 		lParam = Ex_Scale(lParam);
-		if (_obj_setExtraLong(pObj, 6, lParam) != lParam) {
+		if (_obj_setExtraLong(pObj, ETVL_ITEMHEIGHT, lParam) != lParam) {
 			_obj_sendmessage(hWnd, hObj, pObj, WM_SIZE, 0, MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
 		}
 		Ex_ObjInvalidateRect(hObj, 0);
 		return NULL;
 	case TVM_GETITEMHEIGHT:
-		return (_obj_getExtraLong(pObj, 6) / g_Li.DpiX);
+		return (_obj_getExtraLong(pObj, ETVL_ITEMHEIGHT) / g_Li.DpiX);
 	case TVM_GETNODEFROMINDEX:
-		return (size_t)_tv_getnodefromindex(pObj, wParam);
+		return (size_t)_treeview_getnodefromindex(pObj, wParam);
 	}
 	return Ex_ObjCallProc(_tv_lpfn, hWnd, hObj, uMsg, wParam, lParam);
 }
 
-void _TreeView_register()
+void _treeview_register()
 {
 	EX_CLASSINFO class_list = { 0 };
 	INT nError = 0;
 	Ex_ObjGetClassInfoEx((LPCWSTR)ATOM_LISTVIEW, &class_list);
 	_tv_lpfn = class_list.pfnClsProc;
-	_obj_register(ATOM_TREEVIEW, ETS_SHOWADDANDSUB | ETS_SHOWCABLE | EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL, class_list.dwStyleEx, class_list.dwTextFormat, 8 * sizeof(size_t), NULL, _tv_proc, class_list.dwFlags, &nError);
+	_obj_register(ATOM_TREEVIEW, ETS_SHOWADDANDSUB | ETS_SHOWCABLE | EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL, class_list.dwStyleEx, class_list.dwTextFormat, 8 * sizeof(size_t), NULL, _treeview_proc, class_list.dwFlags, &nError);
 }

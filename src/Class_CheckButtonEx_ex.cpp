@@ -2,7 +2,7 @@
 
 ClsPROC m_pfnCheckButtonProc;/*控件基类的消息回调函数*/
 
-void _CheckButtonEx_register()
+void _checkbuttonex_register()
 {
 	EX_CLASSINFO	pClsInfoCheckButton;
 
@@ -18,11 +18,11 @@ void _CheckButtonEx_register()
 
 	/* 3、注册新控件*/
 	WCHAR	newwzCls[] = L"CheckButtonEx";
-	Ex_ObjRegister(newwzCls, pClsInfoCheckButton.dwStyle, pClsInfoCheckButton.dwStyleEx, pClsInfoCheckButton.dwTextFormat, NULL, pClsInfoCheckButton.hCursor, pClsInfoCheckButton.dwFlags, _CheckButtonEx_proc);
+	Ex_ObjRegister(newwzCls, pClsInfoCheckButton.dwStyle, pClsInfoCheckButton.dwStyleEx, pClsInfoCheckButton.dwTextFormat, NULL, pClsInfoCheckButton.hCursor, pClsInfoCheckButton.dwFlags, _checkbuttonex_proc);
 }
 
 
-LRESULT CALLBACK _CheckButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
 	switch (uMsg)
@@ -43,7 +43,7 @@ LRESULT CALLBACK _CheckButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	case WM_PAINT:
 	{
-		return(_CheckButtonEx_paint(hObj));
+		return(_checkbuttonex_paint(hObj));
 	}
 	case WM_MOUSEHOVER:
 	{
@@ -81,7 +81,7 @@ LRESULT CALLBACK _CheckButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	return(Ex_ObjCallProc(m_pfnCheckButtonProc, hWnd, hObj, uMsg, wParam, lParam));
 }
 
-INT _CheckButtonEx_paint(HEXOBJ hObj)
+INT _checkbuttonex_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量

@@ -1,12 +1,12 @@
 #include "Class_ProgressBar_ex.h"
 
-void _ProgressBar_register()
+void _progressbar_register()
 {
 	WCHAR	wzCls[] = L"ProgressBar";
-	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED | EOS_EX_FOCUSABLE, NULL, 5 * sizeof(size_t), NULL, NULL, _ProgressBar_proc);
+	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED | EOS_EX_FOCUSABLE, NULL, 5 * sizeof(size_t), NULL, NULL, _progressbar_proc);
 }
 
-LRESULT CALLBACK _ProgressBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _progressbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg== WM_CREATE)
 	{
@@ -52,13 +52,13 @@ LRESULT CALLBACK _ProgressBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	}
 	else if (uMsg == WM_PAINT)
 	{
-		_ProgressBar_paint(hObj);
+		_progressbar_paint(hObj);
 		return 0;
 	}
 	return(Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam));
 }
 
-void _ProgressBar_paint(HEXOBJ hObj)
+void _progressbar_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT2 ps;
 	if (Ex_ObjBeginPaint(hObj, &ps))

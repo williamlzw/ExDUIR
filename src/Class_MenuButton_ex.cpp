@@ -1,6 +1,6 @@
 #include "Class_MenuButton_ex.h"
 
-void _MenuButton_regsiter()
+void _menubutton_regsiter()
 {
 	Ex_ObjRegister(L"MenuButton", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _menubutton_proc);
 }
@@ -15,8 +15,8 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 	obj_s* pObj2;
 	HWND currentWnd;
 	HEXOBJ hObj = 0;
-
-	if (uMsg == 485 && LODWORD(wParam) == -1)
+	
+	if (uMsg == MN_SELECTITEM && LODWORD(wParam) == -1)
 	{
 		if (_handle_validate(hExDUI, HT_DUI, (LPVOID*)&pWnd, &nError))
 		{
@@ -53,7 +53,7 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 			if (pObj->objParent_ == pObj2->objParent_ && pObj->dwUserData_ == pObj2->dwUserData_)
 			{
 				EndMenu();
-				_obj_postmessage(currentWnd, hObj, pObj, 123321, (size_t)pObj->dwUserData_, 0, 0);
+				_obj_postmessage(currentWnd, hObj, pObj, MN_DOWNITEM, (size_t)pObj->dwUserData_, 0, 0);
 			}
 		}
 	}
@@ -107,7 +107,7 @@ LRESULT CALLBACK _menubutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			break;
 		case WM_LBUTTONDOWN:
 			_obj_setuistate(pObj, STATE_DOWN, FALSE, NULL, TRUE, NULL);
-			_obj_postmessage(hWnd, hObj, pObj, 123321, (size_t)pObj->dwUserData_, pObj->lParam_, NULL);
+			_obj_postmessage(hWnd, hObj, pObj, MN_DOWNITEM, (size_t)pObj->dwUserData_, pObj->lParam_, NULL);
 			break;
 		case WM_LBUTTONUP:
 			_obj_setuistate(pObj, STATE_DOWN, TRUE, NULL, TRUE, NULL);
@@ -115,7 +115,7 @@ LRESULT CALLBACK _menubutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		case WM_ERASEBKGND:
 			return 1;
 		default:
-			if (uMsg == 123321 && wParam == (size_t)pObj->dwUserData_)
+			if (uMsg == MN_DOWNITEM && wParam == (size_t)pObj->dwUserData_)
 			{
 				if (!lParam)
 					lParam = pObj->lParam_;

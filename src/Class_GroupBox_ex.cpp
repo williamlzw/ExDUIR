@@ -1,6 +1,6 @@
 #include "Class_GroupBox_ex.h"
 
-void _GroupBox_regsiter()
+void _groupbox_regsiter()
 {
 	Ex_ObjRegister(L"GroupBox", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_LEFT | DT_TOP | DT_SINGLELINE, 3 * sizeof(size_t), 0,0, _groupbox_proc);
 }

@@ -1,6 +1,6 @@
 #include "Class_Static_SysLink_ex.h"
 
-void _Static_register()
+void _static_register()
 {
 	Ex_ObjRegister(L"Static", EOS_VISIBLE, EOS_EX_TRANSPARENT, DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE, 0, 0, 0, _static_proc);
 }

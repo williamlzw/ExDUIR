@@ -4,7 +4,7 @@ ClsPROC m_pfnCheckBoxProc;/*控件基类的消息回调函数*/
 
 
 
-void _Checkbox_register()
+void _checkbox_register()
 {
 	EX_CLASSINFO	pClsInfoCheckButton;
 

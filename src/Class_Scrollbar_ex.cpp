@@ -1,11 +1,11 @@
 #include "Class_Scrollbar_ex.h"
 
-void _Scrollbar_register()
+void _scrollbar_register()
 {
-	Ex_ObjRegister(L"Scrollbar", ESS_RIGHTBOTTOMALIGN | ESS_CONTROLBUTTON | EOS_VISIBLE, 0, 0, 0, 0, 0, _sb_proc);
+	Ex_ObjRegister(L"Scrollbar", ESS_RIGHTBOTTOMALIGN | ESS_CONTROLBUTTON | EOS_VISIBLE, 0, 0, 0, 0, 0, _scrollbar_proc);
 }
 
-size_t _sb_parentnotify(HWND hWnd, obj_s* pObj, WPARAM wParam, LPARAM lParam, INT uMsg, BOOL bDispatch)
+size_t _scrollbar_parentnotify(HWND hWnd, obj_s* pObj, WPARAM wParam, LPARAM lParam, INT uMsg, BOOL bDispatch)
 {
 	HEXOBJ hParent = pObj->objParent_;
 	obj_s* lpParent = nullptr;
@@ -28,7 +28,7 @@ size_t _sb_parentnotify(HWND hWnd, obj_s* pObj, WPARAM wParam, LPARAM lParam, IN
 	return ret;
 }
 
-INT _sb_pos2point(HWND hWnd, obj_s* pObj, si_s* psi, INT* nPos, BOOL bVert, INT* cxy)
+INT _scrollbar_postopoint(HWND hWnd, obj_s* pObj, si_s* psi, INT* nPos, BOOL bVert, INT* cxy)
 {
 	INT l = psi->rcRegion_left_;
 	INT t = psi->rcRegion_top_;
@@ -67,7 +67,7 @@ INT _sb_pos2point(HWND hWnd, obj_s* pObj, si_s* psi, INT* nPos, BOOL bVert, INT*
 	return point;
 }
 
-HEXOBJ _sb_getscroll(obj_s* pObj, INT nBar)
+HEXOBJ _scrollbar_getscroll(obj_s* pObj, INT nBar)
 {
 	HEXOBJ ret = 0;
 	if (nBar == SB_HORZ)
@@ -85,10 +85,10 @@ HEXOBJ _sb_getscroll(obj_s* pObj, INT nBar)
 	return ret;
 }
 
-void _sb_calcthumb(HWND hWnd, obj_s* pObj, si_s* psi, BOOL bVScroll)
+void _scrollbar_calcthumb(HWND hWnd, obj_s* pObj, si_s* psi, BOOL bVScroll)
 {
 	INT cxy = 0;
-	INT point = _sb_pos2point(hWnd, pObj, psi, &(psi->nPos_), bVScroll, &cxy);
+	INT point = _scrollbar_postopoint(hWnd, pObj, psi, &(psi->nPos_), bVScroll, &cxy);
 	if (bVScroll)
 	{
 		psi->rcThumb_left_ = psi->rcRegion_left_;
@@ -104,7 +104,7 @@ void _sb_calcthumb(HWND hWnd, obj_s* pObj, si_s* psi, BOOL bVScroll)
 	}
 }
 
-INT _sb_realsetinfo(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT Mask, INT nMin, INT nMax, INT nPage, INT nPos, BOOL bRedraw)
+INT _scrollbar_realsetinfo(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT Mask, INT nMin, INT nMax, INT nPage, INT nPos, BOOL bRedraw)
 {
 	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	if ((Mask & SIF_POS) != 0)
@@ -121,11 +121,11 @@ INT _sb_realsetinfo(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT Mask, INT nMin, INT
 		psi->nMax_ = nMax;
 	}
 	INT nPosOrg = psi->nPos_;
-	_sb_calcthumb(hWnd, pObj, psi, ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL));
+	_scrollbar_calcthumb(hWnd, pObj, psi, ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL));
 	nPos = psi->nPos_;
 	if (nPos != nPosOrg)
 	{
-		_sb_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBPOSITION, nPos), 0, 0, FALSE);
+		_scrollbar_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBPOSITION, nPos), 0, 0, FALSE);
 	}
 	if (bRedraw)
 	{
@@ -135,7 +135,7 @@ INT _sb_realsetinfo(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT Mask, INT nMin, INT
 	return nPos;
 }
 
-void _sb_init(obj_s* pObj)
+void _scrollbar_init(obj_s* pObj)
 {
 	si_s* psi = (si_s*)_struct_createfromaddr(pObj, offsetof(obj_s, dwOwnerData_), sizeof(si_s), 0);
 	BOOL bVS = FALSE;
@@ -172,12 +172,12 @@ void _sb_init(obj_s* pObj)
 	}
 }
 
-void _sb_uninit(obj_s* pObj)
+void _scrollbar_uninit(obj_s* pObj)
 {
 	_struct_destroyfromaddr(pObj, offsetof(obj_s, dwOwnerData_));
 }
 
-void _sb_nccalcsize(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
+void _scrollbar_nccalcsize(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 {
 	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	BOOL bVScroll = ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL);
@@ -229,10 +229,10 @@ void _sb_nccalcsize(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		psi->rcRegion_bottom_ = rcClient.bottom;
 	}
 	_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_CALCSIZE, 0, (size_t)psi + offsetof(si_s, rcRegion_left_));
-	_sb_calcthumb(hWnd, pObj, psi, bVScroll);
+	_scrollbar_calcthumb(hWnd, pObj, psi, bVScroll);
 }
 
-INT _sb_point2pos(si_s* psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
+INT _scrollbar_pointtopos(si_s* psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
 {
 	RECT rcRegion, rcThumb;
 	rcRegion.left = psi->rcRegion_left_;
@@ -273,7 +273,7 @@ INT _sb_point2pos(si_s* psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
 	return nPos;
 }
 
-void _sb_nchittest(obj_s* pObj, INT x, INT y)
+void _scrollbar_nchittest(obj_s* pObj, INT x, INT y)
 {
 	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	RECT rc{ 0 };
@@ -358,7 +358,7 @@ void _sb_nchittest(obj_s* pObj, INT x, INT y)
 	}
 }
 
-void _sb_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, INT x, INT y)
+void _scrollbar_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, INT x, INT y)
 {
 	if (wParam != 0)
 	{
@@ -366,21 +366,21 @@ void _sb_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, INT x, IN
 		if (psi->httype_ == SBCT_CONTROL)
 		{
 			INT lstPos = psi->nTrackPos_;
-			INT curPos = _sb_point2pos(psi, x, y, ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL), TRUE);
+			INT curPos = _scrollbar_pointtopos(psi, x, y, ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL), TRUE);
 			if (lstPos != curPos)
 			{
 				psi->nTrackPos_ = curPos;
-				if (_sb_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBTRACK, curPos), 0, 0, TRUE) == 0)
+				if (_scrollbar_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBTRACK, curPos), 0, 0, TRUE) == 0)
 				{
 					psi->nPos_ = curPos;
-					_sb_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBPOSITION, curPos), 0, 0, TRUE);
+					_scrollbar_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBPOSITION, curPos), 0, 0, TRUE);
 				}
 			}
 		}
 	}
 }
 
-void CALLBACK _sb_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+void CALLBACK _scrollbar_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	obj_s* pObj = (obj_s*)(idEvent - TIMER_SCROLLBAR);
 	si_s* psi = (si_s*)_obj_pOwner(pObj);
@@ -392,7 +392,7 @@ void CALLBACK _sb_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 	else {
 		nTrack = SB_LINEDOWN;
 	}
-	_sb_parentnotify(hWnd, pObj, MAKELONG(nTrack, 0), pObj->hObj_, 0, TRUE);
+	_scrollbar_parentnotify(hWnd, pObj, MAKELONG(nTrack, 0), pObj->hObj_, 0, TRUE);
 	nTrack = psi->nPos_;
 	if (psi->httype_ == SBCT_ADJUSTBUTTON1)
 	{
@@ -410,7 +410,7 @@ void CALLBACK _sb_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 
 }
 
-void _sb_lbuttondown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
+void _scrollbar_leftbuttondown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 {
 	si_s* psi = (si_s*)_obj_pOwner(pObj);
 	INT httype = psi->httype_;
@@ -449,16 +449,16 @@ void _sb_lbuttondown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 
 		if (nTrack != -1)
 		{
-			_sb_parentnotify(hWnd, pObj, MAKELONG(nTrack, 0), hObj, 0, TRUE);
+			_scrollbar_parentnotify(hWnd, pObj, MAKELONG(nTrack, 0), hObj, 0, TRUE);
 		}
 		if (fTimer)
 		{
-			SetTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR, 200, _sb_timer);
+			SetTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR, 200, _scrollbar_timer);
 		}
 	}
 }
 
-void _sb_lbuttonup(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
+void _scrollbar_leftbuttonup(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 {
 	INT nError = 0;
 	_obj_setuistate(pObj, STATE_DOWN, TRUE, 0, TRUE, &nError);
@@ -467,7 +467,7 @@ void _sb_lbuttonup(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 	KillTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR);
 }
 
-void _sb_oncommand(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam)
+void _scrollbar_oncommand(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam)
 {
 	BOOL fNotify = TRUE;
 	wnd_s* pWnd;
@@ -479,7 +479,7 @@ void _sb_oncommand(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lP
 		si_s* psi = (si_s*)_obj_pOwner(pObj);
 		INT nTrackPosOffset = psi->nTrackPosOffset_;
 		psi->nTrackPosOffset_ = 0;
-		nPos = _sb_point2pos(psi, LOWORD(nTrackPosOffset) - pObj->w_left_ - pWnd->left_, HIWORD(nTrackPosOffset) - pObj->w_top_ - pWnd->top_, ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL), TRUE);
+		nPos = _scrollbar_pointtopos(psi, LOWORD(nTrackPosOffset) - pObj->w_left_ - pWnd->left_, HIWORD(nTrackPosOffset) - pObj->w_top_ - pWnd->top_, ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL), TRUE);
 		psi->nTrackPos_ = nPos;
 		nCode = SB_THUMBPOSITION;
 	}
@@ -512,11 +512,11 @@ void _sb_oncommand(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lP
 	}
 	if (fNotify)
 	{
-		_sb_parentnotify(hWnd, pObj, MAKELONG(nCode, nPos), hObj, 0, TRUE);
+		_scrollbar_parentnotify(hWnd, pObj, MAKELONG(nCode, nPos), hObj, 0, TRUE);
 	}
 }
 
-void _sb_oncontextmenu(HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
+void _scrollbar_oncontextmenu(HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 {
 	HMENU hMenu = ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL) ? g_Li.hMenuVS : g_Li.hMenuHS;
 	hMenu = GetSubMenu(hMenu, 0);
@@ -535,7 +535,7 @@ void _sb_oncontextmenu(HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 	Ex_TrackPopupMenu(hMenu, 0, LOWORD(lParam), HIWORD(lParam), 0, hObj, 0, 0, 0);
 }
 
-INT _sb_paint(HEXOBJ hObj, obj_s* pObj)
+INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)
 {
 	EX_PAINTSTRUCT2 ps;
 	if (Ex_ObjBeginPaint(hObj, (EX_PAINTSTRUCT2*)&ps))
@@ -632,7 +632,7 @@ INT _sb_paint(HEXOBJ hObj, obj_s* pObj)
 	return 0;
 }
 
-void _sb_set_wArrows(HEXOBJ hSB, INT wArrows, BOOL fRedraw)
+void _scrollbar_set_wArrows(HEXOBJ hSB, INT wArrows, BOOL fRedraw)
 {
 	obj_s* pSB = nullptr;
 	INT nError = 0;
@@ -658,7 +658,7 @@ void _sb_set_wArrows(HEXOBJ hSB, INT wArrows, BOOL fRedraw)
 	}
 }
 
-LRESULT CALLBACK _sb_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	INT nError = 0;
 	obj_s* pObj = nullptr;
@@ -666,31 +666,31 @@ LRESULT CALLBACK _sb_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 	{
 		if (uMsg == WM_CREATE)
 		{
-			_sb_init(pObj);
+			_scrollbar_init(pObj);
 		}
 		else if (uMsg == WM_DESTROY)
 		{
-			_sb_uninit(pObj);
+			_scrollbar_uninit(pObj);
 		}
 		else if (uMsg == WM_NCHITTEST)
 		{
-			_sb_nchittest(pObj, LOWORD(lParam), HIWORD(lParam));
+			_scrollbar_nchittest(pObj, LOWORD(lParam), HIWORD(lParam));
 		}
 		else if (uMsg == WM_MOUSEMOVE)
 		{
-			_sb_mousemove(hWnd, hObj, pObj, wParam, LOWORD(lParam), HIWORD(lParam));
+			_scrollbar_mousemove(hWnd, hObj, pObj, wParam, LOWORD(lParam), HIWORD(lParam));
 		}
 		else if (uMsg == WM_SIZE)
 		{
-			_sb_nccalcsize(hWnd, hObj, pObj);
+			_scrollbar_nccalcsize(hWnd, hObj, pObj);
 		}
 		else if (uMsg == WM_PAINT)
 		{
-			return _sb_paint(hObj, pObj);
+			return _scrollbar_paint(hObj, pObj);
 		}
 		else if (uMsg == WM_CONTEXTMENU)
 		{
-			_sb_oncontextmenu(hObj, pObj, lParam);
+			_scrollbar_oncontextmenu(hObj, pObj, lParam);
 		}
 		else if (uMsg == WM_MOUSEHOVER)
 		{
@@ -702,23 +702,23 @@ LRESULT CALLBACK _sb_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == WM_LBUTTONDOWN)
 		{
-			_sb_lbuttondown(hWnd, hObj, pObj, lParam);
+			_scrollbar_leftbuttondown(hWnd, hObj, pObj, lParam);
 		}
 		else if (uMsg == WM_LBUTTONUP)
 		{
-			_sb_lbuttonup(hWnd, hObj, pObj, lParam);
+			_scrollbar_leftbuttonup(hWnd, hObj, pObj, lParam);
 		}
 		else if (uMsg == WM_MOUSEWHEEL || uMsg == WM_HSCROLL || uMsg == WM_VSCROLL)
 		{
-			_sb_parentnotify(hWnd, pObj, wParam, lParam, uMsg, TRUE);
+			_scrollbar_parentnotify(hWnd, pObj, wParam, lParam, uMsg, TRUE);
 		}
 		else if (uMsg == SBM_SETSCROLLINFO)
 		{
-			return _sb_realsetinfo(hWnd, hObj, pObj, __get_int((LPVOID)lParam, 4), __get_int((LPVOID)lParam, 8), __get_int((LPVOID)lParam, 12), __get_int((LPVOID)lParam, 16), __get_int((LPVOID)lParam, 20), wParam != 0);
+			return _scrollbar_realsetinfo(hWnd, hObj, pObj, __get_int((LPVOID)lParam, 4), __get_int((LPVOID)lParam, 8), __get_int((LPVOID)lParam, 12), __get_int((LPVOID)lParam, 16), __get_int((LPVOID)lParam, 20), wParam != 0);
 		}
 		else if (uMsg == SBM_SETPOS)
 		{
-			return _sb_realsetinfo(hWnd, hObj, pObj, SIF_POS, 0, 0, 0, wParam, lParam != 0);
+			return _scrollbar_realsetinfo(hWnd, hObj, pObj, SIF_POS, 0, 0, 0, wParam, lParam != 0);
 		}
 		else if (uMsg == SBM_GETPOS)
 		{
@@ -726,7 +726,7 @@ LRESULT CALLBACK _sb_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == SBM_SETRANGE)
 		{
-			return _sb_realsetinfo(hWnd, hObj, pObj, SIF_RANGE, wParam, lParam, 0, 0, FALSE);
+			return _scrollbar_realsetinfo(hWnd, hObj, pObj, SIF_RANGE, wParam, lParam, 0, 0, FALSE);
 		}
 		else if (uMsg == SBM_GETRANGE)
 		{
@@ -738,7 +738,7 @@ LRESULT CALLBACK _sb_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARA
 		}
 		else if (uMsg == WM_COMMAND)
 		{
-			_sb_oncommand(hWnd, hObj, pObj, wParam, lParam);
+			_scrollbar_oncommand(hWnd, hObj, pObj, wParam, lParam);
 		}
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);

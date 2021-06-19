@@ -1,13 +1,13 @@
 #include "Class_ButtonEx_ex.h"
 
-void _ButtonEx_register()
+void _buttonex_register()
 {
 	WCHAR wzCls[] = L"ButtonEx";
-	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, DT_SINGLELINE | DT_CENTER | DT_VCENTER, 5 * sizeof(size_t), NULL, NULL, _ButtonEx_proc);
+	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, DT_SINGLELINE | DT_CENTER | DT_VCENTER, 5 * sizeof(size_t), NULL, NULL, _buttonex_proc);
 }
 
 
-LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
@@ -18,13 +18,13 @@ LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	}
 	case WM_DESTROY:
 	{
-		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, BEL_IMG_NORMAL));    /* 正常态 */
-		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, BEL_IMG_HOVER));    /* 点燃态 */
-		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, BEL_IMG_DOWNORCHECKED));    /* 按下态 */
-		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, BEL_ICON));    /* 图标 */
+		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_NORMAL));    /* 正常态 */
+		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_HOVER));    /* 点燃态 */
+		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_DOWNORCHECKED));    /* 按下态 */
+		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_ICON));    /* 图标 */
 
 		 /* 九宫矩形 */
-		RECT* pRect = (RECT*)Ex_ObjGetLong(hObj, BEL_RECT);
+		RECT* pRect = (RECT*)Ex_ObjGetLong(hObj, EBEL_RECT);
 		if (pRect != 0)
 		{
 			delete pRect;
@@ -36,7 +36,7 @@ LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	/* 设置图标 */
 	case WM_SETICON:
 	{
-		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, BEL_ICON, lParam);
+		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_ICON, lParam);
 		/* 若有原位图则销毁 */
 		if (hImage != 0)
 		{
@@ -50,15 +50,15 @@ LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	case BM_SETIMAGE:
 	{
 		EX_IMAGEINFO* img = (EX_IMAGEINFO*)lParam;
-		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, BEL_IMG_NORMAL, img->IMG_NORMAL);
-		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, BEL_IMG_HOVER, img->IMG_HOVER);
-		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, BEL_IMG_DOWNORCHECKED, img->IMG_DOWNORCHECKED);
+		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_NORMAL, img->IMG_NORMAL);
+		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_HOVER, img->IMG_HOVER);
+		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_DOWNORCHECKED, img->IMG_DOWNORCHECKED);
 		if (wParam == 100) /* 设置九宫矩形 */
 		{
 			if (lParam != 0)
 			{
 				RECT* pRect = (RECT*)lParam;
-				Ex_ObjSetLong(hObj, BEL_RECT, (size_t)pRect);
+				Ex_ObjSetLong(hObj, EBEL_RECT, (size_t)pRect);
 				if (pRect != 0)
 				{
 					delete pRect;
@@ -103,7 +103,7 @@ LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	}
 	case WM_PAINT:
 	{
-		return(_ButtonEx_paint(hObj));
+		return(_buttonex_paint(hObj));
 	}
 	case WM_EX_PROPS:
 	{
@@ -134,7 +134,7 @@ LRESULT CALLBACK _ButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 }
 
 
-INT _ButtonEx_paint(HEXOBJ hObj)
+INT _buttonex_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量
@@ -159,7 +159,7 @@ INT _ButtonEx_paint(HEXOBJ hObj)
 
 		if ((ps.dwState & STATE_DOWN) == STATE_DOWN)
 		{
-			hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, BEL_IMG_DOWNORCHECKED);
+			hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_DOWNORCHECKED);
 			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_DOWN);
 			crBkg = Ex_ObjGetProp(hObj, 3);
 			crBorder = Ex_ObjGetProp(hObj, 6);
@@ -168,7 +168,7 @@ INT _ButtonEx_paint(HEXOBJ hObj)
 		}
 		else if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
 		{
-			hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, BEL_IMG_HOVER);
+			hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_HOVER);
 			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_HOVER);
 			crBkg = Ex_ObjGetProp(hObj, 2);
 			crBorder = Ex_ObjGetProp(hObj, 5);

@@ -172,7 +172,7 @@ LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj,INT uMsg,WPARAM wParam,LPAR
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-void _Navbtn_register()
+void _navbtn_register()
 {
 	Ex_ObjRegister(L"NAVBUTTON", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 5 * sizeof(size_t), 0, 0, _navbtn_proc);
 }

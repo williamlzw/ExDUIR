@@ -3762,7 +3762,7 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
 			SHORT zDelta = (SHORT)HIWORD(wParam);
 			if (pCls->atomName == ATOM_SCROLLBAR)
 			{
-				_sb_parentnotify(hWnd, pObj, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, hObj, 0, TRUE);
+				_scrollbar_parentnotify(hWnd, pObj, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, hObj, 0, TRUE);
 				return 1;
 			}
 			else if (((pObj->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL))
@@ -3790,7 +3790,7 @@ BOOL Ex_ObjScrollGetInfo(HEXOBJ hObj, INT nBar, INT* lpnMin, INT* lpnMax, INT* l
 	INT nError = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		HEXOBJ hSB = _sb_getscroll(pObj, nBar);
+		HEXOBJ hSB = _scrollbar_getscroll(pObj, nBar);
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 		{
@@ -3837,11 +3837,11 @@ INT Ex_ObjScrollSetPos(HEXOBJ hObj, INT nBar, INT nPos, BOOL bRedraw)
 	INT ret = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		HEXOBJ hSB = _sb_getscroll(pObj, nBar);
+		HEXOBJ hSB = _scrollbar_getscroll(pObj, nBar);
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 		{
-			ret = _sb_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_POS, 0, 0, 0, nPos, bRedraw);
+			ret = _scrollbar_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_POS, 0, 0, 0, nPos, bRedraw);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -3855,11 +3855,11 @@ INT Ex_ObjScrollSetInfo(HEXOBJ hObj, INT nBar, INT Mask, INT nMin, INT nMax, INT
 	INT ret = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		HEXOBJ hSB = _sb_getscroll(pObj, nBar);
+		HEXOBJ hSB = _scrollbar_getscroll(pObj, nBar);
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 		{
-			ret = _sb_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, Mask, nMin, nMax, nPage, nPos, bRedraw);
+			ret = _scrollbar_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, Mask, nMin, nMax, nPage, nPos, bRedraw);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -3873,11 +3873,11 @@ INT Ex_ObjScrollSetRange(HEXOBJ hObj, INT nBar, INT nMin, INT nMax, BOOL bRedraw
 	INT ret = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		HEXOBJ hSB = _sb_getscroll(pObj, nBar);
+		HEXOBJ hSB = _scrollbar_getscroll(pObj, nBar);
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 		{
-			ret = _sb_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_RANGE, nMin, nMax, 0, 0, bRedraw);
+			ret = _scrollbar_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_RANGE, nMin, nMax, 0, 0, bRedraw);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -3891,7 +3891,7 @@ HEXOBJ Ex_ObjScrollGetControl(HEXOBJ hObj, INT nBar)
 	HEXOBJ ret = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		ret = _sb_getscroll(pObj, nBar);
+		ret = _scrollbar_getscroll(pObj, nBar);
 	}
 	Ex_SetLastError(nError);
 	return ret;
@@ -3929,11 +3929,11 @@ BOOL Ex_ObjScrollShow(HEXOBJ hObj, INT wBar, BOOL fShow)
 	{
 		if (wBar == SB_BOTH)
 		{
-			_sb_show(_sb_getscroll(pObj, SB_VERT), fShow);
-			_sb_show(_sb_getscroll(pObj, SB_HORZ), fShow);
+			_sb_show(_scrollbar_getscroll(pObj, SB_VERT), fShow);
+			_sb_show(_scrollbar_getscroll(pObj, SB_HORZ), fShow);
 		}
 		else {
-			_sb_show(_sb_getscroll(pObj, wBar), fShow);
+			_sb_show(_scrollbar_getscroll(pObj, wBar), fShow);
 		}
 	}
 	return nError == 0;
@@ -3947,11 +3947,11 @@ BOOL Ex_ObjScrollEnable(HEXOBJ hObj, INT wSB, INT wArrows)
 	{
 		if (wSB == SB_BOTH)
 		{
-			_sb_set_wArrows(_sb_getscroll(pObj, SB_VERT), wArrows, TRUE);
-			_sb_set_wArrows(_sb_getscroll(pObj, SB_HORZ), wArrows, TRUE);
+			_scrollbar_set_wArrows(_scrollbar_getscroll(pObj, SB_VERT), wArrows, TRUE);
+			_scrollbar_set_wArrows(_scrollbar_getscroll(pObj, SB_HORZ), wArrows, TRUE);
 		}
 		else {
-			_sb_set_wArrows(_sb_getscroll(pObj, wSB), wArrows, TRUE);
+			_scrollbar_set_wArrows(_scrollbar_getscroll(pObj, wSB), wArrows, TRUE);
 		}
 	}
 	return nError == 0;

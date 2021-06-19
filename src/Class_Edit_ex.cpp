@@ -104,11 +104,11 @@ public:
 	//@cmember Show the caret
 	BOOL TxShowCaret(BOOL fShow) {
 		if (fShow) {
-			FLAGS_ADD(m_pOwner->flags_, eef_bShowCaret);
+			FLAGS_ADD(m_pOwner->flags_, EEF_BSHOWCARET);
 			ShowCaret(_obj_gethWnd(m_pOwner->pObj_));
 		}
 		else {
-			FLAGS_DEL(m_pOwner->flags_, eef_bShowCaret);
+			FLAGS_DEL(m_pOwner->flags_, EEF_BSHOWCARET);
 			HideCaret(_obj_gethWnd(m_pOwner->pObj_));
 		}
 		return TRUE;
@@ -119,8 +119,8 @@ public:
 		obj_s* pObj = m_pOwner->pObj_;
 		OffsetRect((LPRECT)&m_pOwner->rcCaret_left_, x, y);
 		if (FLAGS_CHECK(pObj->dwState_, STATE_FOCUS)) {
-			FLAGS_ADD(m_pOwner->flags_, eef_bCaretContext | eef_bShowCaret);
-			FLAGS_DEL(m_pOwner->flags_, eef_bCaretShowed);
+			FLAGS_ADD(m_pOwner->flags_, EEF_BCARETCONTEXT | EEF_BSHOWCARET);
+			FLAGS_DEL(m_pOwner->flags_, EEF_BCARETSHHOWED);
 			_obj_invalidaterect(pObj, (LPRECT)&m_pOwner->rcCaret_left_, 0);
 		}
 		x += pObj->w_left_;
@@ -284,10 +284,10 @@ public:
 			if (iNotify == EN_SELCHANGE) {
 				SELCHANGE* pSelChange = (SELCHANGE*)pv;
 				if (pSelChange->chrg.cpMin == pSelChange->chrg.cpMax) {
-					FLAGS_DEL(m_pOwner->flags_, eef_bSelected);
+					FLAGS_DEL(m_pOwner->flags_, EE_BSELECTED);
 				}
 				else {
-					FLAGS_ADD(m_pOwner->flags_, eef_bSelected);
+					FLAGS_ADD(m_pOwner->flags_, EE_BSELECTED);
 				}
 			}
 		}
@@ -308,7 +308,7 @@ public:
 	};
 };
 
-void _Edit_register()
+void _edit_register()
 {
 	Ex_ObjRegister(L"Edit", EOS_VISIBLE, EOS_EX_COMPOSITED | EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE, 0, LoadCursorW(0, MAKEINTRESOURCEW(32513)), ECF_D2D_GDI_COMPATIBLE, _edit_proc);
 }
@@ -553,13 +553,13 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 void CALLBACK _edit_timer_caret(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
 	obj_s* pObj = (obj_s*)(idEvent - TIMER_EDIT_CARET);
 	edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
-	if ((pOwner->flags_ & eef_bCaretContext) == eef_bCaretContext) {
-		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & eef_bCaretContext);
-		pOwner->flags_ = pOwner->flags_ | eef_bCaretShowed;
+	if ((pOwner->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT) {
+		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EEF_BCARETCONTEXT);
+		pOwner->flags_ = pOwner->flags_ | EEF_BCARETSHHOWED;
 	}
 	else {
-		pOwner->flags_ = pOwner->flags_ | (eef_bShowCaret | eef_bCaretContext);
-		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & eef_bCaretShowed);
+		pOwner->flags_ = pOwner->flags_ | (EEF_BSHOWCARET | EEF_BCARETCONTEXT);
+		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EEF_BCARETSHHOWED);
 	}
 	
 	_obj_invalidaterect(pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), 0);
@@ -736,9 +736,9 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 				// rt->Release();
 			}
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET)) {
-				if (!((((edit_s*)ps.dwOwnerData)->flags_ & eef_bSelected) == eef_bSelected)) {
-					if ((((edit_s*)ps.dwOwnerData)->flags_ & eef_bCaretContext) == eef_bCaretContext) {
-						if (!((((edit_s*)ps.dwOwnerData)->flags_ & eef_bCaretShowed) == eef_bCaretShowed)) {
+				if (!((((edit_s*)ps.dwOwnerData)->flags_ & EE_BSELECTED) == EE_BSELECTED)) {
+					if ((((edit_s*)ps.dwOwnerData)->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT) {
+						if (!((((edit_s*)ps.dwOwnerData)->flags_ & EEF_BCARETSHHOWED) == EEF_BCARETSHHOWED)) {
 							HEXCANVAS sCanvas = ((edit_s*)ps.dwOwnerData)->hCanvasCaret_;
 							rcTmp.left = ((edit_s*)ps.dwOwnerData)->rcCaret_left_;
 							rcTmp.top = ((edit_s*)ps.dwOwnerData)->rcCaret_top_;
@@ -825,8 +825,8 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET)) {
 				KillTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET);
 				edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
-				if ((pOwner->flags_ & (eef_bShowCaret | eef_bCaretContext)) == (eef_bShowCaret | eef_bCaretContext)) {
-					pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & (eef_bShowCaret | eef_bCaretContext));
+				if ((pOwner->flags_ & (EEF_BSHOWCARET | EEF_BCARETCONTEXT)) == (EEF_BSHOWCARET | EEF_BCARETCONTEXT)) {
+					pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & (EEF_BSHOWCARET | EEF_BCARETCONTEXT));
 					_obj_invalidaterect(pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), &nError);
 				}
 			}

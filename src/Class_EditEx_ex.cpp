@@ -2,7 +2,7 @@
 
 ClsPROC m_pfnEditExProc;/*控件基类的消息回调函数*/
 
-void _EditEx_register()
+void _editex_register()
 {
 	EX_CLASSINFO	pClsInfoEdit;
 
@@ -18,11 +18,11 @@ void _EditEx_register()
 
 	/* 3、注册新控件*/
 	WCHAR	newwzCls[] = L"EditEx";
-	Ex_ObjRegister(newwzCls, pClsInfoEdit.dwStyle, EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW | EOS_EX_FOCUSABLE/*pClsInfoEdit.dwStyleEx*/, pClsInfoEdit.dwTextFormat, NULL, pClsInfoEdit.hCursor, pClsInfoEdit.dwFlags, _EditEx_proc);
+	Ex_ObjRegister(newwzCls, pClsInfoEdit.dwStyle, EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW | EOS_EX_FOCUSABLE/*pClsInfoEdit.dwStyleEx*/, pClsInfoEdit.dwTextFormat, NULL, pClsInfoEdit.hCursor, pClsInfoEdit.dwFlags, _editex_proc);
 }
 
 
-LRESULT CALLBACK _EditEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
 	switch (uMsg)

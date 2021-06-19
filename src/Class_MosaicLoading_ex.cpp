@@ -1,16 +1,16 @@
 #include "Class_MosaicLoading_ex.h"
 
-void _Mosaic_Loading_register()
+void _mosaic_loading_register()
 {
 	WCHAR	wzCls[] = L"MosaicLoading";
-	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, 0, 0, 0, 0, _Mosaic_Loading_proc);
+	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, 0, 0, 0, 0, _mosaic_loading_proc);
 }
 
 INT m_ItemIndex = NULL;
 INT m_ItemCount = 8;
 MosaicRect m_ItemArray[8];
 
-LRESULT CALLBACK _Mosaic_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
@@ -21,7 +21,7 @@ LRESULT CALLBACK _Mosaic_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	}
 	case WM_PAINT:
 	{
-		return(_Mosaic_Loading_paint((HEXOBJ)hObj));
+		return(_mosaic_loading_paint((HEXOBJ)hObj));
 	}
 
 	case WM_TIMER:
@@ -65,7 +65,7 @@ LRESULT CALLBACK _Mosaic_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 }
 
 
-INT _Mosaic_Loading_paint(HEXOBJ hObj)
+INT _mosaic_loading_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量

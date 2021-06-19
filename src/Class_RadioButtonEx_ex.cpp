@@ -2,7 +2,7 @@
 
 ClsPROC m_pfnRadioButtonProc;/*控件基类的消息回调函数*/
 
-void _RadioButtonEx_register()
+void _radiobuttonex_register()
 {
 	EX_CLASSINFO	pClsInfoRadioButton;
 
@@ -18,11 +18,11 @@ void _RadioButtonEx_register()
 
 	/* 3、注册新控件*/
 	WCHAR	newwzCls[] = L"RadioButtonEx";
-	Ex_ObjRegister(newwzCls, pClsInfoRadioButton.dwStyle, pClsInfoRadioButton.dwStyleEx, pClsInfoRadioButton.dwTextFormat, 0, pClsInfoRadioButton.hCursor, pClsInfoRadioButton.dwFlags, _RadioButtonEx_proc);
+	Ex_ObjRegister(newwzCls, pClsInfoRadioButton.dwStyle, pClsInfoRadioButton.dwStyleEx, pClsInfoRadioButton.dwTextFormat, 0, pClsInfoRadioButton.hCursor, pClsInfoRadioButton.dwFlags, _radiobuttonex_proc);
 }
 
 
-LRESULT CALLBACK _RadioButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
 	switch (uMsg)
@@ -45,7 +45,7 @@ LRESULT CALLBACK _RadioButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	case WM_PAINT:
 	{
-		return(_RadioButtonEx_paint(hObj));
+		return(_radiobuttonex_paint(hObj));
 	}
 	case WM_MOUSEHOVER:
 	{
@@ -83,7 +83,7 @@ LRESULT CALLBACK _RadioButtonEx_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	return(Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam));
 }
 
-INT _RadioButtonEx_paint(HEXOBJ hObj)
+INT _radiobuttonex_paint(HEXOBJ hObj)
 {
 	/*
 	 * 定义局部变量

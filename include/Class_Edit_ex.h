@@ -3,11 +3,6 @@
 #include "textserv.h"
 #include "DirectX_ex.h"
 
-//const IID IID_ITextServicesA = {
-//	// 8d33f740-cf58-11ce-a89d-00aa006cadc5
-//	0x8d33f740, 0xcf58, 0x11ce, {0xa8, 0x9d, 0x00, 0xaa, 0x00, 0x6c, 0xad, 0xc5}
-//};
-
 typedef HRESULT(_stdcall* CTSFunc)(IUnknown* punkOuter, ITextHost* pITextHost, IUnknown** ppUnk);
 
 #include "help_ex.h"
@@ -48,15 +43,15 @@ struct EX_EDIT_STREAM {
 };
 
 //编辑框标识_显示光标
-#define eef_bShowCaret 1
+#define EEF_BSHOWCARET 1
 //编辑框标识_已显示光标
-#define eef_bCaretShowed 2
+#define EEF_BCARETSHHOWED 2
 //编辑框标识_光标描述表
-#define eef_bCaretContext 4
+#define EEF_BCARETCONTEXT 4
 //编辑框标识_选中
-#define eef_bSelected 8
+#define EE_BSELECTED 8
 
-void _Edit_register();
+void _edit_register();
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
 void _edit_unint(obj_s* pObj);
 void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height);

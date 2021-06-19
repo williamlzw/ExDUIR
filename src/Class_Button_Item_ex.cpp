@@ -1,13 +1,13 @@
 ﻿#include "Class_Button_Item_ex.h"
 
-void _Button_regsiter()
+void _button_regsiter()
 {
 	Ex_ObjRegister(L"Button", EOS_VISIBLE | EBS_TEXTOFFSET, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_CENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
 	Ex_ObjRegister(L"CheckButton", EOS_VISIBLE | EBS_CHECKBUTTON, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
 	Ex_ObjRegister(L"RadioButton", EOS_VISIBLE | EBS_RADIOBUTTON, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
 }
 
-void _Item_regsiter()
+void _item_regsiter()
 {
 	Ex_ObjRegister(L"Item", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _item_proc);
 }

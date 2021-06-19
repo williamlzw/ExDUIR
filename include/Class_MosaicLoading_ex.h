@@ -3,11 +3,11 @@
 
 struct MosaicRect
 {
-	RECT rc;
+	RECT    rc;
 	INT		color;
 	INT		alpha;
 };
 
-void _Mosaic_Loading_register();
-LRESULT CALLBACK _Mosaic_Loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-INT _Mosaic_Loading_paint(HEXOBJ hObj);
+void _mosaic_loading_register();
+LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+INT _mosaic_loading_paint(HEXOBJ hObj);

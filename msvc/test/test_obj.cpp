@@ -989,29 +989,89 @@ LRESULT CALLBACK OnColorButtonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
+void ColorButton2::Create(EXHANDLE handle, INT left, INT top, INT width, INT height, LPCWSTR title,INT style,INT styleEx,INT nID,INT dwTextFormat,LPARAM lParam,MsgPROC lpMsgProc)
+{
+	mhObj = Ex_ObjCreateEx(styleEx, L"colorbutton", title, style, left, top, width, height, handle, nID, dwTextFormat, lParam, 0, lpMsgProc);
+}
 
+void ColorButton2::SetBkgNormalColor(EXARGB color, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetColor(mhObj, COLOR_EX_CBTN_CRBKG_NORMAL, color, redraw);
+}
+
+void ColorButton2::SetBkgHoverColor(EXARGB color, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetColor(mhObj, COLOR_EX_CBTN_CRBKG_HOVER, color, redraw);
+}
+
+void ColorButton2::SetBkgDownColor(EXARGB color, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetColor(mhObj, COLOR_EX_CBTN_CRBKG_DOWN, color, redraw);
+}
+
+void ColorButton2::SetTextHoverColor(EXARGB color, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetColor(mhObj, COLOR_EX_CBTN_CRBKG_FOCUS, color, redraw);
+}
+
+void ColorButton2::SetBkgFocusColor(EXARGB color, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetColor(mhObj, COLOR_EX_TEXT_HOVER, color, redraw);
+}
+
+void ColorButton2::SetTextDownColor(EXARGB color, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetColor(mhObj, COLOR_EX_TEXT_DOWN, color, redraw);
+}
+
+void ColorButton2::SetTextFocusColor(EXARGB color, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetColor(mhObj, COLOR_EX_TEXT_FOCUS, color, redraw);
+}
+
+void ColorButton2::SetRadius(FLOAT topleft, FLOAT topright, FLOAT bottomright, FLOAT bottomleft, BOOL redraw)
+{
+	if (mhObj == 0) return;
+	Ex_ObjSetRadius(mhObj, topleft, topright, bottomright, bottomleft, redraw);
+}
 
 void test_colorbutton(HWND hWnd)
 {
-	HWND hWnd_colorbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试自定义按钮", 0, 0, 200, 150, 0, 0);
+	HWND hWnd_colorbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试自定义按钮", 0, 0, 300, 150, 0, 0);
 	HEXDUI hExDui_colorbutton = Ex_DUIBindWindowEx(hWnd_colorbutton, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_colorbutton, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	Ex_ObjRegister(L"colorbutton", EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, DT_SINGLELINE | DT_CENTER | DT_VCENTER, 4 * sizeof(size_t), 0, 0, OnColorButtonProc);
-	HEXOBJ hObj = Ex_ObjCreateEx(-1, L"colorbutton", L"colorbutton", -1, 50, 50, 100, 50, hExDui_colorbutton, 0, -1, 0, 0, NULL);
-	if (hObj != 0)
-	{
-		Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);
-		Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_HOVER, ExRGB2ARGB(65535, 255), FALSE);
-		Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_DOWN, ExRGB2ARGB(65280, 255), FALSE);
-		Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_FOCUS, ExRGB2ARGB(16777680, 255), FALSE);
 
-		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(255, 255), FALSE);
-		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16754943, 255), FALSE);
-		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_FOCUS, ExRGB2ARGB(65280, 255), TRUE);
+	HEXOBJ hObj = Ex_ObjCreateEx(-1, L"colorbutton", L"按钮1", -1, 50, 50, 100, 50, hExDui_colorbutton, 0, -1, 0, 0, NULL);
+	Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_HOVER, ExRGB2ARGB(65535, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_DOWN, ExRGB2ARGB(65280, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_CBTN_CRBKG_FOCUS, ExRGB2ARGB(16777680, 255), FALSE);
 
-		Ex_ObjSetRadius(hObj, 25, 25, 25, 25, TRUE);
-	}
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(255, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16754943, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_FOCUS, ExRGB2ARGB(65280, 255), TRUE);
 
+	Ex_ObjSetRadius(hObj, 25, 25, 25, 25, TRUE);
+
+	//下面演示类封装组件
+	ColorButton2 button;
+	button.Create(hExDui_colorbutton, 160, 50, 100, 50, L"按钮2");
+	button.SetBkgNormalColor(ExRGB2ARGB(16777215, 255), FALSE);
+	button.SetBkgHoverColor(ExRGB2ARGB(65535, 255), FALSE);
+	button.SetBkgDownColor(ExRGB2ARGB(65280, 255), FALSE);
+	button.SetBkgFocusColor(ExRGB2ARGB(16777680, 255), FALSE);
+	button.SetTextHoverColor(ExRGB2ARGB(255, 255), FALSE);
+	button.SetTextDownColor(ExRGB2ARGB(16754943, 255), FALSE);
+	button.SetTextFocusColor(ExRGB2ARGB(65280, 255), TRUE);
+	button.SetRadius(25, 25, 25, 25, TRUE);
 	Ex_DUIShowWindow(hExDui_colorbutton, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -1211,62 +1271,62 @@ void test_treelistview(HWND hWnd)
 	Ex_ObjSetColor(treeview, COLOR_EX_BORDER, ExARGB(255, 255, 255, 255), TRUE);
 	ti.fExpand = TRUE;
 	ti.tzText = L"节点1";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点2";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点3";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点3-1";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点3-2";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点3-3";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点3-3-1";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点3-3-2";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.itemParent = 0;
 	ti.tzText = L"节点4";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-1";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2-1";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2-2";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2-2-1";
-	Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2-2-2";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2-2-2-1";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2-2-2-1-1";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.tzText = L"节点5-2-2-2-1-1-1";
-	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEMW, 0, (size_t)&ti);
+	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	Ex_ObjSendMessage(treeview, TVM_UPDATE, 0, 0);
 

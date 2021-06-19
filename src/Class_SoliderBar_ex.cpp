@@ -1,13 +1,13 @@
 #include "Class_soliderBar_ex.h"
 
-void _SoliderBar_register()
+void _soliderbar_register()
 {
 	WCHAR	wzCls[] = L"SoliderBarEx";
-	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, 5 * sizeof(size_t), NULL, NULL, _SoliderBar_proc);
+	Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, 5 * sizeof(size_t), NULL, NULL, _soliderbar_proc);
 }
 
 
-LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	long tmp, tmp2;
 	switch (uMsg)
@@ -30,7 +30,7 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	}
 	case WM_PAINT:
 	{
-		return(_SoliderBar_paint(hObj));
+		return(_soliderbar_paint(hObj));
 	}
 
 	case WM_MOUSEHOVER:
@@ -48,7 +48,7 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 
 		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
 
-		tmp = (long)SoliderBar_GetValueOfThePoint(hObj, lParam);
+		tmp = (long)_soliderbar_getvalueofthepoint(hObj, lParam);
 		tmp2 = Ex_ObjSetLong(hObj, SBL_POS, tmp);
 		if (tmp2 != tmp)  // 若当前位置变化,则发送通知
 		{
@@ -66,7 +66,7 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	{
 		if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)
 		{
-			tmp = (long)SoliderBar_GetValueOfThePoint(hObj, lParam);
+			tmp = (long)_soliderbar_getvalueofthepoint(hObj, lParam);
 			tmp2 = Ex_ObjSetLong(hObj, SBL_POS, tmp);
 			if (tmp2 != tmp)
 			{
@@ -137,12 +137,12 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	}*/
 	case SBM_GETBLOCKRECT:
 	{
-		SoliderBar_GetRECT(hObj, (RECT*)lParam);
+		_soliderbar_getrect(hObj, (RECT*)lParam);
 		break;
 	}
 	case SBM_PT2VALUE:
 	{
-		return((LONG)SoliderBar_GetValueOfThePoint(hObj, lParam));
+		return((LONG)_soliderbar_getvalueofthepoint(hObj, lParam));
 		break;
 	}
 	default:
@@ -152,7 +152,7 @@ LRESULT CALLBACK _SoliderBar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 }
 
 
-INT _SoliderBar_paint(HEXOBJ hObj)
+INT _soliderbar_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT2 ps;
 	RECT RC = { 0 };
@@ -190,7 +190,7 @@ INT _SoliderBar_paint(HEXOBJ hObj)
 			y = Ex_Scale((FLOAT)RC.bottom / 2);
 		}
 		_brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED));
-		SoliderBar_GetRECT(hObj, &RC);
+		_soliderbar_getrect(hObj, &RC);
 		_canvas_fillellipse(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2, Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, Ex_Scale(Ex_ObjGetLong(hObj, SBL_BLOCK_SIZE)), Ex_Scale(Ex_ObjGetLong(hObj, SBL_BLOCK_SIZE)));
 		_canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2, Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, x, y, Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
 		_brush_destroy(hBrush);
@@ -200,7 +200,7 @@ INT _SoliderBar_paint(HEXOBJ hObj)
 }
 
 /*滑块条_取滑块矩形*/
-void SoliderBar_GetRECT(HEXOBJ hObj, RECT* rc)
+void _soliderbar_getrect(HEXOBJ hObj, RECT* rc)
 {
 	FLOAT value = NULL;
 	Ex_ObjGetClientRect(hObj, rc);
@@ -244,7 +244,7 @@ void SoliderBar_GetRECT(HEXOBJ hObj, RECT* rc)
 }
 
 /*滑块条_取点所在值*/
-FLOAT SoliderBar_GetValueOfThePoint(HEXOBJ hObj, LPARAM lParam)
+FLOAT _soliderbar_getvalueofthepoint(HEXOBJ hObj, LPARAM lParam)
 {
 	RECT RC = { 0 };
 	FLOAT value = NULL;

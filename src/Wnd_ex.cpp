@@ -2628,7 +2628,7 @@ void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM 
 			EX_CLASSINFO* pCls = pObj->pCls_;
 			if (pCls->atomName == ATOM_SCROLLBAR)
 			{
-				_sb_parentnotify(hWnd, pObj, wParam > 0 ? SB_LINEUP : SB_LINEDOWN, objHittest, 0, TRUE);
+				_scrollbar_parentnotify(hWnd, pObj, wParam > 0 ? SB_LINEUP : SB_LINEDOWN, objHittest, 0, TRUE);
 			}
 
 			if (((pObj->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL))
@@ -2995,7 +2995,7 @@ BOOL _wnd_menu_callback_test(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, 
 			Ex_ObjSetRadius(aryItems[j], 0, 0, 0, 15, TRUE);
 		}
 	}
-	else if (uMsg == 485)//MN_SELECTITEM 测试一下MenuBar切换菜单项的可行性
+	else if (uMsg == MN_SELECTITEM)//MN_SELECTITEM 测试一下MenuBar切换菜单项的可行性
 	{
 		POINT pt;
 		GetCursorPos(&pt);
