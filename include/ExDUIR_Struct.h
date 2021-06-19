@@ -1090,7 +1090,7 @@
 #define LVM_GETITEMHEIGHT	4909
 // 消息_列表_获取图片组
 #define LVM_GETIMAGELIST	4098
-// 消息_列表_设置图片组 (wParam为是否更新表项宽高,lParam为图片组句柄)
+// 消息_列表_设置图片组 (wParam为是否立即重画,lParam为图片组句柄)
 #define LVM_SETIMAGELIST	4099
 // 消息_列表_重新计算尺寸
 #define LVM_CALCITEMSIZE	5150
@@ -1445,7 +1445,7 @@ struct EX_REPORTLIST_ITEMINFO {
 	UINT		iCol;				//所在列[IN / OUT]
 	DWORD		dwStyle;			//表行风格(同行共用)
 	LPCWSTR		wzText;				//表项文本
-	HEXIMAGE	hImage;				//表项图片(同行共用)
+	DWORD	    nImageIndex;		//表项图片组索引(同行共用)
 	LPARAM		lParam;				//表项参数(同行共用)
 	DWORD		dwState;			//表项状态(同行共用)
 };
@@ -1453,10 +1453,10 @@ struct EX_REPORTLIST_ITEMINFO {
 
 //报表行信息
 struct EX_REPORTLIST_ROWINFO {
-	UINT		nInsertIndex = 0;		//插入位置,0为最后 
+	UINT		nInsertIndex = 0;	//插入位置,0为最后 
 	DWORD		dwStyle;			//表行风格 ERLV_RS_ 
 	LPARAM		lParam;				//参数
-	HEXIMAGE	hImage;				//图片组索引 
+	DWORD	    nImageIndex;		//图片组索引 
 };
 
 //报表排序信息

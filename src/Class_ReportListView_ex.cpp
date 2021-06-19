@@ -49,6 +49,20 @@ LRESULT CALLBACK _rlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 	{
 		return _rlv_li_set(hObj, (EX_REPORTLIST_ITEMINFO*)lParam, FALSE) ? 1 : 0;
 	}
+	else if (uMsg == LVM_SETIMAGELIST)//设置列表图片组 wParam为是否立即重画，lParam为图片组句柄
+	{
+		Ex_ObjSetLong(hObj, _rlv_hImageList, lParam);
+
+		if (wParam != 0)
+		{
+			Ex_ObjInvalidateRect(hObj, 0);
+		}
+		return 1;
+	}
+	else if (uMsg == LVM_GETIMAGELIST)//获取图片组
+	{
+		return Ex_ObjGetLong(hObj, _rlv_hImageList);
+	}
 	else if (uMsg == LVM_GETITEMTEXT)
 	{
 		if (wParam != 0)
@@ -692,12 +706,20 @@ void _rlv_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
 		}
 		if (Ex_ObjDispatchNotify(hObj, RLVN_DRAW_TR, (size_t)pTR, (size_t)pDrawInfo) == 0)
 		{
-			HEXIMAGE hImage = pTR->hImage_;
+			HEXIMAGELIST hImgList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, _rlv_hImageList);
+			HEXIMAGE hImage = _imglist_get(hImgList, pTR->nImageIndex_);
+			INT imgWidth;
+			INT imgHeight;
+			_imglist_size(hImgList, &imgWidth, &imgHeight);
 			if (hImage != 0)
 			{
-				INT index = pDrawInfo->rcPaint.bottom - pDrawInfo->rcPaint.top;
-				_canvas_drawimagerect(pDrawInfo->hCanvas, hImage, rcTD.left, rcTD.top, rcTD.left + index, rcTD.bottom, 255);
-				rcTD.left = rcTD.left + index;
+				INT itemHeight = pDrawInfo->rcPaint.bottom - pDrawInfo->rcPaint.top;
+				if (itemHeight % 2 != 0)
+				{
+					itemHeight = itemHeight + 1;
+				}
+				_canvas_drawimagerectrect(pDrawInfo->hCanvas, hImage, rcTD.left + itemHeight / 4, rcTD.top + itemHeight / 4, rcTD.left + itemHeight / 4 * 3, rcTD.top + itemHeight / 4 * 3, 0, 0, imgWidth, imgHeight, 255);
+				rcTD.left = rcTD.left + itemHeight;
 			}
 			EX_REPORTLIST_COLUMNINFO* pTC = (EX_REPORTLIST_COLUMNINFO*)Ex_ObjGetLong(hObj, _rlv_pTCInfo);
 			for (INT i = 1; i <= nCount; i++)
@@ -847,7 +869,7 @@ void _rlv_tc_update(HEXOBJ hObj)
 	RECT rc{ 0 };
 	Ex_ObjGetRect(hObj, &rc);
 	Ex_ObjSendMessage(hObj, WM_SIZE, 0, MAKELONG(rc.right - rc.left, rc.bottom - rc.top));
-	//Ex_ObjSendMessage(hObj, WM_HSCROLL, MAKELONG(nScroll, 0), 0);
+
 }
 
 INT _rlv_tr_ins(HEXOBJ hObj, EX_REPORTLIST_ROWINFO* pInsertInfo)
@@ -855,7 +877,10 @@ INT _rlv_tr_ins(HEXOBJ hObj, EX_REPORTLIST_ROWINFO* pInsertInfo)
 	INT nCount = Ex_ObjGetLong(hObj, _rlv_cTCs);
 	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, _rlv_arrTRInfo);
 	reportlistview_tr_s* pTR = (reportlistview_tr_s*)Ex_MemAlloc(sizeof(reportlistview_tr_s));
-	RtlMoveMemory(pTR, pInsertInfo, sizeof(EX_REPORTLIST_ROWINFO));
+	pTR->dwStyle_ = pInsertInfo->dwStyle;
+	pTR->nImageIndex_ = pInsertInfo->nImageIndex;
+	pTR->lParam_ = pInsertInfo->lParam;
+	pTR->nInsertIndex_ = pInsertInfo->nInsertIndex;
 	LPVOID pTDs = nullptr;
 	if (nCount > 0)
 	{
@@ -940,7 +965,7 @@ BOOL _rlv_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJustText)
 	{
 		if (fJustText == FALSE)
 		{
-			lParam->hImage = pTR->hImage_;
+			lParam->nImageIndex = pTR->nImageIndex_;
 			lParam->dwStyle = pTR->dwStyle_;
 			lParam->lParam = pTR->lParam_;
 			lParam->wzText = ((reportlistview_td_s*)((size_t)pTR->pTDInfo_ + (nIndexTC - 1) * sizeof(reportlistview_td_s)))->wzText_;
@@ -970,7 +995,7 @@ BOOL _rlv_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJustText)
 	{
 		if (fJustText == FALSE)
 		{
-			pTR->hImage_ = lParam->hImage;
+			pTR->nImageIndex_ = lParam->nImageIndex;
 			pTR->dwStyle_ = lParam->dwStyle;
 			pTR->lParam_ = lParam->lParam;
 		}
@@ -985,6 +1010,6 @@ void _ReportListView_regsiter()
 	EX_CLASSINFO clsInfo{ 0 };
 	Ex_ObjGetClassInfoEx(L"listview", &clsInfo);
 	m_pfnListView = clsInfo.pfnClsProc;
-	Ex_ObjRegister(L"ReportListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 9 * sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _rlv_proc);
+	Ex_ObjRegister(L"ReportListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 10 * sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _rlv_proc);
 	Ex_ObjRegister(L"ReportListView.Header", EOS_VISIBLE, EOS_EX_FOCUSABLE, 0, _rlv_head_sizeof, 0, 0, _rlv_head_proc);
 }

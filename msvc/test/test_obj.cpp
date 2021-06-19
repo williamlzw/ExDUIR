@@ -1016,6 +1016,7 @@ void test_colorbutton(HWND hWnd)
 }
 
 HEXOBJ m_hReportListView;
+HEXIMAGELIST m_hReportListView_ImgList;
 
 LRESULT CALLBACK OnReportListViewEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -1036,15 +1037,7 @@ LRESULT CALLBACK OnReportListViewEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 		auto str = L"你点击了第" + std::to_wstring(wParam) + L"项,第" + std::to_wstring(lParam) + L"列";
 		output(str);
 	}
-	else if (nCode == RLVN_DELETE_ITEM)
-	{
-		EX_REPORTLIST_ROWINFO row{ 0 };
-		RtlMoveMemory(&row, (LPVOID)lParam, sizeof(EX_REPORTLIST_ROWINFO));
-		if (row.hImage != 0)//如果有图片，则销毁
-		{
-			_img_destroy(row.hImage);
-		}
-	}
+
 	return 0;
 }
 
@@ -1054,16 +1047,34 @@ LRESULT CALLBACK OnReportListViewButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WP
 	return 0;
 }
 
+LRESULT CALLBACK OnReportListViewWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_CLOSE)
+	{
+		if (m_hReportListView_ImgList)
+		{
+			_imglist_destroy(m_hReportListView_ImgList);
+		}
+	}
+	return 0;
+}
+
 void test_reportlistview(HWND hWnd)
 {
 	HWND hWnd_reportlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 400, 0, 0);
-	HEXDUI hExDui_reportlistview = Ex_DUIBindWindowEx(hWnd_reportlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_reportlistview = Ex_DUIBindWindowEx(hWnd_reportlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, OnReportListViewWndMsgProc);
 	Ex_DUISetLong(hExDui_reportlistview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", -1, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGB2ARGB(12632256, 100), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOT, ExRGB2ARGB(16777215, 250), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(12632256, 50), FALSE);
+
+	m_hReportListView_ImgList = _imglist_create(30, 30);
+	std::vector<CHAR> imgdata;
+	Ex_ReadFile(L"./icon/1.png", &imgdata);
+	size_t nImageIndex = _imglist_add(m_hReportListView_ImgList, imgdata.data(), imgdata.size(), 0);
+	Ex_ObjSendMessage(m_hReportListView, LVM_SETIMAGELIST, 0, (LPARAM)m_hReportListView_ImgList);
 
 	EX_REPORTLIST_COLUMNINFO col = { 0 };
 	col.wzText = L"第一列";
@@ -1096,10 +1107,12 @@ void test_reportlistview(HWND hWnd)
 
 	EX_REPORTLIST_ROWINFO row = { 0 };
 	EX_REPORTLIST_ITEMINFO item = { 0 };
+	
 	for (INT i = 1; i <= 100; i++)
 	{
 		//先插入表项
-		row.lParam = i+1;
+		row.lParam = i + 1;
+		item.nImageIndex = nImageIndex;
 		item.iRow = Ex_ObjSendMessage(m_hReportListView, LVM_INSERTITEM, 0, (size_t)&row);
 		//先插入表项
 		item.iCol = 1;

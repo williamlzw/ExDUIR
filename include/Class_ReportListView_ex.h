@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "help_ex.h"
 
-#define _rlv_sizeof 9 * sizeof(size_t)
+
 #define _rlv_nItemWidth 0
 #define _rlv_nItemHeight 1
 #define _rlv_cTCs 2
@@ -11,6 +11,7 @@
 #define _rlv_hObjHead 6
 #define _rlv_nHeadHeight 7
 #define _rlv_fTCSortedDesc 8
+#define _rlv_hImageList 9
 
 #define _rlv_head_sizeof 2 * sizeof(size_t)
 #define _rlv_head_hListView 0
@@ -24,7 +25,7 @@ struct reportlistview_tr_s
 	UINT   nInsertIndex_;
 	DWORD dwStyle_;
 	LPARAM lParam_;
-	HEXIMAGE hImage_;
+	DWORD nImageIndex_;
 	LPVOID pTDInfo_;		//行文本数组信息
 };
 
