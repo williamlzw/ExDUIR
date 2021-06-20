@@ -558,7 +558,7 @@ BOOL _canvas_setantialias(HEXCANVAS hCanvas, BOOL antialias);
 
 /*
 * @fnType ExDirectUI
-* @brief _canvas_setimageantialias 设置画布图像抗锯齿
+* @brief _canvas_setimageantialias 设置画布图像抗锯齿,等效于同时设置文本和图形抗锯齿
 * @param 1  hCanvas                 [HEXCANVAS]
 * @param 2  antialias               [BOOL]                是否抗锯齿
 * @return [BOOL]返回是否成功
@@ -569,10 +569,10 @@ BOOL _canvas_setimageantialias(HEXCANVAS hCanvas, BOOL antialias);
 * @fnType ExDirectUI
 * @brief _canvas_settextantialiasmode 设置画布文本抗锯齿模式
 * @param 1  hCanvas                 [HEXCANVAS]
-* @param 2  textAntialiasMode       [DWORD]                 0.不抗锯齿 1.抗锯齿 2.ClearType
+* @param 2  antialias               [BOOL]                 是否抗锯齿
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, DWORD textAntialiasMode);
+BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, BOOL antialias);
 
 /*
 * @fnType ExDirectUI

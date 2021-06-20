@@ -89,9 +89,9 @@ void _canvas_recreate(canvas_s* pCanvas, INT width, INT height, INT* nError)
 	pCanvas->height_ = height;
 	wnd_s* pWnd = pCanvas->pWnd_;
 
-	
+
 	BOOL fGDI = ((pCanvas->dwFlags_ & CVF_GDI_COMPATIBLE) == CVF_GDI_COMPATIBLE) || Flag_Query(EXGF_RENDER_METHOD_D2D_GDI_COMPATIBLE);
-	LPVOID pBitmap = _dx_createbitmap(pWnd->dx_context_, width, height, fGDI,  nError);
+	LPVOID pBitmap = _dx_createbitmap(pWnd->dx_context_, width, height, fGDI, nError);
 
 	if (pBitmap)
 	{
@@ -141,7 +141,7 @@ void _canvas_uninit()
 	{
 		g_Ri.pWICFactory->Release();
 	}
-	
+
 }
 
 LPVOID _cv_dx_bmp(canvas_s* pCanvas)
@@ -245,7 +245,7 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 			D2D1_CAP_STYLE_SQUARE,
 			D2D1_CAP_STYLE_SQUARE,
 			D2D1_CAP_STYLE_SQUARE,
-			D2D1_LINE_JOIN_MITER, 
+			D2D1_LINE_JOIN_MITER,
 			Ex_Scale(strokeWidth) / 2,
 			(D2D1_DASH_STYLE)strokeStyle, 0);
 
@@ -549,7 +549,7 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 				rcfDst.bottom = pCanvas->height_;
 			}
 			else {
-				
+
 				RtlMoveMemory(&rcfDst, lpRCFDst, sizeof(D2D1_RECT_F));
 			}
 			if (lpRcSrc == 0)
@@ -557,7 +557,7 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 				_img_getsize(hImage, (INT*)&rcSrc.right, (INT*)&rcSrc.bottom);
 			}
 			else {
-				
+
 				RtlMoveMemory(&rcSrc, lpRcSrc, sizeof(RECT));
 			}
 			if (dwRepeat != BIR_NO_REPEAT)
@@ -572,7 +572,7 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 			}
 			if (lpGrid != 0)
 			{
-				
+
 				RtlMoveMemory(&rcGrid, lpGrid, sizeof(RECT));
 				_canvas_drawimagefromgrid(hCanvas, hImage, rcfDst.left, rcfDst.top, rcfDst.right, rcfDst.bottom,
 					rcSrc.left, rcSrc.top, rcSrc.right, rcSrc.bottom, rcGrid.left, rcGrid.top, rcGrid.right, rcGrid.bottom, dwFlags, dwAlpha);
@@ -618,14 +618,14 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 					w = rcSrc.right - rcSrc.left;
 					h = rcSrc.bottom - rcSrc.top;
 					HEXIMAGE tmpImg = 0;
-					 _img_copyrect(hImage, rcSrc.left, rcSrc.top, w, h,&tmpImg);
+					_img_copyrect(hImage, rcSrc.left, rcSrc.top, w, h, &tmpImg);
 					if ((dwFlags & BIF_DISABLESCALE) == 0)
 					{
 						w = Ex_Scale(w);
 						h = Ex_Scale(h);
 					}
 					HEXIMAGE hScale = 0;
-					 _img_scale(tmpImg, w, h,&hScale);
+					_img_scale(tmpImg, w, h, &hScale);
 					_img_destroy(tmpImg);
 					if (hScale != 0)
 					{
@@ -649,7 +649,7 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 			}
 		}
 	}
-	
+
 	return nError == 0;
 }
 
@@ -785,7 +785,7 @@ BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText,
 	LPVOID lpwzTextFix = prefixstring(lpwzText, dwDTFormat, &nPreFix);
 	FLOAT iWidth = 0, iHeight = 0;
 	*nError = g_Ri.pDWriteFactory->CreateTextLayout((WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, (IDWriteTextFormat*)pObj, layoutWidth, layoutHeight, (IDWriteTextLayout**)ppLayout);
-	void * pLayout = *ppLayout;
+	void* pLayout = *ppLayout;
 	if (*nError == 0)
 	{
 		BYTE byte = pFont->font_.lfUnderline;
@@ -880,7 +880,7 @@ BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, si
 			if (pFont != 0)
 			{
 				LPVOID pLayout = nullptr;
-				
+
 				_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, layoutWidth, layoutHeight, lpWidth, lpHeight, &pLayout, &nError);
 				if (pLayout != 0)
 				{
@@ -924,7 +924,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
 	{
 		dwLen = lstrlenW(lpwzText);
 	}
-	
+
 	canvas_s* pCanvas = nullptr;
 	INT nError = 0;
 	if (dwLen > 0)
@@ -1108,7 +1108,7 @@ HEXCANVAS _canvas_createfromexdui(HEXDUI hExDui, INT width, INT height, INT dwFl
 {
 	wnd_s* pWnd = nullptr;
 	INT nError = 0;
-	HEXCANVAS hCanvas=0;
+	HEXCANVAS hCanvas = 0;
 	if (_handle_validate(hExDui, HT_DUI, (LPVOID*)&pWnd, &nError))
 	{
 		hCanvas = _canvas_createfrompwnd(pWnd, width, height, dwFlags, &nError);
@@ -1122,24 +1122,34 @@ BOOL _canvas_setantialias(HEXCANVAS hCanvas, BOOL antialias)
 {
 	D2D1_ANTIALIAS_MODE mode;
 	INT nError = 0;
-	canvas_s* pCanvas = 0;
-
+	canvas_s* pCanvas = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if (antialias) {
-			FLAGS_ADD(pCanvas->dwFlags_, 2);
+		BOOL doChange = FALSE;
+		if (antialias)
+		{
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			{
+				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				doChange = TRUE;
+			}
 		}
 		else {
-			FLAGS_DEL(pCanvas->dwFlags_, 2);
+			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			{
+				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				doChange = TRUE;
+			}
 		}
-
-		if (Ex_IsDxRender())
+		if (doChange)
 		{
 			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
-			if (antialias || Flag_Query(EXGF_RENDER_CANVAS_ALIAS)) {
+			if (antialias)
+			{
 				mode = D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
 			}
-			else {
+			else
+			{
 				mode = D2D1_ANTIALIAS_MODE_ALIASED;
 			}
 			pContext->SetAntialiasMode(mode);
@@ -1154,19 +1164,56 @@ BOOL _canvas_setimageantialias(HEXCANVAS hCanvas, BOOL antialias) {
 	INT nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if (antialias) {
-
-			FLAGS_ADD(pCanvas->dwFlags_, 16);
+		BOOL doChange = FALSE;
+		if (antialias)
+		{
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			{
+				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				doChange = TRUE;
+			}
+			else if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			{
+				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				doChange = TRUE;
+			}
 		}
 		else {
-			FLAGS_DEL(pCanvas->dwFlags_, 16);
+			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			{
+				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				doChange = TRUE;
+			}
+			else if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			{
+				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				doChange = TRUE;
+			}
+		}
+		if (doChange)
+		{
+			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			D2D1_ANTIALIAS_MODE mode;
+			D2D1_TEXT_ANTIALIAS_MODE textMode;
+			if (antialias)
+			{
+				mode = D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
+				textMode = D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
+			}
+			else
+			{
+				mode = D2D1_ANTIALIAS_MODE_ALIASED;
+				textMode = D2D1_TEXT_ANTIALIAS_MODE_ALIASED;
+			}
+			pContext->SetAntialiasMode(mode);
+			pContext->SetTextAntialiasMode(textMode);
 		}
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
 }
 
-BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, DWORD textAntialiasMode)
+BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, BOOL antialias)
 {
 	D2D1_TEXT_ANTIALIAS_MODE mode;
 	INT nError = 0;
@@ -1174,30 +1221,32 @@ BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, DWORD textAntialiasMode)
 
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		FLAGS_DEL(pCanvas->dwFlags_, 4 | 8);
-
-		if (textAntialiasMode == 2) {
-			FLAGS_ADD(pCanvas->dwFlags_, 4 | 8);
-			mode = D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE;
-		}
-		else if (textAntialiasMode == 1) {
-			FLAGS_ADD(pCanvas->dwFlags_, 4);
-			mode = D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
+		BOOL doChange = FALSE;
+		if (antialias)
+		{
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			{
+				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				doChange = TRUE;
+			}
 		}
 		else {
-			mode = D2D1_TEXT_ANTIALIAS_MODE_ALIASED;
-		}
-		if (Flag_Query(EXGF_TEXT_ANTIALIAS)) {
-			if (Flag_Query(EXGF_TEXT_CLEARTYPE)) {
-				mode = D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE;
-			}
-			else {
-				mode = D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
+			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			{
+				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				doChange = TRUE;
 			}
 		}
-		if (Ex_IsDxRender())
+		if (doChange)
 		{
 			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			if (antialias)
+			{
+				mode = D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
+			}
+			else {
+				mode = D2D1_TEXT_ANTIALIAS_MODE_ALIASED;
+			}
 			pContext->SetTextAntialiasMode(mode);
 		}
 	}
@@ -1222,7 +1271,7 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
 			}
 			else
 			{
-				D2D1_MATRIX_3X2_F matrix = {0};
+				D2D1_MATRIX_3X2_F matrix = { 0 };
 				matrix.m11 = 1.0f;
 				matrix.m22 = 1.0f;
 				pContext->SetTransform(&matrix);
@@ -1232,7 +1281,7 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
 	return nError == 0;
 }
 
-BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT Width, FLOAT Height, FLOAT RadiuX, FLOAT RadiuY, INT* shadowNum,INT number, EXARGB crShadow) {
+BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT Width, FLOAT Height, FLOAT RadiuX, FLOAT RadiuY, INT* shadowNum, INT number, EXARGB crShadow) {
 	HEXIMAGE newhImg;
 	BOOL ret = FALSE;
 	ret = _img_scale(hImg, (INT)Width, (INT)Height, &newhImg);

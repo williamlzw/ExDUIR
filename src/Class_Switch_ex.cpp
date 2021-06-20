@@ -15,24 +15,24 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 255), FALSE);
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_CHECKED, ExARGB(255, 255, 255, 255), FALSE);
 		Ex_ObjInitPropList(hObj, 8 + 1);
-		Ex_ObjSetProp(hObj, 1, ExARGB(255, 255, 255, 100));
+		Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, ExARGB(255, 255, 255, 100));
 		EXARGB	ThemeColor = ExARGB(98, 184, 120, 255);
-		Ex_ObjSetProp(hObj, 3, ThemeColor);
-		Ex_ObjSetProp(hObj, 4, ExARGB(0, 0, 0, 150));
+		Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, ThemeColor);
+		Ex_ObjSetProp(hObj, ESP_CRBORDERNORMAL, ExARGB(0, 0, 0, 150));
 		break;
 	}
 	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* Switchprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjInitPropList(hObj, 8 + 1);
-		Ex_ObjSetProp(hObj, 1, Switchprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, 2, Switchprops->COLOR_EX_BACKGROUND_HOVER);
-		Ex_ObjSetProp(hObj, 3, Switchprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, 4, Switchprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, 5, Switchprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, 6, Switchprops->COLOR_EX_BORDER_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, 7, Switchprops->Radius);
-		Ex_ObjSetProp(hObj, 8, Switchprops->StrokeWidth);
+		Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, Switchprops->COLOR_EX_BACKGROUND_NORMAL);
+		Ex_ObjSetProp(hObj, ESP_CRBKGHOVER, Switchprops->COLOR_EX_BACKGROUND_HOVER);
+		Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, Switchprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ESP_CRBORDERNORMAL, Switchprops->COLOR_EX_BORDER_NORMAL);
+		Ex_ObjSetProp(hObj, ESP_CRBORDERHOVER, Switchprops->COLOR_EX_BORDER_HOVER);
+		Ex_ObjSetProp(hObj, ESP_CRBORDERDOWNORCHECKED, Switchprops->COLOR_EX_BORDER_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ESP_RADIUS, Switchprops->Radius);
+		Ex_ObjSetProp(hObj, ESP_STROKEWIDTH, Switchprops->StrokeWidth);
 		break;
 	}
 	case WM_PAINT:
@@ -107,17 +107,16 @@ INT _switch_paint(HEXOBJ hObj) {
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		FLOAT _Radius = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, 7));/*自定义圆角度*/
-		FLOAT StrokeWidth = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, 8));
+		FLOAT _Radius = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, ESP_RADIUS));/*自定义圆角度*/
+		FLOAT StrokeWidth = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, ESP_STROKEWIDTH));
 		INT nProgress = Ex_ObjGetLong(hObj, EOL_USERDATA);
 		RECT rcBlock;
 		_canvas_setantialias(ps.hCanvas, TRUE);
-		_canvas_setantialias(ps.hCanvas, TRUE);
-		_canvas_settextantialiasmode(ps.hCanvas, 2);
+		_canvas_settextantialiasmode(ps.hCanvas, TRUE);
 
 		/* 绘制背景 */
 		/* 填充一层不透明 */
-		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, 1));
+		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ESP_CRBKGNORMAL));
 		if (_Radius != 0) {
 			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
 		}
@@ -127,7 +126,7 @@ INT _switch_paint(HEXOBJ hObj) {
 		}
 
 		/* 根据缓动进度填充一层半透明色 */
-		_brush_setcolor(hBrush, ExRGB2ARGB(ExARGB2RGB(Ex_ObjGetProp(hObj, 3)), (INT)((FLOAT)nProgress / 100 * 255)));
+		_brush_setcolor(hBrush, ExRGB2ARGB(ExARGB2RGB(Ex_ObjGetProp(hObj, ESP_CRBKGDOWNORCHECKED)), (INT)((FLOAT)nProgress / 100 * 255)));
 		if (_Radius != 0) {
 			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
 		}
@@ -136,7 +135,7 @@ INT _switch_paint(HEXOBJ hObj) {
 			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth);
 		}
 
-		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 4));/* 设置为边框色*/
+		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ESP_CRBORDERNORMAL));/* 设置为边框色*/
 		if (_Radius != 0) {
 			_canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
 		}
@@ -165,7 +164,7 @@ INT _switch_paint(HEXOBJ hObj) {
 			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left + StrokeWidth, (FLOAT)rcBlock.top + StrokeWidth, (FLOAT)rcBlock.right - StrokeWidth, (FLOAT)rcBlock.bottom - StrokeWidth);
 		}
 
-		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 4));/* 设置为边框色 */
+		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ESP_CRBORDERNORMAL));/* 设置为边框色 */
 		if (_Radius != 0) {
 			_canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left + StrokeWidth, (FLOAT)rcBlock.top + StrokeWidth, (FLOAT)rcBlock.right - StrokeWidth, (FLOAT)rcBlock.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
 		}

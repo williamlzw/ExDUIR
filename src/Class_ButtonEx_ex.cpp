@@ -144,9 +144,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		_canvas_setantialias(ps.hCanvas, TRUE);
 		_canvas_setimageantialias(ps.hCanvas, TRUE);
-		_canvas_settextantialiasmode(ps.hCanvas, 1);
 
 		INT			crBkg = Ex_ObjGetProp(hObj, 1);
 		INT			crBorder = Ex_ObjGetProp(hObj, 4);

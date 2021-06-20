@@ -66,16 +66,10 @@ LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 
 INT _win10_loading_paint(HEXOBJ hObj)
 {
-	/*
-	 * 定义局部变量
-	 * 变量类型 变量名 = 赋值;
-	 */
 	EX_PAINTSTRUCT2 ps;
-
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		_canvas_setantialias(ps.hCanvas, TRUE);
-		_canvas_settextantialiasmode(ps.hCanvas, 1);
 		EXARGB ThemeColor = Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND);
 		if (ThemeColor == 0)
 		{
