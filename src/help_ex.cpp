@@ -21,7 +21,7 @@ LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
 	return ret;
 }
 
-/*取系统缩放比例*/
+//取系统缩放比例
 DOUBLE  GetSysDpi()
 {
 	HDC	desktopDc = GetDC(NULL);
@@ -439,20 +439,15 @@ BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR>* retData)
 	BOOL fOK = FALSE;
 	if (filePath != L"")
 	{
-		//打开文件
 		HANDLE hFile = CreateFileW(filePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 		if (hFile != INVALID_HANDLE_VALUE)
 		{
-			//取文件尺寸
 			DWORD nSize = GetFileSize(hFile, NULL);
 			if (nSize != INVALID_FILE_SIZE)
 			{
-				//申请内存
 				(*retData).resize(nSize);
-				//读入文件
 				fOK = ReadFile(hFile, &(*retData)[0], nSize, &nSize, NULL);
 			}
-			//关闭文件
 			CloseHandle(hFile);
 		}
 	}
@@ -517,7 +512,7 @@ void _struct_destroyfromaddr(LPVOID lpAddr, size_t Offset)
 
 LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT* nError)
 {
-	//TODO: x64 support
+
 	LPVOID tmp = (LPVOID)__get(lpAddr, Offset);
 	if (tmp == 0)
 	{

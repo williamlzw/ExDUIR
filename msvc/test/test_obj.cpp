@@ -1,4 +1,5 @@
 ﻿#include "test_obj.h"
+#include "help_ex.h"
 #include "resource.h"
 
 HEXDUI m_hExDui_button;
@@ -130,7 +131,8 @@ void test_label(HWND hWnd)
 	Ex_ReadFile(L"res/webp.webp", &imgdata);
 	Ex_ObjSetBackgroundImage(label3, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
 
-	HEXOBJ label4 = Ex_ObjCreateEx(-1, L"static", L"标签可以填充动画,支持APNG,PNG,GIF,JPG,BMP,WEBP格式,标签可以自动换行", -1, 200, 200, 180, 60, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
+	HEXOBJ label4 = Ex_ObjCreateEx(-1, L"static", L"标签可以填充动画,支持APNG,PNG,GIF,JPG,BMP,WEBP格式,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
+	Ex_ObjSetFontFromFamily(label4, L"宋体", 14, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(label4, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
 	Ex_DUIShowWindow(hExDui_label, SW_SHOWNORMAL, 0, 0, 0);
@@ -196,31 +198,233 @@ void test_checkbutton(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_checkbutton, SW_SHOWNORMAL, 0, 0, 0);
 }
 
+HEXFONT m_hEditFont;
+std::vector<HEXOBJ> m_hEditButton;
+HEXDUI m_hExDuiEdit;
+
+LRESULT CALLBACK OnEditWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_CLOSE)
+	{
+		if (m_hEditFont)
+		{
+			_font_destroy(m_hEditFont);//此处不销毁会在引擎销毁时统一销毁
+		}
+	}
+
+	return 0;
+}
+
+LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	HEXOBJ hEdit = Ex_ObjGetFromID(m_hExDuiEdit, 101);
+	if (hEdit)
+	{
+		if (nID == 201)//全选
+		{
+			EX_CHARRANGE charRange;
+			charRange.cpMin = 0;
+			charRange.cpMax = -1;
+			Ex_ObjSendMessage(hEdit, EM_EXSETSEL, 0, (LPARAM)&charRange);
+		}
+		else if (nID == 202)//取消选择
+		{
+			Ex_ObjSendMessage(hEdit, EM_SETSEL, 0, 0);
+		}
+		else if (nID == 203)//置选择
+		{
+			Ex_ObjSendMessage(hEdit, EM_SETSEL, 1, 15);
+		}
+		else if (nID == 204)//左对齐
+		{
+			Ex_ObjSetEditSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_LEFT);
+		}
+		else if (nID == 205)//居中对齐
+		{
+			Ex_ObjSetEditSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_CENTER);
+		}
+		else if (nID == 206)//右对齐
+		{
+			Ex_ObjSetEditSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_RIGHT);
+		}
+		else if (nID == 207)//首行缩进
+		{
+			Ex_ObjSetEditSelParFormat(hEdit, PFM_STARTINDENT, NULL, 20);
+		}
+		else if (nID == 208)//右侧缩进
+		{
+			Ex_ObjSetEditSelParFormat(hEdit, PFM_RIGHTINDENT, NULL, NULL, 20);
+		}
+		else if (nID == 209)//非首行缩进
+		{
+			Ex_ObjSetEditSelParFormat(hEdit, PFM_OFFSET, NULL, NULL, NULL, 50);
+		}
+		else if (nID == 210)//项目符号
+		{
+			Ex_ObjSetEditSelParFormat(hEdit, PFM_NUMBERING, PFN_LCROMAN);
+		}
+		else if (nID == 211)//文本蓝色
+		{
+			Ex_ObjSetEditSelCharFormat(hEdit, CFM_COLOR, ExRGB2ARGB(16711680, 255));
+		}
+		else if (nID == 212)//加粗
+		{
+			Ex_ObjSetEditSelCharFormat(hEdit, CFM_BOLD, NULL, NULL, NULL, NULL, TRUE);
+		}
+		else if (nID == 213)//倾斜
+		{
+			Ex_ObjSetEditSelCharFormat(hEdit, CFM_ITALIC, NULL, NULL, NULL, NULL, NULL, TRUE);
+		}
+		else if (nID == 214)//下划线
+		{
+			Ex_ObjSetEditSelCharFormat(hEdit, CFM_UNDERLINE, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+		}
+		else if (nID == 215)//删除线
+		{
+			Ex_ObjSetEditSelCharFormat(hEdit, CFM_STRIKEOUT, NULL, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+		}
+		else if (nID == 216)//超链接
+		{
+			Ex_ObjSetEditSelCharFormat(hEdit, CFM_LINK, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,TRUE);
+		}
+		else if (nID == 217)//幼圆30
+		{
+			Ex_ObjSetEditSelCharFormat(hEdit, CFM_SIZE | CFM_FACE, NULL, L"幼圆", 30);
+		}
+		else if (nID == 218)//撤销
+		{
+			Ex_ObjSendMessage(hEdit, EM_UNDO, 0, 0);
+		}
+		else if (nID == 219)//重做
+		{
+			Ex_ObjSendMessage(hEdit, EM_REDO, 0, 0);
+		}
+		else if (nID == 220)//复制
+		{
+			Ex_ObjSendMessage(hEdit, WM_COPY, 0, 0);
+		}
+		else if (nID == 221)//剪切
+		{
+			Ex_ObjSendMessage(hEdit, WM_CUT, 0, 0);
+		}
+		else if (nID == 222)//粘贴
+		{
+			Ex_ObjSendMessage(hEdit, WM_PASTE, 0, 0);
+		}
+		else if (nID == 223)//删除
+		{
+			Ex_ObjSendMessage(hEdit, WM_CLEAR, 0, 0);
+		}
+		else if (nID == 224)//取行数
+		{
+			output(L"编辑框行数:", Ex_ObjSendMessage(hEdit, EM_GETLINECOUNT, 0, 0));
+		}
+		else if (nID == 225)//寻找文本
+		{
+			EX_TEXTRANGE textRange;
+			textRange.chrg.cpMin = HIWORD(Ex_ObjSendMessage(hEdit, EM_GETSEL, 0, 0));
+			textRange.chrg.cpMax = -1;
+			textRange.lpstrText = L"a";//欲寻找文本
+			textRange.chrg.cpMin = Ex_ObjSendMessage(hEdit, EM_FINDTEXTW, FR_DOWN, (LPARAM)&textRange);
+			if (textRange.chrg.cpMin != -1)
+			{
+				textRange.chrg.cpMax = textRange.chrg.cpMin + lstrlenW(textRange.lpstrText);
+				Ex_ObjSendMessage(hEdit, EM_SETSEL, textRange.chrg.cpMin, textRange.chrg.cpMax);
+			}
+		}
+		else if (nID == 226)//替换文本
+		{
+			EX_SETTEXTEX textformat;
+			textformat.flags = 2;//ST_SELECTION替换选择并保持富文本格式
+			textformat.codepage = 1200;//Unicode code page
+			Ex_ObjSendMessage(hEdit, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为我");
+		}
+		Ex_ObjSetFocus(hEdit);//这一句不能少，不然编辑框无法显示选中区域
+	}
+	return 0;
+}
+
+LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == EN_SELCHANGE)
+	{
+		output(L"选中区域改变:", ((EX_SELCHANGE*)lParam)->chrg.cpMin, ((EX_SELCHANGE*)lParam)->chrg.cpMax);
+	}
+	else if (nCode == EN_LINK)
+	{
+		if (((EX_ENLINK*)lParam)->msg == WM_LBUTTONDOWN)
+		{
+			EX_TEXTRANGE TextRange;
+			TextRange.chrg = ((EX_ENLINK*)lParam)->chrg;
+			TextRange.lpstrText = (LPCWSTR)Ex_AllocBuffer((TextRange.chrg.cpMax - TextRange.chrg.cpMin + 2) * 2);
+			Ex_ObjSendMessage(hObj, EM_GETTEXTRANGE, 0, (LPARAM)&TextRange);
+			output(L"链接被按下:", TextRange.chrg.cpMax, TextRange.chrg.cpMin, TextRange.lpstrText);
+			Ex_FreeBuffer((LPVOID)TextRange.lpstrText);
+		}
+	}
+	return 0;
+}
+
 void test_edit(HWND hWnd)
 {
-	HWND hWnd_edit = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试编辑框", 0, 0, 600, 300, 0, 0);
-	HEXDUI hExDui_edit = Ex_DUIBindWindowEx(hWnd_edit, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
-	Ex_DUISetLong(hExDui_edit, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	HWND hWnd_edit = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试编辑框", 0, 0, 850, 350, 0, 0);
+	m_hExDuiEdit = Ex_DUIBindWindowEx(hWnd_edit, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(m_hExDuiEdit, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
-	HEXOBJ edit = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", L"背景图片编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 30, 150, 30, hExDui_edit, 0, DT_VCENTER, 0, 0, NULL);
+
+	HEXOBJ edit = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", L"背景图片编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 30, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
 	Ex_ObjSetBackgroundImage(edit, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_DEFAULT, 255, TRUE);
-	HEXOBJ edit2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, hExDui_edit, 0, DT_SINGLELINE, 0, 0, NULL);
-	HEXOBJ edit3 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试数值输入编辑框", EOS_VISIBLE | EES_NUMERICINPUT, 10, 110, 150, 30, hExDui_edit, 0, DT_SINGLELINE, 0, 0, NULL);
-	HEXOBJ edit4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, hExDui_edit, 0, DT_SINGLELINE, 0, 0, NULL);
-	HEXOBJ edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n", EOS_VISIBLE | EOS_VSCROLL, 180, 30, 150, 200, hExDui_edit, 0, DT_VCENTER, 0, 0, NULL);
-	HEXOBJ edit6 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", NULL, EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL | EES_RICHTEXT, 360, 30, 200, 200, hExDui_edit, 0, DT_LEFT | DT_TOP, 0, 0, NULL);
+	HEXOBJ edit2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	HEXOBJ edit3 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试数值输入编辑框", EOS_VISIBLE | EES_NUMERICINPUT, 10, 110, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	HEXOBJ edit4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 
+	HEXOBJ edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"测试透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	m_hEditFont = _font_createfromfamily(L"宋体", 14, EFS_UNDERLINE);
+	Ex_ObjSetFont(edit5, m_hEditFont, FALSE);
+	Ex_ObjSetColor(edit5, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
+	Ex_ObjSetColor(edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
+	Ex_ObjSetRadius(edit5, 10, 10, 10, 0, FALSE);
+
+	HEXOBJ edit6 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n", EOS_VISIBLE | EOS_VSCROLL, 10, 230, 150, 100, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+
+	HEXOBJ edit7 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"edit", NULL, EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL | EES_RICHTEXT | EES_PARSEURL | EES_ALLOWTAB | EES_NEWLINE, 180, 30, 300, 300, m_hExDuiEdit, 101, DT_LEFT | DT_TOP, 0, 0, NULL);
 	std::vector<CHAR> rtf;
 	Ex_ReadFile(L"res/test.rtf", &rtf);
-	Ex_ObjSendMessage(edit6, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
+	Ex_ObjSendMessage(edit7, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
+	Ex_ObjHandleEvent(edit7, EN_SELCHANGE, OnEditNotifyEvent);
+	Ex_ObjHandleEvent(edit7, EN_LINK, OnEditNotifyEvent);
 
-	HEXOBJ edit_transparent = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"测试透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 40, hExDui_edit, 0, DT_VCENTER, 0, 0, NULL);
-	Ex_ObjSetColor(edit_transparent, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
-	Ex_ObjSetColor(edit_transparent, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
-	Ex_ObjSetRadius(edit_transparent, 10, 10, 10, 0, FALSE);
-	Ex_DUIShowWindow(hExDui_edit, SW_SHOWNORMAL, 0, 0, 0);
+	std::vector<std::wstring> buttonTitles = { L"全选",L"取消选择",L"置选择",L"左对齐 ",L"居中对齐",L"右对齐",L"首行缩进 ",L"右侧缩进",L"非首行缩进",L"项目符",L"文本蓝色 ",L"加粗",L"倾斜",L"下划线",L"删除线",L"超链接",L"幼圆30",L"撤销 ",L"重做",L"复制",L"剪切",L"粘贴",L"删除",L"取行数 ",L"寻找文本",L"替换文本" };
+	m_hEditButton.resize(buttonTitles.size());
+	HEXOBJ hObjPage = Ex_ObjCreate(L"Page", NULL, -1, 500, 30, 350, 300, m_hExDuiEdit);
+	HEXLAYOUT hLayoutPage = _layout_create(ELT_FLOW, hObjPage);
+	BOOL bWrapLine;
+	for (int i = 0; i < buttonTitles.size(); i++)
+	{
+		bWrapLine = buttonTitles[i].find_last_of(' ') == buttonTitles[i].length() - 1;
+		std::wstring title;
+		if (bWrapLine)
+		{
+			title = buttonTitles[i].substr(0, buttonTitles[i].length() - 1);
+		}
+		else {
+			title = buttonTitles[i];
+		}
+		m_hEditButton[i] = Ex_ObjCreateEx( EOS_EX_AUTOSIZE, L"button", title.c_str(), -1, 10, 30, 10, 10, hObjPage, 201 + i, -1, 0, 0, 0);
+		_layout_setchildprop(hLayoutPage, m_hEditButton[i], ELCP_MARGIN_RIGHT, 5);
+		_layout_setchildprop(hLayoutPage, m_hEditButton[i], ELCP_MARGIN_BOTTOM, 5);
+		if (bWrapLine)
+		{
+			_layout_setchildprop(hLayoutPage, m_hEditButton[i], ELCP_FLOW_NEW_LINE, 1);
+		}
+		Ex_ObjHandleEvent(m_hEditButton[i], NM_CLICK, OnEditButtonEvent);
+	}
+	Ex_ObjLayoutSet(hObjPage, hLayoutPage, TRUE);
+
+
+	Ex_DUIShowWindow(m_hExDuiEdit, SW_SHOWNORMAL, 0, 0, 0);
 }
 
 void test_menubutton(HWND hWnd)
@@ -674,7 +878,7 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 	}
 	else if (hObj == m_hComboBoxButton[1])
 	{
-		std::wstring text = L"插入项目" ;
+		std::wstring text = L"插入项目";
 		Ex_ObjSendMessage(hComboBox, CB_INSERTSTRING, 1, (LPARAM)text.c_str());
 	}
 	else if (hObj == m_hComboBoxButton[2])
@@ -696,7 +900,7 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 	}
 	else if (hObj == m_hComboBoxButton[5])
 	{
-		Ex_ObjSendMessage(hComboBox, CB_SHOWDROPDOWN,TRUE, 0);
+		Ex_ObjSendMessage(hComboBox, CB_SHOWDROPDOWN, TRUE, 0);
 	}
 	else if (hObj == m_hComboBoxButton[6])
 	{
@@ -717,7 +921,7 @@ void test_combobox(HWND hWnd)
 	Ex_ObjSendMessage(hComboBox, CB_ADDSTRING, 0, (size_t)L"uiop[");
 
 	WCHAR Cls[] = L"button";
-	m_hComboBoxButton[0] = Ex_ObjCreate(Cls, L"添加项目", -1,130, 30, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[0] = Ex_ObjCreate(Cls, L"添加项目", -1, 130, 30, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[0], NM_CLICK, OnComboBoxButtonEvent);
 
 	m_hComboBoxButton[1] = Ex_ObjCreate(Cls, L"插入项目", -1, 130, 70, 100, 30, hExDui_combobox);
@@ -989,7 +1193,7 @@ LRESULT CALLBACK OnColorButtonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-void ColorButton2::Create(EXHANDLE handle, INT left, INT top, INT width, INT height, LPCWSTR title,INT style,INT styleEx,INT nID,INT dwTextFormat,LPARAM lParam,MsgPROC lpMsgProc)
+void ColorButton2::Create(EXHANDLE handle, INT left, INT top, INT width, INT height, LPCWSTR title, INT style, INT styleEx, INT nID, INT dwTextFormat, LPARAM lParam, MsgPROC lpMsgProc)
 {
 	mhObj = Ex_ObjCreateEx(styleEx, L"colorbutton", title, style, left, top, width, height, handle, nID, dwTextFormat, lParam, 0, lpMsgProc);
 }
@@ -1167,7 +1371,7 @@ void test_reportlistview(HWND hWnd)
 
 	EX_REPORTLIST_ROWINFO row = { 0 };
 	EX_REPORTLIST_ITEMINFO item = { 0 };
-	
+
 	for (INT i = 1; i <= 100; i++)
 	{
 		//先插入表项
@@ -1189,7 +1393,7 @@ void test_reportlistview(HWND hWnd)
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 
 		item.iCol = 4;
-		auto str = std::to_wstring(Random(0,1000));
+		auto str = std::to_wstring(Random(0, 1000));
 		item.wzText = str.c_str();
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 	}
@@ -1346,12 +1550,12 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 
 		_matrix_translate(mx, (FLOAT)ps.width / 2, (FLOAT)ps.height / 2);
 		_matrix_rotate(mx, (FLOAT)nCurent * 90);
-		_matrix_scale(mx,1 + (FLOAT)nCurent * 0.25, 1 + (FLOAT)nCurent * 0.25);
+		_matrix_scale(mx, 1 + (FLOAT)nCurent * 0.25, 1 + (FLOAT)nCurent * 0.25);
 		_matrix_translate(mx, -(FLOAT)ps.width / 2, -(FLOAT)ps.height / 2);
 		_canvas_settransform(ps.hCanvas, mx);
 
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
-		_canvas_fillellipse(ps.hCanvas, hBrush,(FLOAT) ps.width / 2, (FLOAT)ps.height / 2, 75.f, 50.f);
+		_canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)ps.width / 2, (FLOAT)ps.height / 2, 75.f, 50.f);
 		_brush_destroy(hBrush);
 
 		_canvas_settransform(ps.hCanvas, 0);
@@ -1374,18 +1578,18 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 	else if (uMsg == WM_MOUSEHOVER)
 	{
 		HEXEASING hEasing = _easing_create(ET_OutElastic, 0, ES_SINGLE | ES_THREAD | ES_DISPATCHNOTIFY, hObj, 500, 20, EES_PLAY, 0, 100, 0, 0, 0, 0);
-		HEXEASING oldhEasing =(HEXEASING) Ex_ObjSetLong(hObj, EOL_USERDATA, (size_t)hEasing);
+		HEXEASING oldhEasing = (HEXEASING)Ex_ObjSetLong(hObj, EOL_USERDATA, (size_t)hEasing);
 		if (oldhEasing != 0)//如果前一个缓动未结束,则停止前面的缓动
 		{
 			_easing_setstate(oldhEasing, EES_STOP);
 		}
-		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0,FALSE);//设置点燃状态
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);//设置点燃状态
 	}
 	else if (uMsg == WM_MOUSELEAVE)
 	{
 		HEXEASING hEasing = _easing_create(ET_OutElastic, 0, ES_SINGLE | ES_THREAD | ES_DISPATCHNOTIFY | ES_REVERSE, hObj, 500, 20, EES_PLAY, 0, 100, 0, 0, 0, 0);
 		HEXEASING oldhEasing = (HEXEASING)Ex_ObjSetLong(hObj, EOL_USERDATA, (size_t)hEasing);
-		if (oldhEasing!=0)//如果前一个缓动未结束,则停止前面的缓动
+		if (oldhEasing != 0)//如果前一个缓动未结束,则停止前面的缓动
 		{
 			_easing_setstate(oldhEasing, EES_STOP);
 		}
@@ -1396,7 +1600,7 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 
 void test_matrix(HWND hWnd)
 {
-	HWND hWnd_matrix = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试矩阵", 0, 0, 400,400, 0, 0);
+	HWND hWnd_matrix = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试矩阵", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_matrix = Ex_DUIBindWindowEx(hWnd_matrix, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_matrix, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	LPCWSTR ckass_static = L"static";
@@ -2014,7 +2218,7 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			Ex_ObjGetRect(hObj, &rcObj);
 
 			if (parent != 0)
-			{		
+			{
 				Ex_ObjGetRect(parent, &rcParent);
 				if (pt.x - ptOrg.x > rcParent.left && pt.x - ptOrg.x + rcObj.right - rcObj.left<rcParent.right && pt.y - ptOrg.y>rcParent.top && pt.y - ptOrg.y + rcObj.bottom - rcObj.top < rcParent.bottom)
 				{
@@ -2086,7 +2290,7 @@ LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 				std::wstring fileName;
 				fileName.resize(fileNameLength);
 				DragQueryFileW((HDROP)wParam, index, (LPWSTR)fileName.c_str(), fileNameLength + 2);
-				output(L"接收到文件拖拽:",fileName);
+				output(L"接收到文件拖拽:", fileName);
 			}
 		}
 		*lpResult = DROPEFFECT_LINK;//按建立快捷方式处理
@@ -2098,7 +2302,7 @@ LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 void test_dropobj(HWND hWnd)
 {
 	HWND hWnd_dropobj = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试接收拖曳信息", 0, 0, 300, 300, 0, 0);
-	HEXDUI hExDui_dropobj = Ex_DUIBindWindowEx(hWnd_dropobj, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON , 0, 0);
+	HEXDUI hExDui_dropobj = Ex_DUIBindWindowEx(hWnd_dropobj, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_dropobj, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	WCHAR	Cls[] = L"static";
 	WCHAR	title[] = L"拖拽文本、文件到这里";
@@ -2107,7 +2311,7 @@ void test_dropobj(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_dropobj, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnProgressBarProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam, LRESULT* lpResult)
+LRESULT CALLBACK OnProgressBarProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_TIMER)
 	{
@@ -2142,7 +2346,7 @@ void test_progressbar(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam, LRESULT* lpReturn)
+LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpReturn)
 {
 	if (uMsg == WM_NCHITTEST)
 	{
@@ -2185,6 +2389,7 @@ void test_nchittest(HWND hWnd)
 
 std::vector<HEXOBJ> m_dialog_button(3);
 std::vector<HEXOBJ> m_dialog_edit(2);
+HWND m_hWnd_dialog;
 
 LRESULT CALLBACK OnDialogButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -2194,15 +2399,15 @@ LRESULT CALLBACK OnDialogButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 		{
 			OPENFILENAMEW file_info{ 0 };
 			file_info.lStructSize = sizeof(OPENFILENAMEW);
-			file_info.hwndOwner = 0;
-			file_info.lpstrFilter = L"Picture File(*.bmp,*.jpg)\0*.bmp;*.jpg;\0\0";
+			file_info.hwndOwner = m_hWnd_dialog;
+			file_info.lpstrFilter = L"Picture File(*.bmp,*.jpg)\0*.bmp;*.jpg";
 			file_info.nFilterIndex = 1;
-			WCHAR szFile[256];
+			WCHAR szFile[256] = L"";
 			file_info.lpstrFile = szFile;
 			file_info.nMaxFile = sizeof(szFile);
 			file_info.lpstrTitle = L"打开";
 			file_info.nMaxFileTitle = sizeof(file_info.lpstrTitle);
-			file_info.Flags= OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
+			file_info.Flags = 0;
 			if (GetOpenFileNameW(&file_info))
 			{
 				Ex_ObjSetText(m_dialog_edit[0], (LPCWSTR)file_info.lpstrFile, TRUE);
@@ -2212,14 +2417,14 @@ LRESULT CALLBACK OnDialogButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 		{
 			OPENFILENAMEW file_info{ 0 };
 			file_info.lStructSize = sizeof(OPENFILENAMEW);
-			file_info.hwndOwner = 0;
-			file_info.lpstrFilter = L"Picture File(*.bmp,*.jpg)\0*.bmp;*.jpg;\0\0";
+			file_info.hwndOwner = m_hWnd_dialog;
+			file_info.lpstrFilter = L"Picture File(*.bmp,*.jpg)\0*.bmp;*.jpg";
 			file_info.nFilterIndex = 1;
-			WCHAR szFile[256];
+			WCHAR szFile[256] = L"";
 			file_info.lpstrFile = szFile;
-			file_info.nMaxFile = sizeof(szFile);
+			file_info.nMaxFile = sizeof(szFile) ;
 			file_info.lpstrTitle = L"打开";
-			file_info.nMaxFileTitle = sizeof(file_info.lpstrTitle);
+			file_info.nMaxFileTitle = sizeof(file_info.lpstrTitle) ;
 			file_info.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER;
 			if (GetOpenFileNameW(&file_info))
 			{
@@ -2232,7 +2437,7 @@ LRESULT CALLBACK OnDialogButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 			std::wstring str1;
 			str1.resize(text_length1 * 2 + 2);
 			Ex_ObjGetText(m_dialog_edit[0], str1.c_str(), text_length1 * 2);
-			
+
 			auto text_length2 = Ex_ObjGetTextLength(m_dialog_edit[1]);
 			std::wstring str2;
 			str2.resize(text_length2 * 2 + 2);
@@ -2247,10 +2452,10 @@ LRESULT CALLBACK OnDialogButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 
 void test_dialog(HWND hWnd)
 {
-	HWND hWnd_dialog = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试打开对话框", 0, 0, 400, 200, 0, 0);
-	HEXDUI hExDui_dialog = Ex_DUIBindWindowEx(hWnd_dialog, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	m_hWnd_dialog = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试打开对话框,python测试用", 0, 0, 400, 200, 0, 0);
+	HEXDUI hExDui_dialog = Ex_DUIBindWindowEx(m_hWnd_dialog, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_dialog, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	m_dialog_button[0]= Ex_ObjCreate( L"button", L"按钮1", -1, 10, 50, 100, 30, hExDui_dialog);
+	m_dialog_button[0] = Ex_ObjCreate(L"button", L"按钮1", -1, 10, 50, 100, 30, hExDui_dialog);
 	Ex_ObjHandleEvent(m_dialog_button[0], NM_CLICK, OnDialogButtonEvent);
 	m_dialog_edit[0] = Ex_ObjCreate(L"edit", L"", -1, 110, 50, 250, 30, hExDui_dialog);
 

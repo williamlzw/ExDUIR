@@ -2451,6 +2451,7 @@ BOOL _obj_setfont(obj_s* pObj, HEXFONT hFont, BOOL fredraw)
 	{
 		HEXFONT tmp = pObj->hFont_;
 		pObj->hFont_ = hFont;
+
 		if (tmp != hFont)
 		{
 			_font_destroy(tmp);
@@ -2461,7 +2462,6 @@ BOOL _obj_setfont(obj_s* pObj, HEXFONT hFont, BOOL fredraw)
 			}
 			result = TRUE;
 		}
-
 	}
 	if (fredraw)
 	{
@@ -2478,8 +2478,8 @@ BOOL Ex_ObjSetFont(HEXOBJ hObj, HEXFONT hFont, BOOL fRedraw)
 	BOOL ret = FALSE;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-
-		ret = _obj_setfont(pObj, hFont, fRedraw);
+		ret = Ex_ObjSendMessage(hObj, WM_SETFONT, hFont, fRedraw);//发送消息编辑框才能接收
+		//ret = _obj_setfont(pObj, hFont, fRedraw);
 	}
 	Ex_SetLastError(nError);
 	return ret;
@@ -3744,6 +3744,7 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
 		}
 		else if (uMsg == WM_SETFONT)
 		{
+
 			if (_obj_setfont(pObj, wParam, lParam != 0)) {
 				_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_FONTCHANGED, wParam, lParam);
 			}
@@ -4219,12 +4220,12 @@ LRESULT Ex_ObjCallProc(ClsPROC lpPrevObjProc, HWND hWnd, HEXOBJ hObj, INT uMsg, 
 BOOL Ex_ObjSetFontFromFamily(HEXOBJ hObj, LPCWSTR lpszFontfamily, INT dwFontsize, INT dwFontstyle, BOOL fRedraw)
 {
 	INT ret = 0;
-	HEXFONT pFont;
+	HEXFONT hFont;
 
-	pFont = _font_createfromfamily(lpszFontfamily, dwFontsize, dwFontstyle);
-	if (pFont)
+	hFont = _font_createfromfamily(lpszFontfamily, dwFontsize, dwFontstyle);
+	if (hFont)
 	{
-		ret = Ex_ObjSendMessage(hObj, WM_SETFONT, (size_t)pFont, fRedraw);
+		ret = Ex_ObjSendMessage(hObj, WM_SETFONT, hFont, fRedraw);
 	}
 	else
 	{
@@ -4452,4 +4453,81 @@ INT Ex_ObjGetDropString(HEXOBJ hObj, LPVOID pDataObject, LPWSTR lpwzBuffer,INT c
 		ReleaseStgMedium(&stgMedium);
 	}
 	return ret;
+}
+
+size_t Ex_ObjSetEditSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText, LPCWSTR wzFontFace, DWORD fontSize, INT yOffset, BOOL bBold, BOOL bItalic, BOOL bUnderLine, BOOL bStrikeOut, BOOL bLink)
+{
+	CHARFORMAT2W Format;
+	Format.cbSize = sizeof(CHARFORMAT2W);
+	Format.dwMask = dwMask;
+	DWORD dwEffects = 0;
+	if ((dwMask & CFM_COLOR) == CFM_COLOR)
+	{
+		Format.crTextColor = ExARGB2RGB(crText);
+	}
+	if ((dwMask & CFM_OFFSET) == CFM_OFFSET)
+	{
+		Format.yOffset = yOffset;
+	}
+	if ((dwMask & (CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_LINK)) != 0)
+	{
+		if (bBold)
+		{
+			dwEffects = dwEffects | CFE_BOLD;
+		}
+		if (bItalic)
+		{
+			dwEffects = dwEffects | CFE_ITALIC;
+		}
+		if (bUnderLine)
+		{
+			dwEffects = dwEffects | CFE_UNDERLINE;
+		}
+		if (bStrikeOut)
+		{
+			dwEffects = dwEffects | CFE_STRIKEOUT;
+		}
+		if (bLink)
+		{
+			dwEffects = dwEffects | CFE_LINK;
+		}
+		Format.dwEffects = dwEffects;
+	}
+	if ((dwMask & CFM_FACE) == CFM_FACE)
+	{
+		RtlMoveMemory(Format.szFaceName, wzFontFace, LF_FACESIZE);
+	}
+	if ((dwMask & CFM_SIZE) == CFM_SIZE)
+	{
+		Format.yHeight = fontSize * 20;
+	}
+	return Ex_ObjSendMessage(hObj, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&Format);
+}
+
+size_t Ex_ObjSetEditSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering, INT dxStartIndent, INT dxRightIndent, INT dxOffset, WORD wAlignment)
+{
+	PARAFORMAT Format;
+	Format.cbSize = sizeof(PARAFORMAT);
+	Format.dwMask = dwMask;
+	if ((dwMask & PFM_NUMBERING) == PFM_NUMBERING)
+	{
+		Format.wNumbering = wNumbering;
+	}
+	if ((dwMask & PFM_STARTINDENT) == PFM_STARTINDENT)
+	{
+		Format.dxStartIndent = dxStartIndent * 20;
+	}
+	if ((dwMask & PFM_RIGHTINDENT) == PFM_RIGHTINDENT)
+	{
+		Format.dxRightIndent = dxRightIndent * 20;
+	}
+	if ((dwMask & PFM_OFFSET) == PFM_OFFSET)
+	{
+		Format.dxOffset = dxOffset;
+	}
+	if ((dwMask & PFM_ALIGNMENT) == PFM_ALIGNMENT)
+	{
+		Format.wAlignment = wAlignment;
+	}
+	return Ex_ObjSendMessage(hObj, EM_SETPARAFORMAT, 0, (LPARAM)&Format);
 }

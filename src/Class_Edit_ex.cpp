@@ -377,69 +377,45 @@ void _edit_unint(obj_s* pObj) {
 }
 
 void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height) {
-	//typedef struct _charformat {
-	//UINT     cbSize;
-	//DWORD    dwMask;
-	//DWORD    dwEffects;
-	//LONG     yHeight;
-	//LONG     yOffset;
-	//COLORREF crTextColor;
-	//BYTE     bCharSet;
-	//BYTE     bPitchAndFamily;
-	//TCHAR    szFaceName[LF_FACESIZE];
-	//} CHARFORMAT;
 	INT nError = 0;
-	CHARFORMATW* pcf = (CHARFORMATW*)_struct_createfromaddr(pOwner, offsetof(edit_s, pcf_), sizeof(CHARFORMATW), &nError);
-	if (pcf != 0) {
-		LOGFONTW* logfont = (LOGFONTW*)Ex_MemAlloc(sizeof(LOGFONTW));
-		if (logfont != 0) {
-			_font_getlogfont(pObj->hFont_, logfont);
-			pcf->cbSize = sizeof(CHARFORMATW);
-			DWORD dwMask = CFM_BOLD | CFE_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_SIZE | CFM_COLOR | CFM_FACE |
-				CFM_CHARSET | CFM_OFFSET;
-			DWORD tmp = 0;
-			if (logfont->lfWeight != 400) {
-				tmp = tmp | CFE_BOLD;
-			}
-			BYTE b = logfont->lfItalic;
-			if (b != 0) {
-				tmp = tmp | CFE_ITALIC;
-			}
-			BYTE under = logfont->lfUnderline;
-			if (under != 0) {
-				tmp = tmp | CFE_UNDERLINE;
-			}
-			BYTE StrikeOut = logfont->lfStrikeOut;
-			if (StrikeOut != 0) {
-				tmp = tmp | CFE_STRIKEOUT;
-			}
-			pcf->dwEffects = tmp;
-			pcf->yHeight = -logfont->lfHeight * 1440 / 96;
-			BYTE CharSet = logfont->lfCharSet;
-			pcf->bCharSet = CharSet;
-			BYTE PitchAndFamily = logfont->lfPitchAndFamily;
-			pcf->bPitchAndFamily = PitchAndFamily;
-			pcf->crTextColor = ExARGB2RGB(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
-			RtlMoveMemory(pcf->szFaceName, logfont->lfFaceName, lstrlenW((LPCWSTR)logfont->lfFaceName) * (size_t)2);
-			pcf->dwMask = dwMask;
-			Ex_MemFree(logfont);
+	CHARFORMAT2W* pcf = (CHARFORMAT2W*)_struct_createfromaddr(pOwner, offsetof(edit_s, pcf_), sizeof(CHARFORMAT2W), &nError);
+	if (pcf != 0)
+	{
+		LOGFONTW logfont = {};
+		_font_getlogfont(pObj->hFont_, &logfont);
+
+		pcf->cbSize = sizeof(CHARFORMAT2W);
+		DWORD dwMask = CFM_BOLD | CFE_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_SIZE | CFM_COLOR | CFM_FACE |
+			CFM_CHARSET | CFM_OFFSET ;
+		DWORD dwEffects = 0;
+		if (logfont.lfWeight != 400) {
+			dwEffects = dwEffects | CFE_BOLD;
 		}
+		BYTE b = logfont.lfItalic;
+		if (b != 0) {
+			dwEffects = dwEffects | CFE_ITALIC;
+		}
+		BYTE under = logfont.lfUnderline;
+		if (under != 0) {
+			dwEffects = dwEffects | CFE_UNDERLINE;
+		}
+		BYTE StrikeOut = logfont.lfStrikeOut;
+		if (StrikeOut != 0) {
+			dwEffects = dwEffects | CFE_STRIKEOUT;
+		}
+		pcf->dwEffects = dwEffects;
+		pcf->yHeight = -logfont.lfHeight * 1440 / 96;
+		BYTE CharSet = logfont.lfCharSet;
+		pcf->bCharSet = CharSet;
+		BYTE PitchAndFamily = logfont.lfPitchAndFamily;
+		pcf->bPitchAndFamily = PitchAndFamily;
+		pcf->crTextColor = ExARGB2RGB(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
+		RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, lstrlenW((LPCWSTR)logfont.lfFaceName) * (size_t)2);
+		pcf->dwMask = dwMask;
 	}
 }
 
 void _edit_setppf(obj_s* pObj, edit_s* pOwner) {
-	//typedef struct _paraformat {
-	//UINT  cbSize;
-	//DWORD dwMask;
-	//WORD  wNumbering;
-	//WORD  wReserved;
-	// LONG  dxStartIndent;
-	//LONG  dxRightIndent;
-	//LONG  dxOffset;
-	//WORD  wAlignment;
-	//SHORT cTabCount;
-	//LONG  rgxTabs;
-	//} PARAFORMAT;
 	INT nError = 0;
 	PARAFORMAT* ppf = (PARAFORMAT*)_struct_createfromaddr(pOwner, offsetof(edit_s, ppf_), sizeof(PARAFORMAT), &nError);
 	if (ppf != 0) {
@@ -519,33 +495,25 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 	pOwner->width_ = DtoHimetric(width, 96);
 	DWORD tmp = TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE;
 	if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE) {
-		TEXTMETRICW* lpRc = (TEXTMETRICW*)Ex_MemAlloc(sizeof(TEXTMETRICW));
-		HDC mdc = nullptr;
-		if (lpRc != 0) {
-			mdc = pOwner->mDc_;
-			if (mdc != nullptr) {
-				LOGFONTW* logfont = (LOGFONTW*)Ex_MemAlloc(sizeof(LOGFONTW));
-				if (logfont != 0) {
-					if (_font_getlogfont(pObj->hFont_, logfont)) {
-						HFONT hfont = CreateFontIndirectW(logfont);
-						HGDIOBJ hgdiobj = SelectObject(mdc, hfont);
-						GetTextMetricsW(mdc, lpRc);
-						SelectObject(mdc, hgdiobj);
-						DeleteObject(hfont);
-						tmp |= TXTBIT_VIEWINSETCHANGE;
-					}
-					Ex_MemFree(logfont);
-				}
+		TEXTMETRICW tmrc = {};
+		if (pOwner->mDc_) {
+			LOGFONTW logfont = {};
+			if (_font_getlogfont(pObj->hFont_, &logfont)) {
+				HFONT hfont = CreateFontIndirectW(&logfont);
+				HGDIOBJ hgdiobj = SelectObject(pOwner->mDc_, hfont);
+				GetTextMetricsW(pOwner->mDc_, &tmrc);
+				SelectObject(pOwner->mDc_, hgdiobj);
+				DeleteObject(hfont);
+				tmp |= TXTBIT_VIEWINSETCHANGE;
 			}
-			pOwner->prcinset_->top = DtoHimetric((height - lpRc->tmHeight) / 2, 96);
-			Ex_MemFree(lpRc);
 		}
+		pOwner->prcinset_->top = DtoHimetric((height - tmrc.tmHeight) / 2, 96);
 	}
 	else {
 		Ex_ObjScrollSetInfo(hObj, SB_VERT, SIF_PAGE, 0, 0, height, 0, FALSE);
 		Ex_ObjScrollSetInfo(hObj, SB_HORZ, SIF_PAGE, 0, 0, width, 0, FALSE);
 	}
-	if (pOwner->its_ != nullptr) {
+	if (pOwner->its_) {
 		((ITextServices*)pOwner->its_)->OnTxPropertyBitsChange(tmp, tmp);
 	}
 }
@@ -561,13 +529,12 @@ void CALLBACK _edit_timer_caret(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dw
 		pOwner->flags_ = pOwner->flags_ | (EEF_BSHOWCARET | EEF_BCARETCONTEXT);
 		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EEF_BCARETSHHOWED);
 	}
-	
+
 	_obj_invalidaterect(pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), 0);
 }
 
 
-void
-_edit_txpaint(LPVOID pits, DWORD dwDrawAspect, LONG lindex, LPVOID pvAspect, LPVOID ptd, HDC hdcDraw, HDC hicTargetDev,
+void _edit_txpaint(LPVOID pits, DWORD dwDrawAspect, LONG lindex, LPVOID pvAspect, LPVOID ptd, HDC hdcDraw, HDC hicTargetDev,
 	RECT* lprcBounds, RECT* lprcWBounds, RECT* lprcUpdate, DWORD dwContinue, LONG lViewId) {
 	((ITextServices*)pits)->TxDraw(dwDrawAspect, lindex, pvAspect, (DVTARGETDEVICE*)ptd, hdcDraw, hicTargetDev,
 		(LPCRECTL)lprcBounds, (LPCRECTL)lprcWBounds, (LPRECT)lprcUpdate, NULL,
@@ -584,6 +551,7 @@ LRESULT _edit_sendmessage(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, B
 	LRESULT ret = 0;
 	LPVOID pits = _edit_its(pObj);
 	if (pits != nullptr) {
+		
 		*sOK = ((ITextServices*)pits)->TxSendMessage(uMsg, wParam, lParam, &ret) == 0;
 	}
 	return ret;
@@ -729,7 +697,7 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 			 auto ret= ((ITextServices2*)pITS)->TxDrawD2D(rt, 0, (LPRECT)&rcl, ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);*/
 
 			if (hDc != 0) {
-				_edit_txpaint(pITS, 1, 0, NULL, NULL, hDc, NULL, NULL, NULL, &rcTmp, NULL, ismove ? -1 : 0);				
+				_edit_txpaint(pITS, 1, 0, NULL, NULL, hDc, NULL, NULL, NULL, &rcTmp, NULL, ismove ? -1 : 0);
 				BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left, rcTmp.bottom - rcTmp.top, mDc, 0, 0, SRCPAINT);
 				_canvas_releasedc(ps.hCanvas);
 				// rt->EndDraw();
@@ -821,6 +789,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 				SetTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET, 500, _edit_timer_caret);
 			}
 		}
+
 		else if (uMsg == WM_KILLFOCUS) {
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET)) {
 				KillTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET);
@@ -877,7 +846,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		else if (uMsg == WM_SYSCOLORCHANGE) {
 			edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 			if (wParam == COLOR_EX_TEXT_NORMAL) {
-				CHARFORMATW* pcf = (CHARFORMATW*)pOwner->pcf_;
+				CHARFORMAT2W* pcf = (CHARFORMAT2W*)pOwner->pcf_;
 				pcf->dwMask = CFM_COLOR;
 				pcf->crTextColor = ExARGB2RGB(lParam);
 				((ITextServices*)_edit_its(pObj))->OnTxPropertyBitsChange(
@@ -904,7 +873,34 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			//拦截这两个消息
 		}
 		else if (uMsg == WM_SETFONT) {
-
+			edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
+			LOGFONTW logfont = {};
+			pObj->hFont_ = (HEXFONT)wParam;
+			_font_getlogfont((HEXFONT)wParam, &logfont);
+			CHARFORMAT2W* pcf = (CHARFORMAT2W*)pOwner->pcf_;
+			
+			DWORD dwEffects = 0;
+			if (logfont.lfWeight != 400) {
+				dwEffects = dwEffects | CFE_BOLD;
+			}
+			BYTE b = logfont.lfItalic;
+			if (b != 0) {
+				dwEffects = dwEffects | CFE_ITALIC;
+			}
+			BYTE under = logfont.lfUnderline;
+			if (under != 0) {
+				dwEffects = dwEffects | CFE_UNDERLINE;
+			}
+			BYTE StrikeOut = logfont.lfStrikeOut;
+			if (StrikeOut != 0) {
+				dwEffects = dwEffects | CFE_STRIKEOUT;
+			}
+			pcf->dwEffects = dwEffects;
+			pcf->yHeight = -logfont.lfHeight * 1440 / 96;
+			RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, LF_FACESIZE);
+			((ITextServices*)_edit_its(pObj))->OnTxPropertyBitsChange(
+				TXTBIT_CHARFORMATCHANGE,
+				TXTBIT_CHARFORMATCHANGE);
 		}
 		else {
 			LRESULT ret = _edit_sendmessage(pObj, uMsg, wParam, lParam, &bFree);

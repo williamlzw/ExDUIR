@@ -2533,6 +2533,38 @@ EXARGB Ex_ObjSetColor(HEXOBJ hObj, INT nIndex, EXARGB dwColor, BOOL fRedraw);
 
 /*
 * @fnType ExDirectUI
+* @brief Ex_ObjSetEditSelCharFormat 设置编辑框选中行字符格式
+* @param 1  hObj                    [HEXOBJ]
+* @param 2  dwMask                  [INT]                 相关常量 CFM_
+* @param 3  crText                  [EXARGB]			  文本颜色,可空
+* @param 4  wzFontFace              [LPCWSTR]             字体名称,可空
+* @param 5  fontSize                [DWORD]               字体尺寸,可空
+* @param 6  yOffset                 [INT]                 字体垂直偏移,可空
+* @param 7  bBold                   [BOOL]                是否加粗,可空
+* @param 8  bItalic                 [BOOL]                是否倾斜,可空
+* @param 9  bUnderLine              [BOOL]                是否下划线,可空
+* @param 10  bStrikeOut             [BOOL]                是否删除线,可空
+* @param 11  bLink                  [BOOL]                是否超链接,可空
+* @return [size_t]返回结果
+*/
+size_t Ex_ObjSetEditSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL, LPCWSTR wzFontFace = NULL, DWORD fontSize = NULL, INT yOffset = NULL, BOOL bBold = FALSE, BOOL bItalic = FALSE, BOOL bUnderLine = FALSE, BOOL bStrikeOut = FALSE, BOOL bLink = FALSE);
+
+/*
+* @fnType ExDirectUI
+* @brief Ex_ObjSetEditSelParFormat 设置编辑框选中行段落格式
+* @param 1  hObj                    [HEXOBJ]
+* @param 2  dwMask                  [INT]                 相关常量 PFM_
+* @param 3  wNumbering              [WORD]			      编号类型,可空 PFN_常量
+* @param 4  dxStartIndent           [INT]                 首行缩进,可空
+* @param 5  dxRightIndent           [INT]                 右侧缩进,可空
+* @param 6  dxOffset                [INT]                 非首行缩进,可空
+* @param 7  wAlignment              [INT]                 段落对齐方式,可空 PFA_常量
+* @return [size_t]返回结果
+*/
+size_t Ex_ObjSetEditSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering = NULL, INT dxStartIndent = NULL, INT dxRightIndent = NULL, INT dxOffset = NULL, WORD wAlignment = NULL);
+
+/*
+* @fnType ExDirectUI
 * @brief Ex_ObjSetFocus 设置组件焦点
 * @param 1  hObj                    [HEXOBJ]
 * @return [BOOL]返回是否成功

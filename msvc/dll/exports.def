@@ -140,6 +140,9 @@ Ex_ObjEnablePaintingMsg
 Ex_ObjGetDropString
 Ex_ObjCheckDropFormat
 
+Ex_ObjSetEditSelCharFormat
+Ex_ObjSetEditSelParFormat
+
 ;----------------------------------------
 ;theme
 ;----------------------------------------

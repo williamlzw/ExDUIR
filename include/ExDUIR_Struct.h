@@ -390,12 +390,79 @@
 #define EES_UNDERLINE 0x4000
 #pragma endregion edit style constant
 
+// 通知_编辑框_超链接事件
+#define EN_LINK	1803
+// 通知_编辑框_选中区域改变
+#define EN_SELCHANGE 1794
+
 #pragma region edit message constant
+// 消息_编辑框_设置选中区域
+#define EM_EXSETSEL 1079
+// 消息_编辑框_查找文本
+#define EM_FINDTEXTW 1147
+// 消息_编辑框_取选中范围内容
+#define EM_GETTEXTRANGE 1099
+// 消息_编辑框_撤销
+#define EM_UNDO 199
+// 消息_编辑框_重做
+#define EM_REDO 1108
 // 消息_编辑框_设置提示文本(wParam:提示文本颜色,lParam:文本指针)
 #define EM_SETCUEBANNER	5377
+// 消息_编辑框_设置富文本
+#define EM_SETTEXTEX 1121
 // 消息_编辑框_加载RTF文件(wParam:数据长度,lParam:数据指针)
 #define EM_LOAD_RTF	6001
 #pragma endregion edit message constant
+
+// 编辑框选中行字符格式_加粗
+#define CFM_BOLD		0x00000001
+// 编辑框选中行字符格式_倾斜
+#define CFM_ITALIC		0x00000002
+// 编辑框选中行字符格式_下划线
+#define CFM_UNDERLINE	0x00000004
+// 编辑框选中行字符格式_删除线
+#define CFM_STRIKEOUT	0x00000008
+// 编辑框选中行字符格式_超链接
+#define CFM_LINK		0x00000020
+// 编辑框选中行字符格式_尺寸
+#define CFM_SIZE		0x80000000
+// 编辑框选中行字符格式_颜色
+#define CFM_COLOR		0x40000000
+// 编辑框选中行字符格式_字体名称
+#define CFM_FACE		0x20000000
+// 编辑框选中行字符格式_垂直偏移
+#define CFM_OFFSET		0x10000000
+
+// 编辑框选中行段落格式_首行缩进
+#define PFM_STARTINDENT 		0x00000001
+// 编辑框选中行段落格式_右侧缩进
+#define PFM_RIGHTINDENT 		0x00000002
+// 编辑框选中行段落格式_非首行缩进
+#define PFM_OFFSET				0x00000004
+// 编辑框选中行段落格式_段落对齐方式
+#define PFM_ALIGNMENT			0x00000008
+// 编辑框选中行段落格式_编号类型
+#define PFM_NUMBERING			0x00000020
+
+// 编辑框段落对齐方式_左对齐
+#define PFA_LEFT			 1
+// 编辑框段落对齐方式_右对齐
+#define PFA_RIGHT			 2
+// 编辑框段落对齐方式_居中
+#define PFA_CENTER			 3
+
+// 编辑框段落项目符号类型_圆点 
+#define PFN_BULLET		1
+// 编辑框段落项目符号类型_阿拉伯数字 0, 1, 2,...
+#define PFN_ARABIC		2
+// 编辑框段落项目符号类型_小写字母 a, b, c,...
+#define PFN_LCLETTER	3
+// 编辑框段落项目符号类型_大写字母 A, B, C,...
+#define PFN_UCLETTER	4
+// 编辑框段落项目符号类型_小写罗马字母 i, ii, iii, ...
+#define PFN_LCROMAN 	5
+// 编辑框段落项目符号类型_大写罗马字母 I, II, III, ...
+#define PFN_UCROMAN 	6
 
 #pragma region listview style constant
 // 列表风格_纵向列表 
@@ -1582,4 +1649,42 @@ struct EX_DROPINFO
 	DWORD grfKeyState;			//功能键状态
 	INT x;						//鼠标水平位置
 	INT y;						//鼠标垂直位置
+};
+
+// EM_EXSETSEL消息lParam参数结构
+struct EX_CHARRANGE
+{
+	INT cpMin;
+	INT cpMax;
+};
+
+// EM_GETTEXTRANGE,EM_FINDTEXT消息接收lParam参数
+struct EX_TEXTRANGE
+{
+	EX_CHARRANGE chrg;
+	LPCWSTR	lpstrText;
+};
+
+// EN_SELCHANGE消息lParam参数结构
+struct EX_SELCHANGE
+{
+	NMHDR nmhdr;
+	EX_CHARRANGE	chrg;
+	WORD seltyp;
+};
+
+// EN_LINK消息lParam参数结构
+struct EX_ENLINK
+{
+	NMHDR     nmhdr;
+	UINT      msg;
+	WPARAM    wParam;
+	LPARAM    lParam;
+	EX_CHARRANGE chrg;
+};
+
+struct EX_SETTEXTEX
+{
+	DWORD flags;
+	UINT  codepage;
 };
