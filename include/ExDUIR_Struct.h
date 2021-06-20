@@ -1654,8 +1654,8 @@ struct EX_DROPINFO
 // EM_EXSETSEL消息lParam参数结构
 struct EX_CHARRANGE
 {
-	INT cpMin;
-	INT cpMax;
+	LONG cpMin;
+	LONG cpMax;
 };
 
 // EM_GETTEXTRANGE,EM_FINDTEXT消息接收lParam参数
@@ -1674,6 +1674,7 @@ struct EX_SELCHANGE
 };
 
 // EN_LINK消息lParam参数结构
+#pragma pack(1)
 struct EX_ENLINK
 {
 	NMHDR     nmhdr;
@@ -1682,6 +1683,7 @@ struct EX_ENLINK
 	LPARAM    lParam;
 	EX_CHARRANGE chrg;
 };
+#pragma pack()
 
 struct EX_SETTEXTEX
 {

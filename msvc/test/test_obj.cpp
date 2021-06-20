@@ -1,5 +1,4 @@
 ﻿#include "test_obj.h"
-#include "help_ex.h"
 #include "resource.h"
 
 HEXDUI m_hExDui_button;
@@ -357,6 +356,7 @@ LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			EX_TEXTRANGE TextRange;
 			TextRange.chrg = ((EX_ENLINK*)lParam)->chrg;
 			TextRange.lpstrText = (LPCWSTR)Ex_AllocBuffer((TextRange.chrg.cpMax - TextRange.chrg.cpMin + 2) * 2);
+			output(L"aaaaaaa", TextRange.chrg.cpMax, TextRange.chrg.cpMin, ((EX_ENLINK*)lParam)->chrg.cpMax, ((EX_ENLINK*)lParam)->chrg.cpMin);
 			Ex_ObjSendMessage(hObj, EM_GETTEXTRANGE, 0, (LPARAM)&TextRange);
 			output(L"链接被按下:", TextRange.chrg.cpMax, TextRange.chrg.cpMin, TextRange.lpstrText);
 			Ex_FreeBuffer((LPVOID)TextRange.lpstrText);
