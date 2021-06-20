@@ -245,8 +245,8 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
 	GetWindowRect(hWnd, &rcWindow);
 	maxWidth = rcWindow.right - rcWindow.left;
 	maxHeight = rcWindow.bottom - rcWindow.top;
-	top = maxHeight / g_Li.DpiY - __get_int(pValue, 12) + (__get_int(pValue, 12) - 24) / 2;
-	left = maxWidth / g_Li.DpiX - 85;
+	top = (FLOAT)maxHeight / g_Li.DpiY - __get_int(pValue, 12) + (FLOAT)(__get_int(pValue, 12) - 24) / 2;
+	left = (FLOAT)maxWidth / g_Li.DpiX - 85;
 
 	obj_s* pObj = nullptr;
 	

@@ -1417,7 +1417,10 @@ LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 {
 	if (uMsg == WM_SIZE)
 	{
-		Ex_ObjMove(m_hObj_ListView_icon, 25, 50, LOWORD(lParam) - 50, HIWORD(lParam) - 75, TRUE);
+		HDC dc = GetDC(NULL);
+		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
+		//因为LOWORD(lParam)是DPI缩放后的窗口坐标,而Ex_ObjMove接受缩放前坐标，因此这里需要除以dpix
+		Ex_ObjMove(m_hObj_ListView_icon, 25, 50, (LOWORD(lParam) - 50)/ dpix, (HIWORD(lParam) - 75)/ dpix, TRUE);
 	}
 	else if (uMsg == WM_DESTROY)
 	{
@@ -1431,7 +1434,7 @@ void test_iconlistview(HWND hWnd)
 	HWND hWnd_iconlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试图标列表", 0, 0, 500, 300, 0, 0);
 	HEXDUI hExDui_iconlistview = Ex_DUIBindWindowEx(hWnd_iconlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, OnIconWndMsgProc);
 
-	m_hObj_ListView_icon = Ex_ObjCreateEx(-1, L"iconlistview", L"iconlistview", EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL | EILVS_BUTTON, 25, 50, 450, 225, hExDui_iconlistview, 0, -1, 0, 0, NULL);
+	m_hObj_ListView_icon = Ex_ObjCreateEx(-1, L"iconlistview", L"iconlistview", EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL | EILVS_BUTTON, 25, 50, 400, 225, hExDui_iconlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSendMessage(m_hObj_ListView_icon, ILVM_SETITEMSIZE, 0, MAKELONG(70, 75));//设置表项尺寸为70,75
 	//创建添加图片组信息
 
@@ -1869,56 +1872,56 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 	if (uMsg == WM_INITMENUPOPUP)
 	{
 		RECT rc{ 0 };
+		HDC dc = GetDC(NULL);
+		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
 		if (wParam == (size_t)m_hMenu)
 		{
 			size_t value = 1;
 			SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
 			GetWindowRect(hWnd, &rc);
 			SetWindowPos(hWnd, 0, 0, 0, rc.right - rc.left + 10, rc.bottom - rc.top + 10 + 108, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-
-			rc.right = rc.right - rc.left - 10;
+			rc.right = rc.right - rc.left -  10;
 			rc.bottom = rc.bottom - rc.top - 10 + 108;
 			rc.left = 6;
 			rc.top = 40;
-
 			//创建顶部按钮
 			HEXIMAGE hImg;
 			_img_createfromfile(L"custommenu/btn1.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left, rc.top, rc.right * 0.333, 70, hExDUI, -1, -1, hImg, 0, OnMenuBtnMsgProc);
+
+			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left / dpix, rc.top / dpix, (rc.right * 0.333) / dpix, 70/ dpix, hExDUI, -1, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn2.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, rc.left + rc.right * 0.333, rc.top, rc.right * 0.333, 70, hExDUI, -2, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, (rc.left + rc.right * 0.333) / dpix, rc.top / dpix, (rc.right * 0.333) / dpix, 70 / dpix, hExDUI, -2, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn3.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, 70, hExDUI, -3, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, (rc.left + rc.right * 0.666) / dpix, rc.top / dpix, (rc.right * 0.333) / dpix, 70 / dpix, hExDUI, -3, -1, hImg, 0, OnMenuBtnMsgProc);
 
-			HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_TRANSPARENT | EOS_EX_TOPMOST, L"Static", 0, EOS_VISIBLE, 0, 0, 45, 38, hExDUI, 0, -1, 0, 0, 0);
+			HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_TRANSPARENT | EOS_EX_TOPMOST, L"Static", 0, EOS_VISIBLE, 0, 0, 45/dpix, 38 / dpix, hExDUI, 0, -1, 0, 0, 0);
 			std::vector<CHAR> data;
 			Ex_ReadFile(L"custommenu/Icon.png", &data);
 			Ex_ObjSetBackgroundImage(hObj, data.data(), data.size(), 0, 0, BIR_NO_REPEAT, 0, 0, 255, TRUE);
-			rc.top = rc.top + 75;
-			rc.bottom = rc.bottom - 75;
+			rc.top = rc.top + Ex_Scale(75);
+			rc.bottom = rc.bottom - Ex_Scale(75);
 
 		}
 		else {
 			size_t value = 0;
 			SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
-
 			GetWindowRect(hWnd, &rc);
 			SetWindowPos(hWnd, 0, 0, 0, rc.right - rc.left + 10, rc.bottom - rc.top + 10, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 			rc.right = rc.right - rc.left - 10;
 			rc.bottom = rc.bottom - rc.top - 10;
 			rc.left = 6;
 			rc.top = 8;
-
 		}
 		HEXOBJ hObjfind = Ex_ObjFind(hExDUI, 0, L"Item", 0);
 		INT t = rc.top;
 		RECT rcObj{ 0 };
+		
 		while (hObjfind != 0)
 		{
 			Ex_ObjGetRect(hObjfind, &rcObj);
-			Ex_ObjMove(hObjfind, rc.left, t, rc.right, rcObj.bottom - rcObj.top, TRUE);
+			Ex_ObjMove(hObjfind, rc.left/ dpix, t/ dpix, rc.right/ dpix, (rcObj.bottom - rcObj.top)/ dpix, TRUE);
 			Ex_ObjSetColor(hObjfind, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
 			Ex_ObjSetLong(hObjfind, EOL_OBJPROC, (size_t)OnMenuItemMsgProc);
 			t = t + rcObj.bottom - rcObj.top;
@@ -1928,7 +1931,10 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 	else if (uMsg == WM_ERASEBKGND)
 	{
 		RECT rc{ 0 };
+		HDC dc = GetDC(NULL);
+		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
 		GetWindowRect(hWnd, &rc);
+		
 		_canvas_clear(wParam, 0);
 		HEXIMAGE hImg;
 		if (GetPropW(hWnd, L"IsMainMenu") != 0)

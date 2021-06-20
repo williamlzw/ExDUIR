@@ -868,7 +868,7 @@ void _reportlistview_tc_update(HEXOBJ hObj)
 	Ex_ObjSetLong(hObj, ERLVL_ITEMWIDTH, nWidth);
 	RECT rc{ 0 };
 	Ex_ObjGetRect(hObj, &rc);
-	Ex_ObjSendMessage(hObj, WM_SIZE, 0, MAKELONG(rc.right - rc.left, rc.bottom - rc.top));
+	Ex_ObjSendMessage(hObj, WM_SIZE, 0, MAKELONG(Ex_Scale(rc.right - rc.left), Ex_Scale(rc.bottom - rc.top)));
 
 }
 

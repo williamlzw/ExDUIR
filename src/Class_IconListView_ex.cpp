@@ -196,8 +196,6 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 		LPVOID hBrush = 0;
 		if ((cdr->dwStyle & EILVS_BUTTON) != 0)//如果是按钮状态,则处理背景
 		{
-			
-
 			if ((cdr->dwState & STATE_HOVER) != 0 && (Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)//当当前表项是点燃且左键按下时
 			{
 				hBrush = _brush_create(ExRGB2ARGB(16777215, 100));

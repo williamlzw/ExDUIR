@@ -707,10 +707,10 @@ BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect)
 			RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, left_)), 16);
 			if (Flag_Query(EXGF_DPI_ENABLE))
 			{
-				lpRect->left = lpRect->left / g_Li.DpiX;
-				lpRect->top = lpRect->top / g_Li.DpiY;
-				lpRect->right = lpRect->right / g_Li.DpiX;
-				lpRect->bottom = lpRect->bottom / g_Li.DpiY;
+				lpRect->left = (FLOAT)lpRect->left / g_Li.DpiX;
+				lpRect->top = (FLOAT)lpRect->top / g_Li.DpiY;
+				lpRect->right = (FLOAT)lpRect->right / g_Li.DpiX;
+				lpRect->bottom = (FLOAT)lpRect->bottom / g_Li.DpiY;
 			}
 		}
 	}
@@ -732,10 +732,10 @@ BOOL Ex_ObjGetClientRect(HEXOBJ hObj, RECT* lpRect)
 			RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
 			if (Flag_Query(EXGF_DPI_ENABLE))
 			{
-				lpRect->left = lpRect->left / g_Li.DpiX;
-				lpRect->top = lpRect->top / g_Li.DpiY;
-				lpRect->right = lpRect->right / g_Li.DpiX;
-				lpRect->bottom = lpRect->bottom / g_Li.DpiY;
+				lpRect->left = (FLOAT)lpRect->left / g_Li.DpiX;
+				lpRect->top = (FLOAT)lpRect->top / g_Li.DpiY;
+				lpRect->right = (FLOAT)lpRect->right / g_Li.DpiX;
+				lpRect->bottom = (FLOAT)lpRect->bottom / g_Li.DpiY;
 			}
 		}
 	}
@@ -3550,6 +3550,7 @@ BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
 	{
 		flags = flags | SWP_EX_UPDATEOBJECT;
 	}
+	
 	return Ex_ObjSetPos(hObj, 0, x, y, width, height, flags);
 }
 

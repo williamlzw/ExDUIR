@@ -763,7 +763,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	case TVM_GETVISIBLECOUNT:
 		return _treeview_getvisiblecount((EX_TREEVIEW_NODEITEM*)_obj_getExtraLong(pObj, ETVL_NODEITEM), FALSE);
 	case TVM_GETINDENT:
-		return _obj_getExtraLong(pObj, ETVL_INDENT) / g_Li.DpiX;
+		return (FLOAT)_obj_getExtraLong(pObj, ETVL_INDENT) / g_Li.DpiX;
 	case TVM_SETINDENT:
 		_obj_setExtraLong(pObj, ETVL_INDENT, Ex_Scale(wParam));
 		_treeview_updateitem(pObj);
@@ -816,7 +816,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		Ex_ObjInvalidateRect(hObj, 0);
 		return NULL;
 	case TVM_GETITEMHEIGHT:
-		return (_obj_getExtraLong(pObj, ETVL_ITEMHEIGHT) / g_Li.DpiX);
+		return (FLOAT)_obj_getExtraLong(pObj, ETVL_ITEMHEIGHT) / g_Li.DpiX;
 	case TVM_GETNODEFROMINDEX:
 		return (size_t)_treeview_getnodefromindex(pObj, wParam);
 	}

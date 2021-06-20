@@ -363,8 +363,8 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 						HEXOBJ hObjListView = Ex_ObjCreateEx(-1, (LPCWSTR)ATOM_LISTVIEW, 0, EOS_VISIBLE | EOS_VSCROLL | ELVS_ITEMTRACKING,
 							padding.left,
 							padding.top,
-							tmp.right / g_Li.DpiX - padding.left - padding.right,
-							tmp.bottom / g_Li.DpiY - padding.top - padding.bottom,
+							(FLOAT)tmp.right / g_Li.DpiX - padding.left - padding.right,
+							(FLOAT)tmp.bottom / g_Li.DpiY - padding.top - padding.bottom,
 							hExBox, 0, -1, (size_t)pObj, 0, _combobox_wnd_proc);
 						//TODO: Ex_ObjSendMessage(hObjListView, 48, _font_copy(pObj->hFont_), 0);
 						Ex_ObjSendMessage(hObjListView, LVM_SETITEMCOUNT, _obj_getExtraLong(pObj, ECBL_ITEMCOUNT), 0);

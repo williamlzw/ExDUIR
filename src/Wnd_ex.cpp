@@ -646,7 +646,9 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 	}
 	else if (uMsg == WM_SIZE)
 	{
-		_wnd_wm_size(pWnd, hWnd, wParam, LOWORD(lParam), HIWORD(lParam));
+		INT width = LOWORD(lParam);
+		INT height= HIWORD(lParam);
+		_wnd_wm_size(pWnd, hWnd, wParam, width, height);
 	}
 	else if (uMsg == WM_WINDOWPOSCHANGING)//70
 	{
@@ -2208,8 +2210,17 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 						}
 					}
 					WCHAR buff[520];
-					if (rcItem.left != 0) {
+					if (rcItem.left > 0 & rcItem.top > 0) //一级菜单基本是正数
+					{
 						OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
+					}
+					if (rcItem.left < 0)//这里解决WIN10缩放DPI后GetMenuItemRect取值负数问题。
+					{
+						INT offset = abs(rcItem.left);
+						rcItem.left = rcItem.left + offset;
+						rcItem.top = rcItem.top + offset;
+						rcItem.right = rcItem.right + offset;
+						rcItem.bottom = rcItem.bottom + offset;
 					}
 					GetMenuStringW((HMENU)hMenu, i, buff, 520, MF_BYPOSITION);
 					obj_s* pObj = nullptr;
@@ -2226,9 +2237,9 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 							if (g_Li.DpiX > 1)
 							{
 								pObj->t_left_ = pObj->t_left_ * g_Li.DpiX;
-								pObj->t_top_ = pObj->t_top_ * g_Li.DpiX;
+								pObj->t_top_ = pObj->t_top_ * g_Li.DpiY;
 								pObj->t_right_ = pObj->t_right_ * g_Li.DpiX;
-								pObj->t_bottom_ = pObj->t_bottom_ * g_Li.DpiX;
+								pObj->t_bottom_ = pObj->t_bottom_ * g_Li.DpiY;
 							}
 						}
 					}

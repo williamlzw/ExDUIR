@@ -813,8 +813,8 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		iHeight = Ex_Scale(60);
 	}
 	else {
-		iWidth = (rcClient.right - rcClient.left - Ex_Scale(1)) / g_Li.DpiX;
-		iHeight = iHeight / g_Li.DpiY + 8;
+		iWidth = (FLOAT)(rcClient.right - rcClient.left - Ex_Scale(1)) / g_Li.DpiX;
+		iHeight = (FLOAT)iHeight / g_Li.DpiY + 8;
 	}
 	if (iWidth <= 0) iWidth = 1;
 	if (iHeight <= 0) iHeight = 1;

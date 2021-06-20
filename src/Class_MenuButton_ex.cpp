@@ -81,7 +81,7 @@ void _menubutton_paint(HEXOBJ hObj, obj_s* pObj)
 		}
 		if (nColor)
 			_canvas_clear(ps.hCanvas, nColor);
-
+		
 		_canvas_drawtext(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1, ps.dwTextFormat, ps.p_left, ps.p_top, ps.p_right + ps.p_left, ps.p_bottom + ps.p_top);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
@@ -126,6 +126,7 @@ LRESULT CALLBACK _menubutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 					if (!_obj_dispatchnotify(hWnd, pObj, hObj, pObj->id_, MBN_POPUP, wParam, lParam))
 					{
 						GetWindowRect(hWnd, &lpRect);
+						
 						Ex_TrackPopupMenu((HMENU)lParam, 0, lpRect.left + pObj->w_left_, lpRect.top + pObj->w_bottom_, (size_t)hWnd, hObj, NULL, _menubutton_menu_proc, 0);
 					}
 					_obj_setuistate(pObj, STATE_CHECKED | STATE_DOWN, TRUE, NULL, TRUE, NULL);
