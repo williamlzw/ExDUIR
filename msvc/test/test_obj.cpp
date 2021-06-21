@@ -1874,29 +1874,29 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 		RECT rc{ 0 };
 		HDC dc = GetDC(NULL);
 		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
-		if (wParam == (size_t)m_hMenu)
+		if (wParam == (size_t)m_hMenu)//主菜单
 		{
 			size_t value = 1;
 			SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
 			GetWindowRect(hWnd, &rc);
-			SetWindowPos(hWnd, 0, 0, 0, rc.right - rc.left + 10, rc.bottom - rc.top + 10 + 108, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-			rc.right = rc.right - rc.left -  10;
-			rc.bottom = rc.bottom - rc.top - 10 + 108;
-			rc.left = 6;
+			SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(rc.right - rc.left + 10), Ex_Scale(rc.bottom - rc.top + 10 + 108), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+			rc.right = rc.right - rc.left - Ex_Scale(10);
+			rc.bottom = rc.bottom - rc.top - Ex_Scale(10) + Ex_Scale(108);
+			rc.left = Ex_Scale(6);
 			rc.top = 40;
 			//创建顶部按钮
 			HEXIMAGE hImg;
 			_img_createfromfile(L"custommenu/btn1.png", &hImg);
 
-			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left / dpix, rc.top / dpix, (rc.right * 0.333) / dpix, 70/ dpix, hExDUI, -1, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left , rc.top , rc.right * 0.333 , Ex_Scale(70), hExDUI, -1, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn2.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, (rc.left + rc.right * 0.333) / dpix, rc.top / dpix, (rc.right * 0.333) / dpix, 70 / dpix, hExDUI, -2, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, rc.left + rc.right * 0.333, rc.top , rc.right * 0.333, Ex_Scale(70), hExDUI, -2, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn3.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, (rc.left + rc.right * 0.666) / dpix, rc.top / dpix, (rc.right * 0.333) / dpix, 70 / dpix, hExDUI, -3, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, rc.left + rc.right * 0.666 , rc.top , rc.right * 0.333, Ex_Scale(70), hExDUI, -3, -1, hImg, 0, OnMenuBtnMsgProc);
 
-			HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_TRANSPARENT | EOS_EX_TOPMOST, L"Static", 0, EOS_VISIBLE, 0, 0, 45/dpix, 38 / dpix, hExDUI, 0, -1, 0, 0, 0);
+			HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_TRANSPARENT | EOS_EX_TOPMOST, L"Static", 0, EOS_VISIBLE, 0, 0, 45, 38 , hExDUI, 0, -1, 0, 0, 0);
 			std::vector<CHAR> data;
 			Ex_ReadFile(L"custommenu/Icon.png", &data);
 			Ex_ObjSetBackgroundImage(hObj, data.data(), data.size(), 0, 0, BIR_NO_REPEAT, 0, 0, 255, TRUE);
@@ -1905,14 +1905,15 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 
 		}
 		else {
+			//子菜单
 			size_t value = 0;
 			SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
 			GetWindowRect(hWnd, &rc);
-			SetWindowPos(hWnd, 0, 0, 0, rc.right - rc.left + 10, rc.bottom - rc.top + 10, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-			rc.right = rc.right - rc.left - 10;
-			rc.bottom = rc.bottom - rc.top - 10;
-			rc.left = 6;
-			rc.top = 8;
+			SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(rc.right - rc.left + 10), Ex_Scale(rc.bottom - rc.top + 10), SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+			rc.right = rc.right - rc.left - Ex_Scale(10);
+			rc.bottom = rc.bottom - rc.top - Ex_Scale(10);
+			rc.left = Ex_Scale(6);
+			rc.top = Ex_Scale(8);
 		}
 		HEXOBJ hObjfind = Ex_ObjFind(hExDUI, 0, L"Item", 0);
 		INT t = rc.top;
@@ -1921,7 +1922,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 		while (hObjfind != 0)
 		{
 			Ex_ObjGetRect(hObjfind, &rcObj);
-			Ex_ObjMove(hObjfind, rc.left/ dpix, t/ dpix, rc.right/ dpix, (rcObj.bottom - rcObj.top)/ dpix, TRUE);
+			Ex_ObjMove(hObjfind, rc.left, t, rc.right, rcObj.bottom - rcObj.top, TRUE);
 			Ex_ObjSetColor(hObjfind, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
 			Ex_ObjSetLong(hObjfind, EOL_OBJPROC, (size_t)OnMenuItemMsgProc);
 			t = t + rcObj.bottom - rcObj.top;
@@ -1940,11 +1941,11 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 		if (GetPropW(hWnd, L"IsMainMenu") != 0)
 		{
 			_img_createfromfile(L"custommenu/Main.png", &hImg);
-			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, rc.right - rc.left - 5, rc.bottom - rc.top - 5, 0, 0, 68, 68, 46, 42, 13, 12, 0, 230);
+			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, rc.right - rc.left - Ex_Scale(5), rc.bottom - rc.top - Ex_Scale(5), 0, 0, 68, 68, 46, 42, 13, 12, 0, 230);
 		}
 		else {
 			_img_createfromfile(L"custommenu/Sub.png", &hImg);
-			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, rc.right - rc.left - 5, rc.bottom - rc.top - 5, 0, 0, 24, 24, 8, 9, 10, 10, 0, 230);
+			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, rc.right - rc.left - Ex_Scale(5), rc.bottom - rc.top - Ex_Scale(5), 0, 0, 24, 24, 8, 9, 10, 10, 0, 230);
 		}
 		_img_destroy(hImg);
 		*lpResult = 1;

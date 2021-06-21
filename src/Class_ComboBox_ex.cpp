@@ -274,6 +274,7 @@ INT _combobox_delstring(obj_s* pObj, size_t nIndex) {
 	if (nIndex <= 0 || nIndex > len)
 		return -1;
 	//Ex_MemFree((LPVOID)itemList->items[nIndex - 1].lpwzTitle);
+	
 	_combobox_realloc(pObj, len - 1, 0, TRUE);
 	_obj_setExtraLong(pObj, ECBL_ITEMCOUNT, len - 1);
 	return len;
