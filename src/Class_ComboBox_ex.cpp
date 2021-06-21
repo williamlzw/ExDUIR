@@ -17,7 +17,43 @@ size_t _combobox_size(HWND hWnd, obj_s* pObj, HEXOBJ hObj, INT width, INT height
 EX_COMBOX_ITEMLIST* _combobox_realloc(obj_s* pObj, INT need, INT nIndex, BOOL add) {
 	EX_COMBOX_ITEMLIST* items = (EX_COMBOX_ITEMLIST*)_obj_getExtraLong(pObj, ECBL_ITEMLIST);
 	INT size = items->size;
-	if ((add || size < need) && size != need) {
+	if (!add && size > need) {
+		EX_COMBOX_ITEMLIST* newItems = (EX_COMBOX_ITEMLIST*)Ex_MemAlloc(need * sizeof(EX_COMBOX_ITEM) + sizeof(EX_COMBOX_ITEM));
+		if (size >= need)
+		{
+			size = need;
+		}
+		
+		if (nIndex > 0 && nIndex <= size)
+		{
+			RtlMoveMemory(newItems->items, items->items, (nIndex - 1) * sizeof(EX_COMBOX_ITEM));
+			RtlMoveMemory(&newItems->items[nIndex-1], &items->items[nIndex ], (size - nIndex + 1) * sizeof(EX_COMBOX_ITEM));
+		}
+		else
+		{
+			size_t copySize = 0;
+			LPVOID copyDst = 0;
+			LPVOID copySrc = 0;
+			if (nIndex < 0 && nIndex - -size >= 0) {
+				RtlMoveMemory(newItems->items, items->items, (abs(nIndex) - 1) * sizeof(EX_COMBOX_ITEM));
+				copyDst = &newItems->items[abs(nIndex) - 1];
+				copySrc = &items->items[abs(nIndex)];
+				copySize = (size - abs(nIndex) + 1) * sizeof(EX_COMBOX_ITEM);
+			}
+			else {
+				copyDst = newItems->items;
+				copySrc = items->items;
+				copySize = size * sizeof(EX_COMBOX_ITEM);
+			}
+			RtlMoveMemory(copyDst, copySrc, copySize);
+		}
+		newItems->size = need;
+		Ex_MemFree(items);
+		_obj_setExtraLong(pObj, ECBL_ITEMLIST, (size_t)newItems);
+		items = newItems;
+	}
+	else if ((add || size < need) && size != need)
+	{
 		EX_COMBOX_ITEMLIST* newItems = (EX_COMBOX_ITEMLIST*)Ex_MemAlloc(need * sizeof(EX_COMBOX_ITEM) + sizeof(EX_COMBOX_ITEM));
 		if (size >= need)
 		{
@@ -60,7 +96,7 @@ INT _combobox_insertstring(obj_s* pObj, size_t nIndex, LPCWSTR lpTitle) {
 	{
 		return -1;
 	}
-	EX_COMBOX_ITEMLIST* items = _combobox_realloc(pObj, size, nIndex, FALSE);
+	EX_COMBOX_ITEMLIST* items = _combobox_realloc(pObj, size, nIndex, TRUE);
 	_obj_setExtraLong(pObj, ECBL_ITEMCOUNT, size);
 	items->items[nIndex - 1].lpwzTitle = StrDupW(lpTitle);
 	return nIndex;
@@ -168,8 +204,9 @@ INT _combobox_setcursel(obj_s* pObj, size_t nIndex)
 	}
 	INT cur = _obj_setExtraLong(pObj, ECBL_CURRENTSELECTED, nIndex);
 	LPCWSTR title = _combobox_getitemtitle(pObj, nIndex);
-	_obj_baseproc(_obj_gethWnd(pObj), pObj->hObj_, pObj, 12, 1, (size_t)title);
-	_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, pObj->hObj_, 0, 1, 0, pObj->hObj_);
+	_obj_baseproc(_obj_gethWnd(pObj), pObj->hObj_, pObj, WM_SETTEXT, 1, (size_t)title);
+	_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, pObj->hObj_, 0, CBN_SELCHANGE, 0, pObj->hObj_);
+
 	return cur;
 }
 
@@ -196,11 +233,11 @@ void _combobox_wnd_customdraw(obj_s* pObj, WPARAM wParam, EX_CUSTOMDRAW* lParam)
 		INT colorAtom = 0;
 		EXARGB fontColor = 0;
 		if (FLAGS_CHECK(lParam->dwState, STATE_SELECT)) {
-			colorAtom = -1569548963;
+			colorAtom = ATOM_SELECT;
 			fontColor = _obj_getcolor(pObj, COLOR_EX_TEXT_SELECT);
 		}
-		else if (FLAGS_CHECK(lParam->dwState, 128)) {
-			colorAtom = -453284740;
+		else if (FLAGS_CHECK(lParam->dwState, STATE_HOVER)) {
+			colorAtom = ATOM_HOVER;
 			fontColor = _obj_getcolor(pObj, COLOR_EX_TEXT_HOVER);
 		}
 		else {
@@ -211,7 +248,7 @@ void _combobox_wnd_customdraw(obj_s* pObj, WPARAM wParam, EX_CUSTOMDRAW* lParam)
 		}
 
 		if (colorAtom) {
-			Ex_ThemeDrawControlEx(lParam->hTheme, lParam->hCanvas, lParam->rcPaint.left, lParam->rcPaint.top, lParam->rcPaint.right, lParam->rcPaint.bottom, -425838091, colorAtom, 0, 0, -1414696419, 0, 255);
+			Ex_ThemeDrawControlEx(lParam->hTheme, lParam->hCanvas, lParam->rcPaint.left, lParam->rcPaint.top, lParam->rcPaint.right, lParam->rcPaint.bottom, ATOM_ITEM, colorAtom, 0, 0, ATOM_BACKGROUND_GRID, 0, 255);
 		}
 		RECT padding = { 0 };
 		RECT* pRect = (RECT*)Ex_ThemeGetValuePtr(lParam->hTheme, -1741080004, ATOM_PADDING_TEXT);
@@ -272,10 +309,11 @@ INT _combobox_delstring(obj_s* pObj, size_t nIndex) {
 	INT len = _obj_getExtraLong(pObj, ECBL_ITEMCOUNT);
 	EX_COMBOX_ITEMLIST* itemList = (EX_COMBOX_ITEMLIST*)_obj_getExtraLong(pObj, ECBL_ITEMLIST);
 	if (nIndex <= 0 || nIndex > len)
+	{
 		return -1;
-	//Ex_MemFree((LPVOID)itemList->items[nIndex - 1].lpwzTitle);
-	
-	_combobox_realloc(pObj, len - 1, 0, TRUE);
+	}
+	Ex_MemFree((LPVOID)itemList->items[nIndex - 1].lpwzTitle);
+	_combobox_realloc(pObj, len - 1, nIndex, FALSE);
 	_obj_setExtraLong(pObj, ECBL_ITEMCOUNT, len - 1);
 	return len;
 }

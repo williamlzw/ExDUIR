@@ -879,7 +879,7 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 	else if (hObj == m_hComboBoxButton[1])
 	{
 		std::wstring text = L"插入项目";
-		Ex_ObjSendMessage(hComboBox, CB_INSERTSTRING, 1, (LPARAM)text.c_str());
+		Ex_ObjSendMessage(hComboBox, CB_INSERTSTRING, 2, (LPARAM)text.c_str());
 	}
 	else if (hObj == m_hComboBoxButton[2])
 	{
