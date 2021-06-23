@@ -2214,6 +2214,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 					{
 						OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
 					}
+					output(rcItem.left, rcItem.top);
 					if (rcItem.left < 0)//这里解决WIN10缩放DPI后GetMenuItemRect取值负数问题。
 					{
 						INT offset = abs(rcItem.left);

@@ -207,7 +207,7 @@ LRESULT CALLBACK OnEditWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 	{
 		if (m_hEditFont)
 		{
-			//_font_destroy(m_hEditFont);//此处不销毁会在引擎销毁时统一销毁
+			_font_destroy(m_hEditFont);//此处不销毁会在引擎销毁时统一销毁
 		}
 		m_hEditFont = 0;
 	}
@@ -237,59 +237,59 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 		}
 		else if (nID == 204)//左对齐
 		{
-			Ex_ObjSetEditSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_LEFT);
+			Ex_ObjEditSetSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_LEFT);
 		}
 		else if (nID == 205)//居中对齐
 		{
-			Ex_ObjSetEditSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_CENTER);
+			Ex_ObjEditSetSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_CENTER);
 		}
 		else if (nID == 206)//右对齐
 		{
-			Ex_ObjSetEditSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_RIGHT);
+			Ex_ObjEditSetSelParFormat(hEdit, PFM_ALIGNMENT, NULL, NULL, NULL, NULL, PFA_RIGHT);
 		}
 		else if (nID == 207)//首行缩进
 		{
-			Ex_ObjSetEditSelParFormat(hEdit, PFM_STARTINDENT, NULL, 20);
+			Ex_ObjEditSetSelParFormat(hEdit, PFM_STARTINDENT, NULL, 20);
 		}
 		else if (nID == 208)//右侧缩进
 		{
-			Ex_ObjSetEditSelParFormat(hEdit, PFM_RIGHTINDENT, NULL, NULL, 20);
+			Ex_ObjEditSetSelParFormat(hEdit, PFM_RIGHTINDENT, NULL, NULL, 20);
 		}
 		else if (nID == 209)//非首行缩进
 		{
-			Ex_ObjSetEditSelParFormat(hEdit, PFM_OFFSET, NULL, NULL, NULL, 50);
+			Ex_ObjEditSetSelParFormat(hEdit, PFM_OFFSET, NULL, NULL, NULL, 50);
 		}
 		else if (nID == 210)//项目符号
 		{
-			Ex_ObjSetEditSelParFormat(hEdit, PFM_NUMBERING, PFN_LCROMAN);
+			Ex_ObjEditSetSelParFormat(hEdit, PFM_NUMBERING, PFN_LCROMAN);
 		}
 		else if (nID == 211)//文本蓝色
 		{
-			Ex_ObjSetEditSelCharFormat(hEdit, CFM_COLOR, ExRGB2ARGB(16711680, 255));
+			Ex_ObjEditSetSelCharFormat(hEdit, CFM_COLOR, ExRGB2ARGB(16711680, 255));
 		}
 		else if (nID == 212)//加粗
 		{
-			Ex_ObjSetEditSelCharFormat(hEdit, CFM_BOLD, NULL, NULL, NULL, NULL, TRUE);
+			Ex_ObjEditSetSelCharFormat(hEdit, CFM_BOLD, NULL, NULL, NULL, NULL, TRUE);
 		}
 		else if (nID == 213)//倾斜
 		{
-			Ex_ObjSetEditSelCharFormat(hEdit, CFM_ITALIC, NULL, NULL, NULL, NULL, NULL, TRUE);
+			Ex_ObjEditSetSelCharFormat(hEdit, CFM_ITALIC, NULL, NULL, NULL, NULL, NULL, TRUE);
 		}
 		else if (nID == 214)//下划线
 		{
-			Ex_ObjSetEditSelCharFormat(hEdit, CFM_UNDERLINE, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+			Ex_ObjEditSetSelCharFormat(hEdit, CFM_UNDERLINE, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
 		}
 		else if (nID == 215)//删除线
 		{
-			Ex_ObjSetEditSelCharFormat(hEdit, CFM_STRIKEOUT, NULL, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+			Ex_ObjEditSetSelCharFormat(hEdit, CFM_STRIKEOUT, NULL, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
 		}
 		else if (nID == 216)//超链接
 		{
-			Ex_ObjSetEditSelCharFormat(hEdit, CFM_LINK, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,TRUE);
+			Ex_ObjEditSetSelCharFormat(hEdit, CFM_LINK, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,TRUE);
 		}
 		else if (nID == 217)//幼圆30
 		{
-			Ex_ObjSetEditSelCharFormat(hEdit, CFM_SIZE | CFM_FACE, NULL, L"幼圆", 30);
+			Ex_ObjEditSetSelCharFormat(hEdit, CFM_SIZE | CFM_FACE, NULL, L"幼圆", 30);
 		}
 		else if (nID == 218)//撤销
 		{
@@ -381,8 +381,8 @@ void test_edit(HWND hWnd)
 	HEXOBJ edit4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 
 	HEXOBJ edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"测试透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
-	m_hEditFont = _font_createfromfamily(L"宋体", 14, EFS_UNDERLINE);
-	//Ex_ObjSetFont(edit5, m_hEditFont, FALSE);
+	m_hEditFont = _font_createfromfamily(L"微软雅黑", 16, EFS_UNDERLINE);
+	Ex_ObjSetFont(edit5, m_hEditFont, FALSE);
 	Ex_ObjSetColor(edit5, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
 	Ex_ObjSetColor(edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
 	Ex_ObjSetRadius(edit5, 10, 10, 10, 0, FALSE);

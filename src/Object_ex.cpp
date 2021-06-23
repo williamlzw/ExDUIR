@@ -4456,7 +4456,7 @@ INT Ex_ObjGetDropString(HEXOBJ hObj, LPVOID pDataObject, LPWSTR lpwzBuffer,INT c
 	return ret;
 }
 
-size_t Ex_ObjSetEditSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText, LPCWSTR wzFontFace, DWORD fontSize, INT yOffset, BOOL bBold, BOOL bItalic, BOOL bUnderLine, BOOL bStrikeOut, BOOL bLink)
+size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText, LPCWSTR wzFontFace, DWORD fontSize, INT yOffset, BOOL bBold, BOOL bItalic, BOOL bUnderLine, BOOL bStrikeOut, BOOL bLink)
 {
 	CHARFORMAT2W Format;
 	Format.cbSize = sizeof(CHARFORMAT2W);
@@ -4500,12 +4500,12 @@ size_t Ex_ObjSetEditSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText, LPCWST
 	}
 	if ((dwMask & CFM_SIZE) == CFM_SIZE)
 	{
-		Format.yHeight = fontSize * 20;
+		Format.yHeight = fontSize * 1440 / 96;
 	}
 	return Ex_ObjSendMessage(hObj, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&Format);
 }
 
-size_t Ex_ObjSetEditSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering, INT dxStartIndent, INT dxRightIndent, INT dxOffset, WORD wAlignment)
+size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering, INT dxStartIndent, INT dxRightIndent, INT dxOffset, WORD wAlignment)
 {
 	PARAFORMAT Format;
 	Format.cbSize = sizeof(PARAFORMAT);

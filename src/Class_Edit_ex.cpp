@@ -391,24 +391,22 @@ void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height) {
 		if (logfont.lfWeight != 400) {
 			dwEffects = dwEffects | CFE_BOLD;
 		}
-		BYTE b = logfont.lfItalic;
-		if (b != 0) {
+
+		if (logfont.lfItalic != 0) {
 			dwEffects = dwEffects | CFE_ITALIC;
 		}
-		BYTE under = logfont.lfUnderline;
-		if (under != 0) {
+
+		if (logfont.lfUnderline != 0) {
 			dwEffects = dwEffects | CFE_UNDERLINE;
 		}
-		BYTE StrikeOut = logfont.lfStrikeOut;
-		if (StrikeOut != 0) {
+
+		if (logfont.lfStrikeOut != 0) {
 			dwEffects = dwEffects | CFE_STRIKEOUT;
 		}
 		pcf->dwEffects = dwEffects;
 		pcf->yHeight = -logfont.lfHeight * 1440 / 96;
-		BYTE CharSet = logfont.lfCharSet;
-		pcf->bCharSet = CharSet;
-		BYTE PitchAndFamily = logfont.lfPitchAndFamily;
-		pcf->bPitchAndFamily = PitchAndFamily;
+		pcf->bCharSet = logfont.lfCharSet;
+		pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
 		pcf->crTextColor = ExARGB2RGB(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
 		RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, lstrlenW((LPCWSTR)logfont.lfFaceName) * (size_t)2);
 		pcf->dwMask = dwMask;
@@ -876,27 +874,29 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 			LOGFONTW logfont = {};
 			pObj->hFont_ = (HEXFONT)wParam;
-			_font_getlogfont((HEXFONT)wParam, &logfont);
+			_font_getlogfont(pObj->hFont_, &logfont);
 			CHARFORMAT2W* pcf = (CHARFORMAT2W*)pOwner->pcf_;
 			
 			DWORD dwEffects = 0;
 			if (logfont.lfWeight != 400) {
 				dwEffects = dwEffects | CFE_BOLD;
 			}
-			BYTE b = logfont.lfItalic;
-			if (b != 0) {
+
+			if (logfont.lfItalic != 0) {
 				dwEffects = dwEffects | CFE_ITALIC;
 			}
-			BYTE under = logfont.lfUnderline;
-			if (under != 0) {
+
+			if (logfont.lfUnderline != 0) {
 				dwEffects = dwEffects | CFE_UNDERLINE;
 			}
-			BYTE StrikeOut = logfont.lfStrikeOut;
-			if (StrikeOut != 0) {
+
+			if (logfont.lfStrikeOut != 0) {
 				dwEffects = dwEffects | CFE_STRIKEOUT;
 			}
 			pcf->dwEffects = dwEffects;
-			pcf->yHeight = -logfont.lfHeight * 1440 / 96;
+			pcf->yHeight = -logfont.lfHeight * 1440 / 96 ;
+			pcf->bCharSet = logfont.lfCharSet;
+			pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
 			RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, LF_FACESIZE);
 			((ITextServices*)_edit_its(pObj))->OnTxPropertyBitsChange(
 				TXTBIT_CHARFORMATCHANGE,

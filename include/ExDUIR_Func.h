@@ -2533,7 +2533,7 @@ EXARGB Ex_ObjSetColor(HEXOBJ hObj, INT nIndex, EXARGB dwColor, BOOL fRedraw);
 
 /*
 * @fnType ExDirectUI
-* @brief Ex_ObjSetEditSelCharFormat 设置编辑框选中行字符格式
+* @brief Ex_ObjEditSetSelCharFormat 设置编辑框选中行字符格式
 * @param 1  hObj                    [HEXOBJ]
 * @param 2  dwMask                  [INT]                 相关常量 CFM_
 * @param 3  crText                  [EXARGB]			  文本颜色,可空
@@ -2547,11 +2547,11 @@ EXARGB Ex_ObjSetColor(HEXOBJ hObj, INT nIndex, EXARGB dwColor, BOOL fRedraw);
 * @param 11  bLink                  [BOOL]                是否超链接,可空
 * @return [size_t]返回结果
 */
-size_t Ex_ObjSetEditSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL, LPCWSTR wzFontFace = NULL, DWORD fontSize = NULL, INT yOffset = NULL, BOOL bBold = FALSE, BOOL bItalic = FALSE, BOOL bUnderLine = FALSE, BOOL bStrikeOut = FALSE, BOOL bLink = FALSE);
+size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL, LPCWSTR wzFontFace = NULL, DWORD fontSize = NULL, INT yOffset = NULL, BOOL bBold = FALSE, BOOL bItalic = FALSE, BOOL bUnderLine = FALSE, BOOL bStrikeOut = FALSE, BOOL bLink = FALSE);
 
 /*
 * @fnType ExDirectUI
-* @brief Ex_ObjSetEditSelParFormat 设置编辑框选中行段落格式
+* @brief Ex_ObjEditSetSelParFormat 设置编辑框选中行段落格式
 * @param 1  hObj                    [HEXOBJ]
 * @param 2  dwMask                  [INT]                 相关常量 PFM_
 * @param 3  wNumbering              [WORD]			      编号类型,可空 PFN_常量
@@ -2561,7 +2561,7 @@ size_t Ex_ObjSetEditSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL,
 * @param 7  wAlignment              [INT]                 段落对齐方式,可空 PFA_常量
 * @return [size_t]返回结果
 */
-size_t Ex_ObjSetEditSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering = NULL, INT dxStartIndent = NULL, INT dxRightIndent = NULL, INT dxOffset = NULL, WORD wAlignment = NULL);
+size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering = NULL, INT dxStartIndent = NULL, INT dxRightIndent = NULL, INT dxOffset = NULL, WORD wAlignment = NULL);
 
 /*
 * @fnType ExDirectUI

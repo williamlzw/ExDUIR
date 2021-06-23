@@ -95,19 +95,13 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 INT _checkbox_paint(HEXOBJ hObj)
 {
-	/*
-	 * 定义局部变量
-	 * 变量类型 变量名 = 赋值;
-	 */
+
 	EX_PAINTSTRUCT2 ps;
 	RECT rcBlock = { 0 };
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		/*
-		 * 定义局部变量
-		 * 变量类型 变量名 = 赋值;
-		 */
+
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ECBP_CRNORMAL));
 		EXARGB	crText = NULL;
 		/* 计算文本尺寸 */
