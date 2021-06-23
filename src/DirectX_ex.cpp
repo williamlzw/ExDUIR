@@ -80,23 +80,21 @@ ID2D1GdiInteropRenderTarget* _dx_get_gdiInterop(LPVOID pDeviceContext)
 	return pGDIInterface;
 }
 
-LPVOID _dx_createbitmap(ID2D1DeviceContext* pDeviceContext, INT width, INT height, BOOL fGDI, INT* nError)
+LPVOID _dx_createbitmap(ID2D1DeviceContext* pDeviceContext, INT width, INT height, INT* nError)
 {
 
 	D2D1_SIZE_U size;
 	size.width = width;
 	size.height = height;
+	
 	D2D1_BITMAP_PROPERTIES1 pro = {};
 	pro.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
 	pro.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 	pro.dpiX = 96;
 	pro.dpiY = 96;
-	if (fGDI) {
-		pro.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
-	}
-	else {
-		pro.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET;
-	}
+	
+	pro.bitmapOptions = D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE;
+
 	ID2D1Bitmap1* pBitmap = nullptr;
 	if (nError) {
 		*nError = pDeviceContext->CreateBitmap(size, NULL, 0, pro, (ID2D1Bitmap1**)&pBitmap);
@@ -188,7 +186,7 @@ void _dx_blur(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap, FLOAT fDeviati
 			size.height = (FLOAT)lprc->bottom - ptOffset.y;
 		}
 
-		LPVOID pCopyBitmap = _dx_createbitmap(pDeviceContext, (INT)size.width, (INT)size.height, FALSE, nError);
+		LPVOID pCopyBitmap = _dx_createbitmap(pDeviceContext, (INT)size.width, (INT)size.height,  nError);
 		if (*nError == 0)
 		{
 			((ID2D1Bitmap1*)pCopyBitmap)->CopyFromBitmap(NULL, (ID2D1Bitmap*)pBitmap, (D2D_RECT_U*)lprc);
@@ -296,7 +294,7 @@ void _dx_rotate_hue(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap, FLOAT fA
 	{
 		D2D1_SIZE_F szf = ((ID2D1Bitmap*)pBitmap)->GetSize();
 
-		LPVOID pCopyBitmap = _dx_createbitmap(pDeviceContext, szf.width, szf.height, FALSE, nError);
+		LPVOID pCopyBitmap = _dx_createbitmap(pDeviceContext, szf.width, szf.height,  nError);
 		if (*nError == 0)
 		{
 			((ID2D1Bitmap1*)pCopyBitmap)->CopyFromBitmap(NULL, (ID2D1Bitmap*)pBitmap, NULL);

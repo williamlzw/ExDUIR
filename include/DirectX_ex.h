@@ -17,7 +17,7 @@
 BOOL _dx_init(INT* nError);
 void _dx_uninit();
 ID2D1GdiInteropRenderTarget* _dx_get_gdiInterop(LPVOID prt);
-LPVOID _dx_createbitmap(ID2D1DeviceContext* pDeviceContext, INT width, INT height, BOOL fGDI, INT* nError);
+LPVOID _dx_createbitmap(ID2D1DeviceContext* pDeviceContext, INT width, INT height, INT* nError);
 void _dx_settarget(ID2D1DeviceContext* pDeviceContext, LPVOID pBitmap);
 void _dx_getsize(LPVOID pBitmap, FLOAT* width, FLOAT* height);
 LPVOID _dx_gettarget(ID2D1DeviceContext* pDeviceContext);

@@ -14,7 +14,7 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	{
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 255), FALSE);
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_CHECKED, ExARGB(255, 255, 255, 255), FALSE);
-		Ex_ObjInitPropList(hObj, 8 + 1);
+		Ex_ObjInitPropList(hObj, 9);
 		Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, ExARGB(255, 255, 255, 100));
 		EXARGB	ThemeColor = ExARGB(98, 184, 120, 255);
 		Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, ThemeColor);
@@ -24,7 +24,6 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* Switchprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjInitPropList(hObj, 8 + 1);
 		Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, Switchprops->COLOR_EX_BACKGROUND_NORMAL);
 		Ex_ObjSetProp(hObj, ESP_CRBKGHOVER, Switchprops->COLOR_EX_BACKGROUND_HOVER);
 		Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, Switchprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
@@ -173,22 +172,32 @@ INT _switch_paint(HEXOBJ hObj) {
 			_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left + StrokeWidth, (FLOAT)rcBlock.top + StrokeWidth, (FLOAT)rcBlock.right - StrokeWidth, (FLOAT)rcBlock.bottom - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
 		}
 
-		std::wstring title = (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE);
-
-		if (title.empty() == 0) {
-			LPWSTR titlea= (LPWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE);
-			std::vector<std::wstring> tokens = ws_split(title, L"|");
-			
-			if ((FLOAT)nProgress / 100 * 255)
-			{
-				std::wstring str = tokens[0];
-				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED), str.c_str() /*L"开"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)ps.p_left + _Radius / 2, (FLOAT)ps.p_top, (FLOAT)rcBlock.left, (FLOAT)ps.p_bottom);
-			}
-			else {
-				std::wstring str = tokens[1];
-				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), str.c_str()/* L"关"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)rcBlock.right, (FLOAT)ps.p_top, (FLOAT)ps.p_right - _Radius / 2, (FLOAT)ps.p_bottom);
-			}
+		LPCWSTR titlea = (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE);
+		std::wstring title = L"是|否";
+		if (!titlea)
+		{
+			title = L"是|否";
 		}
+		else {
+			title = titlea;
+		}
+		if (title.find('|') == std::wstring::npos)
+		{
+			title = L"是|否";
+		}
+		
+		std::vector<std::wstring> tokens = ws_split(title, L"|");
+			
+		if ((FLOAT)nProgress / 100 * 255)
+		{
+			std::wstring str = tokens[0];
+			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED), str.c_str() /*L"开"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)ps.p_left + _Radius / 2, (FLOAT)ps.p_top, (FLOAT)rcBlock.left, (FLOAT)ps.p_bottom);
+		}
+		else {
+			std::wstring str = tokens[1];
+			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), str.c_str()/* L"关"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)rcBlock.right, (FLOAT)ps.p_top, (FLOAT)ps.p_right - _Radius / 2, (FLOAT)ps.p_bottom);
+		}
+		
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}

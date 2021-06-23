@@ -108,22 +108,22 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* ButtonExprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjInitPropList(hObj, 15);
-		Ex_ObjSetProp(hObj, 1, ButtonExprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, 2, ButtonExprops->COLOR_EX_BACKGROUND_HOVER);
-		Ex_ObjSetProp(hObj, 3, ButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, 4, ButtonExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, 5, ButtonExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, 6, ButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, 7, ButtonExprops->COLOR_EX_ICON_NORMAL);
-		Ex_ObjSetProp(hObj, 8, ButtonExprops->COLOR_EX_ICON_DOWNORFOCUS);
-		Ex_ObjSetProp(hObj, 9, ButtonExprops->Radius);
-		Ex_ObjSetProp(hObj, 10, ButtonExprops->StrokeWidth);
-		Ex_ObjSetProp(hObj, 11, ButtonExprops->nIconPosition);
-		Ex_ObjSetProp(hObj, 12, ButtonExprops->COLOR_EX_BRD_CRBegin);
-		Ex_ObjSetProp(hObj, 13, ButtonExprops->COLOR_EX_BRD_CREnd);
-		Ex_ObjSetProp(hObj, 14, ButtonExprops->COLOR_EX_BKG_CRBegin);
-		Ex_ObjSetProp(hObj, 15, ButtonExprops->COLOR_EX_BKG_CREnd);
+		Ex_ObjInitPropList(hObj, 16);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGNORMAL, ButtonExprops->COLOR_EX_BACKGROUND_NORMAL);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGHOVER, ButtonExprops->COLOR_EX_BACKGROUND_HOVER);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGDOWNORCHECKED, ButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERNORMAL, ButtonExprops->COLOR_EX_BORDER_NORMAL);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERHOVER, ButtonExprops->COLOR_EX_BORDER_HOVER);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERDOWNORCHECKED, ButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, EBEP_CRICONNORMAL, ButtonExprops->COLOR_EX_ICON_NORMAL);
+		Ex_ObjSetProp(hObj, EBEP_CRICONDOWNORFOCUR, ButtonExprops->COLOR_EX_ICON_DOWNORFOCUS);
+		Ex_ObjSetProp(hObj, EBEP_RADIUS, ButtonExprops->Radius);
+		Ex_ObjSetProp(hObj, EBEP_STROKEWIDTH, ButtonExprops->StrokeWidth);
+		Ex_ObjSetProp(hObj, EBEP_ICONPOSITION, ButtonExprops->nIconPosition);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERBEGIN, ButtonExprops->COLOR_EX_BRD_CRBegin);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDEREND, ButtonExprops->COLOR_EX_BRD_CREnd);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGBEGIN, ButtonExprops->COLOR_EX_BKG_CRBegin);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGEND, ButtonExprops->COLOR_EX_BKG_CREnd);
 		break;
 	}
 
@@ -146,21 +146,21 @@ INT _buttonex_paint(HEXOBJ hObj)
 	{
 		_canvas_setimageantialias(ps.hCanvas, TRUE);
 
-		INT			crBkg = Ex_ObjGetProp(hObj, 1);
-		INT			crBorder = Ex_ObjGetProp(hObj, 4);
+		INT			crBkg = Ex_ObjGetProp(hObj, EBEP_CRBKGNORMAL);
+		INT			crBorder = Ex_ObjGetProp(hObj, EBEP_CRBORDERNORMAL);
 		EXARGB		crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
-		FLOAT		Radius = (FLOAT)Ex_ObjGetProp(hObj, 9);
-		FLOAT		strokeWidth = (FLOAT)Ex_ObjGetProp(hObj, 10);
-		size_t		nIconPosition = Ex_ObjGetProp(hObj, 11);
-		HEXIMAGE	hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, 0);
+		FLOAT		Radius = (FLOAT)Ex_ObjGetProp(hObj, EBEP_RADIUS);
+		FLOAT		strokeWidth = (FLOAT)Ex_ObjGetProp(hObj, EBEP_STROKEWIDTH);
+		size_t		nIconPosition = Ex_ObjGetProp(hObj, EBEP_ICONPOSITION);
+		HEXIMAGE	hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_NORMAL);
 		BOOL		m_IsDraw = FALSE;
 
 		if ((ps.dwState & STATE_DOWN) == STATE_DOWN)
 		{
 			hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_DOWNORCHECKED);
 			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_DOWN);
-			crBkg = Ex_ObjGetProp(hObj, 3);
-			crBorder = Ex_ObjGetProp(hObj, 6);
+			crBkg = Ex_ObjGetProp(hObj, EBEP_CRBKGDOWNORCHECKED);
+			crBorder = Ex_ObjGetProp(hObj, EBEP_CRBORDERDOWNORCHECKED);
 			OffsetRect((LPRECT)&ps.t_left, 2, 2);
 			m_IsDraw = FALSE;
 		}
@@ -168,8 +168,8 @@ INT _buttonex_paint(HEXOBJ hObj)
 		{
 			hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_HOVER);
 			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_HOVER);
-			crBkg = Ex_ObjGetProp(hObj, 2);
-			crBorder = Ex_ObjGetProp(hObj, 5);
+			crBkg = Ex_ObjGetProp(hObj, EBEP_CRBKGHOVER);
+			crBorder = Ex_ObjGetProp(hObj, EBEP_CRBORDERHOVER);
 			m_IsDraw = TRUE;
 		}
 		/* 设置背景画刷 */
@@ -185,7 +185,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 		/*没有普通底色就填充渐变底色*/
 		if (crBkg == 0)
 		{
-			HEXBRUSH	linearhBrush = _brush_createlinear(0, 0, (FLOAT)ps.p_right, 0, Ex_ObjGetProp(hObj, 14), Ex_ObjGetProp(hObj, 15));
+			HEXBRUSH	linearhBrush = _brush_createlinear(0, 0, (FLOAT)ps.p_right, 0, Ex_ObjGetProp(hObj, EBEP_CRBKGBEGIN), Ex_ObjGetProp(hObj, EBEP_CRBKGEND));
 			if (Radius == 0) {
 				_canvas_fillrect(ps.hCanvas, linearhBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom);
 			}
@@ -194,7 +194,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 			}
 			_brush_destroy(linearhBrush);
 
-			if (m_IsDraw && Ex_ObjGetProp(hObj, 14) != 0 && Ex_ObjGetProp(hObj, 15) != 0) {/*覆盖一层半透明色作为点燃色*/
+			if (m_IsDraw && Ex_ObjGetProp(hObj, EBEP_CRBKGBEGIN) != 0 && Ex_ObjGetProp(hObj, EBEP_CRBKGEND) != 0) {/*覆盖一层半透明色作为点燃色*/
 				_brush_setcolor(hBrush, ExARGB(255, 255, 255, 50));
 				if (Radius == 0) {
 					_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left, (FLOAT)ps.p_top, (FLOAT)ps.p_right, (FLOAT)ps.p_bottom);
@@ -208,7 +208,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 		/*没有普通边框色就填充渐变边框色*/
 		if (crBorder == 0) {
 			_brush_destroy(hBrush);
-			hBrush = _brush_createlinear(0, 0, (FLOAT)ps.p_right, 0, Ex_ObjGetProp(hObj, 12), Ex_ObjGetProp(hObj, 13));
+			hBrush = _brush_createlinear(0, 0, (FLOAT)ps.p_right, 0, Ex_ObjGetProp(hObj, EBEP_CRBORDERBEGIN), Ex_ObjGetProp(hObj, EBEP_CRBORDEREND));
 		}
 		else {
 			_brush_setcolor(hBrush, crBorder);
@@ -226,7 +226,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 		if (hImage != 0)
 		{
 			/* 获取九宫矩形 */
-			RECT* pRect = (RECT*)Ex_ObjGetLong(hObj, 3);
+			RECT* pRect = (RECT*)Ex_ObjGetLong(hObj, EBEL_RECT);
 			/* 不是九宫图片 */
 			if (pRect == 0)
 			{
@@ -265,7 +265,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 
 
 	   /* 图标 */
-		hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, 4);
+		hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_ICON);
 
 		if (hImage != 0)
 		{

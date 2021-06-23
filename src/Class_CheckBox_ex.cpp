@@ -32,10 +32,10 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		/*创建时初始化控件属性*/
 	case WM_CREATE:
 	{
-		Ex_ObjInitPropList(hObj, 3 + 1);
-		Ex_ObjSetProp(hObj, 1, ExARGB(190, 190, 190, 255));
-		Ex_ObjSetProp(hObj, 2, ExARGB(200, 200, 200, 255));
-		Ex_ObjSetProp(hObj, 3, ExARGB(0, 200, 200, 255));
+		Ex_ObjInitPropList(hObj, 4);
+		Ex_ObjSetProp(hObj, ECBP_CRNORMAL, ExARGB(190, 190, 190, 255));
+		Ex_ObjSetProp(hObj, ECBP_CRHOVER, ExARGB(200, 200, 200, 255));
+		Ex_ObjSetProp(hObj, ECBP_CRCHECKED, ExARGB(0, 200, 200, 255));
 	}
 	/*销毁时释放资源*/
 	case WM_DESTROY:
@@ -76,10 +76,9 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* checkboxprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjInitPropList(hObj, 3 + 1);
-		Ex_ObjSetProp(hObj, 1, checkboxprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, 2, checkboxprops->COLOR_EX_BACKGROUND_HOVER);
-		Ex_ObjSetProp(hObj, 3, checkboxprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ECBP_CRNORMAL, checkboxprops->COLOR_EX_BACKGROUND_NORMAL);
+		Ex_ObjSetProp(hObj, ECBP_CRHOVER, checkboxprops->COLOR_EX_BACKGROUND_HOVER);
+		Ex_ObjSetProp(hObj, ECBP_CRCHECKED, checkboxprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
 		/*Ex_ObjSetProp(hObj, 4, checkboxprops->COLOR_EX_BORDER_NORMAL);
 		Ex_ObjSetProp(hObj, 5, checkboxprops->COLOR_EX_BORDER_HOVER);
 		Ex_ObjSetProp(hObj, 6, checkboxprops->COLOR_EX_BORDER_DOWNORCHECKED);
@@ -109,7 +108,7 @@ INT _checkbox_paint(HEXOBJ hObj)
 		 * 定义局部变量
 		 * 变量类型 变量名 = 赋值;
 		 */
-		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, 1));
+		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ECBP_CRNORMAL));
 		EXARGB	crText = NULL;
 		/* 计算文本尺寸 */
 		FLOAT nTextWidth = NULL;
@@ -124,14 +123,14 @@ INT _checkbox_paint(HEXOBJ hObj)
 
 		if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_HOVER) != 0)
 		{
-			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 2));
+			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ECBP_CRHOVER));
 			crText = ExARGB(194, 194, 194, 255);
 		}
 
 		if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
 		{
 			/* 定义选中色 */
-			crText = Ex_ObjGetProp(hObj, 3);
+			crText = Ex_ObjGetProp(hObj, ECBP_CRCHECKED);
 			_brush_setcolor(hBrush, crText);
 
 		}

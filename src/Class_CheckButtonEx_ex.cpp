@@ -30,11 +30,11 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		/*创建时初始化控件属性*/
 	case WM_CREATE:
 	{
-		Ex_ObjInitPropList(hObj, 4 + 1);
-		Ex_ObjSetProp(hObj, 1, ExRGB2ARGB(16777215, 255));
-		Ex_ObjSetProp(hObj, 2, ExARGB(0, 0, 0, 255));
-		Ex_ObjSetProp(hObj, 3, ExARGB(0, 0, 0, 255));
-		Ex_ObjSetProp(hObj, 4, ExARGB(0, 0, 0, 255));
+		Ex_ObjInitPropList(hObj, 5);
+		Ex_ObjSetProp(hObj, ECBEP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERNORMAL, ExARGB(0, 0, 0, 255));
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERHOVER, ExARGB(0, 0, 0, 255));
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
 	}
 	/*销毁时释放资源*/
 	case WM_DESTROY:
@@ -68,11 +68,10 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* CheckButtonExprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjInitPropList(hObj, 4 + 1);
-		Ex_ObjSetProp(hObj, 1, CheckButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, 2, CheckButtonExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, 3, CheckButtonExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, 4, CheckButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ECBEP_CRBKGDOWNORCHECKED, CheckButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERNORMAL, CheckButtonExprops->COLOR_EX_BORDER_NORMAL);
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERHOVER, CheckButtonExprops->COLOR_EX_BORDER_HOVER);
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERDOWNORCHECKED, CheckButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
 		break;
 	}
 	default:
@@ -83,30 +82,22 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 
 INT _checkbuttonex_paint(HEXOBJ hObj)
 {
-	/*
-	 * 定义局部变量
-	 * 变量类型 变量名 = 赋值;
-	 */
 	EX_PAINTSTRUCT2 ps;
 	RECT rcBlock = { 0 };
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		/*
-		 * 定义局部变量
-		 * 变量类型 变量名 = 赋值;
-		 */
-		HEXBRUSH hBrush = _brush_create((EXARGB)Ex_ObjGetProp(hObj, 2));
+		HEXBRUSH hBrush = _brush_create((EXARGB)Ex_ObjGetProp(hObj, ECBEP_CRBORDERNORMAL));
 		EXARGB	crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
 		if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
 		{
-			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL/*COLOR_EX_TEXT_HOVER*/);
-			_brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, 3));
+			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
+			_brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, ECBEP_CRBORDERHOVER));
 		}
 
 		if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
 		{
-			_brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, 4));
+			_brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, ECBEP_CRBORDERDOWNORCHECKED));
 		}
 		/* 计算文本尺寸 */
 		FLOAT nTextWidth = NULL;
@@ -123,7 +114,7 @@ INT _checkbuttonex_paint(HEXOBJ hObj)
 		_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, 1, D2D1_DASH_STYLE_SOLID);
 
 		/* 定义选中色 */
-		EXARGB CHECKCLR = (EXARGB)Ex_ObjGetProp(hObj, 1);
+		EXARGB CHECKCLR = (EXARGB)Ex_ObjGetProp(hObj, ECBEP_CRBKGDOWNORCHECKED);
 
 		_brush_setcolor(hBrush, CHECKCLR);
 

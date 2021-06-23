@@ -31,14 +31,14 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	case WM_CREATE:
 	{
 		Ex_ObjSetPadding(hObj, 0, 5, 5, 5, 5, FALSE);
-		Ex_ObjInitPropList(hObj, 9 + 1);
+		Ex_ObjInitPropList(hObj, 10);
 		EXARGB	ThemeColor = ExARGB(76, 175, 80, 255);
-		Ex_ObjSetProp(hObj, 2, ExARGB(0, 0, 0, 100));
-		Ex_ObjSetProp(hObj, 3, ExARGB(0, 0, 0, 150));
-		Ex_ObjSetProp(hObj, 4, ThemeColor);
-		Ex_ObjSetProp(hObj, 5, ExARGB(184, 186, 188, 255));
-		Ex_ObjSetProp(hObj, 6, ExARGB(18, 183, 245, 255));
-		Ex_ObjSetProp(hObj, 8, 2);
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERNORMAL, ExARGB(0, 0, 0, 100));
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERHOVER, ExARGB(0, 0, 0, 150));
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERDOWNORCHECKED, ThemeColor);
+		Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
+		Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
+		Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, 2);
 		break;
 	}
 	/* 设置图标 */
@@ -69,26 +69,25 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* EditExprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjInitPropList(hObj, 9 + 1);
-		Ex_ObjSetProp(hObj, 1, EditExprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, 2, EditExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, 3, EditExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, 4, EditExprops->COLOR_EX_BORDER_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, EEEP_CRBKGNORMAL, EditExprops->COLOR_EX_BACKGROUND_NORMAL);
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERNORMAL, EditExprops->COLOR_EX_BORDER_NORMAL);
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERHOVER, EditExprops->COLOR_EX_BORDER_HOVER);
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERDOWNORCHECKED, EditExprops->COLOR_EX_BORDER_DOWNORCHECKED);
 		if (EditExprops->COLOR_EX_ICON_NORMAL == 0) {
-			Ex_ObjSetProp(hObj, 5, ExARGB(184, 186, 188, 255));
+			Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
 		}
 		else {
-			Ex_ObjSetProp(hObj, 5, EditExprops->COLOR_EX_ICON_NORMAL);
+			Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, EditExprops->COLOR_EX_ICON_NORMAL);
 		}
 		if (EditExprops->COLOR_EX_ICON_DOWNORFOCUS == 0) {
-			Ex_ObjSetProp(hObj, 6, ExARGB(18, 183, 245, 255));
+			Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
 		}
 		else {
-			Ex_ObjSetProp(hObj, 6, EditExprops->COLOR_EX_ICON_DOWNORFOCUS);
+			Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, EditExprops->COLOR_EX_ICON_DOWNORFOCUS);
 		}
-		Ex_ObjSetProp(hObj, 7, EditExprops->Radius);
-		Ex_ObjSetProp(hObj, 8, EditExprops->StrokeWidth);
-		Ex_ObjSetProp(hObj, 9, EditExprops->nIconPosition);
+		Ex_ObjSetProp(hObj, EEEP_RADIUS, EditExprops->Radius);
+		Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, EditExprops->StrokeWidth);
+		Ex_ObjSetProp(hObj, EEEP_ICONPOSITION, EditExprops->nIconPosition);
 		break;
 	}
 
@@ -96,11 +95,11 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	{
 		RECT rc = { 0 };
 		HEXCANVAS	hCanvas = (HEXCANVAS)wParam;
-		HEXBRUSH	hbrush = _brush_create(Ex_ObjGetProp(hObj, 1));
+		HEXBRUSH	hbrush = _brush_create(Ex_ObjGetProp(hObj, EEEP_CRBKGNORMAL));
 		BOOL		m_IsDraw = FALSE;/*假为默认边框风格*/
-		FLOAT		Radius = (FLOAT)Ex_ObjGetProp(hObj, 7);/*圆角度*/
-		FLOAT		StrokeWidth = (FLOAT)Ex_ObjGetProp(hObj, 8);/*线宽*/
-		FLOAT		nIconPosition = (FLOAT)Ex_ObjGetProp(hObj, 9);/*图标位置*/
+		FLOAT		Radius = (FLOAT)Ex_ObjGetProp(hObj, EEEP_RADIUS);
+		FLOAT		StrokeWidth = (FLOAT)Ex_ObjGetProp(hObj, EEEP_STORKEWIDTH);
+		FLOAT		nIconPosition = (FLOAT)Ex_ObjGetProp(hObj, EEEP_ICONPOSITION);
 		/*获取编辑客户区矩形*/
 		Ex_ObjGetClientRect(hObj, &rc);
 		/*填充背景*/
@@ -120,10 +119,9 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		
 
 
-		//HEXBRUSH	hbrush_linear = _brush_createlinear(0, 0, Ex_Scale((FLOAT)rc.right), 0, crBegin, crEnd /*RGB2ARGB(8388736, 200), RGB2ARGB(16746496, 200)*/);
 
 		/*定义线框正常态颜色*/
-		_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, 2));
+		_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERNORMAL));
 
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & EES_UNDERLINE) == EES_UNDERLINE)
 		{
@@ -134,13 +132,13 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		if ((Ex_ObjGetUIState(hObj) & STATE_HOVER) != 0)
 		{
 			/*定义点燃状态下的线框颜色*/
-			_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, 3));
+			_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERHOVER));
 		}
 
 		if ((Ex_ObjGetUIState(hObj) & STATE_FOCUS) != 0)
 		{
 
-			_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, 4));
+			_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERDOWNORCHECKED));
 		}
 
 		/*绘制线框*/

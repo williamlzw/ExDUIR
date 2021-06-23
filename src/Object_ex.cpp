@@ -2055,9 +2055,9 @@ void _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, IN
 
 	//初始化画布
 	INT flags = 0;
-
-	if (((((EX_CLASSINFO*)pCls)->dwFlags & ECF_D2D_GDI_COMPATIBLE) == ECF_D2D_GDI_COMPATIBLE))  flags = CVF_GDI_COMPATIBLE;
-	flags |= 2 | 4 | 16; // TODO: canvas平滑标识
+	flags = CVF_GDI_COMPATIBLE;
+	 
+	
 	if (((EX_CLASSINFO*)pCls)->atomName == ATOM_PAGE)
 	{
 

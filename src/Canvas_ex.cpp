@@ -88,10 +88,8 @@ void _canvas_recreate(canvas_s* pCanvas, INT width, INT height, INT* nError)
 	pCanvas->width_ = width;
 	pCanvas->height_ = height;
 	wnd_s* pWnd = pCanvas->pWnd_;
-
-
-	BOOL fGDI = ((pCanvas->dwFlags_ & CVF_GDI_COMPATIBLE) == CVF_GDI_COMPATIBLE) || Flag_Query(EXGF_RENDER_METHOD_D2D_GDI_COMPATIBLE);
-	LPVOID pBitmap = _dx_createbitmap(pWnd->dx_context_, width, height, fGDI, nError);
+	
+	LPVOID pBitmap = _dx_createbitmap(pWnd->dx_context_, width, height,  nError);
 
 	if (pBitmap)
 	{
@@ -110,7 +108,9 @@ BOOL _canvas_resize(HEXCANVAS hCanvas, INT width, INT height)
 	INT nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
+
 		_canvas_recreate(pCanvas, width, height, &nError);
+
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -1034,6 +1034,7 @@ HEXCANVAS _canvas_createfrompwnd(wnd_s* pWnd, INT width, INT height, INT dwFlags
 			pCanvas->pWnd_ = pWnd;
 			nError = 0;
 			_canvas_recreate(pCanvas, width, height, &nError);
+			
 		}
 	}
 	else {

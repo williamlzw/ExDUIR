@@ -71,7 +71,7 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 void test_button(HWND hWnd)
 {
 	HWND hWnd_button = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试按钮开关", 0, 0, 300, 250, 0, 0);
-	m_hExDui_button = Ex_DUIBindWindowEx(hWnd_button, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	m_hExDui_button = Ex_DUIBindWindowEx(hWnd_button, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(m_hExDui_button, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	std::vector<HEXOBJ> buttons;
 	buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"禁用自身", -1, 10, 30, 120, 30, m_hExDui_button, 201, DT_VCENTER | DT_CENTER, 0, 0, NULL));
@@ -90,7 +90,7 @@ void test_button(HWND hWnd)
 	WCHAR ATOM_switch[] = L"Switch";
 	HEXOBJ switchObj = Ex_ObjCreate(ATOM_switch, L"已开启|已关闭", -1, 150, 30, 80, 30, m_hExDui_button);
 
-	HEXOBJ switchObj2 = Ex_ObjCreateEx(-1, ATOM_switch, L"开|关", -1, 150, 80, 60, 30, m_hExDui_button, 206, -1, 0, 0, 0);
+	HEXOBJ switchObj2 = Ex_ObjCreateEx(-1, ATOM_switch, 0, -1, 150, 80, 60, 30, m_hExDui_button, 206, -1, 0, 0, 0);
 	Ex_ObjSendMessage(switchObj2, BM_SETCHECK, 1, 0); /* 设置选中状态 */
 	Ex_ObjHandleEvent(switchObj2, NM_CHECK, OnButtonEvent);
 	EX_OBJ_PROPS switchprops = { 0 };
@@ -108,7 +108,7 @@ void test_button(HWND hWnd)
 void test_label(HWND hWnd)
 {
 	HWND hWnd_label = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试标签", 0, 0, 400, 400, 0, 0);
-	HEXDUI hExDui_label = Ex_DUIBindWindowEx(hWnd_label, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_label = Ex_DUIBindWindowEx(hWnd_label, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_label, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ label = Ex_ObjCreateEx(-1, L"static", NULL, -1, 10, 30, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
 	std::vector<CHAR> imgdata;
@@ -154,7 +154,7 @@ LRESULT CALLBACK OnCheckButtonCheckedEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 void test_checkbutton(HWND hWnd)
 {
 	HWND hWnd_checkbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试单选框复选框", 0, 0, 300, 250, 0, 0);
-	HEXDUI hExDui_checkbutton = Ex_DUIBindWindowEx(hWnd_checkbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_checkbutton = Ex_DUIBindWindowEx(hWnd_checkbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_checkbutton, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 	HEXOBJ checkbutton = Ex_ObjCreateEx(-1, L"checkbutton", L"复选框", -1, 10, 30, 60, 20, hExDui_checkbutton, 0, DT_VCENTER, 0, 0, NULL);
@@ -207,8 +207,9 @@ LRESULT CALLBACK OnEditWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 	{
 		if (m_hEditFont)
 		{
-			_font_destroy(m_hEditFont);//此处不销毁会在引擎销毁时统一销毁
+			//_font_destroy(m_hEditFont);//此处不销毁会在引擎销毁时统一销毁
 		}
+		m_hEditFont = 0;
 	}
 
 	return 0;
@@ -356,7 +357,6 @@ LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			EX_TEXTRANGE TextRange;
 			TextRange.chrg = ((EX_ENLINK*)lParam)->chrg;
 			TextRange.lpstrText = (LPCWSTR)Ex_AllocBuffer((TextRange.chrg.cpMax - TextRange.chrg.cpMin + 2) * 2);
-			output(L"aaaaaaa", TextRange.chrg.cpMax, TextRange.chrg.cpMin, ((EX_ENLINK*)lParam)->chrg.cpMax, ((EX_ENLINK*)lParam)->chrg.cpMin);
 			Ex_ObjSendMessage(hObj, EM_GETTEXTRANGE, 0, (LPARAM)&TextRange);
 			output(L"链接被按下:", TextRange.chrg.cpMax, TextRange.chrg.cpMin, TextRange.lpstrText);
 			Ex_FreeBuffer((LPVOID)TextRange.lpstrText);
@@ -368,7 +368,7 @@ LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 void test_edit(HWND hWnd)
 {
 	HWND hWnd_edit = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试编辑框", 0, 0, 850, 350, 0, 0);
-	m_hExDuiEdit = Ex_DUIBindWindowEx(hWnd_edit, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	m_hExDuiEdit = Ex_DUIBindWindowEx(hWnd_edit, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(m_hExDuiEdit, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 
@@ -382,7 +382,7 @@ void test_edit(HWND hWnd)
 
 	HEXOBJ edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"测试透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
 	m_hEditFont = _font_createfromfamily(L"宋体", 14, EFS_UNDERLINE);
-	Ex_ObjSetFont(edit5, m_hEditFont, FALSE);
+	//Ex_ObjSetFont(edit5, m_hEditFont, FALSE);
 	Ex_ObjSetColor(edit5, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
 	Ex_ObjSetColor(edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
 	Ex_ObjSetRadius(edit5, 10, 10, 10, 0, FALSE);
@@ -430,7 +430,7 @@ void test_edit(HWND hWnd)
 void test_menubutton(HWND hWnd)
 {
 	HWND hWnd_menubutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试菜单按钮", 0, 0, 350, 200, 0, 0);
-	HEXDUI hExDui_menubutton = Ex_DUIBindWindowEx(hWnd_menubutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_menubutton = Ex_DUIBindWindowEx(hWnd_menubutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_menubutton, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 	HEXOBJ hObjMenuBar = Ex_ObjCreate(L"Page", 0, -1, 0, 30, 300, 22, hExDui_menubutton);
@@ -541,6 +541,7 @@ LRESULT OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM l
 	{
 		Ex_ObjSetLong(hObj, EOL_ALPHA, lParam != 0 ? 255 : 0);
 		Ex_ObjInvalidateRect(hObj, 0);
+		
 	}
 	return 0;
 }
@@ -549,7 +550,7 @@ LRESULT OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM l
 void test_listview(HWND hWnd)
 {
 	HWND hWnd_listview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试列表框", 0, 0, 200, 200, 0, 0);
-	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 	HEXOBJ listview = Ex_ObjCreateEx(EOS_EX_COMPOSITED, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST | EOS_VSCROLL, 30, 30, 150, 150, hExDui_listview, 0, -1, 0, 0, OnListViewMsgProc);
@@ -575,7 +576,7 @@ void test_listview(HWND hWnd)
 void test_groupbox(HWND hWnd)
 {
 	HWND hWnd_groupbox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试分组框", 0, 0, 400, 300, 0, 0);
-	HEXDUI hExDui_groupbox = Ex_DUIBindWindowEx(hWnd_groupbox, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_groupbox = Ex_DUIBindWindowEx(hWnd_groupbox, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_groupbox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 	HEXOBJ groupbox = Ex_ObjCreate(L"groupbox", L"分组框", -1, 30, 30, 230, 230, hExDui_groupbox);
@@ -616,7 +617,7 @@ LRESULT CALLBACK OnNavButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 void test_navbutton(HWND hWnd)
 {
 	HWND hWnd_navbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试选项卡", 0, 0, 800, 600, 0, 0);
-	HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(hWnd_navbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(hWnd_navbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	HEXIMAGE hImage = 0;
 	for (INT i = 0; i < 4; i++)
 	{
@@ -823,7 +824,7 @@ void test_flow(HWND hWnd)
 
 void test_table(HWND hWnd)
 {
-	HWND hWnd_table = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试表格布局", 0, 0, 600, 400, 0, 0);
+	HWND hWnd_table = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试表格布局", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_table = Ex_DUIBindWindowEx(hWnd_table, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MAX | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_table, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXLAYOUT hLayout = _layout_create(ELT_TABLE, hExDui_table);
@@ -912,7 +913,7 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 void test_combobox(HWND hWnd)
 {
 	HWND hWnd_combobox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试组合框", 0, 0, 400, 300, 0, 0);
-	HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(hWnd_combobox, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON, 0, 0);
+	HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(hWnd_combobox, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_combobox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 30, 100, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
 	Ex_ObjSendMessage(hComboBox, CB_ADDSTRING, 0, (size_t)L"TESTa");
@@ -1425,6 +1426,8 @@ LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 	else if (uMsg == WM_DESTROY)
 	{
 		_imglist_destroy(m_hImageList_icon);
+		m_hObj_ListView_icon = 0; //重置0,不然再次创建会有问题。
+		m_hImageList_icon = 0;
 	}
 	return 0;
 }
@@ -1435,6 +1438,7 @@ void test_iconlistview(HWND hWnd)
 	HEXDUI hExDui_iconlistview = Ex_DUIBindWindowEx(hWnd_iconlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, OnIconWndMsgProc);
 
 	m_hObj_ListView_icon = Ex_ObjCreateEx(-1, L"iconlistview", L"iconlistview", EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL | EILVS_BUTTON, 25, 50, 400, 225, hExDui_iconlistview, 0, -1, 0, 0, NULL);
+	
 	Ex_ObjSendMessage(m_hObj_ListView_icon, ILVM_SETITEMSIZE, 0, MAKELONG(70, 75));//设置表项尺寸为70,75
 	//创建添加图片组信息
 

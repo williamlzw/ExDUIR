@@ -30,13 +30,11 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		/*创建时初始化控件属性*/
 	case WM_CREATE:
 	{
-		Ex_ObjInitPropList(hObj, 4 + 1);
-		
-		Ex_ObjSetProp(hObj, 1, ExRGB2ARGB(16777215, 255));
-		
-		Ex_ObjSetProp(hObj, 2, ExARGB(0, 0, 0, 255));
-		Ex_ObjSetProp(hObj, 3, ExARGB(0, 0, 0, 255));
-		Ex_ObjSetProp(hObj, 4, ExARGB(0, 0, 0, 255));
+		Ex_ObjInitPropList(hObj, 5);
+		Ex_ObjSetProp(hObj, ERBEP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERNORMAL, ExARGB(0, 0, 0, 255));
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, ExARGB(0, 0, 0, 255));
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
 	}
 	/*销毁时释放资源*/
 	case WM_DESTROY:
@@ -70,11 +68,11 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	case WM_EX_PROPS:
 	{
 		EX_OBJ_PROPS* RadioButtonExprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjInitPropList(hObj, 4 + 1);
-		Ex_ObjSetProp(hObj, 1, RadioButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, 2, RadioButtonExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, 3, RadioButtonExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, 4, RadioButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
+
+		Ex_ObjSetProp(hObj, ERBEP_CRBKGDOWNORCHECKED, RadioButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERNORMAL, RadioButtonExprops->COLOR_EX_BORDER_NORMAL);
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, RadioButtonExprops->COLOR_EX_BORDER_HOVER);
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, RadioButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
 		break;
 	}
 	default:
@@ -94,22 +92,17 @@ INT _radiobuttonex_paint(HEXOBJ hObj)
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		/*
-		 * 定义局部变量
-		 * 变量类型 变量名 = 赋值;
-		 */
-
-		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, 2));
+		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ERBEP_CRBORDERHOVER));
 		EXARGB	crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
 		if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
 		{
-			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL /*COLOR_EX_TEXT_HOVER*/);
-			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 3));
+			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL );
+			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ERBEP_CRBORDERHOVER));
 		}
 
 		if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
 		{
-			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 4));
+			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED));
 		}
 		/* 计算文本尺寸 */
 		FLOAT nTextWidth = NULL;
@@ -126,7 +119,7 @@ INT _radiobuttonex_paint(HEXOBJ hObj)
 		_canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, nTextHeight / 2 - 1, nTextHeight / 2 - 1, 1, D2D1_DASH_STYLE_SOLID);
 
 		/* 定义选中色 */
-		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, 1));
+		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ERBEP_CRBKGDOWNORCHECKED));
 
 		if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
 		{
