@@ -2055,7 +2055,7 @@ void _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, IN
 
 	//初始化画布
 	INT flags = 0;
-	flags = CVF_GDI_COMPATIBLE;
+	flags = ECVF_GDI_COMPATIBLE;
 	 
 	
 	if (((EX_CLASSINFO*)pCls)->atomName == ATOM_PAGE)

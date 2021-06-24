@@ -310,7 +310,7 @@ public:
 
 void _edit_register()
 {
-	Ex_ObjRegister(L"Edit", EOS_VISIBLE, EOS_EX_COMPOSITED | EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE, 0, LoadCursorW(0, MAKEINTRESOURCEW(32513)), ECF_D2D_GDI_COMPATIBLE, _edit_proc);
+	Ex_ObjRegister(L"Edit", EOS_VISIBLE, EOS_EX_COMPOSITED | EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE, 0, LoadCursorW(0, MAKEINTRESOURCEW(32513)), ECVF_GDI_COMPATIBLE, _edit_proc);
 }
 
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
@@ -901,6 +901,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			((ITextServices*)_edit_its(pObj))->OnTxPropertyBitsChange(
 				TXTBIT_CHARFORMATCHANGE,
 				TXTBIT_CHARFORMATCHANGE);
+			return 0;
 		}
 		else {
 			LRESULT ret = _edit_sendmessage(pObj, uMsg, wParam, lParam, &bFree);

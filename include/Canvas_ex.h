@@ -2,17 +2,6 @@
 #include "help_ex.h"
 #include "ExDUIR_Func.h"
 
-
-// 画布抗锯齿标识_画布抗锯齿
-#define ECVAF_CANVASANTIALIAS 0x01
-// 画布抗锯齿标识_文本抗锯齿
-#define ECVAF_TEXTANTIALIAS 0x02
-
-// 画布创建标识_GDI和D2D混合
-#define CVF_GDI_COMPATIBLE	0x40000000
-// 画布创建标识_重置剪辑区
-#define CVF_CLIPED 0x80000000
-
 struct canvas_s
 {
 	INT dwFlags_;

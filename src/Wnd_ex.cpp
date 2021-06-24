@@ -1081,7 +1081,7 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle, HEXTHEME hTh
 	w1 = rcWindow.right - rcWindow.left;
 	h1 = rcWindow.bottom - rcWindow.top;
 	nError = 0;
-	pWnd->canvas_display_ = _canvas_createfrompwnd(pWnd, w1, h1, CVF_GDI_COMPATIBLE, &nError);
+	pWnd->canvas_display_ = _canvas_createfrompwnd(pWnd, w1, h1, ECVF_GDI_COMPATIBLE, &nError);
 
 	nError = 0;
 	pWnd->canvas_bkg_ = _canvas_createfrompwnd(pWnd, w1, h1, 0, &nError);
@@ -2214,7 +2214,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 					{
 						OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
 					}
-					output(rcItem.left, rcItem.top);
+					//output(rcItem.left, rcItem.top);
 					if (rcItem.left < 0)//这里解决WIN10缩放DPI后GetMenuItemRect取值负数问题。
 					{
 						INT offset = abs(rcItem.left);
@@ -2318,7 +2318,7 @@ void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush)
 				if (hDC != 0)
 				{
 					INT nError = 0;
-					HEXCANVAS cvShadow = _canvas_createfrompwnd(pWnd, sz.cx, sz.cy, CVF_GDI_COMPATIBLE, &nError);
+					HEXCANVAS cvShadow = _canvas_createfrompwnd(pWnd, sz.cx, sz.cy, ECVF_GDI_COMPATIBLE, &nError);
 					if (cvShadow != 0)
 					{
 

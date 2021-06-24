@@ -671,11 +671,13 @@ BOOL _canvas_cliprect(HEXCANVAS hCanvas, INT left, INT top, INT right, INT botto
 	INT nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if ((pCanvas->dwFlags_ & CVF_CLIPED) == CVF_CLIPED)
+		if ((pCanvas->dwFlags_ & ECVF_CLIPED) == ECVF_CLIPED)
 		{
 			_dx_resetclip(_cv_context(pCanvas));
 		}
-		pCanvas->dwFlags_ = pCanvas->dwFlags_ | CVF_CLIPED;
+		else {
+			pCanvas->dwFlags_ = pCanvas->dwFlags_ | ECVF_CLIPED;
+		}
 		pCanvas->c_left_ = left;
 		pCanvas->c_top_ = top;
 		pCanvas->c_right_ = right;
@@ -692,10 +694,10 @@ BOOL _canvas_resetclip(HEXCANVAS hCanvas)
 	INT nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if ((pCanvas->dwFlags_ & CVF_CLIPED) == CVF_CLIPED)
+		if ((pCanvas->dwFlags_ & ECVF_CLIPED) == ECVF_CLIPED)
 		{
 			_dx_resetclip(_cv_context(pCanvas));
-			pCanvas->dwFlags_ = pCanvas->dwFlags_ - (pCanvas->dwFlags_ & CVF_CLIPED);
+			pCanvas->dwFlags_ = pCanvas->dwFlags_ - (pCanvas->dwFlags_ & ECVF_CLIPED);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -1129,16 +1131,16 @@ BOOL _canvas_setantialias(HEXCANVAS hCanvas, BOOL antialias)
 		BOOL doChange = FALSE;
 		if (antialias)
 		{
-			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
 		else {
-			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
@@ -1168,26 +1170,26 @@ BOOL _canvas_setimageantialias(HEXCANVAS hCanvas, BOOL antialias) {
 		BOOL doChange = FALSE;
 		if (antialias)
 		{
-			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
-			else if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			else if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
 		else {
-			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
-			else if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS))
+			else if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_CANVASANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
@@ -1225,16 +1227,16 @@ BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, BOOL antialias)
 		BOOL doChange = FALSE;
 		if (antialias)
 		{
-			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
 		}
 		else {
-			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS))
+			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVAF_TEXTANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
 		}

@@ -494,8 +494,14 @@
 
 
 #pragma region canvas flag constant
-// 画布标识_D2D与GDI兼容
-#define ECF_D2D_GDI_COMPATIBLE	1
+// 画布标识_画布抗锯齿
+#define ECVF_CANVASANTIALIAS 0x01
+// 画布标识_文本抗锯齿
+#define ECVF_TEXTANTIALIAS 0x02
+// 画布标识_GDI和D2D混合
+#define ECVF_GDI_COMPATIBLE	0x40000000
+// 画布标识_重置剪辑区
+#define ECVF_CLIPED 0x80000000
 #pragma endregion canvas flag constant
 
 #pragma region canvas context  constant

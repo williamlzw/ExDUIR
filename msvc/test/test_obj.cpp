@@ -211,7 +211,6 @@ LRESULT CALLBACK OnEditWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 		}
 		m_hEditFont = 0;
 	}
-
 	return 0;
 }
 

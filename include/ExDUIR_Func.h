@@ -2343,7 +2343,7 @@ BOOL Ex_ObjPostMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 * @param 4  dwTextFormat            [INT]               相关常量 DT_
 * @param 5  cbObjExtra              [DWORD]             组件额外分配字节数(值可为0)
 * @param 6  hCursor                 [HCURSOR]           组件默认鼠标指针句柄(值可为0)
-* @param 7  dwFlags                 [INT]               类标志 #ECF_(值可为0)
+* @param 7  dwFlags                 [INT]               画布标志 #ECVF_(值可为0)
 * @param 8  pfnObjProc              [ClsPROC]			组件默认回调 LRESULT CALLBACK ClsPROC(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 * @return [EXATOM] 成功返回组件类名原子,失败返回0
 */
