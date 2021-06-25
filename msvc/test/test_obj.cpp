@@ -30,14 +30,14 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 	{
 		if (nCode == NM_CUSTOMDRAW)
 		{
-			EX_PAINTSTRUCT2 ecd{ 0 };
-			RtlMoveMemory(&ecd, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT2));
+			EX_PAINTSTRUCT2 ps{ 0 };
+			RtlMoveMemory(&ps, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT2));
 			EXARGB crBkg = 0;
-			if ((ecd.dwState & STATE_DOWN) != 0)
+			if ((ps.dwState & STATE_DOWN) != 0)
 			{
 				crBkg = ExRGB2ARGB(255, 51);
 			}
-			else if ((ecd.dwState & STATE_HOVER) != 0)
+			else if ((ps.dwState & STATE_HOVER) != 0)
 			{
 				crBkg = ExRGB2ARGB(16754943, 51);
 			}
@@ -47,7 +47,7 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 			HEXBRUSH hBrush = _brush_create(crBkg);
 			if (hBrush)
 			{
-				_canvas_fillrect(ecd.hCanvas, hBrush, 0, 0, ecd.p_right, ecd.p_bottom);
+				_canvas_fillrect(ps.hCanvas, hBrush, 0, 0, ps.p_right, ps.p_bottom);
 				_brush_destroy(hBrush);
 			}
 		}
@@ -67,10 +67,41 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 	return 0;
 }
 
+LRESULT CALLBACK OnButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_ERASEBKGND)//wParam是canvas,lParam是paintRect
+	{
+		HEXCANVAS	hCanvas = (HEXCANVAS)wParam;
+		RECT rc = { 0 };
+		RtlMoveMemory(&rc, (LPVOID)lParam, sizeof(RECT));
+		EXARGB crBkg = 0;
+		if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)
+		{
+			crBkg = ExRGB2ARGB(255, 51);
+		}
+		else if ((Ex_ObjGetUIState(hObj) & STATE_HOVER) != 0)
+		{
+			crBkg = ExRGB2ARGB(16754943, 51);
+		}
+		else {
+			crBkg = ExRGB2ARGB(16777215, 51);
+		}
+		HEXBRUSH hBrush = _brush_create(crBkg);
+		if (hBrush)
+		{
+			
+			_canvas_fillrect(hCanvas, hBrush, 0, 0, rc.right, rc.bottom);
+			_brush_destroy(hBrush);
+		}
+		*lpResult = 1;
+		return 1;
+	}
+	return 0;
+}
 
 void test_button(HWND hWnd)
 {
-	HWND hWnd_button = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试按钮开关", 0, 0, 300, 250, 0, 0);
+	HWND hWnd_button = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试按钮开关", 0, 0, 300, 200, 0, 0);
 	m_hExDui_button = Ex_DUIBindWindowEx(hWnd_button, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE  | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(m_hExDui_button, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	std::vector<HEXOBJ> buttons;
@@ -84,14 +115,16 @@ void test_button(HWND hWnd)
 		Ex_ObjHandleEvent(button, NM_CLICK, OnButtonEvent);
 	}
 
-	HEXOBJ customdrawbutton = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED, L"button", L"重画背景按钮", -1, 10, 190, 120, 30, m_hExDui_button, 205, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-	Ex_ObjHandleEvent(customdrawbutton, NM_CUSTOMDRAW, OnButtonEvent);
+	HEXOBJ customdrawbutton = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED, L"button", L"重画按钮1", -1, 150, 30, 120, 30, m_hExDui_button, 205, DT_VCENTER | DT_CENTER, 0, 0, NULL);
+	Ex_ObjHandleEvent(customdrawbutton, NM_CUSTOMDRAW, OnButtonEvent);//第一种重画背景方式,全部自带组件都可以采用这样的方式重画,注意带上扩展风格
 
+	HEXOBJ customdrawbutton2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED, L"button", L"重画按钮2", -1, 150, 70, 120, 30, m_hExDui_button, 0, DT_VCENTER | DT_CENTER, 0, 0, OnButtonMsgProc);//第二种重画背景方式,全部自带组件都可以采用这样的方式重画,注意带上扩展风格
+	
 	WCHAR ATOM_switch[] = L"Switch";
-	HEXOBJ switchObj = Ex_ObjCreate(ATOM_switch, L"已开启|已关闭", -1, 150, 30, 80, 30, m_hExDui_button);
+	HEXOBJ switchObj = Ex_ObjCreate(ATOM_switch, L"已开启|已关闭", -1, 150, 110, 80, 30, m_hExDui_button);
 
-	HEXOBJ switchObj2 = Ex_ObjCreateEx(-1, ATOM_switch, 0, -1, 150, 80, 60, 30, m_hExDui_button, 206, -1, 0, 0, 0);
-	Ex_ObjSendMessage(switchObj2, BM_SETCHECK, 1, 0); /* 设置选中状态 */
+	HEXOBJ switchObj2 = Ex_ObjCreateEx(-1, ATOM_switch, 0, -1, 150, 150, 60, 30, m_hExDui_button, 206, -1, 0, 0, 0);
+	Ex_ObjSendMessage(switchObj2, BM_SETCHECK, 1, 0); // 设置选中状态
 	Ex_ObjHandleEvent(switchObj2, NM_CHECK, OnButtonEvent);
 	EX_OBJ_PROPS switchprops = { 0 };
 	switchprops.COLOR_EX_BACKGROUND_NORMAL = ExARGB(255, 255, 255, 100);
@@ -386,7 +419,7 @@ void test_edit(HWND hWnd)
 	Ex_ObjSetColor(edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
 	Ex_ObjSetRadius(edit5, 10, 10, 10, 0, FALSE);
 
-	HEXOBJ edit6 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n", EOS_VISIBLE | EOS_VSCROLL, 10, 230, 150, 100, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	HEXOBJ edit6 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\n", EOS_VISIBLE | EOS_VSCROLL, 10, 230, 150, 100, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
 
 	HEXOBJ edit7 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"edit", NULL, EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL | EES_RICHTEXT | EES_PARSEURL | EES_ALLOWTAB | EES_NEWLINE, 180, 30, 300, 300, m_hExDuiEdit, 101, DT_LEFT | DT_TOP, 0, 0, NULL);
 	std::vector<CHAR> rtf;

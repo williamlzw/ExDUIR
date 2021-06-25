@@ -2530,6 +2530,7 @@ void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint)
 	else {
 		_canvas_clear(hCanvas, crBkg);
 	}
+
 	if (!_obj_baseproc(_obj_gethWnd(pObj), pObj->hObj_, pObj, WM_ERASEBKGND, hCanvas, (size_t)&rcPaint)) {
 		EX_BACKGROUNDIMAGEINFO* bkgimage = pObj->lpBackgroundImage_;
 		if (bkgimage != 0)
@@ -2537,11 +2538,7 @@ void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint)
 			_canvas_drawimagefrombkgimg(hCanvas, bkgimage);
 		}
 	}
-	/*EX_BACKGROUNDIMAGEINFO* bkgimage = pObj->lpBackgroundImage_;
-	if (bkgimage != 0)
-	{
-		_canvas_drawimagefrombkgimg(hCanvas, bkgimage);
-	}*/
+
 }
 
 BOOL Ex_ObjDrawBackgroundProc(HEXOBJ hObj, HEXCANVAS hCanvas, RECT* lprcPaint)

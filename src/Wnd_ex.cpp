@@ -631,7 +631,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 			}
 		}
 	}
-	else if (uMsg == WM_DESTROY)//2
+	else if (uMsg == WM_DESTROY)
 	{
 		SetWindowLongPtrW(hWnd, GWLP_WNDPROC, (size_t)pOld);
 		if (_wnd_destroy(hWnd, pWnd) != 0)
@@ -640,7 +640,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 		}
 		VirtualFree(pData, 0, MEM_RELEASE);
 	}
-	else if (uMsg == WM_ERASEBKGND)//20
+	else if (uMsg == WM_ERASEBKGND)
 	{
 		return 1;
 	}
