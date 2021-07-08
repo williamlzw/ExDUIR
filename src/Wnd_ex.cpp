@@ -2809,7 +2809,11 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lP
 			UINT retvalue = MapVirtualKeyW(wParam, 2);//判断是否不是输入法
 			if (retvalue)
 			{
-				_obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, wParam, lParam);
+				BYTE bs[256] = { 0 };
+				GetKeyboardState(bs);
+				WCHAR charactersPressed[2] = {};
+				ToUnicode(wParam, lParam, bs, charactersPressed, 2, 0);
+				_obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, (WPARAM)charactersPressed[0], lParam);
 			}
 		}
 	}
@@ -2841,7 +2845,8 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lP
 	{
 		if ((pWnd->dwFlags_ & EWF_BMODEL) == EWF_BMODEL && pObj)
 		{
-			_obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, wParam, 0);
+			output(L"bbbbbbbbbbbbb", wParam);
+			_obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, wParam, lParam);
 		}
 	}
 	return 0;
