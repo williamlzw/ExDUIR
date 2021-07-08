@@ -7,7 +7,7 @@ void _groupbox_regsiter()
 
 void _groupbox_paint(HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		_canvas_clear(ps.hCanvas, 0);
@@ -26,10 +26,10 @@ void _groupbox_paint(HEXOBJ hObj, obj_s* pObj)
 		if (lpText)
 		{
 			FLOAT retWidth, retHeight;
-			_canvas_calctextsize(ps.hCanvas, pObj->hFont_, lpText, -1, ps.dwTextFormat, 0, ps.width, ps.height, &retWidth, &retHeight);
+			_canvas_calctextsize(ps.hCanvas, pObj->hFont_, lpText, -1, ps.dwTextFormat, 0, ps.uWidth, ps.uHeight, &retWidth, &retHeight);
 			rcText.right = retWidth;
 			rcText.bottom = retHeight;
-			_canvas_drawtext(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), lpText, -1, ps.dwTextFormat, ps.t_left + radius + textoffset, ps.t_top, ps.t_right, ps.t_bottom);
+			_canvas_drawtext(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), lpText, -1, ps.dwTextFormat, ps.rcText.left + radius + textoffset, ps.rcText.top, ps.rcText.right, ps.rcText.bottom);
 		}
 
 		_brush_setcolor(hBrush, _obj_getcolor(pObj, COLOR_EX_BORDER));
@@ -37,17 +37,17 @@ void _groupbox_paint(HEXOBJ hObj, obj_s* pObj)
 		_path_create(EPF_DISABLESCALE, &hPath);
 		_path_open(hPath);
 
-		ps.p_right -= strokewidth;
-		ps.p_bottom -= strokewidth;
-		ps.p_top += strokewidth;
-		ps.p_left += strokewidth;
+		ps.rcPaint.right -= strokewidth;
+		ps.rcPaint.bottom -= strokewidth;
+		ps.rcPaint.top += strokewidth;
+		ps.rcPaint.left += strokewidth;
 
-		_path_beginfigure2(hPath, static_cast<FLOAT>(ps.p_left + textoffset + rcText.right + 5 + radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2));
-		_path_addarc(hPath, static_cast<FLOAT>(ps.p_right - radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2), static_cast<FLOAT>(ps.p_right), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2 + radius), radius, radius, TRUE);
-		_path_addarc(hPath, static_cast<FLOAT>(ps.p_right), static_cast<FLOAT>(ps.p_bottom - radius), static_cast<FLOAT>(ps.p_right - radius), static_cast<FLOAT>(ps.p_bottom), radius, radius, TRUE);
-		_path_addarc(hPath, static_cast<FLOAT>(ps.p_left + radius), static_cast<FLOAT>(ps.p_bottom), static_cast<FLOAT>(ps.p_left), static_cast<FLOAT>(ps.p_bottom - radius), radius, radius, TRUE);
-		_path_addarc(hPath, static_cast<FLOAT>(ps.p_left), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2 + radius), static_cast<FLOAT>(ps.p_left + radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2), radius, radius, TRUE);
-		_path_addline(hPath, static_cast<FLOAT>(ps.p_left + radius), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2), static_cast<FLOAT>(ps.t_left + radius + textoffset - 5), static_cast<FLOAT>(ps.p_top + rcText.bottom / 2));
+		_path_beginfigure2(hPath, static_cast<FLOAT>(ps.rcPaint.left + textoffset + rcText.right + 5 + radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2));
+		_path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.right - radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2), static_cast<FLOAT>(ps.rcPaint.right), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2 + radius), radius, radius, TRUE);
+		_path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.right), static_cast<FLOAT>(ps.rcPaint.bottom - radius), static_cast<FLOAT>(ps.rcPaint.right - radius), static_cast<FLOAT>(ps.rcPaint.bottom), radius, radius, TRUE);
+		_path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.left + radius), static_cast<FLOAT>(ps.rcPaint.bottom), static_cast<FLOAT>(ps.rcPaint.left), static_cast<FLOAT>(ps.rcPaint.bottom - radius), radius, radius, TRUE);
+		_path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.left), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2 + radius), static_cast<FLOAT>(ps.rcPaint.left + radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2), radius, radius, TRUE);
+		_path_addline(hPath, static_cast<FLOAT>(ps.rcPaint.left + radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2), static_cast<FLOAT>(ps.rcText.left + radius + textoffset - 5), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2));
 
 		_path_endfigure(hPath, FALSE);
 		_path_close(hPath);

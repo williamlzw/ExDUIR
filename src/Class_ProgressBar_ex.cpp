@@ -60,30 +60,30 @@ LRESULT CALLBACK _progressbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 
 void _progressbar_paint(HEXOBJ hObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		size_t Radius = Ex_ObjGetLong(hObj, PBL_RADIUS);
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetLong(hObj, PBL_BKCOLOR));
-		_canvas_fillroundedrect(ps.hCanvas, hBrush,ps.p_left, ps.p_top, ps.p_right, ps.p_bottom, Radius, Radius);
+		_canvas_fillroundedrect(ps.hCanvas, hBrush, ps.rcPaint.left , ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, Radius, Radius);
 		size_t nPos = Ex_ObjGetLong(hObj, PBL_POS);
 		size_t nRange = Ex_ObjGetLong(hObj, PBL_RANGE);
 		FLOAT pbD;
 		if (nRange > 0)
 		{
-			pbD = (FLOAT)nPos / nRange * ps.p_right;
+			pbD = (FLOAT)nPos / nRange * ps.rcPaint.right;
 		}
 		else {
-			pbD = (FLOAT)nPos / 255 * ps.p_right;
+			pbD = (FLOAT)nPos / 255 * ps.rcPaint.right;
 		}
-		if (pbD < ps.p_bottom)
+		if (pbD < ps.rcPaint.bottom)
 		{
-			pbD = ps.p_bottom;
+			pbD = ps.rcPaint.bottom;
 		}
 		_brush_setcolor(hBrush, Ex_ObjGetLong(hObj, PBL_BARCOLOR));
-		_canvas_fillroundedrect(ps.hCanvas, hBrush, ps.p_left, ps.p_top, pbD, ps.p_bottom, Radius, Radius);
+		_canvas_fillroundedrect(ps.hCanvas, hBrush, ps.rcPaint.left, ps.rcPaint.top, pbD, ps.rcPaint.bottom, Radius, Radius);
 		std::wstring text = std::to_wstring((INT)((FLOAT)nPos / nRange * 100)) + L"%";
-		_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), text.c_str(), -1, DT_RIGHT | DT_SINGLELINE | DT_VCENTER, ps.height / 2, 0, pbD - 5, ps.height);
+		_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), text.c_str(), -1, DT_RIGHT | DT_SINGLELINE | DT_VCENTER, ps.uHeight / 2, 0, pbD - 5, ps.uHeight);
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}

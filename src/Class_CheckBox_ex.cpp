@@ -95,10 +95,8 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 INT _checkbox_paint(HEXOBJ hObj)
 {
-
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	RECT rcBlock = { 0 };
-
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 
@@ -107,13 +105,13 @@ INT _checkbox_paint(HEXOBJ hObj)
 		/* 计算文本尺寸 */
 		FLOAT nTextWidth = NULL;
 		FLOAT nTextHeight = NULL;
-		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.width, (FLOAT)ps.height, &nTextWidth, &nTextHeight);
+		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
 		/* 定义选择框矩形 */
-		rcBlock.left = ps.width - ps.height;
-		rcBlock.top = ps.p_top;
-		rcBlock.right = ps.p_right;
-		rcBlock.bottom = ps.p_bottom;
+		rcBlock.left = ps.uWidth - ps.uHeight;
+		rcBlock.top = ps.rcPaint.top;
+		rcBlock.right = ps.rcPaint.right;
+		rcBlock.bottom = ps.rcPaint.bottom;
 
 		if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_HOVER) != 0)
 		{
@@ -129,8 +127,8 @@ INT _checkbox_paint(HEXOBJ hObj)
 
 		}
 		/* 填充矩形和绘制边框 */
-		_canvas_fillrect(ps.hCanvas, hBrush, 0, 0, (FLOAT)rcBlock.left, (FLOAT)ps.height);
-		_canvas_drawrect(ps.hCanvas, hBrush, 0, 0, (FLOAT)ps.width, (FLOAT)ps.height, Ex_Scale(1), D2D1_DASH_STYLE_SOLID);
+		_canvas_fillrect(ps.hCanvas, hBrush, 0, 0, (FLOAT)rcBlock.left, (FLOAT)ps.uHeight);
+		_canvas_drawrect(ps.hCanvas, hBrush, 0, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, Ex_Scale(1), D2D1_DASH_STYLE_SOLID);
 
 		_canvas_drawtext(ps.hCanvas,
 			Ex_ObjGetFont(hObj),
@@ -147,10 +145,10 @@ INT _checkbox_paint(HEXOBJ hObj)
 			(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 			-1,
 			DT_CENTER | DT_VCENTER | DT_SINGLELINE,
-			(FLOAT)ps.t_left,
-			(FLOAT)ps.t_top,
+			(FLOAT)ps.rcText.left ,
+			(FLOAT)ps.rcText.top,
 			(FLOAT)rcBlock.left,
-			(FLOAT)ps.t_bottom);
+			(FLOAT)ps.rcText.bottom);
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}

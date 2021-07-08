@@ -636,7 +636,7 @@ LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT* nOffset)
 
 LPCWSTR GetErrorMessage(DWORD error)
 {
-	WCHAR szBuf[512];
+	WCHAR szBuf[1024];
 	WCHAR* lpMsgBuf;
 	FormatMessageW(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
@@ -646,7 +646,7 @@ LPCWSTR GetErrorMessage(DWORD error)
 		error,
 		0,
 		(LPWSTR)&lpMsgBuf,
-		512, NULL);
+		1024, NULL);
 	swprintf_s(szBuf, L"%s", lpMsgBuf);
 	return (LPCWSTR)szBuf;
 }
@@ -695,6 +695,3 @@ INT wstr_compare(LPCWSTR wstr1, LPCWSTR wstr2, BOOL caseSensitive)
 	}
 	return 0;
 }
-
-
-

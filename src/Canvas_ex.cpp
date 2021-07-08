@@ -455,8 +455,10 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
 			ID2D1Bitmap* pBitmap = nullptr;
 			nError = pContext->CreateBitmapFromWicBitmap((IWICBitmapSource*)pObj, &pBitmap);
-			if (pBitmap != 0)
+			
+			if (nError == 0)
 			{
+				
 				D2D1_RECT_F rect = { dstLeft,dstTop,dstRight,dstBottom };
 				D2D1_RECT_F srect = { srcLeft,srcTop,srcRight,srcBottom };
 				pContext->DrawBitmap(pBitmap, &rect, alpha / 255.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &srect);
@@ -475,7 +477,9 @@ BOOL _canvas_drawimagerect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT
 	BOOL ret = FALSE;
 	if (_img_getsize(hImage, &w, &h))
 	{
+		
 		ret = _canvas_drawimagerectrect(hCanvas, hImage, Left, Top, Right, Bottom, 0, 0, w, h, alpha);
+		
 	}
 	return ret;
 }

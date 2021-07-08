@@ -4,27 +4,26 @@
 
 #define WM_NOTIFY_SELF 1030 //notify父控件前,先发给自己
 
-#define EOF_INITED 2147483648
-#define EOF_OBJECT 1073741824
-
-#define eof_bUserProcessesed	(1U << 0)
-#define eof_bMsgBoxControl		(1U << 1)
-#define eof_bAutosized			(1U << 2)
-#define eof_bMenuItem			(1U << 3)
-#define eof_bPath				(1U << 4)
-#define eof_bPathByRoundedrect	(1U << 5)
-#define eof_bDown				(1U << 10)
-#define eof_bUp				(1U << 11)
-#define eof_bSendSizeMoveMsgs	(1U << 14)
-#define eof_bNeedRedraw			(1U << 15)
-#define eof_bCanRedraw			(1U << 16)
-#define eof_bHiddenPopup		(1U << 17)
-#define eof_bHasCaption			(1U << 18)
-#define eof_bEventBubble		(1U << 19)
-#define eof_bPage				(1U << 20)
-#define eof_bDisableSpaceAndEnter	(1U << 21)
-#define eof_bIME				(1U << 22)
-#define eof_bPaintingMsg		(1U << 23)
+#define EOF_BUSERPROCESSESED		0x01
+#define EOF_BMSGBOXCONTROL			0x02
+#define EOF_BAUTOSIZED				0x04
+#define EOF_BMENUITEM				0x08
+#define EOF_BPATH					0x10
+#define EOF_BPATHBYROUNDEDRECT		0x20
+#define EOF_BDOWN					0x400
+#define EOF_BUP						0x800
+#define EOF_BSENDSIZEMOVEMSGS		0x4000
+#define EOF_BNEEDREDRAW				0x8000
+#define EOF_BCANREDRAW				0x10000
+#define EOF_BHIDDENPOPUP			0x20000
+#define EOF_BHASCAPTION				0x40000
+#define EOF_BEVENTBUBBLE			0x80000
+#define EOF_BPAGE					0x100000
+#define EOF_BDISABLESPACEANDENTER	0x200000
+#define EOF_BIME					0x400000
+#define EOF_BPAINTINGMSG			0x800000
+#define EOF_OBJECT					0x40000000
+#define EOF_INITED					0x80000000
 
 #define TIMER_BKG 1
 #define TIMER_ANIMATION 2
@@ -41,27 +40,28 @@
 #define SWP_EX_NODPISCALE 0x80000000
 
 #define EWF_ACTIVE 0x02
-#define EWF_bLayered 0x04
+#define EWF_BLAYERED 0x04
 #define EWF_SIZED 0x08
-#define EWF_bMenuContext 0x10
-#define EWF_bRedrawBackground 0x20
-#define EWF_bTrackObject 0x40
-#define EWF_bRendering 0x80
-#define EWF_bPopupWindowShown 0x100
-#define EWF_bLeftTrack 0x200
-#define EWF_bRightTrack 0x400
-#define EWF_bMidTrack 0x800
-#define EWF_bLeaveSent 0x2000
-#define EWF_bRendered 0x4000
-#define EWF_bChildLayouted 0x100000
-#define EWF_bTooltipsPopup 0x200000
-#define EWF_bTooltipsTrackPostion 0x400000
-#define EWF_bMenuInited 0x800000
-#define EWF_bMenuRepostion 0x1000000
-#define EWF_bCompositedCheck 0x2000000
-#define EWF_bInheritBkgStarted 0x4000000
-#define EWF_bDestroyWindow 0x8000000
-#define EWF_bSizeMoving 0x10000000
+#define EWF_BMENUCONTEXT 0x10
+#define EWF_BREDRAWBACKGROUND 0x20
+#define EWF_BTRACKOBJECT 0x40
+#define EWF_BRENDERING 0x80
+#define EWF_BPOPUPWINDOIWSHOWN 0x100
+#define EWF_BLEFTTRACK 0x200
+#define EWF_BRIGHTTRACK 0x400
+#define EWF_BMIDTRACK 0x800
+#define EWF_BMODEL 0x1000
+#define EWF_BLEAVESENT 0x2000
+#define EWF_BRENDERED 0x4000
+#define EWF_BCHILDLAYOUTED 0x100000
+#define EWF_BTOOLTIPSPOPUP 0x200000
+#define EWF_BTOOLTIPSTRACKPOSTION 0x400000
+#define EWF_BMENUINITED 0x800000
+#define EWF_BMENUREPOSTION 0x1000000
+#define EWF_BCOMPOSITEDCHECK 0x2000000
+#define EWF_BINHERITBKGSTARTED 0x4000000
+#define EWF_BDESTROYWINDOW 0x8000000
+#define EWF_BSIZEMOVING 0x10000000
 #define EWF_INTED 0x80000000
 
 struct EX_EVENT_HANDLER {

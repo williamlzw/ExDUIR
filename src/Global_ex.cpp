@@ -294,6 +294,50 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
 	return ret;
 }
 
+BOOL Ex_LoadBitMapFromMemory(LPVOID lpData, size_t dwLen, HBITMAP* retBitMap)
+{
+	INT nError = 0;
+	IWICStream* pIWICStream = nullptr;
+	HRESULT hr = g_Ri.pWICFactory->CreateStream(&pIWICStream);
+	BOOL ret = FALSE;
+	if (hr == 0)
+	{
+		hr = pIWICStream->InitializeFromMemory((WICInProcPointer)lpData, dwLen);
+		if (hr == 0)
+		{
+			IWICBitmapDecoder* pDecoder = NULL;
+			hr = g_Ri.pWICFactory->CreateDecoderFromStream(
+				pIWICStream,
+				NULL,
+				WICDecodeMetadataCacheOnLoad,
+				&pDecoder
+			);
+			if (hr == 0)
+			{
+				IWICBitmapFrameDecode* pSource = NULL;
+				hr = pDecoder->GetFrame(0, &pSource);
+				IWICFormatConverter* pConverter = NULL;
+				hr = g_Ri.pWICFactory->CreateFormatConverter(&pConverter);
+				pConverter->Initialize((IWICBitmap*)pSource, GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, NULL, 0.0, WICBitmapPaletteTypeCustom);
+				UINT width = 0, height = 0;
+				pConverter->GetSize(&width, &height);
+				std::vector<BYTE> buffer(width * height * 4);
+				pConverter->CopyPixels(0, width * 4, buffer.size(), buffer.data());
+				if (retBitMap)
+				{
+					*retBitMap = CreateBitmap(width, height, 1, 32, buffer.data());
+					ret = TRUE;
+				}
+				pSource->Release();
+				pConverter->Release();
+			}
+			pDecoder->Release();
+		}
+		pIWICStream->Release();
+	}
+	return ret;
+}
+
 BOOL Flag_Query(INT dwFlag)
 {
 	return  (g_Li.dwFlags & dwFlag) == dwFlag;

@@ -195,7 +195,7 @@ void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM 
 void _wnd_wm_command(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 HEXOBJ _wnd_obj_setnextfocus(HWND hWnd, wnd_s* pWnd, HEXOBJ objEntry, HEXOBJ objLastFocus);
 void _wnd_obj_settabstop(HWND hWnd, wnd_s* pWnd, HEXOBJ objLastFocus);
-void _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL _wnd_obj_childtabstop(HEXOBJ objEntry, HEXOBJ* objFocusable, LPVOID* pObjFocusable, HEXOBJ objLast, BOOL* bFounded);
 void _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd);
 BOOL _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam);
@@ -204,6 +204,6 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, size_t* iItem);
 BOOL _wnd_menu_item_callback(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LPVOID* lpResult);
 BOOL _wnd_menu_callback_test(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LPVOID* lpResult);
-void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, LPVOID hMenu);
+void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu);
 BOOL Ex_DUIGetBackgroundImage(HEXDUI hExDui, LPVOID lpBackgroundImage);
 void _wnd_getclientrect(wnd_s* pWnd, RECT* lpRect, INT* nError);

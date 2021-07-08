@@ -9,6 +9,7 @@ Ex_UnInit
 Ex_Atom
 Ex_GetLastError
 Ex_LoadImageFromMemory
+Ex_LoadBitMapFromMemory
 Ex_FreeBuffer
 Ex_AllocBuffer
 Ex_Scale

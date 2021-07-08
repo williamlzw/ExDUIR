@@ -16,10 +16,12 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 	HWND currentWnd;
 	HEXOBJ hObj = 0;
 	
-	if (uMsg == MN_SELECTITEM && LODWORD(wParam) == -1)
+	if (uMsg == MBM_SELECTITEM && LODWORD(wParam) == -1)
 	{
+		
 		if (_handle_validate(hExDUI, HT_DUI, (LPVOID*)&pWnd, &nError))
 		{
+			
 			lpMenuParams = pWnd->lpMenuParams_;
 			if (!lpMenuParams)
 			{
@@ -32,28 +34,35 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 				return 0;
 			}
 			ScreenToClient(currentWnd, &point);
-			hObj = Ex_DUIGetObjFromPoint((EXHANDLE)currentWnd, point.x,point.y);
+			hObj = Ex_DUIGetObjFromPoint((EXHANDLE)currentWnd, point.x, point.y);
+			
 			if (!hObj || hObj == lpMenuParams->handle_)
 			{
 				return 0;
 			}
+			
 			if (!_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 			{
 				return 0;
 			}
+			
 			if (pObj->pCls_->atomName != ATOM_MENUBUTTON)
 			{
 				return 0;
 			}
 			nError = 0;
+			
 			if (!_handle_validate(lpMenuParams->handle_, HT_OBJECT, (LPVOID*)&pObj2, &nError))
 			{
 				return 0;
 			}
+
+			
 			if (pObj->objParent_ == pObj2->objParent_ && pObj->dwUserData_ == pObj2->dwUserData_)
 			{
+				
 				EndMenu();
-				_obj_postmessage(currentWnd, hObj, pObj, MN_DOWNITEM, (size_t)pObj->dwUserData_, 0, 0);
+				_obj_postmessage(currentWnd, hObj, pObj, MBM_DOWNITEM, (size_t)pObj->dwUserData_, 0, 0);
 			}
 		}
 	}
@@ -62,9 +71,8 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 
 void _menubutton_paint(HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	INT nColor = 0;
-
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		if (FLAGS_CHECK(pObj->dwState_, STATE_DOWN) || FLAGS_CHECK(pObj->dwState_, STATE_CHECKED))
@@ -82,7 +90,7 @@ void _menubutton_paint(HEXOBJ hObj, obj_s* pObj)
 		if (nColor)
 			_canvas_clear(ps.hCanvas, nColor);
 		
-		_canvas_drawtext(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1, ps.dwTextFormat, ps.p_left, ps.p_top, ps.p_right + ps.p_left, ps.p_bottom + ps.p_top);
+		_canvas_drawtext(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1, ps.dwTextFormat, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right + ps.rcPaint.left, ps.rcPaint.bottom + ps.rcPaint.top);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
 }
@@ -97,44 +105,59 @@ LRESULT CALLBACK _menubutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		switch (uMsg)
 		{
 		case WM_PAINT:
+		{
 			_menubutton_paint(hObj, pObj);
 			break;
+		}
 		case WM_MOUSEHOVER:
+		{
 			_obj_setuistate(pObj, STATE_HOVER, FALSE, NULL, TRUE, NULL);
 			break;
+		}
 		case WM_MOUSELEAVE:
+		{
 			_obj_setuistate(pObj, STATE_HOVER, TRUE, NULL, TRUE, NULL);
 			break;
+		}
 		case WM_LBUTTONDOWN:
+		{
 			_obj_setuistate(pObj, STATE_DOWN, FALSE, NULL, TRUE, NULL);
-			_obj_postmessage(hWnd, hObj, pObj, MN_DOWNITEM, (size_t)pObj->dwUserData_, pObj->lParam_, NULL);
+			_obj_postmessage(hWnd, hObj, pObj, MBM_DOWNITEM, (size_t)pObj->dwUserData_, pObj->lParam_, NULL);
 			break;
+		}
 		case WM_LBUTTONUP:
-			_obj_setuistate(pObj, STATE_DOWN, TRUE, NULL, TRUE, NULL);
+		{	
+			_obj_setuistate(pObj, STATE_DOWN , TRUE, NULL, TRUE, NULL);
 			break;
-		case WM_ERASEBKGND:
-			return 1;
+		}
+		//case WM_ERASEBKGND:
+		//	return 1;
 		default:
-			if (uMsg == MN_DOWNITEM && wParam == (size_t)pObj->dwUserData_)
+		{
+			if (uMsg == MBM_DOWNITEM && wParam == (size_t)pObj->dwUserData_)
 			{
 				if (!lParam)
+				{
 					lParam = pObj->lParam_;
+				}
 				if (IsMenu((HMENU)lParam) && !FLAGS_CHECK(pObj->dwState_, STATE_CHECKED))
 				{
 					EndMenu();
 					_obj_setuistate(pObj, STATE_CHECKED, FALSE, NULL, FALSE, NULL);
+					
 					if (!_obj_dispatchnotify(hWnd, pObj, hObj, pObj->id_, MBN_POPUP, wParam, lParam))
 					{
 						GetWindowRect(hWnd, &lpRect);
-						
 						Ex_TrackPopupMenu((HMENU)lParam, 0, lpRect.left + pObj->w_left_, lpRect.top + pObj->w_bottom_, (size_t)hWnd, hObj, NULL, _menubutton_menu_proc, 0);
 					}
+					
 					_obj_setuistate(pObj, STATE_CHECKED | STATE_DOWN, TRUE, NULL, TRUE, NULL);
+					
 				}
 			}
 			break;
 		}
+		}
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
-

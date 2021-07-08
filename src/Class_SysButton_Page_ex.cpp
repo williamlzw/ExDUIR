@@ -12,10 +12,10 @@ void _page_register()
 
 size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps;
 	EXATOM atomClass = 0;
 	EXATOM atomState = 0;
-	if (Ex_ObjBeginPaint(hObj, (EX_PAINTSTRUCT2*)&ps))
+	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		if ((ps.dwStyle & EWS_BUTTON_CLOSE) != 0)
 		{
@@ -71,10 +71,10 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		}
 
 		INT left;
-		Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, atomClass, atomState, 255);
+		Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomState, 255);
 		if ((ps.dwStyle & EWS_TITLE) != 0)
 		{
-			left = ps.t_left;
+			left = ps.rcText.left;
 			if (((pObj->pWnd_->dwStyle_ & EWS_HASICON) == EWS_HASICON))
 			{
 				HICON hicon = (HICON)_wnd_geticonhandle(hWnd, FALSE);
@@ -84,7 +84,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 					_img_createfromhicon(hicon, &hImg);
 					if (hImg != 0)
 					{
-						_canvas_drawimagerect(ps.hCanvas, hImg, left, (ps.t_bottom - ps.t_top - 16) / 2, left + 16, (ps.t_bottom - ps.t_top - 16) / 2 + 16, 255);
+						_canvas_drawimagerect(ps.hCanvas, hImg, left, (ps.rcText.bottom - ps.rcText.top - 16) / 2, left + 16, (ps.rcText.bottom - ps.rcText.top - 16) / 2 + 16, 255);
 						_img_destroy(hImg);
 						left = left + 20;
 					}
@@ -94,10 +94,10 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 			if (((pObj->pWnd_->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 			{
 				_canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1,
-					DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_WORD_ELLIPSIS, left, ps.t_top, ps.t_right, ps.t_bottom, pObj->dwShadowSize_, 0, 0, 0);
+					DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_WORD_ELLIPSIS, left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_, 0, 0, 0);
 			}
 		}
-		Ex_ObjEndPaint(hObj, (EX_PAINTSTRUCT2*)&ps);
+		Ex_ObjEndPaint(hObj, &ps);
 	}
 	return 0;
 }
@@ -224,7 +224,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 			INT ret = pObj->dwStyle_;
 			if ((ret & EWS_BUTTON_CLOSE) != 0)
 			{
-				if (((pObj->pWnd_->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
+				 if (((pObj->pWnd_->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
 				{
 					EndDialog(hWnd, IDCANCEL);
 				}
@@ -273,10 +273,10 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 
 size_t _page_paint(HEXOBJ hObj)
 {
-	EX_PAINTSTRUCT2 ps;
-	if (Ex_ObjBeginPaint(hObj, (EX_PAINTSTRUCT2*)&ps))
+	EX_PAINTSTRUCT ps;
+	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		Ex_ObjEndPaint(hObj, (EX_PAINTSTRUCT2*)&ps);
+		Ex_ObjEndPaint(hObj, &ps);
 	}
 	return 0;
 }

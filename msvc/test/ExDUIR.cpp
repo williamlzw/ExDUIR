@@ -6,6 +6,7 @@ HWND m_hWnd;
 
 LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
+	
 	void(*buttonProc[])(HWND) = {
 		test_button, //101，测试按钮
 		test_label, //102，测试标签
@@ -40,8 +41,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
 		test_dragobj, //131测试拖动组件
 		test_dropobj, //132测试接收拖曳信息
 		test_progressbar, //133测试进度条
-		test_nchittest //134测试限制通知区域
-
+		test_nchittest, //134测试限制通知区域
+		test_modal //135测试模态窗口
 	};
 	buttonProc[nID - 101](m_hWnd);
 	return 0;
@@ -61,7 +62,7 @@ void test_exdui()
 	if (m_hWnd != 0)
 	{
 		HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW , 0, 0);
-
+		
 		std::vector<CHAR> imgdata;
 		Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255,240));
 		Ex_ReadFile(L"res/bkg.png", &imgdata);
@@ -103,6 +104,7 @@ void test_exdui()
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试接收拖曳", -1, 230, 150, 100, 30, hExDui, 132, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试进度条", -1, 230, 190, 100, 30, hExDui, 133, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试限制通知", -1, 230, 230, 100, 30, hExDui, 134, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模态窗口", -1, 230, 270, 100, 30, hExDui, 135, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
 		for (auto button : buttons)
 		{

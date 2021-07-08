@@ -24,7 +24,7 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		}
 		else if (uMsg == WM_EX_LCLICK || uMsg == BM_CLICK)
 		{
-			if ((pObj->dwFlags_ & eof_bMsgBoxControl) == eof_bMsgBoxControl)
+			if ((pObj->dwFlags_ & EOF_BMSGBOXCONTROL) == EOF_BMSGBOXCONTROL)
 			{
 				return EndDialog(hWnd, pObj->lParam_);
 			}
@@ -136,7 +136,7 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
 void _button_paint(HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps = { 0 };
+	EX_PAINTSTRUCT ps = { 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		BOOL fButton = (ps.dwStyle & (EBS_RADIOBUTTON | EBS_CHECKBUTTON)) == 0;
@@ -163,10 +163,10 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
 
 			if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0)
 			{
-				Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, atomClass, atomProp, 255);
+				Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomProp, 255);
 				if ((ps.dwState & STATE_FOCUS) != 0)
 				{
-					Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, atomClass, ATOM_FOCUS, 255);
+					Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, ATOM_FOCUS, 255);
 				}
 			}
 		}
@@ -202,7 +202,7 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
 
 			if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0)
 			{
-				Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, atomClass, atomProp, 255);
+				Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomProp, 255);
 			}
 		}
 		LPCWSTR lptext = pObj->pstrTitle_;
@@ -210,9 +210,9 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
 		{
 			if ((ps.dwState & STATE_DOWN) != 0 && (ps.dwStyle & EBS_TEXTOFFSET) != 0)
 			{
-				OffsetRect((LPRECT)&ps.t_left, Ex_Scale(1), Ex_Scale(1));
+				OffsetRect((LPRECT)&ps.rcText.left, Ex_Scale(1), Ex_Scale(1));
 			}
-			_canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, nIndex), lptext, -1, ps.dwTextFormat, ps.t_left, ps.t_top, ps.t_right, ps.t_bottom, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
+			_canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, nIndex), lptext, -1, ps.dwTextFormat, ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
 		}
 		Ex_ObjEndPaint(hObj, &ps);
 	}
@@ -245,7 +245,7 @@ INT _button_getprop(INT state, BOOL fRadio, EXATOM atom_src, EXATOM atom_check, 
 
 void _item_click(HWND hWnd, obj_s* pObj)
 {
-	if ((pObj->dwFlags_ & eof_bMenuItem) == eof_bMenuItem)
+	if ((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)
 	{
 		if ((pObj->dwStyle_ & EMIS_SEPARATOR) == EMIS_SEPARATOR)
 		{
@@ -274,20 +274,21 @@ void _item_click(HWND hWnd, obj_s* pObj)
 	}
 }
 
-void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
+void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
 {
 	wnd_s* pWnd = pObj->pWnd_;
 	HMENU hMenu = (HMENU)pWnd->hMenuPopup_;
 	MENUITEMINFOW mii;
 	mii.cbSize = sizeof(MENUITEMINFOW);
-	mii.fMask = MIIM_STATE | MIIM_FTYPE | MIIM_DATA | MIIM_SUBMENU;
+	mii.fMask = MIIM_STATE | MIIM_FTYPE | MIIM_DATA | MIIM_SUBMENU | MIIM_BITMAP;
 	size_t nID = pObj->lParam_;
 	RECT rcItem  { 0 };
 	RECT rcPadding  { 0 };
 	RECT rcSub  { 0 };
-	rcItem.right = ps.width;
-	rcItem.bottom = ps.height;
+	rcItem.right = ps.uWidth;
+	rcItem.bottom = ps.uHeight;
 	INT atomProp = 0;
+	
 	if (GetMenuItemInfoW(hMenu, nID, TRUE, &mii))
 	{
 		if ((mii.fType & MFT_SEPARATOR) != 0)
@@ -297,7 +298,7 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 			if (lpPadding != 0)
 			{
 				RtlMoveMemory(&rcPadding, lpPadding, 16);
-				tmp=Ex_Scale(HIBYTE(HIWORD(pWnd->szItemSeparator_)) - (rcPadding.top + rcPadding.bottom));
+				tmp = Ex_Scale(HIBYTE(HIWORD(pWnd->szItemSeparator_)) - (rcPadding.top + rcPadding.bottom));
 			}
 			rcItem.left = Ex_Scale(rcPadding.left);
 			rcItem.top = (rcItem.bottom - tmp) / 2;
@@ -308,7 +309,7 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 		else {
 			BOOL fHover = ((ps.dwState & STATE_HOVER) != 0 && (mii.fState & MFS_GRAYED) == 0) || ((mii.fState & MFS_HILITE) != 0 && mii.hSubMenu != 0);
 
-			INT alpha = 255;
+			CHAR alpha = 255;
 			if (fHover)
 			{
 				pObj->dwState_ = pObj->dwState_ | STATE_HOVER;
@@ -362,25 +363,34 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 			if (lpText != 0)
 			{
 				HEXFONT hFont = pObj->hFont_;
-				LOGFONTW* lpLogfont = 0;
 				if ((mii.fState & MFS_DEFAULT) != 0)
 				{
-					 lpLogfont = (LOGFONTW*)Ex_MemAlloc(sizeof(LOGFONTW));
-					if (_font_getlogfont(hFont, lpLogfont))
+					LOGFONTW Logfont{ 0 };
+					if (_font_getlogfont(hFont, &Logfont))
 					{
-						lpLogfont->lfWeight = 700;
-						hFont = _font_createfromlogfont_ex(lpLogfont, EFF_DISABLEDPISCALE);
-					}
-					else {
-						Ex_MemFree(lpLogfont);
+						Logfont.lfWeight = 700;
+						hFont = _font_createfromlogfont_ex(&Logfont, EFF_DISABLEDPISCALE);
 					}
 				}
-
+				
+				if (mii.hbmpItem)
+				{
+					HEXIMAGE img = 0;
+					_img_createfromhbitmap(mii.hbmpItem, 0, TRUE, &img);
+					if (img != 0)
+					{
+						INT imgWidth, imgHeight;
+						_img_getsize(img, &imgWidth, &imgHeight);
+						_canvas_drawimagerectrect(ps.hCanvas, img, 5, 3, ps.rcPaint.left + 5 + ps.rcPaint.bottom - 6, ps.rcPaint.bottom - 3, 0, 0, imgWidth, imgHeight, 255);
+						_img_destroy(img);
+					}
+				}
+				
 				LPWSTR tmp1 = (LPWSTR)wcschr(lpText, 9);
 				if (tmp1) {
 					*tmp1 = 0;
 				}
-				_canvas_drawtextex(ps.hCanvas, hFont, crColor, lpText, -1, ps.dwTextFormat, ps.t_left, ps.t_top, ps.t_right, ps.t_bottom, 0, 0, 0, 0);
+				_canvas_drawtextex(ps.hCanvas, hFont, crColor, lpText, -1, ps.dwTextFormat, ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom, 0, 0, 0, 0);
 				if (tmp1)
 				{
 					*tmp1 = 9;
@@ -388,15 +398,11 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 					{
 						*(((CHAR*)&crColor) + 3) = (CHAR)128;
 					}
-					_canvas_drawtextex(ps.hCanvas, hFont, crColor, (LPCWSTR)(tmp1 + 1), -1, ps.dwTextFormat | DT_RIGHT, ps.t_left, ps.t_top, ps.t_right, ps.t_bottom, 0, 0, 0, 0);
+					_canvas_drawtextex(ps.hCanvas, hFont, crColor, (LPCWSTR)(tmp1 + 1), -1, ps.dwTextFormat | DT_RIGHT, ps.rcText.left , ps.rcText.top, ps.rcText.right, ps.rcText.bottom, 0, 0, 0, 0);
 				}
 				if ((mii.fState & MFS_DEFAULT) != 0)
 				{
-					if (lpLogfont != 0)
-					{
-						_font_destroy(hFont);
-						Ex_MemFree(lpLogfont);
-					}
+					_font_destroy(hFont);
 				}
 			}
 		}
@@ -405,7 +411,7 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT2 ps, EXARGB crColor, LPCWSTR lpText)
 
 void _item_paint(HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		INT nIndex = COLOR_EX_TEXT_NORMAL;
@@ -420,15 +426,17 @@ void _item_paint(HEXOBJ hObj, obj_s* pObj)
 			if ((ps.dwState & STATE_CHECKED) != 0)
 			{
 				nIndex = COLOR_EX_TEXT_CHECKED;
+				atomProp = ATOM_CHECK;
 			}
 			if ((ps.dwState & STATE_SELECT) != 0)
 			{
 				atomProp = ATOM_SELECT;
+				nIndex = COLOR_EX_TEXT_SELECT;
 			}
 		}
 		EXARGB crColor = _obj_getcolor(pObj, nIndex);
 		LPCWSTR lptext = pObj->pstrTitle_;
-		if ((pObj->dwFlags_ & eof_bMenuItem) == eof_bMenuItem)
+		if ((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)
 		{
 			_item_draw(pObj, ps, crColor, lptext);
 		}
@@ -438,12 +446,12 @@ void _item_paint(HEXOBJ hObj, obj_s* pObj)
 			{
 				if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0)
 				{
-					Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, ATOM_ITEM, atomProp, 255);
+					Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_ITEM, atomProp, 255);
 				}
 			}
 			if (lptext != 0)
 			{
-				_canvas_drawtextex(ps.hCanvas, pObj->hFont_, crColor, lptext, -1, ps.dwTextFormat, ps.t_left, ps.t_top, ps.t_right, ps.t_bottom, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
+				_canvas_drawtextex(ps.hCanvas, pObj->hFont_, crColor, lptext, -1, ps.dwTextFormat, ps.rcText.left , ps.rcText.top, ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
 			}
 		}
 		Ex_ObjEndPaint(hObj, &ps);
@@ -466,7 +474,7 @@ LRESULT CALLBACK _item_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		}
 		else if (uMsg == WM_MOUSEHOVER)
 		{
-			if ((pObj->dwFlags_ & eof_bMenuItem) == eof_bMenuItem)
+			if ((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)
 			{
 				_obj_notify_brothers(hWnd, hObj, pObj, WM_MOUSELEAVE, 0, 0, TRUE, TRUE);
 			}
@@ -495,6 +503,10 @@ LRESULT CALLBACK _item_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		else if (uMsg == WM_KILLFOCUS)
 		{
 			_obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, 0);
+		}
+		else if (uMsg == WM_TIMER)
+		{
+
 		}
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);

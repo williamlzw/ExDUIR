@@ -47,6 +47,7 @@ void _wic_drawframe(img_s* pImg, LPVOID pFrame, INT* nError, D2D1_RECT_F* dest)
 			{
 				rt->DrawBitmap(pBitmap, dest, 1, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, NULL);
 				pBitmap->Release();
+				
 			}
 			rt->EndDraw();
 			rt->Release();
@@ -1087,32 +1088,32 @@ BOOL _img_createfromres(HEXRES hRes, EXATOM atomPath, HEXIMAGE* phImg)
 {
 	LPVOID lpFile = nullptr;
 	size_t dwLen = 0;
-	HEXIMAGE ret = 0;
+	HEXIMAGE hImg = 0;
 	if (Ex_ResGetFileFromAtom(hRes, atomPath, &lpFile, &dwLen))
 	{
-		 _img_createfrommemory(lpFile, dwLen, &ret);
+		 _img_createfrommemory(lpFile, dwLen, &hImg);
+		 if (phImg)
+		 {
+			 *phImg = hImg;
+		 }
 	}
-	if (phImg)
-	{
-		*phImg = ret;
-	}
-	return ret != 0 ? TRUE : FALSE;
+	return hImg != 0 ? TRUE : FALSE;
 }
 
 BOOL _img_createfromhbitmap(LPVOID hBitmap, LPVOID hPalette, BOOL fPreAlpha, HEXIMAGE* phImg)
 {
 	IWICBitmap* pBitmap = nullptr;
 	HEXIMAGE hImg = 0;
-	INT nError=g_Ri.pWICFactory->CreateBitmapFromHBITMAP((HBITMAP)hBitmap, (HPALETTE)hPalette, fPreAlpha? WICBitmapUsePremultipliedAlpha: WICBitmapUseAlpha, &pBitmap);
+	INT nError = g_Ri.pWICFactory->CreateBitmapFromHBITMAP((HBITMAP)hBitmap, (HPALETTE)hPalette, fPreAlpha ? WICBitmapUsePremultipliedAlpha : WICBitmapUseAlpha, &pBitmap);
 	if (nError == 0)
 	{
 		hImg = _img_init(pBitmap, 0, 1, 0, &nError);
+		if (phImg)
+		{
+			*phImg = hImg;
+		}
 	}
 	Ex_SetLastError(nError);
-	if (phImg)
-	{
-		*phImg = hImg;
-	}
 	return hImg != 0 ? TRUE : FALSE;
 }
 
@@ -1153,8 +1154,8 @@ BOOL _img_savetofile(HEXIMAGE hImg, LPCWSTR wzFileName)
 									if (nError == 0)
 									{
 										//SetPixelFormat,如果为PBGRA,导致d2d绘图alpha通道丢失
-										WICPixelFormatGUID aa = GUID_WICPixelFormatDontCare;
-										nError = pFrame->SetPixelFormat(&aa);
+										WICPixelFormatGUID pf = GUID_WICPixelFormatDontCare;
+										nError = pFrame->SetPixelFormat(&pf);
 										if (nError == 0)
 										{
 											nError = pFrame->WriteSource((IWICBitmapSource*)pBitmap, NULL);

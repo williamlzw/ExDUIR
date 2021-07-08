@@ -735,7 +735,7 @@ BOOL _img_createfromfile(LPCWSTR lpwzFilename, HEXIMAGE* phImg);
 
 /*
 * @fnType ExDirectUI
-* @brief _img_createfromhbitmap 创建自GDI位图句柄
+* @brief _img_createfromhbitmap 创建自位图句柄
 * @param 1  hBitmap                 [LPVOID]
 * @param 2  hPalette                [LPVOID]
 * @param 3  fPreAlpha               [BOOL]                是否预乘透明通道
@@ -1735,12 +1735,22 @@ BOOL Ex_IsDxRender();
 
 /*
 * @fnType ExDirectUI
-* @brief Ex_LoadImageFromMemory 加载图像对象自内存(返回位图句柄或图标句柄)
+* @brief Ex_LoadBitMapFromMemory 加载位图对象自内存
 * @param 1  lpData                  [LPVOID]              图像数据指针
 * @param 2  dwLen                   [size_t]              图像数据长度
-* @param 3  uType                   [INT]                 图像类型 #IMAGE_
+* @param 3  retBitMap                   [HBITMAP*]        返回位图句柄
+* @return [BOOL]返回是否成功
+*/
+BOOL Ex_LoadBitMapFromMemory(LPVOID lpData, size_t dwLen, HBITMAP* retBitMap);
+
+/*
+* @fnType ExDirectUI
+* @brief Ex_LoadImageFromMemory 加载图像对象自内存
+* @param 1  lpData                  [LPVOID]              图像数据指针
+* @param 2  dwLen                   [size_t]              图像数据长度
+* @param 3  uType                   [INT]                 图像类型 IMAGE_
 * @param 4  nIndex                  [INT]                 索引
-* @return [LPVOID]
+* @return [LPVOID]返回位图句柄或图标句柄
 */
 LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex);
 
@@ -1778,10 +1788,10 @@ INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,
 * @fnType ExDirectUI
 * @brief Ex_ObjBeginPaint 组件开始绘制
 * @param 1  hObj                    [HEXOBJ]
-* @param 2  lpPS                    [EX_PAINTSTRUCT2*]
+* @param 2  lpPS                    [EX_PAINTSTRUCT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjBeginPaint(HEXOBJ hObj, EX_PAINTSTRUCT2* lpPS);
+BOOL Ex_ObjBeginPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS);
 
 /*
 * @fnType ExDirectUI
@@ -1963,10 +1973,10 @@ BOOL Ex_ObjEnablePaintingMsg(HEXOBJ hObj, BOOL bEnable);
 * @fnType ExDirectUI
 * @brief Ex_ObjEndPaint 组件结束绘制
 * @param 1  hObj                    [HEXOBJ]
-* @param 2  lpPS                    [EX_PAINTSTRUCT2*]
+* @param 2  lpPS                    [EX_PAINTSTRUCT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT2* lpPS);
+BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS);
 
 /*
 * @fnType ExDirectUI
@@ -2156,7 +2166,7 @@ BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect);
 * @brief Ex_ObjGetRectEx 取组件矩形
 * @param 1  hObj                    [HEXOBJ]
 * @param 2  lpRect                  [RECT*]
-* @param 3  nType                   [INT]
+* @param 3  nType                   [INT] 0组件相对位置矩形 1组件客户区矩形 2组件窗口矩形 3组件脏区域矩形 4组件文本矩形
 * @return [BOOL]返回是否成功
 */
 BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT* lpRect, INT nType);
@@ -2707,7 +2717,7 @@ BOOL Ex_ObjSetTextFormat(HEXOBJ hObj, DWORD dwTextFormat, BOOL bRedraw);
 * @details 设置组件时钟
 *
 * @param 1  hObj                    [HEXOBJ]
-* @param 2  uElapse                 [INT]
+* @param 2  uElapse                 [INT]单位毫秒
 * @return [INT]返回索引
 */
 INT Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse);

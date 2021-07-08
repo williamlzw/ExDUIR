@@ -792,6 +792,7 @@
 #define VK_NUMPAD6                      0x66
 #define IDI_ICON2                       102
 #define IDR_BIN1                        102
+#define IDD_PROPPAGE_SMALL              102
 #define VK_NUMPAD7                      0x67
 #define LANG_FULAH                      0x67
 #define LANG_PULAR                      0x67
@@ -806,6 +807,7 @@
 #define LANG_QUECHUA                    0x6b
 #define VK_SEPARATOR                    0x6C
 #define LANG_SOTHO                      0x6c
+#define IDB_PNG1                        108
 #define VK_SUBTRACT                     0x6D
 #define LANG_BASHKIR                    0x6d
 #define VK_DECIMAL                      0x6E
@@ -1371,7 +1373,6 @@
 #define TCS_RAGGEDRIGHT                 0x0800
 #define LVS_ALIGNMASK                   0x0c00
 #define CS_BYTEALIGNCLIENT              0x1000
-#define HDS_OVERFLOW                    0x1000
 #define TBSTYLE_LIST                    0x1000
 #define RBS_REGISTERDROP                0x00001000
 #define TBS_TRANSPARENTBKGND            0x1000
@@ -1516,12 +1517,14 @@
 #define HTERROR                         -2
 #define PWR_FAIL                        -1
 #define HTTRANSPARENT                   -1
+#define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        104
+#define _APS_NO_MFC                     1
+#define _APS_NEXT_RESOURCE_VALUE        109
 #define _APS_NEXT_COMMAND_VALUE         40025
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101

@@ -154,12 +154,10 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 
 INT _soliderbar_paint(HEXOBJ hObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	RECT RC = { 0 };
-
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL));
 		Ex_ObjGetClientRect(hObj, &RC);
 		FLOAT x, y;

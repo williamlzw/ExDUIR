@@ -66,7 +66,7 @@ LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 
 INT _win10_loading_paint(HEXOBJ hObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps;
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		_canvas_setantialias(ps.hCanvas, TRUE);
@@ -93,7 +93,7 @@ INT _win10_loading_paint(HEXOBJ hObj)
 			{
 				n = (FLOAT)(4 * (i - 0.5) * (i - 0.5) * (i - 0.5) + 0.5 + i) / 2;
 				i = (FLOAT)(i - 0.045);
-				_canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)(ps.width * n), (FLOAT)(ps.height * 3 / 5), (FLOAT)Ex_Scale(3), (FLOAT)Ex_Scale(3));
+				_canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)(ps.uWidth * n), (FLOAT)(ps.uHeight * 3 / 5), (FLOAT)Ex_Scale(3), (FLOAT)Ex_Scale(3));
 			}
 			i = a;
 		}
@@ -129,8 +129,8 @@ INT _win10_loading_paint(HEXOBJ hObj)
 				{
 					_canvas_fillellipse(ps.hCanvas,
 						hBrush,
-						(FLOAT)((ps.width - Round_Coordinates[0][(INT)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[0][(INT)(360 * n)])),
-						(FLOAT)((ps.height - Round_Coordinates[1][(INT)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[1][(INT)(360 * n)])),
+						(FLOAT)((ps.uWidth - Round_Coordinates[0][(INT)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[0][(INT)(360 * n)])),
+						(FLOAT)((ps.uHeight - Round_Coordinates[1][(INT)(360 * n)]) / 2 + Ex_Scale(Round_Coordinates[1][(INT)(360 * n)])),
 						(FLOAT)Ex_Scale(3),
 						(FLOAT)Ex_Scale(3));
 				}
@@ -144,10 +144,10 @@ INT _win10_loading_paint(HEXOBJ hObj)
 			(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 			-1,
 			DT_BOTTOM | DT_VCENTER | DT_CENTER | DT_SINGLELINE,
-			(FLOAT)ps.t_left,
-			(FLOAT)(ps.height * 3 / 5),
-			(FLOAT)ps.t_right,
-			(FLOAT)ps.t_bottom);
+			(FLOAT)ps.rcText.left,
+			(FLOAT)(ps.uHeight * 3 / 5),
+			(FLOAT)ps.rcText.right,
+			(FLOAT)ps.rcText.bottom);
 		_brush_destroy(hBrush);
 
 		Ex_ObjEndPaint(hObj, &ps);

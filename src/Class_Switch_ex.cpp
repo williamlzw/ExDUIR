@@ -102,7 +102,7 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
 INT _switch_paint(HEXOBJ hObj) {
 
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps;
 
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
@@ -117,36 +117,36 @@ INT _switch_paint(HEXOBJ hObj) {
 		/* 填充一层不透明 */
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ESP_CRBKGNORMAL));
 		if (_Radius != 0) {
-			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
+			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
 		}
 		else
 		{
-			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth);
+			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth);
 		}
 
 		/* 根据缓动进度填充一层半透明色 */
 		_brush_setcolor(hBrush, ExRGB2ARGB(ExARGB2RGB(Ex_ObjGetProp(hObj, ESP_CRBKGDOWNORCHECKED)), (INT)((FLOAT)nProgress / 100 * 255)));
 		if (_Radius != 0) {
-			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
+			_canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
 		}
 		else
 		{
-			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth);
+			_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth);
 		}
 
 		_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ESP_CRBORDERNORMAL));/* 设置为边框色*/
 		if (_Radius != 0) {
-			_canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
+			_canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
 		}
 		else
 		{
-			_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)ps.p_left + StrokeWidth, (FLOAT)ps.p_top + StrokeWidth, (FLOAT)ps.p_right - StrokeWidth, (FLOAT)ps.p_bottom - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
+			_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
 		}
 		
-		rcBlock.left = (ps.width - ps.height) * nProgress / 100;/* 计算出按钮的矩形位置 */
-		rcBlock.top = ps.p_top;
-		rcBlock.right = rcBlock.left + ps.height;
-		rcBlock.bottom = ps.p_bottom;
+		rcBlock.left = (ps.uWidth - ps.uHeight) * nProgress / 100;/* 计算出按钮的矩形位置 */
+		rcBlock.top = ps.rcPaint.top;
+		rcBlock.right = rcBlock.left + ps.uHeight;
+		rcBlock.bottom = ps.rcPaint.bottom;
 
 		/* 把矩形往里缩3像素 */
 		rcBlock.left = rcBlock.left + (long)Ex_Scale(3);
@@ -191,11 +191,11 @@ INT _switch_paint(HEXOBJ hObj) {
 		if ((FLOAT)nProgress / 100 * 255)
 		{
 			std::wstring str = tokens[0];
-			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED), str.c_str() /*L"开"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)ps.p_left + _Radius / 2, (FLOAT)ps.p_top, (FLOAT)rcBlock.left, (FLOAT)ps.p_bottom);
+			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED), str.c_str() /*L"开"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)ps.rcPaint.left + _Radius / 2, (FLOAT)ps.rcPaint.top, (FLOAT)rcBlock.left, (FLOAT)ps.rcPaint.bottom);
 		}
 		else {
 			std::wstring str = tokens[1];
-			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), str.c_str()/* L"关"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)rcBlock.right, (FLOAT)ps.p_top, (FLOAT)ps.p_right - _Radius / 2, (FLOAT)ps.p_bottom);
+			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), str.c_str()/* L"关"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)rcBlock.right, (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right - _Radius / 2, (FLOAT)ps.rcPaint.bottom);
 		}
 		
 		_brush_destroy(hBrush);

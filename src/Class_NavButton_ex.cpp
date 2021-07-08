@@ -2,7 +2,7 @@
 
 void _navbtn_paint(HEXOBJ hObj)
 {
-	EX_PAINTSTRUCT2 ps{ 0 };
+	EX_PAINTSTRUCT ps{ 0 };
 	Ex_ObjBeginPaint(hObj, &ps);
 	HEXIMAGE hImage = 0;
 	if ((ps.dwState & STATE_DOWN) != 0 || (ps.dwState & STATE_CHECKED) != 0)
@@ -23,16 +23,16 @@ void _navbtn_paint(HEXOBJ hObj)
 		LPRECT pRect=(LPRECT)Ex_ObjGetLong(hObj, 3);
 		if (pRect == 0)
 		{
-			_canvas_drawimagerect(ps.hCanvas, hImage, ps.p_left, ps.p_top, ps.p_right, ps.p_bottom, 255);
+			_canvas_drawimagerect(ps.hCanvas, hImage, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, 255);
 		}
 		else {
 			_img_getsize(hImage, &nImageWidth, &nImageHeight);
-			_canvas_drawimagefromgrid(ps.hCanvas, hImage, ps.p_left, ps.p_top, ps.p_right, ps.p_bottom, 0, 0, nImageWidth, nImageHeight, pRect->left, pRect->top, pRect->right, pRect->bottom, 0, 255);
+			_canvas_drawimagefromgrid(ps.hCanvas, hImage, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, 0, 0, nImageWidth, nImageHeight, pRect->left, pRect->top, pRect->right, pRect->bottom, 0, 255);
 		}
 	}
 	FLOAT nTextWidth = 0;
 	FLOAT nTextHeight = 0;
-	_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, ps.width, ps.height, &nTextWidth, &nTextHeight);
+	_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, ps.uWidth, ps.uHeight, &nTextWidth, &nTextHeight);
 	hImage = Ex_ObjGetLong(hObj, 4);
 	if (hImage != 0)
 	{
@@ -43,10 +43,10 @@ void _navbtn_paint(HEXOBJ hObj)
 		nImageHeight = 0;
 	}
 	RECT rc;
-	rc.top = (ps.height - (nTextHeight + nImageHeight)) / 2;
-	rc.bottom = (ps.height + nTextHeight + nImageHeight) / 2;
-	_canvas_drawimage(ps.hCanvas, hImage, (ps.width - nImageWidth) / 2, rc.top, 255);
-	_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, (ps.width - nTextWidth) / 2, rc.bottom - nTextHeight, (ps.width + nTextWidth) / 2, rc.bottom);
+	rc.top = (ps.uHeight - (nTextHeight + nImageHeight)) / 2;
+	rc.bottom = (ps.uHeight + nTextHeight + nImageHeight) / 2;
+	_canvas_drawimage(ps.hCanvas, hImage, (ps.uWidth - nImageWidth) / 2, rc.top, 255);
+	_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, (ps.uWidth - nTextWidth) / 2, rc.bottom - nTextHeight, (ps.uWidth + nTextWidth) / 2, rc.bottom);
 	Ex_ObjEndPaint(hObj, &ps);
 }
 

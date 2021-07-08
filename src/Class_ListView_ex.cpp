@@ -728,7 +728,7 @@ void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPA
 	pOwner->index_mouse_ = iCur;
 }
 
-void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, EX_PAINTSTRUCT2 ps, INT iItem, RECT rcClip, RECT rcItem)
+void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, EX_PAINTSTRUCT ps, INT iItem, RECT rcClip, RECT rcItem)
 {
 	INT atomRect = 0;
 	EX_CUSTOMDRAW ecd;
@@ -771,7 +771,7 @@ void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner,
 
 size_t _listview_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
@@ -785,7 +785,7 @@ size_t _listview_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 				RECT rcItem{ 0 };
 				_listview_rectfromiitem(pObj, pOwner, i, bHView, &rcItem);
 				RECT rcClip{ 0 };
-				if (IntersectRect(&rcClip, (RECT*)&ps.p_left, &rcItem))
+				if (IntersectRect(&rcClip, &ps.rcPaint, &rcItem))
 				{
 					_listview_drawitem(hWnd, hObj, pObj, pOwner, ps, i, rcClip, rcItem);
 				}

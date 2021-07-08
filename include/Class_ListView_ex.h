@@ -50,7 +50,7 @@ size_t _listview_reselect(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwne
 void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam);
 void _listview_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
 void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam);
-void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, EX_PAINTSTRUCT2 ps, INT iItem, RECT rcClip, RECT rcItem);
+void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, EX_PAINTSTRUCT ps, INT iItem, RECT rcClip, RECT rcItem);
 size_t _listview_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
 size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
 void _listview_lvm_setitemstate(obj_s* pObj, listview_s* pOwner, INT iItem, INT dwState);

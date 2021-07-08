@@ -1,23 +1,23 @@
-#pragma once
+﻿#pragma once
 #include "help_ex.h"
 
-// ��չ�༭��_������ɫ_����
+// 扩展编辑框_背景颜色_正常
 #define EEEP_CRBKGNORMAL	1
-// ��չ�༭��_�߿���ɫ_����
+// 扩展编辑框_边框颜色_正常
 #define EEEP_CRBORDERNORMAL	2
-// ��չ�༭��_�߿���ɫ_��ȼ
+// 扩展编辑框_边框颜色_点燃
 #define EEEP_CRBORDERHOVER	3
-// ��չ�༭��_�߿���ɫ_���»�ѡ��
+// 扩展编辑框_边框颜色_按下或选中
 #define EEEP_CRBORDERDOWNORCHECKED	4
-// ��չ�༭��_ͼ����ɫ_����
+// 扩展编辑框_图标颜色_正常
 #define EEEP_CRICONNORMAL	5
-// ��չ�༭��_ͼ����ɫ_���»򽹵�
+// 扩展编辑框_图标颜色_按下或焦点
 #define EEEP_CRICONDOWNORFOCUS	6
-// ��չ�༭��_Բ�Ƕ�
+// 扩展编辑框_圆角度
 #define EEEP_RADIUS	7
-// ��չ�༭��_�߿�
+// 扩展编辑框_线宽
 #define EEEP_STORKEWIDTH	8
-// ��չ�༭��_ͼ��λ��
+// 扩展编辑框_图标位置
 #define EEEP_ICONPOSITION	9
 
 void _editex_register();

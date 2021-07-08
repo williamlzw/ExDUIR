@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <Windows.h>
+#pragma warning (disable : 4005)
 
 #pragma region engine flag constant
 // 引擎标识_启用DPI缩放
@@ -634,6 +635,8 @@
 #define NM_INTDLG	-87
 // 事件_缓动
 #define NM_EASING	-86
+// 事件_右键被放开
+#define NM_RUP	-85
 // 事件_左键被单击
 #define NM_CLICK	-2
 // 事件_左键被双击
@@ -1280,8 +1283,13 @@
 #pragma endregion menubutton flag constant
 
 #pragma region menubutton message constant
+// 消息_菜单按钮_选择项目
+#define MBM_SELECTITEM 0x1E5
 // 消息_菜单按钮_弹出菜单 (wParam:菜单组,lParam:菜单句柄)
 #define MBM_POPUP	103001
+// 消息_菜单按钮_按下项目
+#define MBM_DOWNITEM 123321
+
 // 事件_菜单按钮_弹出菜单 (wParam:菜单组,lParam:菜单句柄)
 #define MBN_POPUP	102401
 #pragma endregion menubutton message constant
@@ -1396,7 +1404,7 @@ static void output(T...args) {
 	OutputDebugStringW(str.c_str());
 }
 
-//WM_NOTIFY通知信息
+// WM_NOTIFY通知信息
 struct EX_NMHDR
 {
 	HEXOBJ	hObjFrom;			// 	组件句柄
@@ -1414,69 +1422,35 @@ struct RECTF
 	FLOAT bottom;
 };
 
-
+// 自定义绘制信息结构
 struct EX_CUSTOMDRAW {
 	HEXCANVAS	hCanvas;
 	HEXTHEME	hTheme;
 	DWORD		dwState;
 	DWORD		dwStyle;
 	RECT		rcPaint;
-	//INT left;
-	//INT top;
-	//INT right;
-	//INT bottom;
 	INT			iItem;
 	size_t			iItemParam;
 };
 
-//绘制结构信息
+// 绘制信息结构
 struct EX_PAINTSTRUCT
 {
 	HEXCANVAS	hCanvas;		// 	画布
 	HEXTHEME	hTheme;			// 	主题
-	DWORD		dwStyle;		// 	风格
-	DWORD		dwStyleEx;		// 	扩展风格
-	DWORD		dwTextFormat;	// 	文本格式
-	DWORD		dwState;		// 	状态
+	INT		    dwStyle;		// 	风格
+	INT		    dwStyleEx;		// 	扩展风格
+	INT		    dwTextFormat;	// 	文本格式
+	INT		    dwState;		// 	状态
 	LPVOID		dwOwnerData;	// 	所有数据
 	UINT		uWidth;			// 	宽度
 	UINT		uHeight;		// 	高度
 	RECT		rcPaint;		// 	绘制矩形
-	//INT		pLeft;			// 	绘制矩形::左
-	//INT		pTop;			// 	绘制矩形::顶
-	//INT		pRight;			// 	绘制矩形::右
-	//INT		pBottom;		// 	绘制矩形::底
 	RECT		rcText;			// 	文本矩形
-	//INT		tLeft;			// 	文本矩形::左
-	//INT		tTop;			// 	文本矩形::顶
-	//INT		tRight;			// 	文本矩形::右
-	//INT		tBottom;		// 	文本矩形::底
 	LPVOID		dwReserved;		// 	保留
 };
 
-//绘制信息2
-struct EX_PAINTSTRUCT2
-{
-	HEXCANVAS	hCanvas;
-	HEXTHEME	hTheme;
-	INT			dwStyle;
-	INT			dwStyleEx;
-	INT			dwTextFormat;
-	INT			dwState;
-	LPVOID		dwOwnerData;
-	INT			width;
-	INT			height;
-	INT			p_left;
-	INT			p_top;
-	INT			p_right;
-	INT			p_bottom;
-	INT			t_left;
-	INT			t_top;
-	INT			t_right;
-	INT			t_bottom;
-	LPVOID		dwReserved;
-};
-
+// 图像像素数据结构
 struct EX_BITMAPDATA {
 	UINT		Width;
 	UINT		Height;
@@ -1486,7 +1460,7 @@ struct EX_BITMAPDATA {
 	LPVOID		Reserved;
 };
 
-//缓动信息
+// 缓动信息结构
 #pragma pack(1)
 struct EX_EASINGINFO
 {
@@ -1502,7 +1476,7 @@ struct EX_EASINGINFO
 };
 #pragma pack()
 
-//报表列信息
+// 报表列信息结构
 struct EX_REPORTLIST_COLUMNINFO {
 	LPCWSTR		wzText;				//表头标题
 	UINT		nWidth;				//列宽度
@@ -1512,7 +1486,7 @@ struct EX_REPORTLIST_COLUMNINFO {
 	UINT		nInsertIndex;		//插入位置,0为在最后
 };
 
-//报表项目信息
+// 报表项目信息结构
 struct EX_REPORTLIST_ITEMINFO {
 	UINT		iRow;				//所在行[IN / OUT]
 	UINT		iCol;				//所在列[IN / OUT]
@@ -1524,7 +1498,7 @@ struct EX_REPORTLIST_ITEMINFO {
 };
 
 
-//报表行信息
+// 报表行信息结构
 struct EX_REPORTLIST_ROWINFO {
 	UINT		nInsertIndex = 0;	//插入位置,0为最后 
 	DWORD		dwStyle;			//表行风格 ERLV_RS_ 
@@ -1532,7 +1506,7 @@ struct EX_REPORTLIST_ROWINFO {
 	DWORD	    nImageIndex;		//图片组索引 
 };
 
-//报表排序信息
+// 报表排序信息结构
 struct EX_REPORTLIST_SORTINFO {
 	UINT						iCol;				//0为按row.lParam排序 
 	UINT						nType;				//0:文本,1:整数 
@@ -1541,7 +1515,7 @@ struct EX_REPORTLIST_SORTINFO {
 	LPARAM						lParam;				//排序附加参数
 };
 
-//树形框节点信息
+// 树形框节点信息结构
 struct EX_TREEVIEW_NODEITEM {
 	INT						nID;					//项目ID
 	LPCWSTR					lpTitle;				//项目标题
@@ -1558,6 +1532,7 @@ struct EX_TREEVIEW_NODEITEM {
 	INT						nCountChild;			//子节点数量
 };
 
+// 树形框插入项目信息结构
 struct EX_TREEVIEW_INSERTINFO {
 	EX_TREEVIEW_NODEITEM* itemParent;					// 父项句柄（0为根项）
 	EX_TREEVIEW_NODEITEM* itemInsertAfter;			// 插入在此项之后（必须是同层）
@@ -1571,7 +1546,7 @@ struct EX_TREEVIEW_INSERTINFO {
 	BOOL					fUpdateLater;				// 是否暂不更新(统一用TVM_UPDATE更新)
 };
 
-//背景信息
+// 背景信息结构
 struct EX_BACKGROUNDIMAGEINFO {
 	DWORD		dwFlags;				//标识
 	HEXIMAGE	hImage;					//图片句柄
@@ -1585,7 +1560,7 @@ struct EX_BACKGROUNDIMAGEINFO {
 	DWORD       dwAlpha;				//透明度
 };
 
-//组件类信息
+// 组件类信息结构
 struct EX_CLASSINFO
 {
 	DWORD	dwFlags;		//组件标识
@@ -1598,7 +1573,7 @@ struct EX_CLASSINFO
 	EXATOM	atomName;		//类名
 };
 
-//树形框表项信息
+// 树形框表项信息结构
 struct EX_TREEVIEW_ITEMINFO
 {
 	INT		nID;				//表项id
@@ -1610,7 +1585,7 @@ struct EX_TREEVIEW_ITEMINFO
 	DWORD	dwStyle;			//风格
 };
 
-//扩展控件属性信息
+// 扩展控件属性信息结构
 struct EX_OBJ_PROPS
 {
 	EXARGB COLOR_EX_BACKGROUND_NORMAL;			//背景颜色.正常
@@ -1631,7 +1606,7 @@ struct EX_OBJ_PROPS
 	INT nIconPosition;							//图标位置 [忽略/0：左; 1：右; 2:上]
 };
 
-//树形框插入信息
+// 图标列表框插入信息结构
 struct EX_ICONLISTVIEW_ITEMINFO
 {
 	DWORD		nIndex;		//插入位置
@@ -1639,9 +1614,7 @@ struct EX_ICONLISTVIEW_ITEMINFO
 	LPCWSTR		pwzText;	//文本
 };
 
-
-
-//图像属性信息
+// 图像属性信息
 struct EX_IMAGEINFO
 {
 	HEXIMAGE IMG_NORMAL;		//图像.正常
@@ -1649,6 +1622,7 @@ struct EX_IMAGEINFO
 	HEXIMAGE IMG_DOWNORCHECKED;	//图像.按下或者选中
 };
 
+// 拖曳信息结构
 struct EX_DROPINFO
 {
 	LPVOID pDataObject;			//数据对象指针IDataObject*
@@ -1657,21 +1631,21 @@ struct EX_DROPINFO
 	INT y;						//鼠标垂直位置
 };
 
-// EM_EXSETSEL消息lParam参数结构
+// 富文本框EM_EXSETSEL消息lParam参数结构
 struct EX_CHARRANGE
 {
 	LONG cpMin;
 	LONG cpMax;
 };
 
-// EM_GETTEXTRANGE,EM_FINDTEXT消息接收lParam参数
+// 富文本框EM_GETTEXTRANGE,EM_FINDTEXT消息接收lParam参数
 struct EX_TEXTRANGE
 {
 	EX_CHARRANGE chrg;
 	LPCWSTR	lpstrText;
 };
 
-// EN_SELCHANGE消息lParam参数结构
+// 富文本框EN_SELCHANGE消息lParam参数结构
 struct EX_SELCHANGE
 {
 	NMHDR nmhdr;
@@ -1679,7 +1653,7 @@ struct EX_SELCHANGE
 	WORD seltyp;
 };
 
-// EN_LINK消息lParam参数结构
+// 富文本框EN_LINK消息lParam参数结构
 #pragma pack(1)
 struct EX_ENLINK
 {
@@ -1691,6 +1665,7 @@ struct EX_ENLINK
 };
 #pragma pack()
 
+// 富文本框替换文本信息结构
 struct EX_SETTEXTEX
 {
 	DWORD flags;

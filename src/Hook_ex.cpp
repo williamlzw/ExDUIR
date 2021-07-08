@@ -64,7 +64,7 @@ LRESULT CALLBACK _menu_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARA
 
 void _menu_init(HWND hWnd)
 {
-	LPVOID hMenu = (LPVOID)SendMessageW(hWnd, 481, 0, 0);
+	LPVOID hMenu = (LPVOID)SendMessageW(hWnd, MN_GETHMENU, 0, 0);
 	if (hMenu != 0)
 	{
 		size_t hExDui; // 由于HashTable_Get会写入8字节，这里必须是size_t类型
@@ -257,7 +257,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
 		if (hObj != 0)
 		{
 			_obj_create_proc(&nError, TRUE, hTheme, pObj, -1, ATOM_BUTTON, aryText[i].c_str(), -1, left, top, 80, 24, 0, ~aryID[i], 0, aryID[i], -1);
-			pObj->dwFlags_ = pObj->dwFlags_ | eof_bMsgBoxControl;
+			pObj->dwFlags_ = pObj->dwFlags_ | EOF_BMSGBOXCONTROL;
 			_obj_create_done(hWnd, pWnd, hObj, pObj);
 			if (aryID[i] == iDef) _obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE);
 		}

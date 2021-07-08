@@ -537,8 +537,8 @@ void _scrollbar_oncontextmenu(HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 
 INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps;
-	if (Ex_ObjBeginPaint(hObj, (EX_PAINTSTRUCT2*)&ps))
+	EX_PAINTSTRUCT ps;
+	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		INT httype = ((si_s*)ps.dwOwnerData)->httype_;
 		BOOL bHover = (ps.dwState & STATE_HOVER) != 0;

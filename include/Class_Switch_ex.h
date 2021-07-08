@@ -1,21 +1,21 @@
-#pragma once
+ï»¿#pragma once
 #include "help_ex.h"
 
-// ¿ª¹ØÊôÐÔ_±³¾°ÑÕÉ«_ÆÕÍ¨
+// å¼€å…³å±žæ€§_èƒŒæ™¯é¢œè‰²_æ™®é€š
 #define ESP_CRBKGNORMAL	1
-// ¿ª¹ØÊôÐÔ_±³¾°ÑÕÉ«_µãÈ¼
+// å¼€å…³å±žæ€§_èƒŒæ™¯é¢œè‰²_ç‚¹ç‡ƒ
 #define ESP_CRBKGHOVER	2
-// ¿ª¹ØÊôÐÔ_±³¾°ÑÕÉ«_°´ÏÂ»òÑ¡ÖÐ
+// å¼€å…³å±žæ€§_èƒŒæ™¯é¢œè‰²_æŒ‰ä¸‹æˆ–é€‰ä¸­
 #define ESP_CRBKGDOWNORCHECKED	3
-// ¿ª¹ØÊôÐÔ_±ß¿òÑÕÉ«_ÆÕÍ¨
+// å¼€å…³å±žæ€§_è¾¹æ¡†é¢œè‰²_æ™®é€š
 #define ESP_CRBORDERNORMAL	4
-// ¿ª¹ØÊôÐÔ_±ß¿òÑÕÉ«_µãÈ¼
+// å¼€å…³å±žæ€§_è¾¹æ¡†é¢œè‰²_ç‚¹ç‡ƒ
 #define ESP_CRBORDERHOVER	5
-// ¿ª¹ØÊôÐÔ_±ß¿òÑÕÉ«_°´ÏÂ»òÑ¡ÖÐ
+// å¼€å…³å±žæ€§_è¾¹æ¡†é¢œè‰²_æŒ‰ä¸‹æˆ–é€‰ä¸­
 #define ESP_CRBORDERDOWNORCHECKED	6
-// ¿ª¹ØÊôÐÔ_Ô²½Ç¶È
+// å¼€å…³å±žæ€§_åœ†è§’åº¦
 #define ESP_RADIUS 7
-// ¿ª¹ØÊôÐÔ_Ïß¿í
+// å¼€å…³å±žæ€§_çº¿å®½
 #define ESP_STROKEWIDTH 8
 
 

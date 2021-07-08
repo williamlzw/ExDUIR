@@ -506,10 +506,9 @@ size_t _reportlistview_head_hittest(HEXOBJ hObj, INT x, INT y, BOOL fJustHit, IN
 
 void _reportlistview_head_paint(HEXOBJ hObj)
 {
-	EX_PAINTSTRUCT2 ps{ 0 };
+	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-
 		HEXOBJ hObjList = Ex_ObjGetLong(hObj, ERLVHL_HLISTVIEW);
 		INT nIndexHit = Ex_ObjGetLong(hObj, ERLVHL_INDEXHIT);
 		if (hObjList == 0)
@@ -534,11 +533,11 @@ void _reportlistview_head_paint(HEXOBJ hObj)
 						if (nIndexHit == i + 1 && (ptr->dwStyle & ERLV_CS_CLICKABLE) == ERLV_CS_CLICKABLE)
 						{
 							_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_HOVER));
-							_canvas_fillrect(ps.hCanvas, hBrush, nOffsetX, 0, nOffsetX + nColWidth, ps.height);
+							_canvas_fillrect(ps.hCanvas, hBrush, nOffsetX, 0, nOffsetX + nColWidth, ps.uHeight);
 							_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_BORDER));
 						}
-						_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObjList), Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_NORMAL), ptr->wzText, -1, DT_SINGLELINE | ptr->dwTextFormat, nOffsetX + 3, 0, nOffsetX + nColWidth - 3, ps.height);
-						_canvas_drawline(ps.hCanvas, hBrush, nOffsetX + nColWidth, 0, nOffsetX + nColWidth, ps.height, 1.5, D2D1_DASH_STYLE_SOLID);
+						_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObjList), Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_NORMAL), ptr->wzText, -1, DT_SINGLELINE | ptr->dwTextFormat, nOffsetX + 3, 0, nOffsetX + nColWidth - 3, ps.uHeight);
+						_canvas_drawline(ps.hCanvas, hBrush, nOffsetX + nColWidth, 0, nOffsetX + nColWidth, ps.uHeight, 1.5, D2D1_DASH_STYLE_SOLID);
 					}
 					nOffsetX = nOffsetX + nColWidth;
 				}

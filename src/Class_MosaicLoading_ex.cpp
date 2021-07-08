@@ -67,18 +67,9 @@ LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 
 INT _mosaic_loading_paint(HEXOBJ hObj)
 {
-	/*
-	 * 定义局部变量
-	 * 变量类型 变量名 = 赋值;
-	 */
-	EX_PAINTSTRUCT2 ps;
-
+	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		/*
-		 * 定义局部变量
-		 * 变量类型 变量名 = 赋值;
-		 */
 		INT x[3], y[3];
 
 		if (m_ItemCount < 1)
@@ -86,7 +77,7 @@ INT _mosaic_loading_paint(HEXOBJ hObj)
 			return  FALSE;
 		}
 
-		INT nWidth = ps.width, nHeight = ps.height;
+		INT nWidth = ps.uWidth, nHeight = ps.uHeight;
 		INT nSize = NULL;
 		if (nWidth > nHeight)
 		{

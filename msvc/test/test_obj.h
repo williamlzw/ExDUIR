@@ -5,8 +5,8 @@
 #include <Windows.h>
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
-
 #include "ExDUIR_Func.h"
+
 
 #define Random(min,max) (rand()%(max-min))+ min + 1
 
@@ -30,6 +30,8 @@ struct LISTVIEW_ITEM
 	INT depth;
 };
 
+
+
 LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK OnButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_button(HWND hWnd);
@@ -47,7 +49,10 @@ void test_edit(HWND hWnd);
 LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_listview(HWND hWnd);
 
+LRESULT CALLBACK OnMenuButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+LRESULT CALLBACK OnMenuButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_menubutton(HWND hWnd);
+
 void test_custombkg(HWND hWnd);
 void test_combobox(HWND hWnd);
 void test_groupbox(HWND hWnd);
@@ -147,3 +152,6 @@ void test_progressbar(HWND hWnd);
 LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_nchittest(HWND hWnd);
 
+INT_PTR CALLBACK OnDialgWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK OnModalButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_modal(HWND hWnd);

@@ -621,7 +621,7 @@ void _edit_command(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
 }
 
 size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps)) {
 		INT atom;
 		LPVOID pITS = ((edit_s*)ps.dwOwnerData)->its_;;
@@ -635,7 +635,7 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 			atom = ATOM_NORMAL;
 		}
 		if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0) {
-			Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, ATOM_EDIT, atom, 255);
+			Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_EDIT, atom, 255);
 		}
 
 		LPCWSTR lpBanner = ((edit_s*)ps.dwOwnerData)->pBanner_;
@@ -667,10 +667,10 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 
 		if (pITS != 0) {
 			RECT rcTmp{ 0 };
-			IntersectRect(&rcTmp, (RECT*)&ps.t_left, (RECT*)&ps.p_left);
+			IntersectRect(&rcTmp, (RECT*)&ps.rcText.left, (RECT*)&ps.rcPaint.left);
 			HDC mDc = ((edit_s*)ps.dwOwnerData)->mDc_;
 			wnd_s* pWnd = pObj->pWnd_;
-			BOOL ismove = (pWnd->dwFlags_ & EWF_bSizeMoving) == EWF_bSizeMoving;
+			BOOL ismove = (pWnd->dwFlags_ & EWF_BSIZEMOVING) == EWF_BSIZEMOVING;
 			HDC hDc = _canvas_getdc(ps.hCanvas);
 			//const D2D1_PIXEL_FORMAT format =
 			//	D2D1::PixelFormat(

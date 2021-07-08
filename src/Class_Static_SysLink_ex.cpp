@@ -7,17 +7,17 @@ void _static_register()
 
 void _static_paint(HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2 ps;
-	if (Ex_ObjBeginPaint(hObj, (EX_PAINTSTRUCT2*)&ps))
+	EX_PAINTSTRUCT ps{ 0 };
+	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, ATOM_STATIC, ATOM_NORMAL, 255);
+		Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_STATIC, ATOM_NORMAL, 255);
 		LPCWSTR lpText = pObj->pstrTitle_;
 		if (lpText != 0)
 		{
-			_canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), lpText, -1, ps.dwTextFormat, ps.t_left, ps.t_top, ps.t_right, ps.t_bottom,
+			_canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), lpText, -1, ps.dwTextFormat, ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom,
 				pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
 		}
-		Ex_ObjEndPaint(hObj, (EX_PAINTSTRUCT2*)&ps);
+		Ex_ObjEndPaint(hObj, &ps);
 	}
 }
 
@@ -168,14 +168,14 @@ void _syslink_click(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 
 void _syslink_paint(HEXOBJ hObj, obj_s* pObj)
 {
-	EX_PAINTSTRUCT2* ps = (EX_PAINTSTRUCT2*)Ex_MemAlloc(sizeof(EX_PAINTSTRUCT2));
-	if (Ex_ObjBeginPaint(hObj, ps))
+	EX_PAINTSTRUCT ps{ 0 };
+	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		sli_s* pOwner = (sli_s*)_obj_pOwner(pObj);
 		INT nCount = pOwner->nCount_;
 		LPVOID lpBlocks = pOwner->lpBlocks_;
-		HEXCANVAS hCanvas = ps->hCanvas;
-		HEXTHEME hTheme = ps->hTheme;
+		HEXCANVAS hCanvas = ps.hCanvas;
+		HEXTHEME hTheme = ps.hTheme;
 		if (nCount > 0)
 		{
 			for (INT i = 0; i < nCount; i++)
@@ -197,9 +197,8 @@ void _syslink_paint(HEXOBJ hObj, obj_s* pObj)
 				_canvas_drawtextex(hCanvas, hFont, crText, ((slb_s*)((size_t)lpBlocks + index))->szText_, -1, DT_LEFT | DT_TOP | DT_NOPREFIX | DT_SINGLELINE, ((slb_s*)((size_t)lpBlocks + index))->rc_left_, ((slb_s*)((size_t)lpBlocks + index))->rc_top_, ((slb_s*)((size_t)lpBlocks + index))->rc_right_, ((slb_s*)((size_t)lpBlocks + index))->rc_bottom_, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
 			}
 		}
-		Ex_ObjEndPaint(hObj, ps);
+		Ex_ObjEndPaint(hObj, &ps);
 	}
-	Ex_MemFree(ps);
 }
 
 void _syslink_freeblocks(obj_s* pObj)

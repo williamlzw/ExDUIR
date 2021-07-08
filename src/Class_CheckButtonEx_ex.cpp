@@ -82,9 +82,8 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 
 INT _checkbuttonex_paint(HEXOBJ hObj)
 {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	RECT rcBlock = { 0 };
-
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		HEXBRUSH hBrush = _brush_create((EXARGB)Ex_ObjGetProp(hObj, ECBEP_CRBORDERNORMAL));
@@ -102,14 +101,14 @@ INT _checkbuttonex_paint(HEXOBJ hObj)
 		/* 计算文本尺寸 */
 		FLOAT nTextWidth = NULL;
 		FLOAT nTextHeight = NULL;
-		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.width, (FLOAT)ps.height, &nTextWidth, &nTextHeight);
+		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
 
 		/* 定义选择框矩形 */
-		rcBlock.left = ps.p_left + (long)Ex_Scale(2);
-		rcBlock.top = (ps.height - (long)nTextHeight) / 2;
+		rcBlock.left = ps.rcPaint.left + (long)Ex_Scale(2);
+		rcBlock.top = (ps.uHeight - (long)nTextHeight) / 2;
 		rcBlock.right = rcBlock.left + (long)nTextHeight;
-		rcBlock.bottom = (ps.height + (long)nTextHeight) / 2;
+		rcBlock.bottom = (ps.uHeight + (long)nTextHeight) / 2;
 		/* 绘制边框 */
 		_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, 1, D2D1_DASH_STYLE_SOLID);
 
@@ -148,10 +147,10 @@ INT _checkbuttonex_paint(HEXOBJ hObj)
 			(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 			-1,
 			DT_LEFT | DT_VCENTER,
-			(FLOAT)ps.t_left + nTextHeight + Ex_Scale(7),
-			(FLOAT)ps.t_top,
-			(FLOAT)ps.t_right,
-			(FLOAT)ps.t_bottom);
+			(FLOAT)ps.rcText.left + nTextHeight + Ex_Scale(7),
+			(FLOAT)ps.rcText.top,
+			(FLOAT)ps.rcText.right,
+			(FLOAT)ps.rcText.bottom);
 
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);

@@ -229,7 +229,7 @@ void _combobox_init(obj_s* pObj, HEXOBJ hObj)
 
 
 void _combobox_wnd_customdraw(obj_s* pObj, WPARAM wParam, EX_CUSTOMDRAW* lParam) {
-	if (!_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, pObj->hObj_, 0, -12, wParam, (size_t)lParam)) {
+	if (!_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, pObj->hObj_, 0, NM_CUSTOMDRAW, wParam, (size_t)lParam)) {
 		INT colorAtom = 0;
 		EXARGB fontColor = 0;
 		if (FLAGS_CHECK(lParam->dwState, STATE_SELECT)) {
@@ -346,7 +346,7 @@ LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wPa
 
 void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 	wnd_s* pWnd = pObj->pWnd_;
-	if (!FLAGS_CHECK(pWnd->dwFlags_, EWF_bPopupWindowShown)) {
+	if (!FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN)) {
 		if (_obj_queryExtra(pObj, ECBL_STATE, 2)) {
 			
 			_obj_delExtra(pObj, ECBL_STATE, 2);
@@ -428,7 +428,7 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 }
 
 INT _combobox_paint(HEXOBJ hObj, obj_s* pObj) {
-	EX_PAINTSTRUCT2 ps;
+	EX_PAINTSTRUCT ps{ 0 };
 	INT atomSrcRect;
 	if (Ex_ObjBeginPaint(hObj, &ps)) {
 		if (FLAGS_CHECK(ps.dwState, STATE_FOCUS)) {
@@ -445,8 +445,8 @@ INT _combobox_paint(HEXOBJ hObj, obj_s* pObj) {
 			RECT* pRect;
 			RECT tmp2 = { 0 };
 
-			Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.width, ps.height, ATOM_COMBOBOX, atomSrcRect, 255);
-			if (FLAGS_CHECK(pObj->pWnd_->dwFlags_, EWF_bPopupWindowShown)) {
+			Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_COMBOBOX, atomSrcRect, 255);
+			if (FLAGS_CHECK(pObj->pWnd_->dwFlags_, EWF_BPOPUPWINDOIWSHOWN)) {
 				atomSrcRect = ATOM_ARROW2_NORMAL;
 			}
 			else {
@@ -474,7 +474,7 @@ INT _combobox_paint(HEXOBJ hObj, obj_s* pObj) {
 				pObj->pstrTitle_,
 				-1,
 				ps.dwTextFormat,
-				ps.t_left, ps.t_top, ps.t_right - Ex_Scale(24), ps.t_bottom, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
+				ps.rcText.left, ps.rcText.top, ps.rcText.right - Ex_Scale(24), ps.rcText.bottom, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
 		}
 		Ex_ObjEndPaint(hObj, &ps);
 	}
@@ -557,7 +557,7 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			}
 			else
 			{
-				_obj_dispatchnotify(hWnd, pObj, hObj, 0, 8, 0, 0);
+				_obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_CLOSEUP, 0, 0);
 				_obj_invalidaterect(pObj, 0, 0);
 			}
 			return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
@@ -580,7 +580,7 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		case CB_GETCURSEL:
 			return _obj_getExtraLong(pObj, ECBL_CURRENTSELECTED);
 		case CB_GETDROPPEDSTATE:
-			return FLAGS_CHECK(pObj->pWnd_->dwFlags_, EWF_bPopupWindowShown);
+			return FLAGS_CHECK(pObj->pWnd_->dwFlags_, EWF_BPOPUPWINDOIWSHOWN);
 		case CB_GETDROPPEDWIDTH:
 			return _obj_getExtraLong(pObj, ECBL_DROPPEDWIDTH);
 		case CB_SETDROPPEDWIDTH:

@@ -41,8 +41,7 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 
 	case WM_EX_PAINTING:
 	{
-		EX_PAINTSTRUCT2* ps = (EX_PAINTSTRUCT2*)lParam;
-
+		EX_PAINTSTRUCT* ps = (EX_PAINTSTRUCT*)lParam;
 		switch (wParam)
 		{
 			/* 当控件开始绘制时*/
@@ -50,9 +49,9 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		{
 			/*创建矩阵，并旋转一个角度*/
 			HEXMATRIX	mx = _matrix_create();
-			_matrix_translate(mx, (FLOAT)ps->width / 2, (FLOAT)ps->height / 2);
+			_matrix_translate(mx, (FLOAT)ps->uWidth / 2, (FLOAT)ps->uHeight / 2);
 			_matrix_rotate(mx, (FLOAT)Ex_ObjGetLong(hObj, EOL_USERDATA));
-			_matrix_translate(mx, (FLOAT)ps->width / (-2), (FLOAT)ps->height / (-2));
+			_matrix_translate(mx, (FLOAT)ps->uWidth / (-2), (FLOAT)ps->uHeight / (-2));
 			/* 设置到当前画布上*/
 			_canvas_settransform(ps->hCanvas, mx);
 			/* 设置后就可以释放了*/
