@@ -1304,7 +1304,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 	HWND hWnd = pWnd->hWnd_;
 	BOOL fAsyn = (flags & SWP_ASYNCWINDOWPOS) != 0;
 	BOOL fNotify = (flags & SWP_NOSENDCHANGING) == 0;
-	
+
 	if ((flags & SWP_NOZORDER) == 0)// 调整Z序
 	{
 		_obj_z_set(hObj, pObj, hObjInsertAfter, flags, nError);
@@ -1453,7 +1453,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 		np.rgrc[2].right = np.rgrc[0].right;
 		np.rgrc[2].bottom = np.rgrc[0].bottom;
 
-		
+
 		pObj->left_ = np.rgrc[0].left;
 		pObj->top_ = np.rgrc[0].top;
 		pObj->right_ = np.rgrc[0].right;
@@ -2058,8 +2058,8 @@ void _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, IN
 	//初始化画布
 	INT flags = 0;
 	flags = ECVF_GDI_COMPATIBLE;
-	 
-	
+
+
 	if (((EX_CLASSINFO*)pCls)->atomName == ATOM_PAGE)
 	{
 
@@ -2550,7 +2550,7 @@ void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint)
 	ps.hTheme = pObj->hTheme_;
 	ps.dwTextFormat = pObj->dwTextFormat_;
 	ps.dwOwnerData = pObj->dwOwnerData_;
-	
+
 	if (!_obj_baseproc(_obj_gethWnd(pObj), pObj->hObj_, pObj, WM_ERASEBKGND, hCanvas, (size_t)&ps)) {
 		EX_BACKGROUNDIMAGEINFO* bkgimage = pObj->lpBackgroundImage_;
 		if (bkgimage != 0)
@@ -3566,7 +3566,7 @@ BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
 	{
 		flags = flags | SWP_EX_UPDATEOBJECT;
 	}
-	
+
 	return Ex_ObjSetPos(hObj, 0, x, y, width, height, flags);
 }
 
@@ -3662,7 +3662,7 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
 				{
 					pObj->pstrTitle_ = StrDupW((LPCWSTR)lParam);
 				}
-				
+
 				if (((pObj->dwStyleEx_ & EOS_EX_AUTOSIZE) == EOS_EX_AUTOSIZE))
 				{
 					pObj->dwFlags_ = pObj->dwFlags_ - (pObj->dwFlags_ & EOF_BAUTOSIZED);
@@ -3713,7 +3713,7 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
 		else if (uMsg == WM_LBUTTONDOWN)
 		{
 			_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_LDOWN, wParam, lParam);
-			
+
 		}
 		else if (uMsg == WM_LBUTTONUP)
 		{
@@ -3770,14 +3770,12 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
 		}
 		else if (uMsg == WM_SETFONT)
 		{
-
 			if (_obj_setfont(pObj, wParam, lParam != 0)) {
 				_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_FONTCHANGED, wParam, lParam);
 			}
 			else {
 				_font_destroy(wParam);
 			}
-			
 		}
 		else if (uMsg == WM_GETFONT)
 		{
@@ -4421,11 +4419,11 @@ BOOL Ex_ObjCheckDropFormat(HEXOBJ hObj, LPVOID pDataObject, DWORD dwFormat)
 	cFmtIn.dwAspect = DVASPECT_CONTENT;
 	cFmtIn.lindex = -1;
 	cFmtIn.tymed = TYMED_HGLOBAL;
-	HRESULT ret=((IDataObject*)pDataObject)->GetCanonicalFormatEtc(&cFmtIn, &cFmtOUT);
+	HRESULT ret = ((IDataObject*)pDataObject)->GetCanonicalFormatEtc(&cFmtIn, &cFmtOUT);
 	return ret == S_OK;
 }
 
-INT Ex_ObjGetDropString(HEXOBJ hObj, LPVOID pDataObject, LPWSTR lpwzBuffer,INT cchMaxLength)
+INT Ex_ObjGetDropString(HEXOBJ hObj, LPVOID pDataObject, LPWSTR lpwzBuffer, INT cchMaxLength)
 {
 	FORMATETC cFmtIn;
 	cFmtIn.cfFormat = CF_UNICODETEXT;

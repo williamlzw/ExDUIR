@@ -305,7 +305,6 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
 		}
 		else {
 			BOOL fHover = ((ps.dwState & STATE_HOVER) != 0 && (mii.fState & MFS_GRAYED) == 0) || ((mii.fState & MFS_HILITE) != 0 && mii.hSubMenu != 0);
-
 			CHAR alpha = 255;
 			if (fHover)
 			{
@@ -369,7 +368,6 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
 						hFont = _font_createfromlogfont_ex(&Logfont, EFF_DISABLEDPISCALE);
 					}
 				}
-				
 				if (mii.hbmpItem)
 				{
 					HEXIMAGE img = 0;
@@ -382,7 +380,6 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
 						_img_destroy(img);
 					}
 				}
-				
 				LPWSTR tmp1 = (LPWSTR)wcschr(lpText, 9);
 				if (tmp1) {
 					*tmp1 = 0;

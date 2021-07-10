@@ -43,7 +43,7 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	{
 		BOOL fChecked = ((Ex_ObjGetUIState(hObj) & STATE_SELECT) != 0);
 		/* 如果选中状态与当前状态不一致 */
-		if (wParam != 0 != fChecked)
+		if (wParam != fChecked)
 		{
 			/* 设置当前状态 */
 			Ex_ObjSetUIState(hObj, STATE_SELECT, wParam == 0, 0, TRUE);
@@ -75,7 +75,7 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	/* 单击则切换状态 */
 	case WM_EX_LCLICK:
 	{
-		Ex_ObjDispatchMessage(hObj, BM_SETCHECK, (INT)not ((Ex_ObjGetUIState(hObj) & STATE_SELECT) != 0), 0);
+		Ex_ObjDispatchMessage(hObj, BM_SETCHECK, (Ex_ObjGetUIState(hObj) & STATE_SELECT) != STATE_SELECT, 0);
 		break;
 	}
 	/* 动画缓动 */

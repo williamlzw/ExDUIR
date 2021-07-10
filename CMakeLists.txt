@@ -11,7 +11,7 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:UTF-8>")
 
 include_directories(include)
 
-file(GLOB LIBSRCS "src/*.cpp")
+file(GLOB LIBSRCS "src/*.cpp" "src/*.h")
 
 add_library(exdui
         ${LIBSRCS}
@@ -26,7 +26,7 @@ add_executable(test WIN32
         msvc/test/ExduiR.cpp
         msvc/test/test_obj.cpp
         msvc/test/test_obj.h
-        msvc/test/Resource.rc
+        msvc/test/Resource.h
         msvc/test/icon.ico
         )
 target_link_libraries(test PRIVATE exdui)
