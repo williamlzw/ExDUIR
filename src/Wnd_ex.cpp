@@ -129,10 +129,10 @@ LRESULT _wnd_defaultproc(HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam)
 
 HICON _wnd_geticonhandle(HWND hWnd, BOOL isbigicon)
 {
-	HICON ret = (HICON)SendMessageW(hWnd, 127, (isbigicon ? 1 : 0), 0);
+	HICON ret = (HICON)SendMessageW(hWnd, WM_GETICON, (isbigicon ? 1 : 0), 0);
 	if (ret == 0)
 	{
-		ret = (HICON)GetClassLongPtrW(hWnd, isbigicon ? -14 : -34);
+		ret = (HICON)GetClassLongPtrW(hWnd, isbigicon ? GCLP_HICON : GCLP_HICONSM);
 	}
 	return ret;
 }
@@ -404,7 +404,7 @@ BOOL _wnd_wm_stylechanging(wnd_s* pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
 void _wnd_loadtheme(wnd_s* pWnd, HWND hWnd, HEXTHEME hTheme)
 {
 
-	EXATOM atom = ((pWnd->dwStyle_ & EWS_MENU) == EWS_MENU) ? ATOM_MENU : ATOM_WINDOW;
+	EXATOM atom = ((pWnd->dwStyle_ & EWS_MENU) == EWS_MENU) ? ATOM_DUIMENU : ATOM_WINDOW;
 	LPVOID pPADDING_SHADOW = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_PADDING_SHADOW);
 	if (pPADDING_SHADOW != 0)
 	{
@@ -434,28 +434,28 @@ void _wnd_loadtheme(wnd_s* pWnd, HWND hWnd, HEXTHEME hTheme)
 
 	}
 	//菜单
-	LPVOID pPADDING_CLIENT = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_CLIENT);
+	LPVOID pPADDING_CLIENT = Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_PADDING_CLIENT);
 	if (pPADDING_CLIENT != 0)
 	{
 		pWnd->padding_client_ = pPADDING_CLIENT;
 	}
-	LPVOID pPADDING_TEXT = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_TEXT);
+	LPVOID pPADDING_TEXT = Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_PADDING_TEXT);
 	if (pPADDING_TEXT != 0)
 	{
 		pWnd->padding_text_ = pPADDING_TEXT;
 	}
-	LPVOID pPADDING_SEPARATOR = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_SEPARATOR);
+	LPVOID pPADDING_SEPARATOR = Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_PADDING_SEPARATOR);
 	if (pPADDING_SEPARATOR != 0)
 	{
 		pWnd->padding_separator_ = pPADDING_SEPARATOR;
 	}
-	LPVOID pSIZE_ITEM = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_SIZE_ITEM);
+	LPVOID pSIZE_ITEM = Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_SIZE_ITEM);
 	WORD szItem = 0;
 	if (pSIZE_ITEM != 0)
 	{
 		szItem = MAKEWORD(__get_int(pSIZE_ITEM, 0), __get_int(pSIZE_ITEM, 4));
 	}
-	LPVOID pSIZE_SEPARATOR = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_SIZE_SEPARATOR);
+	LPVOID pSIZE_SEPARATOR = Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_SIZE_SEPARATOR);
 	WORD szSeparator = 0;
 	if (pSIZE_SEPARATOR != 0)
 	{
@@ -663,12 +663,13 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 				}
 			}
 
-			if (!(pos->flags & SWP_NOMOVE))//被移动了
+			if ((pos->flags & SWP_NOMOVE)!= SWP_NOMOVE)//被移动了
 			{
+				
 				if (GetWindow(hWnd, GW_OWNER) != 0)//子菜单
 				{
 					
-					//pWnd->pMenuHostWnd_->dwFlags_ = pWnd->pMenuHostWnd_->dwFlags_ - (pWnd->pMenuHostWnd_->dwFlags_ & EWF_BMENUREPOSTION);
+					pWnd->pMenuHostWnd_->dwFlags_ = pWnd->pMenuHostWnd_->dwFlags_ - (pWnd->pMenuHostWnd_->dwFlags_ & EWF_BMENUREPOSTION);
 					_wnd_menu_setpos(hWnd, pWnd, pos);
 				}
 				pWnd->left_ = pos->x;
@@ -705,8 +706,17 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 		else {
 			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_ACTIVE;
 			HEXOBJ focus = pWnd->objFocusPrev_;
-			pWnd->objFocusPrev_ = 0;
 			Ex_ObjSetFocus(focus);
+			//pWnd->objFocusPrev_ = 0;
+			/*EX_CLASSINFO clsInfo{ 0 };
+			if (Ex_ObjGetClassInfo(focus, &clsInfo))
+			{
+				if (clsInfo.atomName == ATOM_EDIT)
+				{
+					output(L"00000000000001ssssssssss");
+					InvalidateRect(hWnd, 0, FALSE);
+				}
+			}*/
 		}
 		_wnd_paint_shadow(pWnd, FALSE, TRUE);
 		if (wParam == 0)
@@ -715,6 +725,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 			{
 				if (((pWnd->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
 				{
+					
 					return 0;
 				}
 			}
@@ -826,8 +837,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 	}
 	else if (uMsg == WM_GETDLGCODE)//135
 	{
-
-		if (((pWnd->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
+		if (((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL))
 		{
 			return (DLGC_WANTARROWS | DLGC_WANTTAB | DLGC_WANTALLKEYS | DLGC_WANTMESSAGE | DLGC_HASSETSEL | DLGC_WANTCHARS);
 		}
@@ -931,7 +941,8 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 	}
 	else if (uMsg == WM_COPY)
 	{
-		if (_wnd_wm_keyboard(pWnd, hWnd, uMsg, wParam, lParam)) {
+		if (_wnd_wm_keyboard(pWnd, hWnd, uMsg, wParam, lParam)) 
+		{
 			return 1;
 		}
 	}
@@ -968,18 +979,16 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle, HEXTHEME hTh
 		MoveWindow(hWnd, rcWindow.left - offsetX, rcWindow.top - offsetY, size.cx, size.cy, FALSE);
 	}
 	HWND hWndParent = 0;
-	if ((dwStyle & EWS_MESSAGEBOX) != 0)
+	if ((dwStyle & EWS_MESSAGEBOX) == EWS_MESSAGEBOX)
 	{
-
 		_wnd_getfromhandle(((mbp_s*)lParam)->handle_, &hWndParent);
 	}
 	else {
 
 		hWndParent = (HWND)GetWindowLongPtrW(hWnd, GWLP_HWNDPARENT);
 	}
-	if ((dwStyle & EWS_CENTERWINDOW) != 0)
+	if ((dwStyle & EWS_CENTERWINDOW) == EWS_CENTERWINDOW)
 	{
-
 		Ex_WndCenterFrom(hWnd, hWndParent, (dwStyle & EWS_FULLSCREEN) != 0);
 	}
 
@@ -988,13 +997,22 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle, HEXTHEME hTh
 	size.cy = rcWindow.bottom - rcWindow.top;
 	INT dwFlags = 0;
 
-	if (_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE) || (dwStyle & EWS_MESSAGEBOX) != 0)
+	if (_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE))
 	{
-		dwFlags = EWF_BLAYERED;
+		if ((dwStyle & EWS_MESSAGEBOX) != EWS_MESSAGEBOX)
+		{
+			dwFlags = EWF_BLAYERED;
+		}
 	}
 	if (hWndParent != 0)
 	{
 		pWnd->hExDuiParent_ = Ex_DUIFromWindow(hWndParent);
+	}
+	auto atomName = GetClassLongPtrW(hWnd, GCW_ATOM);
+	if (atomName == ATOM_DIALOG)
+	{
+		dwFlags = dwFlags | EWF_BMODAL;
+		dwFlags = dwFlags | EWF_ACTIVE;
 	}
 	if (hTheme == 0) hTheme = g_Li.hThemeDefault;
 
@@ -1095,7 +1113,6 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle, HEXTHEME hTh
 		if ((dwStyle & EWS_MENU) == 0)
 		{
 			_wnd_sysbutton_create(hWnd, pWnd, dwStyle);
-
 		}
 
 		_wnd_addstyle(hWnd, WS_THICKFRAME, FALSE);//强制触发样式被修改事件
@@ -1736,14 +1753,13 @@ void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWOR
 	KillTimer(hWnd, idEvent);
 	wnd_s* pWnd = (wnd_s*)(idEvent - TIMER_MOUSETRACK);
 
-	if (!((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT))
+	if ((pWnd->dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT)
 	{
 		POINT pt;
 		GetCursorPos(&pt);
 		if (WindowFromPoint(pt) != hWnd)
 		{
-
-			if (!((pWnd->dwFlags_ & EWF_BLEAVESENT) == EWF_BLEAVESENT))
+			if ((pWnd->dwFlags_ & EWF_BLEAVESENT) != EWF_BLEAVESENT)
 			{
 				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEAVESENT;
 				HEXOBJ hObj = pWnd->objHittestPrev_;
@@ -2138,7 +2154,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 {
 	size_t hMenu = SendMessageW(hWnd, MN_GETHMENU, 0, 0);
 	HEXTHEME hTheme = pWnd->hTheme_;
-	LPVOID lpPaddingText = Ex_ThemeGetValuePtr(hTheme, ATOM_MENU, ATOM_PADDING_TEXT);
+	LPVOID lpPaddingText = Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_PADDING_TEXT);
 	INT nCount = GetMenuItemCount((HMENU)hMenu);
 	wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
 	HWND hParent = pMenuHostWnd->hWnd_;
@@ -2214,7 +2230,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 					{
 						OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
 					}
-
+					
 					if (rcItem.left < 0)//这里解决WIN10缩放DPI后GetMenuItemRect取值负数问题。
 					{
 						INT offset = abs(rcItem.left);
@@ -2328,7 +2344,7 @@ void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush)
 						{
 							_canvas_setantialias(cvShadow, TRUE);
 							_canvas_setimageantialias(cvShadow, TRUE);
-							Ex_ThemeDrawControlEx(pWnd->hTheme_, cvShadow, 1, 1, sz.cx - 2, sz.cy - 2, (((pWnd->dwStyle_ & EWS_MENU) == EWS_MENU) ? ATOM_MENU : ATOM_WINDOW), ATOM_RECT, 0, 0, ATOM_BACKGROUND_GRID, 0, alpha);
+							Ex_ThemeDrawControlEx(pWnd->hTheme_, cvShadow, 1, 1, sz.cx - 2, sz.cy - 2, (((pWnd->dwStyle_ & EWS_MENU) == EWS_MENU) ? ATOM_DUIMENU : ATOM_WINDOW), ATOM_RECT, 0, 0, ATOM_BACKGROUND_GRID, 0, alpha);
 							LPVOID mDC = _canvas_getdc(cvShadow);
 							if (mDC != 0)
 							{
@@ -2658,7 +2674,7 @@ void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM 
 
 void _wnd_wm_command(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if (((pWnd->dwFlags_ & EWF_BMODEL) == EWF_BMODEL))
+	if (((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL))
 	{
 		if (wParam == 2)
 		{
@@ -2804,7 +2820,7 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lP
 			}
 		}
 
-		if ((pWnd->dwFlags_ & EWF_BMODEL) == EWF_BMODEL)
+		if ((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL)
 		{
 			UINT retvalue = MapVirtualKeyW(wParam, 2);//判断是否不是输入法
 			if (retvalue)
@@ -2843,9 +2859,8 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lP
 	}
 	else if (uMsg == WM_IME_CHAR)
 	{
-		if ((pWnd->dwFlags_ & EWF_BMODEL) == EWF_BMODEL && pObj)
+		if ((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL && pObj)
 		{
-			output(L"bbbbbbbbbbbbb", wParam);
 			_obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, wParam, lParam);
 		}
 	}
@@ -2966,7 +2981,6 @@ void _wnd_menu_updatecurrent(wnd_s* pWnd)
 	wnd_s* pHost = pWnd->pMenuHostWnd_;
 	if (pHost != 0)
 	{
-
 		pHost->pMenuTrackWnd_ = pWnd;
 	}
 }
@@ -3488,12 +3502,10 @@ BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, 
 		if (GetFocus() == hWnd) {
 			FLAGS_ADD(pWnd->dwFlags_, EWF_ACTIVE);
 		}
-		HWND hOwner = GetWindow(hWnd, GW_OWNER);
-		if (hOwner && !IsWindowEnabled(hOwner) && GetActiveWindow() == hWnd)//判断是模态窗口,添加模态窗口风格
+		auto atomName = GetClassLongPtrW(hWnd, GCW_ATOM);
+		if (atomName == ATOM_DIALOG)//判断是模态窗口,添加模态窗口风格
 		{
-			FLAGS_ADD(pWnd->dwFlags_, EWF_BMODEL);
 			SetFocus(hWnd);
-			FLAGS_ADD(pWnd->dwFlags_, EWF_ACTIVE);
 		}
 		ret = InvalidateRect(hWnd, NULL, FALSE);
 		ret = UpdateWindow(hWnd);

@@ -1315,6 +1315,8 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 		flags = flags | SWP_EX_NODPISCALE;
 	}
 	NCCALCSIZE_PARAMS np = { 0 };
+
+
 	if ((flags & SWP_NOMOVE) == 0 || (flags & SWP_NOSIZE) == 0 || (flags & SWP_DRAWFRAME) != 0)
 	{
 		BOOL fScale = (flags & SWP_EX_NODPISCALE) == 0;
@@ -1451,16 +1453,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 		np.rgrc[2].right = np.rgrc[0].right;
 		np.rgrc[2].bottom = np.rgrc[0].bottom;
 
-		if (fNotify)
-		{
-			if (fAsyn)
-			{
-				_obj_sendmessage(hWnd, hObj, pObj, WM_NCCALCSIZE, 1, (size_t)&np, 0);
-			}
-			else {
-				_obj_baseproc(hWnd, hObj, pObj, WM_NCCALCSIZE, 1, (size_t)&np);
-			}
-		}
+		
 		pObj->left_ = np.rgrc[0].left;
 		pObj->top_ = np.rgrc[0].top;
 		pObj->right_ = np.rgrc[0].right;
@@ -1471,7 +1464,16 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 		pObj->c_top_ = np.rgrc[2].top;
 		pObj->c_right_ = np.rgrc[2].right;
 		pObj->c_bottom_ = np.rgrc[2].bottom;
-
+		if (fNotify)
+		{
+			if (fAsyn)
+			{
+				_obj_sendmessage(hWnd, hObj, pObj, WM_NCCALCSIZE, 1, (size_t)&np, 0);
+			}
+			else {
+				_obj_baseproc(hWnd, hObj, pObj, WM_NCCALCSIZE, 1, (size_t)&np);
+			}
+		}
 		RECT rcOld{ 0 };
 		//更新窗口位置
 		rcOld.left = pObj->w_left_;
@@ -1522,7 +1524,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 
 		//WM_WINDOWPOSCHANGED 如果用户处理掉了，则不发送 WM_SIZE / WM_MOVE
 
-		if (!((pObj->dwFlags_ & EOF_BUSERPROCESSESED) == EOF_BUSERPROCESSESED) && fNotify)
+		if (((pObj->dwFlags_ & EOF_BUSERPROCESSESED) != EOF_BUSERPROCESSESED) && fNotify)
 		{
 			//应该得发送客户区矩形
 			if ((flags & SWP_NOMOVE) == 0)
@@ -1561,7 +1563,6 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 
 	if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
 	{
-
 		BOOL fScale = ((pObj->pWnd_->dwFlags_ & EWF_SIZED) == EWF_SIZED);
 		if ((flags & SWP_NOREDRAW) == 0) //重画
 		{
@@ -1573,7 +1574,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 		}
 		if (!fScale)
 		{
-			if ((flags & SWP_EX_UPDATEOBJECT) != 0)
+			if ((flags & SWP_EX_UPDATEOBJECT) == SWP_EX_UPDATEOBJECT)
 			{
 				UpdateWindow(hWnd);
 			}

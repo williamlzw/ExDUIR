@@ -16,7 +16,7 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
 	EXATOM atomClass = (EXATOM)(lpcs->lpszClass);
 	auto hParent = lpcs->hwndParent;
 
-	if (atomClass == 32770)
+	if (atomClass == ATOM_DIALOG)
 	{
 		auto hExDui = Ex_DUIFromWindow(hParent);
 		wnd_s* pWnd = nullptr;
@@ -27,7 +27,7 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
 			pWnd->lpMsgParams_ = 0;
 			if (pMsg != 0)
 			{
-				SetClassLongPtrW(hWnd, -12, (LONG_PTR)g_Li.hCursor);
+				SetClassLongPtrW(hWnd, GCLP_HCURSOR, (LONG_PTR)g_Li.hCursor);
 				INT style = EWS_TITLE | EWS_BUTTON_CLOSE | EWS_ESCEXIT | EWS_MOVEABLE | EWS_MESSAGEBOX;
 				
 				if (((pMsg->dwFlags_ & EMBF_WINDOWICON) == EMBF_WINDOWICON))
@@ -38,7 +38,7 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
 			}
 		}
 	}
-	else if (atomClass == 32768)
+	else if (atomClass == ATOM_MENU)
 	{
 		Thunkwindow(hWnd, _menu_proc, 0, 0);
 	}
@@ -75,8 +75,8 @@ void _menu_init(HWND hWnd)
 		{
 			HashTable_Remove(g_Li.hTableLayout, (size_t)hMenu);
 			menu_s* lpMenuParams = pWnd->lpMenuParams_;
-			SetWindowLongPtrW(hWnd, -20, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
-			SetClassLongPtrW(hWnd, -26, 1 | 2 | 8);
+			SetWindowLongPtrW(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+			SetClassLongPtrW(hWnd, GCL_STYLE, CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS);
 			INT dwStyle = EWS_MENU | EWS_NOINHERITBKG | EWS_ESCEXIT | EWS_FULLSCREEN;
 			MsgPROC pfnCallback = nullptr;
 			if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s)))
@@ -249,7 +249,6 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
 	left = (FLOAT)maxWidth / g_Li.DpiX - 85;
 
 	obj_s* pObj = nullptr;
-	
 	for (INT i = aryID.size() - 1; i >= 0; i--)
 	{
 		INT nError = 0;

@@ -462,8 +462,9 @@ LRESULT CALLBACK OnMenuButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
 		RtlMoveMemory(&notify, (LPVOID)lParam, sizeof(EX_NMHDR));
 		if (notify.nCode == NM_CREATE)
 		{
-			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(65280, 255), TRUE);
-			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255), TRUE);
+			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExRGBA(210, 120, 55, 255), TRUE);//改变菜单项目字体正常颜色
+			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255), TRUE);//改变菜单项目字体点燃颜色
+			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), TRUE);//改变菜单项目背景颜色
 		}
 	}
 	return 0;
@@ -478,6 +479,7 @@ LRESULT CALLBACK OnMenuButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		GetWindowRect(hWnd, &rcWindow);
 		Ex_ObjGetRectEx(hObj, &rcObj, 2);
 		Ex_TrackPopupMenu((HMENU)Ex_ObjGetLong(hObj, EOL_LPARAM), TPM_RECURSE, rcWindow.left + rcObj.left, rcWindow.top + rcObj.bottom, 0, hObj, NULL, OnMenuButtonWndMsgProc, EMNF_NOSHADOW);
+		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, NULL, TRUE);
 		*lpResult = 1;
 		return 1;
 	}
@@ -498,18 +500,19 @@ void test_menubutton(HWND hWnd)
 			for (INT i = 0; i < GetMenuItemCount(hMenu); i++) {
 				WCHAR wzText[256];
 				GetMenuStringW(hMenu, i, wzText, 256, MF_BYPOSITION);
-				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObj_menubar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, 0);//OnMenuButtonMsgProc
+				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObj_menubar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, OnMenuButtonMsgProc);//OnMenuButtonMsgProc
 				if (hObj) {
-					Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, 0, FALSE);
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 50), FALSE);
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);
+					Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), FALSE);//改变菜单按钮背景色
+					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//改变菜单按钮字体正常色
+					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体点燃色
+					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);//改变菜单按钮字体按下色
 					_layout_addchild(hLayout, hObj);
 				}
 			}
 		}
 		Ex_ObjLayoutSet(hObj_menubar, hLayout, TRUE);
 	}
+	//设置菜单条目图标
 	if (hMenu)
 	{
 		HMENU hMenu_sub = GetSubMenu(hMenu, 0);

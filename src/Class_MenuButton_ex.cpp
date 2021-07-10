@@ -15,13 +15,13 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 	obj_s* pObj2;
 	HWND currentWnd;
 	HEXOBJ hObj = 0;
-	
-	if (uMsg == MBM_SELECTITEM && LODWORD(wParam) == -1)
+
+	if (uMsg == MBM_SELECTITEM && wParam == -1)
 	{
-		
+
 		if (_handle_validate(hExDUI, HT_DUI, (LPVOID*)&pWnd, &nError))
 		{
-			
+
 			lpMenuParams = pWnd->lpMenuParams_;
 			if (!lpMenuParams)
 			{
@@ -35,32 +35,32 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 			}
 			ScreenToClient(currentWnd, &point);
 			hObj = Ex_DUIGetObjFromPoint((EXHANDLE)currentWnd, point.x, point.y);
-			
+
 			if (!hObj || hObj == lpMenuParams->handle_)
 			{
 				return 0;
 			}
-			
+
 			if (!_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 			{
 				return 0;
 			}
-			
+
 			if (pObj->pCls_->atomName != ATOM_MENUBUTTON)
 			{
 				return 0;
 			}
 			nError = 0;
-			
+
 			if (!_handle_validate(lpMenuParams->handle_, HT_OBJECT, (LPVOID*)&pObj2, &nError))
 			{
 				return 0;
 			}
 
-			
+
 			if (pObj->objParent_ == pObj2->objParent_ && pObj->dwUserData_ == pObj2->dwUserData_)
 			{
-				
+
 				EndMenu();
 				_obj_postmessage(currentWnd, hObj, pObj, MBM_DOWNITEM, (size_t)pObj->dwUserData_, 0, 0);
 			}
@@ -72,25 +72,29 @@ LRESULT CALLBACK _menubutton_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 void _menubutton_paint(HEXOBJ hObj, obj_s* pObj)
 {
 	EX_PAINTSTRUCT ps{ 0 };
-	INT nColor = 0;
+	INT fontColor = 0;
+	INT bkgColor = 0;
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		if (FLAGS_CHECK(pObj->dwState_, STATE_DOWN) || FLAGS_CHECK(pObj->dwState_, STATE_CHECKED))
 		{
-			nColor = _obj_getcolor(pObj, COLOR_EX_TEXT_DOWN);
+			fontColor = _obj_getcolor(pObj, COLOR_EX_TEXT_DOWN);
 		}
 		else if (FLAGS_CHECK(pObj->dwState_, STATE_HOVER))
 		{
-			nColor = _obj_getcolor(pObj, COLOR_EX_TEXT_HOVER);
+			fontColor = _obj_getcolor(pObj, COLOR_EX_TEXT_HOVER);
 		}
-		else
+		else {
+			fontColor = _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL);
+		}
+
+		bkgColor = _obj_getcolor(pObj, COLOR_EX_BACKGROUND);
+
+		if (bkgColor)
 		{
-			nColor = _obj_getcolor(pObj, COLOR_EX_BACKGROUND);
+			_canvas_clear(ps.hCanvas, bkgColor);
 		}
-		if (nColor)
-			_canvas_clear(ps.hCanvas, nColor);
-		
-		_canvas_drawtext(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1, ps.dwTextFormat, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right + ps.rcPaint.left, ps.rcPaint.bottom + ps.rcPaint.top);
+		_canvas_drawtext(ps.hCanvas, pObj->hFont_, fontColor, pObj->pstrTitle_, -1, ps.dwTextFormat, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right + ps.rcPaint.left, ps.rcPaint.bottom + ps.rcPaint.top);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
 }
@@ -126,12 +130,14 @@ LRESULT CALLBACK _menubutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			break;
 		}
 		case WM_LBUTTONUP:
-		{	
-			_obj_setuistate(pObj, STATE_DOWN , TRUE, NULL, TRUE, NULL);
+		{
+			_obj_setuistate(pObj, STATE_DOWN, TRUE, NULL, TRUE, NULL);
 			break;
 		}
-		//case WM_ERASEBKGND:
-		//	return 1;
+		case WM_ERASEBKGND:
+		{
+			return 1;
+		}
 		default:
 		{
 			if (uMsg == MBM_DOWNITEM && wParam == (size_t)pObj->dwUserData_)
@@ -144,15 +150,12 @@ LRESULT CALLBACK _menubutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 				{
 					EndMenu();
 					_obj_setuistate(pObj, STATE_CHECKED, FALSE, NULL, FALSE, NULL);
-					
 					if (!_obj_dispatchnotify(hWnd, pObj, hObj, pObj->id_, MBN_POPUP, wParam, lParam))
 					{
 						GetWindowRect(hWnd, &lpRect);
 						Ex_TrackPopupMenu((HMENU)lParam, 0, lpRect.left + pObj->w_left_, lpRect.top + pObj->w_bottom_, (size_t)hWnd, hObj, NULL, _menubutton_menu_proc, 0);
 					}
-					
 					_obj_setuistate(pObj, STATE_CHECKED | STATE_DOWN, TRUE, NULL, TRUE, NULL);
-					
 				}
 			}
 			break;

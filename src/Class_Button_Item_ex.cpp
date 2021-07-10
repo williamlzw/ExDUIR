@@ -47,9 +47,6 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 						}
 					}
 				}
-				else {
-					//未完成Ex_TrackPopupMenu(g_)
-				}
 			}
 		}
 		else if (uMsg == WM_MOUSEHOVER)
