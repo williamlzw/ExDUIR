@@ -10,10 +10,7 @@ void _soliderbar_register()
 LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	long tmp, tmp2;
-	switch (uMsg)
-	{
-		/*创建时初始化控件属性*/
-	case WM_CREATE:
+	if (uMsg == WM_CREATE)
 	{
 		Ex_ObjSetLong(hObj, SBL_MIN, 0);
 		Ex_ObjSetLong(hObj, SBL_MAX, 100);
@@ -21,33 +18,22 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		Ex_ObjSetLong(hObj, SBL_BLOCK_SIZE, 5);
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_CHECKED, ExARGB(255, 255, 255, 250), TRUE);
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 125), TRUE);
-		break;
 	}
-	/*销毁时释放资源*/
-	case WM_DESTROY:
+	else if (uMsg == WM_PAINT)
 	{
-
+		_soliderbar_paint(hObj);
 	}
-	case WM_PAINT:
-	{
-		return(_soliderbar_paint(hObj));
-	}
-
-	case WM_MOUSEHOVER:
+	else if (uMsg == WM_MOUSEHOVER)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
-		break;
 	}
-	case  WM_MOUSELEAVE:
+	else if (uMsg == WM_MOUSELEAVE)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
-		break;
 	}
-	case WM_LBUTTONDOWN:
+	else if (uMsg == WM_LBUTTONDOWN)
 	{
-
 		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
-
 		tmp = (long)_soliderbar_getvalueofthepoint(hObj, lParam);
 		tmp2 = Ex_ObjSetLong(hObj, SBL_POS, tmp);
 		if (tmp2 != tmp)  // 若当前位置变化,则发送通知
@@ -55,14 +41,12 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			Ex_ObjDispatchNotify(hObj, SBN_VALUE, 0, (LPARAM)tmp);
 			Ex_ObjInvalidateRect(hObj, 0);//  ' 重绘控件
 		}
-		break;
 	}
-	case WM_LBUTTONUP:
+	else if (uMsg == WM_LBUTTONUP)
 	{
 		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
-		break;
 	}
-	case WM_MOUSEMOVE:/*鼠标移动若为按下态,则更新当前位置*/
+	else if (uMsg == WM_MOUSEMOVE)/*鼠标移动若为按下态,则更新当前位置*/
 	{
 		if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)
 		{
@@ -74,9 +58,8 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 				Ex_ObjInvalidateRect(hObj, 0);
 			}
 		}
-		break;
 	}
-	case WM_MOUSEWHEEL:/*鼠标滚轮滚动更新位置*/
+	else if (uMsg == WM_MOUSEWHEEL)/*鼠标滚轮滚动更新位置*/
 	{
 		lParam = Ex_ObjGetLong(hObj, SBL_POS) - (short)HIWORD(wParam) / 120;
 		tmp = Ex_ObjGetLong(hObj, SBL_MIN);
@@ -95,13 +78,12 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			Ex_ObjDispatchNotify(hObj, SBN_VALUE, 0, lParam);
 			Ex_ObjInvalidateRect(hObj, 0);
 		}
-		break;
 	}
-	case SBM_GETPOS:
+	else if (uMsg == SBM_GETPOS)
 	{
 		return(Ex_ObjGetLong(hObj, SBL_POS));
 	}
-	case SBM_SETPOS:
+	else if (uMsg == SBM_SETPOS)
 	{
 		tmp = Ex_ObjGetLong(hObj, SBL_MIN);
 		if (lParam < tmp)
@@ -115,9 +97,8 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		}
 		Ex_ObjSetLong(hObj, SBL_POS, lParam);
 		Ex_ObjInvalidateRect(hObj, 0);
-		break;
 	}
-	case SBM_SETRANGE:
+	else if (uMsg == SBM_SETRANGE)
 	{
 		if ((long)wParam > (long)lParam)  // 逆序则交换
 		{
@@ -128,31 +109,23 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		Ex_ObjSetLong(hObj, SBL_MIN, wParam);
 		Ex_ObjSetLong(hObj, SBL_MAX, lParam);
 		Ex_ObjInvalidateRect(hObj, 0);
-		break;
-	}
-	/*case SBM_GETRANGE:
-	{
 
-		break;
-	}*/
-	case SBM_GETBLOCKRECT:
+	}
+	else if (uMsg == SBM_GETBLOCKRECT)
 	{
 		_soliderbar_getrect(hObj, (RECT*)lParam);
-		break;
+
 	}
-	case SBM_PT2VALUE:
+	else if (uMsg == SBM_PT2VALUE)
 	{
 		return((LONG)_soliderbar_getvalueofthepoint(hObj, lParam));
-		break;
+
 	}
-	default:
-		break;
-	}
-	return(Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam));
+	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
 
-INT _soliderbar_paint(HEXOBJ hObj)
+void _soliderbar_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT ps{ 0 };
 	RECT RC = { 0 };
@@ -163,7 +136,7 @@ INT _soliderbar_paint(HEXOBJ hObj)
 		FLOAT x, y;
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ESBS_VERTICAL) == ESBS_VERTICAL)
 		{
-			_canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)RC.right / 2), Ex_ObjGetLong(hObj,SBL_BLOCK_SIZE), Ex_Scale((FLOAT)RC.right / 2), Ex_Scale((FLOAT)(RC.bottom)) - Ex_ObjGetLong(hObj, SBL_BLOCK_SIZE), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
+			_canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)RC.right / 2), Ex_ObjGetLong(hObj, SBL_BLOCK_SIZE), Ex_Scale((FLOAT)RC.right / 2), Ex_Scale((FLOAT)(RC.bottom)) - Ex_ObjGetLong(hObj, SBL_BLOCK_SIZE), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
 			x = Ex_Scale((FLOAT)RC.right / 2);
 			if (Ex_ObjGetLong(hObj, SBL_BLOCK_POINT) == 1)
 			{
@@ -194,7 +167,6 @@ INT _soliderbar_paint(HEXOBJ hObj)
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
-	return(0);
 }
 
 /*滑块条_取滑块矩形*/

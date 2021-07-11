@@ -9,9 +9,8 @@ void _win10_loading_register() {
 
 LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg)
-	{
-	case WM_CREATE:
+
+	if (uMsg == WM_CREATE)
 	{
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ELDS_LINE) != ELDS_LINE)
 		{
@@ -39,32 +38,25 @@ LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			}
 		}
 		Ex_ObjSetTimer(hObj, 1);
-		break;
-	}
 
-	case WM_DESTROY:
+	}
+	else if (uMsg == WM_DESTROY)
 	{
 		Ex_ObjKillTimer(hObj);
-		break;
 	}
-	case WM_PAINT:
+	else if (uMsg == WM_PAINT)
 	{
-		return _win10_loading_paint(hObj);
+		_win10_loading_paint(hObj);
 	}
-	case WM_TIMER:
+	else if (uMsg == WM_TIMER)
 	{
 		/*重绘控件*/
 		Ex_ObjInvalidateRect(hObj, 0);
-		break;
-	}
-
-	default:
-		break;
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-INT _win10_loading_paint(HEXOBJ hObj)
+void _win10_loading_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT ps;
 	if (Ex_ObjBeginPaint(hObj, &ps))
@@ -152,5 +144,4 @@ INT _win10_loading_paint(HEXOBJ hObj)
 
 		Ex_ObjEndPaint(hObj, &ps);
 	}
-	return  FALSE;
 }

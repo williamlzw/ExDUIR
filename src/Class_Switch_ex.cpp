@@ -8,9 +8,7 @@ void _switch_register()
 
 LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg)
-	{
-	case WM_CREATE:
+	if (uMsg == WM_CREATE)
 	{
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 255), FALSE);
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_CHECKED, ExARGB(255, 255, 255, 255), FALSE);
@@ -19,9 +17,9 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		EXARGB	ThemeColor = ExARGB(98, 184, 120, 255);
 		Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, ThemeColor);
 		Ex_ObjSetProp(hObj, ESP_CRBORDERNORMAL, ExARGB(0, 0, 0, 150));
-		break;
+
 	}
-	case WM_EX_PROPS:
+	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* Switchprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, Switchprops->COLOR_EX_BACKGROUND_NORMAL);
@@ -32,14 +30,13 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		Ex_ObjSetProp(hObj, ESP_CRBORDERDOWNORCHECKED, Switchprops->COLOR_EX_BORDER_DOWNORCHECKED);
 		Ex_ObjSetProp(hObj, ESP_RADIUS, Switchprops->Radius);
 		Ex_ObjSetProp(hObj, ESP_STROKEWIDTH, Switchprops->StrokeWidth);
-		break;
+
 	}
-	case WM_PAINT:
+	else if (uMsg == WM_PAINT)
 	{
-		return(_switch_paint(hObj));
+		_switch_paint(hObj);
 	}
-	/* 设置选中状态(wParam为是否选中,lParam为是否立即绘制而不使用动画) */
-	case BM_SETCHECK:
+	else if (uMsg == BM_SETCHECK)/* 设置选中状态(wParam为是否选中,lParam为是否立即绘制而不使用动画) */
 	{
 		BOOL fChecked = ((Ex_ObjGetUIState(hObj) & STATE_SELECT) != 0);
 		/* 如果选中状态与当前状态不一致 */
@@ -64,22 +61,17 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 			/* 触发一个选中事件 */
 			Ex_ObjDispatchNotify(hObj, NM_CHECK, wParam, 0);
 		}
-		break;
 	}
-	/* 获取选中状态 */
-	case BM_GETCHECK:
+	else if (uMsg == BM_GETCHECK)/* 获取选中状态 */
 	{
 		return((INT)((Ex_ObjGetUIState(hObj) & STATE_SELECT) != 0));
-		break;
+
 	}
-	/* 单击则切换状态 */
-	case WM_EX_LCLICK:
+	else if (uMsg == WM_EX_LCLICK)/* 单击则切换状态 */
 	{
 		Ex_ObjDispatchMessage(hObj, BM_SETCHECK, (Ex_ObjGetUIState(hObj) & STATE_SELECT) != STATE_SELECT, 0);
-		break;
 	}
-	/* 动画缓动 */
-	case WM_EX_EASING:
+	else if (uMsg == WM_EX_EASING)/* 动画缓动 */
 	{
 		if (wParam != 0)
 		{
@@ -91,16 +83,12 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 			/* 重绘控件 */
 			Ex_ObjInvalidateRect(hObj, 0);
 		}
+	}
 
-		return  FALSE;
-	}
-	default:
-		break;
-	}
-	return(Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam));
+	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-INT _switch_paint(HEXOBJ hObj) {
+void _switch_paint(HEXOBJ hObj) {
 
 	EX_PAINTSTRUCT ps;
 
@@ -142,7 +130,7 @@ INT _switch_paint(HEXOBJ hObj) {
 		{
 			_canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
 		}
-		
+
 		rcBlock.left = (ps.uWidth - ps.uHeight) * nProgress / 100;/* 计算出按钮的矩形位置 */
 		rcBlock.top = ps.rcPaint.top;
 		rcBlock.right = rcBlock.left + ps.uHeight;
@@ -185,9 +173,9 @@ INT _switch_paint(HEXOBJ hObj) {
 		{
 			title = L"是|否";
 		}
-		
+
 		std::vector<std::wstring> tokens = ws_split(title, L"|");
-			
+
 		if ((FLOAT)nProgress / 100 * 255)
 		{
 			std::wstring str = tokens[0];
@@ -197,9 +185,7 @@ INT _switch_paint(HEXOBJ hObj) {
 			std::wstring str = tokens[1];
 			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), str.c_str()/* L"关"*/, -1, DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)rcBlock.right, (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right - _Radius / 2, (FLOAT)ps.rcPaint.bottom);
 		}
-		
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
-	return  FALSE;
 }

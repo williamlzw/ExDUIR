@@ -24,11 +24,7 @@ void _editex_register()
 
 LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
-	switch (uMsg)
-	{
-		/*创建时初始化控件属性*/
-	case WM_CREATE:
+	if (uMsg == WM_CREATE)
 	{
 		Ex_ObjSetPadding(hObj, 0, 5, 5, 5, 5, FALSE);
 		Ex_ObjInitPropList(hObj, 10);
@@ -39,13 +35,13 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
 		Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
 		Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, 2);
-		break;
+
 	}
-	/* 设置图标 */
-	case WM_SETICON:
+	else if (uMsg == WM_SETICON)
 	{
+		/* 设置图标 */
 		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EOL_USERDATA, lParam);
-		
+
 		/* 若有原位图则销毁 */
 		if (hImage != 0)
 		{
@@ -57,16 +53,14 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 			/* 重绘控件 */
 			Ex_ObjInvalidateRect(hObj, 0);
 		}
-		break;
+
 	}
-	/*销毁时释放资源*/
-	case WM_DESTROY:
+	else if (uMsg == WM_DESTROY)
 	{
 		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EOL_USERDATA));
-		break;
-	}
 
-	case WM_EX_PROPS:
+	}
+	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* EditExprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjSetProp(hObj, EEEP_CRBKGNORMAL, EditExprops->COLOR_EX_BACKGROUND_NORMAL);
@@ -88,10 +82,9 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		Ex_ObjSetProp(hObj, EEEP_RADIUS, EditExprops->Radius);
 		Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, EditExprops->StrokeWidth);
 		Ex_ObjSetProp(hObj, EEEP_ICONPOSITION, EditExprops->nIconPosition);
-		break;
-	}
 
-	case WM_ERASEBKGND:
+	}
+	else if (uMsg == WM_ERASEBKGND)
 	{
 		RECT rc = { 0 };
 		HEXCANVAS	hCanvas = (HEXCANVAS)wParam;
@@ -116,9 +109,6 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
 		/*获取图标*/
 		HEXIMAGE    hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EOL_USERDATA);
-		
-
-
 
 		/*定义线框正常态颜色*/
 		_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERNORMAL));
@@ -128,10 +118,9 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 			m_IsDraw = TRUE;/*下划线风格*/
 		}
 
-
 		if ((Ex_ObjGetUIState(hObj) & STATE_HOVER) != 0)
 		{
-			/*定义点燃状态下的线框颜色*/
+			/*定义热点状态下的线框颜色*/
 			_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERHOVER));
 		}
 
@@ -166,27 +155,21 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 		{
 			_canvas_setantialias(hCanvas, TRUE);
 			_canvas_setimageantialias(hCanvas, TRUE);
-			
+
 			if (nIconPosition == 0)
 			{
-				
 				P->left = (INT)Height;
 				P->right = (INT)(Width - Ex_Scale(10));
-				_canvas_drawimagerect(hCanvas, hImage, Height / 4, Height / 4, Height - Height / 4, Height - Height / 4,255);
+				_canvas_drawimagerect(hCanvas, hImage, Height / 4, Height / 4, Height - Height / 4, Height - Height / 4, 255);
 			}
 			else if (nIconPosition >= 1)
 			{
 				P->left = (INT)Ex_Scale(10);
 				P->right = (INT)(Width - Height);
-				_canvas_drawimagerect(hCanvas, hImage, Width - Height + Height /4, Height /4, Width - Height + Height -Height/4, Height - Height/4, 255);
+				_canvas_drawimagerect(hCanvas, hImage, Width - Height + Height / 4, Height / 4, Width - Height + Height - Height / 4, Height - Height / 4, 255);
 			}
 		}
-
 		_brush_destroy(hbrush);
-		break;
 	}
-	default:
-		break;
-	}
-	return(Ex_ObjCallProc(m_pfnEditExProc, hWnd, hObj, uMsg, wParam, lParam));
+	return Ex_ObjCallProc(m_pfnEditExProc, hWnd, hObj, uMsg, wParam, lParam);
 }

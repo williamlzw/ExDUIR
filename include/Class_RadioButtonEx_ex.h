@@ -5,11 +5,11 @@
 #define ERBEP_CRBKGDOWNORCHECKED	1
 // 扩展单选框_边框颜色_正常
 #define ERBEP_CRBORDERNORMAL	2
-// 扩展单选框_边框颜色_点燃
+// 扩展单选框_边框颜色_热点
 #define ERBEP_CRBORDERHOVER	3
 // 扩展单选框_边框颜色_按下或选中
 #define ERBEP_CRBORDERDOWNORCHECKED	4
 
 void _radiobuttonex_register();
 LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-INT _radiobuttonex_paint(HEXOBJ hObj);
+void _radiobuttonex_paint(HEXOBJ hObj);

@@ -25,10 +25,8 @@ void _radiobuttonex_register()
 LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
-	switch (uMsg)
-	{
-		/*创建时初始化控件属性*/
-	case WM_CREATE:
+
+	if (uMsg == WM_CREATE)
 	{
 		Ex_ObjInitPropList(hObj, 5);
 		Ex_ObjSetProp(hObj, ERBEP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
@@ -36,36 +34,31 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, ExARGB(0, 0, 0, 255));
 		Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
 	}
-	/*销毁时释放资源*/
-	case WM_DESTROY:
+	else if (uMsg == WM_DESTROY)
 	{
 
 	}
-	case WM_PAINT:
+	else if (uMsg == WM_PAINT)
 	{
-		return(_radiobuttonex_paint(hObj));
+		_radiobuttonex_paint(hObj);
 	}
-	case WM_MOUSEHOVER:
+	else if (uMsg == WM_MOUSEHOVER)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
-		break;
 	}
-	case  WM_MOUSELEAVE:
+	else if (uMsg == WM_MOUSELEAVE)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
-		break;
 	}
-	case WM_LBUTTONDOWN:
+	else if (uMsg == WM_LBUTTONDOWN)
 	{
 		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
-		break;
 	}
-	case WM_LBUTTONUP:
+	else if (uMsg == WM_LBUTTONUP)
 	{
 		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
-		break;
 	}
-	case WM_EX_PROPS:
+	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* RadioButtonExprops = (EX_OBJ_PROPS*)lParam;
 
@@ -73,15 +66,11 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		Ex_ObjSetProp(hObj, ERBEP_CRBORDERNORMAL, RadioButtonExprops->COLOR_EX_BORDER_NORMAL);
 		Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, RadioButtonExprops->COLOR_EX_BORDER_HOVER);
 		Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, RadioButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
-		break;
 	}
-	default:
-		break;
-	}
-	return(Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam));
+	return Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam);
 }
 
-INT _radiobuttonex_paint(HEXOBJ hObj)
+void _radiobuttonex_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT ps{ 0 };
 	RECT rcBlock = { 0 };
@@ -91,7 +80,7 @@ INT _radiobuttonex_paint(HEXOBJ hObj)
 		EXARGB	crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
 		if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
 		{
-			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL );
+			crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
 			_brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ERBEP_CRBORDERHOVER));
 		}
 
@@ -142,6 +131,4 @@ INT _radiobuttonex_paint(HEXOBJ hObj)
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
-	return(0);
-
 }

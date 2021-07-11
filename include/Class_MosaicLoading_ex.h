@@ -10,4 +10,4 @@ struct MosaicRect
 
 void _mosaic_loading_register();
 LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-INT _mosaic_loading_paint(HEXOBJ hObj);
+void _mosaic_loading_paint(HEXOBJ hObj);

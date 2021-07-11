@@ -249,7 +249,7 @@
 #define STATE_HALFSELECT 0x20
 // 状态_只读
 #define STATE_READONLY 0x40
-// 状态_点燃
+// 状态_热点
 #define STATE_HOVER	0x80
 // 状态_默认
 #define STATE_DEFAULT 0x100
@@ -273,7 +273,7 @@
 #define STATE_ALLOWFOCUS 0x100000
 // 状态_允许选择
 #define STATE_ALLOWSELECT 0x200000
-// 状态_超链接_点燃
+// 状态_超链接_热点
 #define STATE_HYPERLINK_HOVER 0x400000
 // 状态_超链接_已访问
 #define STATE_HYPERLINK_VISITED	0x800000
@@ -526,7 +526,7 @@
 #define COLOR_EX_BORDER	1
 // 颜色索引_文本颜色_正常
 #define COLOR_EX_TEXT_NORMAL	2
-// 颜色索引_文本颜色_点燃
+// 颜色索引_文本颜色_热点
 #define COLOR_EX_TEXT_HOVER	3
 // 颜色索引_文本颜色_按下
 #define COLOR_EX_TEXT_DOWN	4
@@ -1589,17 +1589,17 @@ struct EX_TREEVIEW_ITEMINFO
 struct EX_OBJ_PROPS
 {
 	EXARGB COLOR_EX_BACKGROUND_NORMAL;			//背景颜色.正常
-	EXARGB COLOR_EX_BACKGROUND_HOVER;			//背景颜色.点燃
+	EXARGB COLOR_EX_BACKGROUND_HOVER;			//背景颜色.热点
 	EXARGB COLOR_EX_BACKGROUND_DOWNORCHECKED;	//背景颜色.按下或者选中
 	EXARGB COLOR_EX_BKG_CRBegin;				//渐变背景.起点颜色ARGB
 	EXARGB COLOR_EX_BKG_CREnd;					//渐变背景.终点颜色ARGB
 	EXARGB COLOR_EX_BORDER_NORMAL;				//边框颜色.正常
-	EXARGB COLOR_EX_BORDER_HOVER;				//边框颜色.点燃
+	EXARGB COLOR_EX_BORDER_HOVER;				//边框颜色.热点
 	EXARGB COLOR_EX_BORDER_DOWNORCHECKED;		//边框颜色.按下或者选中
 	EXARGB COLOR_EX_BRD_CRBegin;				//渐变边框.起点颜色ARGB
 	EXARGB COLOR_EX_BRD_CREnd;					//渐变边框.终点颜色ARGB
 	EXARGB COLOR_EX_ICON_NORMAL;				//图标颜色.正常
-	EXARGB COLOR_EX_ICON_HOVER;					//图标颜色.点燃
+	EXARGB COLOR_EX_ICON_HOVER;					//图标颜色.热点
 	EXARGB COLOR_EX_ICON_DOWNORFOCUS;			//图标颜色.按下或者焦点
 	INT Radius;									//圆角度
 	INT StrokeWidth;							//线宽
@@ -1618,7 +1618,7 @@ struct EX_ICONLISTVIEW_ITEMINFO
 struct EX_IMAGEINFO
 {
 	HEXIMAGE IMG_NORMAL;		//图像.正常
-	HEXIMAGE IMG_HOVER;			//图像.点燃
+	HEXIMAGE IMG_HOVER;			//图像.热点
 	HEXIMAGE IMG_DOWNORCHECKED;	//图像.按下或者选中
 };
 

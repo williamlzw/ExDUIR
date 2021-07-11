@@ -196,11 +196,11 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 		LPVOID hBrush = 0;
 		if ((cdr->dwStyle & EILVS_BUTTON) != 0)//如果是按钮状态,则处理背景
 		{
-			if ((cdr->dwState & STATE_HOVER) != 0 && (Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)//当当前表项是点燃且左键按下时
+			if ((cdr->dwState & STATE_HOVER) != 0 && (Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)//当当前表项是热点且左键按下时
 			{
 				hBrush = _brush_create(ExRGB2ARGB(16777215, 100));
 			}
-			else if ((cdr->dwState & STATE_HOVER) != 0)//当当前表项是点燃时
+			else if ((cdr->dwState & STATE_HOVER) != 0)//当当前表项是热点时
 			{
 				hBrush = _brush_create(ExRGB2ARGB(16777215, 50));
 			}
@@ -223,5 +223,5 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
 		}
 		_canvas_resetclip(cdr->hCanvas);//重置剪辑区
 	}
-	return (cdr->dwStyle & EILVS_BUTTON) != 0;// 如果不是按钮列表状态，则表项选中、点燃的状态交给列表框绘制
+	return (cdr->dwStyle & EILVS_BUTTON) != 0;// 如果不是按钮列表状态，则表项选中、热点的状态交给列表框绘制
 }

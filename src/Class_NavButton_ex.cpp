@@ -75,7 +75,7 @@ LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj,INT uMsg,WPARAM wParam,LPAR
 	if (uMsg == WM_DESTROY)
 	{
 		_img_destroy(Ex_ObjGetLong(hObj, 0));//正常态
-		_img_destroy(Ex_ObjGetLong(hObj, 1));//点燃态
+		_img_destroy(Ex_ObjGetLong(hObj, 1));//热点态
 		_img_destroy(Ex_ObjGetLong(hObj, 2));//按下态
 		_img_destroy(Ex_ObjGetLong(hObj, 4));//图标
 

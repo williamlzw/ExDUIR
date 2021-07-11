@@ -35,7 +35,7 @@
 // 组合框消息_取可视数量
 #define CB_GETMINVISIBLE 5890
 
-// 组合框标识_点燃
+// 组合框标识_热点
 #define ECBF_HOVER	1
 
 struct EX_COMBOX_ITEM {
@@ -53,7 +53,7 @@ size_t _combobox_size(HWND hWnd, obj_s* pObj, HEXOBJ hObj, INT width, INT height
 EX_COMBOX_ITEMLIST* _combobox_realloc(obj_s* pObj, INT need, INT nIndex, BOOL add);
 INT _combobox_insertstring(obj_s* pObj, size_t nIndex, LPCWSTR lpTitle);
 INT _combobox_addstring(obj_s* pObj, LPCWSTR lpTitle);
-INT _combobox_paint(HEXOBJ hObj, obj_s* pObj);
+void _combobox_paint(HEXOBJ hObj, obj_s* pObj);
 void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
 LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 INT _combobox_delstring(obj_s* pObj, size_t nIndex);

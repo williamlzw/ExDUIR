@@ -98,18 +98,18 @@ public:
 			m_pOwner->rcCaret_right_ = xWidth;
 			m_pOwner->rcCaret_bottom_ = yHeight;
 		}
-		return CreateCaret(_obj_gethWnd(m_pOwner->pObj_), (HBITMAP)-1, xWidth, yHeight);
+		return CreateCaret(_obj_gethwnd(m_pOwner->pObj_), (HBITMAP)-1, xWidth, yHeight);
 	};
 
 	//@cmember Show the caret
 	BOOL TxShowCaret(BOOL fShow) {
 		if (fShow) {
 			FLAGS_ADD(m_pOwner->flags_, EEF_BSHOWCARET);
-			ShowCaret(_obj_gethWnd(m_pOwner->pObj_));
+			ShowCaret(_obj_gethwnd(m_pOwner->pObj_));
 		}
 		else {
 			FLAGS_DEL(m_pOwner->flags_, EEF_BSHOWCARET);
-			HideCaret(_obj_gethWnd(m_pOwner->pObj_));
+			HideCaret(_obj_gethwnd(m_pOwner->pObj_));
 		}
 		return TRUE;
 	};
@@ -131,12 +131,12 @@ public:
 
 	//@cmember Create a timer with the specified timeout
 	BOOL TxSetTimer(UINT idTimer, UINT uTimeout) {
-		return SetTimer(_obj_gethWnd(m_pOwner->pObj_), idTimer, uTimeout, NULL);
+		return SetTimer(_obj_gethwnd(m_pOwner->pObj_), idTimer, uTimeout, NULL);
 	};
 
 	//@cmember Destroy a timer
 	void TxKillTimer(UINT idTimer) {
-		KillTimer(_obj_gethWnd(m_pOwner->pObj_), idTimer);
+		KillTimer(_obj_gethwnd(m_pOwner->pObj_), idTimer);
 	};
 
 	//@cmember Scroll the content of the specified window's client area
@@ -280,7 +280,7 @@ public:
 	HRESULT TxNotify(DWORD iNotify, LPVOID pv) {
 		obj_s* pObj = m_pOwner->pObj_;
 		if (iNotify != EN_UPDATE) {
-			_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, pObj->hObj_, 0, iNotify, 0, (size_t)pv);
+			_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, iNotify, 0, (size_t)pv);
 			if (iNotify == EN_SELCHANGE) {
 				SELCHANGE* pSelChange = (SELCHANGE*)pv;
 				if (pSelChange->chrg.cpMin == pSelChange->chrg.cpMax) {

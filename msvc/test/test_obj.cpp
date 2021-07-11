@@ -463,7 +463,7 @@ LRESULT CALLBACK OnMenuButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
 		if (notify.nCode == NM_CREATE)
 		{
 			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExRGBA(210, 120, 55, 255), TRUE);//改变菜单项目字体正常颜色
-			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255), TRUE);//改变菜单项目字体点燃颜色
+			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255), TRUE);//改变菜单项目字体热点颜色
 			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), TRUE);//改变菜单项目背景颜色
 		}
 	}
@@ -500,11 +500,11 @@ void test_menubutton(HWND hWnd)
 			for (INT i = 0; i < GetMenuItemCount(hMenu); i++) {
 				WCHAR wzText[256];
 				GetMenuStringW(hMenu, i, wzText, 256, MF_BYPOSITION);
-				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObj_menubar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, OnMenuButtonMsgProc);//OnMenuButtonMsgProc
+				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObj_menubar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, 0);//OnMenuButtonMsgProc
 				if (hObj) {
 					Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), FALSE);//改变菜单按钮背景色
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//改变菜单按钮字体正常色
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体点燃色
+					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体热点色
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);//改变菜单按钮字体按下色
 					_layout_addchild(hLayout, hObj);
 				}
@@ -1662,7 +1662,7 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		{
 			_easing_setstate(oldhEasing, EES_STOP);
 		}
-		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);//设置点燃状态
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);//设置热点状态
 	}
 	else if (uMsg == WM_MOUSELEAVE)
 	{
@@ -1672,7 +1672,7 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		{
 			_easing_setstate(oldhEasing, EES_STOP);
 		}
-		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);//删除点燃状态
+		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);//删除热点状态
 	}
 	return 0;
 }
@@ -1799,18 +1799,13 @@ void test_buttonex(HWND hWnd)
 
 LRESULT CALLBACK OnEditChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	switch (nCode)
-	{
-	case EN_CHANGE:
+	if(nCode== EN_CHANGE)
 	{
 		output(L"编辑框内容改变", nID);
 	}
-	case NM_CHAR:
+	else if (nCode == NM_CHAR)
 	{
 		output(L"编辑框输入字符", nID, wParam);
-	}
-	default:
-		break;
 	}
 	return 0;
 }

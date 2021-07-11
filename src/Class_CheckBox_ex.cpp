@@ -3,7 +3,6 @@
 ClsPROC m_pfnCheckBoxProc;/*控件基类的消息回调函数*/
 
 
-
 void _checkbox_register()
 {
 	EX_CLASSINFO	pClsInfoCheckButton;
@@ -27,73 +26,56 @@ void _checkbox_register()
 LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
-	switch (uMsg)
-	{
-		/*创建时初始化控件属性*/
-	case WM_CREATE:
+	if (uMsg == WM_CREATE)
 	{
 		Ex_ObjInitPropList(hObj, 4);
 		Ex_ObjSetProp(hObj, ECBP_CRNORMAL, ExARGB(190, 190, 190, 255));
 		Ex_ObjSetProp(hObj, ECBP_CRHOVER, ExARGB(200, 200, 200, 255));
 		Ex_ObjSetProp(hObj, ECBP_CRCHECKED, ExARGB(0, 200, 200, 255));
 	}
-	/*销毁时释放资源*/
-	case WM_DESTROY:
+	else if (uMsg == WM_DESTROY)
 	{
 
 	}
-	case WM_PAINT:
+	else if (uMsg == WM_PAINT)
 	{
-		return(_checkbox_paint(hObj));
+		_checkbox_paint(hObj);
 	}
-	case WM_MOUSEHOVER:
+	else if (uMsg == WM_MOUSEHOVER)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
-		break;
+
 	}
-	case  WM_MOUSELEAVE:
+	else if (uMsg == WM_MOUSELEAVE)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
-		break;
+
 	}
-	case WM_LBUTTONDOWN:
+	else if (uMsg == WM_LBUTTONDOWN)
 	{
 		SetCursor(LoadCursorW(0, IDC_HAND));
 		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
-		break;
+
 	}
-	case WM_LBUTTONUP:
+	else if (uMsg == WM_LBUTTONUP)
 	{
 		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
-		break;
 	}
-	case WM_MOUSEMOVE:
+	else if (uMsg == WM_MOUSEMOVE)
 	{
 		SetCursor(LoadCursorW(0, IDC_HAND));
-		break;
 	}
-
-	case WM_EX_PROPS:
+	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* checkboxprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjSetProp(hObj, ECBP_CRNORMAL, checkboxprops->COLOR_EX_BACKGROUND_NORMAL);
 		Ex_ObjSetProp(hObj, ECBP_CRHOVER, checkboxprops->COLOR_EX_BACKGROUND_HOVER);
 		Ex_ObjSetProp(hObj, ECBP_CRCHECKED, checkboxprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		/*Ex_ObjSetProp(hObj, 4, checkboxprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, 5, checkboxprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, 6, checkboxprops->COLOR_EX_BORDER_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, 7, checkboxprops->Radius);
-		Ex_ObjSetProp(hObj, 8, checkboxprops->StrokeWidth);*/
-		break;
 	}
-
-	default:
-		break;
-	}
-	return(Ex_ObjCallProc(m_pfnCheckBoxProc, hWnd, hObj, uMsg, wParam, lParam));
+	return Ex_ObjCallProc(m_pfnCheckBoxProc, hWnd, hObj, uMsg, wParam, lParam);
 }
 
-INT _checkbox_paint(HEXOBJ hObj)
+void _checkbox_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT ps{ 0 };
 	RECT rcBlock = { 0 };
@@ -145,13 +127,11 @@ INT _checkbox_paint(HEXOBJ hObj)
 			(LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
 			-1,
 			DT_CENTER | DT_VCENTER | DT_SINGLELINE,
-			(FLOAT)ps.rcText.left ,
+			(FLOAT)ps.rcText.left,
 			(FLOAT)ps.rcText.top,
 			(FLOAT)rcBlock.left,
 			(FLOAT)ps.rcText.bottom);
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
-	return(0);
-
 }

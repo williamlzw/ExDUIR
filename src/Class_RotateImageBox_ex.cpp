@@ -24,10 +24,8 @@ void _rotateimagebox_register()
 
 LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg)
-	{
-		/*创建时初始化控件属性*/
-	case WM_CREATE:
+
+	if (uMsg == WM_CREATE)
 	{
 		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ERIBS_ROTATE) == ERIBS_ROTATE)
 		{
@@ -36,16 +34,11 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			/* 开启时钟*/
 			Ex_ObjSetTimer(hObj, 50);
 		}
-		break;
 	}
-
-	case WM_EX_PAINTING:
+	else if (uMsg == WM_EX_PAINTING)
 	{
 		EX_PAINTSTRUCT* ps = (EX_PAINTSTRUCT*)lParam;
-		switch (wParam)
-		{
-			/* 当控件开始绘制时*/
-		case EPP_BEGIN:
+		if (wParam == EPP_BEGIN)/* 当控件开始绘制时*/
 		{
 			/*创建矩阵，并旋转一个角度*/
 			HEXMATRIX	mx = _matrix_create();
@@ -56,53 +49,36 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			_canvas_settransform(ps->hCanvas, mx);
 			/* 设置后就可以释放了*/
 			_matrix_destroy(mx);
-			break;
+
 		}
-		/* 绘制背景后*/
-		case EPP_BKG:
+		else if (wParam == EPP_BKG)/* 绘制背景后*/
 		{
 			/* 还原当前画布的变换(此时设置仅旋转背景)*/
 			_canvas_settransform(ps->hCanvas, 0);
-			break;
 		}
-		/*绘制结束后*/
-		case EPP_END:
+
+		else if (wParam == EPP_END)/*绘制结束后*/
 		{
 			/* 还原当前画布的变换(此时设置旋转整个控件内容)*/
 			// _canvas_settransform (ps.hCanvas, 0);
-			break;
 		}
-		default:
-			break;
-		}
-
-		break;
 	}
-	case WM_TIMER:
+	else if (uMsg == WM_TIMER)
 	{
 		Ex_ObjSetLong(hObj, EOL_USERDATA, (Ex_ObjGetLong(hObj, EOL_USERDATA) + 1) % 360);/* 每50ms增加1°*/
 		Ex_ObjInvalidateRect(hObj, 0);
-		break;
 	}
-	case WM_MOUSEHOVER:
+	else if (uMsg == WM_MOUSEHOVER)
 	{
-
 		/*移入则停止旋转*/
 		Ex_ObjKillTimer(hObj);
 		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);
-		break;
 	}
-	case  WM_MOUSELEAVE:
+	else if (uMsg == WM_MOUSELEAVE)
 	{
-
 		/*移出则恢复旋转*/
 		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);
 		Ex_ObjSetTimer(hObj, 50);
-		break;
-	}
-	default:
-		break;
 	}
 	return Ex_ObjCallProc(m_pfnStaticProc, hWnd, hObj, uMsg, wParam, lParam);
 }
-

@@ -1,26 +1,26 @@
 ﻿#pragma once
 #include "help_ex.h"
 
-// 扩展按钮_热点图标
+// 扩展按钮_正常图片
 #define EBEL_IMG_NORMAL	0
-// 扩展按钮_热点图标
+// 扩展按钮_热点图片
 #define EBEL_IMG_HOVER	1
-// 扩展按钮_按下图标
+// 扩展按钮_按下图片
 #define EBEL_IMG_DOWNORCHECKED	2
-// 扩展按钮_按下图标
+// 扩展按钮_按下矩形
 #define EBEL_RECT	3
 // 扩展按钮_图标
 #define EBEL_ICON	4
 
 // 扩展按钮_背景颜色_正常
 #define EBEP_CRBKGNORMAL	1
-// 扩展按钮_背景颜色_点燃
+// 扩展按钮_背景颜色_热点
 #define EBEP_CRBKGHOVER	2
 // 扩展按钮_背景颜色_按下或选中
 #define EBEP_CRBKGDOWNORCHECKED	3
 // 扩展按钮_边框颜色_正常
 #define EBEP_CRBORDERNORMAL	4
-// 扩展按钮_边框颜色_点燃
+// 扩展按钮_边框颜色_热点
 #define EBEP_CRBORDERHOVER	5
 // 扩展按钮_边框颜色_按下或选中
 #define EBEP_CRBORDERDOWNORCHECKED	6
@@ -45,4 +45,4 @@
 
 void _buttonex_register();
 LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-INT _buttonex_paint(HEXOBJ hObj);
+void _buttonex_paint(HEXOBJ hObj);

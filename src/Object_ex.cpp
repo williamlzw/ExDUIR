@@ -392,7 +392,7 @@ BOOL Ex_ObjKillFocus(HEXOBJ hObj)
 	return nError == 0;
 }
 
-HWND _obj_gethWnd(obj_s* pObj)
+HWND _obj_gethwnd(obj_s* pObj)
 {
 	wnd_s* pWnd = pObj->pWnd_;
 	return pWnd->hWnd_;
@@ -438,7 +438,7 @@ BOOL Ex_ObjSetFocus(HEXOBJ hObj)
 	obj_s* pObj = nullptr;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		_obj_setfocus(_obj_gethWnd(pObj), pObj->pWnd_, hObj, pObj, FALSE);
+		_obj_setfocus(_obj_gethwnd(pObj), pObj->pWnd_, hObj, pObj, FALSE);
 	}
 	return nError == 0;
 }
@@ -601,7 +601,7 @@ size_t Ex_ObjSendMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 	size_t ret = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		ret = _obj_sendmessage(_obj_gethWnd(pObj), hObj, pObj, uMsg, wParam, lParam, 0);
+		ret = _obj_sendmessage(_obj_gethwnd(pObj), hObj, pObj, uMsg, wParam, lParam, 0);
 	}
 	return ret;
 }
@@ -613,7 +613,7 @@ BOOL Ex_ObjPostMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 	BOOL ret = FALSE;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		ret = _obj_postmessage(_obj_gethWnd(pObj), hObj, pObj, uMsg, wParam, lParam, 0);
+		ret = _obj_postmessage(_obj_gethwnd(pObj), hObj, pObj, uMsg, wParam, lParam, 0);
 	}
 	return ret;
 }
@@ -820,7 +820,7 @@ void _obj_invalidaterect(obj_s* pObj, RECT* lpRect, INT* nError)
 
 		if (_obj_makeupinvalidaterect(pObj->pWnd_, pObj, pRC))
 		{
-			InvalidateRect(_obj_gethWnd(pObj), (RECT*)pRC, FALSE);
+			InvalidateRect(_obj_gethwnd(pObj), (RECT*)pRC, FALSE);
 		}
 		MemPool_Free(g_Li.hMemPoolMsg, pRC);
 	}
@@ -1093,7 +1093,7 @@ LONG_PTR Ex_ObjGetLong(HEXOBJ hObj, INT nIndex)
 			return (LONG_PTR)pObj->dwUserData_;
 		}
 		else if (nIndex >= 0) { // 组件额外数据
-			return _obj_getExtraLong(pObj, nIndex);
+			return _obj_getextralong(pObj, nIndex);
 		}
 		else {
 			EX_ASSERT(false, L"Ex_ObjGetLong: unknown EOL index: %ld", nIndex);
@@ -1196,7 +1196,7 @@ LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong)
 			pObj->dwUserData_ = (LPVOID)dwNewLong;
 		}
 		else if (nIndex >= 0) { // 组件额外数据
-			ret = _obj_setExtraLong(pObj, nIndex, dwNewLong);
+			ret = _obj_setextralong(pObj, nIndex, dwNewLong);
 		}
 		else {
 			EX_ASSERT(false, L"Ex_ObjSetLong: unknown EOL index: %ld", nIndex);
@@ -1763,7 +1763,7 @@ size_t Ex_ObjDispatchMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam
 	size_t ret = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		ret = _obj_baseproc(_obj_gethWnd(pObj), hObj, pObj, uMsg, wParam, lParam);
+		ret = _obj_baseproc(_obj_gethwnd(pObj), hObj, pObj, uMsg, wParam, lParam);
 	}
 	Ex_SetLastError(nError);
 	return ret;
@@ -1825,7 +1825,7 @@ size_t Ex_ObjDispatchNotify(HEXOBJ hObj, INT nCode, WPARAM wParam, LPARAM lParam
 	size_t ret = 1;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		ret = _obj_dispatchnotify(_obj_gethWnd(pObj), pObj, hObj, 0, nCode, wParam, lParam);
+		ret = _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, hObj, 0, nCode, wParam, lParam);
 	}
 	Ex_SetLastError(nError);
 	return ret;
@@ -1848,7 +1848,7 @@ void _obj_backgroundimage_clear(HWND hWnd, obj_base* pObj)
 
 void _obj_destroy(HEXOBJ hObj, obj_s* pObj, INT* nError)
 {
-	HWND hWnd = _obj_gethWnd(pObj);
+	HWND hWnd = _obj_gethwnd(pObj);
 	wnd_s* pWnd = pObj->pWnd_;
 	RECT rc{ 0 };
 	rc.left = pObj->w_left_;
@@ -2551,7 +2551,7 @@ void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint)
 	ps.dwTextFormat = pObj->dwTextFormat_;
 	ps.dwOwnerData = pObj->dwOwnerData_;
 
-	if (!_obj_baseproc(_obj_gethWnd(pObj), pObj->hObj_, pObj, WM_ERASEBKGND, hCanvas, (size_t)&ps)) {
+	if (!_obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_ERASEBKGND, hCanvas, (size_t)&ps)) {
 		EX_BACKGROUNDIMAGEINFO* bkgimage = pObj->lpBackgroundImage_;
 		if (bkgimage != 0)
 		{
@@ -2654,7 +2654,7 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS)
 
 		if (((pObj->dwStyleEx_ & EOS_EX_CUSTOMDRAW) == EOS_EX_CUSTOMDRAW))
 		{
-			_obj_dispatchnotify(_obj_gethWnd(pObj), pObj, hObj, 0, NM_CUSTOMDRAW, 0, (size_t)lpPS);
+			_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, hObj, 0, NM_CUSTOMDRAW, 0, (size_t)lpPS);
 			if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG)) {
 				_obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, EPP_CUSTOMDRAW, (size_t)lpPS);
 			}
@@ -3866,7 +3866,7 @@ INT Ex_ObjScrollSetPos(HEXOBJ hObj, INT nBar, INT nPos, BOOL bRedraw)
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 		{
-			ret = _scrollbar_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_POS, 0, 0, 0, nPos, bRedraw);
+			ret = _scrollbar_realsetinfo(_obj_gethwnd(pSB), hSB, pSB, SIF_POS, 0, 0, 0, nPos, bRedraw);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -3884,7 +3884,7 @@ INT Ex_ObjScrollSetInfo(HEXOBJ hObj, INT nBar, INT Mask, INT nMin, INT nMax, INT
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 		{
-			ret = _scrollbar_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, Mask, nMin, nMax, nPage, nPos, bRedraw);
+			ret = _scrollbar_realsetinfo(_obj_gethwnd(pSB), hSB, pSB, Mask, nMin, nMax, nPage, nPos, bRedraw);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -3902,7 +3902,7 @@ INT Ex_ObjScrollSetRange(HEXOBJ hObj, INT nBar, INT nMin, INT nMax, BOOL bRedraw
 		obj_s* pSB = nullptr;
 		if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 		{
-			ret = _scrollbar_realsetinfo(_obj_gethWnd(pSB), hSB, pSB, SIF_RANGE, nMin, nMax, 0, 0, bRedraw);
+			ret = _scrollbar_realsetinfo(_obj_gethwnd(pSB), hSB, pSB, SIF_RANGE, nMin, nMax, 0, 0, bRedraw);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -3940,7 +3940,7 @@ void _sb_show(HEXOBJ hSB, BOOL fShow)
 	INT nError = 0;
 	if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError))
 	{
-		HWND hWnd = _obj_gethWnd(pSB);
+		HWND hWnd = _obj_gethwnd(pSB);
 		_obj_visable(hWnd, hSB, pSB, fShow);
 		_obj_scroll_repostion(hWnd, pSB->objParent_, FALSE);
 	}
@@ -4259,10 +4259,10 @@ BOOL Ex_ObjSetFontFromFamily(HEXOBJ hObj, LPCWSTR lpszFontfamily, INT dwFontsize
 }
 
 // 设置组件附加数据
-LONG_PTR _obj_setExtraLong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong)
+LONG_PTR _obj_setextralong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong)
 {
-	EX_ASSERT(pObj, L"_obj_getExtraLong: error pObj: %ld", pObj);
-	EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra, L"_obj_getExtraLong: error index: %ld", nIndex);
+	EX_ASSERT(pObj, L"_obj_getextralong: error pObj: %ld", pObj);
+	EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra, L"_obj_getextralong: error index: %ld", nIndex);
 
 	LONG_PTR origin;
 	origin = pObj->extraData_[nIndex];
@@ -4271,32 +4271,32 @@ LONG_PTR _obj_setExtraLong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong)
 }
 
 // 获取组件附加数据
-LONG_PTR _obj_getExtraLong(obj_s* pObj, INT nIndex)
+LONG_PTR _obj_getextralong(obj_s* pObj, INT nIndex)
 {
 
-	EX_ASSERT(pObj, L"_obj_getExtraLong: error pObj: %ld", pObj);
-	EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra, L"_obj_getExtraLong: error index: %ld,%d,%d", nIndex, pObj->pCls_->cbObjExtra, pObj->pCls_->atomName);
+	EX_ASSERT(pObj, L"_obj_getextralong: error pObj: %ld", pObj);
+	EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra, L"_obj_getextralong: error index: %ld,%d,%d", nIndex, pObj->pCls_->cbObjExtra, pObj->pCls_->atomName);
 
 	return pObj->extraData_[nIndex];
 }
 
 // 获取组件附加数据指针
-LPVOID _obj_getExtraPtr(obj_s* pObj, INT nIndex) {
+LPVOID _obj_getextraptr(obj_s* pObj, INT nIndex) {
 	return &pObj->extraData_[nIndex];
 }
 
 // 查询组件附加数据flags
-BOOL _obj_queryExtra(obj_s* pObj, INT nIndex, size_t flags) {
+BOOL _obj_queryextra(obj_s* pObj, INT nIndex, size_t flags) {
 	return FLAGS_CHECK(pObj->extraData_[nIndex], flags);
 }
 
 // 添加组件附加数据flags
-void _obj_addExtra(obj_s* pObj, INT nIndex, size_t flags) {
+void _obj_addextra(obj_s* pObj, INT nIndex, size_t flags) {
 	FLAGS_ADD(pObj->extraData_[nIndex], flags);
 }
 
 
-void _obj_delExtra(obj_s* pObj, INT nIndex, size_t flags) {
+void _obj_delextra(obj_s* pObj, INT nIndex, size_t flags) {
 	FLAGS_DEL(pObj->extraData_[nIndex], flags);
 }
 

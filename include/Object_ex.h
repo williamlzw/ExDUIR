@@ -259,7 +259,7 @@ BOOL _obj_postmessage(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wPar
 INT _obj_wm_nchittest(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _obj_killfocus(HEXOBJ hObj, obj_s* pObj, BOOL bDispatch);
 void _obj_killfocus_real(obj_s* pObj, HEXOBJ hObj, HEXOBJ objFocus);
-HWND _obj_gethWnd(obj_s* pObj);
+HWND _obj_gethwnd(obj_s* pObj);
 BOOL _obj_setfocus(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, BOOL bDispatch);
 void _obj_setfocus_real(HWND hWnd, obj_s* pObj, HEXOBJ hObj, HEXOBJ lstObj);
 LRESULT _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
@@ -297,9 +297,9 @@ void _obj_setradius(HEXOBJ hObj, obj_s* pObj, FLOAT topleft, FLOAT topright, FLO
 void _obj_tooltips_popup(wnd_s* pWnd, LPCWSTR lpTitle, LPCWSTR lpText, INT x, INT y, INT dwTime, INT nIcon, BOOL fShow);
 void _obj_setuistate(obj_s* pObj, DWORD dwState, BOOL fRemove, RECT* lprcUpdate, BOOL fRedraw, INT* nError);
 void _sb_show(HEXOBJ hSB, BOOL fShow);
-LONG_PTR _obj_setExtraLong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong);
-LONG_PTR _obj_getExtraLong(obj_s* pObj, INT nIndex);
-LPVOID _obj_getExtraPtr(obj_s* pObj, INT nIndex);
-BOOL _obj_queryExtra(obj_s* pObj, INT nIndex, size_t flags);
-void _obj_addExtra(obj_s* pObj, INT nIndex, size_t flags);
-void _obj_delExtra(obj_s* pObj, INT nIndex, size_t flags);
+LONG_PTR _obj_setextralong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong);
+LONG_PTR _obj_getextralong(obj_s* pObj, INT nIndex);
+LPVOID _obj_getextraptr(obj_s* pObj, INT nIndex);
+BOOL _obj_queryextra(obj_s* pObj, INT nIndex, size_t flags);
+void _obj_addextra(obj_s* pObj, INT nIndex, size_t flags);
+void _obj_delextra(obj_s* pObj, INT nIndex, size_t flags);

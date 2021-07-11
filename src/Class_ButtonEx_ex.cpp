@@ -9,17 +9,16 @@ void _buttonex_register()
 
 LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg)
-	{
-	case WM_CREATE:
+
+	if (uMsg == WM_CREATE)
 	{
 
-		break;
+
 	}
-	case WM_DESTROY:
+	else if (uMsg == WM_DESTROY)
 	{
 		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_NORMAL));    /* 正常态 */
-		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_HOVER));    /* 点燃态 */
+		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_HOVER));    /* 热点态 */
 		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_DOWNORCHECKED));    /* 按下态 */
 		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_ICON));    /* 图标 */
 
@@ -31,11 +30,11 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			pRect = nullptr;
 		}
 
-		break;
+
 	}
-	/* 设置图标 */
-	case WM_SETICON:
+	else if (uMsg == WM_SETICON)
 	{
+		/* 设置图标 */
 		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_ICON, lParam);
 		/* 若有原位图则销毁 */
 		if (hImage != 0)
@@ -45,9 +44,9 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		/* 重绘控件 */
 		Ex_ObjInvalidateRect(hObj, 0);
 
-		break;
+
 	}
-	case BM_SETIMAGE:
+	else if (uMsg == BM_SETIMAGE)
 	{
 		EX_IMAGEINFO* img = (EX_IMAGEINFO*)lParam;
 		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_NORMAL, img->IMG_NORMAL);
@@ -73,39 +72,35 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			_img_destroy(hImage);
 		}
 		Ex_ObjInvalidateRect(hObj, 0);
-		break;
+
 	}
-	case WM_MOUSEHOVER:
+	else if (uMsg == WM_MOUSEHOVER)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
-		break;
+
 	}
-	case  WM_MOUSELEAVE:
+	else if (uMsg == WM_MOUSELEAVE)
 	{
 		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
-		break;
 	}
-	case WM_LBUTTONDOWN:
+	else if (uMsg == WM_LBUTTONDOWN)
 	{
 		SetCursor(LoadCursorW(0, IDC_HAND));
 		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
-		break;
 	}
-	case WM_LBUTTONUP:
+	else if (uMsg == WM_LBUTTONUP)
 	{
 		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
-		break;
 	}
-	case WM_MOUSEMOVE:
+	else if (uMsg == WM_MOUSEMOVE)
 	{
 		SetCursor(LoadCursorW(0, IDC_HAND));
-		break;
 	}
-	case WM_PAINT:
+	else if (uMsg == WM_PAINT)
 	{
-		return(_buttonex_paint(hObj));
+		_buttonex_paint(hObj);
 	}
-	case WM_EX_PROPS:
+	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* ButtonExprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjInitPropList(hObj, 16);
@@ -124,17 +119,13 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		Ex_ObjSetProp(hObj, EBEP_CRBORDEREND, ButtonExprops->COLOR_EX_BRD_CREnd);
 		Ex_ObjSetProp(hObj, EBEP_CRBKGBEGIN, ButtonExprops->COLOR_EX_BKG_CRBegin);
 		Ex_ObjSetProp(hObj, EBEP_CRBKGEND, ButtonExprops->COLOR_EX_BKG_CREnd);
-		break;
-	}
 
-	default:
-		break;
 	}
-	return(Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam));
+	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
 
-INT _buttonex_paint(HEXOBJ hObj)
+void _buttonex_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT	ps{ 0 };
 
@@ -190,7 +181,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 			}
 			_brush_destroy(linearhBrush);
 
-			if (m_IsDraw && Ex_ObjGetProp(hObj, EBEP_CRBKGBEGIN) != 0 && Ex_ObjGetProp(hObj, EBEP_CRBKGEND) != 0) {/*覆盖一层半透明色作为点燃色*/
+			if (m_IsDraw && Ex_ObjGetProp(hObj, EBEP_CRBKGBEGIN) != 0 && Ex_ObjGetProp(hObj, EBEP_CRBKGEND) != 0) {/*覆盖一层半透明色作为热点色*/
 				_brush_setcolor(hBrush, ExARGB(255, 255, 255, 50));
 				if (Radius == 0) {
 					_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom);
@@ -260,7 +251,7 @@ INT _buttonex_paint(HEXOBJ hObj)
 		_canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
 
-	   /* 图标 */
+		/* 图标 */
 		hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_ICON);
 
 		if (hImage != 0)
@@ -334,5 +325,4 @@ INT _buttonex_paint(HEXOBJ hObj)
 		_brush_destroy(hBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
-	return  FALSE;
 }

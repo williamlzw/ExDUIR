@@ -12,19 +12,15 @@ MosaicRect m_ItemArray[8];
 
 LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch (uMsg)
-	{
-	case WM_CREATE:
+	if(uMsg == WM_CREATE)
 	{
 		Ex_ObjSetTimer(hObj, 180);
-		break;
 	}
-	case WM_PAINT:
+	else if (uMsg == WM_PAINT)
 	{
-		return(_mosaic_loading_paint((HEXOBJ)hObj));
+		_mosaic_loading_paint((HEXOBJ)hObj);
 	}
-
-	case WM_TIMER:
+	else if (uMsg == WM_TIMER)
 	{
 		static INT i;
 		m_ItemIndex = m_ItemIndex + 1;
@@ -51,21 +47,16 @@ LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			}
 		}
 		Ex_ObjInvalidateRect(hObj, 0);
-		break;
+		
 	}
-	case WM_DESTROY:
+	else if (uMsg == WM_DESTROY)
 	{
 		Ex_ObjKillTimer(hObj);
-		break;
 	}
-	default:
-		break;
-	}
-	return(Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam));
+	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-
-INT _mosaic_loading_paint(HEXOBJ hObj)
+void _mosaic_loading_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
@@ -74,7 +65,7 @@ INT _mosaic_loading_paint(HEXOBJ hObj)
 
 		if (m_ItemCount < 1)
 		{
-			return  FALSE;
+			return ;
 		}
 
 		INT nWidth = ps.uWidth, nHeight = ps.uHeight;
@@ -119,5 +110,4 @@ INT _mosaic_loading_paint(HEXOBJ hObj)
 
 		Ex_ObjEndPaint(hObj, &ps);
 	}
-	return  FALSE;
 }

@@ -65,13 +65,9 @@ LRESULT CALLBACK _groupbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	obj_s* pObj = nullptr;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		switch (uMsg)
+		if (uMsg == WM_PAINT)
 		{
-		case WM_PAINT:
 			_groupbox_paint(hObj, pObj);
-			break;
-		default:
-			break;
 		}
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
