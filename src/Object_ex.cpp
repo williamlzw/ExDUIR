@@ -1807,7 +1807,7 @@ size_t _obj_dispatchnotify(HWND hWnd, obj_s* pObj, HEXOBJ hObj, INT nID, INT nCo
 			ret = _obj_baseproc(hWnd, hParent, pParent, WM_NOTIFY, nID, (size_t)&nmhdr);//逐层通知父控件
 			if (ret != 0) break;
 
-			if (!((pObj->dwFlags_ & EOF_BEVENTBUBBLE) == EOF_BEVENTBUBBLE)) break;
+			if ((pObj->dwFlags_ & EOF_BEVENTBUBBLE) != EOF_BEVENTBUBBLE) break;
 			hParent = pParent->objParent_;
 		}
 		if (ret == 0)

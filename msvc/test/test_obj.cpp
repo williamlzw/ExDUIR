@@ -500,7 +500,7 @@ void test_menubutton(HWND hWnd)
 			for (INT i = 0; i < GetMenuItemCount(hMenu); i++) {
 				WCHAR wzText[256];
 				GetMenuStringW(hMenu, i, wzText, 256, MF_BYPOSITION);
-				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObj_menubar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, 0);//OnMenuButtonMsgProc
+				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObj_menubar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, OnMenuButtonMsgProc);//OnMenuButtonMsgProc
 				if (hObj) {
 					Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), FALSE);//改变菜单按钮背景色
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//改变菜单按钮字体正常色
@@ -615,7 +615,7 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	return 0;
 }
 
-LRESULT OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+LRESULT CALLBACK OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_MOUSEHOVER)
 	{

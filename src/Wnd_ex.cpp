@@ -997,12 +997,9 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle, HEXTHEME hTh
 	size.cy = rcWindow.bottom - rcWindow.top;
 	INT dwFlags = 0;
 
-	if (_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE))
+	if (_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE) || ((dwStyle & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
 	{
-		if ((dwStyle & EWS_MESSAGEBOX) != EWS_MESSAGEBOX)
-		{
-			dwFlags = EWF_BLAYERED;
-		}
+		dwFlags = EWF_BLAYERED;
 	}
 	if (hWndParent != 0)
 	{
@@ -1369,7 +1366,7 @@ INT _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam)
 
 	POINT pt;
 	HEXOBJ objMouse = 0;
-	if (lParam == 0xFFFFFFFF)
+	if (lParam == -1)
 	{
 		GetCursorPos(&pt);
 	}
@@ -1791,7 +1788,7 @@ void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, HEXOBJ objCheck, HEXOBJ objHitte
 		if (_handle_validate(objCheck, HT_OBJECT, (LPVOID*)&pObjCheck, &nError))
 		{
 
-			if (!((pWnd->dwFlags_ & EWF_BLEAVESENT) == EWF_BLEAVESENT))
+			if ((pWnd->dwFlags_ & EWF_BLEAVESENT) != EWF_BLEAVESENT)
 			{
 				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEAVESENT;
 				_obj_baseproc(hWnd, objCheck, pObjCheck, WM_MOUSELEAVE, 0, 0);
@@ -1932,7 +1929,7 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd)
 					p = pParent;
 				}
 
-				if (!((pWnd->dwFlags_ & EWF_BINHERITBKGSTARTED) == EWF_BINHERITBKGSTARTED))
+				if ((pWnd->dwFlags_ & EWF_BINHERITBKGSTARTED) != EWF_BINHERITBKGSTARTED)
 				{
 					pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BINHERITBKGSTARTED;
 					SetTimer(hWnd, (size_t)pWnd + TIMER_BKG_INHERIT, 100, &_wnd_backgroundimage_timer_inherit);
@@ -2004,7 +2001,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
 {
 	pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BRENDERING;
 
-	if (((pWnd->dwFlags_ & EWF_BREDRAWBACKGROUND) == EWF_BREDRAWBACKGROUND))
+	if ((pWnd->dwFlags_ & EWF_BREDRAWBACKGROUND) == EWF_BREDRAWBACKGROUND)
 	{
 		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BREDRAWBACKGROUND);
 		_wnd_paint_bkg(hWnd, pWnd);
@@ -2275,7 +2272,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
 void _wnd_menu_init(HWND hWnd, wnd_s* pWnd)
 {
 
-	if (!((pWnd->dwFlags_ & EWF_BMENUINITED) == EWF_BMENUINITED))
+	if ((pWnd->dwFlags_ & EWF_BMENUINITED) != EWF_BMENUINITED)
 	{
 		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMENUINITED;
 		_wnd_menu_createitems(hWnd, pWnd);
@@ -2292,7 +2289,7 @@ void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush)
 	if (!((pWnd->dwStyle_ & EWS_NOSHADOW) == EWS_NOSHADOW))
 	{
 
-		if (((pWnd->dwFlags_ & EWF_BRENDERED) == EWF_BRENDERED))
+		if ((pWnd->dwFlags_ & EWF_BRENDERED) == EWF_BRENDERED)
 		{
 			HWND hWnd = pWnd->hWndShadow_;
 			POINT ptDst;
@@ -2410,7 +2407,7 @@ BOOL _wnd_wm_paint(wnd_s* pWnd, HWND hWnd)
 			EndPaint(hWnd, &ps);
 		}
 	}
-	if (!((pWnd->dwFlags_ & EWF_BRENDERED) == EWF_BRENDERED))
+	if ((pWnd->dwFlags_ & EWF_BRENDERED) != EWF_BRENDERED)
 	{
 		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BRENDERED;
 		_wnd_paint_shadow(pWnd, TRUE, FALSE);
@@ -2605,7 +2602,7 @@ void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lPara
 			else if (uMsg == WM_LBUTTONDBLCLK || uMsg == WM_RBUTTONDBLCLK || uMsg == WM_MBUTTONDBLCLK)
 			{
 				_obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
-				INT newMsg = 0;
+				INT newMsg = uMsg;
 				if (uMsg == WM_LBUTTONDBLCLK)
 				{
 					newMsg = WM_LBUTTONDOWN;

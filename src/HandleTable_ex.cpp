@@ -28,11 +28,13 @@ EXHANDLE _handle_create(INT nType, LPVOID dwData, INT *nError)
 		{
 			*nError = ERROR_EX_MEMPOOL_BADINDEX;
 		}
+		
 	}
 	else
 	{
 		*nError = ERROR_EX_MEMPOOL_ALLOC;
 	}
+	
 	return ret;
 }
 
@@ -40,9 +42,17 @@ BOOL _handle_destroy(EXHANDLE handle, INT* pError)
 {
 	BOOL ret = FALSE;
 	INT nError = 0;
-	if ((handle && 3) == 0)
+	if ((handle & 3) == 0)
 	{
-		EXHANDLE nIndex = (handle << 12) >> 14;
+		EXHANDLE nIndex = -1;
+		for (INT i = 1; i <= 6; i++)
+		{
+			nIndex = (handle - (44 << 24) - (i << 18)) >> 2;
+			if (nIndex > 0 && nIndex < 65537)
+			{
+				break;
+			}
+		}
 		if (nIndex > 0 && nIndex < 65537)
 		{
 			LPVOID lpAddress = MemPool_GetAddressFromIndex(g_Li.hHandles, nIndex);
@@ -53,6 +63,7 @@ BOOL _handle_destroy(EXHANDLE handle, INT* pError)
 			else {
 				nError = ERROR_EX_MEMPOOL_BADPTR;
 			}
+			
 		}
 		else {
 			nError = ERROR_EX_HANDLE_BADINDEX;
@@ -61,6 +72,7 @@ BOOL _handle_destroy(EXHANDLE handle, INT* pError)
 	else {
 		nError = ERROR_EX_HANDLE_UNSUPPORTED_TYPE;
 	}
+	
 	if (pError) {
 		*pError = nError;
 	}
@@ -73,7 +85,6 @@ BOOL _handle_validate(EXHANDLE handle, INT type, LPVOID* dwData, INT* pError)
 	INT nError = 0;
 	if (handle != 0)
 	{
-
 		EXHANDLE nIndex = (handle - (44 << 24) - (type << 18)) >> 2;
 		if (nIndex > 0 && nIndex < 65537)
 		{

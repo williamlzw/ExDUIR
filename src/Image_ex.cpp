@@ -392,6 +392,22 @@ BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE* dstImg)
 	return hImg != 0 ? TRUE : FALSE;
 }
 
+//BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
+//{
+//	INT nError = 0;
+//	canvas_s* pCanvas = nullptr;
+//	if (_handle_validate(hCanvas, HT_CANVAS,(LPVOID*)&pCanvas,&nError))
+//	{
+//		INT width = pCanvas->width_;
+//		INT height = pCanvas->height_;
+//		INT len = width * height * 4;
+//		LPVOID pBitmapData = nullptr;
+//		nError = g_Ri.pWICFactory->CreateBitmap(pCanvas->width_, pCanvas->height_, GUID_WICPixelFormat32bppPBGRA, WICBitmapNoCache, (IWICBitmap**)&pBitmapData);
+//		
+//	}
+//	//未完成
+//}
+
 LPSTREAM _img_createfromstream_init(LPVOID lpData, INT dwLen, INT* nError)
 {
 	if (dwLen > 0)
