@@ -111,7 +111,7 @@ BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc);
 * @param 1  hCanvas                 [HEXCANVAS]
 * @param 2  hFont                   [HEXFONT]
 * @param 3  lpwzText                [LPCWSTR]
-* @param 4  dwLen                   [size_t]
+* @param 4  dwLen                   [LONG_PTR]
 * @param 5  dwDTFormat              [INT]
 * @param 6  lParam                  [LPARAM]
 * @param 7  layoutWidth             [FLOAT]
@@ -120,7 +120,7 @@ BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc);
 * @param 10 lpHeight                [FLOAT*]              小数型 取指针_通用型
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, size_t dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight);
+BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight);
 
 /*
 * @fnType ExDirectUI
@@ -342,7 +342,7 @@ BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 * @param 2  hFont                   [HEXFONT]             如果为0则使用默认字体句柄
 * @param 3  crText                  [EXARGB]
 * @param 4  lpwzText                [LPCWSTR]
-* @param 5  dwLen                   [size_t]              -1则自动计算尺寸(必须是指向空字符串的指针)
+* @param 5  dwLen                   [LONG_PTR]              -1则自动计算尺寸(必须是指向空字符串的指针)
 * @param 6  dwDTFormat              [INT]               #DT_
 * @param 7  left                    [FLOAT]
 * @param 8  top                     [FLOAT]
@@ -350,7 +350,7 @@ BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 * @param 10 bottom                  [FLOAT]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, size_t dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /*
 * @fnType ExDirectUI
@@ -359,7 +359,7 @@ BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR l
 * @param 2  hFont                   [HEXFONT]             如果为0则使用默认字体句柄
 * @param 3  hBrush                  [HEXBRUSH]
 * @param 4  lpwzText                [LPCWSTR]
-* @param 5  dwLen                   [size_t]              -1则自动计算尺寸(必须是指向空字符串的指针)
+* @param 5  dwLen                   [LONG_PTR]              -1则自动计算尺寸(必须是指向空字符串的指针)
 * @param 6  dwDTFormat              [INT]               #DT_
 * @param 7  left                    [FLOAT]
 * @param 8  top                     [FLOAT]
@@ -367,7 +367,7 @@ BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR l
 * @param 10 bottom                  [FLOAT]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, size_t dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /*
 * @fnType ExDirectUI
@@ -376,7 +376,7 @@ BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWST
 * @param 2  hFont                   [HEXFONT]
 * @param 3  crText                  [EXARGB]
 * @param 4  lpwzText                [LPCWSTR]
-* @param 5  dwLen                   [size_t]              -1则自动计算尺寸(必须是指向空字符串的指针)
+* @param 5  dwLen                   [LONG_PTR]              -1则自动计算尺寸(必须是指向空字符串的指针)
 * @param 6  dwDTFormat              [INT]
 * @param 7  left                    [FLOAT]
 * @param 8  top                     [FLOAT]
@@ -388,7 +388,7 @@ BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWST
 * @param 14 prclayout               [INT]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, size_t dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam, LPVOID prclayout);
+BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam, LPVOID prclayout);
 
 /*
 * @fnType ExDirectUI

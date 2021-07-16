@@ -695,7 +695,8 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 	}
 	else if (uMsg == WM_NCACTIVATE)//134
 	{
-		_wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittest_, -1, (obj_s*)-1, TRUE);
+		obj_s Obj;
+		_wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittest_, -1, &Obj, TRUE);
 		if (wParam == 0)
 		{
 			HEXOBJ focus = pWnd->objFocus_;
@@ -707,16 +708,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_ACTIVE;
 			HEXOBJ focus = pWnd->objFocusPrev_;
 			Ex_ObjSetFocus(focus);
-			//pWnd->objFocusPrev_ = 0;
-			/*EX_CLASSINFO clsInfo{ 0 };
-			if (Ex_ObjGetClassInfo(focus, &clsInfo))
-			{
-				if (clsInfo.atomName == ATOM_EDIT)
-				{
-					output(L"00000000000001ssssssssss");
-					InvalidateRect(hWnd, 0, FALSE);
-				}
-			}*/
+			pWnd->objFocusPrev_ = 0;
 		}
 		_wnd_paint_shadow(pWnd, FALSE, TRUE);
 		if (wParam == 0)
@@ -859,7 +851,8 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BMENUINITED);
 		size_t objHittest = pWnd->objHittest_;
 		_wnd_wm_nchittest(pWnd, hWnd, -1);
-		_wnd_wm_leavecheck(hWnd, pWnd, objHittest, -1, (obj_s*)-1, TRUE);
+		obj_s Obj;
+		_wnd_wm_leavecheck(hWnd, pWnd, objHittest, -1, &Obj, TRUE);
 		pWnd->dx_counts_ = 0;
 	}
 	else if (uMsg == WM_IME_COMPOSITION)//271
@@ -883,13 +876,14 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 			return 0;
 		}
 		else {
-			size_t item = 0;
-			_wnd_menu_mouse(hWnd, pWnd, WM_MOUSEMOVE, 0, &item);
-			if (item == -1)
+			LONG_PTR item = 0;
+			_wnd_menu_mouse(hWnd, pWnd, WM_MOUSEMOVE, 0, (LONG_PTR*)&wParam);
+			if (LODWORD(wParam) == -1)
 			{
 				return 0;
 			}
 			else {
+				
 				wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
 				if (pMenuHostWnd != 0)
 				{
@@ -916,7 +910,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 	}
 	else if (uMsg == 0x1ED)//MN_BUTTONDOWN
 	{
-		if (!_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONDOWN, 1, &wParam))
+		if (!_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONDOWN, 1, (LONG_PTR*)&wParam))
 		{
 			return CallWindowProcW(pOld, hWnd, uMsg, -1, lParam);
 		}
@@ -928,7 +922,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM
 	}
 	else if (uMsg == 0x1EF)//MN_BUTTONUP
 	{
-		_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONUP, 0, &wParam);
+		_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONUP, 0, (LONG_PTR*)&wParam);
 		if (pWnd->objTrackPrev_ != pWnd->objHittest_)
 		{
 			return CallWindowProcW(pOld, hWnd, uMsg, -1, lParam);
@@ -1590,7 +1584,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext, HEXCA
 					if (IntersectRect(&rcClip, &rcPaint, &rcObj))
 					{
 
-						auto fPage = !((pObj->dwFlags_ & EOF_BPAGE) == EOF_BPAGE);
+						auto fPage = (pObj->dwFlags_ & EOF_BPAGE) != EOF_BPAGE;
 						if (fPage)
 						{
 
@@ -2500,27 +2494,28 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, BOOL fMsgDispatch)
 			INT uMsg;
 			if (fMsgDispatch)
 			{
-				if (((pWnd->dwFlags_ & EWF_BMIDTRACK) == EWF_BMIDTRACK))
+				
+				if ((pWnd->dwFlags_ & EWF_BLEFTTRACK) == EWF_BLEFTTRACK)
 				{
-					if (((pWnd->dwFlags_ & EWF_BLEFTTRACK) == EWF_BLEFTTRACK))
-					{
-						uMsg = WM_LBUTTONUP;
-					}
-					else if (((pWnd->dwFlags_ & EWF_BRIGHTTRACK) == EWF_BRIGHTTRACK))
-					{
-						uMsg = WM_RBUTTONUP;
-					}
-					else {
-						uMsg = WM_MBUTTONUP;
-					}
-					_obj_baseproc(hWnd, objTrack, pObj, uMsg, 0, 0);
+					uMsg = WM_LBUTTONUP;
 				}
+				else if ((pWnd->dwFlags_ & EWF_BRIGHTTRACK) == EWF_BRIGHTTRACK)
+				{
+					uMsg = WM_RBUTTONUP;
+				}
+				else if((pWnd->dwFlags_ & EWF_BMIDTRACK) == EWF_BMIDTRACK) {
+					uMsg = WM_MBUTTONUP;
+				}
+				_obj_baseproc(hWnd, objTrack, pObj, uMsg, 0, 0);
+				
 				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
-				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (obj_s*)-1, FALSE);
+				obj_s Obj;
+				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, FALSE);
 			}
 			else {
 				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
-				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, (obj_s*)-1, FALSE);
+				obj_s Obj;
+				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, FALSE);
 				if (pWnd->objHittest_ == objTrack)
 				{
 					if (((pWnd->dwFlags_ & EWF_BLEFTTRACK) == EWF_BLEFTTRACK))
@@ -2585,11 +2580,12 @@ void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lPara
 		}
 	}
 	else {
-		if (uMsg == WM_LBUTTONDOWN) {
-			_wnd_popupclose(pWnd, hWnd, hObj, pObj);
-		}
+		
 		if (pObj != 0)
 		{
+			if (uMsg == WM_LBUTTONDOWN) {
+				_wnd_popupclose(pWnd, hWnd, hObj, pObj);
+			}
 			if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN || uMsg == WM_MBUTTONDOWN)
 			{
 				_wnd_wm_buttondown(hWnd, pWnd, hObj, pObj, uMsg, wParam, lParam);
@@ -2982,7 +2978,7 @@ void _wnd_menu_updatecurrent(wnd_s* pWnd)
 	}
 }
 
-BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, size_t* iItem)
+BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LONG_PTR* iItem)
 {
 	*iItem = -1;
 	POINT pt;

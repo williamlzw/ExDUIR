@@ -1,5 +1,6 @@
 ﻿#include "test_obj.h"
 #include "resource.h"
+#include "Windows.h"
 
 HEXDUI m_hExDuiButton;
 
@@ -474,6 +475,7 @@ LRESULT CALLBACK OnMenuButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 {
 	if (uMsg == MBM_DOWNITEM)
 	{
+		output(wParam);
 		RECT rcWindow{ 0 };
 		RECT rcObj{ 0 };
 		GetWindowRect(hWnd, &rcWindow);
@@ -483,6 +485,7 @@ LRESULT CALLBACK OnMenuButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		*lpResult = 1;
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -506,6 +509,7 @@ void test_menubutton(HWND hWnd)
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//改变菜单按钮字体正常色
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体热点色
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);//改变菜单按钮字体按下色
+					
 					_layout_addchild(hLayout, hObj);
 				}
 			}

@@ -1356,7 +1356,7 @@
 typedef UINT8	CHANNEL;		//通道
 typedef COLORREF EXARGB;		// 颜色
 typedef INT EXATOM;				// 原子号
-typedef UINT EXHANDLE;			// 句柄
+typedef INT EXHANDLE;			// 句柄
 typedef EXHANDLE HEXDUI;		// 界面句柄
 typedef EXHANDLE HEXLAYOUT;		// 布局句柄
 typedef EXHANDLE HEXOBJ;		// 控件句柄
