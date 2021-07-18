@@ -62,10 +62,10 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	{
 		EX_OBJ_PROPS* RadioButtonExprops = (EX_OBJ_PROPS*)lParam;
 
-		Ex_ObjSetProp(hObj, ERBEP_CRBKGDOWNORCHECKED, RadioButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, ERBEP_CRBORDERNORMAL, RadioButtonExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, RadioButtonExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, RadioButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ERBEP_CRBKGDOWNORCHECKED, RadioButtonExprops->crBkgDownOrChecked);
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERNORMAL, RadioButtonExprops->crBorderNormal);
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, RadioButtonExprops->crBorderHover);
+		Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, RadioButtonExprops->crBorderDownOrChecked);
 	}
 	return Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam);
 }

@@ -9,7 +9,7 @@ struct canvas_s
 	INT height_;
 	ID2D1DeviceContext* pContext_;
 	ID2D1GdiInteropRenderTarget* pGdiInterop_;
-	LPVOID pBitmap_;
+	ID2D1Bitmap* pBitmap_;
 	wnd_s* pWnd_;
 	INT c_left_;
 	INT c_top_;
@@ -27,7 +27,7 @@ void _canvas_init(INT* nError);
 
 void _canvas_uninit();
 
-BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, INT y, INT dwRepeat, LPVOID lpGrid, INT dwFlags, INT dwAlpha, RECT* lpRcSrc, RECTF* lpRCFDst);
+BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, INT y, INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, RECT* lpRcSrc, RECTF* lpRCFDst);
 
 BOOL _canvas_drawimagefrombkgimg(HEXCANVAS hCanvas, EX_BACKGROUNDIMAGEINFO* lpBkgImg);
 
@@ -37,7 +37,7 @@ BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLO
 
 BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight, LPVOID* pLayout, INT* nError);
 
-BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam, LPVOID prclayout);
+BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam);
 void _canvas_dx_drawtext_buffer(canvas_s* pCanvas, LPVOID pLayout, EXARGB crText, FLOAT left, FLOAT top, INT iGlowsize, INT crShadow);
 void _canvas_dx_drawtext_buffer2(canvas_s* pCanvas, LPVOID pLayout, HEXBRUSH hBrush, FLOAT left, FLOAT top, INT iGlowsize, INT crShadow);
 
@@ -47,7 +47,7 @@ HDC _canvas_getdc_ex(canvas_s* pCanvas, INT* nError);
 
 void _canvas_releasedc_ex(canvas_s* pCanvas, INT* nError);
 
-LPVOID _cv_dx_bmp(canvas_s* pCanvas);
+ID2D1Bitmap* _cv_dx_bmp(canvas_s* pCanvas);
 
 ID2D1DeviceContext* _cv_context(canvas_s* pCanvas);
 

@@ -7,9 +7,9 @@ BOOL _canvas_destroy(HEXCANVAS hCanvas)
 	canvas_s* pCanvas = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		LPVOID bmp = _cv_dx_bmp(pCanvas);
+		ID2D1Bitmap* bmp = _cv_dx_bmp(pCanvas);
 		if (bmp) {
-			((ID2D1Bitmap1*)bmp)->Release();
+			bmp->Release();
 		}
 		Ex_MemFree(pCanvas);
 		_handle_destroy(hCanvas, &nError);
@@ -67,15 +67,16 @@ BOOL _md_destroy(LPVOID pData, size_t OffsetDc, size_t OffsetBmp, size_t OffsetB
 	return ret;
 }
 
-HEXCANVAS _canvas_createfromobj(HEXOBJ hObj, INT uWidth, INT uHeight, INT dwFlags, INT* nError)
+HEXCANVAS _canvas_createfromobj(HEXOBJ hObj, INT uWidth, INT uHeight, INT dwFlags)
 {
+	INT nError = 0;
 	obj_s* pObj = nullptr;
 	HEXCANVAS hCanvas = 0;
-	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, nError))
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
-		hCanvas = _canvas_createfrompwnd(pObj->pWnd_, uWidth, uHeight, 0, nError);
+		hCanvas = _canvas_createfrompwnd(pObj->pWnd_, uWidth, uHeight, 0, &nError);
 	}
-	Ex_SetLastError(*nError);
+	Ex_SetLastError(nError);
 	return hCanvas;
 }
 
@@ -89,11 +90,11 @@ void _canvas_recreate(canvas_s* pCanvas, INT width, INT height, INT* nError)
 	pCanvas->height_ = height;
 	wnd_s* pWnd = pCanvas->pWnd_;
 	
-	LPVOID pBitmap = _dx_createbitmap(pWnd->dx_context_, width, height,  nError);
+	ID2D1Bitmap* pBitmap = _dx_createbitmap(pWnd->dx_context_, width, height,  nError);
 
 	if (pBitmap)
 	{
-		LPVOID oldBitmap = pCanvas->pBitmap_;
+		ID2D1Bitmap* oldBitmap = pCanvas->pBitmap_;
 		if (oldBitmap != 0)
 		{
 			((ID2D1Bitmap1*)oldBitmap)->Release();
@@ -144,7 +145,7 @@ void _canvas_uninit()
 
 }
 
-LPVOID _cv_dx_bmp(canvas_s* pCanvas)
+ID2D1Bitmap* _cv_dx_bmp(canvas_s* pCanvas)
 {
 
 	return pCanvas->pBitmap_;
@@ -196,7 +197,7 @@ BOOL _canvas_begindraw(HEXCANVAS hCanvas)
 		}
 		InterlockedExchangeAdd((long*)&(pWnd->dx_counts_), 1);
 
-		_dx_settarget(pContext, _cv_dx_bmp(pCanvas));
+		_dx_settarget(pContext, (ID2D1Bitmap*)_cv_dx_bmp(pCanvas));
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -451,18 +452,17 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 	{
 		if (_handle_validate(hImage, HT_IMAGE, (LPVOID*)&pImage, &nError))
 		{
-			LPVOID pObj = pImage->pObj_;
+			IWICBitmapSource* pBitmapSource = pImage->pBitmapSource_;
 			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
 			ID2D1Bitmap* pBitmap = nullptr;
-			nError = pContext->CreateBitmapFromWicBitmap((IWICBitmapSource*)pObj, &pBitmap);
+			nError = pContext->CreateBitmapFromWicBitmap(pBitmapSource, &pBitmap);
 			
 			if (nError == 0)
 			{
-				
 				D2D1_RECT_F rect = { dstLeft,dstTop,dstRight,dstBottom };
 				D2D1_RECT_F srect = { srcLeft,srcTop,srcRight,srcBottom };
 				pContext->DrawBitmap(pBitmap, &rect, alpha / 255.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &srect);
-				((ID2D1Bitmap*)pBitmap)->Release();
+				pBitmap->Release();
 			}
 		}
 	}
@@ -536,7 +536,7 @@ BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 }
 
 
-BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, INT y, INT dwRepeat, LPVOID lpGrid, INT dwFlags, INT dwAlpha, RECT* lpRcSrc, RECTF* lpRCFDst)
+BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, INT y, INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, RECT* lpRcSrc, RECTF* lpRCFDst)
 {
 	canvas_s* pCanvas = NULL;
 	INT nError = 0;
@@ -924,7 +924,7 @@ void _canvas_dx_drawtext_buffer2(canvas_s* pCanvas, LPVOID pLayout, HEXBRUSH hBr
 	((IDWriteTextLayout*)pLayout)->Release();
 }
 
-BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam, LPVOID prclayout)
+BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
 {
 	if (dwLen == -1)
 	{
@@ -956,7 +956,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
 	return nError == 0;
 }
 
-BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam, LPVOID prclayout)
+BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
 {
 	if (dwLen == -1)
 	{
@@ -990,12 +990,12 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCW
 
 BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
-	return _canvas_drawtextex(hCanvas, hFont, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, 0, 0, NULL, NULL);
+	return _canvas_drawtextex(hCanvas, hFont, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, 0, 0, NULL);
 }
 
 BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
-	return _canvas_drawtextex2(hCanvas, hFont, hBrush, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, 0, 0, NULL, NULL);
+	return _canvas_drawtextex2(hCanvas, hFont, hBrush, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, 0, 0, NULL);
 }
 
 BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc)

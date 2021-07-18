@@ -562,7 +562,7 @@ void _obj_update(obj_s* pObj, BOOL fUpdateWindow)
 	OffsetRect((LPRECT)&pObj->d_left_, -pObj->left_, -pObj->top_);
 	RtlMoveMemory(prc, &pObj->d_left_, sizeof(RECT));
 
-	_ASSERT_EXPR(sizeof(RECT) == 16, "_obj_update: RECT size error!");
+
 
 	OffsetRect(prc, pObj->w_left_, pObj->w_top_);
 	wnd_s* pWnd = pObj->pWnd_;

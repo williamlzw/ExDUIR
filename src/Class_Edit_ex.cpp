@@ -323,7 +323,7 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
 		pOwner->pObj_ = pObj;
 		pOwner->crBanner_ = ExARGB(0, 0, 0, 128);
 		pOwner->charPsw_ = 9679;
-		pOwner->hCanvasCaret_ = _canvas_createfromobj(hObj, 0, 0, 0, &nError);
+		pOwner->hCanvasCaret_ = _canvas_createfromobj(hObj, 0, 0, 0);
 		pOwner->crCaret_ = ExARGB(0, 0, 0, 255);
 
 		_struct_createfromaddr(pOwner, offsetof(edit_s, prctext_), sizeof(RECT), &nError);

@@ -5,7 +5,7 @@
 #define EEEP_CRBKGNORMAL	1
 // 扩展编辑框_边框颜色_正常
 #define EEEP_CRBORDERNORMAL	2
-// 扩展编辑框_边框颜色_热点
+// 扩展编辑框_边框颜色_悬浮
 #define EEEP_CRBORDERHOVER	3
 // 扩展编辑框_边框颜色_按下或选中
 #define EEEP_CRBORDERDOWNORCHECKED	4

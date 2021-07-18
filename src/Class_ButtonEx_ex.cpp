@@ -18,7 +18,7 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	else if (uMsg == WM_DESTROY)
 	{
 		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_NORMAL));    /* 正常态 */
-		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_HOVER));    /* 热点态 */
+		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_HOVER));    /* 悬浮态 */
 		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_IMG_DOWNORCHECKED));    /* 按下态 */
 		_img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EBEL_ICON));    /* 图标 */
 
@@ -49,9 +49,9 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	else if (uMsg == BM_SETIMAGE)
 	{
 		EX_IMAGEINFO* img = (EX_IMAGEINFO*)lParam;
-		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_NORMAL, img->IMG_NORMAL);
-		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_HOVER, img->IMG_HOVER);
-		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_DOWNORCHECKED, img->IMG_DOWNORCHECKED);
+		HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_NORMAL, img->imgNormal);
+		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_HOVER, img->imgHover);
+		hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_DOWNORCHECKED, img->imgDownOrChecked);
 		if (wParam == 100) /* 设置九宫矩形 */
 		{
 			if (lParam != 0)
@@ -104,21 +104,21 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	{
 		EX_OBJ_PROPS* ButtonExprops = (EX_OBJ_PROPS*)lParam;
 		Ex_ObjInitPropList(hObj, 16);
-		Ex_ObjSetProp(hObj, EBEP_CRBKGNORMAL, ButtonExprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, EBEP_CRBKGHOVER, ButtonExprops->COLOR_EX_BACKGROUND_HOVER);
-		Ex_ObjSetProp(hObj, EBEP_CRBKGDOWNORCHECKED, ButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, EBEP_CRBORDERNORMAL, ButtonExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, EBEP_CRBORDERHOVER, ButtonExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, EBEP_CRBORDERDOWNORCHECKED, ButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, EBEP_CRICONNORMAL, ButtonExprops->COLOR_EX_ICON_NORMAL);
-		Ex_ObjSetProp(hObj, EBEP_CRICONDOWNORFOCUR, ButtonExprops->COLOR_EX_ICON_DOWNORFOCUS);
-		Ex_ObjSetProp(hObj, EBEP_RADIUS, ButtonExprops->Radius);
-		Ex_ObjSetProp(hObj, EBEP_STROKEWIDTH, ButtonExprops->StrokeWidth);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGNORMAL, ButtonExprops->crBkgNormal);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGHOVER, ButtonExprops->crBkgHover);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGDOWNORCHECKED, ButtonExprops->crBkgDownOrChecked);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERNORMAL, ButtonExprops->crBorderNormal);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERHOVER, ButtonExprops->crBorderHover);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERDOWNORCHECKED, ButtonExprops->crBorderDownOrChecked);
+		Ex_ObjSetProp(hObj, EBEP_CRICONNORMAL, ButtonExprops->crIconNormal);
+		Ex_ObjSetProp(hObj, EBEP_CRICONDOWNORFOCUR, ButtonExprops->crIconDownOrFocus);
+		Ex_ObjSetProp(hObj, EBEP_RADIUS, ButtonExprops->radius);
+		Ex_ObjSetProp(hObj, EBEP_STROKEWIDTH, ButtonExprops->strokeWidth);
 		Ex_ObjSetProp(hObj, EBEP_ICONPOSITION, ButtonExprops->nIconPosition);
-		Ex_ObjSetProp(hObj, EBEP_CRBORDERBEGIN, ButtonExprops->COLOR_EX_BRD_CRBegin);
-		Ex_ObjSetProp(hObj, EBEP_CRBORDEREND, ButtonExprops->COLOR_EX_BRD_CREnd);
-		Ex_ObjSetProp(hObj, EBEP_CRBKGBEGIN, ButtonExprops->COLOR_EX_BKG_CRBegin);
-		Ex_ObjSetProp(hObj, EBEP_CRBKGEND, ButtonExprops->COLOR_EX_BKG_CREnd);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDERBEGIN, ButtonExprops->crBorderBegin);
+		Ex_ObjSetProp(hObj, EBEP_CRBORDEREND, ButtonExprops->crBorderEnd);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGBEGIN, ButtonExprops->crBkgBegin);
+		Ex_ObjSetProp(hObj, EBEP_CRBKGEND, ButtonExprops->crBkgEnd);
 
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
@@ -181,7 +181,7 @@ void _buttonex_paint(HEXOBJ hObj)
 			}
 			_brush_destroy(linearhBrush);
 
-			if (m_IsDraw && Ex_ObjGetProp(hObj, EBEP_CRBKGBEGIN) != 0 && Ex_ObjGetProp(hObj, EBEP_CRBKGEND) != 0) {/*覆盖一层半透明色作为热点色*/
+			if (m_IsDraw && Ex_ObjGetProp(hObj, EBEP_CRBKGBEGIN) != 0 && Ex_ObjGetProp(hObj, EBEP_CRBKGEND) != 0) {/*覆盖一层半透明色作为悬浮色*/
 				_brush_setcolor(hBrush, ExARGB(255, 255, 255, 50));
 				if (Radius == 0) {
 					_canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom);

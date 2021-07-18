@@ -178,7 +178,7 @@ void _treeview_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pW
 				}
 				else {
 					FLOAT width = 0;
-					if (_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, item->lpTitle, -1, 32, 0, 0, 0, &width, NULL)) {
+					if (_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, item->pwzText, -1, 32, 0, 0, 0, &width, NULL)) {
 						width += item->nDepth * _obj_getextralong(pObj, ETVL_INDENT) + imgWidth + Ex_Scale(35);
 						if (FLAGS_CHECK(pObj->dwStyle_, 64)) {
 							width += Ex_Scale(20);
@@ -296,7 +296,7 @@ EX_TREEVIEW_NODEITEM* _treeview_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIE
 	EX_TREEVIEW_NODEITEM* item = (EX_TREEVIEW_NODEITEM*)Ex_MemAlloc(sizeof(EX_TREEVIEW_NODEITEM));
 	if (item) {
 		if (_treeview_inititem(pObj, item, parent, insertAfter)) {
-			item->lpTitle = StrDupW(wzTitle);
+			item->pwzText = StrDupW(wzTitle);
 			item->fExpand = fExpand;
 			item->nID = nID;
 		}
@@ -323,21 +323,16 @@ void _treeview_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child, BOO
 		}
 		_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, pObj->id_, TVN_DELETEITEM, 0, (size_t)item);
 		_treeview_updateitem(pObj);
-		if (item->lpTitle) {
-			Ex_MemFree((LPVOID)item->lpTitle);
+		if (item->pwzText) {
+			Ex_MemFree((LPVOID)item->pwzText);
 		}
 		Ex_MemFree(item);
 	}
 }
 
-EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item, BOOL widechar) {
+EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item) {
 	LPCWSTR title;
-	if (!widechar) {
-		A2W_Addr((LPVOID)item->tzText, (LPVOID*)&title, 0, 0, 0);
-	}
-	else {
-		title = item->tzText;
-	}
+	title = item->pwzText;
 	EX_TREEVIEW_NODEITEM* tvitem = _treeview_newitem(pObj, title, item->itemParent, item->itemInsertAfter, item->nID, FALSE);
 	if (tvitem) {
 		tvitem->lParam = item->lParam;
@@ -522,7 +517,7 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam) {
 					_imglist_draw(imageList, nImageIndex, ps->hCanvas, rect.left, rect.top, rect.right, rect.bottom, 255);
 				}
 			}
-			_canvas_drawtext(ps->hCanvas, pObj->hFont_, _obj_getcolor(pObj, 2), item->lpTitle, -1, 4 | 0 | 32, rect.right + Ex_Scale(5), ps->rcPaint.top, ps->rcPaint.right, ps->rcPaint.bottom);
+			_canvas_drawtext(ps->hCanvas, pObj->hFont_, _obj_getcolor(pObj, 2), item->pwzText, -1, 4 | 0 | 32, rect.right + Ex_Scale(5), ps->rcPaint.top, ps->rcPaint.right, ps->rcPaint.bottom);
 		}
 
 
@@ -646,7 +641,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	}
 	else if (uMsg == TVM_INSERTITEM)
 	{
-		return (size_t)_treeview_insertitem(pObj, (EX_TREEVIEW_INSERTINFO*)lParam, uMsg == TVM_INSERTITEM);
+		return (size_t)_treeview_insertitem(pObj, (EX_TREEVIEW_INSERTINFO*)lParam);
 	}
 	else if (uMsg == TVM_DELETEITEM)
 	{
@@ -685,7 +680,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		if (wParam) {
 			RtlMoveMemory((LPVOID)wParam, (LPVOID)lParam, sizeof(EX_TREEVIEW_ITEMINFO));
 			EX_TREEVIEW_NODEITEM* itemInfo = (EX_TREEVIEW_NODEITEM*)wParam;
-			itemInfo->lpTitle = StrDupW(itemInfo->lpTitle);
+			itemInfo->pwzText = StrDupW(itemInfo->pwzText);
 			_treeview_updateitem(pObj);
 			return TRUE;
 		}
@@ -694,8 +689,8 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	else if (uMsg == TVM_SETITEMTEXTW)
 	{
 		if (wParam) {
-			Ex_MemFree((LPVOID)((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle);
-			((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle = StrDupW((LPCWSTR)lParam);
+			Ex_MemFree((LPVOID)((EX_TREEVIEW_NODEITEM*)wParam)->pwzText);
+			((EX_TREEVIEW_NODEITEM*)wParam)->pwzText = StrDupW((LPCWSTR)lParam);
 			_treeview_updateitem(pObj);
 			return TRUE;
 		}
@@ -704,7 +699,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	else if (uMsg == TVM_GETITEMTEXTW)
 	{
 		if (wParam) {
-			return (size_t)((EX_TREEVIEW_NODEITEM*)wParam)->lpTitle;
+			return (size_t)((EX_TREEVIEW_NODEITEM*)wParam)->pwzText;
 		}
 		return NULL;
 	}

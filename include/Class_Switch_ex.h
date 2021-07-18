@@ -3,13 +3,13 @@
 
 // 开关属性_背景颜色_普通
 #define ESP_CRBKGNORMAL	1
-// 开关属性_背景颜色_热点
+// 开关属性_背景颜色_悬浮
 #define ESP_CRBKGHOVER	2
 // 开关属性_背景颜色_按下或选中
 #define ESP_CRBKGDOWNORCHECKED	3
 // 开关属性_边框颜色_普通
 #define ESP_CRBORDERNORMAL	4
-// 开关属性_边框颜色_热点
+// 开关属性_边框颜色_悬浮
 #define ESP_CRBORDERHOVER	5
 // 开关属性_边框颜色_按下或选中
 #define ESP_CRBORDERDOWNORCHECKED	6

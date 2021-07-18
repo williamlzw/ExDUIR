@@ -34,7 +34,7 @@ BOOL _treeview_expanditem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item);
 BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM* parent, EX_TREEVIEW_NODEITEM* insertAfter);
 EX_TREEVIEW_NODEITEM* _treeview_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIEW_NODEITEM* parent, EX_TREEVIEW_NODEITEM* insertAfter, INT nID, BOOL fExpand);
 void _treeview_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child = TRUE, BOOL dellink = TRUE);
-EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item, BOOL widechar);
+EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item);
 EX_TREEVIEW_NODEITEM* _treeview_getnodefromindex(obj_s* pObj, INT index);
 BOOL _treeview_generatelist(obj_s* pObj, BOOL bForce);
 void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam);

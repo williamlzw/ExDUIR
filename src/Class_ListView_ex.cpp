@@ -821,7 +821,7 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	//项目尺寸
 	pOwner->width_item_ = Ex_Scale(iWidth);
 	pOwner->height_item_ = Ex_Scale(iHeight);
-	//特殊热点项尺寸
+	//特殊悬浮项尺寸
 	pOwner->width_spec_ = pOwner->width_item_;
 	pOwner->height_spec_ = pOwner->height_item_;
 	//间隔尺寸

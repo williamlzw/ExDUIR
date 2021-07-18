@@ -63,24 +63,24 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* EditExprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjSetProp(hObj, EEEP_CRBKGNORMAL, EditExprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, EEEP_CRBORDERNORMAL, EditExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, EEEP_CRBORDERHOVER, EditExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, EEEP_CRBORDERDOWNORCHECKED, EditExprops->COLOR_EX_BORDER_DOWNORCHECKED);
-		if (EditExprops->COLOR_EX_ICON_NORMAL == 0) {
+		Ex_ObjSetProp(hObj, EEEP_CRBKGNORMAL, EditExprops->crBkgNormal);
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERNORMAL, EditExprops->crBorderNormal);
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERHOVER, EditExprops->crBorderHover);
+		Ex_ObjSetProp(hObj, EEEP_CRBORDERDOWNORCHECKED, EditExprops->crBorderDownOrChecked);
+		if (EditExprops->crIconNormal == 0) {
 			Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
 		}
 		else {
-			Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, EditExprops->COLOR_EX_ICON_NORMAL);
+			Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, EditExprops->crIconNormal);
 		}
-		if (EditExprops->COLOR_EX_ICON_DOWNORFOCUS == 0) {
+		if (EditExprops->crIconDownOrFocus == 0) {
 			Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
 		}
 		else {
-			Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, EditExprops->COLOR_EX_ICON_DOWNORFOCUS);
+			Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, EditExprops->crIconDownOrFocus);
 		}
-		Ex_ObjSetProp(hObj, EEEP_RADIUS, EditExprops->Radius);
-		Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, EditExprops->StrokeWidth);
+		Ex_ObjSetProp(hObj, EEEP_RADIUS, EditExprops->radius);
+		Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, EditExprops->strokeWidth);
 		Ex_ObjSetProp(hObj, EEEP_ICONPOSITION, EditExprops->nIconPosition);
 
 	}
@@ -120,7 +120,7 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
 		if ((Ex_ObjGetUIState(hObj) & STATE_HOVER) != 0)
 		{
-			/*定义热点状态下的线框颜色*/
+			/*定义悬浮状态下的线框颜色*/
 			_brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERHOVER));
 		}
 

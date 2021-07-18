@@ -1599,7 +1599,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext, HEXCA
 										_obj_baseproc(hWnd, objNext, pObj, WM_PAINT, 0, 0);
 										if (fDX)
 										{
-											_dx_settarget(pContext, pBitmapDisplay);
+											_dx_settarget(pContext, (ID2D1Bitmap*)pBitmapDisplay);
 										}
 									}
 								}
@@ -2004,14 +2004,14 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
 	if (_canvas_begindraw(cvDisplay))
 	{
 		ID2D1DeviceContext* pContext = nullptr;
-		LPVOID pBitmapDisplay = nullptr;
+		ID2D1Bitmap* pBitmapDisplay = nullptr;
 		if (fDX)
 		{
 			pContext = pWnd->dx_context_;
-			pBitmapDisplay = _canvas_getcontext(cvDisplay, CVC_DX_D2DBITMAP);
-			_dx_bmp_copyfrom(&pBitmapDisplay, _canvas_getcontext(pWnd->canvas_bkg_, CVC_DX_D2DBITMAP), rcPaint.left, rcPaint.top, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom);
+			pBitmapDisplay = (ID2D1Bitmap*)_canvas_getcontext(cvDisplay, CVC_DX_D2DBITMAP);
+			_dx_bmp_copyfrom(&pBitmapDisplay,(ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_, CVC_DX_D2DBITMAP), rcPaint.left, rcPaint.top, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom);
 
-			_dx_settarget(pContext, pBitmapDisplay);
+			_dx_settarget(pContext, (ID2D1Bitmap*)pBitmapDisplay);
 		}
 		else {
 

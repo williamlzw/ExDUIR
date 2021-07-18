@@ -11,7 +11,7 @@ struct EX_EASING
 	DWORD dwMode;
 	LPVOID lpfnEsaing;
 	LPVOID lpEasingContext;
-	LPVOID pContext;
+	LONG_PTR pContext;
 	HANDLE hEventPause;
 	INT nCurFrame;
 	INT nTotal;
@@ -20,10 +20,10 @@ struct EX_EASING
 	INT nStart;
 	INT nStop;
 	DWORD nState;
-	size_t param1;
-	size_t param2;
-	size_t param3;
-	size_t param4;
+	LONG_PTR param1;
+	LONG_PTR param2;
+	LONG_PTR param3;
+	LONG_PTR param4;
 };
 
 struct easinghead_s

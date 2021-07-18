@@ -120,16 +120,16 @@ void test_button(HWND hWnd)
 	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED, L"button", L"重画按钮2", -1, 150, 70, 120, 30, m_hExDuiButton, 0, DT_VCENTER | DT_CENTER, 0, 0, OnButtonMsgProc);//第二种重画背景方式,全部自带组件都可以采用这样的方式重画,注意带上扩展风格
 
 	HEXOBJ hObj_switch = Ex_ObjCreate(L"Switch", L"已开启|已关闭", -1, 150, 110, 80, 30, m_hExDuiButton);
-
+	
 	HEXOBJ hObj_switch2 = Ex_ObjCreateEx(-1, L"Switch", 0, -1, 150, 150, 60, 30, m_hExDuiButton, 206, -1, 0, 0, 0);
 	Ex_ObjSendMessage(hObj_switch2, BM_SETCHECK, 1, 0); // 设置选中状态
 	Ex_ObjHandleEvent(hObj_switch2, NM_CHECK, OnButtonEvent);
 	EX_OBJ_PROPS switchprops = { 0 };
-	switchprops.COLOR_EX_BACKGROUND_NORMAL = ExARGB(255, 255, 255, 100);
-	switchprops.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExARGB(200, 50, 100, 0);
-	switchprops.COLOR_EX_BORDER_NORMAL = ExARGB(255, 255, 255, 255);
-	switchprops.Radius = 15;
-	switchprops.StrokeWidth = 1;
+	switchprops.crBkgNormal = ExARGB(255, 255, 255, 100);
+	switchprops.crBkgDownOrChecked = ExARGB(200, 50, 100, 0);
+	switchprops.crBorderNormal = ExARGB(255, 255, 255, 255);
+	switchprops.radius = 15;
+	switchprops.strokeWidth = 1;
 	Ex_ObjSendMessage(hObj_switch2, WM_EX_PROPS, 0, (LPARAM)&switchprops);
 
 	Ex_DUIShowWindow(m_hExDuiButton, SW_SHOWNORMAL, 0, 0, 0);
@@ -195,18 +195,18 @@ void test_checkbutton(HWND hWnd)
 	EX_OBJ_PROPS CheckButtonExProps = { 0 };
 	HEXOBJ	hObj_checkbutton1 = Ex_ObjCreate(L"CheckButtonEx", L"扩展复选框", -1, 10, 90, 120, 30, hExDui_checkbutton);
 	Ex_ObjSetColor(hObj_checkbutton1, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), TRUE);
-	CheckButtonExProps.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExARGB(215, 117, 23, 250);
-	CheckButtonExProps.COLOR_EX_BORDER_NORMAL = ExARGB(222, 222, 222, 150);
-	CheckButtonExProps.COLOR_EX_BORDER_HOVER = ExARGB(222, 222, 222, 200);
-	CheckButtonExProps.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(222, 222, 222, 250);
+	CheckButtonExProps.crBkgDownOrChecked = ExARGB(215, 117, 23, 250);
+	CheckButtonExProps.crBorderNormal = ExARGB(222, 222, 222, 150);
+	CheckButtonExProps.crBorderHover = ExARGB(222, 222, 222, 200);
+	CheckButtonExProps.crBorderDownOrChecked = ExARGB(222, 222, 222, 250);
 	Ex_ObjSendMessage(hObj_checkbutton1, WM_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
 	Ex_ObjSendMessage(hObj_checkbutton1, BM_SETCHECK, 1, 0);
 
 	HEXOBJ	hObj_checkbutton2 = Ex_ObjCreate(L"CheckButtonEx", L"扩展复选框", -1, 10, 120, 120, 30, hExDui_checkbutton);
-	CheckButtonExProps.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExARGB(251, 171, 213, 250);
-	CheckButtonExProps.COLOR_EX_BORDER_NORMAL = ExARGB(22, 222, 222, 150);
-	CheckButtonExProps.COLOR_EX_BORDER_HOVER = ExARGB(22, 222, 222, 200);
-	CheckButtonExProps.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(222, 22, 222, 250);
+	CheckButtonExProps.crBkgDownOrChecked = ExARGB(251, 171, 213, 250);
+	CheckButtonExProps.crBorderNormal = ExARGB(22, 222, 222, 150);
+	CheckButtonExProps.crBorderHover = ExARGB(22, 222, 222, 200);
+	CheckButtonExProps.crBorderDownOrChecked = ExARGB(222, 22, 222, 250);
 	Ex_ObjSendMessage(hObj_checkbutton2, WM_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
 	Ex_ObjHandleEvent(hObj_checkbutton2, NM_CHECK, OnCheckButtonCheckedEvent);
 
@@ -352,11 +352,11 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			EX_TEXTRANGE textRange;
 			textRange.chrg.cpMin = HIWORD(Ex_ObjSendMessage(hEdit, EM_GETSEL, 0, 0));
 			textRange.chrg.cpMax = -1;
-			textRange.lpstrText = L"a";//欲寻找文本
+			textRange.pwzText = L"a";//欲寻找文本
 			textRange.chrg.cpMin = Ex_ObjSendMessage(hEdit, EM_FINDTEXTW, FR_DOWN, (LPARAM)&textRange);
 			if (textRange.chrg.cpMin != -1)
 			{
-				textRange.chrg.cpMax = textRange.chrg.cpMin + lstrlenW(textRange.lpstrText);
+				textRange.chrg.cpMax = textRange.chrg.cpMin + lstrlenW(textRange.pwzText);
 				Ex_ObjSendMessage(hEdit, EM_SETSEL, textRange.chrg.cpMin, textRange.chrg.cpMax);
 			}
 		}
@@ -364,7 +364,7 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 		{
 			EX_SETTEXTEX textformat;
 			textformat.flags = 2;//ST_SELECTION替换选择并保持富文本格式
-			textformat.codepage = 1200;//Unicode code page
+			textformat.codePage = 1200;//Unicode code page
 			Ex_ObjSendMessage(hEdit, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为我");
 		}
 		Ex_ObjSetFocus(hEdit);//这一句不能少，不然编辑框无法显示选中区域
@@ -384,10 +384,10 @@ LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 		{
 			EX_TEXTRANGE TextRange;
 			TextRange.chrg = ((EX_ENLINK*)lParam)->chrg;
-			TextRange.lpstrText = (LPCWSTR)Ex_AllocBuffer((TextRange.chrg.cpMax - TextRange.chrg.cpMin + 2) * 2);
+			TextRange.pwzText = (LPCWSTR)Ex_AllocBuffer((TextRange.chrg.cpMax - TextRange.chrg.cpMin + 2) * 2);
 			Ex_ObjSendMessage(hObj, EM_GETTEXTRANGE, 0, (LPARAM)&TextRange);
-			output(L"链接被按下:", TextRange.chrg.cpMax, TextRange.chrg.cpMin, TextRange.lpstrText);
-			Ex_FreeBuffer((LPVOID)TextRange.lpstrText);
+			output(L"链接被按下:", TextRange.chrg.cpMax, TextRange.chrg.cpMin, TextRange.pwzText);
+			Ex_FreeBuffer((LPVOID)TextRange.pwzText);
 		}
 	}
 	return 0;
@@ -415,7 +415,10 @@ void test_edit(HWND hWnd)
 	Ex_ObjSetColor(hObj_edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
 	Ex_ObjSetRadius(hObj_edit5, 10, 10, 10, 0, FALSE);
 
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\n", EOS_VISIBLE | EOS_VSCROLL, 10, 230, 150, 100, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	HEXOBJ hobj_edit_multiline = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\n", EOS_VISIBLE | EOS_VSCROLL, 10, 230, 150, 100, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	Ex_ObjSendMessage(hobj_edit_multiline, EM_SETSEL, -1, -1);//移动到最后一行
+	Ex_ObjSendMessage(hobj_edit_multiline, EM_REPLACESEL, -1, (LPARAM)L"新添加一行");//添加一行
+	Ex_ObjSetFocus(hobj_edit_multiline);//添加焦点自动滚动到最后一行
 
 	HEXOBJ hObj_edit7 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"edit", NULL, EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL | EES_RICHTEXT | EES_PARSEURL | EES_ALLOWTAB | EES_NEWLINE, 180, 30, 300, 300, m_hExDuiEdit, 101, DT_LEFT | DT_TOP, 0, 0, NULL);
 	std::vector<CHAR> rtf;
@@ -464,7 +467,7 @@ LRESULT CALLBACK OnMenuButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
 		if (notify.nCode == NM_CREATE)
 		{
 			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExRGBA(210, 120, 55, 255), TRUE);//改变菜单项目字体正常颜色
-			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255), TRUE);//改变菜单项目字体热点颜色
+			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255), TRUE);//改变菜单项目字体悬浮颜色
 			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), TRUE);//改变菜单项目背景颜色
 		}
 	}
@@ -475,7 +478,6 @@ LRESULT CALLBACK OnMenuButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 {
 	if (uMsg == MBM_DOWNITEM)
 	{
-		output(wParam);
 		RECT rcWindow{ 0 };
 		RECT rcObj{ 0 };
 		GetWindowRect(hWnd, &rcWindow);
@@ -507,7 +509,7 @@ void test_menubutton(HWND hWnd)
 				if (hObj) {
 					Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), FALSE);//改变菜单按钮背景色
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//改变菜单按钮字体正常色
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体热点色
+					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体悬浮色
 					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);//改变菜单按钮字体按下色
 					
 					_layout_addchild(hLayout, hObj);
@@ -1421,28 +1423,28 @@ void test_reportlistview(HWND hWnd)
 	Ex_ObjSendMessage(m_hReportListView, LVM_SETIMAGELIST, 0, (LPARAM)m_hReportListViewImgList);
 
 	EX_REPORTLIST_COLUMNINFO col = { 0 };
-	col.wzText = L"第一列";
+	col.pwzText = L"第一列";
 	col.nWidth = 75;
 	col.crText = ExRGB2ARGB(255, 255);
 	col.dwStyle = 0;
 	col.dwTextFormat = DT_LEFT;
 	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
-	col.wzText = L"固定列宽";
+	col.pwzText = L"固定列宽";
 	col.nWidth = 110;
 	col.crText = ExRGB2ARGB(16711680, 255);
 	col.dwStyle = ERLV_CS_LOCKWIDTH;
 	col.dwTextFormat = DT_LEFT;
 	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
-	col.wzText = L"居中可点击";
+	col.pwzText = L"居中可点击";
 	col.nWidth = 100;
 	col.crText = ExRGB2ARGB(65535, 255);
 	col.dwStyle = ERLV_CS_CLICKABLE;
 	col.dwTextFormat = DT_CENTER | DT_VCENTER;
 	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
-	col.wzText = L"可排序";
+	col.pwzText = L"可排序";
 	col.nWidth = 60;
 	col.crText = ExRGB2ARGB(16777215, 255);
 	col.dwStyle = ERLV_CS_CLICKABLE | ERLV_CS_SORTABLE;
@@ -1461,20 +1463,20 @@ void test_reportlistview(HWND hWnd)
 		//先插入表项
 		item.iCol = 1;
 		std::wstring wstr = L"第" + std::to_wstring(i) + L"项";
-		item.wzText = wstr.c_str();
+		item.pwzText = wstr.c_str();
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 
 		item.iCol = 2;
-		item.wzText = L"第二列";
+		item.pwzText = L"第二列";
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 
 		item.iCol = 3;
-		item.wzText = L"第三列";
+		item.pwzText = L"第三列";
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 
 		item.iCol = 4;
 		auto str = std::to_wstring(Random(0, 1000));
-		item.wzText = str.c_str();
+		item.pwzText = str.c_str();
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item);//wParam为是否立即更新
 	}
 	Ex_ObjSendMessage(m_hReportListView, LVM_UPDATE, 0, 0);//整体更新,以加快绘制速度
@@ -1557,62 +1559,62 @@ void test_treelistview(HWND hWnd)
 	Ex_ObjSetColor(hObj_treeview, COLOR_EX_BACKGROUND, ExARGB(255, 255, 255, 125), FALSE);
 	Ex_ObjSetColor(hObj_treeview, COLOR_EX_BORDER, ExARGB(255, 255, 255, 255), TRUE);
 	ti.fExpand = TRUE;
-	ti.tzText = L"节点1";
+	ti.pwzText = L"节点1";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点2";
+	ti.pwzText = L"节点2";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点3";
+	ti.pwzText = L"节点3";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点3-1";
+	ti.pwzText = L"节点3-1";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点3-2";
+	ti.pwzText = L"节点3-2";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点3-3";
+	ti.pwzText = L"节点3-3";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点3-3-1";
+	ti.pwzText = L"节点3-3-1";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点3-3-2";
+	ti.pwzText = L"节点3-3-2";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	ti.itemParent = 0;
-	ti.tzText = L"节点4";
+	ti.pwzText = L"节点4";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5";
+	ti.pwzText = L"节点5";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-1";
+	ti.pwzText = L"节点5-1";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2";
+	ti.pwzText = L"节点5-2";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2-1";
+	ti.pwzText = L"节点5-2-1";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2-2";
+	ti.pwzText = L"节点5-2-2";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2-2-1";
+	ti.pwzText = L"节点5-2-2-1";
 	Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2-2-2";
+	ti.pwzText = L"节点5-2-2-2";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2-2-2-1";
+	ti.pwzText = L"节点5-2-2-2-1";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2-2-2-1-1";
+	ti.pwzText = L"节点5-2-2-2-1-1";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
-	ti.tzText = L"节点5-2-2-2-1-1-1";
+	ti.pwzText = L"节点5-2-2-2-1-1-1";
 	ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TVM_INSERTITEM, 0, (size_t)&ti);
 
 	Ex_ObjSendMessage(hObj_treeview, TVM_UPDATE, 0, 0);
@@ -1666,7 +1668,7 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		{
 			_easing_setstate(oldhEasing, EES_STOP);
 		}
-		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);//设置热点状态
+		Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);//设置悬浮状态
 	}
 	else if (uMsg == WM_MOUSELEAVE)
 	{
@@ -1676,7 +1678,7 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		{
 			_easing_setstate(oldhEasing, EES_STOP);
 		}
-		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);//删除热点状态
+		Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);//删除悬浮状态
 	}
 	return 0;
 }
@@ -1700,35 +1702,35 @@ void test_buttonex(HWND hWnd)
 	HEXOBJ hObj_btnex1 = Ex_ObjCreate(L"ButtonEx", L"☏直角纯色按钮", -1, 50, 50, 100, 30, hExDui_buttonex);
 	EXARGB ThemeColor = RGB(76, 175, 80);
 	EX_OBJ_PROPS ButtonExprops = { 0 };
-	ButtonExprops.COLOR_EX_BACKGROUND_NORMAL = ExRGB2ARGB(ThemeColor, 225);
-	ButtonExprops.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(ThemeColor, 250);
-	ButtonExprops.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(ThemeColor, 200);
+	ButtonExprops.crBkgNormal = ExRGB2ARGB(ThemeColor, 225);
+	ButtonExprops.crBkgHover = ExRGB2ARGB(ThemeColor, 250);
+	ButtonExprops.crBkgDownOrChecked = ExRGB2ARGB(ThemeColor, 200);
 	Ex_ObjSendMessage(hObj_btnex1, WM_EX_PROPS, 0, (size_t)&ButtonExprops);
 
 	HEXOBJ hObj_btnex2 = Ex_ObjCreate(L"ButtonEx", L"点击进入 👉", -1, 50, 100, 100, 30, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops2 = { 0 };
-	ButtonExprops2.COLOR_EX_BACKGROUND_NORMAL = ExRGB2ARGB(7037666, 255);
-	ButtonExprops2.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(6182117, 255);
-	ButtonExprops2.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(4865258, 255);
-	ButtonExprops2.Radius = 15;
+	ButtonExprops2.crBkgNormal = ExRGB2ARGB(7037666, 255);
+	ButtonExprops2.crBkgHover = ExRGB2ARGB(6182117, 255);
+	ButtonExprops2.crBkgDownOrChecked = ExRGB2ARGB(4865258, 255);
+	ButtonExprops2.radius = 15;
 	Ex_ObjSendMessage(hObj_btnex2, WM_EX_PROPS, 0, (size_t)&ButtonExprops2);
 
 	HEXOBJ hObj_btnex3 = Ex_ObjCreate(L"ButtonEx", L"Metro按钮☪", -1, 50, 150, 100, 30, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops3 = { 0 };
-	ButtonExprops3.COLOR_EX_BACKGROUND_NORMAL = ExARGB(130, 130, 130, 255);
-	ButtonExprops3.COLOR_EX_BACKGROUND_HOVER = ExARGB(130, 130, 130, 235);
-	ButtonExprops3.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExARGB(200, 200, 200, 100);
-	ButtonExprops3.COLOR_EX_BORDER_NORMAL = ExARGB(130, 130, 130, 255);
-	ButtonExprops3.COLOR_EX_BORDER_HOVER = ExARGB(0, 0, 0, 135);
-	ButtonExprops3.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(0, 0, 0, 150);
-	ButtonExprops3.StrokeWidth = 2;
+	ButtonExprops3.crBkgNormal = ExARGB(130, 130, 130, 255);
+	ButtonExprops3.crBkgHover = ExARGB(130, 130, 130, 235);
+	ButtonExprops3.crBkgDownOrChecked = ExARGB(200, 200, 200, 100);
+	ButtonExprops3.crBorderNormal = ExARGB(130, 130, 130, 255);
+	ButtonExprops3.crBorderHover = ExARGB(0, 0, 0, 135);
+	ButtonExprops3.crBorderDownOrChecked = ExARGB(0, 0, 0, 150);
+	ButtonExprops3.strokeWidth = 2;
 	Ex_ObjSendMessage(hObj_btnex3, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops3);
 
 	HEXOBJ hObj_btnex4 = Ex_ObjCreate(L"ButtonEx", L"图标在左", -1, 50, 200, 100, 30, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops4 = { 0 };
-	ButtonExprops4.COLOR_EX_BACKGROUND_NORMAL = ExRGB2ARGB(10066176, 255);
-	ButtonExprops4.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(10066176, 220);
-	ButtonExprops4.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(10066176, 200);
+	ButtonExprops4.crBkgNormal = ExRGB2ARGB(10066176, 255);
+	ButtonExprops4.crBkgHover = ExRGB2ARGB(10066176, 220);
+	ButtonExprops4.crBkgDownOrChecked = ExRGB2ARGB(10066176, 200);
 	Ex_ObjSendMessage(hObj_btnex4, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops4);
 	Ex_ObjSetFontFromFamily(hObj_btnex4, L"楷体", 16, -1, TRUE);
 	HEXIMAGE hImg;
@@ -1736,9 +1738,9 @@ void test_buttonex(HWND hWnd)
 	Ex_ObjSendMessage(hObj_btnex4, WM_SETICON, 0, (LPARAM)hImg);   /* 设置图标; */
 
 	EX_IMAGEINFO IMG0 = { 0 };
-	_img_createfromfile(L"buttonex/4正常.png", &IMG0.IMG_NORMAL);//注意用完销毁
-	_img_createfromfile(L"buttonex/4点燃.png", &IMG0.IMG_HOVER);
-	_img_createfromfile(L"buttonex/4按下.png", &IMG0.IMG_DOWNORCHECKED);
+	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal);//注意用完销毁
+	_img_createfromfile(L"buttonex/4点燃.png", &IMG0.imgHover);
+	_img_createfromfile(L"buttonex/4按下.png", &IMG0.imgDownOrChecked);
 	HEXOBJ hObj_btnex5 = Ex_ObjCreate(L"ButtonEx", NULL, -1, 50, 250, 100, 30, hExDui_buttonex);/*图片按钮*/
 	Ex_ObjSendMessage(hObj_btnex5, BM_SETIMAGE, 0, (LPARAM)&IMG0);
 
@@ -1747,24 +1749,24 @@ void test_buttonex(HWND hWnd)
 	Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(65535, 255), FALSE);
 	Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(65535, 255), FALSE);
 	EX_IMAGEINFO IMG = { 0 };
-	_img_createfromfile(L"buttonex/正常.png", &IMG.IMG_NORMAL);//注意用完销毁
-	_img_createfromfile(L"buttonex/进入.png", &IMG.IMG_HOVER);
-	_img_createfromfile(L"buttonex/按下.png", &IMG.IMG_DOWNORCHECKED);
+	_img_createfromfile(L"buttonex/正常.png", &IMG.imgNormal);//注意用完销毁
+	_img_createfromfile(L"buttonex/进入.png", &IMG.imgHover);
+	_img_createfromfile(L"buttonex/按下.png", &IMG.imgDownOrChecked);
 	Ex_ObjSendMessage(hObj_btnex6, BM_SETIMAGE, 0, (LPARAM)&IMG);
 
 	HEXOBJ hObj_btnex7 = Ex_ObjCreate(L"ButtonEx", L"渐变按钮🔊", -1, 180, 100, 100, 30, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops7 = { 0 };
-	ButtonExprops7.COLOR_EX_BKG_CRBegin = ExARGB(0, 173, 241, 255);
-	ButtonExprops7.COLOR_EX_BKG_CREnd = ExARGB(100, 25, 129, 255);
-	ButtonExprops7.StrokeWidth = 2;
+	ButtonExprops7.crBkgBegin = ExARGB(0, 173, 241, 255);
+	ButtonExprops7.crBkgEnd = ExARGB(100, 25, 129, 255);
+	ButtonExprops7.strokeWidth = 2;
 	Ex_ObjSendMessage(hObj_btnex7, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops7);
 	Ex_ObjSetFontFromFamily(hObj_btnex7, L"楷体", 16, -1, TRUE);
 
 	HEXOBJ hObj_btnex8 = Ex_ObjCreate(L"ButtonEx", L"线框按钮", -1, 180, 150, 100, 30, hExDui_buttonex);/*图标按钮*/
 	EX_OBJ_PROPS ButtonExprops8 = { 0 };
-	ButtonExprops8.COLOR_EX_BRD_CRBegin = ExARGB(227, 34, 103, 255);
-	ButtonExprops8.COLOR_EX_BRD_CREnd = ExRGB2ARGB(16746496, 255);
-	ButtonExprops8.StrokeWidth = 2;
+	ButtonExprops8.crBorderBegin = ExARGB(227, 34, 103, 255);
+	ButtonExprops8.crBorderEnd = ExRGB2ARGB(16746496, 255);
+	ButtonExprops8.strokeWidth = 2;
 	Ex_ObjSendMessage(hObj_btnex8, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops8);
 	Ex_ObjSetColor(hObj_btnex8, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(65535, 180), FALSE);
 	Ex_ObjSetColor(hObj_btnex8, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(65535, 255), FALSE);
@@ -1773,9 +1775,9 @@ void test_buttonex(HWND hWnd)
 
 	HEXOBJ hObj_btnex9 = Ex_ObjCreate(L"ButtonEx", L"图标在上", -1, 180, 200, 100, 40, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops9 = { 0 };
-	ButtonExprops9.COLOR_EX_BACKGROUND_NORMAL = ExRGB2ARGB(10061616, 255);
-	ButtonExprops9.COLOR_EX_BACKGROUND_HOVER = ExRGB2ARGB(10061616, 220);
-	ButtonExprops9.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExRGB2ARGB(10061616, 200);
+	ButtonExprops9.crBkgNormal = ExRGB2ARGB(10061616, 255);
+	ButtonExprops9.crBkgHover = ExRGB2ARGB(10061616, 220);
+	ButtonExprops9.crBkgDownOrChecked = ExRGB2ARGB(10061616, 200);
 	ButtonExprops9.nIconPosition = 2;
 	Ex_ObjSendMessage(hObj_btnex9, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops9);
 	Ex_ObjSetFontFromFamily(hObj_btnex9, L"楷体", 16, -1, TRUE);
@@ -1784,15 +1786,15 @@ void test_buttonex(HWND hWnd)
 
 	HEXOBJ hObj_btnex10 = Ex_ObjCreate(L"ButtonEx", L"图标在右", -1, 180, 250, 100, 30, hExDui_buttonex);
 	EX_OBJ_PROPS ButtonExprops10 = { 0 };
-	ButtonExprops10.COLOR_EX_BACKGROUND_NORMAL = ExARGB(255, 255, 255, 50);
-	ButtonExprops10.COLOR_EX_BACKGROUND_HOVER = ExARGB(255, 255, 255, 80);
-	ButtonExprops10.COLOR_EX_BACKGROUND_DOWNORCHECKED = ExARGB(255, 255, 255, 100);
-	ButtonExprops10.COLOR_EX_BORDER_NORMAL = ExARGB(0, 0, 0, 150);
-	ButtonExprops10.COLOR_EX_BORDER_HOVER = ExARGB(0, 0, 0, 180);
-	ButtonExprops10.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(0, 0, 0, 200);
-	ButtonExprops10.StrokeWidth = 1;
+	ButtonExprops10.crBkgNormal = ExARGB(255, 255, 255, 50);
+	ButtonExprops10.crBkgHover = ExARGB(255, 255, 255, 80);
+	ButtonExprops10.crBkgDownOrChecked = ExARGB(255, 255, 255, 100);
+	ButtonExprops10.crBorderNormal = ExARGB(0, 0, 0, 150);
+	ButtonExprops10.crBorderHover = ExARGB(0, 0, 0, 180);
+	ButtonExprops10.crBorderDownOrChecked = ExARGB(0, 0, 0, 200);
+	ButtonExprops10.strokeWidth = 1;
 	ButtonExprops10.nIconPosition = 1;
-	ButtonExprops10.Radius = 7;
+	ButtonExprops10.radius = 7;
 	Ex_ObjSendMessage(hObj_btnex10, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops10);
 	Ex_ObjSetFontFromFamily(hObj_btnex10, L"楷体", 16, -1, TRUE);
 	_img_createfromfile(L"buttonex\\3.png", &hImg);
@@ -1838,11 +1840,11 @@ void test_editex(HWND hWnd)
 	HEXOBJ hObj_editex3 = Ex_ObjCreate(L"EditEx", NULL, -1, 200, 50, 150, 30, hExDui_editex);
 	Ex_ObjSendMessage(hObj_editex3, EM_SETCUEBANNER, ExARGB(255, 255, 255, 100), (LPARAM)L"搜索一下");
 	Ex_ObjSetColor(hObj_editex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 200), FALSE);
-	EditExprops.COLOR_EX_BACKGROUND_NORMAL = ExARGB(20, 20, 120, 150);
-	EditExprops.COLOR_EX_BORDER_HOVER = ExARGB(255, 77, 77, 150);
-	EditExprops.COLOR_EX_BORDER_DOWNORCHECKED = ExARGB(255, 77, 77, 200);
-	EditExprops.Radius = 15;
-	EditExprops.StrokeWidth = 1;
+	EditExprops.crBkgNormal = ExARGB(20, 20, 120, 150);
+	EditExprops.crBorderHover = ExARGB(255, 77, 77, 150);
+	EditExprops.crBorderDownOrChecked = ExARGB(255, 77, 77, 200);
+	EditExprops.radius = 15;
+	EditExprops.strokeWidth = 1;
 	EditExprops.nIconPosition = 1;
 	Ex_ObjSendMessage(hObj_editex3, WM_EX_PROPS, 0, (LPARAM)&EditExprops);
 	_img_createfromfile(L"editex\\search_normal.png", &hImage);

@@ -65,10 +65,10 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* CheckButtonExprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjSetProp(hObj, ECBEP_CRBKGDOWNORCHECKED, CheckButtonExprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, ECBEP_CRBORDERNORMAL, CheckButtonExprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, ECBEP_CRBORDERHOVER, CheckButtonExprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, ECBEP_CRBORDERDOWNORCHECKED, CheckButtonExprops->COLOR_EX_BORDER_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ECBEP_CRBKGDOWNORCHECKED, CheckButtonExprops->crBkgDownOrChecked);
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERNORMAL, CheckButtonExprops->crBorderNormal);
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERHOVER, CheckButtonExprops->crBorderHover);
+		Ex_ObjSetProp(hObj, ECBEP_CRBORDERDOWNORCHECKED, CheckButtonExprops->crBorderDownOrChecked);
 		
 	}
 

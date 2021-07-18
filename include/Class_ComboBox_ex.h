@@ -35,7 +35,7 @@
 // 组合框消息_取可视数量
 #define CB_GETMINVISIBLE 5890
 
-// 组合框标识_热点
+// 组合框标识_悬浮
 #define ECBF_HOVER	1
 
 struct EX_COMBOX_ITEM {

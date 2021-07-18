@@ -37,9 +37,9 @@ HEXBRUSH _brush_createfromimg(HEXIMAGE hImg)
 	ID2D1BitmapBrush* hBrush = nullptr;
 	if (_handle_validate(hImg, HT_IMAGE, (LPVOID*)&pImg, &nError))
 	{
-		LPVOID pObj = pImg->pObj_;
+		IWICBitmapSource* pBitmapSource = pImg->pBitmapSource_;
 		ID2D1Bitmap* pBitmap = nullptr;
-		HRESULT hr = g_Ri.pD2DDeviceContext->CreateBitmapFromWicBitmap((IWICBitmapSource*)pObj, &pBitmap);
+		HRESULT hr = g_Ri.pD2DDeviceContext->CreateBitmapFromWicBitmap(pBitmapSource, &pBitmap);
 		if (hr == 0)
 		{
 			D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};

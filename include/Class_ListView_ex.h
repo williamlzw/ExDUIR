@@ -17,7 +17,7 @@ struct listview_s
 	INT count_view_h_;//可视横向数量
 	INT count_view_v_; //可视纵向数量
 	INT index_select_;//当前选中
-	INT index_mouse_;//热点项目
+	INT index_mouse_;//悬浮项目
 	INT index_start_;
 	INT index_end_;
 	INT index_track_start_;

@@ -32,10 +32,10 @@ struct EX_APNG_THUNK {
 struct img_s
 {
 	INT dwFlags_;
-	LPVOID pObj_;
+	IWICBitmapSource* pBitmapSource_;
 	INT nMaxFrames_;
 	INT nCurFrame_;
-	LPVOID pWicDecoder_;
+	IWICBitmapDecoder* pWicDecoder_;
 	EX_APNG_THUNK** lpFrames_;
 	LPVOID lpHeader_;
 	IWICBitmap* pPrev_;
@@ -46,20 +46,20 @@ struct img_s
 };
 
 
-HEXIMAGE _img_init(LPVOID pObj, INT curframe, INT frames, LPVOID pDecoder, INT* nError);
+HEXIMAGE _img_init(IWICBitmapSource* pObj, INT curframe, INT frames, IWICBitmapDecoder* pDecoder, INT* nError);
 BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE* dstImg);
 LPSTREAM _img_createfromstream_init(LPVOID lpData, INT dwLen, INT* nError);
 LPVOID _img_getcontext(HEXIMAGE hImage);
 void _apng_drawframe(img_s* pImage, INT nIndex);
 INT _apng_thunk_getlength(LPVOID lpMem);
 BOOL _apng_thunk_getnext(LPVOID lpMem, INT* nPos, INT dwThunkType, EX_APNG_THUNK** lpThunk, INT* dwThunkLen);
-void _apng_int(HEXIMAGE hImage, LPVOID lpStream);
+void _apng_int(HEXIMAGE hImage, LPSTREAM lpStream);
 BOOL _apng_getframedelay(img_s* pImg, INT* lpDelay, INT nFrames);
 HEXIMAGE _wic_create(INT width, INT height, GUID pFormat, INT* nError);
-HEXIMAGE _wic_init_from_decoder(LPVOID pDecoder, INT* nError);
-void _wic_savetobin(LPVOID pBitmap, LPVOID* lpBin, size_t* len, INT* nError);
-void _wic_drawframe(img_s* pImg, LPVOID pFrame, INT* nError, D2D1_RECT_F* dest = NULL);
-LPVOID _wic_convert(LPVOID pBitmap, BOOL bFreeOld, INT* nError);
-LPVOID _wic_selectactiveframe(LPVOID pDecoder, INT nIndex, INT* nError, D2D1_RECT_F* dest);
-EXARGB _wic_getpixel(LPVOID pBitmap, INT x, INT y, INT* nError);
-BOOL _wic_getframedelay(LPVOID pDecoder, INT* lpDelay, INT nCount, INT* nError);
+HEXIMAGE _wic_init_from_decoder(IWICBitmapDecoder* pDecoder, INT* nError);
+void _wic_savetobin(IWICBitmapSource* pBitmapSource, LPVOID* lpBin, size_t* len, INT* nError);
+void _wic_drawframe(img_s* pImg, IWICBitmapSource* pFrame, INT* nError, D2D1_RECT_F* dest = NULL);
+IWICBitmap* _wic_convert(IWICBitmapSource* pBitmapSource, BOOL bFreeOld, INT* nError);
+IWICBitmap* _wic_selectactiveframe(IWICBitmapDecoder* pDecoder, INT nIndex, INT* nError, D2D1_RECT_F* dest);
+EXARGB _wic_getpixel(IWICBitmapSource* pBitmap, INT x, INT y, INT* nError);
+BOOL _wic_getframedelay(IWICBitmapDecoder* pDecoder, INT* lpDelay, INT nCount, INT* nError);

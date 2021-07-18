@@ -76,16 +76,16 @@ void _easing_progress(HEXEASING pEasing)
 	INT uType = ((EX_EASING*)pEasing)->dwType;
 	LPVOID lpCalcProc = ((EX_EASING*)pEasing)->lpfnEsaing;
 	LPVOID pEasingContext = ((EX_EASING*)pEasing)->lpEasingContext;
-	LPVOID pContext = ((EX_EASING*)pEasing)->pContext;
+	LONG_PTR pContext = ((EX_EASING*)pEasing)->pContext;
 	INT nFrameCount = ((EX_EASING*)pEasing)->nFrameCount;
 	INT nInterval = ((EX_EASING*)pEasing)->nInterval;
 	DOUBLE nFrameStep = (DOUBLE)nInterval / ((EX_EASING*)pEasing)->nTotal;
 	INT nStart = ((EX_EASING*)pEasing)->nStart;
 	INT nStop = ((EX_EASING*)pEasing)->nStop;
-	size_t param1 = ((EX_EASING*)pEasing)->param1;
-	size_t param2 = ((EX_EASING*)pEasing)->param2;
-	size_t param3 = ((EX_EASING*)pEasing)->param3;
-	size_t param4 = ((EX_EASING*)pEasing)->param4;
+	LONG_PTR param1 = ((EX_EASING*)pEasing)->param1;
+	LONG_PTR param2 = ((EX_EASING*)pEasing)->param2;
+	LONG_PTR param3 = ((EX_EASING*)pEasing)->param3;
+	LONG_PTR param4 = ((EX_EASING*)pEasing)->param4;
 	INT nMode = LOWORD(((EX_EASING*)pEasing)->dwMode);
 	INT nTimes = HIWORD(((EX_EASING*)pEasing)->dwMode);
 	if (nTimes <= 0) nTimes = 1;
@@ -96,10 +96,10 @@ void _easing_progress(HEXEASING pEasing)
 	LPVOID pCurrent;
 	if ((nMode & ES_DISPATCHNOTIFY) == ES_DISPATCHNOTIFY)
 	{
-		EasingInfo.p1 = param1;
-		EasingInfo.p2 = param2;
-		EasingInfo.p3 = param3;
-		EasingInfo.p4 = param4;
+		EasingInfo.param1 = param1;
+		EasingInfo.param2 = param2;
+		EasingInfo.param3 = param3;
+		EasingInfo.param4 = param4;
 		EasingInfo.pEasing = pEasing;
 		EasingInfo.pEasingContext = pEasingContext;
 	}
@@ -723,7 +723,7 @@ void _easing_calc_Punch(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurren
 	*nCurrent = nStop * pow(2, -10 * nProgress) * sin((DOUBLE) (nProgress - _s) * 2 * 3.1415926 / _p);
 }
 
-HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode,size_t pContext, INT nTotalTime, INT nInterval, DWORD nState, INT nStart, INT nStop, size_t param1, size_t param2, size_t param3, size_t param4)
+HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG_PTR pContext, INT nTotalTime, INT nInterval, DWORD nState, INT nStart, INT nStop, LONG_PTR param1, LONG_PTR param2, LONG_PTR param3, LONG_PTR param4)
 {
 	HEXEASING pEasing = nullptr;
 	if (pContext != 0)
@@ -747,7 +747,7 @@ HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode,size_
 				return 0;
 			}
 		}
-		((EX_EASING*)pEasing)->pContext = (LPVOID)pContext;
+		((EX_EASING*)pEasing)->pContext = pContext;
 		LPVOID lpProc = nullptr;
 		std::vector<LPVOID> lpCalcProcs = { &_easing_calc_Linear, &_easing_calc_Clerp, &_easing_calc_Spring, &_easing_calc_Punch, &_easing_calc_InQuad, &_easing_calc_OutQuad, &_easing_calc_InOutQuad, &_easing_calc_InCubic, &_easing_calc_OutCubic, &_easing_calc_InOutCubic, &_easing_calc_InQuart, &_easing_calc_OutQuart, &_easing_calc_InOutQuart, &_easing_calc_InQuint, &_easing_calc_OutQuint, &_easing_calc_InOutQuint, &_easing_calc_InSine, &_easing_calc_OutSine, &_easing_calc_InOutSine, &_easing_calc_InExpo, &_easing_calc_OutExpo, &_easing_calc_InOutExpo, &_easing_calc_InCirc, &_easing_calc_OutCirc, &_easing_calc_InOutCirc, &_easing_calc_InBounce, &_easing_calc_OutBounce, &_easing_calc_InOutBounce, &_easing_calc_InBack, &_easing_calc_OutBack, &_easing_calc_InOutBack, &_easing_calc_InElastic, &_easing_calc_OutElastic, &_easing_calc_InOutElastic };
 		if (dwType >= 0 && dwType < lpCalcProcs.size())

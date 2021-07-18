@@ -177,8 +177,8 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		if (ptr != 0)
 		{
 			RtlMoveMemory(ptr, (LPVOID)lParam, sizeof(EX_REPORTLIST_COLUMNINFO));
-			LPCWSTR old = ptr->wzText;
-			ptr->wzText = StrDupW(((EX_REPORTLIST_COLUMNINFO*)lParam)->wzText);
+			LPCWSTR old = ptr->pwzText;
+			ptr->pwzText = StrDupW(((EX_REPORTLIST_COLUMNINFO*)lParam)->pwzText);
 			Ex_MemFree((LPVOID)old);
 			ret = 1;
 		}
@@ -194,8 +194,8 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		size_t ret = 0;
 		if (ptr != 0)
 		{
-			LPCWSTR old = ptr->wzText;
-			ptr->wzText = StrDupW((LPCWSTR)lParam);
+			LPCWSTR old = ptr->pwzText;
+			ptr->pwzText = StrDupW((LPCWSTR)lParam);
 			Ex_MemFree((LPVOID)old);
 			ret = 1;
 		}
@@ -211,7 +211,7 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		size_t ret = 0;
 		if (ptr != 0)
 		{
-			ret = (size_t)ptr->wzText;
+			ret = (size_t)ptr->pwzText;
 		}
 		if (ret != 0 && HIWORD(wParam) != 0)
 		{
@@ -536,7 +536,7 @@ void _reportlistview_head_paint(HEXOBJ hObj)
 							_canvas_fillrect(ps.hCanvas, hBrush, nOffsetX, 0, nOffsetX + nColWidth, ps.uHeight);
 							_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_BORDER));
 						}
-						_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObjList), Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_NORMAL), ptr->wzText, -1, DT_SINGLELINE | ptr->dwTextFormat, nOffsetX + 3, 0, nOffsetX + nColWidth - 3, ps.uHeight);
+						_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObjList), Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_NORMAL), ptr->pwzText, -1, DT_SINGLELINE | ptr->dwTextFormat, nOffsetX + 3, 0, nOffsetX + nColWidth - 3, ps.uHeight);
 						_canvas_drawline(ps.hCanvas, hBrush, nOffsetX + nColWidth, 0, nOffsetX + nColWidth, ps.uHeight, 1.5, D2D1_DASH_STYLE_SOLID);
 					}
 					nOffsetX = nOffsetX + nColWidth;
@@ -682,7 +682,7 @@ void _reportlistview_uninit(HEXOBJ hObj)
 		for (INT i = 0; i < nCount; i++)
 		{
 			ptc = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTCs + i * sizeof(EX_REPORTLIST_COLUMNINFO));
-			Ex_MemFree((LPVOID)ptc->wzText);
+			Ex_MemFree((LPVOID)ptc->pwzText);
 		}
 		Ex_MemFree(pTCs);
 	}
@@ -774,7 +774,7 @@ INT _reportlistview_tc_ins(HEXOBJ hObj, EX_REPORTLIST_COLUMNINFO* pInsertInfo)
 	INT nIndexInsert = pInsertInfo->nInsertIndex;
 	LPVOID pNew = __ptr_ins(&pTCs, nCount, &nIndexInsert, sizeof(EX_REPORTLIST_COLUMNINFO), pInsertInfo);
 	EX_REPORTLIST_COLUMNINFO* ptc = (EX_REPORTLIST_COLUMNINFO*)((size_t)pNew + (nIndexInsert - 1) * sizeof(EX_REPORTLIST_COLUMNINFO));
-	ptc->wzText = StrDupW(pInsertInfo->wzText);
+	ptc->pwzText = StrDupW(pInsertInfo->pwzText);
 	ptc->nInsertIndex = 0;
 	if (ptc->dwTextFormat == 0)
 	{
@@ -805,7 +805,7 @@ BOOL _reportlistview_tc_del(HEXOBJ hObj, INT nIndex)
 	}
 	LPVOID pTCs = (LPVOID)Ex_ObjGetLong(hObj, ERLVL_TCINFO);
 	EX_REPORTLIST_COLUMNINFO* ptc = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTCs + (nIndex - 1) * sizeof(EX_REPORTLIST_COLUMNINFO));
-	Ex_MemFree((LPVOID)ptc->wzText);
+	Ex_MemFree((LPVOID)ptc->pwzText);
 	__ptr_del(&pTCs, nCount, nIndex, sizeof(EX_REPORTLIST_COLUMNINFO));
 	Ex_ObjSetLong(hObj, ERLVL_TCINFO, (size_t)pTCs);
 	nCount = nCount - 1;
@@ -832,7 +832,7 @@ void _reportlistview_tc_clear(HEXOBJ hObj)
 	for (INT i = 0; i < nCount; i++)
 	{
 		ptc = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTCs + i * sizeof(EX_REPORTLIST_COLUMNINFO));
-		Ex_MemFree((LPVOID)ptc->wzText);
+		Ex_MemFree((LPVOID)ptc->pwzText);
 	}
 	Ex_MemFree(pTCs);
 	Ex_ObjSetLong(hObj, ERLVL_TCINFO, 0);
@@ -967,7 +967,7 @@ BOOL _reportlistview_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJ
 			lParam->nImageIndex = pTR->nImageIndex_;
 			lParam->dwStyle = pTR->dwStyle_;
 			lParam->lParam = pTR->lParam_;
-			lParam->wzText = ((reportlistview_td_s*)((size_t)pTR->pTDInfo_ + (nIndexTC - 1) * sizeof(reportlistview_td_s)))->wzText_;
+			lParam->pwzText = ((reportlistview_td_s*)((size_t)pTR->pTDInfo_ + (nIndexTC - 1) * sizeof(reportlistview_td_s)))->wzText_;
 		}
 		INT nError = 0;
 		obj_s* pObj = nullptr;
@@ -996,7 +996,7 @@ BOOL _reportlistview_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJ
 			pTR->dwStyle_ = lParam->dwStyle;
 			pTR->lParam_ = lParam->lParam;
 		}
-		_reportlistview_td_settext(hObj, nIndexTR, nIndexTC, lParam->wzText);
+		_reportlistview_td_settext(hObj, nIndexTR, nIndexTC, lParam->pwzText);
 		ret = TRUE;
 	}
 	return ret;

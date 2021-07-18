@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 5,0,21,708
- PRODUCTVERSION 5,0,21,708
+ FILEVERSION 5,0,21,716
+ PRODUCTVERSION 5,0,21,716
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "ExDirectUI"
             VALUE "FileDescription", "ExDirectUI Library 5"
-            VALUE "FileVersion", "5.0.21.708"
+            VALUE "FileVersion", "5.0.21.716"
             VALUE "InternalName", "libexdui.dll"
             VALUE "LegalCopyright", "Copyright (C) YHan"
             VALUE "OriginalFilename", "libexdui.dll"
             VALUE "ProductName", "ExDirectUI Library 5"
-            VALUE "ProductVersion", "5.0.21.708"
+            VALUE "ProductVersion", "5.0.21.716"
         END
     END
     BLOCK "VarFileInfo"

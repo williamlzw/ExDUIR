@@ -15,7 +15,7 @@ void _static_paint(HEXOBJ hObj, obj_s* pObj)
 		if (lpText != 0)
 		{
 			_canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), lpText, -1, ps.dwTextFormat, ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom,
-				pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
+				pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
 		}
 		Ex_ObjEndPaint(hObj, &ps);
 	}
@@ -194,7 +194,7 @@ void _syslink_paint(HEXOBJ hObj, obj_s* pObj)
 						crText = _obj_getcolor(pObj, COLOR_EX_TEXT_VISTED);
 					}
 				}
-				_canvas_drawtextex(hCanvas, hFont, crText, ((slb_s*)((size_t)lpBlocks + index))->szText_, -1, DT_LEFT | DT_TOP | DT_NOPREFIX | DT_SINGLELINE, ((slb_s*)((size_t)lpBlocks + index))->rc_left_, ((slb_s*)((size_t)lpBlocks + index))->rc_top_, ((slb_s*)((size_t)lpBlocks + index))->rc_right_, ((slb_s*)((size_t)lpBlocks + index))->rc_bottom_, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0, 0);
+				_canvas_drawtextex(hCanvas, hFont, crText, ((slb_s*)((size_t)lpBlocks + index))->szText_, -1, DT_LEFT | DT_TOP | DT_NOPREFIX | DT_SINGLELINE, ((slb_s*)((size_t)lpBlocks + index))->rc_left_, ((slb_s*)((size_t)lpBlocks + index))->rc_top_, ((slb_s*)((size_t)lpBlocks + index))->rc_right_, ((slb_s*)((size_t)lpBlocks + index))->rc_bottom_, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
 			}
 		}
 		Ex_ObjEndPaint(hObj, &ps);

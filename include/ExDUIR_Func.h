@@ -161,10 +161,9 @@ HEXCANVAS _canvas_createfromexdui(HEXDUI hExDui, INT width, INT height, INT dwFl
 * @param 2  uWidth                  [INT]
 * @param 3  uHeight                 [INT]
 * @param 4  dwFlags                 [DWORD]               常量CVF_
-* @param 5  nError                  [INT*]
 * @return [HEXCANVAS]成功返回画布句柄，失败返回0
 */
-HEXCANVAS _canvas_createfromobj(HEXOBJ hObj, INT uWidth, INT uHeight, INT dwFlags, INT* nError);
+HEXCANVAS _canvas_createfromobj(HEXOBJ hObj, INT uWidth, INT uHeight, INT dwFlags);
 
 /*
 * @fnType ExDirectUI
@@ -385,10 +384,9 @@ BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWST
 * @param 11 iGlowsize               [INT]
 * @param 12 crShadow                [EXARGB]
 * @param 13 lParam                  [LPARAM]
-* @param 14 prclayout               [INT]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam, LPVOID prclayout);
+BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam);
 
 /*
 * @fnType ExDirectUI
@@ -589,19 +587,19 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix);
 * @param 1  dwType                  [DWORD]               常量ET_
 * @param 2  pEasingContext          [LPVOID]
 * @param 3  dwMode                  [DWORD]               常量ES_的组合
-* @param 4  pContext                [size_t]			  描述表,可以是值或回调地址
+* @param 4  pContext                [LONG_PTR]			  描述表,可以是值或回调地址
 * @param 5  nTotalTime              [INT]                 ms
 * @param 6  nInterval               [INT]                 ms
 * @param 7  nState                  [DWORD]               常量EES_
 * @param 8  nStart                  [INT]
 * @param 9  nStop                   [INT]
-* @param 10 param1                  [size_t]
-* @param 11 param2                  [size_t]
-* @param 12 param3                  [size_t]
-* @param 13 param4                  [size_t]
+* @param 10 param1                  [LONG_PTR]
+* @param 11 param2                  [LONG_PTR]
+* @param 12 param3                  [LONG_PTR]
+* @param 13 param4                  [LONG_PTR]
 * @return [HEXEASING]返回缓动句柄
 */
-HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, size_t pContext, INT nTotalTime, INT nInterval, DWORD nState, INT nStart, INT nStop, size_t param1, size_t param2, size_t param3, size_t param4);
+HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG_PTR pContext, INT nTotalTime, INT nInterval, DWORD nState, INT nStart, INT nStop, LONG_PTR param1, LONG_PTR param2, LONG_PTR param3, LONG_PTR param4);
 
 /*
 * @fnType ExDirectUI
@@ -1653,7 +1651,7 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewlong);
 * @param 2  nCmdShow                [INT]                 相关常量:#SW_
 * @param 3  dwTimer                 [INT]                 动画时间间隔.(ms)
 * @param 4  dwFrames                [INT]                 动画总帧数.
-* @param 5  dwFlags                 [INT]               动画标记.
+* @param 5  dwFlags                 [INT]                 动画标记.
 * @return [BOOL]返回是否成功
 */
 BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, INT dwFlags);
@@ -1665,7 +1663,7 @@ BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, IN
 * @param 2  nCmdShow                [INT]                 相关常量:#SW_
 * @param 3  dwTimer                 [INT]                 动画时间间隔.(ms)
 * @param 4  dwFrames                [INT]                 动画总帧数.
-* @param 5  dwFlags                 [INT]               动画标记.#EXA_
+* @param 5  dwFlags                 [INT]                 动画标记.#EXA_
 * @param 6  uEasing                 [INT]                 缓动类型常量#ET_
 * @param 7  wParam                  [WPARAM]              参数1
 * @param 8  lParam                  [LPARAM]              参数2
@@ -1679,7 +1677,7 @@ BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, 
 * @param 1  hExDui                  [HEXDUI]              引擎句柄
 * @param 2  lpwzInfo                [LPCWSTR]             弹出文本内容
 * @param 3  lpwzInfoTitle           [LPCWSTR]             弹出标题文本
-* @param 4  dwInfoFlags             [INT]               相关常量 #NIIF_
+* @param 4  dwInfoFlags             [INT]                 相关常量 #NIIF_
 * @return [BOOL]返回是否成功
 */
 BOOL Ex_DUITrayIconPopup(HEXDUI hExDui, LPCWSTR lpwzInfo, LPCWSTR lpwzInfoTitle, INT dwInfoFlags);
@@ -1687,9 +1685,9 @@ BOOL Ex_DUITrayIconPopup(HEXDUI hExDui, LPCWSTR lpwzInfo, LPCWSTR lpwzInfoTitle,
 /*
 * @fnType ExDirectUI
 * @brief Ex_DUITrayIconSet 设置托盘图标
-* @param 1  hExdui                  [HEXDUI]                 引擎句柄
+* @param 1  hExdui                  [HEXDUI]                引擎句柄
 * @param 2  hIcon                   [HICON]                 图标句柄
-* @param 3  lpwzTips                [LPCWSTR]             提示文本指针
+* @param 3  lpwzTips                [LPCWSTR]               提示文本指针
 * @return [BOOL]返回是否成功
 */
 BOOL Ex_DUITrayIconSet(HEXDUI hExDui, HICON hIcon, LPCWSTR lpwzTips);

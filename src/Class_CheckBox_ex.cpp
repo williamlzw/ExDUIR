@@ -68,9 +68,9 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* checkboxprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjSetProp(hObj, ECBP_CRNORMAL, checkboxprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, ECBP_CRHOVER, checkboxprops->COLOR_EX_BACKGROUND_HOVER);
-		Ex_ObjSetProp(hObj, ECBP_CRCHECKED, checkboxprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
+		Ex_ObjSetProp(hObj, ECBP_CRNORMAL, checkboxprops->crBkgNormal);
+		Ex_ObjSetProp(hObj, ECBP_CRHOVER, checkboxprops->crBkgHover);
+		Ex_ObjSetProp(hObj, ECBP_CRCHECKED, checkboxprops->crBkgDownOrChecked);
 	}
 	return Ex_ObjCallProc(m_pfnCheckBoxProc, hWnd, hObj, uMsg, wParam, lParam);
 }

@@ -22,14 +22,14 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 	else if (uMsg == WM_EX_PROPS)
 	{
 		EX_OBJ_PROPS* Switchprops = (EX_OBJ_PROPS*)lParam;
-		Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, Switchprops->COLOR_EX_BACKGROUND_NORMAL);
-		Ex_ObjSetProp(hObj, ESP_CRBKGHOVER, Switchprops->COLOR_EX_BACKGROUND_HOVER);
-		Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, Switchprops->COLOR_EX_BACKGROUND_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, ESP_CRBORDERNORMAL, Switchprops->COLOR_EX_BORDER_NORMAL);
-		Ex_ObjSetProp(hObj, ESP_CRBORDERHOVER, Switchprops->COLOR_EX_BORDER_HOVER);
-		Ex_ObjSetProp(hObj, ESP_CRBORDERDOWNORCHECKED, Switchprops->COLOR_EX_BORDER_DOWNORCHECKED);
-		Ex_ObjSetProp(hObj, ESP_RADIUS, Switchprops->Radius);
-		Ex_ObjSetProp(hObj, ESP_STROKEWIDTH, Switchprops->StrokeWidth);
+		Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, Switchprops->crBkgNormal);
+		Ex_ObjSetProp(hObj, ESP_CRBKGHOVER, Switchprops->crBkgHover);
+		Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, Switchprops->crBkgDownOrChecked);
+		Ex_ObjSetProp(hObj, ESP_CRBORDERNORMAL, Switchprops->crBorderNormal);
+		Ex_ObjSetProp(hObj, ESP_CRBORDERHOVER, Switchprops->crBorderHover);
+		Ex_ObjSetProp(hObj, ESP_CRBORDERDOWNORCHECKED, Switchprops->crBorderDownOrChecked);
+		Ex_ObjSetProp(hObj, ESP_RADIUS, Switchprops->radius);
+		Ex_ObjSetProp(hObj, ESP_STROKEWIDTH, Switchprops->strokeWidth);
 
 	}
 	else if (uMsg == WM_PAINT)

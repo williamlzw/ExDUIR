@@ -5,7 +5,7 @@
 #define ECBEP_CRBKGDOWNORCHECKED	1
 // 扩展选择框_边框颜色_正常
 #define ECBEP_CRBORDERNORMAL	2
-// 扩展选择框_边框颜色_热点
+// 扩展选择框_边框颜色_悬浮
 #define ECBEP_CRBORDERHOVER	3
 // 扩展选择框_边框颜色_按下或选中
 #define ECBEP_CRBORDERDOWNORCHECKED	4

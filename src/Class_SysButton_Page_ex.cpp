@@ -94,7 +94,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 			if (((pObj->pWnd_->dwStyle_ & EWS_TITLE) == EWS_TITLE))
 			{
 				_canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1,
-					DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_WORD_ELLIPSIS, left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_, 0, 0, 0);
+					DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_WORD_ELLIPSIS, left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_, 0, 0);
 			}
 		}
 		Ex_ObjEndPaint(hObj, &ps);

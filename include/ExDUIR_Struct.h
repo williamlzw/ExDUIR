@@ -249,7 +249,7 @@
 #define STATE_HALFSELECT 0x20
 // 状态_只读
 #define STATE_READONLY 0x40
-// 状态_热点
+// 状态_悬浮
 #define STATE_HOVER	0x80
 // 状态_默认
 #define STATE_DEFAULT 0x100
@@ -273,7 +273,7 @@
 #define STATE_ALLOWFOCUS 0x100000
 // 状态_允许选择
 #define STATE_ALLOWSELECT 0x200000
-// 状态_超链接_热点
+// 状态_超链接_悬浮
 #define STATE_HYPERLINK_HOVER 0x400000
 // 状态_超链接_已访问
 #define STATE_HYPERLINK_VISITED	0x800000
@@ -488,7 +488,7 @@
 #pragma region listview notify constant
 // 事件_列表_现行选中项被改变
 #define LVN_ITEMCHANGED	-101
-// 事件_列表_热点跟踪
+// 事件_列表_悬浮跟踪
 #define LVN_HOTTRACK	-121
 #pragma endregion listview notify constant
 
@@ -526,7 +526,7 @@
 #define COLOR_EX_BORDER	1
 // 颜色索引_文本颜色_正常
 #define COLOR_EX_TEXT_NORMAL	2
-// 颜色索引_文本颜色_热点
+// 颜色索引_文本颜色_悬浮
 #define COLOR_EX_TEXT_HOVER	3
 // 颜色索引_文本颜色_按下
 #define COLOR_EX_TEXT_DOWN	4
@@ -536,7 +536,7 @@
 #define COLOR_EX_TEXT_CHECKED	6
 // 颜色索引_文本颜色_选择
 #define COLOR_EX_TEXT_SELECT	7
-// 颜色索引_文本颜色_热点
+// 颜色索引_文本颜色_悬浮
 #define COLOR_EX_TEXT_HOT	8
 // 颜色索引_文本颜色_已访问
 #define COLOR_EX_TEXT_VISTED	9
@@ -1353,7 +1353,7 @@
 #define ExRGB2ARGB(rgb,a)   ((EXARGB)(BYTE(ExGetR(rgb))<<16 | BYTE(ExGetG(rgb))<<8 | BYTE(ExGetB(rgb)) | (a<<24)))
 
 
-typedef UINT8	CHANNEL;		//通道
+typedef UINT8	CHANNEL;		// 通道
 typedef COLORREF EXARGB;		// 颜色
 typedef INT EXATOM;				// 原子号
 typedef INT EXHANDLE;			// 句柄
@@ -1404,7 +1404,7 @@ static void output(T...args) {
 	OutputDebugStringW(str.c_str());
 }
 
-// WM_NOTIFY通知信息
+// 接收WM_NOTIFY通知信息结构
 struct EX_NMHDR
 {
 	HEXOBJ	hObjFrom;			// 	组件句柄
@@ -1424,20 +1424,20 @@ struct RECTF
 
 // 自定义绘制信息结构
 struct EX_CUSTOMDRAW {
-	HEXCANVAS	hCanvas;
-	HEXTHEME	hTheme;
-	DWORD		dwState;
-	DWORD		dwStyle;
-	RECT		rcPaint;
+	HEXCANVAS	hCanvas;		// 	画布句柄
+	HEXTHEME	hTheme;			// 	主题句柄
+	DWORD		dwState;		// 	状态
+	DWORD		dwStyle;		// 	风格
+	RECT		rcPaint;		// 	绘制矩形
 	INT			iItem;
-	size_t			iItemParam;
+	LONG_PTR	iItemParam;
 };
 
 // 绘制信息结构
 struct EX_PAINTSTRUCT
 {
-	HEXCANVAS	hCanvas;		// 	画布
-	HEXTHEME	hTheme;			// 	主题
+	HEXCANVAS	hCanvas;		// 	画布句柄
+	HEXTHEME	hTheme;			// 	主题句柄
 	INT		    dwStyle;		// 	风格
 	INT		    dwStyleEx;		// 	扩展风格
 	INT		    dwTextFormat;	// 	文本格式
@@ -1452,12 +1452,12 @@ struct EX_PAINTSTRUCT
 
 // 图像像素数据结构
 struct EX_BITMAPDATA {
-	UINT		Width;
-	UINT		Height;
-	INT			Stride;
-	INT			PixelFormat;
-	EXARGB* Scan0;
-	LPVOID		Reserved;
+	UINT		width;
+	UINT		height;
+	INT			stride;
+	INT			pixelFormat;
+	EXARGB*     scan0;
+	LPVOID		reserved;
 };
 
 // 缓动信息结构
@@ -1469,16 +1469,16 @@ struct EX_EASINGINFO
 	DOUBLE		nCurrent;			//  当前值
 	LPVOID		pEasingContext;		//  缓动参数
 	UINT		nTimesSurplus;		//  剩余数
-	SIZE_T		p1;					//  参数1
-	SIZE_T		p2;					//  参数2
-	SIZE_T		p3;					//  参数3
-	SIZE_T		p4;					//  参数4
+	LONG_PTR	param1;				//  参数1
+	LONG_PTR	param2;				//  参数2
+	LONG_PTR	param3;				//  参数3
+	LONG_PTR	param4;				//  参数4
 };
 #pragma pack()
 
 // 报表列信息结构
 struct EX_REPORTLIST_COLUMNINFO {
-	LPCWSTR		wzText;				//表头标题
+	LPCWSTR		pwzText;			//表头标题
 	UINT		nWidth;				//列宽度
 	DWORD		dwStyle;			//表头风格 ERLV_CS_
 	DWORD		dwTextFormat;		//列文本格式
@@ -1490,19 +1490,19 @@ struct EX_REPORTLIST_COLUMNINFO {
 struct EX_REPORTLIST_ITEMINFO {
 	UINT		iRow;				//所在行[IN / OUT]
 	UINT		iCol;				//所在列[IN / OUT]
-	DWORD		dwStyle;			//表行风格(同行共用)
-	LPCWSTR		wzText;				//表项文本
-	DWORD	    nImageIndex;		//表项图片组索引(同行共用)
-	LPARAM		lParam;				//表项参数(同行共用)
-	DWORD		dwState;			//表项状态(同行共用)
+	DWORD		dwStyle;			//项目行风格(同行共用)
+	LPCWSTR		pwzText;			//项目文本
+	DWORD	    nImageIndex;		//项目图片组索引(同行共用)
+	LPARAM		lParam;				//项目参数(同行共用)
+	DWORD		dwState;			//项目状态(同行共用)
 };
 
 
 // 报表行信息结构
 struct EX_REPORTLIST_ROWINFO {
 	UINT		nInsertIndex = 0;	//插入位置,0为最后 
-	DWORD		dwStyle;			//表行风格 ERLV_RS_ 
-	LPARAM		lParam;				//参数
+	DWORD		dwStyle;			//项目行风格 ERLV_RS_ 
+	LPARAM		lParam;				//项目附加参数
 	DWORD	    nImageIndex;		//图片组索引 
 };
 
@@ -1515,32 +1515,44 @@ struct EX_REPORTLIST_SORTINFO {
 	LPARAM						lParam;				//排序附加参数
 };
 
-// 树形框节点信息结构
+// 树形框节点信息结构,不能改变成员顺序
 struct EX_TREEVIEW_NODEITEM {
 	INT						nID;					//项目ID
-	LPCWSTR					lpTitle;				//项目标题
+	LPCWSTR					pwzText;				//项目标题
 	LPARAM					lParam;					//项目附加参数
-	DWORD						nImageIndex;			//收缩图片索引
-	DWORD						nImageIndexExpand;		//扩展图片索引
+	DWORD					nImageIndex;			//收缩图片索引
+	DWORD					nImageIndexExpand;		//扩展图片索引
 	BOOL					fExpand;				//是否展开
 	DWORD					dwStyle;				//风格
 	INT						nDepth;					//层次
-	EX_TREEVIEW_NODEITEM* pParent;				//父节点
-	EX_TREEVIEW_NODEITEM* pPrev;					//上一个节点
-	EX_TREEVIEW_NODEITEM* pNext;					//下一个节点
-	EX_TREEVIEW_NODEITEM* pChildFirst;			//第一个子节点
+	EX_TREEVIEW_NODEITEM*   pParent;				//父节点
+	EX_TREEVIEW_NODEITEM*   pPrev;					//上一个节点
+	EX_TREEVIEW_NODEITEM*   pNext;					//下一个节点
+	EX_TREEVIEW_NODEITEM*   pChildFirst;			//第一个子节点
 	INT						nCountChild;			//子节点数量
+};
+
+// 树形框表项信息结构,不能改变成员顺序
+struct EX_TREEVIEW_ITEMINFO
+{
+	INT		nID;				//项目ID
+	LPCWSTR pwzText;			//项目标题
+	LPARAM	lParam;				//项目附加参数
+	DWORD	nImageIndex;		//收缩图片索引
+	DWORD	nImageIndexExpand;	//扩展图片索引
+	BOOL	fExpand;			//是否展开
+	DWORD	dwStyle;			//风格
 };
 
 // 树形框插入项目信息结构
 struct EX_TREEVIEW_INSERTINFO {
-	EX_TREEVIEW_NODEITEM* itemParent;					// 父项句柄（0为根项）
-	EX_TREEVIEW_NODEITEM* itemInsertAfter;			// 插入在此项之后（必须是同层）
-	INT						nID;						// ID
-	LPCWSTR					tzText;						// 表项文本ansi / unicode
-	LPARAM					lParam;						// 参数
-	INT						nImageIndex;				// 收缩时图片索引
-	INT						nImageIndexExpand;			// 展开时图片索引
+	EX_TREEVIEW_NODEITEM*   itemParent;					// 父项句柄（0为根项）
+	EX_TREEVIEW_NODEITEM*   itemInsertAfter;			// 插入在此项之后（必须是同层）
+	INT						nID;						// 项目ID
+	LPCWSTR					pwzText;					// 项目标题
+	LPARAM					lParam;						// 项目附加参数
+	INT						nImageIndex;				// 收缩图片索引
+	INT						nImageIndexExpand;			// 展开图片索引
 	BOOL					fExpand;					// 是否展开
 	DWORD					dwStyle;					// 风格
 	BOOL					fUpdateLater;				// 是否暂不更新(统一用TVM_UPDATE更新)
@@ -1573,53 +1585,43 @@ struct EX_CLASSINFO
 	EXATOM	atomName;		//类名
 };
 
-// 树形框表项信息结构
-struct EX_TREEVIEW_ITEMINFO
-{
-	INT		nID;				//表项id
-	LPCWSTR tzText;				//表项文本
-	LPARAM	lParam;				//表项附加参数
-	DWORD	nImageIndex;		//收缩时图片索引
-	DWORD	nImageIndexExpand;	//展开时图片索引
-	BOOL	fExpand;			//是否展开
-	DWORD	dwStyle;			//风格
-};
+
 
 // 扩展控件属性信息结构
 struct EX_OBJ_PROPS
 {
-	EXARGB COLOR_EX_BACKGROUND_NORMAL;			//背景颜色.正常
-	EXARGB COLOR_EX_BACKGROUND_HOVER;			//背景颜色.热点
-	EXARGB COLOR_EX_BACKGROUND_DOWNORCHECKED;	//背景颜色.按下或者选中
-	EXARGB COLOR_EX_BKG_CRBegin;				//渐变背景.起点颜色ARGB
-	EXARGB COLOR_EX_BKG_CREnd;					//渐变背景.终点颜色ARGB
-	EXARGB COLOR_EX_BORDER_NORMAL;				//边框颜色.正常
-	EXARGB COLOR_EX_BORDER_HOVER;				//边框颜色.热点
-	EXARGB COLOR_EX_BORDER_DOWNORCHECKED;		//边框颜色.按下或者选中
-	EXARGB COLOR_EX_BRD_CRBegin;				//渐变边框.起点颜色ARGB
-	EXARGB COLOR_EX_BRD_CREnd;					//渐变边框.终点颜色ARGB
-	EXARGB COLOR_EX_ICON_NORMAL;				//图标颜色.正常
-	EXARGB COLOR_EX_ICON_HOVER;					//图标颜色.热点
-	EXARGB COLOR_EX_ICON_DOWNORFOCUS;			//图标颜色.按下或者焦点
-	INT Radius;									//圆角度
-	INT StrokeWidth;							//线宽
-	INT nIconPosition;							//图标位置 [忽略/0：左; 1：右; 2:上]
+	EXARGB crBkgNormal;				//背景颜色.正常
+	EXARGB crBkgHover;				//背景颜色.悬浮
+	EXARGB crBkgDownOrChecked;		//背景颜色.按下或者选中
+	EXARGB crBkgBegin;				//渐变背景.起点颜色ARGB
+	EXARGB crBkgEnd;				//渐变背景.终点颜色ARGB
+	EXARGB crBorderNormal;			//边框颜色.正常
+	EXARGB crBorderHover;			//边框颜色.悬浮
+	EXARGB crBorderDownOrChecked;	//边框颜色.按下或者选中
+	EXARGB crBorderBegin;			//渐变边框.起点颜色ARGB
+	EXARGB crBorderEnd;				//渐变边框.终点颜色ARGB
+	EXARGB crIconNormal;			//图标颜色.正常
+	EXARGB crIconHover;				//图标颜色.悬浮
+	EXARGB crIconDownOrFocus;		//图标颜色.按下或者焦点
+	INT radius;						//圆角度
+	INT strokeWidth;				//线宽
+	INT nIconPosition;				//图标位置 [忽略/0：左; 1：右; 2:上]
 };
 
 // 图标列表框插入信息结构
 struct EX_ICONLISTVIEW_ITEMINFO
 {
-	DWORD		nIndex;		//插入位置
+	DWORD		nIndex;			//插入位置
 	DWORD		nImageIndex;	//图片索引
-	LPCWSTR		pwzText;	//文本
+	LPCWSTR		pwzText;		//文本
 };
 
 // 图像属性信息
 struct EX_IMAGEINFO
 {
-	HEXIMAGE IMG_NORMAL;		//图像.正常
-	HEXIMAGE IMG_HOVER;			//图像.热点
-	HEXIMAGE IMG_DOWNORCHECKED;	//图像.按下或者选中
+	HEXIMAGE imgNormal;			//图像.正常
+	HEXIMAGE imgHover;			//图像.悬浮
+	HEXIMAGE imgDownOrChecked;	//图像.按下或者选中
 };
 
 // 拖曳信息结构
@@ -1642,7 +1644,7 @@ struct EX_CHARRANGE
 struct EX_TEXTRANGE
 {
 	EX_CHARRANGE chrg;
-	LPCWSTR	lpstrText;
+	LPCWSTR	pwzText;
 };
 
 // 富文本框EN_SELCHANGE消息lParam参数结构
@@ -1669,5 +1671,5 @@ struct EX_ENLINK
 struct EX_SETTEXTEX
 {
 	DWORD flags;
-	UINT  codepage;
+	UINT  codePage;
 };
