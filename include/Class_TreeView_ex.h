@@ -17,6 +17,8 @@
 #define ETVL_ITEMHEIGHT	6
 // 树形列表属性_左边
 #define ETVL_LEFT	7
+// 树形列表属性_是否点击收缩
+#define ETVL_EXPAND 8
 
 void _treeview_register();
 EX_TREEVIEW_NODEITEM* _treeview_getlastitem(EX_TREEVIEW_NODEITEM* item);

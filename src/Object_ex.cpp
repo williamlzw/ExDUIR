@@ -2676,8 +2676,8 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS)
 					pObj->c_bottom_,
 					pObj->radius_topleft_,
 					pObj->radius_topright_,
-					pObj->radius_bottomright_,
-					pObj->radius_bottomleft_
+					pObj->radius_bottomleft_,
+					pObj->radius_bottomright_
 				);
 				_path_endfigure(hPath, TRUE);
 				_path_close(hPath);

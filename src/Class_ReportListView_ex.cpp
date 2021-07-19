@@ -16,9 +16,13 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	}
 	else if (uMsg == WM_NCCALCSIZE)
 	{
-		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ERLS_NOHEAD) == 0)
+		if (!(Ex_ObjGetLong(hObj, EOL_STYLE) & ERLS_NOHEAD))
 		{
-			((NCCALCSIZE_PARAMS*)lParam)->rgrc[2].top = ((NCCALCSIZE_PARAMS*)lParam)->rgrc[2].top + Ex_ObjGetLong(hObj, ERLVL_HEADHEIGHT);//rcClient.Top
+			obj_s* pObj = nullptr;
+			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+				pObj->c_top_ = Ex_Scale(Ex_ObjGetLong(hObj, ERLVL_HEADHEIGHT));
+				return 1;
+			}
 		}
 	}
 	else if (uMsg == WM_NOTIFY)
@@ -537,9 +541,15 @@ void _reportlistview_head_paint(HEXOBJ hObj)
 							_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_BORDER));
 						}
 						_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObjList), Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_NORMAL), ptr->pwzText, -1, DT_SINGLELINE | ptr->dwTextFormat, nOffsetX + 3, 0, nOffsetX + nColWidth - 3, ps.uHeight);
-						_canvas_drawline(ps.hCanvas, hBrush, nOffsetX + nColWidth, 0, nOffsetX + nColWidth, ps.uHeight, 1.5, D2D1_DASH_STYLE_SOLID);
+						_canvas_drawline(ps.hCanvas, hBrush, nOffsetX + nColWidth + 1, 0, nOffsetX + nColWidth + 1, ps.uHeight, 1.5, D2D1_DASH_STYLE_SOLID);
 					}
 					nOffsetX = nOffsetX + nColWidth;
+				}
+				RECT rc;
+				Ex_ObjGetClientRect(hObjList, &rc);
+				if ((Ex_ObjGetLong(hObjList, EOL_STYLE) & EOS_BORDER) == EOS_BORDER) {
+					// uHeight +1 是为了不显示下边线，不然，表头下边线和报表上边线都出现，会出现两条边线的情况
+					_canvas_drawrect(ps.hCanvas, hBrush, 0, 0, Ex_Scale(rc.right), ps.uHeight + 1, 1, 0);
 				}
 				_brush_destroy(hBrush);
 			}
@@ -732,7 +742,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
 				rcTD.left = rcTD.right;
 				pTC = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTC + sizeof(EX_REPORTLIST_COLUMNINFO));
 			}
-			if ((pDrawInfo->dwStyle & ERLS_DRAWHORIZONTALLINE) != 0)
+			if ((pDrawInfo->dwStyle & ERLS_DRAWHORIZONTALLINE) == ERLS_DRAWHORIZONTALLINE)
 			{
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BORDER));
 				_canvas_drawline(pDrawInfo->hCanvas, hBrush, pDrawInfo->rcPaint.left, pDrawInfo->rcPaint.bottom, pDrawInfo->rcPaint.right, pDrawInfo->rcPaint.bottom, 1.5, D2D1_DASH_STYLE_SOLID);
@@ -757,7 +767,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
 				if (crText == 0) crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
 				_canvas_drawtext(cd->hCanvas, Ex_ObjGetFont(hObj), crText, wzText, -1, pTC->dwTextFormat, rcTD->left + 1, rcTD->top, rcTD->right - 3, rcTD->bottom);
 			}
-			if ((cd->dwStyle & ERLS_DRAWVERTICALLINE) != 0)
+			if ((cd->dwStyle & ERLS_DRAWVERTICALLINE) == ERLS_DRAWVERTICALLINE)
 			{
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BORDER));
 				_canvas_drawline(cd->hCanvas, hBrush, rcTD->right, rcTD->top, rcTD->right, rcTD->bottom, 1.5, D2D1_DASH_STYLE_SOLID);

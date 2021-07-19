@@ -678,7 +678,23 @@ LRESULT CALLBACK _scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		}
 		else if (uMsg == WM_MOUSEMOVE)
 		{
-			_scrollbar_mousemove(hWnd, hObj, pObj, wParam, LOWORD(lParam), HIWORD(lParam));
+			INT x = LOWORD(lParam);
+			INT y = HIWORD(lParam);
+			si_s* psi = (si_s*)_obj_pOwner(pObj);
+			if (((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL))
+			{
+				if (y >= psi->nMin_ && y <= psi->nMax_ + psi->rcRegion_bottom_ - psi->rcRegion_top_)
+				{
+					_scrollbar_mousemove(hWnd, hObj, pObj, wParam, x, y);
+				}
+			}
+			else if (((pObj->dwStyle_ & ESS_HORIZONTALSCROLL) == ESS_HORIZONTALSCROLL))
+			{
+				if (x >= psi->nMin_ && x <= psi->nMax_ + psi->rcRegion_right_ - psi->rcRegion_left_)
+				{
+					_scrollbar_mousemove(hWnd, hObj, pObj, wParam, x, y);
+				}
+			}
 		}
 		else if (uMsg == WM_SIZE)
 		{

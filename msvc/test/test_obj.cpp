@@ -141,10 +141,11 @@ void test_label(HWND hWnd)
 	HWND hWnd_label = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试标签", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_label = Ex_DUIBindWindowEx(hWnd_label, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_label, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj_label = Ex_ObjCreateEx(-1, L"static", NULL, -1, 10, 30, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
+	HEXOBJ hObj_label = Ex_ObjCreateEx(-1, L"static", NULL, EOS_BORDER | EOS_VISIBLE, 10, 30, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/Loading.png", &imgdata);
 	Ex_ObjSetBackgroundImage(hObj_label, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
+	Ex_ObjSetRadius(hObj_label, 10, 10, 15, 10, TRUE);
 	EX_BACKGROUNDIMAGEINFO bkg{ 0 };
 	Ex_ObjGetBackgroundImage(hObj_label, &bkg);
 	output(L"背景信息:", bkg.x, bkg.y, bkg.dwAlpha, bkg.dwRepeat, bkg.hImage, bkg.curFrame, bkg.maxFrame);
@@ -1410,9 +1411,9 @@ void test_reportlistview(HWND hWnd)
 	HWND hWnd_reportlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_reportlistview = Ex_DUIBindWindowEx(hWnd_reportlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, OnReportListViewWndMsgProc);
 	Ex_DUISetLong(hExDui_reportlistview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", -1, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
+	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", EOS_BORDER | EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL , 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
-	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGB2ARGB(12632256, 100), FALSE);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGBA(120,120,120, 255), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOT, ExRGB2ARGB(16777215, 250), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(12632256, 50), FALSE);
 
@@ -1454,7 +1455,7 @@ void test_reportlistview(HWND hWnd)
 	EX_REPORTLIST_ROWINFO row = { 0 };
 	EX_REPORTLIST_ITEMINFO item = { 0 };
 
-	for (INT i = 1; i <= 100; i++)
+	for (INT i = 1; i <= 15; i++)
 	{
 		//先插入表项
 		row.lParam = i + 1;
@@ -1553,7 +1554,7 @@ void test_treelistview(HWND hWnd)
 	HEXDUI hExDui_treelistview = Ex_DUIBindWindowEx(hWnd_treelistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_treelistview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
-	HEXOBJ hObj_treeview = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"treeview", L"fasdf", -1, 50, 50, 250, 250, hExDui_treelistview, 0, DT_VCENTER, 0, 0, NULL);
+	HEXOBJ hObj_treeview = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"treeview", L"fasdf", EOS_BORDER | EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL, 50, 50, 250, 250, hExDui_treelistview, 0, DT_VCENTER, 0, 0, NULL);
 	EX_TREEVIEW_INSERTINFO ti = { 0 };
 
 	Ex_ObjSetColor(hObj_treeview, COLOR_EX_BACKGROUND, ExARGB(255, 255, 255, 125), FALSE);

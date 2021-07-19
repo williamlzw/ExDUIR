@@ -333,6 +333,13 @@ size_t _listview_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, L
 	{
 		Ex_MemFree(pOld);
 	}
+	//取 提交的项目索引和当前项目索引
+	int index = HIWORD(lParam);
+	int index_select = pOwner->index_select_;
+	if (nCount < 1) {
+		index = 0;
+		index_select = 0;
+	}
 	pOld = Ex_MemAlloc(nCount * 4);
 	pOwner->lpItems_ = pOld;
 	pOwner->count_items_ = nCount;
@@ -347,7 +354,7 @@ size_t _listview_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, L
 	INT nPage = 0;
 	INT nView = 0;
 	INT nLine = 0;
-	if ((lParam & 2) != 0)//LVSICF_NOSCROLL
+	if ((LOWORD(lParam) & 2) != 0)//LVSICF_NOSCROLL
 	{
 		HEXOBJ hSB = 0;
 		_listview_getscrollbarvalue(pObj, pOwner, TRUE, &hSB, &nPosX, &nLine, &nPage, &nView);
@@ -366,6 +373,12 @@ size_t _listview_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, L
 	_listview_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
 	INT nError = 0;
 	_obj_invalidaterect(pObj, 0, &nError);
+	//判断是否需要选中项目
+	if (nCount > 0 && index > 0) {
+		if (index >= nCount) {
+			_listview_reselect(hWnd, hObj, pObj, pOwner, index, TRUE);
+		}
+	}
 	return 0;
 }
 
