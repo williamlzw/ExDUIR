@@ -858,5 +858,5 @@ void _treeview_register()
 	INT nError = 0;
 	Ex_ObjGetClassInfoEx((LPCWSTR)ATOM_LISTVIEW, &class_list);
 	_tv_lpfn = class_list.pfnClsProc;
-	_obj_register(ATOM_TREEVIEW, ETS_SHOWADDANDSUB | ETS_SHOWCABLE | EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL, class_list.dwStyleEx, class_list.dwTextFormat, 8 * sizeof(size_t), NULL, _treeview_proc, class_list.dwFlags, &nError);
+	_obj_register(ATOM_TREEVIEW, ETS_SHOWADDANDSUB | ETS_SHOWCABLE | EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL, class_list.dwStyleEx, class_list.dwTextFormat, 9 * sizeof(size_t), NULL, _treeview_proc, class_list.dwFlags, &nError);
 }
