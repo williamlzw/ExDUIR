@@ -260,21 +260,24 @@ void _easing_calc_Linear(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurre
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	*nCurrent = (DOUBLE)(nStop - nStart) *  + nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
+	*nCurrent = _ed1 * nProgress + nStart;
 }
 
 void _easing_calc_InQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param)
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	*nCurrent = (DOUBLE)(nStop - nStart) * nProgress * nProgress + nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
+	*nCurrent = _ed1 * nProgress * nProgress + nStart;
 }
 
 void _easing_calc_OutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param)
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	*nCurrent = -(DOUBLE)(nStop - nStart) * nProgress * (nProgress - 2) + nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
+	*nCurrent = -_ed1 * nProgress * (nProgress - 2) + nStart;
 }
 
 void _easing_calc_InOutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param)
@@ -295,7 +298,8 @@ void _easing_calc_InCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurr
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	*nCurrent = (DOUBLE)(nStop - nStart)* nProgress * nProgress * nProgress+ nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
+	*nCurrent = _ed1 * nProgress * nProgress * nProgress+ nStart;
 }
 
 void _easing_calc_OutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param)
@@ -311,7 +315,7 @@ void _easing_calc_InOutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nC
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
 	DOUBLE _st = nProgress *2;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	if (_st < 1)
 	{
 		*nCurrent = (DOUBLE)(_ed1 / 2 * _st * _st * _st) + nStart;
@@ -325,7 +329,8 @@ void _easing_calc_InQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurr
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	*nCurrent = (DOUBLE)(nStop - nStart) * nProgress* nProgress* nProgress* nProgress + nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
+	*nCurrent = _ed1 * nProgress* nProgress* nProgress* nProgress + nStart;
 }
 
 void _easing_calc_OutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param)
@@ -341,7 +346,7 @@ void _easing_calc_InOutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nC
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
 	DOUBLE _st = nProgress * 2;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	if (_st < 1)
 	{
 		*nCurrent = (DOUBLE)(_ed1 / 2 * _st * _st * _st * _st) + nStart;
@@ -355,7 +360,8 @@ void _easing_calc_InQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurr
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	*nCurrent = (DOUBLE)(nStop - nStart) * nProgress * nProgress * nProgress * nProgress * nProgress + nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
+	*nCurrent = _ed1 * nProgress * nProgress * nProgress * nProgress * nProgress + nStart;
 }
 
 void _easing_calc_OutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, LPVOID param)
@@ -363,7 +369,7 @@ void _easing_calc_OutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCur
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
 	DOUBLE _st = nProgress - 1;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	*nCurrent = _ed1 *(_st * _st * _st * _st * _st + 1) + nStart;
 }
 
@@ -372,7 +378,7 @@ void _easing_calc_InOutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nC
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
 	DOUBLE _st = nProgress *2;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	if (_st < 1)
 	{
 		*nCurrent = (DOUBLE)(_ed1 / 2 * _st * _st * _st * _st * _st) + nStart;
@@ -386,7 +392,7 @@ void _easing_calc_InSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurre
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	*nCurrent = -(DOUBLE)(_ed1* cos(nProgress / 1 * 3.1415926/ 2)) + _ed1 + nStart;
 }
 
@@ -394,7 +400,7 @@ void _easing_calc_OutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurr
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	*nCurrent = -(DOUBLE)(_ed1 * sin(nProgress / 1 * 3.1415926 / 2))  + nStart;
 }
 
@@ -402,7 +408,7 @@ void _easing_calc_InOutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCu
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	DOUBLE _ed1 = nStop - nStart;
+	INT _ed1 = nStop - nStart;
 	*nCurrent = -(DOUBLE)(_ed1 /2 *(cos(3.1415926 * nProgress / 1) - 1)) + nStart;
 }
 
@@ -410,7 +416,7 @@ void _easing_calc_InExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurre
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	*nCurrent = _ed1 * pow(2, 10 *(nProgress / 1 - 1)) + nStart;
 }
 
@@ -418,7 +424,7 @@ void _easing_calc_OutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurr
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	*nCurrent = _ed1 *(- pow(2, -10 * nProgress / 1) + 1) + nStart;
 }
 
@@ -427,7 +433,7 @@ void _easing_calc_InOutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCu
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
 	DOUBLE _st = nProgress * 2;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	if (_st < 1)
 	{
 		*nCurrent = (DOUBLE)(_ed1 / 2 * pow(2, 10 *(_st - 1)) )+ nStart;
@@ -441,7 +447,7 @@ void _easing_calc_InCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurre
 {
 	if (nProgress < 0) nProgress = 0;
 	if (nProgress > 1) nProgress = 1;
-	DOUBLE _ed1 = nStop - nStart;
+	DOUBLE _ed1 = (DOUBLE)(nStop - nStart);
 	*nCurrent = -_ed1 *(sqrt(1 - nProgress * nProgress) - 1) + nStart;
 }
 
@@ -750,7 +756,7 @@ HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG
 		((EX_EASING*)pEasing)->pContext = pContext;
 		LPVOID lpProc = nullptr;
 		std::vector<LPVOID> lpCalcProcs = { &_easing_calc_Linear, &_easing_calc_Clerp, &_easing_calc_Spring, &_easing_calc_Punch, &_easing_calc_InQuad, &_easing_calc_OutQuad, &_easing_calc_InOutQuad, &_easing_calc_InCubic, &_easing_calc_OutCubic, &_easing_calc_InOutCubic, &_easing_calc_InQuart, &_easing_calc_OutQuart, &_easing_calc_InOutQuart, &_easing_calc_InQuint, &_easing_calc_OutQuint, &_easing_calc_InOutQuint, &_easing_calc_InSine, &_easing_calc_OutSine, &_easing_calc_InOutSine, &_easing_calc_InExpo, &_easing_calc_OutExpo, &_easing_calc_InOutExpo, &_easing_calc_InCirc, &_easing_calc_OutCirc, &_easing_calc_InOutCirc, &_easing_calc_InBounce, &_easing_calc_OutBounce, &_easing_calc_InOutBounce, &_easing_calc_InBack, &_easing_calc_OutBack, &_easing_calc_InOutBack, &_easing_calc_InElastic, &_easing_calc_OutElastic, &_easing_calc_InOutElastic };
-		if (dwType >= 0 && dwType < lpCalcProcs.size())
+		if (dwType >= 1 && dwType <= lpCalcProcs.size())
 		{
 			lpProc = lpCalcProcs[dwType-1];
 		}

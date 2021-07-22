@@ -3,7 +3,7 @@
 #include "ExDUIR_Func.h"
 
 typedef size_t(*EasingPROC)(DOUBLE, INT, INT, LPVOID, LPVOID);
-typedef size_t(*EasingPROC2)(LPVOID, DOUBLE, DOUBLE,LPVOID, INT, size_t, size_t, size_t, size_t);
+typedef size_t(*EasingPROC2)(LPVOID, DOUBLE, DOUBLE,LPVOID, INT, LONG_PTR, LONG_PTR, LONG_PTR, LONG_PTR);
 
 struct EX_EASING
 {
