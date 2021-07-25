@@ -35,9 +35,8 @@ struct easinghead_s
 };
 
 void _easing_curve_free(LPVOID pCurveInfo);
-
 void _easing_progress(HEXEASING pEasing);
-INT _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE* nCurrent);
+INT CALLBACK _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE* nCurrent);
 void _easing_calc_line(DOUBLE nProgress, DOUBLE* nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param);
 void _easing_calc_curve(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE* nCurrent, size_t param);
 void _easing_calc_bezier(DOUBLE nProgress, DOUBLE* nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param);

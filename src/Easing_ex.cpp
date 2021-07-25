@@ -122,16 +122,16 @@ void _easing_progress(HEXEASING pEasing)
 		else {
 			fDesc = FALSE;
 		}
-		nProcessTime = GetTickCount();
+		nProcessTime = GetTickCount64();
 		INT i = 1;
 		BOOL fStop = FALSE;
 		while (i <= nFrameCount)
 		{
-			Ex_Sleep((nInterval - (GetTickCount() - nProcessTime)) * 1000);
+			Ex_Sleep((nInterval - (GetTickCount64() - nProcessTime)) * 1000);
 			if(((EX_EASING*)pEasing)->nState== EES_PAUSE)
 			{
 				WaitForSingleObject(((EX_EASING*)pEasing)->hEventPause, INFINITE);//停住最大程度节省CPU
-				nProcessTime = GetTickCount();//如果没停住,则延时一段时间节省CPU
+				nProcessTime = GetTickCount64();//如果没停住,则延时一段时间节省CPU
 				continue;
 			}
 			nProcess = nFrameStep * i;
@@ -166,7 +166,7 @@ void _easing_progress(HEXEASING pEasing)
 				break;
 			}
 			i = i + 1;
-			nProcessTime = GetTickCount();
+			nProcessTime = GetTickCount64();
 		}
 		nTimes = nTimes - 1;
 	}
@@ -178,7 +178,7 @@ void _easing_progress(HEXEASING pEasing)
 	Ex_MemFree(pEasing);
 }
 
-INT _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE* nCurrent)
+INT CALLBACK _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE* nCurrent)
 {
 	if (lpEasingProc != 0)
 	{
