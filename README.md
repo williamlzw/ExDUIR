@@ -105,3 +105,5 @@ Windows平台轻量DirectUI框架。
 ![image](demo_image/demo_sliderbar.png)
 ### demo treeview:  
 ![image](demo_image/demo_treeview.png)
+### demo modal:  
+![image](demo_image/demo_modal.png)
