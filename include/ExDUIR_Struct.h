@@ -1098,7 +1098,7 @@
 #define LVM_GETITEMCOUNT	4100
 // 消息_报表_获取表项 (lParam为EX_REPORTLIST_ITEMINFO指针)
 #define LVM_GETITEM	4101
-// 消息_报表_设置表项 (lParam为EX_REPORTLIST_ITEMINFO指针)
+// 消息_报表_设置表项 (wParam为是否重画,lParam为EX_REPORTLIST_ITEMINFO指针)
 #define LVM_SETITEM	4102
 // 消息_列表_插入表项 lParam 为EX_REPORTLIST_ROWINFO指针,wParam为是否立即重画,返回索引
 #define LVM_INSERTITEM	4103
@@ -1277,22 +1277,20 @@
 // 资源包头
 #define EPDF_FILES	255
 
-#pragma region menubutton flag constant
-// 菜单按钮标识_不显示菜单阴影
+#pragma region menu flag constant
+// 菜单标识_不显示菜单阴影
 #define EMNF_NOSHADOW	0x80000000
-#pragma endregion menubutton flag constant
+#pragma endregion menu flag constant
 
-#pragma region menubutton message constant
-// 消息_菜单按钮_选择项目
-#define MBM_SELECTITEM 0x1E5
-// 消息_菜单按钮_弹出菜单 (wParam:菜单组,lParam:菜单句柄)
-#define MBM_POPUP	103001
-// 消息_菜单按钮_按下项目
-#define MBM_DOWNITEM 123321
+// 消息_选择菜单项目
+#define MN_SELECTITEM 0x1E5
 
-// 事件_菜单按钮_弹出菜单 (wParam:菜单组,lParam:菜单句柄)
-#define MBN_POPUP	102401
-#pragma endregion menubutton message constant
+#pragma region listbutton message constant
+// 消息_列表按钮_按下项目
+#define LBM_DOWNITEM 1237701
+// 消息_列表按钮_选择项目
+#define LBM_SELECTITEM 1237702
+#pragma endregion listbutton message constant
 
 #pragma region win10loading style constant
 // WIN10动画加载风格_直线
@@ -1672,4 +1670,18 @@ struct EX_SETTEXTEX
 {
 	DWORD flags;
 	UINT  codePage;
+};
+
+struct EX_LISTBUTTON_ITEMINFO {
+	UINT		dwMask;			// 1,图片 2,标题 4,提示文本 8,状态 16,菜单 32,文本格式 64,宽度
+	UINT		nType;			//项目类型   0,分隔条 1,普通按钮 2,选择按钮
+	UINT		nIndex;			//插入索引
+	UINT		nImage;			//图片索引
+	LPCWSTR		wzText;			//项目标题
+	LPCWSTR		wzTips;			//项目提示文本
+	UINT		nLeft;			//项目左边
+	UINT		nWidth;			//项目宽度
+	UINT		dwState;		//项目状态   0,正常 1,焦点 2,按下 3,禁止
+	UINT		nMenu;			//项目菜单
+	UINT		TextFormat;		//项目文本格式
 };

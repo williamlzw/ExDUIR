@@ -13,7 +13,7 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
 		test_checkbutton, //103，测试单选框选择框
 		test_edit, //104，测试编辑框
 		test_listview, //105，测试列表框
-		test_menubutton, //106，测试菜单按钮 
+		test_listbutton, //106，测试列表按钮 
 		test_custombkg, //107,测试自定义外形
 		test_navbutton, //108,测试选项卡
 		test_groupbox,//109,测试分组框

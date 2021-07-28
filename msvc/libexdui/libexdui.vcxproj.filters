@@ -108,9 +108,6 @@
     <ClCompile Include="..\..\src\Easing_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_MenuButton_ex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ImageList_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -163,6 +160,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Class_ProgressBar_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Class_ListButton_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -263,9 +263,6 @@
     <ClInclude Include="..\..\include\Easing_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_MenuButton_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\ImageList_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -321,6 +318,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_ProgressBar_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_ListButton_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -30,8 +30,8 @@
     <ClCompile Include="..\..\src\Class_Edit_ex.cpp" />
     <ClCompile Include="..\..\src\Class_GroupBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_IconListView_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_ListButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ListView_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_MenuButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ComboBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_MosaicLoading_ex.cpp" />
     <ClCompile Include="..\..\src\Class_NavButton_ex.cpp" />
@@ -82,8 +82,8 @@
     <ClInclude Include="..\..\include\Class_Edit_ex.h" />
     <ClInclude Include="..\..\include\Class_GroupBox_ex.h" />
     <ClInclude Include="..\..\include\Class_IconListView_ex.h" />
+    <ClInclude Include="..\..\include\Class_ListButton_ex.h" />
     <ClInclude Include="..\..\include\Class_ListView_ex.h" />
-    <ClInclude Include="..\..\include\Class_MenuButton_ex.h" />
     <ClInclude Include="..\..\include\Class_ComboBox_ex.h" />
     <ClInclude Include="..\..\include\Class_MosaicLoading_ex.h" />
     <ClInclude Include="..\..\include\Class_NavButton_ex.h" />

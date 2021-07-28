@@ -51,7 +51,12 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	}
 	else if (uMsg == LVM_SETITEM)
 	{
-		return _reportlistview_li_set(hObj, (EX_REPORTLIST_ITEMINFO*)lParam, FALSE) ? 1 : 0;
+		BOOL ret = _reportlistview_li_set(hObj, (EX_REPORTLIST_ITEMINFO*)lParam, FALSE);
+		if (wParam != 0)
+		{
+			Ex_ObjInvalidateRect(hObj, 0);
+		}
+		return  ret;
 	}
 	else if (uMsg == LVM_SETIMAGELIST)//设置列表图片组 wParam为是否立即重画，lParam为图片组句柄
 	{

@@ -152,7 +152,6 @@ void _object_init()
 	_scrollbar_register();
 	_edit_register();
 	_listview_regsiter();
-	_menubutton_regsiter();
 	_combobox_regsiter();
 	_groupbox_regsiter();
 	_reportlistview_regsiter();
@@ -170,6 +169,7 @@ void _object_init()
 	_soliderbar_register();
 	_rotateimagebox_register();
 	_progressbar_register();
+	_listbuttonex_register();
 }
 
 FLOAT Ex_Scale(FLOAT n)//OK

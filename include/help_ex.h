@@ -318,7 +318,6 @@ struct obj_base {
 #include "Class_GroupBox_ex.h"
 #include "Class_ReportListView_ex.h"
 #include "Class_IconListView_ex.h"
-#include "Class_MenuButton_ex.h"
 #include "Class_TreeView_ex.h"
 #include "Class_NavButton_ex.h"
 #include "Class_ButtonEx_ex.h"
@@ -332,6 +331,7 @@ struct obj_base {
 #include "Class_SoliderBar_ex.h"
 #include "Class_RotateImageBox_ex.h"
 #include "Class_ProgressBar_ex.h"
+#include "Class_ListButton_ex.h"
 
 
 struct LOCALINFO

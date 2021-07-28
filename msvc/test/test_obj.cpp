@@ -120,7 +120,7 @@ void test_button(HWND hWnd)
 	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED, L"button", L"重画按钮2", -1, 150, 70, 120, 30, m_hExDuiButton, 0, DT_VCENTER | DT_CENTER, 0, 0, OnButtonMsgProc);//第二种重画背景方式,全部自带组件都可以采用这样的方式重画,注意带上扩展风格
 
 	HEXOBJ hObj_switch = Ex_ObjCreate(L"Switch", L"已开启|已关闭", -1, 150, 110, 80, 30, m_hExDuiButton);
-	
+
 	HEXOBJ hObj_switch2 = Ex_ObjCreateEx(-1, L"Switch", 0, -1, 150, 150, 60, 30, m_hExDuiButton, 206, -1, 0, 0, 0);
 	Ex_ObjSendMessage(hObj_switch2, BM_SETCHECK, 1, 0); // 设置选中状态
 	Ex_ObjHandleEvent(hObj_switch2, NM_CHECK, OnButtonEvent);
@@ -459,7 +459,8 @@ void test_edit(HWND hWnd)
 	Ex_DUIShowWindow(m_hExDuiEdit, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnMenuButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+
+LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_NOTIFY)
 	{
@@ -472,19 +473,28 @@ LRESULT CALLBACK OnMenuButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
 			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), TRUE);//改变菜单项目背景颜色
 		}
 	}
+	else if (uMsg == MN_SELECTITEM && (DWORD)wParam == -1)//恢复正常状态
+	{
+		POINT point = { 0 };
+		GetCursorPos(&point);
+		HWND currentWnd = WindowFromPoint(point);
+		ScreenToClient(currentWnd, &point);
+		HEXOBJ hObj = Ex_DUIGetObjFromPoint((EXHANDLE)currentWnd, point.x, point.y);
+		Ex_ObjPostMessage(hObj, LBM_SELECTITEM, 0, 0);
+	}
 	return 0;
 }
 
-LRESULT CALLBACK OnMenuButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+
+LRESULT CALLBACK OnListButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
-	if (uMsg == MBM_DOWNITEM)
+	if (uMsg == LBM_DOWNITEM)
 	{
 		RECT rcWindow{ 0 };
 		RECT rcObj{ 0 };
 		GetWindowRect(hWnd, &rcWindow);
 		Ex_ObjGetRectEx(hObj, &rcObj, 2);
-		Ex_TrackPopupMenu((HMENU)Ex_ObjGetLong(hObj, EOL_LPARAM), TPM_RECURSE, rcWindow.left + rcObj.left, rcWindow.top + rcObj.bottom, 0, hObj, NULL, OnMenuButtonWndMsgProc, EMNF_NOSHADOW);
-		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, NULL, TRUE);
+		Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + rcObj.bottom, 0, hObj, NULL, OnListButtonWndMsgProc, EMNF_NOSHADOW);
 		*lpResult = 1;
 		return 1;
 	}
@@ -492,33 +502,129 @@ LRESULT CALLBACK OnMenuButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	return 0;
 }
 
-void test_menubutton(HWND hWnd)
+void test_listbutton(HWND hWnd)
 {
-	HWND hWnd_menubutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试菜单按钮", 0, 0, 350, 200, 0, 0);
-	HEXDUI hExDui_menubutton = Ex_DUIBindWindowEx(hWnd_menubutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON, 0, 0);
-	Ex_DUISetLong(hExDui_menubutton, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HMENU hMenu = 0;
-	HEXOBJ hObj_menubar = Ex_ObjCreate(L"Page", 0, -1, 0, 30, 300, 22, hExDui_menubutton);
-	if (hObj_menubar != 0) {
-		HEXLAYOUT hLayout = _layout_create(ELT_LINEAR, hObj_menubar);
-		hMenu = LoadMenuW(GetModuleHandleW(0), (LPWSTR)IDR_MENU1);
-		if (hMenu) {
-			for (INT i = 0; i < GetMenuItemCount(hMenu); i++) {
-				WCHAR wzText[256];
-				GetMenuStringW(hMenu, i, wzText, 256, MF_BYPOSITION);
-				HEXOBJ hObj = Ex_ObjCreateEx(-1, L"MenuButton", wzText, -1, 0, 0, 50, 22, hObj_menubar, 0, -1, (size_t)GetSubMenu(hMenu, i), 0, OnMenuButtonMsgProc);//OnMenuButtonMsgProc
-				if (hObj) {
-					Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), FALSE);//改变菜单按钮背景色
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//改变菜单按钮字体正常色
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体悬浮色
-					Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);//改变菜单按钮字体按下色
-					
-					_layout_addchild(hLayout, hObj);
-				}
-			}
-		}
-		Ex_ObjLayoutSet(hObj_menubar, hLayout, TRUE);
-	}
+	HWND hWnd_listbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试列表按钮", 0, 0, 480, 200, 0, 0);
+	HEXDUI hExDui_listbutton = Ex_DUIBindWindowEx(hWnd_listbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_listbutton, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	HMENU hMenu = LoadMenuW(GetModuleHandleW(0), (LPWSTR)IDR_MENU1);
+
+	//创建正常菜单条
+	HEXOBJ hObj = 0;
+	hObj = Ex_ObjCreateEx(-1, L"Menubar", 0, -1, 0, 30, 220, 22, hExDui_listbutton, 0, -1, 0, 0, 0);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), FALSE);//文本色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16774117, 255), FALSE);//点燃背景色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16765337, 255), FALSE);//按下背景色
+
+	EX_LISTBUTTON_ITEMINFO item1 = { 0 };
+	item1.wzText = L"文件(&F)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 0);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
+	item1.wzText = L"编辑(&E)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 1);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
+	item1.wzText = L"选项(&O)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 2);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
+	item1.wzText = L"帮助(&H)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 3);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item1);
+
+	//创建自定义回调菜单条
+
+	hObj = Ex_ObjCreateEx(-1, L"Menubar", 0, -1, 0, 60, 220, 22, hExDui_listbutton, 0, -1, 0, 0, OnListButtonMsgProc);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), FALSE);//改变菜单按钮背景色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//改变菜单按钮字体正常色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);//改变菜单按钮字体热点色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);//改变菜单按钮字体按下色
+	item1.wzText = L"文件(&F)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 0);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
+	item1.wzText = L"编辑(&E)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 1);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
+	item1.wzText = L"选项(&O)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 2);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
+	item1.wzText = L"帮助(&H)";
+	item1.nMenu = (UINT)GetSubMenu(hMenu, 3);
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item1);
+
+	//创建工具条
+	hObj = Ex_ObjCreate(L"Toolbar", 0, -1, 0, 90, 400, 22, hExDui_listbutton);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), FALSE);//文本色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16774117, 255), FALSE);//点燃背景色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16765337, 255), FALSE);//按下背景色
+	HEXIMAGELIST hImageList = _imglist_create(18, 18);
+	std::vector<CHAR> imgdata;
+	Ex_ReadFile(L"buttonex\\4.png", &imgdata);
+	size_t nImageIndex = _imglist_add(hImageList, imgdata.data(), imgdata.size(), 0);
+	Ex_ObjSendMessage(hObj, LVM_SETIMAGELIST, 0, (LPARAM)hImageList);
+	EX_LISTBUTTON_ITEMINFO item2 = { 0 };
+	item2.nType = 1;
+	item2.nImage = nImageIndex;
+	item2.wzText = NULL;
+	item2.wzTips = L"普通按钮1";
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
+	item2.nType = 1;
+	item2.nImage = 0;
+	item2.wzText = L"普通按钮2";
+	item2.wzTips = L"普通按钮2";
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
+	item2.nType = 2;
+	item2.nImage = nImageIndex;
+	item2.wzText = NULL;
+	item2.wzTips = L"选择按钮1";
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
+	item2.nType = 2;
+	item2.nImage = 0;
+	item2.wzText = L"选择按钮2";
+	item2.wzTips = L"选择按钮2";
+	item2.dwState = 2;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
+	item2.nType = 0;
+	item2.nImage = 0;
+	item2.wzText = NULL;
+	item2.wzTips = NULL;
+	item2.dwState = 0;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
+	item2.nType = 1;
+	item2.nImage = nImageIndex;
+	item2.wzText = L"测试3";
+	item2.wzTips = L"测试3";
+	item2.dwState = 3;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
+	item2.nType = 1;
+	item2.nImage = 0;
+	item2.wzText = L"普通4";
+	item2.wzTips = L"普通4";
+	item2.dwState = 0;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item2);
+
+	//创建状态条
+	hObj = Ex_ObjCreate(L"Statusbar", 0, -1, 0, 120, 430, 22, hExDui_listbutton);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(12557930, 255), FALSE);//背景色
+	Ex_ObjSetColor(hObj, COLOR_EX_BORDER, ExARGB(255, 255, 255, 255), FALSE);//分割色
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);//文本色
+	EX_LISTBUTTON_ITEMINFO item3 = { 0 };
+	item3.wzText = L"asdasda";
+	item3.nWidth = 100;
+	item3.TextFormat = DT_LEFT;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item3);
+	item3.wzText = L"xxxx";
+	item3.nWidth = 80;
+	item3.TextFormat = DT_CENTER;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item3);
+	item3.wzText = L"测试";
+	item3.nWidth = 150;
+	item3.TextFormat = DT_RIGHT;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item3);
+	item3.wzText = L"asdas99";
+	item3.nWidth = 100;
+	item3.nIndex = 2;
+	item3.TextFormat = DT_LEFT;
+	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item3);
+
 	//设置菜单条目图标
 	if (hMenu)
 	{
@@ -548,7 +654,7 @@ void test_menubutton(HWND hWnd)
 			SetMenuItemInfoW(hMenu_sub, 1, TRUE, &minfo);
 		}
 	}
-	Ex_DUIShowWindow(hExDui_menubutton, SW_SHOWNORMAL, 0, 0, 0);
+	Ex_DUIShowWindow(hExDui_listbutton, SW_SHOWNORMAL, 0, 0, 0);
 }
 
 void test_custombkg(HWND hWnd)
@@ -1411,9 +1517,9 @@ void test_reportlistview(HWND hWnd)
 	HWND hWnd_reportlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_reportlistview = Ex_DUIBindWindowEx(hWnd_reportlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, OnReportListViewWndMsgProc);
 	Ex_DUISetLong(hExDui_reportlistview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", EOS_BORDER | EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL , 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
+	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", EOS_BORDER | EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
-	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGBA(120,120,120, 255), FALSE);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGBA(120, 120, 120, 255), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOT, ExRGB2ARGB(16777215, 250), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(12632256, 50), FALSE);
 
@@ -1806,7 +1912,7 @@ void test_buttonex(HWND hWnd)
 
 LRESULT CALLBACK OnEditChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	if(nCode== EN_CHANGE)
+	if (nCode == EN_CHANGE)
 	{
 		output(L"编辑框内容改变", nID);
 	}
