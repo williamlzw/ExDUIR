@@ -12,22 +12,19 @@
 
 //断言
 #ifndef _DEBUG
-	#ifndef EX_ASSERT
-	#define EX_ASSERT(expr, msg, ...) ((void)0)
-	#endif
+#ifndef EX_ASSERT
+#define EX_ASSERT(expr, msg, ...) ((void)0)
+#endif
 #else
-	#ifndef EX_ASSERT
-	#define EX_ASSERT(expr, msg, ...) \
-				(void)(                                                                                     \
-					(!!(expr)) ||                                                                           \
-					(1 != _CrtDbgReportW(_CRT_ASSERT, _CRT_WIDE(__FILE__), __LINE__, NULL, msg, __VA_ARGS__)) || \
-					(_CrtDbgBreak(), 0)                                                                     \
-				)
-	#endif
+#ifndef EX_ASSERT
+#define EX_ASSERT(expr, msg, ...)                                                                       \
+    (void)((!!(expr)) ||                                                                                \
+           (1 != _CrtDbgReportW(_CRT_ASSERT, _CRT_WIDE(__FILE__), __LINE__, NULL, msg, __VA_ARGS__)) || \
+           (_CrtDbgBreak(), 0))
+#endif
 #endif
 
 #include "ExDUIR_Struct.h"
-
 
 struct wnd_s;
 struct obj_s;
@@ -52,29 +49,27 @@ struct EX_EVENT_HANDLER;
 struct EX_EVENT_HANDLER_TABLE;
 struct EX_APNG_THUNK;
 
+typedef BOOL(CALLBACK *UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO *);
+typedef INT(CALLBACK *EnumPROC)(size_t, size_t);
 
-typedef BOOL(CALLBACK* UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO*);
-typedef INT(CALLBACK* EnumPROC)(size_t, size_t);
-
-
-struct obj_base {
-	union {
-		HEXDUI hexdui_;
-		HEXOBJ hObj_;
-	};
-	HEXOBJ objChildFirst_;
-	HEXOBJ objChildLast_;
-	HEXLAYOUT hLayout_;
-	INT dwFlags_;
-	EX_BACKGROUNDIMAGEINFO* lpBackgroundImage_;
-	HEXTHEME hTheme_;
+struct obj_base
+{
+    union
+    {
+        HEXDUI hexdui_;
+        HEXOBJ hObj_;
+    };
+    HEXOBJ objChildFirst_;
+    HEXOBJ objChildLast_;
+    HEXLAYOUT hLayout_;
+    INT dwFlags_;
+    EX_BACKGROUNDIMAGEINFO *lpBackgroundImage_;
+    HEXTHEME hTheme_;
 };
 
-
-
-#define FLAGS_CHECK(a,b) (((a)&(b)) == (b))
-#define FLAGS_ADD(a,b) (a |= (b))
-#define FLAGS_DEL(a,b)  (a &= ~(b))
+#define FLAGS_CHECK(a, b) (((a) & (b)) == (b))
+#define FLAGS_ADD(a, b) (a |= (b))
+#define FLAGS_DEL(a, b) (a &= ~(b))
 
 #define HT_DUI 1
 #define HT_OBJECT 2
@@ -186,9 +181,9 @@ struct obj_base {
 #define ATOM_ARROW1_DOWN 1927594409
 #define ATOM_ARROW2_NORMAL 1108002696
 #define ATOM_ARROW2_HOVER -1250549992
-#define ATOM_ARROW2_DOWN  91886425
+#define ATOM_ARROW2_DOWN 91886425
 
-#define ATOM_REPORTLISTVIEW	-2110221007
+#define ATOM_REPORTLISTVIEW -2110221007
 #define ATOM_REPORTLISTVIEW_HEAD 1379019209
 #define ATOM_STATIC 1404034966
 #define ATOM_SYSBUTTON 612196532
@@ -241,39 +236,39 @@ struct obj_base {
 #define ATOM_POPUPBOX 314323724
 #define ATOM_COMBOBOX -1916733255
 #define ATOM_MENUBUTTON 371568388
-#define ATOM_GROUPBOX  74178432
+#define ATOM_GROUPBOX 74178432
 
 #define ERROR_EX_NOERROR 0 //成功
 
 #define ERROR_EX_CANVAS_INITERROR 16001 //canvas初始化失败
-#define ERROR_EX_CHECKSUM 16002 //数据效验失败
+#define ERROR_EX_CHECKSUM 16002         //数据效验失败
 #define ERROR_EX_UNSUPPORTED_TYPE 16003 //未支持的类型/格式
-#define ERROR_EX_BAD_LENGTH 16004 //错误的长度
-#define ERROR_EX_BAD_SIZE 16005 //错误的尺寸
-#define ERROR_EX_INVALID_OBJECT 16006 //未初始化的对象
-#define ERROR_EX_DX_STATE 16007 //状态错误
-#define ERROR_EX_BAD_STRING 16008 //错误的文本
-#define ERROR_EX_INVALID_CLASS 16009 //未初始化的组件类
+#define ERROR_EX_BAD_LENGTH 16004       //错误的长度
+#define ERROR_EX_BAD_SIZE 16005         //错误的尺寸
+#define ERROR_EX_INVALID_OBJECT 16006   //未初始化的对象
+#define ERROR_EX_DX_STATE 16007         //状态错误
+#define ERROR_EX_BAD_STRING 16008       //错误的文本
+#define ERROR_EX_INVALID_CLASS 16009    //未初始化的组件类
 
 #define ERROR_EX_MEMORY_OVERFLOW 16010 //超出尺寸/超出内存
-#define ERROR_EX_MEMORY_ALLOC 16011 //Ex_MemAlloc失败
+#define ERROR_EX_MEMORY_ALLOC 16011    //Ex_MemAlloc失败
 #define ERROR_EX_MEMORY_BADPTR 16012
 
-#define ERROR_EX_MEMPOOL_ALLOC 16021 // 内存池，Ex_MemAlloc失败
-#define ERROR_EX_MEMPOOL_BADINDEX 16022 //检索索引失败
-#define ERROR_EX_MEMPOOL_BADPTR 16023 //检索指针失败
+#define ERROR_EX_MEMPOOL_ALLOC 16021        // 内存池，Ex_MemAlloc失败
+#define ERROR_EX_MEMPOOL_BADINDEX 16022     //检索索引失败
+#define ERROR_EX_MEMPOOL_BADPTR 16023       //检索指针失败
 #define ERROR_EX_MEMPOOL_INVALIDBLOCK 16024 //未初始化的内存块
-#define ERROR_EX_MEMPOOL_INVALID 16025 //未初始化的内存池
+#define ERROR_EX_MEMPOOL_INVALID 16025      //未初始化的内存池
 
-#define ERROR_EX_HANDLE_BADINDEX 16030 //检索索引失败
+#define ERROR_EX_HANDLE_BADINDEX 16030         //检索索引失败
 #define ERROR_EX_HANDLE_UNSUPPORTED_TYPE 16031 //检索类型失败
-#define ERROR_EX_HANDLE_INVALID 16032 //检索句柄失败
+#define ERROR_EX_HANDLE_INVALID 16032          //检索句柄失败
 
 #define ERROR_EX_XML_PARSE 16040 //XML解析失败
 
-#define ERROR_EX_LAYOUT_INVALID 16050 //布局类型未初始化
+#define ERROR_EX_LAYOUT_INVALID 16050          //布局类型未初始化
 #define ERROR_EX_LAYOUT_UNSUPPORTED_PROP 16051 //未支持的属性
-#define ERROR_EX_LAYOUT_NOT_CHILD 16052 // 未找到布局子组件或组件不是子组件
+#define ERROR_EX_LAYOUT_NOT_CHILD 16052        // 未找到布局子组件或组件不是子组件
 
 //条目风格_子菜单
 #define EMIS_SUBMENU 1
@@ -333,61 +328,60 @@ struct obj_base {
 #include "Class_ProgressBar_ex.h"
 #include "Class_ListButton_ex.h"
 
-
 struct LOCALINFO
 {
-	HMODULE hModuleUser;
-	HINSTANCE hInstance;
-	INT dwFlags;
-	HANDLE csError;
-	INT dwError;
-	HCURSOR hCursor;
-	HICON hIcon;
-	HICON hIconsm;
-	FLOAT DpiX;
-	FLOAT DpiY;
-	FLOAT DpiX_Real;
-	FLOAT DpiY_Real;
-	WORD atomClassName;
-	WORD atomSysShadow;
-	UINT dwMessage;
-	mempool_s* hMemPoolMsg;
-	EX_HASHTABLE* hTableClass;
-	EX_HASHTABLE* hTableFont;
-	EX_HASHTABLE* hTableLayout;
-	UpdateLayeredWindowIndirectPROC pfnUpdateLayeredWindowIndirect;
-	LOGFONTW* lpLogFontDefault;
-	HEXTHEME hThemeDefault;
-	HMENU hMenuVS;
-	HMENU hMenuHS;
-	HMENU hMenuEdit;
-	LPVOID hHookMsgBox;
-	mempool_s* hHandles;
-	std::vector<HEXTHEME> aryThemes;
-	std::vector<INT> aryColorsAtom;
-	std::vector<INT> aryColorsOffset;
-	LPCWSTR lpstr_min;
-	LPCWSTR lpstr_res_min;
-	LPCWSTR lpstr_max;
-	LPCWSTR lpstr_res_max;
-	LPCWSTR lpstr_close;
-	LPCWSTR lpstr_help;
-	UINT dwClickTime;
-	size_t hToken;
+    HMODULE hModuleUser;
+    HINSTANCE hInstance;
+    INT dwFlags;
+    HANDLE csError;
+    INT dwError;
+    HCURSOR hCursor;
+    HICON hIcon;
+    HICON hIconsm;
+    FLOAT DpiX;
+    FLOAT DpiY;
+    FLOAT DpiX_Real;
+    FLOAT DpiY_Real;
+    WORD atomClassName;
+    WORD atomSysShadow;
+    UINT dwMessage;
+    mempool_s *hMemPoolMsg;
+    EX_HASHTABLE *hTableClass;
+    EX_HASHTABLE *hTableFont;
+    EX_HASHTABLE *hTableLayout;
+    UpdateLayeredWindowIndirectPROC pfnUpdateLayeredWindowIndirect;
+    LOGFONTW *lpLogFontDefault;
+    HEXTHEME hThemeDefault;
+    HMENU hMenuVS;
+    HMENU hMenuHS;
+    HMENU hMenuEdit;
+    LPVOID hHookMsgBox;
+    mempool_s *hHandles;
+    std::vector<HEXTHEME> aryThemes;
+    std::vector<INT> aryColorsAtom;
+    std::vector<INT> aryColorsOffset;
+    LPCWSTR lpstr_min;
+    LPCWSTR lpstr_res_min;
+    LPCWSTR lpstr_max;
+    LPCWSTR lpstr_res_max;
+    LPCWSTR lpstr_close;
+    LPCWSTR lpstr_help;
+    UINT dwClickTime;
+    size_t hToken;
 };
 
 struct RENDERINFO
 {
-	LPVOID pLocalName;
-	IDWriteFactory* pDWriteFactory;
-	IWICImagingFactory* pWICFactory;
-	ID2D1Factory1* pD2Dfactory;
-	ID2D1Device* pD2DDevice;
-	ID2D1DeviceContext* pD2DDeviceContext;
-	ID2D1GdiInteropRenderTarget* pGDIInterop;
-	ID2D1Effect* pEffectGaussianBlur;
-	ID2D1Effect* pEffectHueRotation;
-	HMODULE hRiched20;
+    LPVOID pLocalName;
+    IDWriteFactory *pDWriteFactory;
+    IWICImagingFactory *pWICFactory;
+    ID2D1Factory1 *pD2Dfactory;
+    ID2D1Device *pD2DDevice;
+    ID2D1DeviceContext *pD2DDeviceContext;
+    ID2D1GdiInteropRenderTarget *pGDIInterop;
+    ID2D1Effect *pEffectGaussianBlur;
+    ID2D1Effect *pEffectHueRotation;
+    HMODULE hRiched20;
 };
 
 extern LOCALINFO g_Li;
@@ -395,36 +389,35 @@ extern RENDERINFO g_Ri;
 
 typedef struct ICONDIRENTRY
 {
-	BYTE bWidth; // Width, in pixels, of the image
-	BYTE bHeight; // Height, in pixels, of the image
-	BYTE bColorCount; // Number of colors in image (0 if >=8bpp)
-	BYTE bReserved; // Reserved ( must be 0)
-	WORD wPlanes; // Color Planes
-	WORD wBitCount; // Bits per pixel
-	DWORD dwBytesInRes; // How many bytes in this resource?
-	DWORD dwImageOffset; // Where in the file is this image?
-} ICONDIRENTRY, * LPICONDIRENTRY;
+    BYTE bWidth;         // Width, in pixels, of the image
+    BYTE bHeight;        // Height, in pixels, of the image
+    BYTE bColorCount;    // Number of colors in image (0 if >=8bpp)
+    BYTE bReserved;      // Reserved ( must be 0)
+    WORD wPlanes;        // Color Planes
+    WORD wBitCount;      // Bits per pixel
+    DWORD dwBytesInRes;  // How many bytes in this resource?
+    DWORD dwImageOffset; // Where in the file is this image?
+} ICONDIRENTRY, *LPICONDIRENTRY;
 
 typedef struct ICONDIR
 {
-	WORD idReserved; // Reserved (must be 0)
-	WORD idType; // Resource Type (1 for icons)
-	WORD idCount; // How many images?
-	ICONDIRENTRY idEntries[1]; // An entry for each image (idCount of 'em)
-} ICONDIR, * LPICONDIR;
+    WORD idReserved;           // Reserved (must be 0)
+    WORD idType;               // Resource Type (1 for icons)
+    WORD idCount;              // How many images?
+    ICONDIRENTRY idEntries[1]; // An entry for each image (idCount of 'em)
+} ICONDIR, *LPICONDIR;
 
 typedef struct ICONIMAGE
 {
-	BITMAPINFOHEADER icHeader; // DIB header
-	RGBQUAD icColors[1]; // Color table
-	BYTE icXOR[1]; // DIB bits for XOR mask
-	BYTE icAND[1]; // DIB bits for AND mask
-} ICONIMAGE, * LPICONIMAGE;
-
+    BITMAPINFOHEADER icHeader; // DIB header
+    RGBQUAD icColors[1];       // Color table
+    BYTE icXOR[1];             // DIB bits for XOR mask
+    BYTE icAND[1];             // DIB bits for AND mask
+} ICONIMAGE, *LPICONIMAGE;
 
 INT DtoHimetric(INT d, INT PerInchc);
 LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
-DOUBLE  GetSysDpi();
+DOUBLE GetSysDpi();
 BOOL Ex_MemFree(LPVOID hMem);
 LPVOID Ex_MemAlloc(size_t dwSize, INT dwFlags = LMEM_ZEROINIT);
 LPVOID Ex_MemReAlloc(LPVOID hMem, size_t dwSizes);
@@ -435,30 +428,29 @@ WCHAR __get_wchar(LPVOID lpAddr, LONG_PTR offset);
 void __set_char(LPVOID lpAddr, LONG_PTR offset, CHAR value);
 void __set_unsignedchar(LPVOID lpAddr, LONG_PTR offset, UCHAR value);
 void __set_wchar(LPVOID lpAddr, LONG_PTR offset, WCHAR value);
-void _bit_add(size_t* dwValue, size_t index);
-void _bit_del(size_t* dwValue, size_t index);
-void _bit_not(size_t* dwValue, size_t index);
-BOOL _bit_test(size_t* dwValue, size_t index);
-LPVOID __ptr_ins(LPVOID* ptr, INT nCount, INT* nIndexInsert, INT cbBlock, LPVOID pNewItem);
-LPVOID __ptr_del(LPVOID* ptr, INT nCount, INT nIndex, INT cbBlock);
+void _bit_add(size_t *dwValue, size_t index);
+void _bit_del(size_t *dwValue, size_t index);
+void _bit_not(size_t *dwValue, size_t index);
+BOOL _bit_test(size_t *dwValue, size_t index);
+LPVOID __ptr_ins(LPVOID *ptr, INT nCount, INT *nIndexInsert, INT cbBlock, LPVOID pNewItem);
+LPVOID __ptr_del(LPVOID *ptr, INT nCount, INT nIndex, INT cbBlock);
 LPVOID __ptr_index(LPVOID ptr, INT nCount, INT nIndex, INT cbBlock);
-void _wstr_deletechar(LPVOID lpstr, INT* dwsize, WCHAR wchar);
-void A2W_Addr(LPVOID lpszString, LPVOID* retPtr, size_t* retLen, INT CodePage, INT dwLen);
+void _wstr_deletechar(LPVOID lpstr, INT *dwsize, WCHAR wchar);
+void A2W_Addr(LPVOID lpszString, LPVOID *retPtr, size_t *retLen, INT CodePage, INT dwLen);
 
-void U2W_Addr(LPVOID lpUTF8, INT dwLen, LPVOID* retPtr, size_t* retLen);
-void ANY2W(LPVOID pAddr, size_t dwLen, LPVOID* retPtr, size_t* retLen);
-void PrintArray(UCHAR* data, INT len);
-std::vector<std::wstring> ws_split(const std::wstring& str, const std::wstring& delim);
+void U2W_Addr(LPVOID lpUTF8, INT dwLen, LPVOID *retPtr, size_t *retLen);
+void ANY2W(LPVOID pAddr, size_t dwLen, LPVOID *retPtr, size_t *retLen);
+void PrintArray(UCHAR *data, INT len);
+std::vector<std::wstring> ws_split(const std::wstring &str, const std::wstring &delim);
 
 INT GetNearestPrime(INT value);
 
 void _struct_destroyfromaddr(LPVOID lpAddr, size_t Offset);
-LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT* nError);
+LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT *nError);
 
 void RC4(LPVOID dest, size_t dstlen, const LPVOID pwd, size_t pwdlen);
 UINT Crc32_Addr(LPVOID buf, UINT nLength);
-LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT* nOffset);
-
+LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT *nOffset);
 
 LPCWSTR GetErrorMessage(DWORD error);
 LPCWSTR copytstr(LPCWSTR lptstr, INT len);

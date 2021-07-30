@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "help_ex.h"
 
 // 报表列表属性_项目宽度
@@ -26,16 +26,15 @@
 #define ERLVHL_HLISTVIEW 0
 #define ERLVHL_INDEXHIT 1
 
-
 #define LVSICF_NOSCROLL 2
 
 struct reportlistview_tr_s
 {
-	UINT   nInsertIndex_;
+	UINT nInsertIndex_;
 	DWORD dwStyle_;
 	LPARAM lParam_;
 	DWORD nImageIndex_;
-	LPVOID pTDInfo_;		//行文本数组信息
+	LPVOID pTDInfo_; //行文本数组信息
 };
 
 struct reportlistview_td_s
@@ -43,29 +42,28 @@ struct reportlistview_td_s
 	LPCWSTR wzText_;
 };
 
-
 LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-size_t _reportlistview_head_hittest(HEXOBJ hObj, INT x, INT y, BOOL fJustHit, INT* rHitBlock);
+size_t _reportlistview_head_hittest(HEXOBJ hObj, INT x, INT y, BOOL fJustHit, INT *rHitBlock);
 void _reportlistview_head_paint(HEXOBJ hObj);
 INT _reportlistview_gethitcol(HEXOBJ hObj, INT x);
-BOOL _reportlistview_notify_proc(HEXOBJ hObj, EX_NMHDR* pNotifyInfo);
+BOOL _reportlistview_notify_proc(HEXOBJ hObj, EX_NMHDR *pNotifyInfo);
 void _reportlistview_init(HEXOBJ hObj);
-void _reportlistview_arr_del(array_s* hArr, INT nIndex, reportlistview_tr_s* pvData, INT nType);
-size_t _reportlistview_arr_order(array_s* hArr, INT nIndex1, LPVOID pvData1, INT nIndex2, LPVOID pvData2, EX_REPORTLIST_SORTINFO* pSortInfo = NULL, INT nReason = 2);
+void _reportlistview_arr_del(array_s *hArr, INT nIndex, reportlistview_tr_s *pvData, INT nType);
+size_t _reportlistview_arr_order(array_s *hArr, INT nIndex1, LPVOID pvData1, INT nIndex2, LPVOID pvData2, EX_REPORTLIST_SORTINFO *pSortInfo = NULL, INT nReason = 2);
 void _reportlistview_uninit(HEXOBJ hObj);
-void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo);
-void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT nIndexTC, EX_REPORTLIST_COLUMNINFO* pTC, RECT* rcTD);
-INT _reportlistview_tc_ins(HEXOBJ hObj, EX_REPORTLIST_COLUMNINFO* pInsertInfo);
+void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW *pDrawInfo);
+void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW *cd, INT nIndexTR, INT nIndexTC, EX_REPORTLIST_COLUMNINFO *pTC, RECT *rcTD);
+INT _reportlistview_tc_ins(HEXOBJ hObj, EX_REPORTLIST_COLUMNINFO *pInsertInfo);
 BOOL _reportlistview_tc_del(HEXOBJ hObj, INT nIndex);
 void _reportlistview_tc_clear(HEXOBJ hObj);
 void _reportlistview_tc_update(HEXOBJ hObj);
-INT _reportlistview_tr_ins(HEXOBJ hObj, EX_REPORTLIST_ROWINFO* pInsertInfo);
+INT _reportlistview_tr_ins(HEXOBJ hObj, EX_REPORTLIST_ROWINFO *pInsertInfo);
 BOOL _reportlistview_tr_del(HEXOBJ hObj, INT nIndex);
 void _reportlistview_tr_clear(HEXOBJ hObj);
 void _reportlistview_tr_update(HEXOBJ hObj);
-reportlistview_td_s* _reportlistview_td_get(HEXOBJ hObj, INT nIndexTR, INT nIndexTC);
+reportlistview_td_s *_reportlistview_td_get(HEXOBJ hObj, INT nIndexTR, INT nIndexTC);
 void _reportlistview_td_settext(HEXOBJ hObj, INT nIndexTR, INT nIndexTC, LPCWSTR wzText);
-BOOL _reportlistview_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJustText);
-BOOL _reportlistview_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJustText);
+BOOL _reportlistview_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO *lParam, BOOL fJustText);
+BOOL _reportlistview_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO *lParam, BOOL fJustText);
 void _reportlistview_regsiter();

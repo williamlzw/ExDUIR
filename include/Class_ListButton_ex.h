@@ -1,31 +1,31 @@
 #pragma once
 #include "help_ex.h"
 
-// ÁĞ±íÊôĞÔ_ÀàĞÍ
+// åˆ—è¡¨å±æ€§_ç±»å‹
 #define LB_TYPE 0
-// ÁĞ±íÊôĞÔ_±íÏîÊı
+// åˆ—è¡¨å±æ€§_è¡¨é¡¹æ•°
 #define LB_CTCS 1
-// ÁĞ±íÊôĞÔ_±íÏîĞÅÏ¢
+// åˆ—è¡¨å±æ€§_è¡¨é¡¹ä¿¡æ¯
 #define LB_ITEMINFO 2
-// ÁĞ±íÊôĞÔ_ÈÈµãÏîÄ¿
+// åˆ—è¡¨å±æ€§_çƒ­ç‚¹é¡¹ç›®
 #define LB_INDEX 3
-// ÁĞ±íÊôĞÔ_Í¼Æ¬×é¾ä±ú
+// åˆ—è¡¨å±æ€§_å›¾ç‰‡ç»„å¥æŸ„
 #define LB_HIMAGELIST 4
-// ÁĞ±íÊôĞÔ_Í¼Æ¬×é¿í¶È
+// åˆ—è¡¨å±æ€§_å›¾ç‰‡ç»„å®½åº¦
 #define LB_HIMAGWIDTH 5
-// ÁĞ±íÊôĞÔ_Í¼Æ¬×é¸ß¶È
+// åˆ—è¡¨å±æ€§_å›¾ç‰‡ç»„é«˜åº¦
 #define LB_HIMAGHEIGHT 6
 
 void _listbuttonex_register();
 LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _listbuttonex_arr_del(array_s* hArr, INT nIndex, EX_LISTBUTTON_ITEMINFO* pvData, INT nType);
+void _listbuttonex_arr_del(array_s *hArr, INT nIndex, EX_LISTBUTTON_ITEMINFO *pvData, INT nType);
 void _listbuttonex_paint(HEXOBJ hObj);
 void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam);
 void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam);
 void _listbuttonex_mouseup(HEXOBJ hObj, INT nType, LPARAM lParam);
 void _listbuttonex_mouseleave(HEXOBJ hObj, INT nType);
 void _listbuttonex_update(HEXOBJ hObj);
-INT _listbuttonex_hittest(HEXOBJ hObj, array_s* hArr, POINT pt);
-void _listbuttonex_recovery(HEXOBJ hObj, INT nType, array_s* hArr, INT Index, BOOL Update);
+INT _listbuttonex_hittest(HEXOBJ hObj, array_s *hArr, POINT pt);
+void _listbuttonex_recovery(HEXOBJ hObj, INT nType, array_s *hArr, INT Index, BOOL Update);
 INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText);
-LRESULT CALLBACK _listbuttonex_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+LRESULT CALLBACK _listbuttonex_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT *lpResult);

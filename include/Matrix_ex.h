@@ -12,6 +12,5 @@ struct EX_MATRIX
 	FLOAT dy;
 };
 
-
-void _matrix_init(D2D1::Matrix3x2F* mx, HEXMATRIX pMatrix);
+void _matrix_init(D2D1::Matrix3x2F *mx, HEXMATRIX pMatrix);
 void _matrix_update(D2D1::Matrix3x2F mx, HEXMATRIX pMatrix);

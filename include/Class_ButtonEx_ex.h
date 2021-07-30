@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "help_ex.h"
 
 // 扩展按钮_正常图片

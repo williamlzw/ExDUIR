@@ -6,11 +6,11 @@
 
 struct font_s
 {
-	size_t dwFlags_;
-	size_t dwCount_;
-	obj_s* pObj_;
-	LOGFONT font_;
+    size_t dwFlags_;
+    size_t dwCount_;
+    obj_s *pObj_;
+    LOGFONT font_;
 };
-void pfnDefaultFreeFont(LPVOID dwData);
 
-HEXFONT _font_createfromlogfont_ex(LOGFONTW* lpLogfont, INT flags);
+void pfnDefaultFreeFont(LPVOID dwData);
+HEXFONT _font_createfromlogfont_ex(LOGFONTW *lpLogfont, INT flags);

@@ -3,9 +3,9 @@
 
 struct MosaicRect
 {
-	RECT    rc;
-	INT		color;
-	INT		alpha;
+	RECT rc;
+	INT color;
+	INT alpha;
 };
 
 void _mosaic_loading_register();

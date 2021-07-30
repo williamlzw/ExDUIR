@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ExDUIR_Struct.h"
 
 /*
@@ -58,7 +58,7 @@ HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,
 * @param 6  cStopPts                  [INT]                 停止点个数
 * @return [HEXBRUSH]返回画刷句柄
 */
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const INT* arrStopPts, INT cStopPts);
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const INT *arrStopPts, INT cStopPts);
 
 /*
 * @fnType ExDirectUI
@@ -86,7 +86,6 @@ EXARGB _brush_setcolor(HEXBRUSH hBrush, EXARGB argb);
 */
 void _brush_settransform(HEXBRUSH hBrush, HEXMATRIX matrix);
 
-
 /*
 * @fnType ExDirectUI
 * @brief _canvas_begindraw 画布开始绘制
@@ -103,7 +102,7 @@ BOOL _canvas_begindraw(HEXCANVAS hCanvas);
 * @param 3  lprc                    [RECT*]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc);
+BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT *lprc);
 
 /*
 * @fnType ExDirectUI
@@ -120,7 +119,7 @@ BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc);
 * @param 10 lpHeight                [FLOAT*]              小数型 取指针_通用型
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight);
+BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT *lpWidth, FLOAT *lpHeight);
 
 /*
 * @fnType ExDirectUI
@@ -239,8 +238,8 @@ BOOL _canvas_drawimage(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT Top
 * @return [BOOL]返回是否成功
 */
 BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, FLOAT gridPaddingLeft, FLOAT gridPaddingTop, FLOAT gridPaddingRight,
-	FLOAT gridPaddingBottom, INT dwFlags, DWORD dwAlpha);
+							   FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, FLOAT gridPaddingLeft, FLOAT gridPaddingTop, FLOAT gridPaddingRight,
+							   FLOAT gridPaddingBottom, INT dwFlags, DWORD dwAlpha);
 
 /*
 * @fnType ExDirectUI
@@ -273,7 +272,7 @@ BOOL _canvas_drawimagerect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT
 * @return [BOOL]返回是否成功
 */
 BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, DWORD alpha);
+							   FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, DWORD alpha);
 
 /*
 * @fnType ExDirectUI
@@ -458,7 +457,7 @@ BOOL _canvas_fillregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush);
 * @param 11 crShadow                [EXARGB]]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT Width, FLOAT Height, FLOAT RadiuX, FLOAT RadiuY,  INT* shadowNum, INT number,EXARGB crShadow);
+BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT Width, FLOAT Height, FLOAT RadiuX, FLOAT RadiuY, INT *shadowNum, INT number, EXARGB crShadow);
 
 /*
 * @fnType ExDirectUI
@@ -508,7 +507,7 @@ HDC _canvas_getdc(HEXCANVAS hCanvas);
 * @param 3  height                  [INT*]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_getsize(HEXCANVAS hCanvas, INT* width, INT* height);
+BOOL _canvas_getsize(HEXCANVAS hCanvas, INT *width, INT *height);
 
 /*
 * @fnType ExDirectUI
@@ -641,7 +640,7 @@ HEXFONT _font_createfromfamily(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFon
 * @param 1  lpLogfont               [LPVOID]
 * @return [HEXFONT]返回字体句柄
 */
-HEXFONT _font_createfromlogfont(LOGFONTW* lpLogfont);
+HEXFONT _font_createfromlogfont(LOGFONTW *lpLogfont);
 
 /*
 * @fnType ExDirectUI
@@ -666,7 +665,7 @@ LPVOID _font_getcontext(HEXFONT hFont);
 * @param 2  lpLogFont               [LOGFONTW*]		返回逻辑字体
 * @return [BOOL]返回是否成功
 */
-BOOL _font_getlogfont(HEXFONT hFont, LOGFONTW* lpLogFont);
+BOOL _font_getlogfont(HEXFONT hFont, LOGFONTW *lpLogFont);
 
 /*
 * @fnType ExDirectUI
@@ -688,7 +687,7 @@ BOOL _img_changecolor(HEXIMAGE hImg, EXARGB argb);
 * @param 6  phImg                   [HEXIMAGE*]           返回新图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_clip(HEXIMAGE hImg, INT left, INT top, INT width, INT height, HEXIMAGE* phImg);
+BOOL _img_clip(HEXIMAGE hImg, INT left, INT top, INT width, INT height, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -697,7 +696,7 @@ BOOL _img_clip(HEXIMAGE hImg, INT left, INT top, INT width, INT height, HEXIMAGE
 * @param 2  phImg                  [HEXIMAGE*]           返回新图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_copy(HEXIMAGE hImg, HEXIMAGE* phImg);
+BOOL _img_copy(HEXIMAGE hImg, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -710,7 +709,7 @@ BOOL _img_copy(HEXIMAGE hImg, HEXIMAGE* phImg);
 * @param 6  phImg                  [HEXIMAGE*]           返回新图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_copyrect(HEXIMAGE hImg, INT x, INT y, INT width, INT height, HEXIMAGE* phImg);
+BOOL _img_copyrect(HEXIMAGE hImg, INT x, INT y, INT width, INT height, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -720,7 +719,7 @@ BOOL _img_copyrect(HEXIMAGE hImg, INT x, INT y, INT width, INT height, HEXIMAGE*
 * @param 3  phImg                   [HEXIMAGE*]           返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_create(INT width, INT height, HEXIMAGE* phImg);
+BOOL _img_create(INT width, INT height, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -729,7 +728,7 @@ BOOL _img_create(INT width, INT height, HEXIMAGE* phImg);
 * @param 2  phImg                   [HEXIMAGE*]          返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfromfile(LPCWSTR lpwzFilename, HEXIMAGE* phImg);
+BOOL _img_createfromfile(LPCWSTR lpwzFilename, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -740,7 +739,7 @@ BOOL _img_createfromfile(LPCWSTR lpwzFilename, HEXIMAGE* phImg);
 * @param 4  phImg                    [HEXIMAGE*]           返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfromhbitmap(LPVOID hBitmap, LPVOID hPalette, BOOL fPreAlpha, HEXIMAGE* phImg);
+BOOL _img_createfromhbitmap(LPVOID hBitmap, LPVOID hPalette, BOOL fPreAlpha, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -749,7 +748,7 @@ BOOL _img_createfromhbitmap(LPVOID hBitmap, LPVOID hPalette, BOOL fPreAlpha, HEX
 * @param 2  phImg                    [HEXIMAGE*]           返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfromhicon(HICON hIcon, HEXIMAGE* phImg);
+BOOL _img_createfromhicon(HICON hIcon, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -759,7 +758,7 @@ BOOL _img_createfromhicon(HICON hIcon, HEXIMAGE* phImg);
 * @param 3  phImg                   [HEXIMAGE*]           返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfrommemory(LPVOID lpData, size_t dwLen, HEXIMAGE* phImg);
+BOOL _img_createfrommemory(LPVOID lpData, size_t dwLen, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -769,7 +768,7 @@ BOOL _img_createfrommemory(LPVOID lpData, size_t dwLen, HEXIMAGE* phImg);
 * @param 3  phImg                    [HEXIMAGE*]         返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfromres(HEXRES hRes, EXATOM atomPath, HEXIMAGE* phImg);
+BOOL _img_createfromres(HEXRES hRes, EXATOM atomPath, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -779,7 +778,7 @@ BOOL _img_createfromres(HEXRES hRes, EXATOM atomPath, HEXIMAGE* phImg);
 * @param 2  phImg                    [HEXIMAGE*]           返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfromstream(LPVOID lpStream, HEXIMAGE* phImg);
+BOOL _img_createfromstream(LPVOID lpStream, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -797,7 +796,7 @@ BOOL _img_destroy(HEXIMAGE hImg);
 * @param 2  nFrameCount             [INT*]                返回帧数.
 * @return [BOOL]返回是否成功
 */
-BOOL _img_getframecount(HEXIMAGE hImage, INT* nFrameCount);
+BOOL _img_getframecount(HEXIMAGE hImage, INT *nFrameCount);
 
 /*
 * @fnType ExDirectUI
@@ -808,7 +807,7 @@ BOOL _img_getframecount(HEXIMAGE hImage, INT* nFrameCount);
 * @param 3  nFrames                 [INT]                 返回总帧数
 * @return [BOOL]返回是否成功
 */
-BOOL _img_getframedelay(HEXIMAGE hImg, INT* lpDelayAry, INT nFrames);
+BOOL _img_getframedelay(HEXIMAGE hImg, INT *lpDelayAry, INT nFrames);
 
 /*
 * @fnType ExDirectUI
@@ -820,7 +819,7 @@ BOOL _img_getframedelay(HEXIMAGE hImg, INT* lpDelayAry, INT nFrames);
 * @param 4  retPixel                [EXARGB*]             返回ARGB颜色
 * @return [BOOL]返回是否成功
 */
-BOOL _img_getpixel(HEXIMAGE hImg, INT x, INT y, EXARGB* retPixel);
+BOOL _img_getpixel(HEXIMAGE hImg, INT x, INT y, EXARGB *retPixel);
 
 /*
 * @fnType ExDirectUI
@@ -831,7 +830,7 @@ BOOL _img_getpixel(HEXIMAGE hImg, INT x, INT y, EXARGB* retPixel);
 * @param 3  lpHeight                [INT*]
 * @return [BOOL]返回是否成功
 */
-BOOL _img_getsize(HEXIMAGE hImg, INT* lpWidth, INT* lpHeight);
+BOOL _img_getsize(HEXIMAGE hImg, INT *lpWidth, INT *lpHeight);
 
 /*
 * @fnType ExDirectUI
@@ -852,7 +851,7 @@ INT _img_height(HEXIMAGE hImg);
 * @param 5  lpLockedBitmapData      [EX_BITMAPDATA*]      BITMAPDATA
 * @return [BOOL]返回是否成功
 */
-BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BITMAPDATA* lpLockedBitmapData);
+BOOL _img_lock(HEXIMAGE hImg, RECT *lpRectL, DWORD flags, INT PixelFormat, EX_BITMAPDATA *lpLockedBitmapData);
 
 /*
 * @fnType ExDirectUI
@@ -862,7 +861,7 @@ BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BI
 * @param 3  phImg                   [HEXIMAGE*]           返回新图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_rotateflip(HEXIMAGE hImg, INT rfType, HEXIMAGE* phImg);
+BOOL _img_rotateflip(HEXIMAGE hImg, INT rfType, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -891,7 +890,7 @@ size_t _img_savetomemory(HEXIMAGE hImg, LPVOID lpBuffer);
 * @param 4  phImg                   [HEXIMAGE*]           返回新图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_scale(HEXIMAGE hImg, INT width, INT height, HEXIMAGE* phImg);
+BOOL _img_scale(HEXIMAGE hImg, INT width, INT height, HEXIMAGE *phImg);
 
 /*
 * @fnType ExDirectUI
@@ -923,7 +922,7 @@ BOOL _img_setpixel(HEXIMAGE hImg, INT x, INT y, EXARGB color);
 * @param 2  lpLockedBitmapData      [EX_BITMAPDATA*]
 * @return [BOOL]返回是否成功
 */
-BOOL _img_unlock(HEXIMAGE hImg, EX_BITMAPDATA* lpLockedBitmapData);
+BOOL _img_unlock(HEXIMAGE hImg, EX_BITMAPDATA *lpLockedBitmapData);
 
 /*
 * @fnType ExDirectUI
@@ -1042,7 +1041,7 @@ BOOL _imglist_setimage(HEXIMAGELIST hImageList, size_t nIndex, HEXIMAGE hImg);
 * @param 3  pHeight                 [INT*]                 返回图片高度
 * @return [BOOL]返回是否成功
 */
-BOOL _imglist_size(HEXIMAGELIST hImageList, INT* pWidth, INT* pHeight);
+BOOL _imglist_size(HEXIMAGELIST hImageList, INT *pWidth, INT *pHeight);
 
 /*
 * @fnType ExDirectUI
@@ -1089,7 +1088,7 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj);
 * @param 4  nCount                  [INT*]                加入的个数
 * @return [BOOL]返回是否成功
 */
-BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, INT* nCount);
+BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, INT *nCount);
 
 /*
 * @fnType ExDirectUI
@@ -1144,7 +1143,7 @@ BOOL _layout_enableupdate(HEXLAYOUT hLayout, BOOL fUpdateable);
 * @param 4  pvValue                 [size_t*]
 * @return [BOOL]返回是否成功
 */
-BOOL _layout_getchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t* pvValue);
+BOOL _layout_getchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t *pvValue);
 
 /*
 * @fnType ExDirectUI
@@ -1154,7 +1153,7 @@ BOOL _layout_getchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t* 
 * @param 3  lpProps                 [LPVOID*]                不释放
 * @return [BOOL]返回是否成功
 */
-BOOL _layout_getchildproplist(HEXLAYOUT hLayout, HEXOBJ hObj, LPVOID* lpProps);
+BOOL _layout_getchildproplist(HEXLAYOUT hLayout, HEXOBJ hObj, LPVOID *lpProps);
 
 /*
 * @fnType ExDirectUI
@@ -1192,8 +1191,6 @@ INT _layout_gettype(HEXLAYOUT hLayout);
 */
 LRESULT _layout_notify(HEXLAYOUT hLayout, INT nEvent, WPARAM wParam, LPARAM lParam);
 
-
-
 /*
 * @fnType ExDirectUI
 * @brief _layout_setchildprop 布局置子属性
@@ -1227,7 +1224,7 @@ BOOL _layout_setprop(HEXLAYOUT hLayout, INT dwPropID, size_t pvValue);
 * @param 5  cCells                  [INT]
 * @return [BOOL]返回是否成功
 */
-BOOL _layout_table_setinfo(HEXLAYOUT hLayout, INT* aRowHeight, INT cRows, INT* aCellWidth, INT cCells);
+BOOL _layout_table_setinfo(HEXLAYOUT hLayout, INT *aRowHeight, INT cRows, INT *aCellWidth, INT cCells);
 
 /*
 * @fnType ExDirectUI
@@ -1444,7 +1441,7 @@ BOOL _path_close(HEXPATH hPath);
 * @param 2  hPath                   [HEXPATH*]
 * @return [BOOL]返回是否成功
 */
-BOOL _path_create(DWORD dwFlags, HEXPATH* hPath);
+BOOL _path_create(DWORD dwFlags, HEXPATH *hPath);
 
 /*
 * @fnType ExDirectUI
@@ -1470,7 +1467,7 @@ BOOL _path_endfigure(HEXPATH hPath, BOOL fCloseFigure);
 * @param 2  lpBounds                [RECTF*]              RECTF
 * @return [BOOL]返回是否成功
 */
-BOOL _path_getbounds(HEXPATH hPath, RECTF* lpBounds);
+BOOL _path_getbounds(HEXPATH hPath, RECTF *lpBounds);
 
 /*
 * @fnType ExDirectUI
@@ -1613,7 +1610,7 @@ HEXDUI Ex_DUIFromWindow(HWND hWnd);
 * @param 2  lpClientRect            [RECT*]               矩形指针
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_DUIGetClientRect(HEXDUI hExDui, RECT* lpClientRect);
+BOOL Ex_DUIGetClientRect(HEXDUI hExDui, RECT *lpClientRect);
 
 /*
 * @fnType ExDirectUI
@@ -1721,7 +1718,7 @@ INT Ex_GetLastError();
 * @return [BOOL]返回是否成功
 */
 BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName,
-	LPVOID lpDefaultTheme, size_t dwDefaultThemeLen, LPVOID lpDefaultI18N, size_t dwDefaultI18NLen);
+			 LPVOID lpDefaultTheme, size_t dwDefaultThemeLen, LPVOID lpDefaultI18N, size_t dwDefaultI18NLen);
 
 /*
 * @fnType ExDirectUI
@@ -1739,7 +1736,7 @@ BOOL Ex_IsDxRender();
 * @param 3  retBitMap                   [HBITMAP*]        返回位图句柄
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_LoadBitMapFromMemory(LPVOID lpData, size_t dwLen, HBITMAP* retBitMap);
+BOOL Ex_LoadBitMapFromMemory(LPVOID lpData, size_t dwLen, HBITMAP *retBitMap);
 
 /*
 * @fnType ExDirectUI
@@ -1780,7 +1777,7 @@ INT Ex_MessageBox(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, I
 * @param 9  lpfnMsgProc             [MsgPROC]           (BOOL)MsgProc(hWnd,hExDui,uMsg,wParam,lParam,lpResult).
 * @return [INT]
 */
-INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, LPCWSTR lpCheckBox, BOOL* lpCheckBoxChecked, INT dwMilliseconds, INT dwFlags, MsgPROC lpfnMsgProc);
+INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, LPCWSTR lpCheckBox, BOOL *lpCheckBoxChecked, INT dwMilliseconds, INT dwFlags, MsgPROC lpfnMsgProc);
 
 /*
 * @fnType ExDirectUI
@@ -1789,7 +1786,7 @@ INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,
 * @param 2  lpPS                    [EX_PAINTSTRUCT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjBeginPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS);
+BOOL Ex_ObjBeginPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS);
 
 /*
 * @fnType ExDirectUI
@@ -1822,7 +1819,7 @@ BOOL Ex_ObjCheckDropFormat(HEXOBJ hObj, LPVOID pDataObject, DWORD dwFormat);
 * @param 3  y                       [INT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjClientToScreen(HEXOBJ hObj, INT* x, INT* y);
+BOOL Ex_ObjClientToScreen(HEXOBJ hObj, INT *x, INT *y);
 
 /*
 * @fnType ExDirectUI
@@ -1832,7 +1829,7 @@ BOOL Ex_ObjClientToScreen(HEXOBJ hObj, INT* x, INT* y);
 * @param 3  y                       [INT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjClientToWindow(HEXOBJ hObj, INT* x, INT* y);
+BOOL Ex_ObjClientToWindow(HEXOBJ hObj, INT *x, INT *y);
 
 /*
 * @fnType ExDirectUI
@@ -1929,7 +1926,7 @@ size_t Ex_ObjDispatchNotify(HEXOBJ hObj, INT nCode, WPARAM wParam, LPARAM lParam
 * @param 3  lprcPaint               [RECT*]
 * @return [BOOL]
 */
-BOOL Ex_ObjDrawBackgroundProc(HEXOBJ hObj, HEXCANVAS hCanvas, RECT* lprcPaint);
+BOOL Ex_ObjDrawBackgroundProc(HEXOBJ hObj, HEXCANVAS hCanvas, RECT *lprcPaint);
 
 /*
 * @fnType ExDirectUI
@@ -1974,7 +1971,7 @@ BOOL Ex_ObjEnablePaintingMsg(HEXOBJ hObj, BOOL bEnable);
 * @param 2  lpPS                    [EX_PAINTSTRUCT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS);
+BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS);
 
 /*
 * @fnType ExDirectUI
@@ -2014,7 +2011,7 @@ HEXOBJ Ex_ObjFind(EXHANDLE hObjParent, HEXOBJ hObjChildAfter, LPCWSTR lpClassNam
 * @param 2  lpBackgroundImage       [EX_BACKGROUNDIMAGEINFO]            相关结构 EX_BACKGROUNDIMAGEINFO
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO* lpBackgroundImage);
+BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO *lpBackgroundImage);
 
 /*
 * @fnType ExDirectUI
@@ -2023,7 +2020,7 @@ BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO* lpBackgro
 * @param 2  lpClassInfo             [EX_CLASSINFO*]                 相关结构 EX_CLASSINFO
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjGetClassInfo(HEXOBJ hObj, EX_CLASSINFO* lpClassInfo);
+BOOL Ex_ObjGetClassInfo(HEXOBJ hObj, EX_CLASSINFO *lpClassInfo);
 
 /*
 * @fnType ExDirectUI
@@ -2032,7 +2029,7 @@ BOOL Ex_ObjGetClassInfo(HEXOBJ hObj, EX_CLASSINFO* lpClassInfo);
 * @param 2  lpClassInfo             [INT]                 相关结构 EX_CLASSINFO
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjGetClassInfoEx(LPCWSTR lptszClassName, EX_CLASSINFO* lpClassInfo);
+BOOL Ex_ObjGetClassInfoEx(LPCWSTR lptszClassName, EX_CLASSINFO *lpClassInfo);
 
 /*
 * @fnType ExDirectUI
@@ -2041,7 +2038,7 @@ BOOL Ex_ObjGetClassInfoEx(LPCWSTR lptszClassName, EX_CLASSINFO* lpClassInfo);
 * @param 2  lpRect                  [RECT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjGetClientRect(HEXOBJ hObj, RECT* lpRect);
+BOOL Ex_ObjGetClientRect(HEXOBJ hObj, RECT *lpRect);
 
 /*
 * @fnType ExDirectUI
@@ -2139,7 +2136,7 @@ EXHANDLE Ex_ObjGetParent(HEXOBJ hObj);
 * @param 2  phExDUI                 [HEXDUI*]
 * @return [EXHANDLE]返回父组件句柄
 */
-EXHANDLE Ex_ObjGetParentEx(HEXOBJ hObj, HEXDUI* phExDUI);
+EXHANDLE Ex_ObjGetParentEx(HEXOBJ hObj, HEXDUI *phExDUI);
 
 /*
 * @fnType ExDirectUI
@@ -2157,7 +2154,7 @@ size_t Ex_ObjGetProp(HEXOBJ hObj, size_t dwKey);
 * @param 2  lpRect                  [RECT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect);
+BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT *lpRect);
 
 /*
 * @fnType ExDirectUI
@@ -2167,7 +2164,7 @@ BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect);
 * @param 3  nType                   [INT] 0组件相对位置矩形 1组件客户区矩形 2组件窗口矩形 3组件脏区域矩形 4组件文本矩形
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT* lpRect, INT nType);
+BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT *lpRect, INT nType);
 
 /*
 * @fnType ExDirectUI
@@ -2194,7 +2191,7 @@ size_t Ex_ObjGetTextLength(HEXOBJ hObj);
 * @param 2  lpRect                  [RECT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjGetTextRect(HEXOBJ hObj, RECT* lpRect);
+BOOL Ex_ObjGetTextRect(HEXOBJ hObj, RECT *lpRect);
 
 /*
 * @fnType ExDirectUI
@@ -2230,7 +2227,7 @@ BOOL Ex_ObjInitPropList(HEXOBJ hObj, INT nPropCount);
 * @param 2  lprcRedraw              [RECT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjInvalidateRect(HEXOBJ hObj, RECT* lprcRedraw);
+BOOL Ex_ObjInvalidateRect(HEXOBJ hObj, RECT *lprcRedraw);
 
 /*
 * @fnType ExDirectUI
@@ -2329,7 +2326,7 @@ BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
 * @param 4  ptY                     [INT*]                in/out
 * @return [BOOL] 返回是否成功
 */
-BOOL Ex_ObjPointTransform(HEXOBJ hObjSrc, HEXOBJ hObjDst, INT* ptX, INT* ptY);
+BOOL Ex_ObjPointTransform(HEXOBJ hObjSrc, HEXOBJ hObjDst, INT *ptX, INT *ptY);
 
 /*
 * @fnType ExDirectUI
@@ -2396,7 +2393,7 @@ HEXOBJ Ex_ObjScrollGetControl(HEXOBJ hObj, INT nBar);
 * @param 6  lpnTrackPos             [INT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjScrollGetInfo(HEXOBJ hObj, INT nBar, INT* lpnMin, INT* lpnMax, INT* lpnPos, INT* lpnTrackPos);
+BOOL Ex_ObjScrollGetInfo(HEXOBJ hObj, INT nBar, INT *lpnMin, INT *lpnMax, INT *lpnPos, INT *lpnTrackPos);
 
 /*
 * @fnType ExDirectUI
@@ -2420,7 +2417,7 @@ INT Ex_ObjScrollGetPos(HEXOBJ hObj, INT nBar);
 * @param 4  lpnMaxPos               [INT*]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjScrollGetRange(HEXOBJ hObj, INT nBar, INT* lpnMinPos, INT* lpnMaxPos);
+BOOL Ex_ObjScrollGetRange(HEXOBJ hObj, INT nBar, INT *lpnMinPos, INT *lpnMaxPos);
 
 /*
 * @fnType ExDirectUI
@@ -2505,7 +2502,7 @@ size_t Ex_ObjSendMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 * @param 10 fUpdate                 [BOOL]                是否立即刷新
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen, INT x, INT y, DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate);
+BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen, INT x, INT y, DWORD dwRepeat, RECT *lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate);
 
 /*
 * @fnType ExDirectUI
@@ -2732,7 +2729,7 @@ INT Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse);
 * @param 5  fRedraw                 [BOOL]
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjSetUIState(HEXOBJ hObj, DWORD dwState, BOOL fRemove, RECT* lprcRedraw, BOOL fRedraw);
+BOOL Ex_ObjSetUIState(HEXOBJ hObj, DWORD dwState, BOOL fRemove, RECT *lprcRedraw, BOOL fRedraw);
 
 /*
 * @fnType ExDirectUI
@@ -2791,7 +2788,7 @@ BOOL Ex_ObjUpdate(HEXOBJ hObj);
 * @param 2  retData                 [std::vector<CHAR>*] 返回数据
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR>* retData);
+BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR> *retData);
 
 /*
 * @fnType ExDirectUI
@@ -2801,7 +2798,7 @@ BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR>* retData);
 * @param 3  retData               [std::vector<CHAR>*]   返回数据
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<CHAR>* retData);
+BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<CHAR> *retData);
 
 /*
 * @fnType ExDirectUI
@@ -2822,7 +2819,7 @@ void Ex_ResFree(HEXRES hRes);
 * @param 4  dwFileLen               [size_t*]                [out]文件尺寸.
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ResGetFile(HEXRES hRes, LPCWSTR lpwzPath, LPVOID* lpFile, size_t* dwFileLen);
+BOOL Ex_ResGetFile(HEXRES hRes, LPCWSTR lpwzPath, LPVOID *lpFile, size_t *dwFileLen);
 
 /*
 * @fnType ExDirectUI
@@ -2833,7 +2830,7 @@ BOOL Ex_ResGetFile(HEXRES hRes, LPCWSTR lpwzPath, LPVOID* lpFile, size_t* dwFile
 * @param 4  dwFileLen               [size_t*]      [out]文件尺寸.
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ResGetFileFromAtom(HEXRES hRes, EXATOM atomPath, LPVOID* lpFile, size_t* dwFileLen);
+BOOL Ex_ResGetFileFromAtom(HEXRES hRes, EXATOM atomPath, LPVOID *lpFile, size_t *dwFileLen);
 
 /*
 * @fnType ExDirectUI
@@ -2893,7 +2890,7 @@ void Ex_Sleep(INT us);
 * @return [BOOL]返回是否成功
 */
 BOOL Ex_ThemeDrawControl(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	EXATOM atomClass, EXATOM atomSrcRect, DWORD dwAlpha);
+						 EXATOM atomClass, EXATOM atomSrcRect, DWORD dwAlpha);
 
 /*
 * @fnType ExDirectUI
@@ -2914,7 +2911,7 @@ BOOL Ex_ThemeDrawControl(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOA
 * @return [BOOL]返回是否成功
 */
 BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	EXATOM atomClass, EXATOM atomSrcRect, EXATOM atomBackgroundRepeat, EXATOM atomBackgroundPositon, EXATOM atomBackgroundGrid, EXATOM atomBackgroundFlags, DWORD dwAlpha);
+						   EXATOM atomClass, EXATOM atomSrcRect, EXATOM atomBackgroundRepeat, EXATOM atomBackgroundPositon, EXATOM atomBackgroundGrid, EXATOM atomBackgroundFlags, DWORD dwAlpha);
 
 /*
 * @fnType ExDirectUI
@@ -2980,7 +2977,7 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 * @param 9  dwFlags                 [DWORD]               相关常量 EMNF_
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y, size_t nReserved, EXHANDLE handle, RECT* lpRC, MsgPROC pfnCallback, DWORD dwFlags);
+BOOL Ex_TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y, size_t nReserved, EXHANDLE handle, RECT *lpRC, MsgPROC pfnCallback, DWORD dwFlags);
 
 /*
 * @fnType ExDirectUI
