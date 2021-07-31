@@ -183,7 +183,7 @@ void _easing_progress(HEXEASING pEasing)
     Ex_MemFree(pEasing);
 }
 
-INT CALLBACK _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE *nCurrent)
+INT  _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE *nCurrent)
 {
     if (lpEasingProc != 0)
     {

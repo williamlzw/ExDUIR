@@ -1,9 +1,9 @@
 #pragma once
 #include "help_ex.h"
 
-typedef LONG_PTR (*ArrayComparePROC)(LPVOID, LONG_PTR, size_t, LONG_PTR, size_t, size_t, INT);
-typedef LONG_PTR (*ArrayPROC)(LPVOID, LONG_PTR, size_t, size_t);
-typedef BOOL (*ArrayEnumPROC)(LPVOID, INT, LPVOID, size_t, size_t);
+typedef LONG_PTR (CALLBACK *ArrayComparePROC)(LPVOID, LONG_PTR, size_t, LONG_PTR, size_t, size_t, INT);
+typedef LONG_PTR (CALLBACK *ArrayPROC)(LPVOID, LONG_PTR, size_t, size_t);
+typedef BOOL (CALLBACK *ArrayEnumPROC)(LPVOID, INT, LPVOID, size_t, size_t);
 
 //数组默认增长系数
 #define eaf_growthfactor 1.1

@@ -8,7 +8,7 @@ struct entry_s
 	entry_s *pEntry;
 };
 
-typedef void (*HashTablePROC)(LPVOID);
+typedef void (CALLBACK *HashTablePROC)(LPVOID);
 
 struct EX_HASHTABLE
 {
