@@ -108,3 +108,5 @@ Windows平台轻量DirectUI框架。
 ![image](demo_image/demo_treeview.png)
 ### demo modal:  
 ![image](demo_image/demo_modal.png)
+### demo miniblink:
+![image](demo_image/demo_miniblink.png)
