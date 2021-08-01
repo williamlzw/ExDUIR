@@ -50,7 +50,7 @@ struct EX_EDIT_STREAM
 //编辑框标识_光标描述表
 #define EEF_BCARETCONTEXT 4
 //编辑框标识_选中
-#define EE_BSELECTED 8
+#define EEF_BSELECTED 8
 
 void _edit_register();
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s *pObj);

@@ -367,7 +367,7 @@ size_t _listview_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT nCount, L
     INT nPage = 0;
     INT nView = 0;
     INT nLine = 0;
-    if ((LOWORD(lParam) & 2) != 0) //LVSICF_NOSCROLL
+    if ((LOWORD(lParam) & LVSICF_NOSCROLL) != 0) 
     {
         HEXOBJ hSB = 0;
         _listview_getscrollbarvalue(pObj, pOwner, TRUE, &hSB, &nPosX, &nLine, &nPage, &nView);

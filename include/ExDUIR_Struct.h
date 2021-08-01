@@ -861,6 +861,11 @@
 // 事件_组合框_弹出下拉列表
 #define CBN_POPUPLISTWINDOW 2001
 
+// 事件_列表按钮_单击 wParam 索引
+#define LBN_CLICK 1
+// 事件_列表按钮_选中 wParam 索引,lParam 状态
+#define LBN_CHECK 2
+
 // 缓动类型_线性
 #define ET_Linear 1
 // 缓动类型_圆线性插值
@@ -1086,9 +1091,9 @@
 #pragma region listview message constant
 // 消息_列表_取表项总数
 #define LVM_GETITEMCOUNT 4100
-// 消息_报表_获取表项 (lParam为EX_REPORTLIST_ITEMINFO指针)
+// 消息_列表_获取表项 (LISTBUTTON wParam为项目索引, lParam为EX_REPORTLIST_ITEMINFO指针或EX_LISTBUTTON_ITEMINFO指针)
 #define LVM_GETITEM 4101
-// 消息_报表_设置表项 (wParam为是否重画,lParam为EX_REPORTLIST_ITEMINFO或EX_LISTBUTTON_ITEMINFO指针)
+// 消息_列表_设置表项 (wParam为是否重画,lParam为EX_REPORTLIST_ITEMINFO或EX_LISTBUTTON_ITEMINFO指针)
 #define LVM_SETITEM 4102
 // 消息_列表_插入表项 lParam 为EX_REPORTLIST_ROWINFO指针,wParam为是否立即重画,返回索引
 #define LVM_INSERTITEM 4103
@@ -1272,7 +1277,7 @@
 #define MN_SELECTITEM 0x1E5
 
 #pragma region listbutton message constant
-// 消息_列表按钮_按下项目
+// 消息_列表按钮_按下项目 wParam按下横坐标 lParam 菜单句柄
 #define LBM_DOWNITEM 1237701
 // 消息_列表按钮_选择项目
 #define LBM_SELECTITEM 1237702
@@ -1672,7 +1677,7 @@ struct EX_LISTBUTTON_ITEMINFO
     LPCWSTR wzTips;  //项目提示文本
     UINT nLeft;      //项目左边
     UINT nWidth;     //项目宽度
-    UINT dwState;    //项目状态   0,正常 1,焦点 2,按下 3,禁止
+    UINT dwState;    //项目状态   可取STATE_NORMAL,STATE_DOWN,STATE_FOCUS,STATE_DISABLE
     UINT nMenu;      //项目菜单
     UINT TextFormat; //项目文本格式
 };

@@ -2,19 +2,19 @@
 #include "help_ex.h"
 
 // 列表属性_类型
-#define LB_TYPE 0
+#define ELBL_TYPE 0
 // 列表属性_表项数
-#define LB_CTCS 1
+#define ELBL_CTCS 1
 // 列表属性_表项信息
-#define LB_ITEMINFO 2
+#define ELBL_ITEMINFO 2
 // 列表属性_热点项目
-#define LB_INDEX 3
+#define ELBL_INDEX 3
 // 列表属性_图片组句柄
-#define LB_HIMAGELIST 4
+#define ELBL_HIMAGELIST 4
 // 列表属性_图片组宽度
-#define LB_HIMAGWIDTH 5
+#define ELBL_HIMAGWIDTH 5
 // 列表属性_图片组高度
-#define LB_HIMAGHEIGHT 6
+#define ELBL_HIMAGHEIGHT 6
 
 void _listbuttonex_register();
 LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

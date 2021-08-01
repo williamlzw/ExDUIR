@@ -498,6 +498,20 @@ LRESULT CALLBACK OnListButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
     return 0;
 }
 
+LRESULT CALLBACK OnListButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+    if (nCode == LBN_CLICK)
+    {
+        output(L"点击", wParam, lParam);
+    }
+    else if (nCode == LBN_CHECK)
+    {
+        output(L"选择", wParam, lParam);
+    }
+
+    return 0;
+}
+
 void test_listbutton(HWND hWnd)
 {
     HWND hWnd_listbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试列表按钮", 0, 0, 480, 200, 0, 0);
@@ -507,7 +521,7 @@ void test_listbutton(HWND hWnd)
 
     //创建正常菜单条
     HEXOBJ hObj = 0;
-    hObj = Ex_ObjCreateEx(-1, L"Menubar", 0, -1, 0, 30, 220, 22, hExDui_listbutton, 0, -1, 0, 0, 0);
+    hObj = Ex_ObjCreate(L"Menubar", 0, -1, 0, 30, 220, 22, hExDui_listbutton);
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), FALSE);       //文本色
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16774117, 255), FALSE); //点燃背景色
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16765337, 255), FALSE);  //按下背景色
@@ -576,26 +590,28 @@ void test_listbutton(HWND hWnd)
     item2.nImage = 0;
     item2.wzText = L"选择按钮2";
     item2.wzTips = L"选择按钮2";
-    item2.dwState = 2;
+    item2.dwState = STATE_DOWN;
     Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
     item2.nType = 0;
     item2.nImage = 0;
     item2.wzText = NULL;
     item2.wzTips = NULL;
-    item2.dwState = 0;
+    item2.dwState = STATE_NORMAL;
     Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
     item2.nType = 1;
     item2.nImage = nImageIndex;
     item2.wzText = L"测试3";
     item2.wzTips = L"测试3";
-    item2.dwState = 3;
+    item2.dwState = STATE_DISABLE;
     Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
     item2.nType = 1;
     item2.nImage = 0;
     item2.wzText = L"普通4";
     item2.wzTips = L"普通4";
-    item2.dwState = 0;
+    item2.dwState = STATE_NORMAL;
     Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item2);
+    Ex_ObjHandleEvent(hObj, LBN_CLICK, OnListButtonEvent);
+    Ex_ObjHandleEvent(hObj, LBN_CHECK, OnListButtonEvent);
 
     //创建状态条
     hObj = Ex_ObjCreate(L"Statusbar", 0, -1, 0, 120, 430, 22, hExDui_listbutton);

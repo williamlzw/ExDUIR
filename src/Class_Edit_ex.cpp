@@ -334,11 +334,11 @@ public:
                 SELCHANGE *pSelChange = (SELCHANGE *)pv;
                 if (pSelChange->chrg.cpMin == pSelChange->chrg.cpMax)
                 {
-                    FLAGS_DEL(m_pOwner->flags_, EE_BSELECTED);
+                    FLAGS_DEL(m_pOwner->flags_, EEF_BSELECTED);
                 }
                 else
                 {
-                    FLAGS_ADD(m_pOwner->flags_, EE_BSELECTED);
+                    FLAGS_ADD(m_pOwner->flags_, EEF_BSELECTED);
                 }
             }
         }
@@ -826,7 +826,7 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
             }
             if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
             {
-                if (!((((edit_s *)ps.dwOwnerData)->flags_ & EE_BSELECTED) == EE_BSELECTED))
+                if (!((((edit_s *)ps.dwOwnerData)->flags_ & EEF_BSELECTED) == EEF_BSELECTED))
                 {
                     if ((((edit_s *)ps.dwOwnerData)->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT)
                     {
