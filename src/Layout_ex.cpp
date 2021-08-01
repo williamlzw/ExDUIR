@@ -1046,7 +1046,7 @@ LRESULT CALLBACK __layout_relative_proc(layout_s *pLayout, INT nEvent, WPARAM wP
 void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hArrObjs, LPARAM lParam)
 {
     INT Prime = GetNearestPrime(Array_GetCount(hArrObjs));
-    EX_HASHTABLE *hHashPosInfos = HashTable_Create(Prime, &pfnDefaultFreeData);
+    EX_HASHTABLE *hHashPosInfos = HashTable_Create(Prime, pfnDefaultFreeData);
     EXHANDLE hObjParent = ((layout_s *)pLayout)->hBind_;
     RECT rcClient{0};
     if (((layout_s *)pLayout)->nBindType_ == HT_OBJECT)

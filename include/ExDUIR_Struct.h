@@ -1330,6 +1330,24 @@
 // 分组框属性_线宽
 #define GROUPBOX_STROKEWIDTH 2
 
+
+// mibiblink浏览框属性_浏览框句柄
+#define MBBL_VIEW 0
+// mibiblink浏览框属性_绘画函数地址
+#define MBBL_ONPAINT 1
+
+// mibiblink浏览框加载类型_URL
+#define MBBL_TYPE_URL 0
+// mibiblink浏览框加载类型_文件
+#define MBBL_TYPE_FILE 1
+// mibiblink浏览框加载类型_HTML
+#define MBBL_TYPE_HTML 2
+
+// 消息_mibiblink浏览框_获取浏览框句柄
+#define MBBM_GETWEBVIEW 100011
+// 消息_mibiblink浏览框_加载
+#define MBBM_LOAD 100012
+
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
 #define ExGetB(argb) (LOBYTE((argb) >> 16))

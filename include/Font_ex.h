@@ -12,5 +12,5 @@ struct font_s
     LOGFONT font_;
 };
 
-void pfnDefaultFreeFont(LPVOID dwData);
+void CALLBACK pfnDefaultFreeFont(LPVOID dwData);
 HEXFONT _font_createfromlogfont_ex(LOGFONTW *lpLogfont, INT flags);

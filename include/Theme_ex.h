@@ -30,4 +30,4 @@ struct EX_THEME
 BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen, std::vector<INT> *atomFiles, std::vector<LPVOID> *lpFiles, std::vector<UCHAR> *dwFileProps);
 INT _theme_fillitems(LPVOID lpContent, std::vector<INT> *artItems1, std::vector<size_t> *artItems2);
 BOOL _theme_fillclasses(EX_HASHTABLE *pTableFiles, EX_HASHTABLE *pTableClass, std::vector<INT> atomFiles, std::vector<LPVOID> lpFiles, std::vector<UCHAR> dwFileProps, LPVOID aryCorlors);
-void _theme_freeclass(LPVOID pClass);
+void CALLBACK _theme_freeclass(LPVOID pClass);

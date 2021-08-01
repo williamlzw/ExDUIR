@@ -33,6 +33,7 @@
     <ClCompile Include="..\..\src\Class_ListButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ComboBox_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp" />
     <ClCompile Include="..\..\src\Class_MosaicLoading_ex.cpp" />
     <ClCompile Include="..\..\src\Class_NavButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ProgressBar_ex.cpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="..\..\src\Class_Scrollbar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SoliderBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Static_SysLink_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_SuperListview_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Switch_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SysButton_Page_ex.cpp" />
     <ClCompile Include="..\..\src\Class_TreeView_ex.cpp" />
@@ -85,6 +87,7 @@
     <ClInclude Include="..\..\include\Class_ListButton_ex.h" />
     <ClInclude Include="..\..\include\Class_ListView_ex.h" />
     <ClInclude Include="..\..\include\Class_ComboBox_ex.h" />
+    <ClInclude Include="..\..\include\Class_MiniBlink_ex.h" />
     <ClInclude Include="..\..\include\Class_MosaicLoading_ex.h" />
     <ClInclude Include="..\..\include\Class_NavButton_ex.h" />
     <ClInclude Include="..\..\include\Class_ProgressBar_ex.h" />
@@ -94,6 +97,7 @@
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h" />
     <ClInclude Include="..\..\include\Class_SoliderBar_ex.h" />
     <ClInclude Include="..\..\include\Class_Static_SysLink_ex.h" />
+    <ClInclude Include="..\..\include\Class_SuperListview_ex.h" />
     <ClInclude Include="..\..\include\Class_Switch_ex.h" />
     <ClInclude Include="..\..\include\Class_SysButton_Page_ex.h" />
     <ClInclude Include="..\..\include\Class_TreeView_ex.h" />
@@ -135,26 +139,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -178,7 +182,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
@@ -186,20 +190,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\lib\</OutDir>
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</IncludePath>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LibraryPath>$(LibraryPath)</LibraryPath>

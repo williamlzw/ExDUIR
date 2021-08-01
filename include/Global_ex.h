@@ -3,7 +3,7 @@
 #include "ExDUIR_Func.h"
 
 void _object_init();
-void pfnDefaultFreeData(LPVOID dwData);
+void CALLBACK pfnDefaultFreeData(LPVOID dwData);
 BOOL Flag_Query(INT dwFlag);
 void Flag_Add(INT dwFlag);
 void Flag_Del(INT dwFlag);

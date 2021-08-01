@@ -80,7 +80,7 @@ HEXRES _res_unpack(LPVOID lpData, size_t dwDataLen, UCHAR byteHeader)
             INT count = __get_int(retPtr, 1);
             if (count > 0)
             {
-                tableFiles = HashTable_Create(GetNearestPrime(count), &pfnDefaultFreeData);
+                tableFiles = HashTable_Create(GetNearestPrime(count), pfnDefaultFreeData);
                 if (tableFiles != 0)
                 {
                     retPtr = (LPVOID)((size_t)retPtr + 5);

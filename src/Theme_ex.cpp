@@ -149,7 +149,7 @@ BOOL _theme_fillclasses(EX_HASHTABLE *pTableFiles, EX_HASHTABLE *pTableClass, st
                             classtable_s *pClass = (classtable_s *)Ex_MemAlloc(sizeof(classtable_s));
                             if (pClass != 0)
                             {
-                                EX_HASHTABLE *pTableProp = HashTable_Create(GetNearestPrime(nCount), &pfnDefaultFreeData);
+                                EX_HASHTABLE *pTableProp = HashTable_Create(GetNearestPrime(nCount), pfnDefaultFreeData);
                                 if (pTableProp != 0)
                                 {
                                     pClass->tableProps_ = pTableProp;
@@ -218,7 +218,7 @@ BOOL _theme_fillclasses(EX_HASHTABLE *pTableFiles, EX_HASHTABLE *pTableClass, st
     return ret;
 }
 
-void _theme_freeclass(LPVOID pClass)
+void CALLBACK _theme_freeclass(LPVOID pClass)
 {
     if (pClass != 0)
     {
@@ -269,7 +269,7 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
             EX_HASHTABLE *pTableFiles = HashTable_Create(GetNearestPrime(atomFiles.size()), pfnDefaultFreeData);
             if (pTableFiles != 0)
             {
-                EX_HASHTABLE *pTableClass = HashTable_Create(27, &_theme_freeclass);
+                EX_HASHTABLE *pTableClass = HashTable_Create(27, _theme_freeclass);
                 if (pTableClass != 0)
                 {
                     LPVOID aryColors = Ex_MemAlloc(sizeof(colors_s));

@@ -1,6 +1,6 @@
 #include "Font_ex.h"
 
-void pfnDefaultFreeFont(LPVOID dwData)
+void CALLBACK pfnDefaultFreeFont(LPVOID dwData)
 {
     if (IsBadReadPtr(dwData, sizeof(font_s)))
     {

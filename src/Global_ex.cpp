@@ -1,6 +1,6 @@
 #include "Global_ex.h"
 
-void pfnDefaultFreeData(LPVOID dwData)
+void CALLBACK pfnDefaultFreeData(LPVOID dwData)
 {
     Ex_MemFree(dwData);
 }
@@ -49,8 +49,8 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     g_Li.atomClassName = Ex_WndRegisterClass(lpszDefaultClassName, NULL, NULL, NULL);
 
     g_Li.dwMessage = RegisterWindowMessageW(L"Ex_DirectUI");
-    g_Li.hTableClass = HashTable_Create(47, &pfnDefaultFreeData);
-    g_Li.hTableFont = HashTable_Create(17, &pfnDefaultFreeFont);
+    g_Li.hTableClass = HashTable_Create(47, pfnDefaultFreeData);
+    g_Li.hTableFont = HashTable_Create(17, pfnDefaultFreeFont);
     g_Li.hTableLayout = HashTable_Create(17, NULL);
     g_Li.hMemPoolMsg = MemPool_Create(256, sizeof(mempoolmsg_s), 0);
     g_Li.hHandles = _handle_init();
@@ -171,6 +171,7 @@ void _object_init()
     _rotateimagebox_register();
     _progressbar_register();
     _listbuttonex_register();
+    _miniblink_register();
 }
 
 FLOAT Ex_Scale(FLOAT n) //OK

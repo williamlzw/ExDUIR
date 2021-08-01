@@ -327,6 +327,7 @@ struct obj_base
 #include "Class_RotateImageBox_ex.h"
 #include "Class_ProgressBar_ex.h"
 #include "Class_ListButton_ex.h"
+#include "Class_Miniblink_ex.h"
 
 struct LOCALINFO
 {
