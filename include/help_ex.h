@@ -328,6 +328,9 @@ struct obj_base
 #include "Class_ProgressBar_ex.h"
 #include "Class_ListButton_ex.h"
 #include "Class_Miniblink_ex.h"
+#include "Class_DateBox_ex.h"
+#include "Class_TitleBar_ex.h"
+#include "Class_Palette_ex.h"
 
 struct LOCALINFO
 {

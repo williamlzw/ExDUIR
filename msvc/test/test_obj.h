@@ -147,3 +147,11 @@ void test_modal(HWND hWnd);
 
 LRESULT CALLBACK OnMiniblinkWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_miniblink(HWND hWnd);
+
+LRESULT CALLBACK OnPaletteButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_palette(HWND hParent);
+
+void test_titlebar(HWND hParent);
+
+LRESULT CALLBACK OnDateBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_datebox(HWND hParent);

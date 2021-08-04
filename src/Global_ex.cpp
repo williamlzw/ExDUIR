@@ -1,5 +1,39 @@
 #include "Global_ex.h"
 
+void _object_init()
+{
+    _sysbutton_register();
+    _page_register();
+    _static_register();
+    _button_regsiter();
+    _item_regsiter();
+    _scrollbar_register();
+    _edit_register();
+    _listview_regsiter();
+    _combobox_regsiter();
+    _groupbox_regsiter();
+    _reportlistview_regsiter();
+    _iconlistview_register();
+    _treeview_register();
+    _navbtn_register();
+    _buttonex_register();
+    _editex_register();
+    _checkbuttonex_register();
+    _radiobuttonex_register();
+    _checkbox_register();
+    _switch_register();
+    _mosaic_loading_register();
+    _win10_loading_register();
+    _soliderbar_register();
+    _rotateimagebox_register();
+    _progressbar_register();
+    _listbuttonex_register();
+    _miniblink_register();
+    _datebox_register();
+    _titlebar_register();
+    _palette_register();
+}
+
 void CALLBACK pfnDefaultFreeData(LPVOID dwData)
 {
     Ex_MemFree(dwData);
@@ -143,36 +177,7 @@ void Ex_UnInit()
     CoUninitialize();
 }
 
-void _object_init()
-{
-    _sysbutton_register();
-    _page_register();
-    _static_register();
-    _button_regsiter();
-    _item_regsiter();
-    _scrollbar_register();
-    _edit_register();
-    _listview_regsiter();
-    _combobox_regsiter();
-    _groupbox_regsiter();
-    _reportlistview_regsiter();
-    _iconlistview_register();
-    _treeview_register();
-    _navbtn_register();
-    _buttonex_register();
-    _editex_register();
-    _checkbuttonex_register();
-    _radiobuttonex_register();
-    _checkbox_register();
-    _switch_register();
-    _mosaic_loading_register();
-    _win10_loading_register();
-    _soliderbar_register();
-    _rotateimagebox_register();
-    _progressbar_register();
-    _listbuttonex_register();
-    _miniblink_register();
-}
+
 
 FLOAT Ex_Scale(FLOAT n) //OK
 {

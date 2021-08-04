@@ -444,7 +444,7 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                         tmp.bottom = screen.bottom - tmp.top;
                     }
                 }
-                HWND hWndBox = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, (LPCWSTR)GetClassLongW(hWnd, -32), 0, 0x80880000, tmp.left, tmp.top, tmp.right, tmp.bottom, hWnd, 0, g_Li.hInstance, 0);
+                HWND hWndBox = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, (LPCWSTR)GetClassLongPtrW(hWnd, GCW_ATOM), 0, WS_BORDER | WS_SYSMENU | WS_POPUP, tmp.left, tmp.top, tmp.right, tmp.bottom, hWnd, 0, g_Li.hInstance, 0);
                 if (hWnd)
                 {
                     HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOSHADOW | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW | EWS_COMBOWINDOW, hObj, NULL);

@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckButtonEx_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_DateBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_EditEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Edit_ex.cpp" />
     <ClCompile Include="..\..\src\Class_GroupBox_ex.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp" />
     <ClCompile Include="..\..\src\Class_MosaicLoading_ex.cpp" />
     <ClCompile Include="..\..\src\Class_NavButton_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_Palette_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ProgressBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_RadioButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ReportListView_ex.cpp" />
@@ -46,6 +48,7 @@
     <ClCompile Include="..\..\src\Class_SuperListview_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Switch_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SysButton_Page_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_TitleBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_TreeView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Win10Loading_ex.cpp" />
     <ClCompile Include="..\..\src\DirectX_ex.cpp" />
@@ -80,6 +83,7 @@
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckBox_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckButtonEx_ex.h" />
+    <ClInclude Include="..\..\include\Class_DateBox_ex.h" />
     <ClInclude Include="..\..\include\Class_EditEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Edit_ex.h" />
     <ClInclude Include="..\..\include\Class_GroupBox_ex.h" />
@@ -90,6 +94,7 @@
     <ClInclude Include="..\..\include\Class_MiniBlink_ex.h" />
     <ClInclude Include="..\..\include\Class_MosaicLoading_ex.h" />
     <ClInclude Include="..\..\include\Class_NavButton_ex.h" />
+    <ClInclude Include="..\..\include\Class_Palette_ex.h" />
     <ClInclude Include="..\..\include\Class_ProgressBar_ex.h" />
     <ClInclude Include="..\..\include\Class_RadioButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_ReportListView_ex.h" />
@@ -100,6 +105,7 @@
     <ClInclude Include="..\..\include\Class_SuperListview_ex.h" />
     <ClInclude Include="..\..\include\Class_Switch_ex.h" />
     <ClInclude Include="..\..\include\Class_SysButton_Page_ex.h" />
+    <ClInclude Include="..\..\include\Class_TitleBar_ex.h" />
     <ClInclude Include="..\..\include\Class_TreeView_ex.h" />
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h" />
     <ClInclude Include="..\..\include\DropTarget_ex.h" />
@@ -117,6 +123,7 @@
     <ClInclude Include="..\..\include\ImageList_ex.h" />
     <ClInclude Include="..\..\include\Image_ex.h" />
     <ClInclude Include="..\..\include\Layout_ex.h" />
+    <ClInclude Include="..\..\include\lunarday.h" />
     <ClInclude Include="..\..\include\Matrix_ex.h" />
     <ClInclude Include="..\..\include\MemPool_ex.h" />
     <ClInclude Include="..\..\include\Object_ex.h" />

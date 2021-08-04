@@ -5,7 +5,6 @@ HWND m_hWnd;
 
 LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-
     void (*buttonProc[])(HWND) = {
         test_button,         //101，测试按钮
         test_label,          //102，测试标签
@@ -42,7 +41,10 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_progressbar,    //133测试进度条
         test_nchittest,      //134测试限制通知区域
         test_modal,           //135测试模态窗口
-        test_miniblink       //136测试miniblink浏览框
+        test_miniblink,      //136测试miniblink浏览框
+        test_titlebar,      //137测试标题框
+        test_datebox,       //138测试日期框
+        test_palette        //139测试调色板
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -105,6 +107,10 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试限制通知", -1, 230, 230, 100, 30, hExDui, 134, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模态窗口", -1, 230, 270, 100, 30, hExDui, 135, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试mb浏览框", -1, 230, 310, 100, 30, hExDui, 136, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标题框", -1, 230, 350, 100, 30, hExDui, 137, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试日期框", -1, 230, 390, 100, 30, hExDui, 138, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 230, 430, 100, 30, hExDui, 139, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+
 
         for (auto button : buttons)
         {

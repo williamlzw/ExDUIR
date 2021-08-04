@@ -2637,3 +2637,78 @@ void test_miniblink(HWND hWnd)
 
 	Ex_DUIShowWindow(hExDui_miniblink, SW_SHOWNORMAL, 0, 0, 0);
 }
+
+LRESULT CALLBACK OnPaletteButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == PTN_COLORCHANGE) {
+		output(L"颜色已更改", (int)lParam);
+	}
+	return 0;
+}
+
+void test_palette(HWND hParent)
+{
+	HWND hWnd_palette = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试调色板", 0, 0, 400, 200, 0, 0);
+	HEXDUI hExDui_palette = Ex_DUIBindWindowEx(hWnd_palette, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_palette, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	HEXOBJ hObj = Ex_ObjCreate(L"Palette", 0, -1, 50, 80, 100, 30, hExDui_palette);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 255), TRUE);
+	Ex_ObjHandleEvent(hObj, PTN_COLORCHANGE, OnPaletteButtonEvent);
+	Ex_DUIShowWindow(hExDui_palette, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+LRESULT CALLBACK OnDateBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == DBN_DATETIME) {
+		EX_DATETIME* dt = (EX_DATETIME*)lParam;
+		output(L"日期已更改", dt->Year, dt->Mon, dt->Mday, dt->Wday);
+	}
+	return 0;
+}
+
+void test_datebox(HWND hParent) 
+{
+	HWND hWnd_datebox = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试日期框", 0, 0, 400, 200, 0, 0);
+	HEXDUI hExDui_datebox = Ex_DUIBindWindowEx(hWnd_datebox, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_datebox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+
+	HEXOBJ hObj = Ex_ObjCreate(L"DateBox", 0, -1, 160, 80, 150, 30, hExDui_datebox);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, -1, FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16711680, 255), TRUE);
+	EX_DATETIME dt;
+	dt.Year = 2021; //年
+	dt.Mon = 8;     //月
+	dt.Mday = 10;   //日
+	dt.Wday = 0;    //星期  0为自动计算
+	Ex_ObjSendMessage(hObj, DBM_DATETIME, 0, (size_t)&dt); //设置时间，可以不设置，默认为当前时间。
+	Ex_ObjHandleEvent(hObj, DBN_DATETIME, OnDateBoxButtonEvent);
+
+	Ex_DUIShowWindow(hExDui_datebox, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+void test_titlebar(HWND hParent) 
+{
+	HWND hWnd = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试标题框", 0, 0, 400, 200, 0, 0);
+	HEXDUI hExDui = Ex_DUIBindWindowEx(hWnd, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+
+	HEXOBJ hObj = 0;
+	hObj = Ex_ObjCreate(L"Titlebar", L"标题框1", -1, 30, 50, 300, 20, hExDui);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, -1, FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
+
+	hObj = Ex_ObjCreate(L"Titlebar", L"标题框2", -1, 30, 80, 300, 20, hExDui);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(255, 255), TRUE);
+
+	hObj = Ex_ObjCreate(L"Titlebar", L"标题框3", -1, 30, 110, 300, 20, hExDui);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16711680, 255), TRUE);
+
+	hObj = Ex_ObjCreate(L"Titlebar", L"标题框4444444444", -1, 30, 140, 300, 20, hExDui);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), FALSE);
+	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, -1, TRUE);
+
+
+	Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL, 0, 0, 0);
+}

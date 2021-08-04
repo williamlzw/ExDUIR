@@ -1348,6 +1348,16 @@
 // 消息_mibiblink浏览框_加载
 #define MBBM_LOAD 100012
 
+// 消息_调色板颜色已更改
+#define PTM_COLORCHANGE 100051
+// 事件_调色板颜色已更改
+#define PTN_COLORCHANGE 100052
+
+// 消息_日期框已更改
+#define DBM_DATETIME 100061
+// 事件_日期框已更改
+#define DBN_DATETIME 100062
+
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
 #define ExGetB(argb) (LOBYTE((argb) >> 16))
@@ -1685,6 +1695,7 @@ struct EX_SETTEXTEX
     UINT codePage;
 };
 
+// 列表按钮项目信息结构
 struct EX_LISTBUTTON_ITEMINFO
 {
     UINT dwMask;     // 1,图片 2,标题 4,提示文本 8,状态 16,菜单 32,文本格式 64,宽度
@@ -1698,4 +1709,12 @@ struct EX_LISTBUTTON_ITEMINFO
     UINT dwState;    //项目状态   可取STATE_NORMAL,STATE_DOWN,STATE_FOCUS,STATE_DISABLE
     UINT nMenu;      //项目菜单
     UINT TextFormat; //项目文本格式
+};
+
+// 日期框信息结构
+struct EX_DATETIME {
+    INT Year;				//年
+    INT Mon;				//月   1-12
+    INT Mday;				//日   1-31
+    INT Wday;				//星期 1-7 7=星期日
 };
