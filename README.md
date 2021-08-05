@@ -111,3 +111,9 @@ Windows平台轻量DirectUI框架。
 ![image](demo_image/demo_modal.png)
 ### demo miniblink:
 ![image](demo_image/demo_miniblink.png)
+### demo titlebar:
+![image](demo_image/demo_titlebar.png)
+### demo datebox:
+![image](demo_image/demo_datebox.png)
+### demo palette:
+![image](demo_image/demo_palette.png)
