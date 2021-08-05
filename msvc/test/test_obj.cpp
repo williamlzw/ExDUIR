@@ -1275,15 +1275,12 @@ void test_ani(HWND hWnd)
 
 LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
-	if (uMsg == WM_ERASEBKGND) //wParam画布句柄
+	if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
-		RECT rc{ 0 };
-		GetWindowRect(hWnd, &rc);
-		OffsetRect(&rc, -rc.left, -rc.top);
 		_canvas_setantialias(wParam, TRUE);
 		_canvas_clear(wParam, 0);
 		HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(16711680, 150));
-		_canvas_fillellipse(wParam, hBrush, rc.right / 2, rc.bottom / 2, rc.right / 2 - 2, rc.bottom / 2 - 2);
+		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 		_brush_destroy(hBrush);
 		*lpResult = 1;
 		return 1;
@@ -2128,23 +2125,22 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 			hObjfind = Ex_ObjGetObj(hObjfind, GW_HWNDNEXT);
 		}
 	}
-	else if (uMsg == WM_ERASEBKGND)
+	else if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
 		RECT rc{ 0 };
 		HDC dc = GetDC(NULL);
 		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
-		GetWindowRect(hWnd, &rc);
 		_canvas_clear(wParam, 0);
 		HEXIMAGE hImg;
 		if (GetPropW(hWnd, L"IsMainMenu") != 0)
 		{
 			_img_createfromfile(L"custommenu/Main.png", &hImg);
-			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, rc.right - rc.left - Ex_Scale(5), rc.bottom - rc.top - Ex_Scale(5), 0, 0, 68, 68, 46, 42, 13, 12, 0, 230);
+			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 68, 68, 46, 42, 13, 12, 0, 230);
 		}
 		else
 		{
 			_img_createfromfile(L"custommenu/Sub.png", &hImg);
-			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, rc.right - rc.left - Ex_Scale(5), rc.bottom - rc.top - Ex_Scale(5), 0, 0, 24, 24, 8, 9, 10, 10, 0, 230);
+			_canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 24, 24, 8, 9, 10, 10, 0, 230);
 		}
 		_img_destroy(hImg);
 		*lpResult = 1;
@@ -2538,7 +2534,7 @@ LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPAR
 			return HTTRANSPARENT;
 		}
 	}
-	else if (uMsg == WM_ERASEBKGND)
+	else if (uMsg == WM_ERASEBKGND) //wParam画布句柄
 	{
 		RECT rc{ 0 };
 		Ex_ObjGetRect(hObj, &rc);
@@ -2648,7 +2644,7 @@ LRESULT CALLBACK OnPaletteButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 
 void test_palette(HWND hParent)
 {
-	HWND hWnd_palette = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试调色板", 0, 0, 400, 200, 0, 0);
+	HWND hWnd_palette = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试调色板", 0, 0, 300, 300, 0, 0);
 	HEXDUI hExDui_palette = Ex_DUIBindWindowEx(hWnd_palette, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_palette, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ hObj = Ex_ObjCreate(L"Palette", 0, -1, 50, 80, 100, 30, hExDui_palette);
@@ -2668,11 +2664,11 @@ LRESULT CALLBACK OnDateBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 
 void test_datebox(HWND hParent) 
 {
-	HWND hWnd_datebox = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试日期框", 0, 0, 400, 200, 0, 0);
+	HWND hWnd_datebox = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试日期框", 0, 0, 250, 200, 0, 0);
 	HEXDUI hExDui_datebox = Ex_DUIBindWindowEx(hWnd_datebox, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_datebox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
-	HEXOBJ hObj = Ex_ObjCreate(L"DateBox", 0, -1, 160, 80, 150, 30, hExDui_datebox);
+	HEXOBJ hObj = Ex_ObjCreate(L"DateBox", 0, -1, 50, 80, 150, 30, hExDui_datebox);
 	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, -1, FALSE);
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16711680, 255), TRUE);
 	EX_DATETIME dt;

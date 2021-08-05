@@ -6,7 +6,7 @@ void _miniblink_register()
 	Ex_ObjRegister(L"mbBrowser", EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, -1, 2 * sizeof(SIZE_T), 0, 0, _miniblink_proc);
 }
 
-void WKE_CALL_TYPE _miniblink_OnPaint(wkeWebView hWebView, LPVOID hObj,const HDC hDC, INT x, INT y, INT cx, INT cy)
+void WKE_CALL_TYPE _miniblink_onpaint(wkeWebView hWebView, LPVOID hObj,const HDC hDC, INT x, INT y, INT cx, INT cy)
 {
 	cx = cx + x;
 	cy = cy + y;
@@ -73,7 +73,7 @@ DWORD _miniblink_geteventflags(WPARAM wParam, BOOL fKeyEvent)
 HCURSOR _miniblink_setcursor(HEXOBJ hObj, DWORD dwCursorType)
 {
 	std::vector<INT> arrCurs = { 0, 32512, 1, 32515, 2, 32649, 3, 32513, 4, 32514, 5, 32651, 6, 32644, 7, 32645, 8, 32643, 9, 32642, 10, 32645, 11, 32642, 12, 32643, 13, 32644, 14, 32645, 15, 32644, 16, 32643, 17, 32642, 18, 32644, 19, 32645, 20, 32640, 21, 32644, 22, 32644, 23, 32643, 24, 32642, 25, 32645, 26, 32642, 27, 32643, 28, 32644, 29, 32646, 30, 32513, 31, 32512, 32, 32512, 33, 32512, 34, 32650, 35, 32648, 36, 32512, 37, -1, 38, 32648, 39, 32515, 40, 32646, 41, 32512, 42, 32512, 43, 32512 };
-	LPCWSTR CursorName;
+	LPCWSTR CursorName = NULL;
 	for (int i = 0; i < arrCurs.size() / 2; i++)
 	{
 		if (dwCursorType = arrCurs[i * 2])
@@ -107,8 +107,8 @@ LRESULT CALLBACK _miniblink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		if (hWebView)
 		{
 			Ex_ObjSetLong(hObj, MBBL_VIEW, (LONG_PTR)hWebView);
-			Ex_ObjSetLong(hObj, MBBL_ONPAINT, (LONG_PTR)_miniblink_OnPaint);
-			wkeOnPaintUpdated(hWebView, _miniblink_OnPaint, (LPVOID)hObj);
+			Ex_ObjSetLong(hObj, MBBL_ONPAINT, (LONG_PTR)_miniblink_onpaint);
+			wkeOnPaintUpdated(hWebView, _miniblink_onpaint, (LPVOID)hObj);
 		}
 	}
 	else if (uMsg == WM_DESTROY)

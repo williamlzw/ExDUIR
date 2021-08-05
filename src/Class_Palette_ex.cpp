@@ -58,9 +58,9 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 					//创建一个底部标签，防止点击空白标题处，窗口会关闭。
 					HEXOBJ hObj_Static = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 0, 0, 400, 400, hExBox, 0, -1, 0, 0, 0);
 
-					SetWindowPos(hWndBox, 0, lpRect.left, lpRect.top, Ex_Scale(181), Ex_Scale(160), SWP_NOZORDER | SWP_NOACTIVATE);
+					SetWindowPos(hWndBox, 0, lpRect.left, lpRect.top, Ex_Scale(180), Ex_Scale(180), SWP_NOZORDER | SWP_NOACTIVATE);
 
-					HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 8, 10, 170, 120, hObj_Static, 76601, -1, 0, 0, _palette_onlistproc);
+					HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 15, 15, 160, 120, hObj_Static, 76601, -1, 0, 0, _palette_onlistproc);
 					Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, 32, 0);
 
 					WCHAR lpTitle[12];
@@ -69,7 +69,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 					INT G = ExGetG(nColor);
 					INT B = ExGetB(nColor);
 					swprintf_s(lpTitle, L"%X %X %X", R, G, B);
-					Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", lpTitle, EOS_VISIBLE, 8, 128, 160, 25, hObj_Static, 76602, DT_SINGLELINE, 0, 0, _palette_oneditproc);
+					Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", lpTitle, EOS_VISIBLE, 15, 150, 150, 25, hObj_Static, 76602, DT_SINGLELINE, 0, 0, _palette_oneditproc);
 					Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
 				}
 			}
@@ -138,8 +138,8 @@ LRESULT CALLBACK _palette_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			{
 				__set_int((LPVOID)ni.lParam, 0, Ex_Scale(16));//改变项目宽度
 				__set_int((LPVOID)ni.lParam, 4, Ex_Scale(16));//改变项目高度
-				__set_int((LPVOID)ni.lParam, 8, 10);//改变项目间隔宽度
-				__set_int((LPVOID)ni.lParam, 12, 10);//改变项目间隔高度
+				__set_int((LPVOID)ni.lParam, 8, Ex_Scale(10));//改变项目间隔宽度
+				__set_int((LPVOID)ni.lParam, 12, Ex_Scale(10));//改变项目间隔高度
 				nIndex = 0;
 				*lpResult = 1;
 				return 1;

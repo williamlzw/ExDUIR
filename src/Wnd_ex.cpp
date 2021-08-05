@@ -1965,7 +1965,7 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s *pWnd)
         _canvas_setantialias(cvBkg, TRUE);
         _canvas_setimageantialias(cvBkg, TRUE);
         LRESULT result = 0;
-        if (!pWnd->pfnMsgProc_ || !pWnd->pfnMsgProc_(hWnd, pWnd->hexdui_, WM_ERASEBKGND, cvBkg, pWnd->hexdui_, &result))
+        if (!pWnd->pfnMsgProc_ || !pWnd->pfnMsgProc_(hWnd, pWnd->hexdui_, WM_ERASEBKGND, cvBkg, MAKELONG(pWnd->width_, pWnd->height_), &result))
         {
             if (!((pWnd->dwStyle_ & EWS_NOINHERITBKG) == EWS_NOINHERITBKG))
             {

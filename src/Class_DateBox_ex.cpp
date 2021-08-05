@@ -193,7 +193,6 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			pOwner->Mon = ptm.tm_mon + 1;
 			pOwner->Mday = ptm.tm_mday;
 			pOwner->Wday = ptm.tm_wday == 0 ? 7 : ptm.tm_wday;
-			//pOwner->Format = L"%Y-%m-%d %a";  //%Y-%m-%d %H:%M:%S %a
 			pOwner->nCalendar = 1;
 			pOwner->nSohwType = 0;
 			pOwner->Items = Ex_MemAlloc(42 * (20 + sizeof(size_t)));
@@ -207,7 +206,17 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			datebox_s* pOwner = (datebox_s*)_obj_pOwner(pObj);
 			_font_destroy(pOwner->hFont);
 			LPVOID pOld = pOwner->Items;
-			if (pOld != 0) {
+			if (pOld != 0) 
+			{
+				for (int i = 0; i < 42; i++)
+				{
+					LONG_PTR offset = i * (20 + sizeof(size_t));
+					LPVOID Calendar = (LPVOID)__get(pOld, offset + 20);
+					if (Calendar)
+					{
+						Ex_MemFree(Calendar);
+					}
+				}
 				Ex_MemFree(pOld);
 			}
 			_struct_destroyfromaddr(pObj, offsetof(obj_s, dwOwnerData_));
@@ -293,16 +302,14 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult) {
 	if (uMsg == WM_DESTROY) {
 		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, EWL_LPARAM);
-
 		pOwner->nProcessTime = GetTickCount64();
 	}
-	else if (uMsg == WM_ERASEBKGND) {
+	else if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
+	{
 		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, EWL_LPARAM);
 		_canvas_clear(wParam, -1);
 		int offset = Ex_Scale(26);
-		RECT rc;
-		GetWindowRect(hWnd, &rc);
-		_canvas_drawtext(wParam, pOwner->hFont, ExRGB2ARGB(16711680, 255), (LPCWSTR)Ex_ObjGetLong(pOwner->hObj, EOL_LPWZTITLE), -1, DT_LEFT | DT_VCENTER, Ex_Scale(18), rc.bottom - rc.top - offset, Ex_Scale(220), rc.bottom - rc.top - offset + Ex_Scale(22));
+		_canvas_drawtext(wParam, pOwner->hFont, ExRGB2ARGB(16711680, 255), (LPCWSTR)Ex_ObjGetLong(pOwner->hObj, EOL_LPWZTITLE), -1, DT_LEFT | DT_VCENTER, Ex_Scale(18), HIWORD(lParam) - offset, Ex_Scale(220), HIWORD(lParam) - offset + Ex_Scale(22));
 		*lpResult = 1;
 		return 1;
 	}
@@ -408,7 +415,8 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			}
 		}
 	}
-	else if (uMsg == WM_ERASEBKGND) {
+	else if (uMsg == WM_ERASEBKGND) 
+	{
 		if (__get((LPVOID)lParam, 0) == wParam) {
 			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
 			if (pOwner->nSohwType > 0) {
