@@ -1,6 +1,7 @@
+#include "Windows.h"
 #include "test_obj.h"
 #include "resource.h"
-#include "Windows.h"
+#include "DataTime.hpp"
 
 HEXDUI m_hExDuiButton;
 
@@ -2705,6 +2706,32 @@ void test_titlebar(HWND hParent)
 	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), FALSE);
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, -1, TRUE);
 
-
 	Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+
+	SYSTEMTIME lpSysTime{};
+	if (Ex_ObjSendMessage(hObj, MCM_GETCURSEL, 0, (LPARAM)&lpSysTime))
+	{
+		std::wstring outr;
+		systime_to_wstring(lpSysTime, L"当前选择时间2：%c %A", outr);
+		output(hObj, outr);
+	}
+
+	return 0;
+}
+
+void test_calendar(HWND hParent)
+{
+	HWND hWnd_calendar = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试月历", 0, 0, 800, 600, 0, 0);
+	HEXDUI hExDui_calendar = Ex_DUIBindWindowEx(hWnd_calendar, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_calendar, EWL_CRBKG, ExARGB(200, 200, 200, 255));
+
+	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER | EMCS_SHOWLUNAR, 30, 50, 500, 400, hExDui_calendar, 100, -1, 0, 0, 0);
+	Ex_ObjSendMessage(MonthCal, MCM_SETCOLOR, MCSC_BACKGROUND, ExRGBA(120,37,150,255));
+	Ex_ObjHandleEvent(MonthCal, NM_CLICK, OnCalendarEvent);
+
+	Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL, 0, 0, 0);
 }

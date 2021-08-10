@@ -1358,6 +1358,39 @@
 // 事件_日期框已更改
 #define DBN_DATETIME 100062
 
+//显示农历
+#define EMCS_SHOWLUNAR  1
+//显示水印
+#define EMCS_SHOWWATERMARK  2
+//不圈今天
+#define EMCS_NOTODAYCIRCLE  4
+//月历控件不在控件底部显示 "今天" 日期。
+#define EMCS_NOTODAY  8
+
+#pragma region 月历消息
+
+#define MCSC_BACKGROUND   0   // the background color (between months)
+#define MCSC_TEXT         1   // the dates
+#define MCSC_TITLEBK      2   // background of the title
+#define MCSC_TITLETEXT    3
+#define MCSC_MONTHBK      4   // background within the month cal
+#define MCSC_TRAILINGTEXT 5   // the text color of header & trailing days
+
+//获得当前选中的日期 wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
+#define MCM_GETCURSEL	4097
+//为月历控件设置当前选定的日期。 如果指定的日期不在视图中，则控件将更新显示以使其显示在视图中。
+#define MCM_SETCURSEL	4098
+//设置颜色wParam = (WPARAM)(INT)iColor，见:MCSC_;lParam = (LPARAM)(COLORREF)clr;
+#define MCM_SETCOLOR	4106
+//为月历控件设置 "今天" 选择,wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
+#define MCM_SETTODAY	4108
+//检索为月历控件指定为 "今日" 的日期的日期信息。wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
+#define MCM_GETTODAY	4109
+//设置日历的当前视图;wParam = 0;lParam =MCMV_MONTH
+#define MCM_SETCURRENTVIEW	4128
+
+#pragma endregion 月历消息
+
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
 #define ExGetB(argb) (LOBYTE((argb) >> 16))

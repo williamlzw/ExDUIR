@@ -32,6 +32,7 @@ void _object_init()
     _datebox_register();
     _titlebar_register();
     _palette_register();
+    _calendar_register();
 }
 
 void CALLBACK pfnDefaultFreeData(LPVOID dwData)

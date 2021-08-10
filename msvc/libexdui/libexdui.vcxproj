@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\src\Canvas_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_Calendar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_DateBox_ex.cpp" />
@@ -78,9 +79,11 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\Array_ex.h" />
     <ClInclude Include="..\..\include\Brush_ex.h" />
+    <ClInclude Include="..\..\include\CalendarHelper.hpp" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
+    <ClInclude Include="..\..\include\Class_Calendar_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckBox_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_DateBox_ex.h" />
@@ -108,6 +111,7 @@
     <ClInclude Include="..\..\include\Class_TitleBar_ex.h" />
     <ClInclude Include="..\..\include\Class_TreeView_ex.h" />
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h" />
+    <ClInclude Include="..\..\include\DataTime.hpp" />
     <ClInclude Include="..\..\include\DropTarget_ex.h" />
     <ClInclude Include="..\..\include\ExDUIR_Struct.h" />
     <ClInclude Include="..\..\include\DirectX_ex.h" />
@@ -123,6 +127,7 @@
     <ClInclude Include="..\..\include\ImageList_ex.h" />
     <ClInclude Include="..\..\include\Image_ex.h" />
     <ClInclude Include="..\..\include\Layout_ex.h" />
+    <ClInclude Include="..\..\include\LunarData.h" />
     <ClInclude Include="..\..\include\lunarday.h" />
     <ClInclude Include="..\..\include\Matrix_ex.h" />
     <ClInclude Include="..\..\include\MemPool_ex.h" />
@@ -229,6 +234,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -239,7 +245,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -249,6 +255,8 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -269,6 +277,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -279,7 +288,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
@@ -287,6 +296,8 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <Optimization>Full</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

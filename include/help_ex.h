@@ -331,6 +331,7 @@ struct obj_base
 #include "Class_DateBox_ex.h"
 #include "Class_TitleBar_ex.h"
 #include "Class_Palette_ex.h"
+#include "Class_Calendar_ex.h"
 
 struct LOCALINFO
 {
