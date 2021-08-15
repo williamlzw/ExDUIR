@@ -2725,13 +2725,14 @@ LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 
 void test_calendar(HWND hParent)
 {
-	HWND hWnd_calendar = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试月历", 0, 0, 800, 600, 0, 0);
+	HWND hWnd_calendar = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试月历", 0, 0, 600, 500, 0, 0);
 	HEXDUI hExDui_calendar = Ex_DUIBindWindowEx(hWnd_calendar, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_calendar, EWL_CRBKG, ExARGB(200, 200, 200, 255));
 
-	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER | EMCS_SHOWLUNAR, 30, 50, 500, 400, hExDui_calendar, 100, -1, 0, 0, 0);
-	Ex_ObjSendMessage(MonthCal, MCM_SETCOLOR, MCSC_BACKGROUND, ExRGBA(120,37,150,255));
+	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER | EMCS_SHOWLUNAR, 50, 50, 500, 400, hExDui_calendar, 100, -1, 0, 0, 0);
+	Ex_ObjSendMessage(MonthCal, MCM_SETCOLOR, MCSC_WEEKTITLEBK, ExRGBA(120,37,150,255));
 	Ex_ObjHandleEvent(MonthCal, NM_CLICK, OnCalendarEvent);
 
 	Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL, 0, 0, 0);
 }
+

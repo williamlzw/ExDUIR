@@ -16,6 +16,21 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		{
 			monthCal_info* monthCal_ = new monthCal_info();
 			GetLocalTime(&monthCal_->timeOld);
+			monthCal_->Color_Grid = ExRGBA(255, 255, 255, 200);
+			monthCal_->Color_WaterPrint = ExRGBA(230, 255, 255, 255);
+			monthCal_->Color_MonthCalTitle = ExRGBA(0, 0, 0, 200);
+			monthCal_->Color_TitleBk = ExRGBA(130, 135, 149, 200);
+			monthCal_->Color_NDayDefault = ExRGBA(153, 153, 153, 255);
+			monthCal_->Color_SolarTerms = ExRGBA(0, 88, 178, 255);
+			monthCal_->Color_ShuJiu = ExRGBA(20, 120, 255, 255);
+			monthCal_->Color_MeiYu = ExRGBA(30, 190, 35, 255);
+			monthCal_->Color_SanFu = ExRGBA(255, 100, 25, 255);
+			monthCal_->Color_MonthHeader = ExRGBA(0, 0, 255, 200);
+			monthCal_->Color_NHoliday = ExRGBA(255, 0, 0, 255);
+			monthCal_->Color_GHoliday = ExRGBA(0, 140, 35, 255);
+			monthCal_->Color_Weekend = ExRGBA(208, 47, 18, 255);
+			monthCal_->Color_Weekday = ExRGBA(85, 85, 85, 255);
+			monthCal_->Color_Today = ExRGBA(255, 255, 255, 200);
 			pObj->dwOwnerData_ = monthCal_;
 		}
 		break;
@@ -208,7 +223,76 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			break;
 
 		case MCM_SETCOLOR: //设置颜色wParam = (WPARAM)(INT)iColor;lParam = (LPARAM)(COLORREF)clr;
+			if (lParam)
+			{
+				switch (wParam)
+				{
+				case MCSC_SOLARTERMS:
+					MONTHCAL(pObj->dwOwnerData_)->Color_SolarTerms = lParam;
+					break;
 
+				case MCSC_WEEKENDTEXT:
+					MONTHCAL(pObj->dwOwnerData_)->Color_Weekend = lParam;
+					break;
+
+				case MCSC_WEEKDAYTEXT:
+					MONTHCAL(pObj->dwOwnerData_)->Color_Weekday = lParam;
+					break;
+
+				case MCSC_DAYDEFAULTTEXT:
+					MONTHCAL(pObj->dwOwnerData_)->Color_NDayDefault = lParam;
+					break;
+
+				case MCSC_WEEKTITLEBK:
+					MONTHCAL(pObj->dwOwnerData_)->Color_TitleBk = lParam;
+					break;
+
+				case MCSC_TITLETEXT:
+					MONTHCAL(pObj->dwOwnerData_)->Color_MonthCalTitle = lParam;
+					break;
+
+				case MCSC_SHUJIU:
+					MONTHCAL(pObj->dwOwnerData_)->Color_ShuJiu = lParam;
+					break;
+
+				case MCSC_MEIYU:
+					MONTHCAL(pObj->dwOwnerData_)->Color_MeiYu = lParam;
+					break;
+
+				case MCSC_SANFU:
+					MONTHCAL(pObj->dwOwnerData_)->Color_SanFu = lParam;
+					break;
+
+				case MCSC_MONTHHEADER:
+					MONTHCAL(pObj->dwOwnerData_)->Color_MonthHeader = lParam;
+					break;
+
+				case MCSC_NHOLIDAY:
+					MONTHCAL(pObj->dwOwnerData_)->Color_NHoliday = lParam;
+					break;
+
+				case MCSC_GHOLIDAY:
+					MONTHCAL(pObj->dwOwnerData_)->Color_GHoliday = lParam;
+					break;
+
+				case MCSC_DAYGRIDLINE:
+					MONTHCAL(pObj->dwOwnerData_)->Color_Grid = lParam;
+					break;
+
+				case MCSC_WATERPRINT:
+					MONTHCAL(pObj->dwOwnerData_)->Color_WaterPrint = lParam;
+					break;
+
+				case MCSC_TODAY:
+					MONTHCAL(pObj->dwOwnerData_)->Color_Today = lParam;
+					break;
+
+				default:
+
+					break;
+				}
+				Ex_ObjInvalidateRect(hObj, 0);
+			}
 			break;
 
 		case MCM_SETCURRENTVIEW: //设置日历的当前视图;wParam = 0;lParam =MCMV_MONTH
@@ -231,23 +315,23 @@ int _calendar_paint(HEXOBJ hObj, obj_s* pObj)
 	{
 		COLORREF	Color_NongLi = NULL;
 		COLORREF	Color_GongLi = NULL;
-
-		COLORREF	Color_Grid = ExRGBA(255, 255, 255, 150);			/* 网格线颜色 */
-		COLORREF	Color_WaterPrint = ExRGBA(230, 255, 255, 255);		/* 水印颜色 */
+		COLORREF	Color_Grid = MONTHCAL(pObj->dwOwnerData_)->Color_Grid;
+		COLORREF	Color_WaterPrint = MONTHCAL(pObj->dwOwnerData_)->Color_WaterPrint;
+		
 		COLORREF	Color_TitleWeekend = ExRGBA(227, 83, 100, 255);		/* 星期标题周末颜色 */
 		COLORREF	Color_TitleWeekDay = ExRGBA(88, 92, 104, 255);		/* 星期标题工作日颜色 */
-		COLORREF	Color_CalendarTitle = ExRGBA(0, 0, 0, 150);			/* 日历标题字体颜色 */
-		COLORREF	Color_NDayDefault = ExRGBA(153, 153, 153, 255);		/* 农历日期默认颜色 */
-		COLORREF	Color_SolarTerms = ExRGBA(0, 88, 178, 255);		    /* 节气颜色 */
-		COLORREF	Color_ShuJiu = ExRGBA(20, 120, 255, 255);			/* 数九颜色 */
-		COLORREF	Color_MeiYu = ExRGBA(30, 190, 35, 255);				/* 入梅、出梅颜色 */
-		COLORREF	Color_SanFu = ExRGBA(255, 100, 25, 255);			/* 三伏颜色 */
-		COLORREF	Color_MonthHeader = ExRGBA(0, 0, 255, 200);			/* 月首颜色 */
-		COLORREF	Color_NHoliday = ExRGBA(255, 0, 0, 255);			/* 农历传统节日颜色 */
-		COLORREF	Color_GHoliday = ExRGBA(0, 140, 35, 255);		    /* 公众 / 国际节日颜色 */
-		COLORREF	Color_Weekend = ExRGBA(208, 47, 18, 255);			/* 周末颜色 */
-		COLORREF	Color_Weekday = ExRGBA(85, 85, 85, 255);			/* 工作日颜色 */
-		COLORREF    Color_Today = ExRGBA(255, 255, 255, 255);			/* 当前日期颜色 */
+		COLORREF	Color_CalendarTitle = MONTHCAL(pObj->dwOwnerData_)->Color_MonthCalTitle;
+		COLORREF	Color_NDayDefault = MONTHCAL(pObj->dwOwnerData_)->Color_NDayDefault;
+		COLORREF	Color_SolarTerms = MONTHCAL(pObj->dwOwnerData_)->Color_SolarTerms;
+		COLORREF	Color_ShuJiu = MONTHCAL(pObj->dwOwnerData_)->Color_ShuJiu;
+		COLORREF	Color_MeiYu = MONTHCAL(pObj->dwOwnerData_)->Color_MeiYu;
+		COLORREF	Color_SanFu = MONTHCAL(pObj->dwOwnerData_)->Color_SanFu;
+		COLORREF	Color_MonthHeader = MONTHCAL(pObj->dwOwnerData_)->Color_MonthHeader;
+		COLORREF	Color_NHoliday = MONTHCAL(pObj->dwOwnerData_)->Color_NHoliday;
+		COLORREF	Color_GHoliday = MONTHCAL(pObj->dwOwnerData_)->Color_GHoliday;
+		COLORREF	Color_Weekend = MONTHCAL(pObj->dwOwnerData_)->Color_Weekend;
+		COLORREF	Color_Weekday = MONTHCAL(pObj->dwOwnerData_)->Color_Weekday;
+		COLORREF    Color_Today = MONTHCAL(pObj->dwOwnerData_)->Color_Today;
 
 		_canvas_clear(ps.hCanvas, _obj_getcolor(pObj, COLOR_EX_BACKGROUND));
 		HEXBRUSH hBrush = _brush_create(NULL);
@@ -263,33 +347,6 @@ int _calendar_paint(HEXOBJ hObj, obj_s* pObj)
 		float m_WeekTitleHeight = Ex_Scale(30);/*星期标题高度*/
 		float m_GridWidth = (float)(ps.uWidth - MARGINE_LEFT * 2) / 7;/*日期格子宽度*/
 		float m_GridHeight = (float)(ps.uHeight - m_TitleHeight - m_WeekTitleHeight - MARGINE_BUTTOM) / 6;/*日期格子高度*/
-
-	   /*要显示一个月的月历，有以下几个要点：
-		*1.该月1日的星期
-		*2.该月的总天数
-		*3.该月1日对应的农历以及农历月大小，有时甚至需要知道下个月甚至下下个月的大小*/
-
-		int iDayofweek_1st = 0;/*该月1日星期*/
-		short sNYear = 0;
-		unsigned short wNMonth = 0, wNDay = 0;/*农历年、月、日*/
-		BOOL bNLeapMonth = FALSE;/*闰月标志*/
-		int iDaysofmonth = 0;/*公历月总天数*/
-		int iNDaysofmonth = 0;/*农历月总天数*/
-		int  iGDayIdx = 1, iNDayIdx = 0, iNindex = 1;/*公历日，农历日，农历输出天数（同步iDaysofmonth）*/
-
-		iDayofweek_1st = GetDayOfWeek(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear, MONTHCAL(pObj->dwOwnerData_)->timeOld.wMonth, 1);/*取得1日的星期*/
-		if (iDayofweek_1st == -1)
-			return FALSE;/*输入年月有误*/
-
-		iDaysofmonth = GetDaysOfMonth(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear, MONTHCAL(pObj->dwOwnerData_)->timeOld.wMonth);/*得到本月总天数*/
-		Gongli2Nongli(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear, MONTHCAL(pObj->dwOwnerData_)->timeOld.wMonth, 1, &sNYear, &wNMonth, &wNDay, &bNLeapMonth);/*得到公历1日的农历*/
-		iNDaysofmonth = LunarGetDaysofMonth(sNYear, wNMonth, bNLeapMonth);/*得到农历月总天数*/
-		iNDayIdx = wNDay;/*取出农历日*/
-
-		/*output(L"该月1日星期", iDayofweek_1st);
-		output(L"公历月总天数", iDaysofmonth);
-		output(L"取出农历日", iNDayIdx);
-		output(L"得到农历月总天数", iNDaysofmonth);*/
 
 		INT crDate = NULL, crBtn = NULL;
 		if (FLAGS_CHECK(ps.dwState, STATE_HOVER))
@@ -322,8 +379,30 @@ int _calendar_paint(HEXOBJ hObj, obj_s* pObj)
 		if (MONTHCAL(pObj->dwOwnerData_)->type == 0)
 		{
 			Titlestr = std::to_wstring(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear) + L"年" + std::to_wstring(MONTHCAL(pObj->dwOwnerData_)->timeOld.wMonth) + L"月 ";
+			/*要显示一个月的月历，有以下几个要点：
+			*1.该月1日的星期
+			*2.该月的总天数
+			*3.该月1日对应的农历以及农历月大小，有时甚至需要知道下个月甚至下下个月的大小*/
+
+			int iDayofweek_1st = 0;/*该月1日星期*/
+			short sNYear = 0;
+			unsigned short wNMonth = 0, wNDay = 0;/*农历年、月、日*/
+			BOOL bNLeapMonth = FALSE;/*闰月标志*/
+			int iDaysofmonth = 0;/*公历月总天数*/
+			int iNDaysofmonth = 0;/*农历月总天数*/
+			int  iGDayIdx = 1, iNDayIdx = 0, iNindex = 1;/*公历日，农历日，农历输出天数（同步iDaysofmonth）*/
+
+			iDayofweek_1st = GetDayOfWeek(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear, MONTHCAL(pObj->dwOwnerData_)->timeOld.wMonth, 1);/*取得1日的星期*/
+			if (iDayofweek_1st == -1)
+				return FALSE;/*输入年月有误*/
+
+			iDaysofmonth = GetDaysOfMonth(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear, MONTHCAL(pObj->dwOwnerData_)->timeOld.wMonth);/*得到本月总天数*/
+			Gongli2Nongli(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear, MONTHCAL(pObj->dwOwnerData_)->timeOld.wMonth, 1, &sNYear, &wNMonth, &wNDay, &bNLeapMonth);/*得到公历1日的农历*/
+			iNDaysofmonth = LunarGetDaysofMonth(sNYear, wNMonth, bNLeapMonth);/*得到农历月总天数*/
+			iNDayIdx = wNDay;/*取出农历日*/
+
 			/*绘制星期标题*/
-			_brush_setcolor(hBrush, ExRGBA(130, 135, 149, 200));
+			_brush_setcolor(hBrush, MONTHCAL(pObj->dwOwnerData_)->Color_TitleBk);
 
 			_canvas_fillrect(ps.hCanvas, hBrush, ps.rcPaint.left + MARGINE_LEFT - 2, m_TitleHeight, ps.rcPaint.right - MARGINE_LEFT + 2, m_TitleHeight - Ex_Scale(3) + m_WeekTitleHeight);
 			_canvas_drawrect(ps.hCanvas, hBrush, ps.rcPaint.left + MARGINE_LEFT - 2, m_TitleHeight, ps.rcPaint.right - MARGINE_LEFT + 2, ps.uHeight - MARGINE_BUTTOM, 2, 0);
@@ -678,10 +757,10 @@ int _calendar_paint(HEXOBJ hObj, obj_s* pObj)
 			systime_to_wstring(s, L"【今】%F %A ", wzToday);
 			if (FLAGS_CHECK(ps.dwStyle, EMCS_SHOWLUNAR))
 			{
-				wzToday += Tiangan[(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear - 4) % 10];
-				wzToday += Dizhi[(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear - 4) % 12];
+				wzToday += Tiangan[(s.wYear - 4) % 10];
+				wzToday += Dizhi[(s.wYear - 4) % 12];
 				wzToday += L"（";
-				wzToday += Shengxiao[(MONTHCAL(pObj->dwOwnerData_)->timeOld.wYear - 4) % 12];
+				wzToday += Shengxiao[(s.wYear - 4) % 12];
 				wzToday += L"）年 ";
 			}
 			float textwidth = NULL;

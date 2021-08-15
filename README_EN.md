@@ -40,6 +40,13 @@ Currently,the following two compiling methods are supported:
 * Support for modal Windows.
 * Support for restricted area message notification.
 
+## Extension component description
+Ex_ObjRegister registers the component class, draws the component in the WM_PAINT message in the callback, and other messages control the state of the component. Create a component with the class name. The number of properties required by a component is set in the cbObjextra of Ex_ObjRegister, and each has a default size of 8 bytes. Use an index that starts at 0 (negative numbers are built-in indexes for the underlying component, do not use). Use Ex_ObjSetLong to set the properties and Ex_ObjGetLong to get the properties.
+
+* It is possible to superclass an extension component to class_rotateImageBox_ex.cpp on top of the underlying component callbacks, which return Ex_ObjCallProc by default
+* You can recustomize the component callback extension component to refer to class_titlebar_ex.cpp. By default, the callback returns Ex_ObjDefProc
+The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing structure, and ends by calling Ex_ObjEndPaint.
+
 ## Demo
 ### demo_all:  
 ![image](demo_image/demo_all.png)    
@@ -117,3 +124,5 @@ Currently,the following two compiling methods are supported:
 ![image](demo_image/demo_datebox.png)
 ### demo palette:
 ![image](demo_image/demo_palette.png)
+### demo calendar:
+![image](demo_image/demo_calendar.png)

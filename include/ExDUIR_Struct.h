@@ -1369,12 +1369,21 @@
 
 #pragma region 月历消息
 
-#define MCSC_BACKGROUND   0   // the background color (between months)
-#define MCSC_TEXT         1   // the dates
-#define MCSC_TITLEBK      2   // background of the title
-#define MCSC_TITLETEXT    3
-#define MCSC_MONTHBK      4   // background within the month cal
-#define MCSC_TRAILINGTEXT 5   // the text color of header & trailing days
+#define MCSC_WEEKENDTEXT	1   // 周末文本颜色
+#define MCSC_WEEKDAYTEXT	2	// 工作日文本颜色
+#define MCSC_DAYDEFAULTTEXT	3	// 农历日期默认颜色
+#define MCSC_WEEKTITLEBK	4   // 星期标题背景颜色
+#define MCSC_TITLETEXT		5	// 日历标题和底部字体颜色
+#define	MCSC_SHUJIU			6	// 数九颜色
+#define	MCSC_MEIYU			7	// 入梅、出梅颜色
+#define	MCSC_SANFU			8	// 三伏颜色
+#define	MCSC_MONTHHEADER	9	// 月首颜色
+#define	MCSC_NHOLIDAY		10	// 农历传统节日颜色
+#define	MCSC_GHOLIDAY		11	// 公众、国际节日颜色
+#define	MCSC_DAYGRIDLINE	12	// 日期网格线颜色
+#define	MCSC_WATERPRINT		13	// 水印颜色
+#define MCSC_TODAY			14	// 标注（今日）字体颜色
+#define MCSC_SOLARTERMS		15  // 节气颜色
 
 //获得当前选中的日期 wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
 #define MCM_GETCURSEL	4097

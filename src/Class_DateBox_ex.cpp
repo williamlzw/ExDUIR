@@ -3,7 +3,7 @@
 
 void _datebox_register()
 {
-	DWORD cbObjExtra = 5 * sizeof(size_t);
+	DWORD cbObjExtra = 1 * sizeof(size_t);
 	Ex_ObjRegister(L"DateBox", EOS_VISIBLE | EOS_BORDER, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, cbObjExtra, LoadCursor(0, IDC_HAND), ECVF_TEXTANTIALIAS, _datebox_proc);
 }
 
@@ -181,6 +181,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	obj_s* pObj = nullptr;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 		if (uMsg == WM_CREATE) {
+			Ex_ObjSetLong(hObj, DBL_STATE, 0);
 			_struct_createfromaddr(pObj, offsetof(obj_s, dwOwnerData_), sizeof(datebox_s), &nError);
 
 			datebox_s* pOwner = (datebox_s*)_obj_pOwner(pObj);
@@ -239,6 +240,10 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			}
 			else
 			{
+				if (Ex_ObjGetLong(hObj, DBL_STATE) ==1) 
+				{ 
+					return 0; 
+				}
 				RECT lpRect = { 0 };
 				GetWindowRect(hWnd, &lpRect);
 				lpRect.left += pObj->w_left_;
@@ -268,6 +273,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 					Ex_ObjShow(hObj, FALSE);
 					Ex_ObjSetFontFromFamily(hObj, 0, 14, -1, FALSE);
 					Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, 12, 0);
+					Ex_ObjSetLong(hObj, DBL_STATE, 1);
 				}
 				Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
 			}
@@ -303,6 +309,7 @@ LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 	if (uMsg == WM_DESTROY) {
 		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, EWL_LPARAM);
 		pOwner->nProcessTime = GetTickCount64();
+		Ex_ObjSetLong(pOwner->hObj, DBL_STATE, 0);
 	}
 	else if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
@@ -330,6 +337,7 @@ LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 		dt.Mday = pOwner->Mday;
 		dt.Wday = pOwner->Wday;
 		Ex_ObjDispatchNotify(pOwner->hObj, DBN_DATETIME, 0, (size_t)&dt);
+		Ex_ObjSetLong(pOwner->hObj, DBL_STATE, 0);
 		PostMessageW(hWnd, WM_CLOSE, 0, 0);
 	}
 	return 0;

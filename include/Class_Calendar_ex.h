@@ -17,6 +17,21 @@ struct monthCal_info  //月历元素
 	RECT rcBtn[2];
 	RECT rcToday;
 	RECT rcDay;
+	EXARGB Color_Grid;				/* 网格线颜色 */
+	EXARGB Color_WaterPrint;		/* 水印颜色 */
+	EXARGB Color_MonthCalTitle;	/* 日历标题和底部字体颜色 */
+	EXARGB Color_TitleBk;			/* 星期标题背景颜色 */
+	EXARGB Color_NDayDefault;		/* 农历日期默认颜色 */
+	EXARGB Color_SolarTerms;		/* 节气颜色 */
+	EXARGB Color_ShuJiu;			/* 数九颜色 */
+	EXARGB Color_MeiYu;			/* 入梅、出梅颜色 */
+	EXARGB Color_SanFu;			/* 三伏颜色 */
+	EXARGB Color_MonthHeader;		/* 月首颜色 */
+	EXARGB Color_NHoliday;			/* 农历传统节日颜色 */
+	EXARGB Color_GHoliday;		    /* 公众 / 国际节日颜色 */
+	EXARGB Color_Weekend;			/* 周末颜色 */
+	EXARGB Color_Weekday;			/* 工作日颜色 */
+	EXARGB Color_Today;			/* 当前日期颜色 */
 };
 
 #define MONTHCAL(hEle) ((monthCal_info*)hEle)

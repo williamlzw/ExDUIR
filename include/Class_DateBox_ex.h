@@ -1,6 +1,9 @@
 #pragma once
 #include "help_ex.h"
 
+// 日期框属性_状态
+#define DBL_STATE 0
+
 struct datebox_s
 {
 	HEXOBJ hObj;
