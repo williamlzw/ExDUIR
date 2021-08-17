@@ -1,4 +1,5 @@
 #pragma once
+#include <time.h>
 #include "help_ex.h"
 
 // 日期框属性_状态
@@ -19,6 +20,66 @@ struct datebox_s
 	INT lpMon;				//临时月
 	LPVOID Items;			//数据
 };
+
+
+
+/*
+ * @brief 获取调整的时间戳，即0表示当前
+ * @param timestamp 0表示会返回当前时间戳，否则原样返回
+ * @return 调整过的时间戳
+ */
+inline time_t get_fixed_time(time_t timestamp) {
+	return timestamp == 0 ? time(0) : timestamp;
+}
+
+
+/*
+ * @brief 获取当前日期的天
+ * @param timestamp 要获取的时间戳，0表示当前时间
+ * @return 当前日期的天，1-31
+ */
+inline int64_t get_day(time_t timestamp = 0) {
+	struct tm ptm;
+	timestamp = get_fixed_time(timestamp);
+	localtime_s(&ptm, &timestamp);
+	return ptm.tm_mday;
+}
+
+/*
+ * @brief 获取当前日期的星期数
+ * @param timestamp 要获取的时间戳，0表示当前时间
+ * @return 当前日期的星期数，0-6，周日为0
+ */
+inline int64_t get_weekday(time_t timestamp = 0) {
+	struct tm ptm;
+	timestamp = get_fixed_time(timestamp);
+	localtime_s(&ptm, &timestamp);
+	return ptm.tm_wday;
+}
+
+/*
+ * @brief 获取当前日期的月数
+ * @param timestamp 要获取的时间戳，0表示当前时间
+ * @return 当前日期的月数，1-12
+ */
+inline int64_t get_month(time_t timestamp = 0) {
+	struct tm ptm;
+	timestamp = get_fixed_time(timestamp);
+	localtime_s(&ptm, &timestamp);
+	return (int64_t)ptm.tm_mon + 1;
+}
+
+/*
+ * @brief 获取当前日期的年份
+ * @param timestamp 要获取的时间戳，0表示当前时间
+ * @return 当前日期的年份
+ */
+inline int64_t get_year(time_t timestamp = 0) {
+	struct tm ptm;
+	timestamp = get_fixed_time(timestamp);
+	localtime_s(&ptm, &timestamp);
+	return (int64_t)ptm.tm_year + 1900;
+}
 
 void _datebox_register();
 time_t _datebox_gettimestamp();

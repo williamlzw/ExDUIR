@@ -25,6 +25,7 @@
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Calendar_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_CefBrowser.cpp" />
     <ClCompile Include="..\..\src\Class_CheckBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_DateBox_ex.cpp" />
@@ -84,6 +85,7 @@
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
     <ClInclude Include="..\..\include\Class_Calendar_ex.h" />
+    <ClInclude Include="..\..\include\Class_CefBrowser.h" />
     <ClInclude Include="..\..\include\Class_CheckBox_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_DateBox_ex.h" />
@@ -228,7 +230,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <CallingConvention>StdCall</CallingConvention>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
@@ -302,6 +304,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <Optimization>Full</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

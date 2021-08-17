@@ -140,6 +140,7 @@ struct wnd_s
     INT menu_maxwidth_;
 };
 
+LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 BOOL _wnd_getfromhandle(size_t handle, HWND *hWnd = NULL, wnd_s **pWnd = NULL, obj_s **pObj = NULL, BOOL *isObject = NULL, INT *nError = NULL);
 LRESULT _wnd_dispatch_notify(HWND hWnd, wnd_s *pWnd, size_t hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam, obj_s *pObj);
 void _wnd_redraw_bkg(HWND hWnd, wnd_s *pWnd, LPVOID lpRect, BOOL bRedrawBkg, BOOL bUpdate);
@@ -151,9 +152,8 @@ HICON _wnd_geticonhandle(HWND hWnd, BOOL isbigicon);
 LPVOID Thunkwindow(HWND hWnd, ThunkPROC pfnProc, LPVOID dwData, INT *nError);
 BOOL _wnd_getscreenrect(HWND hWnd, RECT *rcMonitor = NULL, RECT *rcDesk = NULL);
 std::wstring _wnd_gettitle(HWND hWnd);
-INT Wnd_ClassToAtom(HWND hWnd);
+INT _wnd_classtoatom(HWND hWnd);
 INT _wnd_getfunctionkeys();
-void IME_Control(HWND hWnd, wnd_s *pWnd, BOOL bEnable);
 void _wnd_recalcclient(wnd_s *pWnd, HWND hWnd, INT width, INT height);
 BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam);
 void _wnd_loadtheme(wnd_s *pWnd, HWND hWnd, HEXTHEME hTheme);

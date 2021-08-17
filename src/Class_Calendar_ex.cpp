@@ -486,7 +486,7 @@ int _calendar_paint(HEXOBJ hObj, obj_s* pObj)
 							NH_and_GH += G_Holiday;
 
 							lunar = NH_and_GH;
-							/*output(lunar);*/
+							
 							Color_NongLi = Color_GHoliday;
 							/*判断公历节日是否是节气，并设置对应颜色值*/
 							for (int i = 0; i < 24; i++)

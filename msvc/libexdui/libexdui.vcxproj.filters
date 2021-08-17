@@ -183,6 +183,9 @@
     <ClCompile Include="..\..\src\Class_Calendar_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Class_CefBrowser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -369,6 +372,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\LunarData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_CefBrowser.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

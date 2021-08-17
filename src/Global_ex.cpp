@@ -33,11 +33,7 @@ void _object_init()
     _titlebar_register();
     _palette_register();
     _calendar_register();
-}
-
-void CALLBACK pfnDefaultFreeData(LPVOID dwData)
-{
-    Ex_MemFree(dwData);
+    _cefbrowser_register();
 }
 
 void Ex_SetLastError(INT nError)
@@ -359,4 +355,111 @@ void Flag_Add(INT dwFlag)
 void Flag_Del(INT dwFlag)
 {
     g_Li.dwFlags = g_Li.dwFlags - (g_Li.dwFlags & dwFlag);
+}
+
+void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable)
+{
+    ImmAssociateContext(hWnd, (bEnable ? pWnd->hImc_ : 0));
+}
+
+LPVOID Ex_MemAlloc(size_t dwSize, INT dwFlags)
+{
+    return HeapAlloc(GetProcessHeap(), 8, dwSize);
+}
+
+LPVOID Ex_MemReAlloc(LPVOID hMem, size_t dwSize)
+{
+    return HeapReAlloc(GetProcessHeap(), 8, hMem, dwSize);
+}
+
+BOOL Ex_MemFree(LPVOID hMem)
+{
+    if (hMem != nullptr)
+    {
+        return HeapFree(GetProcessHeap(), 0, hMem);
+    }
+    return FALSE;
+}
+
+LPCWSTR GetErrorMessage(DWORD error)
+{
+    WCHAR szBuf[1024];
+    WCHAR* lpMsgBuf;
+    FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER |
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        error,
+        0,
+        (LPWSTR)&lpMsgBuf,
+        1024, NULL);
+    swprintf_s(szBuf, L"%s", lpMsgBuf);
+    return (LPCWSTR)szBuf;
+}
+
+BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR>* retData)
+{
+    BOOL fOK = FALSE;
+    if (filePath != L"")
+    {
+        HANDLE hFile = CreateFileW(filePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (hFile != INVALID_HANDLE_VALUE)
+        {
+            DWORD nSize = GetFileSize(hFile, NULL);
+            if (nSize != INVALID_FILE_SIZE)
+            {
+                (*retData).resize(nSize);
+                fOK = ReadFile(hFile, &(*retData)[0], nSize, &nSize, NULL);
+            }
+            CloseHandle(hFile);
+        }
+    }
+    return fOK;
+}
+
+/* 读取RC资源 */
+BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<CHAR>* retData)
+{
+    BOOL fOK = FALSE;
+    /* 检查参数有效性 */
+    if (lpname)
+    {
+        /* 查找资源 */
+        HRSRC hRsrc = FindResourceW(NULL, MAKEINTRESOURCE(lpname), lpType);
+        if (NULL == hRsrc)
+            return (FALSE);
+
+        /* 获取资源的大小 */
+        DWORD dwSize = SizeofResource(NULL, hRsrc);
+        if (dwSize == 0)
+        {
+            return (FALSE);
+        }
+
+        /* 加载资源 */
+        HGLOBAL hGlobal = LoadResource(NULL, hRsrc);
+        if (hGlobal == 0)
+        {
+            return (FALSE);
+        }
+
+        /* 锁定资源 */
+        LPVOID pBuffer = LockResource(hGlobal);
+        if (pBuffer == NULL)
+        {
+            return (FALSE);
+        }
+
+        (*retData).resize(dwSize);
+        RtlMoveMemory((*retData).data(), pBuffer, dwSize);
+        fOK = TRUE;
+        /*
+         * 在资源使用完毕后我们可以不需要使用 UnlockResource和FreeResource来手动地释放资源
+         * 因为它们都是16位Windows遗留下来的，在Win32中，在使用完毕后系统会自动回收。
+         */
+        UnlockResource(hGlobal);
+        FreeResource(hGlobal);
+    }
+    return (fOK);
 }

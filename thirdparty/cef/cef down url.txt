@@ -1,0 +1,2 @@
+https://github.com/laizewei/Ex_libcef/releases/tag/1.0
+https://gitee.com/william_lzw/Ex_libcef/releases/1.0

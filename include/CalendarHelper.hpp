@@ -1,7 +1,4 @@
 #pragma once
-#ifndef _CALENDAR_H_
-#define _CALENDAR_H_
-
 #include "LunarData.h"
 #include <stdio.h>
 #include <Windows.h>
@@ -1339,5 +1336,3 @@ inline BOOL N_HolidayShow(int sNYear, int iNMonth, int iNDay, BOOL iLeapMonth, s
 	}
 	return FALSE; /* 没有节日等 */
 }
-
-#endif 

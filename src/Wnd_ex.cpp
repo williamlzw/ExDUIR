@@ -1,6 +1,6 @@
 #include "Wnd_ex.h"
 
-LRESULT CALLBACK Wnd_DefWindowProcW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {
     return DefWindowProcW(hWnd, Msg, wParam, lParam);
 }
@@ -10,7 +10,7 @@ WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm, HCUR
     WNDCLASSEXW WndClass = {0};
     WndClass.cbSize = sizeof(WNDCLASSEXW);
     WndClass.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS; //| CS_DBLCLKS
-    WndClass.lpfnWndProc = Wnd_DefWindowProcW;
+    WndClass.lpfnWndProc = _wnd_defwindowprocW;
     WndClass.hInstance = g_Li.hInstance;
     WndClass.hCursor = (hCursor == NULL ? g_Li.hCursor : hCursor);
     WndClass.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH); //NULL_BRUSH
@@ -228,7 +228,7 @@ std::wstring _wnd_gettitle(HWND hWnd) //OK
     return ret;
 }
 
-INT Wnd_ClassToAtom(HWND hWnd) //OK
+INT _wnd_classtoatom(HWND hWnd) //OK
 {
     std::wstring ret;
     ret.resize(64);
@@ -252,11 +252,6 @@ INT _wnd_getfunctionkeys() //OK
         ret = ret | 4;
     }
     return ret;
-}
-
-void IME_Control(HWND hWnd, wnd_s *pWnd, BOOL bEnable)
-{
-    ImmAssociateContext(hWnd, (bEnable ? pWnd->hImc_ : 0));
 }
 
 void Ex_WndCenterFrom(HWND hWnd, HWND hWndFrom, BOOL bFullScreen)

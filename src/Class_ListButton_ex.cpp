@@ -97,13 +97,13 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			pTR->wzText = L"";
 		}
-		if (nType == 1)
+		if (nType == 1)//菜单条
 		{
 			pTR->nType = 1;
 			pTR->nMenu = pItemInfo->nMenu;
 			pTR->nWidth = _listbuttonex_itemWidth(hObj, nType, 0, pTR->wzText);
 		}
-		else if (nType == 2)
+		else if (nType == 2)//工具条
 		{
 			pTR->nType = pItemInfo->nType;
 			pTR->nImage = pItemInfo->nImage;
@@ -123,7 +123,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			}
 			pTR->nWidth = nWidth;
 		}
-		else if (nType == 3)
+		else if (nType == 3)//状态条
 		{
 			pTR->TextFormat = pItemInfo->TextFormat;
 			pTR->nWidth = pItemInfo->nWidth;
@@ -180,8 +180,10 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				}
 				if ((pItemInfo->dwMask & 2) == 2)
 				{
-					if (pTR->wzText != L"")
+					if (lstrlenW(pTR->wzText) > 0)
+					{
 						Ex_MemFree((LPVOID)pTR->wzText);
+					}
 					if (pItemInfo->wzText)
 					{
 						pTR->wzText = StrDupW(pItemInfo->wzText);
@@ -193,8 +195,10 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				}
 				if ((pItemInfo->dwMask & 4) == 4)
 				{
-					if (pTR->wzTips != L"")
+					if (lstrlenW(pTR->wzTips) > 0)
+					{
 						Ex_MemFree((LPVOID)pTR->wzTips);
+					}
 					if (pItemInfo->wzTips)
 					{
 						pTR->wzTips = StrDupW(pItemInfo->wzTips);
@@ -307,7 +311,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				Ex_ObjSetLong(hObj, ELBL_INDEX, Heatindex);
 				Ex_ObjInvalidateRect(hObj, 0);
 				EndMenu();
-				Ex_ObjPostMessage(hObj, LBM_DOWNITEM, pTR->nLeft, pTR->nMenu);
+				Ex_ObjPostMessage(hObj, LBM_DOWNITEM, pTR->nLeft, (LPARAM)pTR->nMenu);
 			}
 		}
 	}
@@ -317,19 +321,21 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 void _listbuttonex_arr_del(array_s* hArr, INT nIndex, EX_LISTBUTTON_ITEMINFO* pvData, INT nType)
 {
 	HEXOBJ hObj = Array_GetExtra(hArr);
-	if (nType == 1)
+	if (nType == 1)//菜单条
 	{
-		if (pvData->nMenu != 0)
+		if (pvData->nMenu)
 		{
-			DestroyMenu((HMENU)pvData->nMenu);
+			DestroyMenu(pvData->nMenu);
 		}
 	}
-	else if (nType == 2)
+	else if (nType == 2)//工具条
 	{
-		if (pvData->wzTips != L"")
+		if (lstrlenW(pvData->wzTips) > 0)
+		{
 			Ex_MemFree((LPVOID)pvData->wzTips);
+		}
 	}
-	if (pvData->wzText != L"")
+	if (lstrlenW(pvData->wzText) > 0)
 	{
 		Ex_MemFree((LPVOID)pvData->wzText);
 	}
@@ -614,7 +620,7 @@ void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 			pTR->dwState = STATE_DOWN;
 			Ex_ObjInvalidateRect(hObj, 0);
 
-			Ex_ObjPostMessage(hObj, LBM_DOWNITEM, pTR->nLeft, pTR->nMenu);
+			Ex_ObjPostMessage(hObj, LBM_DOWNITEM, pTR->nLeft, (LPARAM)pTR->nMenu);
 		}
 		else if (nType == 2)//工具条
 		{

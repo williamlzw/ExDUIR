@@ -1367,8 +1367,6 @@
 //月历控件不在控件底部显示 "今天" 日期。
 #define EMCS_NOTODAY  8
 
-#pragma region 月历消息
-
 #define MCSC_WEEKENDTEXT	1   // 周末文本颜色
 #define MCSC_WEEKDAYTEXT	2	// 工作日文本颜色
 #define MCSC_DAYDEFAULTTEXT	3	// 农历日期默认颜色
@@ -1385,6 +1383,7 @@
 #define MCSC_TODAY			14	// 标注（今日）字体颜色
 #define MCSC_SOLARTERMS		15  // 节气颜色
 
+#pragma region 月历消息
 //获得当前选中的日期 wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
 #define MCM_GETCURSEL	4097
 //为月历控件设置当前选定的日期。 如果指定的日期不在视图中，则控件将更新显示以使其显示在视图中。
@@ -1397,8 +1396,16 @@
 #define MCM_GETTODAY	4109
 //设置日历的当前视图;wParam = 0;lParam =MCMV_MONTH
 #define MCM_SETCURRENTVIEW	4128
-
 #pragma endregion 月历消息
+
+
+// 消息_Cef浏览框_加载URL
+#define CEFM_LOADURL 100001
+// 消息_Cef浏览框_获取浏览框句柄
+#define CEFM_GETWEBVIEW 100002
+
+// 事件_Cef浏览框_已创建
+#define CEFN_CREATE 100100
 
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
@@ -1429,334 +1436,336 @@ typedef LPVOID HEXMATRIX;    // 矩阵句柄
 typedef LPVOID HEXEASING;    // 缓动句柄/指针
 typedef LPVOID HEXRES;       // 资源包句柄
 
-typedef LRESULT(CALLBACK *WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT *);
-typedef LRESULT(CALLBACK *MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT *);
-typedef LRESULT(CALLBACK *ClsPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM);
-typedef LRESULT(CALLBACK *EventHandlerPROC)(HEXOBJ, INT, INT, WPARAM, LPARAM);
-typedef LRESULT(CALLBACK *EnumPropsPROC)(HEXOBJ, size_t, size_t, size_t);
-typedef LRESULT(CALLBACK *ReportListViewOrderPROC)(HEXOBJ, UINT, LPVOID, UINT, LPVOID, UINT, UINT, size_t);
+typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
+typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);
+typedef LRESULT(CALLBACK* ClsPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM);
+typedef LRESULT(CALLBACK* EventHandlerPROC)(HEXOBJ, INT, INT, WPARAM, LPARAM);
+typedef LRESULT(CALLBACK* EnumPropsPROC)(HEXOBJ, size_t, size_t, size_t);
+typedef LRESULT(CALLBACK* ReportListViewOrderPROC)(HEXOBJ, UINT, LPVOID, UINT, LPVOID, UINT, UINT, size_t);
+
+typedef void(CALLBACK* CefPROC)(void* command_line);
 
 template <class Ty> //这里实现了 INT long FLOAT DOUBLE  unsigned INT/... 等等
-static void pt(std::wstring &str, Ty v)
+static void pt(std::wstring& str, Ty v)
 {
-    str.append(std::to_wstring(v) + L" ");
+	str.append(std::to_wstring(v) + L" ");
 }
-static void pt(std::wstring &str, std::wstring s) //这个是 文本型
+static void pt(std::wstring& str, std::wstring s) //这个是 文本型
 {
-    str.append(s + L" ");
+	str.append(s + L" ");
 }
-static void pt(std::wstring &str, const WCHAR *s) //这个是 L""
+static void pt(std::wstring& str, const WCHAR* s) //这个是 L""
 {
-    str.append(s);
-    str.append(L" ");
+	str.append(s);
+	str.append(L" ");
 }
 
 //调试输出 支持 无限参数!  任意类型!  (没有的可以重载方法自定义)
 template <class... T>
 static void output(T... args)
 {
-    std::wstring str = L"";
-    std::initializer_list<INT>{(pt(str, std::forward<T>(args)), 0)...};
-    str.append(L"\r\n");
-    OutputDebugStringW(str.c_str());
+	std::wstring str = L"";
+	std::initializer_list<INT>{(pt(str, std::forward<T>(args)), 0)...};
+	str.append(L"\r\n");
+	OutputDebugStringW(str.c_str());
 }
 
 // 接收WM_NOTIFY通知信息结构
 struct EX_NMHDR
 {
-    HEXOBJ hObjFrom; // 	组件句柄
-    INT idFrom;      // 	组件ID
-    INT nCode;       // 	通知消息
-    WPARAM wParam;   // 	无符号整数 通常是一个与消息有关的常量值，也可能是窗口或控件的句柄
-    LPARAM lParam;   // 	长整型 通常是一个指向内存中数据的指针
+	HEXOBJ hObjFrom; // 	组件句柄
+	INT idFrom;      // 	组件ID
+	INT nCode;       // 	通知消息
+	WPARAM wParam;   // 	无符号整数 通常是一个与消息有关的常量值，也可能是窗口或控件的句柄
+	LPARAM lParam;   // 	长整型 通常是一个指向内存中数据的指针
 };
 
 struct RECTF
 {
-    FLOAT left;
-    FLOAT top;
-    FLOAT right;
-    FLOAT bottom;
+	FLOAT left;
+	FLOAT top;
+	FLOAT right;
+	FLOAT bottom;
 };
 
 // 自定义绘制信息结构
 struct EX_CUSTOMDRAW
 {
-    HEXCANVAS hCanvas; // 	画布句柄
-    HEXTHEME hTheme;   // 	主题句柄
-    DWORD dwState;     // 	状态
-    DWORD dwStyle;     // 	风格
-    RECT rcPaint;      // 	绘制矩形
-    INT iItem;
-    LONG_PTR iItemParam;
+	HEXCANVAS hCanvas; // 	画布句柄
+	HEXTHEME hTheme;   // 	主题句柄
+	DWORD dwState;     // 	状态
+	DWORD dwStyle;     // 	风格
+	RECT rcPaint;      // 	绘制矩形
+	INT iItem;
+	LONG_PTR iItemParam;
 };
 
 // 绘制信息结构
 struct EX_PAINTSTRUCT
 {
-    HEXCANVAS hCanvas;  // 	画布句柄
-    HEXTHEME hTheme;    // 	主题句柄
-    INT dwStyle;        // 	风格
-    INT dwStyleEx;      // 	扩展风格
-    INT dwTextFormat;   // 	文本格式
-    INT dwState;        // 	状态
-    LPVOID dwOwnerData; // 	所有数据
-    UINT uWidth;        // 	宽度
-    UINT uHeight;       // 	高度
-    RECT rcPaint;       // 	绘制矩形
-    RECT rcText;        // 	文本矩形
-    LPVOID dwReserved;  // 	保留
+	HEXCANVAS hCanvas;  // 	画布句柄
+	HEXTHEME hTheme;    // 	主题句柄
+	INT dwStyle;        // 	风格
+	INT dwStyleEx;      // 	扩展风格
+	INT dwTextFormat;   // 	文本格式
+	INT dwState;        // 	状态
+	LPVOID dwOwnerData; // 	所有数据
+	UINT uWidth;        // 	宽度
+	UINT uHeight;       // 	高度
+	RECT rcPaint;       // 	绘制矩形
+	RECT rcText;        // 	文本矩形
+	LPVOID dwReserved;  // 	保留
 };
 
 // 图像像素数据结构
 struct EX_BITMAPDATA
 {
-    UINT width;
-    UINT height;
-    INT stride;
-    INT pixelFormat;
-    EXARGB *scan0;
-    LPVOID reserved;
+	UINT width;
+	UINT height;
+	INT stride;
+	INT pixelFormat;
+	EXARGB* scan0;
+	LPVOID reserved;
 };
 
 // 缓动信息结构
 #pragma pack(1)
 struct EX_EASINGINFO
 {
-    LPVOID pEasing;        //  缓动指针
-    DOUBLE nProgress;      //  进度 0-1
-    DOUBLE nCurrent;       //  当前值
-    LPVOID pEasingContext; //  缓动参数
-    UINT nTimesSurplus;    //  剩余数
-    LONG_PTR param1;       //  参数1
-    LONG_PTR param2;       //  参数2
-    LONG_PTR param3;       //  参数3
-    LONG_PTR param4;       //  参数4
+	LPVOID pEasing;        //  缓动指针
+	DOUBLE nProgress;      //  进度 0-1
+	DOUBLE nCurrent;       //  当前值
+	LPVOID pEasingContext; //  缓动参数
+	UINT nTimesSurplus;    //  剩余数
+	LONG_PTR param1;       //  参数1
+	LONG_PTR param2;       //  参数2
+	LONG_PTR param3;       //  参数3
+	LONG_PTR param4;       //  参数4
 };
 #pragma pack()
 
 // 报表列信息结构
 struct EX_REPORTLIST_COLUMNINFO
 {
-    LPCWSTR pwzText;    //表头标题
-    UINT nWidth;        //列宽度
-    DWORD dwStyle;      //表头风格 ERLV_CS_
-    DWORD dwTextFormat; //列文本格式
-    EXARGB crText;      //列文本颜色
-    UINT nInsertIndex;  //插入位置,0为在最后
+	LPCWSTR pwzText;    //表头标题
+	UINT nWidth;        //列宽度
+	DWORD dwStyle;      //表头风格 ERLV_CS_
+	DWORD dwTextFormat; //列文本格式
+	EXARGB crText;      //列文本颜色
+	UINT nInsertIndex;  //插入位置,0为在最后
 };
 
 // 报表项目信息结构
 struct EX_REPORTLIST_ITEMINFO
 {
-    UINT iRow;         //所在行[IN / OUT]
-    UINT iCol;         //所在列[IN / OUT]
-    DWORD dwStyle;     //项目行风格(同行共用)
-    LPCWSTR pwzText;   //项目文本
-    DWORD nImageIndex; //项目图片组索引(同行共用)
-    LPARAM lParam;     //项目参数(同行共用)
-    DWORD dwState;     //项目状态(同行共用)
+	UINT iRow;         //所在行[IN / OUT]
+	UINT iCol;         //所在列[IN / OUT]
+	DWORD dwStyle;     //项目行风格(同行共用)
+	LPCWSTR pwzText;   //项目文本
+	DWORD nImageIndex; //项目图片组索引(同行共用)
+	LPARAM lParam;     //项目参数(同行共用)
+	DWORD dwState;     //项目状态(同行共用)
 };
 
 // 报表行信息结构
 struct EX_REPORTLIST_ROWINFO
 {
-    UINT nInsertIndex = 0; //插入位置,0为最后
-    DWORD dwStyle;         //项目行风格 ERLV_RS_
-    LPARAM lParam;         //项目附加参数
-    DWORD nImageIndex;     //图片组索引
+	UINT nInsertIndex = 0; //插入位置,0为最后
+	DWORD dwStyle;         //项目行风格 ERLV_RS_
+	LPARAM lParam;         //项目附加参数
+	DWORD nImageIndex;     //图片组索引
 };
 
 // 报表排序信息结构
 struct EX_REPORTLIST_SORTINFO
 {
-    UINT iCol;                       //0为按row.lParam排序
-    UINT nType;                      //0:文本,1:整数
-    ReportListViewOrderPROC lpfnCmp; //LRESULT orderProc(HEXOBJ hObj,UINT nIndex1,LPVOID pvData1,UINT nIndex2,LPVOID pvData2,UINT nIndexCol,UINT nType,size_t lParam)
-    BOOL fDesc;                      //是否倒序
-    LPARAM lParam;                   //排序附加参数
+	UINT iCol;                       //0为按row.lParam排序
+	UINT nType;                      //0:文本,1:整数
+	ReportListViewOrderPROC lpfnCmp; //LRESULT orderProc(HEXOBJ hObj,UINT nIndex1,LPVOID pvData1,UINT nIndex2,LPVOID pvData2,UINT nIndexCol,UINT nType,size_t lParam)
+	BOOL fDesc;                      //是否倒序
+	LPARAM lParam;                   //排序附加参数
 };
 
 // 树形框节点信息结构,不能改变成员顺序
 struct EX_TREEVIEW_NODEITEM
 {
-    INT nID;                           //项目ID
-    LPCWSTR pwzText;                   //项目标题
-    LPARAM lParam;                     //项目附加参数
-    DWORD nImageIndex;                 //收缩图片索引
-    DWORD nImageIndexExpand;           //扩展图片索引
-    BOOL fExpand;                      //是否展开
-    DWORD dwStyle;                     //风格
-    INT nDepth;                        //层次
-    EX_TREEVIEW_NODEITEM *pParent;     //父节点
-    EX_TREEVIEW_NODEITEM *pPrev;       //上一个节点
-    EX_TREEVIEW_NODEITEM *pNext;       //下一个节点
-    EX_TREEVIEW_NODEITEM *pChildFirst; //第一个子节点
-    INT nCountChild;                   //子节点数量
+	INT nID;                           //项目ID
+	LPCWSTR pwzText;                   //项目标题
+	LPARAM lParam;                     //项目附加参数
+	DWORD nImageIndex;                 //收缩图片索引
+	DWORD nImageIndexExpand;           //扩展图片索引
+	BOOL fExpand;                      //是否展开
+	DWORD dwStyle;                     //风格
+	INT nDepth;                        //层次
+	EX_TREEVIEW_NODEITEM* pParent;     //父节点
+	EX_TREEVIEW_NODEITEM* pPrev;       //上一个节点
+	EX_TREEVIEW_NODEITEM* pNext;       //下一个节点
+	EX_TREEVIEW_NODEITEM* pChildFirst; //第一个子节点
+	INT nCountChild;                   //子节点数量
 };
 
 // 树形框表项信息结构,不能改变成员顺序
 struct EX_TREEVIEW_ITEMINFO
 {
-    INT nID;                 //项目ID
-    LPCWSTR pwzText;         //项目标题
-    LPARAM lParam;           //项目附加参数
-    DWORD nImageIndex;       //收缩图片索引
-    DWORD nImageIndexExpand; //扩展图片索引
-    BOOL fExpand;            //是否展开
-    DWORD dwStyle;           //风格
+	INT nID;                 //项目ID
+	LPCWSTR pwzText;         //项目标题
+	LPARAM lParam;           //项目附加参数
+	DWORD nImageIndex;       //收缩图片索引
+	DWORD nImageIndexExpand; //扩展图片索引
+	BOOL fExpand;            //是否展开
+	DWORD dwStyle;           //风格
 };
 
 // 树形框插入项目信息结构
 struct EX_TREEVIEW_INSERTINFO
 {
-    EX_TREEVIEW_NODEITEM *itemParent;      // 父项句柄（0为根项）
-    EX_TREEVIEW_NODEITEM *itemInsertAfter; // 插入在此项之后（必须是同层）
-    INT nID;                               // 项目ID
-    LPCWSTR pwzText;                       // 项目标题
-    LPARAM lParam;                         // 项目附加参数
-    INT nImageIndex;                       // 收缩图片索引
-    INT nImageIndexExpand;                 // 展开图片索引
-    BOOL fExpand;                          // 是否展开
-    DWORD dwStyle;                         // 风格
-    BOOL fUpdateLater;                     // 是否暂不更新(统一用TVM_UPDATE更新)
+	EX_TREEVIEW_NODEITEM* itemParent;      // 父项句柄（0为根项）
+	EX_TREEVIEW_NODEITEM* itemInsertAfter; // 插入在此项之后（必须是同层）
+	INT nID;                               // 项目ID
+	LPCWSTR pwzText;                       // 项目标题
+	LPARAM lParam;                         // 项目附加参数
+	INT nImageIndex;                       // 收缩图片索引
+	INT nImageIndexExpand;                 // 展开图片索引
+	BOOL fExpand;                          // 是否展开
+	DWORD dwStyle;                         // 风格
+	BOOL fUpdateLater;                     // 是否暂不更新(统一用TVM_UPDATE更新)
 };
 
 // 背景信息结构
 struct EX_BACKGROUNDIMAGEINFO
 {
-    DWORD dwFlags;   //标识
-    HEXIMAGE hImage; //图片句柄
-    INT x;           //左上角横坐标
-    INT y;           //左上角纵坐标
-    DWORD dwRepeat;  //重复方式
-    LPRECT lpGrid;   //九宫矩形
-    LPVOID lpDelay;  //延时信息
-    DWORD curFrame;  //当前帧
-    DWORD maxFrame;  //最大帧
-    DWORD dwAlpha;   //透明度
+	DWORD dwFlags;   //标识
+	HEXIMAGE hImage; //图片句柄
+	INT x;           //左上角横坐标
+	INT y;           //左上角纵坐标
+	DWORD dwRepeat;  //重复方式
+	LPRECT lpGrid;   //九宫矩形
+	LPVOID lpDelay;  //延时信息
+	DWORD curFrame;  //当前帧
+	DWORD maxFrame;  //最大帧
+	DWORD dwAlpha;   //透明度
 };
 
 // 组件类信息结构
 struct EX_CLASSINFO
 {
-    DWORD dwFlags;      //组件标识
-    INT dwStyle;        //基础风格
-    INT dwStyleEx;      //扩展风格
-    INT dwTextFormat;   //文本格式
-    INT cbObjExtra;     //类附加属性尺寸
-    HCURSOR hCursor;    //鼠标句柄
-    ClsPROC pfnClsProc; //类回调
-    EXATOM atomName;    //类名
+	DWORD dwFlags;      //组件标识
+	INT dwStyle;        //基础风格
+	INT dwStyleEx;      //扩展风格
+	INT dwTextFormat;   //文本格式
+	INT cbObjExtra;     //类附加属性尺寸
+	HCURSOR hCursor;    //鼠标句柄
+	ClsPROC pfnClsProc; //类回调
+	EXATOM atomName;    //类名
 };
 
 // 扩展控件属性信息结构
 struct EX_OBJ_PROPS
 {
-    EXARGB crBkgNormal;           //背景颜色.正常
-    EXARGB crBkgHover;            //背景颜色.悬浮
-    EXARGB crBkgDownOrChecked;    //背景颜色.按下或者选中
-    EXARGB crBkgBegin;            //渐变背景.起点颜色ARGB
-    EXARGB crBkgEnd;              //渐变背景.终点颜色ARGB
-    EXARGB crBorderNormal;        //边框颜色.正常
-    EXARGB crBorderHover;         //边框颜色.悬浮
-    EXARGB crBorderDownOrChecked; //边框颜色.按下或者选中
-    EXARGB crBorderBegin;         //渐变边框.起点颜色ARGB
-    EXARGB crBorderEnd;           //渐变边框.终点颜色ARGB
-    EXARGB crIconNormal;          //图标颜色.正常
-    EXARGB crIconHover;           //图标颜色.悬浮
-    EXARGB crIconDownOrFocus;     //图标颜色.按下或者焦点
-    INT radius;                   //圆角度
-    INT strokeWidth;              //线宽
-    INT nIconPosition;            //图标位置 [忽略/0：左; 1：右; 2:上]
+	EXARGB crBkgNormal;           //背景颜色.正常
+	EXARGB crBkgHover;            //背景颜色.悬浮
+	EXARGB crBkgDownOrChecked;    //背景颜色.按下或者选中
+	EXARGB crBkgBegin;            //渐变背景.起点颜色ARGB
+	EXARGB crBkgEnd;              //渐变背景.终点颜色ARGB
+	EXARGB crBorderNormal;        //边框颜色.正常
+	EXARGB crBorderHover;         //边框颜色.悬浮
+	EXARGB crBorderDownOrChecked; //边框颜色.按下或者选中
+	EXARGB crBorderBegin;         //渐变边框.起点颜色ARGB
+	EXARGB crBorderEnd;           //渐变边框.终点颜色ARGB
+	EXARGB crIconNormal;          //图标颜色.正常
+	EXARGB crIconHover;           //图标颜色.悬浮
+	EXARGB crIconDownOrFocus;     //图标颜色.按下或者焦点
+	INT radius;                   //圆角度
+	INT strokeWidth;              //线宽
+	INT nIconPosition;            //图标位置 [忽略/0：左; 1：右; 2:上]
 };
 
 // 图标列表框插入信息结构
 struct EX_ICONLISTVIEW_ITEMINFO
 {
-    DWORD nIndex;      //插入位置
-    DWORD nImageIndex; //图片索引
-    LPCWSTR pwzText;   //文本
+	DWORD nIndex;      //插入位置
+	DWORD nImageIndex; //图片索引
+	LPCWSTR pwzText;   //文本
 };
 
 // 图像属性信息
 struct EX_IMAGEINFO
 {
-    HEXIMAGE imgNormal;        //图像.正常
-    HEXIMAGE imgHover;         //图像.悬浮
-    HEXIMAGE imgDownOrChecked; //图像.按下或者选中
+	HEXIMAGE imgNormal;        //图像.正常
+	HEXIMAGE imgHover;         //图像.悬浮
+	HEXIMAGE imgDownOrChecked; //图像.按下或者选中
 };
 
 // 拖曳信息结构
 struct EX_DROPINFO
 {
-    LPVOID pDataObject; //数据对象指针IDataObject*
-    DWORD grfKeyState;  //功能键状态
-    INT x;              //鼠标水平位置
-    INT y;              //鼠标垂直位置
+	LPVOID pDataObject; //数据对象指针IDataObject*
+	DWORD grfKeyState;  //功能键状态
+	INT x;              //鼠标水平位置
+	INT y;              //鼠标垂直位置
 };
 
 // 富文本框EM_EXSETSEL消息lParam参数结构
 struct EX_CHARRANGE
 {
-    LONG cpMin;
-    LONG cpMax;
+	LONG cpMin;
+	LONG cpMax;
 };
 
 // 富文本框EM_GETTEXTRANGE,EM_FINDTEXT消息接收lParam参数
 struct EX_TEXTRANGE
 {
-    EX_CHARRANGE chrg;
-    LPCWSTR pwzText;
+	EX_CHARRANGE chrg;
+	LPCWSTR pwzText;
 };
 
 // 富文本框EN_SELCHANGE消息lParam参数结构
 struct EX_SELCHANGE
 {
-    NMHDR nmhdr;
-    EX_CHARRANGE chrg;
-    WORD seltyp;
+	NMHDR nmhdr;
+	EX_CHARRANGE chrg;
+	WORD seltyp;
 };
 
 // 富文本框EN_LINK消息lParam参数结构
 #pragma pack(1)
 struct EX_ENLINK
 {
-    NMHDR nmhdr;
-    UINT msg;
-    WPARAM wParam;
-    LPARAM lParam;
-    EX_CHARRANGE chrg;
+	NMHDR nmhdr;
+	UINT msg;
+	WPARAM wParam;
+	LPARAM lParam;
+	EX_CHARRANGE chrg;
 };
 #pragma pack()
 
 // 富文本框替换文本信息结构
 struct EX_SETTEXTEX
 {
-    DWORD flags;
-    UINT codePage;
+	DWORD flags;
+	UINT codePage;
 };
 
 // 列表按钮项目信息结构
 struct EX_LISTBUTTON_ITEMINFO
 {
-    UINT dwMask;     // 1,图片 2,标题 4,提示文本 8,状态 16,菜单 32,文本格式 64,宽度
-    UINT nType;      //项目类型   0,分隔条 1,普通按钮 2,选择按钮
-    UINT nIndex;     //插入索引
-    UINT nImage;     //图片索引
-    LPCWSTR wzText;  //项目标题
-    LPCWSTR wzTips;  //项目提示文本
-    UINT nLeft;      //项目左边
-    UINT nWidth;     //项目宽度
-    UINT dwState;    //项目状态   可取STATE_NORMAL,STATE_DOWN,STATE_FOCUS,STATE_DISABLE
-    UINT nMenu;      //项目菜单
-    UINT TextFormat; //项目文本格式
+	UINT dwMask;     // 1,图片 2,标题 4,提示文本 8,状态 16,菜单 32,文本格式 64,宽度
+	UINT nType;      //项目类型   0,分隔条 1,普通按钮 2,选择按钮
+	UINT nIndex;     //插入索引
+	UINT nImage;     //图片索引
+	LPCWSTR wzText;  //项目标题
+	LPCWSTR wzTips;  //项目提示文本
+	UINT nLeft;      //项目左边
+	UINT nWidth;     //项目宽度
+	UINT dwState;    //项目状态   可取STATE_NORMAL,STATE_DOWN,STATE_FOCUS,STATE_DISABLE
+	HMENU nMenu;      //项目菜单
+	INT TextFormat; //项目文本格式
 };
 
 // 日期框信息结构
 struct EX_DATETIME {
-    INT Year;				//年
-    INT Mon;				//月   1-12
-    INT Mday;				//日   1-31
-    INT Wday;				//星期 1-7 7=星期日
+	INT Year;				//年
+	INT Mon;				//月   1-12
+	INT Mday;				//日   1-31
+	INT Wday;				//星期 1-7 7=星期日
 };

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <vector>
 #include <string>
 #include <Windows.h>
@@ -332,6 +333,7 @@ struct obj_base
 #include "Class_TitleBar_ex.h"
 #include "Class_Palette_ex.h"
 #include "Class_Calendar_ex.h"
+#include "Class_CefBrowser.h"
 
 struct LOCALINFO
 {
@@ -420,13 +422,7 @@ typedef struct ICONIMAGE
     BYTE icAND[1];             // DIB bits for AND mask
 } ICONIMAGE, *LPICONIMAGE;
 
-INT DtoHimetric(INT d, INT PerInchc);
-LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
-DOUBLE GetSysDpi();
-BOOL Ex_MemFree(LPVOID hMem);
-LPVOID Ex_MemAlloc(size_t dwSize, INT dwFlags = LMEM_ZEROINIT);
-LPVOID Ex_MemReAlloc(LPVOID hMem, size_t dwSizes);
-
+void CALLBACK pfnDefaultFreeData(LPVOID dwData);
 CHAR __get_char(LPVOID lpAddr, LONG_PTR offset);
 UCHAR __get_unsignedchar(LPVOID lpAddr, LONG_PTR offset);
 WCHAR __get_wchar(LPVOID lpAddr, LONG_PTR offset);
@@ -441,23 +437,15 @@ LPVOID __ptr_ins(LPVOID *ptr, INT nCount, INT *nIndexInsert, INT cbBlock, LPVOID
 LPVOID __ptr_del(LPVOID *ptr, INT nCount, INT nIndex, INT cbBlock);
 LPVOID __ptr_index(LPVOID ptr, INT nCount, INT nIndex, INT cbBlock);
 void _wstr_deletechar(LPVOID lpstr, INT *dwsize, WCHAR wchar);
-void A2W_Addr(LPVOID lpszString, LPVOID *retPtr, size_t *retLen, INT CodePage, INT dwLen);
-
-void U2W_Addr(LPVOID lpUTF8, INT dwLen, LPVOID *retPtr, size_t *retLen);
-void ANY2W(LPVOID pAddr, size_t dwLen, LPVOID *retPtr, size_t *retLen);
-void PrintArray(UCHAR *data, INT len);
 std::vector<std::wstring> ws_split(const std::wstring &str, const std::wstring &delim);
-
-INT GetNearestPrime(INT value);
-
 void _struct_destroyfromaddr(LPVOID lpAddr, size_t Offset);
 LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT *nError);
-
+INT DtoHimetric(INT d, INT PerInchc);
+LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
+DOUBLE GetSysDpi();
+INT GetNearestPrime(INT value);
 void RC4(LPVOID dest, size_t dstlen, const LPVOID pwd, size_t pwdlen);
 UINT Crc32_Addr(LPVOID buf, UINT nLength);
 LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT *nOffset);
-
-LPCWSTR GetErrorMessage(DWORD error);
-LPCWSTR copytstr(LPCWSTR lptstr, INT len);
-INT wstr_compare(LPCWSTR wstr1, LPCWSTR wstr2, BOOL caseSensitive);
-std::wstring a2w(std::string str);
+std::wstring a2w(const std::string& str);
+std::wstring u2w(const std::string& str);

@@ -13,7 +13,6 @@ time_t _datebox_gettimestamp() {
 	return difftime(t, 0);
 }
 
-
 void _datebox_settitle(HEXOBJ hObj, datebox_s* pOwner, int type) {
 	TCHAR str[][4] = { L"", L"一", L"二" ,L"三", L"四", L"五", L"六", L"日" };
 	WCHAR lpTitle[50];
@@ -207,7 +206,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			datebox_s* pOwner = (datebox_s*)_obj_pOwner(pObj);
 			_font_destroy(pOwner->hFont);
 			LPVOID pOld = pOwner->Items;
-			if (pOld != 0) 
+			if (pOld != 0)
 			{
 				for (int i = 0; i < 42; i++)
 				{
@@ -240,9 +239,9 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			}
 			else
 			{
-				if (Ex_ObjGetLong(hObj, DBL_STATE) ==1) 
-				{ 
-					return 0; 
+				if (Ex_ObjGetLong(hObj, DBL_STATE) == 1)
+				{
+					return 0;
 				}
 				RECT lpRect = { 0 };
 				GetWindowRect(hWnd, &lpRect);
@@ -258,21 +257,21 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 					pOwner->nSohwType = 0;
 					SetWindowPos(hWndBox, 0, lpRect.left, lpRect.top, Ex_Scale(310), Ex_Scale(342), SWP_NOZORDER | SWP_NOACTIVATE);
 
-					HEXOBJ hObj = 0;
-					hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22, hObj_Static, 77701, -1, (LPARAM)pOwner, 0, _datebox_onbuttonproc);
-					Ex_ObjSetFontFromFamily(hObj, 0, 14, -1, FALSE);
-					hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj_Static, 77702, DT_CENTER | DT_VCENTER, (LPARAM)pOwner, 0, _datebox_onbuttonproc);
-					Ex_ObjSetFontFromFamily(hObj, 0, 24, -1, FALSE);
-					hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj_Static, 77703, DT_CENTER | DT_VCENTER, (LPARAM)pOwner, 0, _datebox_onbuttonproc);
-					Ex_ObjSetFontFromFamily(hObj, 0, 24, -1, FALSE);
+					HEXOBJ hObj1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22, hObj_Static, 77701, -1, (LPARAM)pOwner, 0, _datebox_onbuttonproc);
+					Ex_ObjSetFontFromFamily(hObj1, 0, 14, -1, FALSE);
+					HEXOBJ hObj2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj_Static, 77702, DT_CENTER | DT_VCENTER, (LPARAM)pOwner, 0, _datebox_onbuttonproc);
+					Ex_ObjSetFontFromFamily(hObj2, 0, 24, -1, FALSE);
+					HEXOBJ hObj3 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj_Static, 77703, DT_CENTER | DT_VCENTER, (LPARAM)pOwner, 0, _datebox_onbuttonproc);
+					Ex_ObjSetFontFromFamily(hObj3, 0, 24, -1, FALSE);
 
-					hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 10, 45, 300, 267, hObj_Static, 77704, -1, (LPARAM)pOwner, 0, _datebox_onlistproc);
-					_datebox_init(hObj, pOwner->Year, pOwner->Mon);
+					HEXOBJ hObj4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 10, 45, 300, 267, hObj_Static, 77704, -1, (LPARAM)pOwner, 0, _datebox_onlistproc);
+					_datebox_init(hObj4, pOwner->Year, pOwner->Mon);
 
-					hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, ELVS_VERTICALLIST, 10, 65, 300, 247, hObj_Static, 77705, -1, (LPARAM)pOwner, 0, _datebox_onlistproc);
-					Ex_ObjShow(hObj, FALSE);
-					Ex_ObjSetFontFromFamily(hObj, 0, 14, -1, FALSE);
-					Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, 12, 0);
+					HEXOBJ hObj5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, ELVS_VERTICALLIST, 10, 65, 300, 247, hObj_Static, 77705, -1, (LPARAM)pOwner, 0, _datebox_onlistproc);
+					Ex_ObjShow(hObj5, FALSE);
+					Ex_ObjSetFontFromFamily(hObj5, 0, 14, -1, FALSE);
+					Ex_ObjSendMessage(hObj5, LVM_SETITEMCOUNT, 12, 0);
+
 					Ex_ObjSetLong(hObj, DBL_STATE, 1);
 				}
 				Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
@@ -346,7 +345,6 @@ LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult) {
 	if (uMsg == WM_CREATE) {
 		Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
-		//Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(16754943, 255), FALSE);
 	}
 	else if (uMsg == WM_NOTIFY) {
 		EX_NMHDR ni{ 0 };
@@ -423,7 +421,7 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			}
 		}
 	}
-	else if (uMsg == WM_ERASEBKGND) 
+	else if (uMsg == WM_ERASEBKGND)
 	{
 		if (__get((LPVOID)lParam, 0) == wParam) {
 			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);

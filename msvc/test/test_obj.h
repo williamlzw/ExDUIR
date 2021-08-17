@@ -158,3 +158,8 @@ void test_datebox(HWND hParent);
 
 LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_calendar(HWND hParent);
+
+LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+void CALLBACK OnBeforeCommandLine(void* command_line);
+LRESULT CALLBACK OnChromiumMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+void test_chromium(HWND hParent);

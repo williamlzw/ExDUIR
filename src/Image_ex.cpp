@@ -398,6 +398,22 @@ BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE *dstImg)
     return hImg != 0 ? TRUE : FALSE;
 }
 
+BOOL _img_createfrompngbits2(INT nWidth, INT nHeight, BYTE* pbBuffer, HEXIMAGE* dstImg) {
+    INT nError = 0;
+    HEXIMAGE hImg = 0;
+    INT len = nWidth * nHeight * 4;
+    IWICBitmap* pBitmapData = nullptr;
+    nError = g_Ri.pWICFactory->CreateBitmapFromMemory(nWidth, nHeight, GUID_WICPixelFormat32bppPBGRA, nWidth * 4, len, pbBuffer, &pBitmapData);
+    if (nError == 0) {
+        hImg = _img_init(pBitmapData, 0, 1, NULL, &nError);
+    }
+    Ex_SetLastError(nError);
+    if (dstImg) {
+        *dstImg = hImg;
+    }
+    return hImg != 0 ? TRUE : FALSE;
+}
+
 //BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 //{
 //	INT nError = 0;

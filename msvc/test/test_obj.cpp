@@ -529,16 +529,16 @@ void test_listbutton(HWND hWnd)
 
 	EX_LISTBUTTON_ITEMINFO item1 = { 0 };
 	item1.wzText = L"文件(&F)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 0);
+	item1.nMenu = GetSubMenu(hMenu, 0);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
 	item1.wzText = L"编辑(&E)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 1);
+	item1.nMenu = GetSubMenu(hMenu, 1);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
 	item1.wzText = L"选项(&O)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 2);
+	item1.nMenu = GetSubMenu(hMenu, 2);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
 	item1.wzText = L"帮助(&H)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 3);
+	item1.nMenu = GetSubMenu(hMenu, 3);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item1);
 
 	//创建自定义回调菜单条
@@ -549,16 +549,16 @@ void test_listbutton(HWND hWnd)
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);   //改变菜单按钮字体热点色
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);   //改变菜单按钮字体按下色
 	item1.wzText = L"文件(&F)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 0);
+	item1.nMenu = GetSubMenu(hMenu, 0);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
 	item1.wzText = L"编辑(&E)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 1);
+	item1.nMenu = GetSubMenu(hMenu, 1);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
 	item1.wzText = L"选项(&O)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 2);
+	item1.nMenu = GetSubMenu(hMenu, 2);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item1);
 	item1.wzText = L"帮助(&H)";
-	item1.nMenu = (UINT)GetSubMenu(hMenu, 3);
+	item1.nMenu = GetSubMenu(hMenu, 3);
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item1);
 
 	//创建工具条
@@ -1578,7 +1578,7 @@ void test_reportlistview(HWND hWnd)
 	EX_REPORTLIST_ROWINFO row = { 0 };
 	EX_REPORTLIST_ITEMINFO item = { 0 };
 
-	for (INT i = 1; i <= 15; i++)
+	for (INT i = 1; i <= 10000; i++)
 	{
 		//先插入表项
 		row.lParam = i + 1;
@@ -2663,7 +2663,7 @@ LRESULT CALLBACK OnDateBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 	return 0;
 }
 
-void test_datebox(HWND hParent) 
+void test_datebox(HWND hParent)
 {
 	HWND hWnd_datebox = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试日期框", 0, 0, 250, 200, 0, 0);
 	HEXDUI hExDui_datebox = Ex_DUIBindWindowEx(hWnd_datebox, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
@@ -2683,7 +2683,7 @@ void test_datebox(HWND hParent)
 	Ex_DUIShowWindow(hExDui_datebox, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-void test_titlebar(HWND hParent) 
+void test_titlebar(HWND hParent)
 {
 	HWND hWnd = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试标题框", 0, 0, 400, 200, 0, 0);
 	HEXDUI hExDui = Ex_DUIBindWindowEx(hWnd, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
@@ -2730,9 +2730,45 @@ void test_calendar(HWND hParent)
 	Ex_DUISetLong(hExDui_calendar, EWL_CRBKG, ExARGB(200, 200, 200, 255));
 
 	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER | EMCS_SHOWLUNAR, 50, 50, 500, 400, hExDui_calendar, 100, -1, 0, 0, 0);
-	Ex_ObjSendMessage(MonthCal, MCM_SETCOLOR, MCSC_WEEKTITLEBK, ExRGBA(120,37,150,255));
+	Ex_ObjSendMessage(MonthCal, MCM_SETCOLOR, MCSC_WEEKTITLEBK, ExRGBA(120, 37, 150, 255));
 	Ex_ObjHandleEvent(MonthCal, NM_CLICK, OnCalendarEvent);
 
 	Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL, 0, 0, 0);
 }
 
+HEXOBJ m_hObjChromium;
+
+LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_SIZE)
+	{
+		Ex_ObjMove(m_hObjChromium, 50, 50, LOWORD(lParam) - 100, HIWORD(lParam) - 100, FALSE);
+	}
+	return 0;
+}
+
+void CALLBACK OnBeforeCommandLine(void* command_line)
+{
+	output(L"加载命令行：", (size_t)command_line);
+}
+
+LRESULT CALLBACK OnChromiumMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == CEFN_CREATE) {
+		output(L"创建浏览器：", (size_t)lParam);
+	}
+	return 0;
+}
+
+void test_chromium(HWND hParent)
+{
+	Ex_ObjCefBrowserInitialize(NULL, TRUE, NULL, 0, 0, OnBeforeCommandLine);
+	HWND hWnd_chromium = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试Cef3浏览框", 0, 0, 800, 600, 0, 0);
+	HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(hWnd_chromium, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnChromiumWndMsgProc);
+	Ex_DUISetLong(hExDui_chromium, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+
+	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 77785, -1, 0, 0, OnChromiumMsgProc);
+	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
+
+	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
+}

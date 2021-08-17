@@ -1789,11 +1789,10 @@ size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam
     }
     else if (uMsg == WM_PAINT)
     {
-
         if (!((pObj->dwFlags_ & EOF_BNEEDREDRAW) == EOF_BNEEDREDRAW))
         {
             _obj_invalidaterect(pObj, 0, &nError);
-            return 0;
+            if (wParam == 0 && lParam == 0) return 0;
         }
     }
     return _obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);

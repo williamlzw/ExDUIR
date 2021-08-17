@@ -46,7 +46,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_titlebar,      //137测试标题框
         test_datebox,       //138测试日期框
         test_palette,        //139测试调色板
-        test_calendar      //140测试月历
+        test_calendar,      //140测试月历
+        test_chromium       //141测试CEF浏览框
         
     };
     buttonProc[nID - 101](m_hWnd);
@@ -114,7 +115,7 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试日期框", -1, 230, 390, 100, 30, hExDui, 138, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 230, 430, 100, 30, hExDui, 139, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试月历", -1, 230, 470, 100, 30, hExDui, 140, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试CEF浏览框", -1, 230, 510, 100, 30, hExDui, 141, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
         for (auto button : buttons)
         {

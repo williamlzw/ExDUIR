@@ -673,7 +673,7 @@ size_t _reportlistview_arr_order(array_s *hArr, INT nIndex1, LPVOID pvData1, INT
         }
         else if (pSortInfo->nType == 0)
         {
-            return wstr_compare((LPCWSTR)pvData2, (LPCWSTR)pvData1, TRUE);
+            return wcscmp((LPCWSTR)pvData2, (LPCWSTR)pvData1);
         }
         else
         {

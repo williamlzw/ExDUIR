@@ -94,13 +94,12 @@ BOOL _theme_fillclasses(EX_HASHTABLE *pTableFiles, EX_HASHTABLE *pTableClass, st
     size_t lpFile = 0;
     if (HashTable_Get(pTableFiles, atomINI, &lpFile))
     {
-        LPVOID retPtr = nullptr;
-        size_t retLen = 0;
-        ANY2W((LPVOID)(lpFile + 4), __get_int((LPVOID)lpFile, 0), &retPtr, &retLen);
-        CharLowerW((LPWSTR)retPtr);
+        std::string utf8Str((char*)(lpFile + 4), __get_int((LPVOID)lpFile, 0));
+        std::wstring unicodeStr = u2w(utf8Str);
+        transform(unicodeStr.begin(), unicodeStr.end(), unicodeStr.begin(), ::tolower);
         aryAtomKey.resize(32);
         arylpValue.resize(32);
-        auto iClassStart = wcschr((WCHAR *)retPtr, '[');
+        auto iClassStart = wcschr((WCHAR*)unicodeStr.c_str(), '[');
         LPVOID lpValue = nullptr;
         INT Value;
         while (iClassStart != 0)
