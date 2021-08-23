@@ -13,32 +13,20 @@ void _navbtn_paint(HEXOBJ hObj)
     {
         hImage = Ex_ObjGetLong(hObj, 1);
     }
-    else
-    {
-        hImage = Ex_ObjGetLong(hObj, 0);
-    }
+    
     INT nImageWidth = 0;
     INT nImageHeight = 0;
     if (hImage != 0)
     {
-        LPRECT pRect = (LPRECT)Ex_ObjGetLong(hObj, 3);
-        if (pRect == 0)
-        {
-            _canvas_drawimagerect(ps.hCanvas, hImage, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, 255);
-        }
-        else
-        {
-            _img_getsize(hImage, &nImageWidth, &nImageHeight);
-            _canvas_drawimagefromgrid(ps.hCanvas, hImage, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, 0, 0, nImageWidth, nImageHeight, pRect->left, pRect->top, pRect->right, pRect->bottom, 0, 255);
-        }
+        _canvas_drawimagerect(ps.hCanvas, hImage, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, 255);
     }
     FLOAT nTextWidth = 0;
     FLOAT nTextHeight = 0;
     _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, ps.uWidth, ps.uHeight, &nTextWidth, &nTextHeight);
-    hImage = Ex_ObjGetLong(hObj, 4);
-    if (hImage != 0)
+    HEXIMAGE hImage2 = Ex_ObjGetLong(hObj, 0);
+    if (hImage2 != 0)
     {
-        _img_getsize(hImage, &nImageWidth, &nImageHeight);
+        _img_getsize(hImage2, &nImageWidth, &nImageHeight);
     }
     else
     {
@@ -48,7 +36,7 @@ void _navbtn_paint(HEXOBJ hObj)
     RECT rc;
     rc.top = (ps.uHeight - (nTextHeight + nImageHeight)) / 2;
     rc.bottom = (ps.uHeight + nTextHeight + nImageHeight) / 2;
-    _canvas_drawimage(ps.hCanvas, hImage, (ps.uWidth - nImageWidth) / 2, rc.top, 255);
+    _canvas_drawimage(ps.hCanvas, hImage2, (ps.uWidth - nImageWidth) / 2, rc.top, 255);
     _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, (ps.uWidth - nTextWidth) / 2, rc.bottom - nTextHeight, (ps.uWidth + nTextWidth) / 2, rc.bottom);
     Ex_ObjEndPaint(hObj, &ps);
 }
@@ -77,15 +65,23 @@ LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 {
     if (uMsg == WM_DESTROY)
     {
-        _img_destroy(Ex_ObjGetLong(hObj, 0)); //正常态
-        _img_destroy(Ex_ObjGetLong(hObj, 1)); //悬浮态
-        _img_destroy(Ex_ObjGetLong(hObj, 2)); //按下态
-        _img_destroy(Ex_ObjGetLong(hObj, 4)); //图标
-
-        LPVOID pRect = (LPVOID)Ex_ObjGetLong(hObj, 3);
-        if (pRect)
+        HEXIMAGE hImg1 = Ex_ObjGetLong(hObj, 1);
+        if (hImg1 != 0)
         {
-            Ex_MemFree(pRect);
+            _img_destroy(hImg1);
+            Ex_ObjSetLong(hObj, 1, 0);
+        }
+        HEXIMAGE hImg2 = Ex_ObjGetLong(hObj, 2);
+        if (hImg2 != 0)
+        {
+            _img_destroy(hImg2);
+            Ex_ObjSetLong(hObj, 2, 0);
+        }
+        HEXIMAGE hImg0 = Ex_ObjGetLong(hObj, 0);
+        if (hImg0 != 0)
+        {
+            _img_destroy(hImg0);
+            Ex_ObjSetLong(hObj, 0, 0);
         }
         return 0;
     }
@@ -96,11 +92,12 @@ LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
     }
     else if (uMsg == WM_SETICON)
     {
-        HEXIMAGE hImage = Ex_ObjSetLong(hObj, 4, lParam);
+        HEXIMAGE hImage = Ex_ObjGetLong(hObj, 0);
         if (hImage != 0)
         {
             _img_destroy(hImage);
         }
+        Ex_ObjSetLong(hObj, 0, lParam);
         if (wParam != 0)
         {
             Ex_ObjInvalidateRect(hObj, 0);
@@ -110,31 +107,16 @@ LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
     else if (uMsg == BM_SETIMAGE)
     {
         HEXIMAGE hImage = 0;
-        if (wParam == 0)
+
+        if (wParam == 1)
         {
-            hImage = Ex_ObjSetLong(hObj, 0, lParam);
-        }
-        else if (wParam == 1)
-        {
-            hImage = Ex_ObjSetLong(hObj, 1, lParam);
+            hImage = Ex_ObjGetLong(hObj, 1);
+            Ex_ObjSetLong(hObj, 1, lParam);
         }
         else if (wParam == 2)
         {
-            hImage = Ex_ObjSetLong(hObj, 2, lParam);
-        }
-        if (wParam == 100)
-        {
-            LPVOID pRect = nullptr;
-            if (lParam != 0)
-            {
-                pRect = Ex_MemAlloc(16);
-                RtlMoveMemory(pRect, (LPVOID)lParam, 16);
-            }
-            LPVOID pOld = (LPVOID)Ex_ObjSetLong(hObj, 4, (size_t)pRect);
-            if (pOld)
-            {
-                Ex_MemFree(pOld);
-            }
+            hImage = Ex_ObjGetLong(hObj, 2);
+            Ex_ObjSetLong(hObj, 2, lParam);
         }
         if (hImage != 0)
         {
@@ -177,5 +159,5 @@ LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
 void _navbtn_register()
 {
-    Ex_ObjRegister(L"NAVBUTTON", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 5 * sizeof(size_t), 0, 0, _navbtn_proc);
+    Ex_ObjRegister(L"NAVBUTTON", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 3 * sizeof(size_t), 0, 0, _navbtn_proc);
 }

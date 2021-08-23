@@ -180,6 +180,10 @@ LPVOID _canvas_getcontext(HEXCANVAS hCanvas, INT nType)
         {
             ret = _cv_dx_bmp(pCanvas);
         }
+        else if (nType == CVC_DX_GDIRENDERTARGET)
+        {
+            ret = _cv_dx_gdiinterop(pCanvas);
+        }
     }
     Ex_SetLastError(nError);
     return ret;
@@ -199,9 +203,13 @@ BOOL _canvas_begindraw(HEXCANVAS hCanvas)
         {
             _dx_begindraw(pContext);
         }
+        
         InterlockedExchangeAdd((long *)&(pWnd->dx_counts_), 1);
-
-        _dx_settarget(pContext, (ID2D1Bitmap *)_cv_dx_bmp(pCanvas));
+        auto target = _cv_dx_bmp(pCanvas);
+        if (target)
+        {
+            _dx_settarget(pContext, target);
+        }
     }
     Ex_SetLastError(nError);
     return nError == 0;
@@ -233,8 +241,12 @@ BOOL _canvas_clear(HEXCANVAS hCanvas, EXARGB Color)
     INT nError = 0;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID *)&pCanvas, &nError))
     {
-
-        _dx_clear(_cv_context(pCanvas), Color);
+        ID2D1DeviceContext* context = _cv_context(pCanvas);
+        if (context)
+        {
+            _dx_clear(context, Color);
+        }
+        
     }
     Ex_SetLastError(nError);
     return nError == 0;

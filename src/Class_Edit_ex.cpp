@@ -96,25 +96,16 @@ public:
     //@cmember Create the caret
     BOOL TxCreateCaret(HBITMAP hbmp, INT xWidth, INT yHeight)
     {
-        HEXCANVAS hCanvas = m_pOwner->hCanvasCaret_;
-        if (hCanvas)
+        if (!FLAGS_CHECK(m_pOwner->pObj_->dwStyle_, EES_HIDDENCARET))
         {
-            if (Flag_Query(EXGF_DPI_ENABLE))
-            {
-                xWidth = 2;
-            }
-            _canvas_resize(hCanvas, xWidth, yHeight);
-            if (_canvas_begindraw(hCanvas))
-            {
-                _canvas_clear(hCanvas, m_pOwner->crCaret_);
-                _canvas_enddraw(hCanvas);
-            }
+            xWidth = 2;
             m_pOwner->rcCaret_left_ = 0;
             m_pOwner->rcCaret_top_ = 0;
             m_pOwner->rcCaret_right_ = xWidth;
             m_pOwner->rcCaret_bottom_ = yHeight;
+            return CreateCaret(_obj_gethwnd(m_pOwner->pObj_), (HBITMAP)-1, xWidth, yHeight);
         }
-        return CreateCaret(_obj_gethwnd(m_pOwner->pObj_), (HBITMAP)-1, xWidth, yHeight);
+        return FALSE;
     };
 
     //@cmember Show the caret
@@ -377,7 +368,6 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
         pOwner->pObj_ = pObj;
         pOwner->crBanner_ = ExARGB(0, 0, 0, 128);
         pOwner->charPsw_ = 9679;
-        pOwner->hCanvasCaret_ = _canvas_createfromobj(hObj, 0, 0, 0);
         pOwner->crCaret_ = ExARGB(0, 0, 0, 255);
 
         _struct_createfromaddr(pOwner, offsetof(edit_s, prctext_), sizeof(RECT), &nError);
@@ -421,7 +411,6 @@ void _edit_unint(obj_s *pObj)
     edit_s *pOwner = (edit_s *)_obj_pOwner(pObj);
     if (pOwner != 0)
     {
-        _canvas_destroy(pOwner->hCanvasCaret_);
         ((ITextServices *)pOwner->its_)->Release();
         ((ITextHost *)pOwner->ith_)->Release();
         delete pOwner->ith_;
@@ -445,8 +434,7 @@ void _edit_setpcf(obj_s *pObj, edit_s *pOwner, INT height)
         _font_getlogfont(pObj->hFont_, &logfont);
 
         pcf->cbSize = sizeof(CHARFORMAT2W);
-        DWORD dwMask = CFM_BOLD | CFE_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_SIZE | CFM_COLOR | CFM_FACE |
-                       CFM_CHARSET | CFM_OFFSET;
+        DWORD dwMask = CFM_BOLD | CFE_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_SIZE | CFM_COLOR | CFM_FACE | CFM_CHARSET | CFM_OFFSET;
         DWORD dwEffects = 0;
         if (logfont.lfWeight != 400)
         {
@@ -794,36 +782,9 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
             wnd_s *pWnd = pObj->pWnd_;
             BOOL ismove = (pWnd->dwFlags_ & EWF_BSIZEMOVING) == EWF_BSIZEMOVING;
             HDC hDc = _canvas_getdc(ps.hCanvas);
-            //const D2D1_PIXEL_FORMAT format =
-            //	D2D1::PixelFormat(
-            //		DXGI_FORMAT_B8G8R8A8_UNORM,
-            //		D2D1_ALPHA_MODE_IGNORE);
-            //const D2D1_RENDER_TARGET_PROPERTIES pro =
-            //	D2D1::RenderTargetProperties(
-            //		D2D1_RENDER_TARGET_TYPE_DEFAULT,
-            //		format,
-            //		96.0f, // default dpi
-            //		96.0f, // default dpi
-            //		D2D1_RENDER_TARGET_USAGE_GDI_COMPATIBLE);
-
-            //ID2D1HwndRenderTarget* rt = nullptr;
-            //D2D1_SIZE_U size = D2D1::SizeU(
-            //	rcTmp.right - rcTmp.left,
-            //	rcTmp.bottom - rcTmp.top
-            //);
-            /*((ID2D1Factory1*)g_Ri.pD2Dfactory)->CreateHwndRenderTarget(pro, D2D1::HwndRenderTargetProperties(hWnd, size), &rt);
-			 rt->BeginDraw();
-			 RECT rcl{ 0, 0, rcTmp.right - rcTmp.left, rcTmp.bottom - rcTmp.top };
-			 auto ret= ((ITextServices2*)pITS)->TxDrawD2D(rt, 0, (LPRECT)&rcl, ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);*/
-
-            if (hDc != 0)
-            {
-                _edit_txpaint(pITS, 1, 0, NULL, NULL, hDc, NULL, NULL, NULL, &rcTmp, NULL, ismove ? -1 : 0);
-                BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left, rcTmp.bottom - rcTmp.top, mDc, 0, 0, SRCPAINT);
-                _canvas_releasedc(ps.hCanvas);
-                // rt->EndDraw();
-                // rt->Release();
-            }
+            _edit_txpaint(pITS, DVASPECT_CONTENT, 0, NULL, NULL, hDc, NULL, NULL, NULL, &rcTmp, NULL, ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);
+            BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left, rcTmp.bottom - rcTmp.top, mDc, 0, 0, SRCPAINT);
+            _canvas_releasedc(ps.hCanvas);
             if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
             {
                 if (!((((edit_s *)ps.dwOwnerData)->flags_ & EEF_BSELECTED) == EEF_BSELECTED))
@@ -832,16 +793,15 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                     {
                         if (!((((edit_s *)ps.dwOwnerData)->flags_ & EEF_BCARETSHHOWED) == EEF_BCARETSHHOWED))
                         {
-                            HEXCANVAS sCanvas = ((edit_s *)ps.dwOwnerData)->hCanvasCaret_;
                             rcTmp.left = ((edit_s *)ps.dwOwnerData)->rcCaret_left_;
                             rcTmp.top = ((edit_s *)ps.dwOwnerData)->rcCaret_top_;
                             rcTmp.right = ((edit_s *)ps.dwOwnerData)->rcCaret_right_;
                             rcTmp.bottom = ((edit_s *)ps.dwOwnerData)->rcCaret_bottom_;
                             if (rcTmp.right > 0 && rcTmp.bottom > 0)
                             {
-                                _canvas_alphablend(ps.hCanvas, sCanvas, rcTmp.left, rcTmp.top, rcTmp.right,
-                                                   rcTmp.bottom, 0, 0, rcTmp.right - rcTmp.left,
-                                                   rcTmp.bottom - rcTmp.top, 255);
+                                HEXBRUSH hCaretBrush = _brush_create(((edit_s *)ps.dwOwnerData)->crCaret_);
+                                _canvas_fillrect(ps.hCanvas, hCaretBrush, (FLOAT)rcTmp.left, (FLOAT)rcTmp.top, (FLOAT)rcTmp.right, (FLOAT)rcTmp.bottom);
+                                _brush_destroy(hCaretBrush);
                             }
                         }
                     }

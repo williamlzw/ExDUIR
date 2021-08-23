@@ -24,7 +24,6 @@ struct edit_s
 	LPVOID hBmp_;
 	LPVOID pBits_;
 	INT charPsw_;
-	HEXCANVAS hCanvasCaret_;
 	INT crCaret_;
 	INT rcCaret_left_;
 	INT rcCaret_top_;

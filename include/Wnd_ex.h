@@ -62,7 +62,7 @@ struct wnd_s
 
     ID2D1DeviceContext *dx_context_;
     ID2D1GdiInteropRenderTarget *dx_gdiinterop_;
-    INT dx_counts_;
+    INT dx_counts_ = 0;
     HEXCANVAS canvas_bkg_;
     HEXCANVAS canvas_display_;
 

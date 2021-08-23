@@ -505,6 +505,8 @@
 #define CVC_DX_D2DCONTEXT 1
 // 画布信息类型_D2D图形
 #define CVC_DX_D2DBITMAP 2
+// 画布信息类型_GDI渲染目标
+#define CVC_DX_GDIRENDERTARGET 3
 #pragma endregion canvas context constant
 
 #pragma region canvas context constant

@@ -7,7 +7,18 @@ BOOL _dx_init(INT *nError)
     *nError = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT, NULL, 0, D3D11_SDK_VERSION, &pD3DDevice, NULL, NULL);
     if (*nError == 0 && pD3DDevice != nullptr)
     {
-        *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), (LPVOID *)&(g_Ri.pD2Dfactory));
+       /* *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), (LPVOID *)&(g_Ri.pD2Dfactory));*/
+#ifdef _DEBUG//如果为Debug模式，则启用D2D调试层
+
+//下面为设置启用调试层，会在IDE输出窗口内显示
+        D2D1_FACTORY_OPTIONS options;
+        options.debugLevel = D2D1_DEBUG_LEVEL_ERROR;
+        //创建工厂
+        /**nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, &g_Ri.pD2Dfactory);*/
+        *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, & g_Ri.pD2Dfactory);
+#else
+        * nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Ri.pD2Dfactory);
+#endif
         if (*nError == 0)
         {
             IDXGIDevice *pDXGIDevice = nullptr;
