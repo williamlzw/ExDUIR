@@ -168,7 +168,7 @@ public:
 
     //@cmember Set the focus to the text window
     void TxSetFocus(){
-
+        Ex_ObjSetFocus(m_pOwner->pObj_->hObj_);
     };
 
     //@cmember Establish a new cursor shape

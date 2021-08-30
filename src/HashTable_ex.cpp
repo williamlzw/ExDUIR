@@ -112,8 +112,8 @@ BOOL HashTable_Set(EX_HASHTABLE *hTable, size_t hKey, size_t dwValue)
         {
             if (pEntry->hKey == hKey)
             {
-                pEntry->dwValue = dwValue;
-                //InterlockedExchange((size_t*)&(pEntry->dwValue), (size_t)dwValue);
+                //pEntry->dwValue = dwValue;
+                InterlockedExchange((size_t*)&(pEntry->dwValue), (size_t)dwValue);
                 return TRUE;
             }
             pEntry = pEntry->pEntry;

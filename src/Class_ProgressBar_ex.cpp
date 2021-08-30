@@ -53,7 +53,6 @@ LRESULT CALLBACK _progressbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
     else if (uMsg == WM_PAINT)
     {
         _progressbar_paint(hObj);
-        return 0;
     }
     return (Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam));
 }

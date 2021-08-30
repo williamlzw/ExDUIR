@@ -103,7 +103,7 @@ void _canvas_recreate(canvas_s *pCanvas, INT width, INT height, INT *nError)
         ID2D1Bitmap *oldBitmap = pCanvas->pBitmap_;
         if (oldBitmap != 0)
         {
-            ((ID2D1Bitmap1 *)oldBitmap)->Release();
+            oldBitmap->Release();
         }
         pCanvas->pBitmap_ = pBitmap;
     }

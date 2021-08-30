@@ -25,7 +25,7 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 		auto text_length = Ex_ObjGetTextLength(Ex_ObjGetFromID(m_hExDuiButton, 201)); //取按钮1文本长度
 		std::wstring str;
 		str.resize(text_length * 2 + 2);
-		Ex_ObjGetText(Ex_ObjGetFromID(m_hExDuiButton, 201), str.c_str(), text_length * 2);
+		Ex_ObjGetText(Ex_ObjGetFromID(m_hExDuiButton, 201), str.c_str(), text_length * 2 + 2);
 		Ex_ObjSetText(hObj, (L"按钮1文本:" + str).c_str(), TRUE);
 	}
 	else if (nID == 205)
@@ -144,7 +144,7 @@ void test_label(HWND hWnd)
 	Ex_DUISetLong(hExDui_label, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ hObj_label = Ex_ObjCreateEx(-1, L"static", NULL, EOS_BORDER | EOS_VISIBLE, 10, 30, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
 	std::vector<CHAR> imgdata;
-	Ex_ReadFile(L"res/Loading.png", &imgdata);
+	Ex_ReadFile(L"res/Loading.gif", &imgdata);
 	Ex_ObjSetBackgroundImage(hObj_label, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
 	Ex_ObjSetRadius(hObj_label, 10, 10, 15, 10, TRUE);
 	EX_BACKGROUNDIMAGEINFO bkg{ 0 };
@@ -154,15 +154,11 @@ void test_label(HWND hWnd)
 	Ex_ObjGetRect(hObj_label, &rect);
 	output(L"标签矩形:", rect.right, rect.bottom);
 
-	HEXOBJ hObj_label2 = Ex_ObjCreateEx(-1, L"static", NULL, -1, 200, 30, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
-	Ex_ReadFile(L"res/Loading.gif", &imgdata);
-	Ex_ObjSetBackgroundImage(hObj_label2, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
-
 	HEXOBJ hObj_label3 = Ex_ObjCreateEx(-1, L"static", NULL, -1, 10, 200, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
 	Ex_ReadFile(L"res/webp.webp", &imgdata);
 	Ex_ObjSetBackgroundImage(hObj_label3, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
 
-	HEXOBJ hObj_label4 = Ex_ObjCreateEx(-1, L"static", L"标签可以填充动画,支持APNG,PNG,GIF,JPG,BMP,WEBP格式,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
+	HEXOBJ hObj_label4 = Ex_ObjCreateEx(-1, L"static", L"标签可以填充动画,支持PNG,GIF,JPG,BMP,WEBP格式,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
 	Ex_ObjSetFontFromFamily(hObj_label4, L"宋体", 14, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(hObj_label4, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
@@ -368,7 +364,7 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			textformat.codePage = 1200; //Unicode code page
 			Ex_ObjSendMessage(hEdit, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为我");
 		}
-		Ex_ObjSetFocus(hEdit); //这一句不能少，不然编辑框无法显示选中区域
+		
 	}
 	return 0;
 }
@@ -834,16 +830,15 @@ LRESULT CALLBACK OnNavButtonMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM w
 void test_navbutton(HWND hWnd)
 {
 	HWND hWnd_navbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试选项卡", 0, 0, 800, 600, 0, 0);
-	HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(hWnd_navbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, OnNavButtonMsgProc);
+	HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(hWnd_navbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	
-	HEXIMAGE hImage = 0;
-	HEXIMAGE hImg1 = 0;
-	HEXIMAGE hImg2 = 0;
 	for (INT i = 0; i < 4; i++)
 	{
-		
+		HEXIMAGE hImage = 0;
+		HEXIMAGE hImg1 = 0;
+		HEXIMAGE hImg2 = 0;
 		auto str = L"Tab" + std::to_wstring(i);
-		m_hNavbtn[i] = Ex_ObjCreate(L"NavButton", str.c_str(), -1, 20 + i * 85, 40, 80, 80, hExDui_navbutton);
+		m_hNavbtn[i] = Ex_ObjCreate(L"NavButtonEx", str.c_str(), -1, 20 + i * 85, 40, 80, 80, hExDui_navbutton);
 
 		auto file = L"./navbtn/大图标" + std::to_wstring(i + 1) + L".png";
 		_img_createfromfile(file.c_str(), &hImage);

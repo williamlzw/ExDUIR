@@ -32,7 +32,7 @@ Currently,the following two compiling methods are supported:
 * Extension components are free and flexible, and the engine handles the underlying logic. The user only needs to write the drawing code and does not need to worry about complex message processing.
 * Currently support component has a button, switch, radio buttons, select box, edit box, rich text edit box, list box, list report, group boxes, combo boxes, menus, tree frame, the slider, radio buttons, select box, TAB, load, animations, rotating picture box, page, picture box, message box, list of ICONS, list button, miniblink browser, the toolbar , status bar, date box, color palette, title box, cef3 browser, you can superclass extension components on these components.
 * Support for layouts that automatically update component positions when window sizes change. Currently, the following layouts are supported: absolute layout, relative layout, linear layout, flow layout, and table layout. Users can extend the layout.
-* Support APNG, GIF format images automatically play animation, support image format PNG, APNG, JPEG, BMP, GIF, WEBP. Windows or components can use the above format image as the background.
+* Support GIF format images automatically play animation, support image format PNG, JPEG, BMP, GIF, WEBP. Windows or components can use the above format image as the background.
 * Support 34 eases, users can freely write window eases or component eases. Users can extend the easing algorithm.
 * Window support special-shaped window, picture shape window. Windows and components support 0 to 255 transparency. Supports Gaussian blur.
 * Edit box supports rich text and supports loading documents in RTF format.

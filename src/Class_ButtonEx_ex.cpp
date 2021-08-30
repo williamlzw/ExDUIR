@@ -43,8 +43,24 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     {
         EX_IMAGEINFO *img = (EX_IMAGEINFO *)lParam;
         HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_NORMAL, img->imgNormal);
+        if (hImage != 0)
+        {
+            /* 若有原位图则销毁 */
+            _img_destroy(hImage);
+            hImage = 0;
+        }
         hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_HOVER, img->imgHover);
+        if (hImage != 0)
+        {
+            _img_destroy(hImage);
+            hImage = 0;
+        }
         hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EBEL_IMG_DOWNORCHECKED, img->imgDownOrChecked);
+        if (hImage != 0)
+        {
+            _img_destroy(hImage);
+            hImage = 0;
+        }
         if (wParam == 100) /* 设置九宫矩形 */
         {
             if (lParam != 0)
@@ -59,11 +75,7 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             }
         }
 
-        if (hImage != 0)
-        {
-            /* 若有原位图则销毁 */
-            _img_destroy(hImage);
-        }
+        
         Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == WM_MOUSEHOVER)

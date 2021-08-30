@@ -48,7 +48,7 @@ struct mempoolmsg_s;
 struct EX_THUNK_DATA;
 struct EX_EVENT_HANDLER;
 struct EX_EVENT_HANDLER_TABLE;
-struct EX_APNG_THUNK;
+
 
 typedef BOOL(CALLBACK *UpdateLayeredWindowIndirectPROC)(HWND, UPDATELAYEREDWINDOWINFO *);
 typedef INT(CALLBACK *EnumPROC)(size_t, size_t);

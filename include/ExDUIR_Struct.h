@@ -174,7 +174,7 @@
 #define WM_EX_DROP -9
 // 消息_扩展_控件绘制中事件 wParam为绘制进度,lParam为EX_PAINTSTRUCT指针
 #define WM_EX_PAINTING -10
-// 组件数值_扩展_属性消息 lParam为EX_OBJ_PROPS结构体
+// 消息_扩展_属性消息 lParam为EX_OBJ_PROPS结构体
 #define WM_EX_PROPS -11
 #pragma endregion msg ex constant
 

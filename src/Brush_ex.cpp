@@ -122,8 +122,10 @@ HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yE
         gradientProperties.endPoint.x = xEnd;
         gradientProperties.endPoint.y = yEnd;
         if (gradientStopCollection)
+        {
             g_Ri.pD2DDeviceContext->CreateLinearGradientBrush(&gradientProperties, NULL, gradientStopCollection, &hBrush);
-
+        }
+        gradientStopCollection->Release();
         free(gradientStops);
         return hBrush;
     }

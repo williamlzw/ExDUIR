@@ -34,6 +34,5 @@ void _dx_drawbitmaprectrect(ID2D1DeviceContext *pDeviceContext, ID2D1Bitmap *pBi
 void _dx_drawimage(ID2D1DeviceContext *pDeviceContext, img_s *pImage, FLOAT left, FLOAT top, INT mode);
 void _dx_drawimage_ex(ID2D1DeviceContext *pDeviceContext, img_s *pImage, FLOAT dstLeft, FLOAT dstTop, FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, INT mode);
 void _dx_bmp_copyfrom(ID2D1Bitmap **pDestBitmap, ID2D1Bitmap *pSrcBitmap, INT dX, INT dY, INT srcLeft, INT srcTop, INT srcRight, INT srcBottom);
-void _dx_drawframe_apng(img_s *pImage, IWICBitmap *pImgSrc, IStream *lpStream, INT x, INT y, BYTE dispose, BYTE blend, INT nIndex);
 void ARGB2ColorF(EXARGB argb, D2D1_COLOR_F *color);
 void ColorF2ARGB(D2D1_COLOR_F color, EXARGB *argb);

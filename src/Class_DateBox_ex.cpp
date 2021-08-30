@@ -346,14 +346,19 @@ LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 	if (uMsg == WM_CREATE) {
 		Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
 	}
-	else if (uMsg == WM_NOTIFY) {
+	else if (uMsg == WM_NOTIFY) 
+	{
 		EX_NMHDR ni{ 0 };
 		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
-		if (hObj == ni.hObjFrom) {
-			if (ni.nCode == NM_CLICK) {
+		if (hObj == ni.hObjFrom) 
+		{
+			if (ni.nCode == NM_CLICK) 
+			{
 				datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
-				if (ni.idFrom == 77701) {
-					if (pOwner->nSohwType == 0) {
+				if (ni.idFrom == 77701) 
+				{
+					if (pOwner->nSohwType == 0) 
+					{
 						pOwner->nSohwType = 1;
 						_datebox_show(hObj, pOwner, 2);
 					}
@@ -367,7 +372,8 @@ LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 					}
 				}
 				else if (ni.idFrom == 77702) {
-					if (pOwner->nSohwType == 0) {
+					if (pOwner->nSohwType == 0) 
+					{
 						pOwner->lpMon -= 1;
 						if (pOwner->lpMon == 0) {
 							pOwner->lpYear -= 1;
@@ -375,29 +381,36 @@ LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 						}
 						_datebox_show(hObj, pOwner, 4);
 					}
-					else if (pOwner->nSohwType == 1) {
+					else if (pOwner->nSohwType == 1) 
+					{
 						pOwner->lpYear -= 1;
 						_datebox_show(hObj, pOwner, 3);;
 					}
-					else if (pOwner->nSohwType == 2) {
+					else if (pOwner->nSohwType == 2) 
+					{
 						pOwner->lpYear -= 12;
 						_datebox_show(hObj, pOwner, 3);
 					}
 				}
-				else if (ni.idFrom == 77703) {
-					if (pOwner->nSohwType == 0) {
+				else if (ni.idFrom == 77703) 
+				{
+					if (pOwner->nSohwType == 0) 
+					{
 						pOwner->lpMon += 1;
-						if (pOwner->lpMon == 13) {
+						if (pOwner->lpMon == 13) 
+						{
 							pOwner->lpYear += 1;
 							pOwner->lpMon = 1;
 						}
 						_datebox_show(hObj, pOwner, 4);
 					}
-					else if (pOwner->nSohwType == 1) {
+					else if (pOwner->nSohwType == 1) 
+					{
 						pOwner->lpYear += 1;
 						_datebox_show(hObj, pOwner, 3);
 					}
-					else if (pOwner->nSohwType == 2) {
+					else if (pOwner->nSohwType == 2) 
+					{
 						pOwner->lpYear += 12;
 						_datebox_show(hObj, pOwner, 3);
 					}
@@ -411,10 +424,13 @@ LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult) {
 	INT nError = 0;
 	static LPARAM nIndex;
-	if (uMsg == WM_NCCALCSIZE) {
+	if (uMsg == WM_NCCALCSIZE) 
+	{
 		obj_s* pObj = nullptr;
-		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-			if (pObj->id_ == 77704) {
+		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) 
+		{
+			if (pObj->id_ == 77704) 
+			{
 				pObj->c_top_ = Ex_Scale(23);
 				*lpResult = 1;
 				return 1;
@@ -423,9 +439,11 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	else if (uMsg == WM_ERASEBKGND)
 	{
-		if (__get((LPVOID)lParam, 0) == wParam) {
+		if (__get((LPVOID)lParam, 0) == wParam) 
+		{
 			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
-			if (pOwner->nSohwType > 0) {
+			if (pOwner->nSohwType > 0) 
+			{
 				return 0;
 			}
 			EX_PAINTSTRUCT ps{ 0 };
@@ -433,14 +451,18 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 
 			INT nLeft = 0;
 			LPCWSTR wzText = L"";
-			for (INT i = 1; i <= 7; i++) {
-				if (i == 1) {
+			for (INT i = 1; i <= 7; i++) 
+			{
+				if (i == 1) 
+				{
 					nLeft = 15;
 				}
-				else {
+				else 
+				{
 					nLeft += Ex_Scale(42);
 				}
-				switch (i) {
+				switch (i) 
+				{
 				case 1:
 					wzText = L"一";
 					break;
@@ -467,19 +489,24 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			}
 		}
 	}
-	else if (uMsg == WM_NOTIFY) {
+	else if (uMsg == WM_NOTIFY) 
+	{
 		EX_NMHDR ni{ 0 };
 		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
-		if (hObj == ni.hObjFrom) {
+		if (hObj == ni.hObjFrom) 
+		{
 			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
-			if (ni.nCode == NM_CALCSIZE) {
-				if (ni.idFrom == 77704) {
+			if (ni.nCode == NM_CALCSIZE) 
+			{
+				if (ni.idFrom == 77704) 
+				{
 					__set_int((LPVOID)ni.lParam, 0, Ex_Scale(40));//改变项目宽度
 					__set_int((LPVOID)ni.lParam, 4, Ex_Scale(40));//改变项目高度
 					__set_int((LPVOID)ni.lParam, 8, 2);//改变项目间隔宽度
 					__set_int((LPVOID)ni.lParam, 12, 1);//改变项目间隔高度
 				}
-				else if (ni.idFrom == 77705) {
+				else if (ni.idFrom == 77705) 
+				{
 					__set_int((LPVOID)ni.lParam, 0, Ex_Scale(72));//改变项目宽度
 					__set_int((LPVOID)ni.lParam, 4, Ex_Scale(72));//改变项目高度
 					__set_int((LPVOID)ni.lParam, 8, 2);//改变项目间隔宽度
@@ -489,11 +516,13 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 				*lpResult = 1;
 				return 1;
 			}
-			else if (ni.nCode == NM_CUSTOMDRAW) {
+			else if (ni.nCode == NM_CUSTOMDRAW) 
+			{
 				EX_CUSTOMDRAW cd{ 0 };
 				RtlMoveMemory(&cd, (LPVOID)ni.lParam, sizeof(EX_CUSTOMDRAW));
 
-				if (ni.idFrom == 77704) {
+				if (ni.idFrom == 77704) 
+				{
 					LPVOID lpItems = pOwner->Items;
 					LONG_PTR offset = (cd.iItem - 1) * (20 + sizeof(size_t));
 					int type = __get_int(lpItems, offset);
@@ -508,30 +537,37 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 					if (year == pOwner->Year && mon == pOwner->Mon && Mday == pOwner->Mday) {
 						_canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3, cd.rcPaint.top + 3, cd.rcPaint.right - 3, cd.rcPaint.bottom - 3);
 					}
-					else {
-						if (type == 2) {
+					else 
+					{
+						if (type == 2) 
+						{
 							crText = ExRGB2ARGB(0, 255);
 						}
-						else {
+						else 
+						{
 							crText = ExRGB2ARGB(8421504, 255);
 						}
 					}
-					if (cd.dwState & STATE_HOVER) {
+					if (cd.dwState & STATE_HOVER) 
+					{
 						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
 						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1, cd.rcPaint.top + 1, cd.rcPaint.right - 1, cd.rcPaint.bottom - 1, 1, 0);
 					}
 					_brush_destroy(hBrush);
 
 					WCHAR lpwzText[50];
-					if (pOwner->nCalendar == 0) {
+					if (pOwner->nCalendar == 0) 
+					{
 						swprintf_s(lpwzText, L"%d", Mday);
 					}
-					else {
+					else 
+					{
 						swprintf_s(lpwzText, L"%d\n%s", Mday, (LPCWSTR)Calendar);
 					}
 					_canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), crText, lpwzText, -1, DT_CENTER | DT_VCENTER | DT_WORDBREAK, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
 				}
-				else if (ni.idFrom == 77705) {
+				else if (ni.idFrom == 77705) 
+				{
 					LPVOID lpItems = pOwner->Items;
 					LONG_PTR offset = (cd.iItem - 1) * (20 + sizeof(size_t));
 					int year = __get_int(lpItems, offset + 4);
@@ -539,39 +575,48 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 
 					EXARGB crText = ExRGB2ARGB(0, 255);
 					HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(14120960, 255));
-					if (pOwner->nSohwType == 1 && cd.iItem == pOwner->Mon && pOwner->lpYear == pOwner->Year) {
+					if (pOwner->nSohwType == 1 && cd.iItem == pOwner->Mon && pOwner->lpYear == pOwner->Year) 
+					{
 						crText = -1;
 						_canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3, cd.rcPaint.top + 3, cd.rcPaint.right - 3, cd.rcPaint.bottom - 3);
 					}
-					if (pOwner->nSohwType == 2) {
+					if (pOwner->nSohwType == 2) 
+					{
 						int nYear = 0;
-						if (cd.iItem == 1) {
+						if (cd.iItem == 1) 
+						{
 							nYear = pOwner->lpYear - 1;
 						}
 						else {
 							nYear = pOwner->lpYear + cd.iItem - 2;
 						}
-						if (nYear == pOwner->Year) {
+						if (nYear == pOwner->Year) 
+						{
 							crText = -1;
 							_canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3, cd.rcPaint.top + 3, cd.rcPaint.right - 3, cd.rcPaint.bottom - 3);
 						}
 					}
-					if (cd.dwState & STATE_HOVER) {
+					if (cd.dwState & STATE_HOVER) 
+					{
 						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
 						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1, cd.rcPaint.top + 1, cd.rcPaint.right - 1, cd.rcPaint.bottom - 1, 1, 0);
 					}
 					_brush_destroy(hBrush);
 
 					WCHAR lpwzText[50];
-					if (pOwner->nSohwType == 1) {
+					if (pOwner->nSohwType == 1) 
+					{
 						swprintf_s(lpwzText, L"%d月", cd.iItem);
 					}
-					else if (pOwner->nSohwType == 2) {
+					else if (pOwner->nSohwType == 2) 
+					{
 						int nYear = 0;
-						if (cd.iItem == 1) {
+						if (cd.iItem == 1) 
+						{
 							nYear = pOwner->lpYear - 1;
 						}
-						else {
+						else 
+						{
 							nYear = pOwner->lpYear + cd.iItem - 2;
 						}
 						swprintf_s(lpwzText, L"%d年", nYear);
@@ -582,23 +627,30 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 				*lpResult = 1;
 				return 1;
 			}
-			else if (ni.nCode == LVN_ITEMCHANGED) {
+			else if (ni.nCode == LVN_ITEMCHANGED) 
+{
 				//wParam 新选中项,lParam 旧选中项
-				if (ni.idFrom == 77704) {
+				if (ni.idFrom == 77704) 
+				{
 					PostMessage(hWnd, 11112, ni.wParam, 0);
 				}
-				else if (ni.idFrom == 77705) {
-					if (pOwner->nSohwType == 1) {
+				else if (ni.idFrom == 77705) 
+				{
+					if (pOwner->nSohwType == 1) 
+					{
 						pOwner->lpMon = ni.wParam;
 						pOwner->nSohwType = 0;
 						_datebox_show(hObj, pOwner, 1);
 					}
-					else if (pOwner->nSohwType == 2) {
+					else if (pOwner->nSohwType == 2) 
+					{
 						int nYear = 0;
-						if (ni.wParam == 1) {
+						if (ni.wParam == 1) 
+						{
 							nYear = pOwner->lpYear - 1;
 						}
-						else {
+						else 
+						{
 							nYear = pOwner->lpYear + ni.wParam - 2;
 						}
 						pOwner->lpYear = nYear;
@@ -611,22 +663,28 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			}
 		}
 	}
-	else if (uMsg == WM_MOUSEMOVE) {
+	else if (uMsg == WM_MOUSEMOVE) 
+{
 		INT index = Ex_ObjSendMessage(hObj, LVM_GETHOTITEM, 0, 0);
-		if (index > 0) {
-			if (index != nIndex) {
+		if (index > 0) 
+		{
+			if (index != nIndex) 
+			{
 				nIndex = index;
 				Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
 			}
 		}
-		else {
-			if (nIndex > 0) {
+		else 
+		{
+			if (nIndex > 0) 
+			{
 				nIndex = 0;
 				Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
 			}
 		}
 	}
-	else if (uMsg == WM_MOUSELEAVE) {
+	else if (uMsg == WM_MOUSELEAVE) 
+{
 		Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
 	}
 	return 0;
