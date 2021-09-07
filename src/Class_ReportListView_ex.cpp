@@ -45,6 +45,7 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
     else if (uMsg == WM_SIZE)
     {
         Ex_ObjMove(Ex_ObjGetLong(hObj, ERLVL_HOBJHEAD), 0, 0, LOWORD(lParam), Ex_ObjGetLong(hObj, ERLVL_HEADHEIGHT), FALSE);
+        _reportlistview_tc_update(hObj);
     }
     else if (uMsg == LVM_GETITEM)
     {

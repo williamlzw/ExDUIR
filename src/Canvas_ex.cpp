@@ -493,7 +493,6 @@ BOOL _canvas_drawimagerect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT
     BOOL ret = FALSE;
     if (_img_getsize(hImage, &w, &h))
     {
-
         ret = _canvas_drawimagerectrect(hCanvas, hImage, Left, Top, Right, Bottom, 0, 0, w, h, alpha);
     }
     return ret;
