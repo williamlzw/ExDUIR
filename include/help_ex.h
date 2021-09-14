@@ -449,3 +449,5 @@ UINT Crc32_Addr(LPVOID buf, UINT nLength);
 LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT *nOffset);
 std::wstring a2w(const std::string& str);
 std::wstring u2w(const std::string& str);
+std::wstring WStringFormat(const std::wstring format, ...);
+BOOL SystemTimeToWstring(const SYSTEMTIME& st, const std::wstring& date_fmt, std::wstring& result);

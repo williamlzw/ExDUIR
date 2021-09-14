@@ -754,7 +754,7 @@ int _calendar_paint(HEXOBJ hObj, obj_s* pObj)
 			SYSTEMTIME s;
 			std::wstring wzToday;
 			GetLocalTime(&s);
-			systime_to_wstring(s, L"【今】%F %A ", wzToday);
+			SystemTimeToWstring(s, L"【今】yyyy/MM/dd dddd", wzToday);
 			if (FLAGS_CHECK(ps.dwStyle, EMCS_SHOWLUNAR))
 			{
 				wzToday += Tiangan[(s.wYear - 4) % 10];

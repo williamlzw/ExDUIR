@@ -1,7 +1,6 @@
 #include "Windows.h"
 #include "test_obj.h"
 #include "resource.h"
-#include "DataTime.hpp"
 
 HEXDUI m_hExDuiButton;
 
@@ -2731,9 +2730,11 @@ LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 	SYSTEMTIME lpSysTime{};
 	if (Ex_ObjSendMessage(hObj, MCM_GETCURSEL, 0, (LPARAM)&lpSysTime))
 	{
+		
 		std::wstring outr;
-		systime_to_wstring(lpSysTime, L"当前选择时间2：%c %A", outr);
-		output(hObj, outr);
+		outr.resize(50);
+		auto ret = GetDateFormatEx(0, 0, &lpSysTime, L"当前选择时间2：yyyy/MM/dd dddd", (LPWSTR)outr.c_str(), 50, 0);
+		output( outr);
 	}
 
 	return 0;
@@ -2778,12 +2779,12 @@ LRESULT CALLBACK OnChromiumMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 
 void test_chromium(HWND hParent)
 {
-	Ex_ObjCefBrowserInitialize(NULL, TRUE, NULL, 0, 0, OnBeforeCommandLine);
+	Ex_ObjCefBrowserInitialize(NULL, TRUE, NULL, 0, 0, 0);
 	HWND hWnd_chromium = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试Cef3浏览框", 0, 0, 800, 600, 0, 0);
-	HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(hWnd_chromium, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnChromiumWndMsgProc);
+	HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(hWnd_chromium, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_chromium, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
-	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 77785, -1, 0, 0, OnChromiumMsgProc);
+	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
 	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
 
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);

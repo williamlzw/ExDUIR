@@ -113,7 +113,6 @@
     <ClInclude Include="..\..\include\Class_TitleBar_ex.h" />
     <ClInclude Include="..\..\include\Class_TreeView_ex.h" />
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h" />
-    <ClInclude Include="..\..\include\DataTime.hpp" />
     <ClInclude Include="..\..\include\DropTarget_ex.h" />
     <ClInclude Include="..\..\include\ExDUIR_Struct.h" />
     <ClInclude Include="..\..\include\DirectX_ex.h" />
@@ -302,9 +301,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <CallingConvention>StdCall</CallingConvention>
+      <CallingConvention>Cdecl</CallingConvention>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -313,6 +312,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

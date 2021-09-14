@@ -368,9 +368,6 @@
     <ClInclude Include="..\..\include\CalendarHelper.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\DataTime.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\LunarData.h">
       <Filter>头文件</Filter>
     </ClInclude>

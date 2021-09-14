@@ -468,7 +468,38 @@ std::wstring u2w(const std::string& str)
 	return std::wstring(result.data(), result.size());
 }
 
+std::wstring WStringFormat(const std::wstring format, ...)
+{
+	va_list args;
+	std::vector<WCHAR> vec(30);
+	va_start(args, format);
+	//size_t len = _vsnwprintf_s(&vec[0], 30, 30, format.c_str(), args);
+	size_t len = _vsnwprintf(NULL, 0, format.c_str(), args);
+	va_end(args);
+
+	vec.resize(len + 1);
+
+	va_start(args, format);
+	//_vsnwprintf_s(&vec[0], len + 1, 30, format.c_str(), args);
+	_vsnwprintf(&vec[0], len + 1, format.c_str(), args);
+	va_end(args);
+
+	return &vec[0];
+}
+
 void CALLBACK pfnDefaultFreeData(LPVOID dwData)
 {
 	Ex_MemFree(dwData);
+}
+
+BOOL SystemTimeToWstring(const SYSTEMTIME& st, const std::wstring& date_fmt, std::wstring& result)
+{
+	result.resize(50);
+	auto ret = GetDateFormatEx(0, 0, &st, date_fmt.c_str(), (LPWSTR)result.c_str(), 50, 0);
+	if (ret)
+	{
+		return FALSE;
+	}
+
+	return TRUE;
 }

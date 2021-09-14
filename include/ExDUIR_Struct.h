@@ -1472,6 +1472,8 @@ static void output(T... args)
 	OutputDebugStringW(str.c_str());
 }
 
+
+
 // 接收WM_NOTIFY通知信息结构
 struct EX_NMHDR
 {
