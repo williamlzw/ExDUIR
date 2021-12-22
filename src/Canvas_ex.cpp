@@ -1,5 +1,285 @@
 #include "Canvas_ex.h"
 
+class CustomTextRenderer : public IDWriteTextRenderer
+{
+protected:
+    ULONG m_cRef = NULL;
+
+    ID2D1DeviceContext* m_pRenderTarget = nullptr;
+    ID2D1Brush* m_pTextBodyBrush = nullptr;
+    ID2D1Brush* m_pTextOutlineBrush = nullptr;
+    float mStrokeWidth = NULL;
+
+public:
+    CustomTextRenderer(ID2D1DeviceContext* pRenderTarget,
+        ID2D1Brush* pTextBodyBrush, ID2D1Brush* pTextOutlineBrush,
+        float strokeWidth)
+    {
+        m_pRenderTarget = pRenderTarget;
+        m_pTextBodyBrush = pTextBodyBrush;
+        m_pTextOutlineBrush = pTextOutlineBrush;
+        mStrokeWidth = strokeWidth;
+    };
+
+    ~CustomTextRenderer()
+    {
+    };
+
+    STDMETHOD(DrawGlyphRun)(
+        void* clientDrawingContext,
+        FLOAT                              baselineOriginX,
+        FLOAT                              baselineOriginY,
+        DWRITE_MEASURING_MODE              measuringMode,
+        DWRITE_GLYPH_RUN const* glyphRun,
+        DWRITE_GLYPH_RUN_DESCRIPTION const* glyphRunDescription,
+        IUnknown* clientDrawingEffect
+        )
+    {
+        HRESULT hr = S_OK;
+
+        ID2D1PathGeometry* pPathGeometry = nullptr;
+        hr = g_Ri.pD2Dfactory->CreatePathGeometry(&pPathGeometry);
+        if (pPathGeometry)
+        {
+            ID2D1GeometrySink* pSink = nullptr;
+            hr = pPathGeometry->Open(&pSink);
+            if (pSink)
+            {
+                hr = glyphRun->fontFace->GetGlyphRunOutline(
+                    glyphRun->fontEmSize,
+                    glyphRun->glyphIndices,
+                    glyphRun->glyphAdvances,
+                    glyphRun->glyphOffsets,
+                    glyphRun->glyphCount,
+                    glyphRun->isSideways,
+                    glyphRun->bidiLevel % 2,
+                    pSink
+                );
+                hr = pSink->Close();
+
+                ID2D1TransformedGeometry* pTransformedGeometry = nullptr;
+                hr = g_Ri.pD2Dfactory->CreateTransformedGeometry(
+                    pPathGeometry,
+                    D2D1::Matrix3x2F::Translation(baselineOriginX, baselineOriginY),
+                    &pTransformedGeometry
+                );
+                if (pTransformedGeometry)
+                {
+                    // 绘制文字描边部分
+                    if (m_pTextOutlineBrush)
+                        m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, mStrokeWidth);
+                    // 绘制文字填充部分
+                    if (m_pTextBodyBrush)
+                        m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
+                    pTransformedGeometry->Release();
+                }
+                pSink->Release();
+            }
+            pPathGeometry->Release();
+        }
+        return hr;
+    }
+
+    STDMETHOD(DrawUnderline)(
+        void* clientDrawingContext,
+        FLOAT                  baselineOriginX,
+        FLOAT                  baselineOriginY,
+        DWRITE_UNDERLINE const* underline,
+        IUnknown* clientDrawingEffect
+        )
+    {
+        HRESULT hr = S_OK;
+        D2D1_RECT_F rect = D2D1::RectF(
+            0,
+            underline->offset,
+            underline->width,
+            underline->offset + underline->thickness
+        );
+        ID2D1RectangleGeometry* pRectangleGeometry = nullptr;
+        hr = g_Ri.pD2Dfactory->CreateRectangleGeometry(
+            &rect,
+            &pRectangleGeometry
+        );
+        if (pRectangleGeometry)
+        {
+            ID2D1TransformedGeometry* pTransformedGeometry = nullptr;
+            if (SUCCEEDED(hr))
+            {
+                hr = g_Ri.pD2Dfactory->CreateTransformedGeometry(
+                    pRectangleGeometry,
+                    D2D1::Matrix3x2F::Translation(baselineOriginX, baselineOriginY),
+                    &pTransformedGeometry
+                );
+            }
+            if (pTransformedGeometry)
+            {
+                // 绘制文字下划线描边部分
+                if (m_pTextOutlineBrush)
+                    m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, mStrokeWidth);
+                // 绘制文字下划线填充部分
+                if (m_pTextBodyBrush)
+                    m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
+
+                pTransformedGeometry->Release();
+            }
+            pRectangleGeometry->Release();
+        }
+        return S_OK;
+    }
+
+    STDMETHOD(DrawStrikethrough)(
+        void* clientDrawingContext,
+        FLOAT                      baselineOriginX,
+        FLOAT                      baselineOriginY,
+        DWRITE_STRIKETHROUGH const* strikethrough,
+        IUnknown* clientDrawingEffect
+        )
+    {
+        HRESULT hr = S_OK;
+        D2D1_RECT_F rect = D2D1::RectF(
+            0,
+            strikethrough->offset,
+            strikethrough->width,
+            strikethrough->offset + strikethrough->thickness
+        );
+        ID2D1RectangleGeometry* pRectangleGeometry = nullptr;
+        hr = g_Ri.pD2Dfactory->CreateRectangleGeometry(
+            &rect,
+            &pRectangleGeometry
+        );
+        if (pRectangleGeometry)
+        {
+            ID2D1TransformedGeometry* pTransformedGeometry = nullptr;
+            if (SUCCEEDED(hr))
+            {
+                hr = g_Ri.pD2Dfactory->CreateTransformedGeometry(
+                    pRectangleGeometry,
+                    D2D1::Matrix3x2F::Translation(baselineOriginX, baselineOriginY),
+                    &pTransformedGeometry
+                );
+            }
+            if (pTransformedGeometry)
+            {
+                // 绘制文字删除线描边部分
+                if (m_pTextOutlineBrush)
+                    m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, mStrokeWidth);
+                // 绘制文字删除线填充部分
+                if (m_pTextBodyBrush)
+                    m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
+                pTransformedGeometry->Release();
+            }
+            pRectangleGeometry->Release();
+        }
+        return S_OK;
+    }
+
+    STDMETHOD(DrawInlineObject)(
+        void* clientDrawingContext,
+        FLOAT               originX,
+        FLOAT               originY,
+        IDWriteInlineObject* inlineObject,
+        BOOL                isSideways,
+        BOOL                isRightToLeft,
+        IUnknown* clientDrawingEffect
+        )
+    {
+        return E_NOTIMPL;
+    }
+
+    STDMETHOD(IsPixelSnappingDisabled)(
+        void* clientDrawingContext,
+        BOOL* isDisabled
+        )
+    {
+        *isDisabled = FALSE;
+        return S_OK;
+    }
+
+    STDMETHOD(GetCurrentTransform)(
+        void* clientDrawingContext,
+        DWRITE_MATRIX* transform
+        )
+    {
+        m_pRenderTarget->GetTransform(reinterpret_cast<D2D1_MATRIX_3X2_F*>(transform));
+        return S_OK;
+    }
+
+    STDMETHOD(GetPixelsPerDip)(
+        void* clientDrawingContext,
+        FLOAT* pixelsPerDip
+        )
+    {
+        float x, yUnused;
+
+        m_pRenderTarget->GetDpi(&x, &yUnused);
+        *pixelsPerDip = x / 96.0f;
+        return S_OK;
+    }
+
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void FAR* FAR* ppvObj)
+    {
+        if (iid == IID_IUnknown /*|| iid == IID_IDWritePixelSnapping || iid == IID_IDWriteTextRenderer*/)
+        {
+            *ppvObj = this;
+            AddRef();
+            return NOERROR;
+        }
+        return E_NOINTERFACE;
+    }
+
+    ULONG STDMETHODCALLTYPE AddRef()
+    {
+        return ++m_cRef;
+    }
+
+    ULONG STDMETHODCALLTYPE Release()
+    {
+        // Decrement the object's internal counter.
+        if (0 == --m_cRef)
+        {
+            delete this;
+        }
+
+        return m_cRef;
+    }
+};
+
+BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, HEXBRUSH hrShadom, LPARAM lParam)
+{
+    if (dwLen == -1)
+    {
+        dwLen = lstrlenW(lpwzText);
+    }
+
+    canvas_s* pCanvas = nullptr;
+    INT nError = 0;
+    if (dwLen > 0)
+    {
+        if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
+        {
+            font_s* pFont = 0;
+            if (HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t*)&pFont))
+            {
+                if (bottom > top && right > left)
+                {
+                    FLOAT iWidth, iHeight;
+                    LPVOID pLayout = nullptr;
+                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, right - left, bottom - top, &iWidth, &iHeight, &pLayout, &nError))
+                    {
+                        CustomTextRenderer* m_pTextRenderer = new CustomTextRenderer(
+                            pCanvas->pContext_, (ID2D1Brush*)hrText, (ID2D1Brush*)hrShadom, iGlowsize);
+                        ((IDWriteTextLayout*)pLayout)->Draw(nullptr, m_pTextRenderer, left, top);
+                        delete m_pTextRenderer;
+                    }
+                    ((IDWriteTextLayout*)pLayout)->Release();
+                }
+            }
+        }
+    }
+    Ex_SetLastError(nError);
+    return nError == 0;
+}
+
 BOOL _canvas_destroy(HEXCANVAS hCanvas)
 {
     INT nError = 0;

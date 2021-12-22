@@ -450,7 +450,8 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                     HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOSHADOW | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW | EWS_COMBOWINDOW, hObj, NULL);
                     pWnd->lpPopupParams_ = hObj;
                     wnd_s *pWndBox;
-                    if (_handle_validate(hExBox, HT_DUI, (LPVOID *)&pWndBox, NULL))
+                    INT nError = 0;
+                    if (_handle_validate(hExBox, HT_DUI, (LPVOID *)&pWndBox, &nError))
                     {
                         _obj_setextralong(pObj, ECBL_BOXHWND, (size_t)hWndBox);
                         HEXOBJ hObjListView = Ex_ObjCreateEx(-1, (LPCWSTR)ATOM_LISTVIEW, 0, EOS_VISIBLE | EOS_VSCROLL | ELVS_ITEMTRACKING,
@@ -744,7 +745,12 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             }
             else
             {
-                DestroyWindow((HWND)_obj_getextralong(pObj, ECBL_BOXHWND));
+                HWND hWndBox = (HWND)_obj_getextralong(pObj, ECBL_BOXHWND);
+                if (hWndBox != 0)
+                {
+                    DestroyWindow(hWndBox);
+                    _obj_setextralong(pObj, ECBL_BOXHWND, 0);
+                }
             }
             _obj_invalidaterect(pObj, 0, 0);
             return 1;

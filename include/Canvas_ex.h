@@ -19,6 +19,7 @@ struct canvas_s
 
 BOOL _md_create(LPVOID pData, size_t offsetDc, size_t offsetBmp, size_t offsetBits, INT width, INT height, INT *nError);
 BOOL _md_destroy(LPVOID pData, size_t OffsetDc, size_t OffsetBmp, size_t OffsetBits);
+BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, HEXBRUSH hrShadom, LPARAM lParam);
 void _canvas_recreate(canvas_s *pCanvas, INT width, INT height, INT *nError);
 void _canvas_init(INT *nError);
 void _canvas_uninit();
