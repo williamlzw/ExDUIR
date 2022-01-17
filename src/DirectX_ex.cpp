@@ -10,7 +10,7 @@ BOOL _dx_init(INT *nError)
        /* *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), (LPVOID *)&(g_Ri.pD2Dfactory));*/
 #ifdef _DEBUG//如果为Debug模式，则启用D2D调试层
 
-//下面为设置启用调试层，会在IDE输出窗口内显示
+//下面为设置启用调试层，会在IDE输出窗口内显示,消息框和菜单项目会有彩色外框
         D2D1_FACTORY_OPTIONS options;
         options.debugLevel = D2D1_DEBUG_LEVEL_ERROR;
         //创建工厂
