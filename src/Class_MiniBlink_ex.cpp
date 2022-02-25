@@ -76,7 +76,7 @@ HCURSOR _miniblink_setcursor(HEXOBJ hObj, DWORD dwCursorType)
 	LPCWSTR CursorName = NULL;
 	for (int i = 0; i < arrCurs.size() / 2; i++)
 	{
-		if (dwCursorType = arrCurs[i * 2])
+		if (dwCursorType == arrCurs[i * 2])
 		{
 			CursorName = MAKEINTRESOURCE(arrCurs[i * 2 + 1]);
 			break;
