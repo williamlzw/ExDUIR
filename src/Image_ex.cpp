@@ -98,24 +98,29 @@ IWICBitmap* _wic_selectactiveframe(IWICBitmapDecoder* pDecoder, INT nIndex, INT*
 		{
 			dest->left = propValue.uiVal;
 		}
+		PropVariantClear(&propValue);
 		PropVariantInit(&propValue);
 		pFrameMetadataQueryReader->GetMetadataByName(L"/imgdesc/Top", &propValue);
 		if (propValue.vt == VT_UI2)
 		{
 			dest->top = propValue.uiVal;
 		}
+		PropVariantClear(&propValue);
 		PropVariantInit(&propValue);
 		pFrameMetadataQueryReader->GetMetadataByName(L"/imgdesc/Width", &propValue);
 		if (propValue.vt == VT_UI2)
 		{
 			dest->right = dest->left + propValue.uiVal;
 		}
+		PropVariantClear(&propValue);
 		PropVariantInit(&propValue);
 		pFrameMetadataQueryReader->GetMetadataByName(L"/imgdesc/Height", &propValue);
 		if (propValue.vt == VT_UI2)
 		{
 			dest->bottom = dest->top + propValue.uiVal;
 		}
+		PropVariantClear(&propValue);
+		pFrameMetadataQueryReader->Release();
 	}
 
 	return ret;
@@ -811,6 +816,7 @@ BOOL _wic_getframedelay(IWICBitmapDecoder* pDecoder, INT* lpDelay, INT nCount, I
 						lpDelay[i] = nDelay;
 						fOK = TRUE;
 					}
+					PropVariantClear(&pValue);
 					pReader->Release();
 				}
 				pFrame->Release();

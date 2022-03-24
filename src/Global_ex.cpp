@@ -162,6 +162,7 @@ void Ex_UnInit()
     Ex_MemFree((LPVOID)g_Li.lpstr_res_max);
     Ex_MemFree((LPVOID)g_Li.lpstr_close);
     Ex_MemFree((LPVOID)g_Li.lpstr_help);
+    Ex_ThemeFree(g_Li.hThemeDefault);//新增
     Ex_MemFree(g_Li.lpLogFontDefault);
     _canvas_uninit();
     _handle_uninit(g_Li.hHandles);

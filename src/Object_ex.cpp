@@ -2044,6 +2044,7 @@ void _obj_destroy(HEXOBJ hObj, obj_s *pObj, INT *nError)
         ReleaseCapture();
     }
     _handle_destroy(hObj, nError);
+    Ex_MemFree(pObj);
 
     if (fReDraw && !((pWnd->dwFlags_ & EWF_BDESTROYWINDOW) == EWF_BDESTROYWINDOW))
     {
