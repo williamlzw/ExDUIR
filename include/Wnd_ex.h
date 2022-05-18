@@ -90,7 +90,7 @@ struct wnd_s
     HEXOBJ objFocusPrev_;
 
     HEXOBJ objMenucontext_;
-    size_t dwHitObjPos_Abs_;
+    LONG dwHitObjPos_Abs_;
     INT dwHitCode_;
     HEXOBJ objHittest_;
     HEXOBJ objHittestPrev_;

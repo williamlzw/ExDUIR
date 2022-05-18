@@ -2267,9 +2267,15 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
                         }
                     }
                     WCHAR buff[520];
-                    if (rcItem.left > 0 && rcItem.top > 0) //一级菜单基本是正数
+                    
+                    if (rcItem.left > 0 && rcItem.top >= 0)
                     {
                         OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
+                       
+                    }
+                    else if(rcItem.left < 0 && rcItem.top >= 0) {
+                        OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
+                        
                     }
 
                     if (rcItem.left < 0) //这里解决WIN10缩放DPI后GetMenuItemRect取值负数问题。
