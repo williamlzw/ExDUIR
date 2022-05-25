@@ -1576,15 +1576,17 @@ EXATOM Ex_Atom(LPCWSTR lptstring);
 /*
 * @fnType ExDirectUI
 * @brief Ex_CefBrowserInitialize 初始化CEF浏览框路径,创建前使用
-* @param 1  libPath               [LPCWSTR] 库文件夹路径,绝对路径,不为0时会写入环境变量PATH
-* @param 2  singleProcess         [BOOL] 是否单进程模式
-* @param 3  cachePath             [LPCWSTR] 临时文件保存路径,绝对路径,0为内存模式
-* @param 4  userAgent             [LPCWSTR] 用户设备
-* @param 5  debuggingPort         [INT] 调试端口
-* @param 6  BeforeCommandLine     [CefPROC] 可为0,初始化传入的命令行参数void(CALLBACK* CefPROC)(void* command_line);
+* @param 1  hModule               [HMODULE] 模块句柄
+* @param 2  libPath               [LPCWSTR] 库文件夹路径,绝对路径,不为0时会写入环境变量PATH。默认程序运行路径
+* @param 3  dllName               [LPCWSTR] 库文件名称 默认为FTBrowser.dll
+* @param 4  cachePath             [LPCWSTR] 临时文件保存路径,绝对路径,0为内存模式
+* @param 5  userAgent             [LPCWSTR] 用户设备
+* @param 6  debuggingPort         [INT] 调试端口
+* @param 7  lpBeforeCommandLine   [void*] 可为0,初始化传入的命令行参数void(CALLBACK* OnBeforeCommandLine)(int uMsg, LONG_PTR handler, LONG_PTR hObj, 
+										LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam);
 * @return [BOOL]返回是否成功
 */
-BOOL Ex_ObjCefBrowserInitialize(LPCWSTR libPath, BOOL singleProcess, LPCWSTR cachePath, LPCWSTR userAgent, INT debuggingPort, CefPROC lpBeforeCommandLine);
+BOOL Ex_ObjCefBrowserInitialize(HMODULE hModule, LPCWSTR libPath, LPCWSTR dllName, LPCWSTR cachePath, LPCWSTR userAgent, INT debuggingPort, void* lpBeforeCommandLine);
 
 /*
 * @fnType ExDirectUI

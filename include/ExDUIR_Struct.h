@@ -1438,6 +1438,8 @@ typedef LPVOID HEXMATRIX;    // 矩阵句柄
 typedef LPVOID HEXEASING;    // 缓动句柄/指针
 typedef LPVOID HEXRES;       // 资源包句柄
 
+
+
 typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* ClsPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM);
@@ -1773,3 +1775,11 @@ struct EX_DATETIME {
 	INT Mday;				//日   1-31
 	INT Wday;				//星期 1-7 7=星期日
 };
+
+#define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
+typedef void* HWEBVIEW;  //浏览器指针
+DECLARE_HANDLEX(HCOMMAND); //命令行句柄
+DECLARE_HANDLEX(HV8VALUE); //V8值句柄
+DECLARE_HANDLEX(HV8CONTEXE);//V8环境句柄
+DECLARE_HANDLEX(HFRAME);//框架句柄
+DECLARE_HANDLEX(HBROWSER);//浏览器句柄

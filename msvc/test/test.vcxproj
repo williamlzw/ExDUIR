@@ -109,7 +109,7 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
@@ -155,7 +155,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
@@ -179,7 +179,7 @@
       <CallingConvention>StdCall</CallingConvention>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
-      <Optimization>Full</Optimization>
+      <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>None</DebugInformationFormat>

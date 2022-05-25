@@ -6,6 +6,7 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 #include "ExDUIR_Func.h"
+#include "Class_CefBrowser_ex.h"
 
 #define Random(min, max) (rand() % (max - min)) + min + 1
 
@@ -146,9 +147,6 @@ INT_PTR CALLBACK OnDialgWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 LRESULT CALLBACK OnModalButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_modal(HWND hWnd);
 
-LRESULT CALLBACK OnMiniblinkWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
-void test_miniblink(HWND hWnd);
-
 LRESULT CALLBACK OnPaletteButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_palette(HWND hParent);
 
@@ -161,6 +159,10 @@ LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 void test_calendar(HWND hParent);
 
 LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
-void CALLBACK OnBeforeCommandLine(void* command_line);
+void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> arguments, uintptr_t* retval, LPCWSTR exception, bool* pbHandled, void* lParam);
+void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam);
 LRESULT CALLBACK OnChromiumMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_chromium(HWND hParent);
+
+LRESULT CALLBACK OnScoreButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_scorebtn(HWND hParent);

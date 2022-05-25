@@ -28,12 +28,12 @@ void _object_init()
     _rotateimagebox_register();
     _progressbar_register();
     _listbuttonex_register();
-    _miniblink_register();
     _datebox_register();
     _titlebar_register();
     _palette_register();
     _calendar_register();
     _cefbrowser_register();
+    _scorebtn_register();
 }
 
 void Ex_SetLastError(INT nError)

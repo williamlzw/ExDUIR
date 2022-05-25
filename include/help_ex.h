@@ -25,6 +25,10 @@
 #endif
 #endif
 
+#define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
+#define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	
+#define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule, #NAME)		//获取函数指针
+
 #include "ExDUIR_Struct.h"
 
 struct wnd_s;
@@ -328,12 +332,12 @@ struct obj_base
 #include "Class_RotateImageBox_ex.h"
 #include "Class_ProgressBar_ex.h"
 #include "Class_ListButton_ex.h"
-#include "Class_Miniblink_ex.h"
 #include "Class_DateBox_ex.h"
 #include "Class_TitleBar_ex.h"
 #include "Class_Palette_ex.h"
 #include "Class_Calendar_ex.h"
-#include "Class_CefBrowser.h"
+#include "Class_CefBrowser_ex.h"
+#include "Class_ScoreButton_ex.h"
 
 struct LOCALINFO
 {

@@ -25,7 +25,7 @@
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Calendar_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_CefBrowser.cpp" />
+    <ClCompile Include="..\..\src\Class_CefBrowser_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_DateBox_ex.cpp" />
@@ -36,7 +36,6 @@
     <ClCompile Include="..\..\src\Class_ListButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ComboBox_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp" />
     <ClCompile Include="..\..\src\Class_MosaicLoading_ex.cpp" />
     <ClCompile Include="..\..\src\Class_NavButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Palette_ex.cpp" />
@@ -44,6 +43,7 @@
     <ClCompile Include="..\..\src\Class_RadioButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ReportListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_RotateImageBox_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_ScoreButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Scrollbar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SoliderBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Static_SysLink_ex.cpp" />
@@ -82,10 +82,11 @@
     <ClInclude Include="..\..\include\Brush_ex.h" />
     <ClInclude Include="..\..\include\CalendarHelper.hpp" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
+    <ClInclude Include="..\..\include\CkBrowser.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
     <ClInclude Include="..\..\include\Class_Calendar_ex.h" />
-    <ClInclude Include="..\..\include\Class_CefBrowser.h" />
+    <ClInclude Include="..\..\include\Class_CefBrowser_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckBox_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_DateBox_ex.h" />
@@ -96,7 +97,6 @@
     <ClInclude Include="..\..\include\Class_ListButton_ex.h" />
     <ClInclude Include="..\..\include\Class_ListView_ex.h" />
     <ClInclude Include="..\..\include\Class_ComboBox_ex.h" />
-    <ClInclude Include="..\..\include\Class_MiniBlink_ex.h" />
     <ClInclude Include="..\..\include\Class_MosaicLoading_ex.h" />
     <ClInclude Include="..\..\include\Class_NavButton_ex.h" />
     <ClInclude Include="..\..\include\Class_Palette_ex.h" />
@@ -104,6 +104,7 @@
     <ClInclude Include="..\..\include\Class_RadioButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_ReportListView_ex.h" />
     <ClInclude Include="..\..\include\Class_RotateImageBox_ex.h" />
+    <ClInclude Include="..\..\include\Class_ScoreButton_ex.h" />
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h" />
     <ClInclude Include="..\..\include\Class_SoliderBar_ex.h" />
     <ClInclude Include="..\..\include\Class_Static_SysLink_ex.h" />
@@ -238,9 +239,9 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <Optimization>MinSpace</Optimization>
+      <Optimization>Disabled</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -261,8 +262,8 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <Optimization>MinSpace</Optimization>
-      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <Optimization>Disabled</Optimization>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <MinimalRebuild>false</MinimalRebuild>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
@@ -285,10 +286,10 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <Optimization>MinSpace</Optimization>
+      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -308,10 +309,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <Optimization>MinSpace</Optimization>
+      <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)include;$(SolutionDir)thirdparty\miniblink;$(IncludePath)</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>

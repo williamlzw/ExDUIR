@@ -2628,27 +2628,6 @@ void test_modal(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_modal, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-HEXOBJ m_hObjBrowser;
-
-LRESULT CALLBACK OnMiniblinkWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
-{
-	if (uMsg == WM_SIZE)
-	{
-		Ex_ObjMove(m_hObjBrowser, 50, 50, LOWORD(lParam) - 100, HIWORD(lParam) - 100, FALSE);
-	}
-	return 0;
-}
-
-void test_miniblink(HWND hWnd)
-{
-	HWND hWndminiblink = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试miniblink浏览框", 0, 0, 800, 600, 0, 0);
-	HEXDUI hExDui_miniblink = Ex_DUIBindWindowEx(hWndminiblink, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnMiniblinkWndMsgProc);
-	Ex_DUISetLong(hExDui_miniblink, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	m_hObjBrowser = Ex_ObjCreate(L"mbBrowser", NULL, -1, 50, 50, 700, 500, hExDui_miniblink);
-	Ex_ObjSendMessage(m_hObjBrowser, MBBM_LOAD, MBBL_TYPE_URL, (LPARAM)L"https://www.baidu.com");
-
-	Ex_DUIShowWindow(hExDui_miniblink, SW_SHOWNORMAL, 0, 0, 0);
-}
 
 LRESULT CALLBACK OnPaletteButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
@@ -2764,9 +2743,33 @@ LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
 	return 0;
 }
 
-void CALLBACK OnBeforeCommandLine(void* command_line)
+void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> arguments, uintptr_t* retval, LPCWSTR exception, bool* pbHandled, void* lParam) {
+	if (std::wstring(name) == L"addFunction") {
+		int nSum = 0;
+		for (INT i = 0; i < arguments.size(); i++) {
+			if (!Ck_V8IsInt((HV8VALUE)arguments[i]))
+				return;
+			nSum = nSum + Ck_V8GetIntValue((HV8VALUE)arguments[i]);
+		}
+		*retval = (uintptr_t)Ck_V8CreateInt(nSum);
+		*pbHandled = TRUE;
+	}
+}
+
+void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam)
 {
-	output(L"加载命令行：", (size_t)command_line);
+	if (uMsg == 1) {
+		//Ck_CommandLine_AppendSwitch((HCOMMAND)handler, Ck_WCharToChar(L"single - process"));
+		output(L"加载命令行：", uMsg);
+	}
+	else if (uMsg == 2) {
+		HV8VALUE window = Ck_V8CGetGlobal((HV8CONTEXE)attach1);
+		HV8VALUE v8 = Ck_V8CreateString(L"say yes");
+		Ck_V8SetValue(window, L"say_yes", v8, 0);
+
+		v8 = Ck_V8CreateFunction(L"addFunction", OnFunction, NULL);
+		Ck_V8SetValue(window, L"add_Function", v8, 0);
+	}
 }
 
 LRESULT CALLBACK OnChromiumMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
@@ -2779,13 +2782,52 @@ LRESULT CALLBACK OnChromiumMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 
 void test_chromium(HWND hParent)
 {
-	Ex_ObjCefBrowserInitialize(NULL, TRUE, NULL, 0, 0, 0);
+
 	HWND hWnd_chromium = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试Cef3浏览框", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(hWnd_chromium, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_chromium, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-
+	Ex_ObjCefBrowserInitialize(0, NULL, 0, NULL, 0, 0, OnBeforeCommandLine);
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
-	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
-
+	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
+	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"C:/Users/Administrator/Downloads/ExDUIR-master/msvc/test/res/xccefjs.html");
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+std::vector<HEXOBJ> m_hScorebtn(5);
+
+LRESULT CALLBACK OnScoreButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (lParam != 0)
+	{
+		INT nIndex = Ex_ObjGetLong(hObj, EOL_LPARAM);
+		output(L"选择分数", nIndex);
+	}
+	return 0;
+}
+
+void test_scorebtn(HWND hParent)
+{
+	HWND hWnd_score = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试分数按钮", 0, 0, 300, 100, 0, 0);
+	HEXDUI hExDui_score = Ex_DUIBindWindowEx(hWnd_score, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
+	Ex_DUISetLong(hExDui_score, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+
+
+	HEXIMAGE hImg1 = 0;
+	HEXIMAGE hImg2 = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		m_hScorebtn[i] = Ex_ObjCreate(L"ScoreButton", 0, -1, 20 + i * 45, 40, 40, 40, hExDui_score);
+		_img_createfromfile(L"./navbtn/star_normal.png", &hImg1);
+
+		Ex_ObjSendMessage(m_hScorebtn[i], BM_SETIMAGE, 0, hImg1);
+
+		_img_createfromfile(L"./navbtn/star_hover.png", &hImg2);
+
+		Ex_ObjSendMessage(m_hScorebtn[i], BM_SETIMAGE, 1, hImg2);
+		Ex_ObjSetLong(m_hScorebtn[i], EOL_LPARAM, i);
+		Ex_ObjHandleEvent(m_hScorebtn[i], NM_CHECK, OnScoreButtonCheckEvent);
+	}
+
+
+	Ex_DUIShowWindow(hExDui_score, SW_SHOWNORMAL, 0, 0, 0);
 }

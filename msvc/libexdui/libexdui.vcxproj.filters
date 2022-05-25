@@ -168,9 +168,6 @@
     <ClCompile Include="..\..\src\Class_SuperListview_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Class_DateBox_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -183,7 +180,10 @@
     <ClCompile Include="..\..\src\Class_Calendar_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_CefBrowser.cpp">
+    <ClCompile Include="..\..\src\Class_CefBrowser_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Class_ScoreButton_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -347,9 +347,6 @@
     <ClInclude Include="..\..\include\Class_SuperListview_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_MiniBlink_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Class_DateBox_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -371,7 +368,13 @@
     <ClInclude Include="..\..\include\LunarData.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_CefBrowser.h">
+    <ClInclude Include="..\..\include\Class_CefBrowser_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_ScoreButton_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\CkBrowser.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
