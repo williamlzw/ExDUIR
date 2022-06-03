@@ -58,7 +58,7 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 	{
 		if (wParam != 0)
 		{
-			Ex_MessageBox(hObj, L"开启", L"取开关状态", 128, EMBF_CENTEWINDOW);
+			Ex_MessageBox(hObj, L"开启", L"取开关状态", MB_USERICON, EMBF_CENTEWINDOW);
 		}
 		else
 		{
@@ -287,7 +287,7 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 		{
 			Ex_ObjEditSetSelParFormat(hEdit, PFM_NUMBERING, PFN_LCROMAN);
 		}
-		else if (nID == 211) //文本蓝色
+		else if (nID == 211) //文本颜色
 		{
 			Ex_ObjEditSetSelCharFormat(hEdit, CFM_COLOR, ExRGB2ARGB(16711680, 255));
 		}
@@ -418,6 +418,7 @@ void test_edit(HWND hWnd)
 	HEXOBJ hObj_edit7 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"edit", NULL, EOS_VISIBLE | EOS_VSCROLL | EOS_HSCROLL | EES_RICHTEXT | EES_PARSEURL | EES_ALLOWTAB | EES_NEWLINE, 180, 30, 300, 300, m_hExDuiEdit, 101, DT_LEFT | DT_TOP, 0, 0, NULL);
 	std::vector<CHAR> rtf;
 	Ex_ReadFile(L"res/test.rtf", &rtf);
+
 	Ex_ObjSendMessage(hObj_edit7, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
 	Ex_ObjHandleEvent(hObj_edit7, EN_SELCHANGE, OnEditNotifyEvent);
 	Ex_ObjHandleEvent(hObj_edit7, EN_LINK, OnEditNotifyEvent);
@@ -2772,11 +2773,11 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
 	}
 }
 
-LRESULT CALLBACK OnChromiumMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+
+
+LRESULT CALLBACK OnChromiumEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	if (uMsg == CEFN_CREATE) {
-		output(L"创建浏览器：", (size_t)lParam);
-	}
+	output(L"加载完毕aaaaaaaaaaaaaaaaaa");
 	return 0;
 }
 
@@ -2784,12 +2785,14 @@ void test_chromium(HWND hParent)
 {
 
 	HWND hWnd_chromium = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试Cef3浏览框", 0, 0, 800, 600, 0, 0);
-	HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(hWnd_chromium, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
+	HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(hWnd_chromium, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnChromiumWndMsgProc);
 	Ex_DUISetLong(hExDui_chromium, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_ObjCefBrowserInitialize(0, NULL, 0, NULL, 0, 0, OnBeforeCommandLine);
+	Ex_ObjCefBrowserInitialize(0, L"J:/ExDUIR/Release", L"FTBrowser.dll", NULL, 0, 0, OnBeforeCommandLine);
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
-	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
-	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"C:/Users/Administrator/Downloads/ExDUIR-master/msvc/test/res/xccefjs.html");
+	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
+	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"123456.MP4");
+	Ex_ObjHandleEvent(m_hObjChromium, CEFN_LOADEND, OnChromiumEvent);
+	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"C:/Users/Administrator/Downloads/ExDUIR-master/msvc/test/res/xccefjs.html");
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -2807,7 +2810,7 @@ LRESULT CALLBACK OnScoreButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM
 
 void test_scorebtn(HWND hParent)
 {
-	HWND hWnd_score = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试分数按钮", 0, 0, 300, 100, 0, 0);
+	HWND hWnd_score = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试打分按钮", 0, 0, 300, 100, 0, 0);
 	HEXDUI hExDui_score = Ex_DUIBindWindowEx(hWnd_score, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_score, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
@@ -2830,4 +2833,25 @@ void test_scorebtn(HWND hParent)
 
 
 	Ex_DUIShowWindow(hExDui_score, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+void test_carousel(HWND hParent)
+{
+	HWND hWnd_carousel = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试轮播", 0, 0, 800, 600, 0, 0);
+	HEXDUI hExDui_carousel = Ex_DUIBindWindowEx(hWnd_carousel, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
+	Ex_DUISetLong(hExDui_carousel, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	auto hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20 , 40, 760, 550, hExDui_carousel);
+	
+	Ex_ObjSendMessage(hObj, CM_SIZE, 500, 500);
+	HEXIMAGE hImg = 0;
+	_img_createfromfile(L"res/1.png", &hImg);
+	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
+	_img_createfromfile(L"res/2.jpg", &hImg);
+	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
+	_img_createfromfile(L"res/3.jpg", &hImg);
+	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
+	Ex_ObjSendMessage(hObj, CM_SETTIMER, 0, 5000);
+	Ex_ObjSendMessage(hObj, CM_CLEAR, 0, 0);
+
+	Ex_DUIShowWindow(hExDui_carousel, SW_SHOWNORMAL, 0, 0, 0);
 }

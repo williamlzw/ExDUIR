@@ -10,7 +10,7 @@
 #pragma comment(lib, "OleAut32.lib")
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
-
+#pragma comment(lib, "winmm.lib")
 //断言
 #ifndef _DEBUG
 #ifndef EX_ASSERT
@@ -70,6 +70,9 @@ struct obj_base
     INT dwFlags_;
     EX_BACKGROUNDIMAGEINFO *lpBackgroundImage_;
     HEXTHEME hTheme_;
+    MMRESULT timeEventTag;//多媒体时钟ID
+    UINT timeDelay;//多媒体时钟延时时间
+    HWND timehWnd;//多媒体时钟关联的窗口句柄HWND
 };
 
 #define FLAGS_CHECK(a, b) (((a) & (b)) == (b))
@@ -338,6 +341,7 @@ struct obj_base
 #include "Class_Calendar_ex.h"
 #include "Class_CefBrowser_ex.h"
 #include "Class_ScoreButton_ex.h"
+#include "Class_Carousel_ex.h"
 
 struct LOCALINFO
 {

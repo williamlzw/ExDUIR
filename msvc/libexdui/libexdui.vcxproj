@@ -25,6 +25,7 @@
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Calendar_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_Carousel_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CefBrowser_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckButtonEx_ex.cpp" />
@@ -86,6 +87,7 @@
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
     <ClInclude Include="..\..\include\Class_Calendar_ex.h" />
+    <ClInclude Include="..\..\include\Class_Carousel_ex.h" />
     <ClInclude Include="..\..\include\Class_CefBrowser_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckBox_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckButtonEx_ex.h" />
@@ -304,7 +306,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <CallingConvention>Cdecl</CallingConvention>
+      <CallingConvention>StdCall</CallingConvention>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>

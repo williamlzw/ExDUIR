@@ -38,7 +38,7 @@ LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                 Round_Coordinates[1][i] = (FLOAT)(r * sin(a * pi / 180));
             }
         }
-        Ex_ObjSetTimer(hObj, 1);
+        Ex_ObjSetTimer(hObj, 10);
     }
     else if (uMsg == WM_DESTROY)
     {

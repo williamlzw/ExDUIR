@@ -34,6 +34,7 @@ void _object_init()
     _calendar_register();
     _cefbrowser_register();
     _scorebtn_register();
+    _carousel_register();
 }
 
 void Ex_SetLastError(INT nError)

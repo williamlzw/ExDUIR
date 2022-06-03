@@ -47,7 +47,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_palette,        //138测试调色板
         test_calendar,      //139测试月历
         test_chromium,       //140测试CEF浏览框
-        test_scorebtn          //141测试score打分
+        test_scorebtn,          //141测试score打分
+        test_carousel
 
     };
     buttonProc[nID - 101](m_hWnd);
@@ -57,10 +58,10 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
 void test_exdui()
 {
     std::vector<CHAR> data;
-    Ex_ReadFile(L"res/cursor.cur", &data);
-    LPVOID hCursor = Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
+    //Ex_ReadFile(L"res/cursor.cur", &data);
+    //LPVOID hCursor = Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
     Ex_ReadFile(L"res/Default.ext", &data);
-    Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_MENU_ALL, (HCURSOR)hCursor, 0, data.data(), data.size(), 0, 0);
+    Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_MENU_ALL, 0, 0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
     m_hWnd = Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
 
@@ -115,8 +116,9 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 230, 390, 100, 30, hExDui, 138, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试月历", -1, 230, 430, 100, 30, hExDui, 139, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试CEF浏览框", -1, 230, 470, 100, 30, hExDui, 140, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试score", -1, 230, 510, 100, 30, hExDui, 141, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试打分按钮", -1, 230, 510, 100, 30, hExDui, 141, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试轮播", -1, 230, 550, 100, 30, hExDui, 142, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        output(offsetof(EX_BACKGROUNDIMAGEINFO, dwRepeat));
         for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);

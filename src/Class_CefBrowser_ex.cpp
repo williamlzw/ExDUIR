@@ -248,8 +248,8 @@ void _cefbrowser_setcursor(HEXOBJ hObj, DWORD dwCursorType) {
 BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam) {
 	INT nError = 0;
 	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-		if (uMsg == 1) {
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {		
+		if (uMsg == type_BCreated) {
 			Ex_ObjSetLong(hObj, CEFL_INIT, 1);
 			Ex_ObjDispatchNotify(hObj, CEFN_CREATE, 0, (LPARAM)handler);
 
@@ -260,17 +260,17 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
 				Ex_ObjSetLong(hObj, CEFL_URL, 0);
 			}
 		}
-		else if (uMsg == 2) {
+		else if (uMsg == type_browserdraw) {
 			//绘制
 			Ex_ObjSendMessage(hObj, WM_PAINT, attach1, MAKELONG(attach2, attach3));
 		}
-		else if (uMsg == 3) {
+		else if (uMsg == type_Setcursor) {
 			_cefbrowser_setcursor(hObj, attach1);
 		}
-		else if (uMsg == 4) {
+		else if (uMsg == type_KeyboardRequested) {
 			Ex_ObjPostMessage(hObj, WM_NEXTDLGCTL, attach1, 99);
 		}
-		else if (uMsg == 5) {
+		else if (uMsg == type_MenuCreated) {
 			int model = attach1;
 			int TypeFlags = attach2;
 			LPCWSTR LinkUrl = L"";
@@ -286,10 +286,19 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
 
 			return 0;
 		}
-		else if (uMsg == 6) {
+		else if (uMsg == type_MenuCommand) {
 			int command_id = attach1;
 
 		}
+		else if (uMsg == type_LoadEnd)
+		{
+			Ex_ObjDispatchNotify(hObj, CEFN_LOADEND, 0, (LPARAM)handler);
+		}
+		else if (uMsg == type_LoadStart)
+		{
+			Ex_ObjDispatchNotify(hObj, CEFN_LOADSTART, 0, (LPARAM)handler);
+		}
+		
 	}
 	return 0;
 }
@@ -398,6 +407,7 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 				Ck_Browser_LoadUrl(hWebView, (LPCWSTR)lParam);
 			}
 		}
+		
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }

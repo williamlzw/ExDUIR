@@ -548,6 +548,7 @@ void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR 
                     _wnd_redraw_bkg(hWnd, pWnd, 0, TRUE, FALSE);
                     UpdateWindow(hWnd);
                     SetTimer(hWnd, idEvent, pDelay[lpBI->curFrame] * 10, _wnd_backgroundimage_timer_inherit);
+                    
                 }
             }
         }
@@ -1975,6 +1976,7 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s *pWnd)
                 {
                     pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BINHERITBKGSTARTED;
                     SetTimer(hWnd, (size_t)pWnd + TIMER_BKG_INHERIT, 100, &_wnd_backgroundimage_timer_inherit);
+
                 }
             }
             //绘制底色

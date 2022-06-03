@@ -1408,6 +1408,23 @@
 
 // 事件_Cef浏览框_已创建
 #define CEFN_CREATE 100100
+// 事件_Cef浏览框_加载完毕
+#define CEFN_LOADEND 100101
+// 事件_Cef浏览框_加载开始
+#define CEFN_LOADSTART 100102
+
+// 消息_轮播_设置尺寸
+#define CM_SIZE 5000
+// 消息_轮播_播放下一张
+#define CM_NEXT 5001
+// 消息_轮播_播放上一张
+#define CM_PREV 5002
+// 消息_轮播_添加图片
+#define CM_ADDIMG 5003
+// 消息_轮播_清空
+#define CM_CLEAR 5004
+// 消息_轮播_设置时钟周期
+#define CM_SETTIMER 5005
 
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
