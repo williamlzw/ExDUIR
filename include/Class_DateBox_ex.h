@@ -23,21 +23,20 @@ struct datebox_s
 
 
 
-/*
- * @brief 获取调整的时间戳，即0表示当前
- * @param timestamp 0表示会返回当前时间戳，否则原样返回
- * @return 调整过的时间戳
- */
+/// <summary>
+/// 获取调整的时间戳，即0表示当前
+/// </summary>
+/// <param name="timestamp">0表示会返回当前时间戳，否则原样返回</param>
+/// <returns>调整过的时间戳</returns>
 inline time_t get_fixed_time(time_t timestamp) {
 	return timestamp == 0 ? time(0) : timestamp;
 }
 
-
-/*
- * @brief 获取当前日期的天
- * @param timestamp 要获取的时间戳，0表示当前时间
- * @return 当前日期的天，1-31
- */
+/// <summary>
+/// 获取当前日期的天
+/// </summary>
+/// <param name="timestamp">要获取的时间戳，0表示当前时间</param>
+/// <returns>当前日期的天，1-31</returns>
 inline int64_t get_day(time_t timestamp = 0) {
 	struct tm ptm;
 	timestamp = get_fixed_time(timestamp);
@@ -45,11 +44,12 @@ inline int64_t get_day(time_t timestamp = 0) {
 	return ptm.tm_mday;
 }
 
-/*
- * @brief 获取当前日期的星期数
- * @param timestamp 要获取的时间戳，0表示当前时间
- * @return 当前日期的星期数，0-6，周日为0
- */
+
+/// <summary>
+/// 获取当前日期的星期数
+/// </summary>
+/// <param name="timestamp">要获取的时间戳，0表示当前时间</param>
+/// <returns>当前日期的星期数，0-6，周日为0</returns>
 inline int64_t get_weekday(time_t timestamp = 0) {
 	struct tm ptm;
 	timestamp = get_fixed_time(timestamp);
@@ -57,11 +57,11 @@ inline int64_t get_weekday(time_t timestamp = 0) {
 	return ptm.tm_wday;
 }
 
-/*
- * @brief 获取当前日期的月数
- * @param timestamp 要获取的时间戳，0表示当前时间
- * @return 当前日期的月数，1-12
- */
+/// <summary>
+/// 获取当前日期的月数
+/// </summary>
+/// <param name="timestamp">要获取的时间戳，0表示当前时间</param>
+/// <returns>当前日期的月数，1-12</returns>
 inline int64_t get_month(time_t timestamp = 0) {
 	struct tm ptm;
 	timestamp = get_fixed_time(timestamp);
@@ -69,11 +69,11 @@ inline int64_t get_month(time_t timestamp = 0) {
 	return (int64_t)ptm.tm_mon + 1;
 }
 
-/*
- * @brief 获取当前日期的年份
- * @param timestamp 要获取的时间戳，0表示当前时间
- * @return 当前日期的年份
- */
+/// <summary>
+/// 获取当前日期的年份
+/// </summary>
+/// <param name="timestamp">要获取的时间戳，0表示当前时间</param>
+/// <returns>当前日期的年份</returns>
 inline int64_t get_year(time_t timestamp = 0) {
 	struct tm ptm;
 	timestamp = get_fixed_time(timestamp);

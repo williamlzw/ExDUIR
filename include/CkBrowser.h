@@ -2,6 +2,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <windef.h>
 #pragma comment  (lib, "FTBrowser.lib")
 
 #define  Ck_API extern "C"

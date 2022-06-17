@@ -1,4 +1,3 @@
-#include "Windows.h"
 #include "test_obj.h"
 #include "resource.h"
 
@@ -10,6 +9,7 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 	{
 		Ex_ObjEnable(hObj, FALSE); //禁用自身
 		Ex_ObjSetPadding(hObj, 0, 20, 5, 5, 5, TRUE);
+
 	}
 	else if (nID == 202)
 	{
@@ -2851,7 +2851,137 @@ void test_carousel(HWND hParent)
 	_img_createfromfile(L"res/3.jpg", &hImg);
 	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
 	Ex_ObjSendMessage(hObj, CM_SETTIMER, 0, 5000);
-	Ex_ObjSendMessage(hObj, CM_CLEAR, 0, 0);
+	// 全部销毁用下面的
+	//Ex_ObjSendMessage(hObj, CM_CLEAR, 0, 0);
 
 	Ex_DUIShowWindow(hExDui_carousel, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+std::vector<TLISTVIEW_ITEM> m_TlistViewItemInfo;
+
+LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (Ex_ObjGetLong(hObj, EOL_NODEID) == 3)//点了某项的按钮
+	{
+		HEXOBJ hObjItem = Ex_ObjGetParent(hObj);// 表项句柄
+		INT nIndex = Ex_ObjGetLong(hObjItem, 0);// 获得表项当前代表的索引
+		if (nIndex > 0 && nIndex <= (m_TlistViewItemInfo.size()))
+		{
+			output(L"TList 按钮点击", nIndex - 1, nID, wParam, lParam);
+		}
+	}
+	return 0;
+}
+
+LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	HEXOBJ hObjTmp = 0;
+	static int selectedItem[2] = { 0 };
+	if (uMsg == WM_NOTIFY)
+	{
+		EX_NMHDR* ni = (EX_NMHDR*)lParam;
+		if (ni->hObjFrom != hObj)
+		{
+			if (ni->nCode == NM_LEAVE && ni->hObjFrom != selectedItem[1])
+				Ex_ObjSetColor(ni->hObjFrom, COLOR_EX_BACKGROUND, ExARGB(150, 150, 150, 255), TRUE);
+			if (ni->nCode == NM_HOVER && ni->hObjFrom != selectedItem[1])
+				Ex_ObjSetColor(ni->hObjFrom, COLOR_EX_BACKGROUND, ExRGB2ARGB(15066083, 200), TRUE);
+			if (ni->nCode == NM_CLICK && ni->hObjFrom != selectedItem[1])
+			{
+				Ex_ObjSetColor(selectedItem[1], COLOR_EX_BACKGROUND, ExARGB(150, 150, 150, 255), TRUE);//改变为选中颜色
+				if (ni->hObjFrom != 0)
+					Ex_ObjSetColor(ni->hObjFrom, COLOR_EX_BACKGROUND, ExRGB2ARGB(15066083, 250), TRUE);  // 清空上个选中的颜色
+				selectedItem[0] = selectedItem[1];//记录上个点击的组件，清空选中颜色
+				selectedItem[1] = ni->hObjFrom; //记录当前点击的组件，改变颜色
+			}
+
+		}
+		if (ni->hObjFrom == hObj)
+		{
+			if (ni->nCode == NM_CLICK && ni->wParam)
+			{
+				output(L"按下表项改变", ni->wParam, ni->lParam);
+				if (selectedItem[1] != 0)
+					Ex_ObjSetColor(selectedItem[1], COLOR_EX_BACKGROUND, ExRGB2ARGB(16448250, 20), TRUE);  // 清空上个选中的颜色
+
+			}
+			if (ni->nCode == NM_CALCSIZE)//设置表项尺寸事件 默认为列表框宽度/一行文字的高度
+			{
+				__set((void*)ni->lParam, 4, 40);//ni->lParam指向一个size结构,偏移0为宽度,4为高度
+				__set((void*)ni->lParam, 12, 0);//  ' 纵间距
+				*lpResult = 1;//拦截这个事件
+				return 1;
+			}
+			else if (ni->nCode == LVN_ITEMCHANGED)
+			{
+				output(L"TList表项改变", ni->wParam, ni->lParam);
+			}
+			return 1;
+		}
+
+	}
+	else if (uMsg == TLVM_ITEM_CREATED)
+	{
+		//lParam: hObjItem
+		hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 6, 128, 28, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
+		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 1);
+		hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 130, 6, 358, 28, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
+		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 2);
+		hObjTmp = Ex_ObjCreateEx(-1, L"Button", 0, -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
+		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 3);
+		Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
+
+		hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 39, 648, 1, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
+		Ex_ObjSetColor(hObjTmp, COLOR_EX_BACKGROUND, ExRGB2ARGB(14868961, 250), TRUE);
+		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 4);
+		*lpResult = 1;
+		return 1;
+	}
+	else if (uMsg == TLVM_ITEM_FILL)
+	{
+		if (wParam > 0 && wParam <= (m_TlistViewItemInfo.size()))//索引从1开始
+		{
+			hObjTmp = Ex_ObjGetFromNodeID(lParam, 1);
+			if (hObjTmp)
+				Ex_ObjSetText(hObjTmp, L"TEST", true);
+			hObjTmp = Ex_ObjGetFromNodeID(lParam, 2);
+			if (hObjTmp)
+				Ex_ObjSetText(hObjTmp, m_TlistViewItemInfo[wParam - 1].text.c_str(), true);
+			hObjTmp = Ex_ObjGetFromNodeID(lParam, 3);
+			if (hObjTmp)
+				Ex_ObjSetText(hObjTmp, m_TlistViewItemInfo[wParam - 1].btnTitle.c_str(), true);
+
+		}
+	}
+	else if (uMsg == WM_MOUSEHOVER)
+	{
+		output(L"WM_MOUSEHOVER ");
+	}
+	*lpResult = 0;
+	return 0;
+}
+
+
+
+void test_templatelistview(HWND hParent)
+{
+	HWND hWnd_listview = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试模板列表", 0, 0, 800, 600, 0, 0);
+	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
+	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	auto hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20, 40, 760, 550, hExDui_listview);
+
+	HEXOBJ hobj_listview = Ex_ObjCreateEx(-1, L"TListView",
+		NULL, -1, 30, 50, 650, 520,
+		hExDui_listview, 0, -1, 0, 0, OnTemplateListViewProc);
+	//Ex_ObjSetColor(hobj_listview, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 50), 1);
+	if (m_TlistViewItemInfo.size() == 0)//
+	{
+		for (int i = 0; i < 20; i++)
+		{
+			m_TlistViewItemInfo.push_back({ L"标签一" + std::to_wstring(i),L"标签二" + std::to_wstring(i),L"按钮" + std::to_wstring(i) });
+		}
+	}
+	Ex_ObjSendMessage(hobj_listview, LVM_SETITEMCOUNT, m_TlistViewItemInfo.size(), m_TlistViewItemInfo.size());
+
+	Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL, 0, 0, 0);
 }

@@ -1,7 +1,5 @@
 #pragma once
 #include "LunarData.h"
-#include <stdio.h>
-#include <Windows.h>
 
 static const std::wstring week[7] = { L"日", L"一", L"二", L"三", L"四", L"五", L"六" };
 static const std::wstring rName[30] = { L"初一", L"初二", L"初三", L"初四", L"初五", L"初六", L"初七", L"初八", L"初九", L"初十", L"十一", L"十二", L"十三", L"十四", L"十五", L"十六", L"十七", L"十八", L"十九", L"二十", L"廿一", L"廿二", L"廿三", L"廿四", L"廿五", L"廿六", L"廿七", L"廿八", L"廿九", L"三十" };

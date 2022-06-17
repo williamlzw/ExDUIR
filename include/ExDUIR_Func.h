@@ -448,16 +448,16 @@ BOOL _canvas_fillregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush);
 * @param 2  hBrush                  [HEXBRUSH]
 * @param 3  left                    [FLOAT]
 * @param 4  top                     [FLOAT]
-* @param 5  Width                   [FLOAT]
-* @param 6  Height                  [FLOAT]
-* @param 7  RadiuX                  [FLOAT]
-* @param 8  RadiuY                  [FLOAT]
+* @param 5  width                   [FLOAT]
+* @param 6  height                  [FLOAT]
+* @param 7  radiusX                  [FLOAT]
+* @param 8  radiusY                  [FLOAT]
 * @param 9  shadowNum               [INT*]		透明度数组
 * @param 10	number					[INT]		透明度数量
 * @param 11 crShadow                [EXARGB]]
 * @return [BOOL]返回是否成功
 */
-BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT Width, FLOAT Height, FLOAT RadiuX, FLOAT RadiuY, INT* shadowNum, INT number, EXARGB crShadow);
+BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT width, FLOAT height, FLOAT radiusX, FLOAT radiusY, INT* shadowNum, INT number, EXARGB crShadow);
 
 /*
 * @fnType ExDirectUI
@@ -733,13 +733,13 @@ BOOL _img_createfromfile(LPCWSTR lpwzFilename, HEXIMAGE* phImg);
 /*
 * @fnType ExDirectUI
 * @brief _img_createfromhbitmap 创建自位图句柄
-* @param 1  hBitmap                 [LPVOID]
-* @param 2  hPalette                [LPVOID]
+* @param 1  hBitmap                 [HBITMAP]
+* @param 2  hPalette                [HPALETTE]
 * @param 3  fPreAlpha               [BOOL]                是否预乘透明通道
 * @param 4  phImg                    [HEXIMAGE*]           返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfromhbitmap(LPVOID hBitmap, LPVOID hPalette, BOOL fPreAlpha, HEXIMAGE* phImg);
+BOOL _img_createfromhbitmap(HBITMAP hBitmap, HPALETTE hPalette, BOOL fPreAlpha, HEXIMAGE* phImg);
 
 /*
 * @fnType ExDirectUI
@@ -774,11 +774,11 @@ BOOL _img_createfromres(HEXRES hRes, EXATOM atomPath, HEXIMAGE* phImg);
 * @fnType ExDirectUI
 * @brief _img_createfromstream 创建自字节流
 *
-* @param 1  lpStream                [LPVOID]
+* @param 1  lpStream                [LPSTREAM]
 * @param 2  phImg                    [HEXIMAGE*]           返回图像指针
 * @return [BOOL]返回是否成功
 */
-BOOL _img_createfromstream(LPVOID lpStream, HEXIMAGE* phImg);
+BOOL _img_createfromstream(LPSTREAM lpStream, HEXIMAGE* phImg);
 
 /*
 * @fnType ExDirectUI
@@ -1651,10 +1651,10 @@ HEXOBJ Ex_DUIGetObjFromPoint(EXHANDLE handle, INT x, INT y);
 * @brief Ex_DUISetLong 设置引擎数值
 * @param 1  hExDui                  [HEXDUI]
 * @param 2  nIndex                  [INT]                 #EWL_
-* @param 3  dwNewlong               [size_t]
+* @param 3  dwNewLong               [size_t]
 * @return [size_t]返回旧数值
 */
-size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewlong);
+size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong);
 
 /*
 * @fnType ExDirectUI

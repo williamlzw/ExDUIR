@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="源文件\Graphics">
+      <UniqueIdentifier>{abc36d32-c547-430d-b169-9fbc399a3d40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Layout">
+      <UniqueIdentifier>{ba4aff8e-346f-4e48-8f94-cc42fd159613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\global">
+      <UniqueIdentifier>{640a3a2d-37d9-4624-9a6f-b97dd4441054}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ExLayout.hpp">
+      <Filter>源文件\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="ExBrush.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExCanvas.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExEasing.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExFont.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExImage.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExMatrix.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExPath.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExRegion.hpp">
+      <Filter>源文件\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ExApp.hpp">
+      <Filter>源文件\global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExCommon.hpp">
+      <Filter>源文件\global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExControl.hpp">
+      <Filter>源文件\global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExDUIRCPP.hpp">
+      <Filter>源文件\global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExMessageBox.hpp">
+      <Filter>源文件\global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExSkin.hpp">
+      <Filter>源文件\global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExUIbase.hpp">
+      <Filter>源文件\global</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

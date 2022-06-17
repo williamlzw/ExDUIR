@@ -487,12 +487,12 @@ HEXIMAGE _wic_init_from_decoder(IWICBitmapDecoder* pDecoder, INT* nError)
 	return ret;
 }
 
-BOOL _img_createfromstream(LPVOID lpStream, HEXIMAGE* phImg)
+BOOL _img_createfromstream(LPSTREAM lpStream, HEXIMAGE* phImg)
 {
 	INT nError = 0;
 	IWICBitmapDecoder* pDecoder = nullptr;
 	HEXIMAGE hImg = 0;
-	nError = g_Ri.pWICFactory->CreateDecoderFromStream((LPSTREAM)lpStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
+	nError = g_Ri.pWICFactory->CreateDecoderFromStream(lpStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
 	if (nError == 0)
 	{
 
@@ -896,7 +896,7 @@ BOOL _img_createfromres(HEXRES hRes, EXATOM atomPath, HEXIMAGE* phImg)
 	return hImg != 0 ? TRUE : FALSE;
 }
 
-BOOL _img_createfromhbitmap(LPVOID hBitmap, LPVOID hPalette, BOOL fPreAlpha, HEXIMAGE* phImg)
+BOOL _img_createfromhbitmap(HBITMAP hBitmap, HPALETTE hPalette, BOOL fPreAlpha, HEXIMAGE* phImg)
 {
 	IWICBitmap* pBitmap = nullptr;
 	HEXIMAGE hImg = 0;

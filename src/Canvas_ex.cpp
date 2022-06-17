@@ -1598,11 +1598,11 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
     return nError == 0;
 }
 
-BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT Width, FLOAT Height, FLOAT RadiuX, FLOAT RadiuY, INT *shadowNum, INT number, EXARGB crShadow)
+BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT width, FLOAT height, FLOAT radiusX, FLOAT radiusY, INT *shadowNum, INT number, EXARGB crShadow)
 {
     HEXIMAGE newhImg;
     BOOL ret = FALSE;
-    ret = _img_scale(hImg, (INT)Width, (INT)Height, &newhImg);
+    ret = _img_scale(hImg, (INT)width, (INT)height, &newhImg);
     if (!ret)
     {
         HEXBRUSH hImgBrush = _brush_createfromimg(newhImg);
@@ -1619,11 +1619,11 @@ BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOA
                     for (INT tmp = 0; tmp < number; tmp++)
                     {
                         _brush_setcolor(hBrush, ExARGB(ExGetR(crShadow), ExGetG(crShadow), ExGetB(crShadow), shadowNum[tmp]));
-                        _canvas_drawroundedrect(hCanvas, hBrush, 0 - FLOAT(tmp), 0 - FLOAT(tmp), Width + tmp, Height + tmp, RadiuX + (FLOAT(tmp) / 2), RadiuY + (FLOAT(tmp) / 2), 1, D2D1_DASH_STYLE_SOLID);
+                        _canvas_drawroundedrect(hCanvas, hBrush, 0 - FLOAT(tmp), 0 - FLOAT(tmp), width + tmp, height + tmp, radiusX + (FLOAT(tmp) / 2), radiusY + (FLOAT(tmp) / 2), 1, D2D1_DASH_STYLE_SOLID);
                     }
                 }
                 _brush_destroy(hBrush);
-                _canvas_fillroundedrect(hCanvas, hImgBrush, 0, 0, Width, Height, RadiuX, RadiuY);
+                _canvas_fillroundedrect(hCanvas, hImgBrush, 0, 0, width, height, radiusX, radiusY);
                 _canvas_settransform(hCanvas, NULL);
                 _matrix_destroy(hMatrix);
                 ret = TRUE;

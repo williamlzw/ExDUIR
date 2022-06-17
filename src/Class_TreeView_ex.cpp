@@ -501,7 +501,7 @@ void _treeview_drawitem(obj_s *pObj, EX_NMHDR *lParam)
     _canvas_setantialias(ps->hCanvas, 0);
     if (item)
     {
-        ps->iItemParam = (size_t)item; // TODO: x64
+        ps->iItemParam = (size_t)item;
         if (!_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, pObj->id_, TVN_DRAWITEM, index, (size_t)ps))
         {
             RECT rect;

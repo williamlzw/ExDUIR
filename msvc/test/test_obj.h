@@ -2,7 +2,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <Windows.h>
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 #include "ExDUIR_Func.h"
@@ -26,6 +25,13 @@ struct LISTVIEW_ITEM
     LPCWSTR text;
     EXARGB color;
     INT depth;
+};
+
+struct TLISTVIEW_ITEM
+{
+    std::wstring title;
+    std::wstring text;
+    std::wstring btnTitle;
 };
 
 LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
@@ -168,3 +174,7 @@ LRESULT CALLBACK OnScoreButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM
 void test_scorebtn(HWND hParent);
 
 void test_carousel(HWND hParent);
+
+LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+void test_templatelistview(HWND hParent);

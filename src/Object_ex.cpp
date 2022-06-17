@@ -3081,7 +3081,13 @@ BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO *lpBackgro
         }
         else
         {
-            RtlMoveMemory(lpBackgroundImage, pObj->lpBackgroundImage_, sizeof(EX_BACKGROUNDIMAGEINFO));
+            if (!IsBadReadPtr(pObj->lpBackgroundImage_, sizeof(EX_BACKGROUNDIMAGEINFO)))
+            {
+                RtlMoveMemory(lpBackgroundImage, pObj->lpBackgroundImage_, sizeof(EX_BACKGROUNDIMAGEINFO));
+            }
+            else {
+                nError = ERROR_EX_MEMORY_BADPTR;
+            }
         }
     }
     Ex_SetLastError(nError);
@@ -4229,8 +4235,9 @@ BOOL Ex_ObjGetClassInfo(HEXOBJ hObj, EX_CLASSINFO *lpClassInfo)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
         EX_CLASSINFO *pClass = pObj->pCls_;
-        if (lpClassInfo)
+        if (!IsBadWritePtr(lpClassInfo, sizeof(EX_CLASSINFO)))
         {
+            
             RtlMoveMemory(lpClassInfo, pClass, sizeof(EX_CLASSINFO));
         }
         else
@@ -4333,6 +4340,7 @@ BOOL Ex_ObjGetClassInfoEx(LPCWSTR lptszClassName, EX_CLASSINFO *lpClassInfo)
 {
     LPVOID pClass = NULL;
     EXATOM atom;
+    INT nError = 0;
     if (HashTable_IsExist(g_Li.hTableClass, (size_t)lptszClassName))
     {
         atom = (EXATOM)lptszClassName;
@@ -4344,13 +4352,15 @@ BOOL Ex_ObjGetClassInfoEx(LPCWSTR lptszClassName, EX_CLASSINFO *lpClassInfo)
 
     if (HashTable_Get(g_Li.hTableClass, atom, (size_t *)&pClass) && pClass)
     {
-        if (lpClassInfo)
+        if (!IsBadWritePtr(lpClassInfo, sizeof(EX_CLASSINFO)))
         {
             RtlMoveMemory(lpClassInfo, pClass, sizeof(EX_CLASSINFO));
             return TRUE;
         }
         else
         {
+            nError = ERROR_EX_MEMPOOL_BADPTR;
+            Ex_SetLastError(nError);
             return FALSE;
         }
     }

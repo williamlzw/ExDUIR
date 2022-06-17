@@ -3470,7 +3470,7 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex)
     return ret;
 }
 
-size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewlong)
+size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong)
 {
     wnd_s *pWnd = nullptr;
     INT nError = 0;
@@ -3481,72 +3481,72 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewlong)
         if (nIndex == EWL_ALPHA)
         {
             ret = (size_t)pWnd->alpha_;
-            pWnd->alpha_ = dwNewlong;
+            pWnd->alpha_ = dwNewLong;
             FLAGS_DEL(pWnd->dwFlags_, EWF_BRENDERED); //强制阴影重画
         }
         else if (nIndex == EWL_BLUR)
         {
             ret = pWnd->fBlur_;
-            pWnd->fBlur_ = dwNewlong;
+            pWnd->fBlur_ = dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_CRBKG)
         {
             ret = (size_t)pWnd->crBkg_;
-            pWnd->crBkg_ = dwNewlong;
+            pWnd->crBkg_ = dwNewLong;
             pWnd->dwStyle_ = pWnd->dwStyle_ | EWS_NOINHERITBKG;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_CRBORDER)
         {
             ret = (size_t)pWnd->crBorder_;
-            pWnd->crBorder_ = dwNewlong;
+            pWnd->crBorder_ = dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_HTHEME)
         {
             ret = (size_t)pWnd->hTheme_;
-            pWnd->hTheme_ = (HEXTHEME)dwNewlong;
+            pWnd->hTheme_ = (HEXTHEME)dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_HWND)
         {
             ret = (size_t)pWnd->hWnd_;
-            pWnd->hWnd_ = (HWND)dwNewlong;
+            pWnd->hWnd_ = (HWND)dwNewLong;
         }
         else if (nIndex == EWL_LPARAM)
         {
             ret = pWnd->lParam_;
-            pWnd->lParam_ = dwNewlong;
+            pWnd->lParam_ = dwNewLong;
         }
         else if (nIndex == EWL_MINHEIGHT)
         {
             ret = pWnd->minHeight_;
-            pWnd->minHeight_ = dwNewlong;
+            pWnd->minHeight_ = dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_MINWIDTH)
         {
             ret = pWnd->minWidth_;
-            pWnd->minWidth_ = dwNewlong;
+            pWnd->minWidth_ = dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_MSGPROC)
         {
             ret = (size_t)pWnd->pfnMsgProc_;
-            pWnd->pfnMsgProc_ = (WinMsgPROC)dwNewlong;
+            pWnd->pfnMsgProc_ = (WinMsgPROC)dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_OBJCAPTION)
         {
             ret = pWnd->objCaption_;
-            pWnd->objCaption_ = dwNewlong;
+            pWnd->objCaption_ = dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_OBJFOCUS)
         {
             ret = pWnd->objFocus_;
-            pWnd->objFocus_ = dwNewlong;
+            pWnd->objFocus_ = dwNewLong;
             bRedraw = TRUE;
         }
         else

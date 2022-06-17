@@ -1466,30 +1466,7 @@ typedef LRESULT(CALLBACK* ReportListViewOrderPROC)(HEXOBJ, UINT, LPVOID, UINT, L
 
 typedef void(CALLBACK* CefPROC)(void* command_line);
 
-template <class Ty> //这里实现了 INT long FLOAT DOUBLE  unsigned INT/... 等等
-static void pt(std::wstring& str, Ty v)
-{
-	str.append(std::to_wstring(v) + L" ");
-}
-static void pt(std::wstring& str, std::wstring s) //这个是 文本型
-{
-	str.append(s + L" ");
-}
-static void pt(std::wstring& str, const WCHAR* s) //这个是 L""
-{
-	str.append(s);
-	str.append(L" ");
-}
 
-//调试输出 支持 无限参数!  任意类型!  (没有的可以重载方法自定义)
-template <class... T>
-static void output(T... args)
-{
-	std::wstring str = L"";
-	std::initializer_list<INT>{(pt(str, std::forward<T>(args)), 0)...};
-	str.append(L"\r\n");
-	OutputDebugStringW(str.c_str());
-}
 
 
 
@@ -1551,21 +1528,23 @@ struct EX_BITMAPDATA
 	LPVOID reserved;
 };
 
+
 // 缓动信息结构
 #pragma pack(1)
 struct EX_EASINGINFO
 {
-	LPVOID pEasing;        //  缓动指针
-	DOUBLE nProgress;      //  进度 0-1
-	DOUBLE nCurrent;       //  当前值
-	LPVOID pEasingContext; //  缓动参数
-	UINT nTimesSurplus;    //  剩余数
-	LONG_PTR param1;       //  参数1
-	LONG_PTR param2;       //  参数2
+	LPVOID pEasing;			//  缓动指针
+	DOUBLE nProgress;		//  进度0到1
+	DOUBLE nCurrent;		//  当前值
+	LPVOID pEasingContext;	//  缓动参数
+	UINT nTimesSurplus;		//  剩余数
+	LONG_PTR param1;		//  参数1
+	LONG_PTR param2;		//  参数2
 	LONG_PTR param3;       //  参数3
 	LONG_PTR param4;       //  参数4
 };
 #pragma pack()
+
 
 // 报表列信息结构
 struct EX_REPORTLIST_COLUMNINFO
@@ -1800,3 +1779,30 @@ DECLARE_HANDLEX(HV8VALUE); //V8值句柄
 DECLARE_HANDLEX(HV8CONTEXE);//V8环境句柄
 DECLARE_HANDLEX(HFRAME);//框架句柄
 DECLARE_HANDLEX(HBROWSER);//浏览器句柄
+
+template <class Ty> //这里实现了 INT long FLOAT DOUBLE  unsigned INT/... 等等
+static void pt(std::wstring& str, Ty v)
+{
+	str.append(std::to_wstring(v) + L" ");
+}
+
+static void pt(std::wstring& str, std::wstring s) //这个是 文本型
+{
+	str.append(s + L" ");
+}
+
+static void pt(std::wstring& str, const WCHAR* s) //这个是 L""
+{
+	str.append(s);
+	str.append(L" ");
+}
+
+//调试输出 支持 无限参数!  任意类型!  (没有的可以重载方法自定义)
+template <class... T>
+static void output(T... args)
+{
+	std::wstring str = L"";
+	std::initializer_list<INT>{(pt(str, std::forward<T>(args)), 0)...};
+	str.append(L"\r\n");
+	OutputDebugStringW(str.c_str());
+}
