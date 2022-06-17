@@ -82,39 +82,39 @@ namespace ExDUIR
 					return _img_unlock(m_image, lpLockedBitmapData);
 				}
 
-				inline std::shared_ptr<ExImage> RotateFlip(INT rfType)
+				inline ExImage RotateFlip(INT rfType)
 				{
 					HEXIMAGE retImage;
 					_img_rotateflip(m_image, rfType, &retImage);
-					return std::make_shared<ExImage>(retImage);
+					return ExImage(retImage);
 				}
 
-				inline std::shared_ptr<ExImage> Scale(INT width, INT height)
+				inline ExImage Scale(INT width, INT height)
 				{
 					HEXIMAGE retImage;
 					_img_scale(m_image, width, height, &retImage);
-					return std::make_shared<ExImage>(retImage);
+					return ExImage(retImage);
 				}
 
-				inline std::shared_ptr<ExImage> Copy()
+				inline ExImage Copy()
 				{
 					HEXIMAGE retImage;
 					_img_copy(m_image, &retImage);
-					return std::make_shared<ExImage>(retImage);
+					return ExImage(retImage);
 				}
 
-				inline std::shared_ptr<ExImage> CopyRect(INT x, INT y, INT width, INT height)
+				inline ExImage CopyRect(INT x, INT y, INT width, INT height)
 				{
 					HEXIMAGE retImage;
 					_img_copyrect(m_image, x, y, width, height, &retImage);
-					return std::make_shared<ExImage>(retImage);
+					return ExImage(retImage);
 				}
 
-				inline std::shared_ptr<ExImage> Clip(INT left, INT top, INT width, INT height)
+				inline ExImage Clip(INT left, INT top, INT width, INT height)
 				{
 					HEXIMAGE retImage;
 					_img_clip(m_image, left, top, width, height, &retImage);
-					return std::make_shared<ExImage>(retImage);
+					return ExImage(retImage);
 				}
 
 				inline BOOL SaveToFile(LPCWSTR lpwzFileName)

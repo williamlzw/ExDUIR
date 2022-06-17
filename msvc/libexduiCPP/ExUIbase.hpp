@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include "ExDUIR_Func.h"
 
 namespace ExDUIR

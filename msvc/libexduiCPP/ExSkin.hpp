@@ -12,6 +12,7 @@ namespace ExDUIR
 		{
 		public:
 			HWND m_hWnd = 0;
+			ExSkin() = default;
 			~ExSkin() {};
 			ExSkin(EXHANDLE hObj)
 			{
@@ -32,24 +33,24 @@ namespace ExDUIR
 			inline BOOL SetTitle(LPCWSTR title) { return SetWindowTextW(m_hWnd, title); }
 			inline BOOL Move(INT x, INT y, INT width, INT height, BOOL bRepaint) { return MoveWindow(m_hWnd, x, y, width, height, bRepaint); }
 			inline BOOL PostMsg(UINT uMsg, WPARAM wParam, LPARAM lParam) { PostMessageW(m_hWnd, uMsg, wParam, lParam); }
-			inline LPCWSTR GetTitle()
+			inline std::wstring GetTitle()
 			{
 				int len = GetWindowTextLengthW(m_hWnd);
 				std::wstring retTitle;
 				retTitle.resize(len + 1);
 				GetWindowTextW(m_hWnd, (LPWSTR)retTitle.c_str(), len + 1);
-				return retTitle.c_str();
+				return retTitle;
 			}
 			inline BOOL SetBackgroundImage(LPVOID lpImage, size_t dwImageLen, INT x, INT y, DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate)
 			{
 				return Ex_ObjSetBackgroundImage(m_handle, lpImage, dwImageLen, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 			}
 
-			inline std::shared_ptr<ExControl> GetFromID(INT nID)
+			inline ExControl GetFromID(INT nID)
 			{
 				auto hObj = Ex_ObjGetFromID(m_handle, nID);
 
-				return std::make_shared<ExControl>(hObj);
+				return ExControl(hObj);
 			}
 
 		};

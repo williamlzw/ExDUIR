@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 #include "ExUIbase.hpp"
 #include "ExPath.hpp"
 
@@ -44,9 +43,9 @@ namespace ExDUIR
 					return _rgn_hittest(m_region, x, y);
 				}
 
-				std::shared_ptr<ExRegion> Combine(ExRegion RgnSrc, ExRegion RgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY)
+				ExRegion Combine(ExRegion RgnSrc, ExRegion RgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY)
 				{
-					return std::make_shared<ExRegion>(_rgn_combine(RgnSrc.m_region, RgnDst.m_region, nCombineMode, dstOffsetX, dstOffsetY));
+					return ExRegion(_rgn_combine(RgnSrc.m_region, RgnDst.m_region, nCombineMode, dstOffsetX, dstOffsetY));
 				}
 			};
 		}

@@ -44,14 +44,13 @@ namespace ExDUIR
 					return rc;
 				}
 
-
-				LPCWSTR GetText()
+				std::wstring GetText()
 				{
 					size_t len = Ex_ObjGetTextLength(m_handle);
 					std::wstring str;
-					str.resize(len * 2 + 2);
-					Ex_ObjGetText(m_handle, str.c_str(), len * 2 + 2);
-					return str.c_str();
+					str.resize(len * 2 + 2 );
+					Ex_ObjGetText(m_handle, str.c_str(), len *2+ 2 );
+					return str;
 				}
 
 				BOOL SetText(LPCWSTR text, BOOL bRepaint = FALSE)
@@ -128,10 +127,10 @@ namespace ExDUIR
 					return Ex_ObjEndPaint(m_handle, &ps);
 				}
 
-				std::shared_ptr<ExControl> GetFocus()
+				ExControl GetFocus()
 				{
 					auto hObj = Ex_ObjGetFocus(m_handle);
-					auto ret = std::make_shared<ExControl>(hObj);
+					auto ret = ExControl(hObj);
 					return ret;
 				}
 
@@ -215,11 +214,11 @@ namespace ExDUIR
 					return Ex_ObjCheckDropFormat(m_handle, pDataObject, dwFormat);
 				}
 
-				inline std::shared_ptr<ExControl> GetFromID(INT nID)
+				inline ExControl GetFromID(INT nID)
 				{
 					auto hObj = Ex_ObjGetFromID(m_handle, nID);
 
-					return std::make_shared<ExControl>(hObj);
+					return ExControl(hObj);
 				}
 			};
 		}
