@@ -753,7 +753,6 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
             ID2D1DeviceContext *pContext = _cv_context(pCanvas);
             ID2D1Bitmap *pBitmap = nullptr;
             nError = pContext->CreateBitmapFromWicBitmap(pBitmapSource, &pBitmap);
-
             if (nError == 0)
             {
                 D2D1_RECT_F rect = {dstLeft, dstTop, dstRight, dstBottom};

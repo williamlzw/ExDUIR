@@ -1522,9 +1522,9 @@ struct EX_BITMAPDATA
 {
 	UINT width;
 	UINT height;
-	INT stride;
+	UINT stride;
 	INT pixelFormat;
-	EXARGB* scan0;
+	BYTE* scan0;
 	LPVOID reserved;
 };
 

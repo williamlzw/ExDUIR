@@ -669,15 +669,6 @@ BOOL _font_getlogfont(HEXFONT hFont, LOGFONTW* lpLogFont);
 
 /*
 * @fnType ExDirectUI
-* @brief _img_changecolor 图像改颜色
-* @param 1  hImg                    [HEXIMAGE]            图像句柄
-* @param 2  argb                    [EXARGB]              新颜色
-* @return [BOOL]返回是否成功
-*/
-BOOL _img_changecolor(HEXIMAGE hImg, EXARGB argb);
-
-/*
-* @fnType ExDirectUI
 * @brief _img_clip 裁剪图像
 * @param 1  hImg                    [HEXIMAGE]
 * @param 2  left                    [INT]

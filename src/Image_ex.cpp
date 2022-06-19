@@ -188,10 +188,10 @@ BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BI
 	INT nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, (LPVOID*)&pImage, &nError))
 	{
-		IWICBitmapSource* pBitmapSource = pImage->pBitmapSource_;
-		INT swidth, sheight;
+		IWICBitmap* pBitmapSource = (IWICBitmap*)pImage->pBitmapSource_;
+		UINT swidth, sheight;
 		INT width, height, left, top;
-		nError = pBitmapSource->GetSize((UINT*)&swidth, (UINT*)&sheight);
+		nError = pBitmapSource->GetSize(&swidth, &sheight);
 		if (nError == 0)
 		{
 			if (lpRectL == 0 || IsBadReadPtr(lpRectL, 16))
@@ -210,12 +210,12 @@ BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BI
 			}
 
 			IWICBitmapLock* pLock;
-			RECT rc{ left, top, width, height };
-			nError = ((IWICBitmap*)pBitmapSource)->Lock((WICRect*)&rc, flags, &pLock);
+			WICRect rc{ left, top, width, height };
+			nError = pBitmapSource->Lock(&rc, flags, &pLock);
 			if (nError == 0)
 			{
-				INT stride;
-				nError = pLock->GetStride((UINT*)&stride);
+				UINT stride;
+				nError = pLock->GetStride(&stride);
 				if (nError == 0)
 				{
 					UINT dwlen = 0;
@@ -227,7 +227,7 @@ BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BI
 						lpLockedBitmapData->height = height;
 						lpLockedBitmapData->pixelFormat = PixelFormat;
 						lpLockedBitmapData->stride = stride;
-						lpLockedBitmapData->scan0 = (EXARGB*)scan0;
+						lpLockedBitmapData->scan0 = scan0;
 						lpLockedBitmapData->reserved = pLock;
 					}
 				}
@@ -248,13 +248,13 @@ BOOL _img_unlock(HEXIMAGE hImg, EX_BITMAPDATA* lpLockedBitmapData)
 	INT nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, (LPVOID*)&pImage, &nError))
 	{
+		_wic_drawframe(pImage, pImage->pBitmapSource_, &nError);
 		if (lpLockedBitmapData->reserved != nullptr)
 		{
 			((IWICBitmapLock*)lpLockedBitmapData->reserved)->Release();
 			lpLockedBitmapData->reserved = nullptr;
 		}
-		//nError = 0;
-		//_wic_drawframe(pImage, pImage->pObj_, &nError);
+		
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -272,16 +272,21 @@ BOOL _img_setpixel(HEXIMAGE hImg, INT x, INT y, EXARGB color)
 			RECT rect1 = { x, y, 1, 1 };
 			if (_img_lock(hImg, &rect1, WICBitmapLockRead | WICBitmapLockWrite, 2498570, pBitmapData)) //PixelFormat32bppARGB
 			{
-				EXARGB* scan0 = pBitmapData->scan0;
-				if (scan0 != 0)
+				BYTE* pByte = new BYTE[4];
+				if (pBitmapData->scan0 != 0)
 				{
-					*(EXARGB*)scan0 = color;
+					for (int i = 0; i < 4; i++)
+					{
+						pByte[i] = (BYTE)(color >> 8 * (3 - i) & 0xff);
+					}
+					pBitmapData->scan0 = pByte;
 				}
 				else
 				{
 					nError = ERROR_EX_MEMORY_BADPTR;
 				}
 				_img_unlock(hImg, pBitmapData);
+				delete[] pByte;
 			}
 			Ex_MemFree(pBitmapData);
 		}
@@ -495,7 +500,6 @@ BOOL _img_createfromstream(LPSTREAM lpStream, HEXIMAGE* phImg)
 	nError = g_Ri.pWICFactory->CreateDecoderFromStream(lpStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
 	if (nError == 0)
 	{
-
 		hImg = _wic_init_from_decoder(pDecoder, &nError);
 	}
 	Ex_SetLastError(nError);
@@ -617,8 +621,15 @@ BOOL _img_scale(HEXIMAGE hImg, INT width, INT height, HEXIMAGE* phImg)
 			nError = pBitmapScaler->Initialize(pBitmapSource, width, height, WICBitmapInterpolationModeLinear);
 			if (nError == 0)
 			{
-				ret = _img_init(pBitmapScaler, 0, 1, NULL, &nError);
-			}
+				IWICBitmap* pBitmapConvert = _wic_convert(pBitmapScaler, TRUE, &nError);
+				if (nError == 0)
+				{
+					ret = _img_init(pBitmapConvert, 0, 1, 0, &nError);
+				}
+				else {
+					pBitmapScaler->Release();
+				}
+			}	
 		}
 	}
 	Ex_SetLastError(nError);
@@ -628,6 +639,7 @@ BOOL _img_scale(HEXIMAGE hImg, INT width, INT height, HEXIMAGE* phImg)
 	}
 	return ret != 0 ? TRUE : FALSE;
 }
+
 
 BOOL _img_clip(HEXIMAGE hImg, INT left, INT top, INT width, INT height, HEXIMAGE* phImg)
 {
@@ -645,7 +657,14 @@ BOOL _img_clip(HEXIMAGE hImg, INT left, INT top, INT width, INT height, HEXIMAGE
 			nError = pBitmapClipper->Initialize(pBitmapSource, &rcClip);
 			if (nError == 0)
 			{
-				ret = _img_init(pBitmapClipper, 0, 1, NULL, &nError);
+				IWICBitmap* pBitmapConvert = _wic_convert(pBitmapClipper, TRUE, &nError);
+				if (nError == 0)
+				{
+					ret = _img_init(pBitmapConvert, 0, 1, NULL, &nError);
+				}
+				else {
+					pBitmapClipper->Release();
+				}
 			}
 		}
 	}
@@ -672,7 +691,14 @@ BOOL _img_rotateflip(HEXIMAGE hImg, INT rfType, HEXIMAGE* phImg)
 			nError = pBitmapFlipRotator->Initialize(pBitmapSource, (WICBitmapTransformOptions)rfType);
 			if (nError == 0)
 			{
-				ret = _img_init(pBitmapFlipRotator, 0, 1, NULL, &nError);
+				IWICBitmap* pBitmapConvert = _wic_convert(pBitmapFlipRotator, TRUE, &nError);
+				if (nError == 0)
+				{
+					ret = _img_init(pBitmapConvert, 0, 1, NULL, &nError);
+				}
+				else {
+					pBitmapFlipRotator->Release();
+				}
 			}
 		}
 	}
@@ -961,6 +987,7 @@ BOOL _img_savetofile(HEXIMAGE hImg, LPCWSTR wzFileName)
 												if (nError == 0)
 												{
 													nError = pEncoder->Commit();
+													pIWICStream->Commit(STGC_DEFAULT);
 													isOK = TRUE;
 												}
 											}
@@ -978,24 +1005,4 @@ BOOL _img_savetofile(HEXIMAGE hImg, LPCWSTR wzFileName)
 		}
 	}
 	return isOK;
-}
-
-BOOL _img_changecolor(HEXIMAGE hImg, EXARGB argb)
-{
-	EX_BITMAPDATA Data;
-	if (_img_lock(hImg, 0, WICBitmapLockRead | WICBitmapLockWrite, 2498570, &Data)) //PixelFormat32bppARGB
-	{
-		EXARGB Clr;
-		for (INT i = 0; i < (INT)(Data.width * Data.height - 1); i++)
-		{
-			Clr = Data.scan0[i];
-			if (Clr)
-			{
-				Data.scan0[i] = ExARGB(ExGetR(argb), ExGetG(argb), ExGetB(argb), ExGetA(Data.scan0[i]));
-			}
-		}
-		_img_unlock(hImg, &Data);
-		return TRUE;
-	}
-	return FALSE;
 }
