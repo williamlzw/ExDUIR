@@ -244,13 +244,15 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
     {
         EX_REPORTLIST_COLUMNINFO *ptr = (EX_REPORTLIST_COLUMNINFO *)__ptr_index((LPVOID)Ex_ObjGetLong(hObj, ERLVL_TCINFO), Ex_ObjGetLong(hObj, ERLVL_CTCS), LOWORD(wParam), sizeof(EX_REPORTLIST_COLUMNINFO));
         size_t ret = 0;
-        if (ptr != 0)
+        if (ptr != nullptr)
         {
             ptr->nWidth = lParam;
+            ret = ptr->nWidth;
         }
-        if (ret != 0 && HIWORD(wParam) != 0)
+        if (lParam > 0 && wParam > 0)
         {
             _reportlistview_tc_update(hObj);
+            _reportlistview_tr_update(hObj);
         }
         return ret;
     }
