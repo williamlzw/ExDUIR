@@ -118,8 +118,8 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试CEF浏览框", -1, 230, 470, 100, 30, hExDui, 140, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试打分按钮", -1, 230, 510, 100, 30, hExDui, 141, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试轮播", -1, 230, 550, 100, 30, hExDui, 142, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模板列表", -1, 340, 30, 100, 30, hExDui, 143, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+              
         for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);

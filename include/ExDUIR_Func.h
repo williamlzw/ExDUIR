@@ -712,6 +712,16 @@ BOOL _img_copyrect(HEXIMAGE hImg, INT x, INT y, INT width, INT height, HEXIMAGE*
 */
 BOOL _img_create(INT width, INT height, HEXIMAGE* phImg);
 
+
+/*
+* @fnType ExDirectUI
+* @brief _img_createfromcanvas 图像创建自画布句柄
+* @param 1  hCanvas                 [HEXCANVAS]画布句柄
+* @param 2  phImg                   [HEXIMAGE*]           返回图像指针
+* @return [BOOL]返回是否成功
+*/
+BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg);
+
 /*
 * @fnType ExDirectUI
 * @brief _img_createfromfile 图像创建自文件

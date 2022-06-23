@@ -36,7 +36,6 @@ HEXIMAGE _wic_init_from_decoder(IWICBitmapDecoder *pDecoder, INT *nError);
 void _wic_savetobin(IWICBitmapSource *pBitmapSource, LPVOID *lpBin, size_t *len, INT *nError);
 void _wic_drawframe(img_s *pImg, IWICBitmapSource *pFrame, INT *nError, D2D1_RECT_F *dest = NULL);
 IWICBitmap *_wic_convert(IWICBitmapSource *pBitmapSource, BOOL bFreeOld, INT *nError);
-HEXIMAGE _wic_convert_to_png(IWICBitmapSource* pBitmapSource, INT* nError);
 IWICBitmap *_wic_selectactiveframe(IWICBitmapDecoder *pDecoder, INT nIndex, INT *nError, D2D1_RECT_F *dest);
 EXARGB _wic_getpixel(IWICBitmapSource *pBitmap, INT x, INT y, INT *nError);
 BOOL _wic_getframedelay(IWICBitmapDecoder *pDecoder, INT *lpDelay, INT nCount, INT *nError);

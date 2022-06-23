@@ -1184,9 +1184,9 @@
 
 // 消息_报表_检查框点击
 #define RLVM_CHECK 99001
-// 消息_报表_设置检查框状态
+// 消息_报表_设置检查框状态 wParam 为项目索引 lParam为置选中状态1选中, 0不选中
 #define RLVM_SETCHECK 99002
-// 消息_报表_获取检查框状态
+// 消息_报表_获取检查框状态 wParam 为项目索引 , 返回1选中, 0不选中
 #define RLVM_GETCHECK 99003
 // 消息_报表_获取命中列索引
 #define RLVM_GETHITCOL 99004

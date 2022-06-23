@@ -263,7 +263,7 @@ _img_createfromhbitmap
 _img_createfromhicon
 _img_createfrommemory
 _img_createfromstream
-;_img_createfromcanvas
+_img_createfromcanvas
 _img_createfromfile
 _img_savetofile
 _img_savetomemory
@@ -283,7 +283,6 @@ _img_scale
 _img_clip
 _img_rotateflip
 ;_img_getthumbnail
-_img_changecolor
 
 ;----------------------------------------
 ;font

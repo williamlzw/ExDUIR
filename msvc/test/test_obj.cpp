@@ -1504,23 +1504,31 @@ void test_colorbutton(HWND hWnd)
 HEXOBJ m_hReportListView;
 HEXIMAGELIST m_hReportListViewImgList;
 
-LRESULT CALLBACK OnReportListViewEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OnReportListViewItemChecked(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == RLVN_CHECK)
+	{
+		auto str = L"第" + std::to_wstring(wParam) + L"项选择框状态发生变化,选中状态：" + std::to_wstring(lParam);
+		output(str);
+	}
+	return 0;
+}
+
+LRESULT CALLBACK OnReportListViewItemChange(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode == LVN_ITEMCHANGED)
 	{
 		auto str = L"你选择了第" + std::to_wstring(wParam) + L"项";
 		output(str);
 	}
-	else if (nCode == RLVN_COLUMNCLICK)
+	return 0;
+}
+
+LRESULT CALLBACK OnReportListViewColumnClick(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == RLVN_COLUMNCLICK)
 	{
-		auto str = L"你点击了第" + std::to_wstring(wParam) + L"列";
-		output(str);
-	}
-	else if (nCode == NM_CLICK)
-	{
-		wParam = Ex_ObjSendMessage(hObj, LVM_GETSELECTIONMARK, 0, 0);        //获取现行选中项
-		lParam = Ex_ObjSendMessage(hObj, RLVM_GETHITCOL, 0, LOWORD(lParam)); //获取命中的列索引
-		auto str = L"你点击了第" + std::to_wstring(wParam) + L"项,第" + std::to_wstring(lParam) + L"列";
+		auto str = L"你点击了第" + std::to_wstring(wParam) + L"列表头";
 		output(str);
 	}
 	return 0;
@@ -1559,7 +1567,10 @@ void test_reportlistview(HWND hWnd)
 	m_hReportListViewImgList = _imglist_create(30, 30);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"./icon/1.png", &imgdata);
-	size_t nImageIndex = _imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
+	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
+	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
+	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
+	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
 	Ex_ObjSendMessage(m_hReportListView, LVM_SETIMAGELIST, 0, (LPARAM)m_hReportListViewImgList);
 
 	EX_REPORTLIST_COLUMNINFO col = { 0 };
@@ -1598,7 +1609,9 @@ void test_reportlistview(HWND hWnd)
 	{
 		//先插入表项
 		row.lParam = i + 1;
-		item.nImageIndex = nImageIndex;
+		item.nImageIndex = i;
+		// 下面这句控制项目是否带选择框
+		item.dwStyle = (i % 3 == 0 ? ERLV_RS_CHECKBOX | ERLV_RS_CHECKBOX_CHECK : 0);
 		item.iRow = Ex_ObjSendMessage(m_hReportListView, LVM_INSERTITEM, 0, (size_t)&row);
 		//先插入表项
 		item.iCol = 1;
@@ -1620,9 +1633,9 @@ void test_reportlistview(HWND hWnd)
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
 	}
 	Ex_ObjSendMessage(m_hReportListView, LVM_UPDATE, 0, 0); //整体更新,以加快绘制速度
-	Ex_ObjHandleEvent(m_hReportListView, LVN_ITEMCHANGED, OnReportListViewEvent);
-	Ex_ObjHandleEvent(m_hReportListView, RLVN_COLUMNCLICK, OnReportListViewEvent);
-	Ex_ObjHandleEvent(m_hReportListView, NM_CLICK, OnReportListViewEvent);
+	Ex_ObjHandleEvent(m_hReportListView, LVN_ITEMCHANGED, OnReportListViewItemChange);
+	Ex_ObjHandleEvent(m_hReportListView, RLVN_COLUMNCLICK, OnReportListViewColumnClick);
+	Ex_ObjHandleEvent(m_hReportListView, RLVN_CHECK, OnReportListViewItemChecked);
 
 	HEXOBJ hObj_button = Ex_ObjCreate(L"button", L"删除列", -1, 20, 330, 100, 30, hExDui_reportlistview);
 	Ex_ObjHandleEvent(hObj_button, NM_CLICK, OnReportListViewButtonEvent);

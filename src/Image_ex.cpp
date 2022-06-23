@@ -248,13 +248,11 @@ BOOL _img_unlock(HEXIMAGE hImg, EX_BITMAPDATA* lpLockedBitmapData)
 	INT nError = 0;
 	if (_handle_validate(hImg, HT_IMAGE, (LPVOID*)&pImage, &nError))
 	{
-		_wic_drawframe(pImage, pImage->pBitmapSource_, &nError);
 		if (lpLockedBitmapData->reserved != nullptr)
 		{
 			((IWICBitmapLock*)lpLockedBitmapData->reserved)->Release();
 			lpLockedBitmapData->reserved = nullptr;
 		}
-		
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -422,22 +420,6 @@ BOOL _img_createfrompngbits2(INT nWidth, INT nHeight, BYTE* pbBuffer, HEXIMAGE* 
 	}
 	return hImg != 0 ? TRUE : FALSE;
 }
-
-//BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
-//{
-//	INT nError = 0;
-//	canvas_s* pCanvas = nullptr;
-//	if (_handle_validate(hCanvas, HT_CANVAS,(LPVOID*)&pCanvas,&nError))
-//	{
-//		INT width = pCanvas->width_;
-//		INT height = pCanvas->height_;
-//		INT len = width * height * 4;
-//		LPVOID pBitmapData = nullptr;
-//		nError = g_Ri.pWICFactory->CreateBitmap(pCanvas->width_, pCanvas->height_, GUID_WICPixelFormat32bppPBGRA, WICBitmapNoCache, (IWICBitmap**)&pBitmapData);
-//
-//	}
-//	//未完成
-//}
 
 LPSTREAM _img_createfromstream_init(LPVOID lpData, INT dwLen, INT* nError)
 {
@@ -629,7 +611,7 @@ BOOL _img_scale(HEXIMAGE hImg, INT width, INT height, HEXIMAGE* phImg)
 				else {
 					pBitmapScaler->Release();
 				}
-			}	
+			}
 		}
 	}
 	Ex_SetLastError(nError);
@@ -987,7 +969,6 @@ BOOL _img_savetofile(HEXIMAGE hImg, LPCWSTR wzFileName)
 												if (nError == 0)
 												{
 													nError = pEncoder->Commit();
-													pIWICStream->Commit(STGC_DEFAULT);
 													isOK = TRUE;
 												}
 											}
@@ -1005,4 +986,92 @@ BOOL _img_savetofile(HEXIMAGE hImg, LPCWSTR wzFileName)
 		}
 	}
 	return isOK;
+}
+
+BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
+{
+	INT nError = 0; HEXIMAGE hImg = 0;
+	canvas_s* pCanvas = nullptr;
+	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
+	{
+		UINT nWidth = pCanvas->width_;
+		UINT nHeight = pCanvas->height_;
+
+		D2D1_BITMAP_PROPERTIES1 bp1 = D2D1::BitmapProperties1(
+			D2D1_BITMAP_OPTIONS_CANNOT_DRAW | D2D1_BITMAP_OPTIONS_CPU_READ,
+			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
+		);
+
+		BOOL bTempDraw = pCanvas->pContext_ == NULL;
+
+		if (bTempDraw)
+		{
+			pCanvas->pContext_->BeginDraw();
+		}
+
+		ID2D1Bitmap1* pBitmap1 = NULL;
+		IWICBitmap* m_pWICBitmap = NULL;
+		//创建临时位图
+		if (SUCCEEDED(g_Ri.pD2DDeviceContext->CreateBitmap(D2D1::SizeU(nWidth, nHeight), NULL, 0, bp1, &pBitmap1)))
+		{
+			pCanvas->pContext_->Flush();
+			//从画布位图拷贝
+			if (SUCCEEDED(pBitmap1->CopyFromBitmap(NULL, pCanvas->pBitmap_, NULL)))
+			{
+				//锁住
+				D2D1_MAPPED_RECT mrc;
+				if (SUCCEEDED(pBitmap1->Map(D2D1_MAP_OPTIONS_READ, &mrc)))
+				{
+					//创建一个空目标位图
+					if (SUCCEEDED(g_Ri.pWICFactory->CreateBitmap(nWidth, nHeight, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &m_pWICBitmap)))
+					{
+						//锁定位图
+						WICRect rect = { 0, 0, (INT)nWidth, (INT)nHeight };
+						IWICBitmapLock* pLocker = NULL;
+						if (SUCCEEDED(m_pWICBitmap->Lock(&rect, WICBitmapLockWrite, &pLocker)))
+						{
+							LPBYTE aBits = NULL;
+							UINT cbFrame = 0;
+							UINT cbStride = 0;
+
+							//获取缓冲区指针及行跨步
+							if (SUCCEEDED(pLocker->GetDataPointer(&cbFrame, &aBits)))
+							{
+								pLocker->GetStride(&cbStride);
+
+								//拷贝点阵数据到WIC位图中
+								UINT cbStride = min(cbStride, mrc.pitch);
+								for (UINT y = 0; y < nHeight; y++)
+								{
+									RtlMoveMemory(aBits + cbStride * y, mrc.bits + mrc.pitch * y, cbStride);
+								}
+
+								//释放锁
+								pLocker->Release();
+							}
+						}
+					}
+					pBitmap1->Unmap();
+				}
+			}
+			pBitmap1->Release();
+
+			if (nError == 0)
+			{
+				hImg = _img_init(m_pWICBitmap, 0, 1, NULL, &nError);
+			}
+
+			if (dstImg)
+			{
+				*dstImg = hImg;
+			}
+			m_pWICBitmap->Release();
+		}
+		if (bTempDraw)
+		{
+			pCanvas->pContext_->EndDraw();
+		}
+
+	}
+	return hImg != 0 ? TRUE : FALSE;
 }
