@@ -753,6 +753,11 @@ size_t _reportlistview_arr_order(array_s* hArr, INT nIndex1, LPVOID pvData1, INT
 
 void _reportlistview_uninit(HEXOBJ hObj)
 {
+	HEXIMAGELIST ptr = (HEXIMAGELIST)Ex_ObjSetLong(hObj, ERLVL_HIMAGELIST, 0);
+	if (ptr)
+	{
+		_imglist_destroy(ptr);
+	}
 	Array_Destroy((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO));
 	INT nCount = Ex_ObjSetLong(hObj, ERLVL_CTCS, 0);
 	LPVOID pTCs = (LPVOID)Ex_ObjSetLong(hObj, ERLVL_TCINFO, 0);
