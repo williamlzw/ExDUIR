@@ -799,7 +799,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
 			}
 			else
 			{
-				HEXIMAGE hImage = _imglist_get(hImgList, pDrawInfo->iItem);
+				HEXIMAGE hImage = _imglist_get(hImgList, pTR->nImageIndex_);
 				if (hImage != 0)
 				{
 					INT imgWidth;
