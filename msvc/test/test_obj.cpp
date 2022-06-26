@@ -1295,8 +1295,14 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 	if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
 		_canvas_setantialias(wParam, TRUE);
-		_canvas_clear(wParam, 0);
-		HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(16711680, 150));
+		RECT rc{ 0 };
+		Ex_DUIGetClientRect(hExDui, &rc);
+		FLOAT arrStopPts[2][2];
+		arrStopPts[0][0] = 0;
+		arrStopPts[0][1] = ExRGB2ARGB(ExRGB(10, 127, 213), 200);
+		arrStopPts[1][0] = 1.0;
+		arrStopPts[1][1] = ExRGB2ARGB(ExRGB(200, 10, 10), 200);
+		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, &arrStopPts[0][0], 2);
 		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 		_brush_destroy(hBrush);
 		*lpResult = 1;
@@ -1829,8 +1835,9 @@ void test_matrix(HWND hWnd)
 	HWND hWnd_matrix = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试矩阵", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_matrix = Ex_DUIBindWindowEx(hWnd_matrix, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_matrix, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"static", L"fasdf", -1, 50, 50, 200, 250, hExDui_matrix, 0, DT_VCENTER, 0, 0, OnMatrixMsgProc);
+	HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"static", 0, -1, 50, 50, 200, 250, hExDui_matrix, 0, DT_VCENTER, 0, 0, OnMatrixMsgProc);
 	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 255), TRUE);
+
 	Ex_DUIShowWindow(hExDui_matrix, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -2383,7 +2390,8 @@ void test_rotateimgbox(HWND hWnd)
 	HWND hWnd_rotateimgbox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试旋转图片框", 0, 0, 200, 200, 0, 0);
 	HEXDUI hExDui_rotateimgbox = Ex_DUIBindWindowEx(hWnd_rotateimgbox, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_rotateimgbox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj_imagebox = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"RotateImageBox", NULL, EOS_VISIBLE | ERIBS_ROTATE, 50, 50, 100, 100, hExDui_rotateimgbox, 0, -1, 0, 0, 0);
+	HEXOBJ hObj_imagebox = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"RotateImageBox", L"旋转背景但文字不变", EOS_VISIBLE, 50, 50, 100, 100, hExDui_rotateimgbox, 0, -1, 0, 0, 0);
+	Ex_ObjSetColor(hObj_imagebox, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(255, 255), TRUE);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/rotateimgbox.jpg", &imgdata);
 	Ex_ObjSetBackgroundImage(hObj_imagebox, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
@@ -2579,7 +2587,7 @@ void test_nchittest(HWND hWnd)
 	HWND hWnd_nchittest = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试限制通知区域", 0, 0, 400, 200, 0, 0);
 	HEXDUI hExDui_nchittest = Ex_DUIBindWindowEx(hWnd_nchittest, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_nchittest, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"static", L"鼠标操作只能在红色区域里", -1, 50, 50, 300, 100, hExDui_nchittest, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0, OnNchitTestButtonMsgProc);
+	Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"static", L"鼠标只能在红色区域里响应", -1, 50, 50, 300, 100, hExDui_nchittest, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0, OnNchitTestButtonMsgProc);
 	Ex_DUIShowWindow(hExDui_nchittest, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -2625,7 +2633,7 @@ void test_modal(HWND hWnd)
 	m_hWndModal = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试模态窗口", 0, 0, 400, 200, 0, 0);
 	HEXDUI hExDui_modal = Ex_DUIBindWindowEx(m_hWndModal, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_modal, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj = Ex_ObjCreate(L"button", L"建立模态对话框", -1, 50, 50, 300, 100, hExDui_modal);
+	HEXOBJ hObj = Ex_ObjCreate(L"button", L"弹出模态对话框", -1, 50, 50, 300, 100, hExDui_modal);
 	Ex_ObjHandleEvent(hObj, NM_CLICK, OnModalButtonEvent);
 	Ex_DUIShowWindow(hExDui_modal, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -2698,7 +2706,7 @@ void test_titlebar(HWND hParent)
 	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 255), FALSE);
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16711680, 255), TRUE);
 
-	hObj = Ex_ObjCreate(L"Titlebar", L"标题框4444444444", -1, 30, 140, 300, 20, hExDui);
+	hObj = Ex_ObjCreate(L"Titlebar", L"标题框4", -1, 30, 140, 300, 20, hExDui);
 	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), FALSE);
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, -1, TRUE);
 
@@ -2750,7 +2758,9 @@ void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> 
 		int nSum = 0;
 		for (INT i = 0; i < arguments.size(); i++) {
 			if (!Ck_V8IsInt((HV8VALUE)arguments[i]))
+			{
 				return;
+			}
 			nSum = nSum + Ck_V8GetIntValue((HV8VALUE)arguments[i]);
 		}
 		*retval = (uintptr_t)Ck_V8CreateInt(nSum);
@@ -2774,11 +2784,9 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
 	}
 }
 
-
-
 LRESULT CALLBACK OnChromiumEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	output(L"加载完毕aaaaaaaaaaaaaaaaaa");
+	output(L"加载完毕");
 	return 0;
 }
 
@@ -2792,8 +2800,8 @@ void test_chromium(HWND hParent)
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
 	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
 	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"123456.MP4");
+	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"d:/res/xccefjs.html");
 	Ex_ObjHandleEvent(m_hObjChromium, CEFN_LOADEND, OnChromiumEvent);
-	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"C:/Users/Administrator/Downloads/ExDUIR-master/msvc/test/res/xccefjs.html");
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -2814,8 +2822,6 @@ void test_scorebtn(HWND hParent)
 	HWND hWnd_score = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试打分按钮", 0, 0, 300, 100, 0, 0);
 	HEXDUI hExDui_score = Ex_DUIBindWindowEx(hWnd_score, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_score, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-
-
 	HEXIMAGE hImg1 = 0;
 	HEXIMAGE hImg2 = 0;
 	for (int i = 0; i < 5; i++)
@@ -2832,7 +2838,6 @@ void test_scorebtn(HWND hParent)
 		Ex_ObjHandleEvent(m_hScorebtn[i], NM_CHECK, OnScoreButtonCheckEvent);
 	}
 
-
 	Ex_DUIShowWindow(hExDui_score, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -2841,7 +2846,7 @@ void test_carousel(HWND hParent)
 	HWND hWnd_carousel = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试轮播", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_carousel = Ex_DUIBindWindowEx(hWnd_carousel, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_carousel, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	auto hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20 , 40, 760, 550, hExDui_carousel);
+	HEXOBJ hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20 , 40, 760, 550, hExDui_carousel);
 	
 	Ex_ObjSendMessage(hObj, CM_SIZE, 500, 500);
 	HEXIMAGE hImg = 0;
@@ -2962,19 +2967,14 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 	return 0;
 }
 
-
-
 void test_templatelistview(HWND hParent)
 {
 	HWND hWnd_listview = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试模板列表", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	auto hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20, 40, 760, 550, hExDui_listview);
-
 	HEXOBJ hobj_listview = Ex_ObjCreateEx(-1, L"TListView",
 		NULL, -1, 30, 50, 650, 520,
 		hExDui_listview, 0, -1, 0, 0, OnTemplateListViewProc);
-	//Ex_ObjSetColor(hobj_listview, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 50), 1);
 	if (m_TlistViewItemInfo.size() == 0)//
 	{
 		for (int i = 0; i < 20; i++)
@@ -2985,4 +2985,61 @@ void test_templatelistview(HWND hParent)
 	Ex_ObjSendMessage(hobj_listview, LVM_SETITEMCOUNT, m_TlistViewItemInfo.size(), m_TlistViewItemInfo.size());
 
 	Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+HEXOBJ hObjDrawingBoard;
+
+LRESULT CALLBACK OnDrawingBoardSwitchEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == NM_CHECK)
+	{
+		if (wParam != 0)
+		{
+			Ex_ObjSendMessage(hObjDrawingBoard, DBM_SETPENTYPE, 0, 0);
+			
+		}
+		else {
+			Ex_ObjSendMessage(hObjDrawingBoard, DBM_SETPENTYPE, 0, 1);
+		}
+	}
+	return 0;
+}
+
+LRESULT CALLBACK OnDrawingBoardButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == NM_CLICK)
+	{
+		if (nID == 100)
+		{
+			Ex_ObjSendMessage(hObjDrawingBoard, DBM_CLEAR, 0, 0);
+		}
+		else if (nID == 101)
+		{
+			Ex_ObjSendMessage(hObjDrawingBoard, DBM_SETPENWIDTH, 0, 5);
+		}
+		else if (nID == 102)
+		{
+			Ex_ObjSendMessage(hObjDrawingBoard, DBM_SETPENCOLOR, 0, ExARGB(255, 0, 0, 255));
+		}
+	}
+	return 0;
+}
+
+void test_drawingboard(HWND hParent)
+{
+	HWND hWnd_drawingboard = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试鼠标绘制板", 0, 0, 700, 600, 0, 0);
+	HEXDUI hExDui_drawingboard = Ex_DUIBindWindowEx(hWnd_drawingboard, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
+	Ex_DUISetLong(hExDui_drawingboard, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	hObjDrawingBoard = Ex_ObjCreate(L"drawingboard", 0, -1, 30, 30, 500, 500, hExDui_drawingboard);
+	HEXOBJ hObj_switch = Ex_ObjCreate(L"Switch", L"画笔|橡皮擦", -1, 550, 30, 100, 30, hExDui_drawingboard);
+	Ex_ObjSendMessage(hObj_switch, BM_SETCHECK, 1, 0); // 设置选中状态
+	Ex_ObjHandleEvent(hObj_switch, NM_CHECK, OnDrawingBoardSwitchEvent);
+
+	auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"清空绘制板", -1, 550, 70, 100, 30, hExDui_drawingboard, 100, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnDrawingBoardButtonEvent);
+	auto hObj2 = Ex_ObjCreateEx(-1, L"button", L"改变画刷大小", -1, 550, 110, 100, 30, hExDui_drawingboard, 101, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj2, NM_CLICK, OnDrawingBoardButtonEvent);
+	auto hObj3 = Ex_ObjCreateEx(-1, L"button", L"改变画刷颜色", -1, 550, 150, 100, 30, hExDui_drawingboard, 102, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj3, NM_CLICK, OnDrawingBoardButtonEvent);
+	Ex_DUIShowWindow(hExDui_drawingboard, SW_SHOWNORMAL, 0, 0, 0);
 }

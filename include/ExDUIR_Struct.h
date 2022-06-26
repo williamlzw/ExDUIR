@@ -1322,8 +1322,6 @@
 #define SBL_BLOCK_SIZE 4
 #pragma endregion soliderbar long constant
 
-// 旋转图片框风格_旋转
-#define ERIBS_ROTATE 0x01
 
 // 分组框属性_文本左边的偏移
 #define GROUPBOX_TEXT_OFFSET 0
@@ -1332,23 +1330,6 @@
 // 分组框属性_线宽
 #define GROUPBOX_STROKEWIDTH 2
 
-
-// mibiblink浏览框属性_浏览框句柄
-#define MBBL_VIEW 0
-// mibiblink浏览框属性_绘画函数地址
-#define MBBL_ONPAINT 1
-
-// mibiblink浏览框加载类型_URL
-#define MBBL_TYPE_URL 0
-// mibiblink浏览框加载类型_文件
-#define MBBL_TYPE_FILE 1
-// mibiblink浏览框加载类型_HTML
-#define MBBL_TYPE_HTML 2
-
-// 消息_mibiblink浏览框_获取浏览框句柄
-#define MBBM_GETWEBVIEW 100011
-// 消息_mibiblink浏览框_加载
-#define MBBM_LOAD 100012
 
 // 消息_调色板颜色已更改
 #define PTM_COLORCHANGE 100051
@@ -1425,6 +1406,17 @@
 #define CM_CLEAR 5004
 // 消息_轮播_设置时钟周期
 #define CM_SETTIMER 5005
+
+#pragma region drawingboard message
+// 鼠绘板消息_设置画笔类型 lParam 0画笔 1橡皮擦
+#define DBM_SETPENTYPE 20000
+// 鼠绘板消息_设置画笔宽度 lParam
+#define DBM_SETPENWIDTH 20001
+// 鼠绘板消息_设置画笔颜色 lParam
+#define DBM_SETPENCOLOR 20002
+// 鼠绘板消息_清空画板
+#define DBM_CLEAR 20003
+#pragma endregion drawingboard message
 
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))

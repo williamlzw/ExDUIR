@@ -14,8 +14,8 @@ BOOL _dx_init(INT *nError)
         D2D1_FACTORY_OPTIONS options;
         options.debugLevel = D2D1_DEBUG_LEVEL_ERROR;
         //创建工厂
-        //*nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, & g_Ri.pD2Dfactory);
-        *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Ri.pD2Dfactory);
+        *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, & g_Ri.pD2Dfactory);
+        //*nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Ri.pD2Dfactory);
 #else
         * nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Ri.pD2Dfactory);
 #endif
@@ -40,8 +40,8 @@ BOOL _dx_init(INT *nError)
                             INT reta = GetUserDefaultLocaleName(LocaleName, 260) * 2;
                             if (reta > 0)
                             {
-                                g_Ri.pLocalName = Ex_MemAlloc(reta);
-                                RtlMoveMemory(g_Ri.pLocalName, LocaleName, reta);
+                                g_Ri.pLocaleName = Ex_MemAlloc(reta);
+                                RtlMoveMemory(g_Ri.pLocaleName, LocaleName, reta);
                             }
                             ret = TRUE;
                         }
@@ -57,9 +57,9 @@ BOOL _dx_init(INT *nError)
 
 void _dx_uninit()
 {
-    if (g_Ri.pLocalName)
+    if (g_Ri.pLocaleName)
     {
-        Ex_MemFree(g_Ri.pLocalName);
+        Ex_MemFree(g_Ri.pLocaleName);
     }
     if (g_Ri.pEffectGaussianBlur)
     {

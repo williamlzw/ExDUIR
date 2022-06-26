@@ -135,15 +135,15 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
             LPCWSTR ret = nullptr;
             if (((pObj->dwStyle_ & EWS_BUTTON_MIN) == EWS_BUTTON_MIN))
             {
-                ret = StrDupW(g_Li.lpstr_min);
+                ret = StrDupW(g_Li.lpStrMin);
             }
             else if (((pObj->dwStyle_ & EWS_BUTTON_CLOSE) == EWS_BUTTON_CLOSE))
             {
-                ret = StrDupW(g_Li.lpstr_close);
+                ret = StrDupW(g_Li.lpStrClose);
             }
             else if (((pObj->dwStyle_ & EWS_BUTTON_HELP) == EWS_BUTTON_HELP))
             {
-                ret = StrDupW(g_Li.lpstr_help);
+                ret = StrDupW(g_Li.lpStrHelp);
             }
             if (ret != 0)
             {
@@ -181,11 +181,11 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
                     Ex_MemFree((LPVOID)pObj->pstrTips_);
                     if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
                     {
-                        ret = StrDupW(g_Li.lpstr_res_max);
+                        ret = StrDupW(g_Li.lpStrResMax);
                     }
                     else
                     {
-                        ret = StrDupW(g_Li.lpstr_max);
+                        ret = StrDupW(g_Li.lpStrMax);
                     }
                     pObj->pstrTips_ = ret;
                 }
@@ -194,11 +194,11 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
                     Ex_MemFree((LPVOID)pObj->pstrTips_);
                     if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
                     {
-                        ret = StrDupW(g_Li.lpstr_res_min);
+                        ret = StrDupW(g_Li.lpStrResMin);
                     }
                     else
                     {
-                        ret = StrDupW(g_Li.lpstr_min);
+                        ret = StrDupW(g_Li.lpStrMin);
                     }
                     pObj->pstrTips_ = ret;
                 }

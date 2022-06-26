@@ -54,11 +54,11 @@ HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,
 * @param 2  yStart                    [FLOAT]               起点Y
 * @param 3  xEnd                      [FLOAT]               终点X
 * @param 4  yEnd                      [FLOAT]               终点Y
-* @param 5  arrStopPts				  [INT*]                停止点指针,{位置(0-100),颜色(ARGB),位置,颜色,...}
-* @param 6  cStopPts                  [INT]                 停止点个数
+* @param 5  arrStopPts				  [FLOAT*]              两个点位置和颜色数据,只能两个{位置(0-1.0),颜色(ARGB),位置(0-1.0),颜色(ARGB)}这样传参
+* @param 6  cStopPts                  [INT]                 点个数，只能两个传2
 * @return [HEXBRUSH]返回画刷句柄
 */
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const INT* arrStopPts, INT cStopPts);
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrStopPts, INT cStopPts);
 
 /*
 * @fnType ExDirectUI

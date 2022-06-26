@@ -6,7 +6,7 @@ LRESULT CALLBACK _hook_proc(INT code, WPARAM wParam, LPARAM lParam)
     {
         return _hook_oncreate(code, (HWND)wParam, lParam);
     }
-    return CallNextHookEx((HHOOK)g_Li.hHookMsgBox, code, wParam, lParam);
+    return CallNextHookEx(g_Li.hHookMsgBox, code, wParam, lParam);
 }
 
 LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
@@ -42,7 +42,7 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
     {
         Thunkwindow(hWnd, _menu_proc, 0, 0);
     }
-    return CallNextHookEx((HHOOK)g_Li.hHookMsgBox, code, (WPARAM)hWnd, lParam);
+    return CallNextHookEx(g_Li.hHookMsgBox, code, (WPARAM)hWnd, lParam);
 }
 
 LRESULT CALLBACK _menu_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM lParam)

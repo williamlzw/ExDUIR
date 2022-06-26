@@ -26,13 +26,10 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 
     if (uMsg == WM_CREATE)
     {
-        if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ERIBS_ROTATE) == ERIBS_ROTATE)
-        {
-            /* 创建时启用 绘图中消息*/
-            Ex_ObjEnablePaintingMsg(hObj, TRUE);
-            /* 开启时钟*/
-            Ex_ObjSetTimer(hObj, 50);
-        }
+        /* 创建时启用 绘图中消息*/
+        Ex_ObjEnablePaintingMsg(hObj, TRUE);
+        /* 开启时钟*/
+        Ex_ObjSetTimer(hObj, 50);
     }
     else if (uMsg == WM_EX_PAINTING)
     {
@@ -77,6 +74,10 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
         /*移出则恢复旋转*/
         Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);
         Ex_ObjSetTimer(hObj, 50);
+    }
+    else if (uMsg == WM_DESTROY)
+    {
+        Ex_ObjKillTimer(hObj);
     }
     return Ex_ObjCallProc(m_pfnStaticProc, hWnd, hObj, uMsg, wParam, lParam);
 }

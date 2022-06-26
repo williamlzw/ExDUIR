@@ -109,7 +109,7 @@ HEXFONT _font_createfromlogfont_ex(LOGFONTW *lpLogfont, INT flags)
             }
             g_Ri.pDWriteFactory->CreateTextFormat(pFont->font_.lfFaceName, NULL,
                                                   (DWRITE_FONT_WEIGHT)pFont->font_.lfWeight, (DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
-                                                  (FLOAT)(-pFont->font_.lfHeight), (WCHAR *)g_Ri.pLocalName, (IDWriteTextFormat **)&(pFont->pObj_));
+                                                  (FLOAT)(-pFont->font_.lfHeight), (WCHAR *)g_Ri.pLocaleName, (IDWriteTextFormat **)&(pFont->pObj_));
         }
         else
         {

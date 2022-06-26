@@ -410,12 +410,16 @@ const UINT32 table[] = {
 UINT Crc32_Addr(LPVOID buf, UINT nLength) //OK
 {
 	if (nLength < 1)
+	{
 		return 0xffffffff;
-
+	}
+		
 	UINT CRC32 = 0xFFFFFFFF; //设置初始值
 
 	for (DWORD i = 0; i < nLength; ++i)
+	{
 		CRC32 = table[(CRC32 ^ ((UCHAR*)(buf))[i]) & 0xff] ^ (CRC32 >> 8);
+	}
 
 	return CRC32 ^ 0xFFFFFFFF;
 }
@@ -470,21 +474,18 @@ std::wstring u2w(const std::string& str)
 
 std::wstring WStringFormat(const std::wstring format, ...)
 {
-	va_list args;
-	std::vector<WCHAR> vec(30);
+	std::wstring tmp;
+	va_list args = 0;
 	va_start(args, format);
-	//size_t len = _vsnwprintf_s(&vec[0], 30, 30, format.c_str(), args);
-	size_t len = _vsnwprintf(NULL, 0, format.c_str(), args);
+
+	size_t len = _vscwprintf(format.c_str(), args);
+	if (len > tmp.capacity())
+	{
+		tmp.resize(len + 1);
+	}
+	vswprintf_s((wchar_t*)tmp.data(), tmp.capacity(), format.c_str(), args);
 	va_end(args);
-
-	vec.resize(len + 1);
-
-	va_start(args, format);
-	//_vsnwprintf_s(&vec[0], len + 1, 30, format.c_str(), args);
-	_vsnwprintf(&vec[0], len + 1, format.c_str(), args);
-	va_end(args);
-
-	return &vec[0];
+	return tmp;
 }
 
 void CALLBACK pfnDefaultFreeData(LPVOID dwData)

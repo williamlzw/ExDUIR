@@ -98,7 +98,7 @@ void _brush_settransform(HEXBRUSH hBrush, HEXMATRIX matrix)
     ((ID2D1BitmapBrush *)hBrush)->SetTransform(&mx);
 }
 
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const INT *arrStopPts, INT cStopPts)
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT *arrStopPts, INT cStopPts)
 {
     if (cStopPts < 2)
     {
@@ -134,6 +134,6 @@ HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yE
 
 HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, EXARGB crBegin, EXARGB crEnd)
 {
-    INT arrStopPts[] = {0, crBegin, 1, crEnd};
+    FLOAT arrStopPts[] = {0, crBegin, 1, crEnd};
     return _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrStopPts, 2);
 }

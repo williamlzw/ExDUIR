@@ -35,6 +35,7 @@ void _object_init()
     _cefbrowser_register();
     _scorebtn_register();
     _carousel_register();
+    _drawingboard_register();
 }
 
 void Ex_SetLastError(INT nError)
@@ -96,22 +97,22 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     LPVOID i = Ex_MemAlloc(64);
     INT len;
     len = LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);
-    g_Li.lpstr_min = StrDupW((LPWSTR)i);
+    g_Li.lpStrMin = StrDupW((LPWSTR)i);
     RtlZeroMemory(i, 64);
     len = LoadStringW(g_Li.hModuleUser, 901, (LPWSTR)i, 64);
-    g_Li.lpstr_max = StrDupW((LPWSTR)i);
+    g_Li.lpStrMax = StrDupW((LPWSTR)i);
     RtlZeroMemory(i, 64);
     len = LoadStringW(g_Li.hModuleUser, 902, (LPWSTR)i, 64);
-    g_Li.lpstr_res_min = StrDupW((LPWSTR)i);
+    g_Li.lpStrResMin = StrDupW((LPWSTR)i);
     RtlZeroMemory(i, 64);
     len = LoadStringW(g_Li.hModuleUser, 903, (LPWSTR)i, 64);
-    g_Li.lpstr_res_max = StrDupW((LPWSTR)i);
+    g_Li.lpStrResMax = StrDupW((LPWSTR)i);
     RtlZeroMemory(i, 64);
     len = LoadStringW(g_Li.hModuleUser, 904, (LPWSTR)i, 64);
-    g_Li.lpstr_help = StrDupW((LPWSTR)i);
+    g_Li.lpStrHelp = StrDupW((LPWSTR)i);
     RtlZeroMemory(i, 64);
     len = LoadStringW(g_Li.hModuleUser, 905, (LPWSTR)i, 64);
-    g_Li.lpstr_close = StrDupW((LPWSTR)i);
+    g_Li.lpStrClose = StrDupW((LPWSTR)i);
     Ex_MemFree(i);
     INT nError = 0;
     _canvas_init(&nError);
@@ -149,20 +150,20 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     _layout_init();
     g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
 
-    g_Li.hHookMsgBox = SetWindowsHookEx(WH_CBT, (HOOKPROC)_hook_proc, 0, GetCurrentThreadId());
+    g_Li.hHookMsgBox = SetWindowsHookExW(WH_CBT, (HOOKPROC)_hook_proc, 0, GetCurrentThreadId());
     Ex_SetLastError(nError);
     return nError == 0;
 }
 
 void Ex_UnInit()
 {
-    UnhookWindowsHookEx((HHOOK)g_Li.hHookMsgBox);
-    Ex_MemFree((LPVOID)g_Li.lpstr_min);
-    Ex_MemFree((LPVOID)g_Li.lpstr_max);
-    Ex_MemFree((LPVOID)g_Li.lpstr_res_min);
-    Ex_MemFree((LPVOID)g_Li.lpstr_res_max);
-    Ex_MemFree((LPVOID)g_Li.lpstr_close);
-    Ex_MemFree((LPVOID)g_Li.lpstr_help);
+    UnhookWindowsHookEx(g_Li.hHookMsgBox);
+    Ex_MemFree((LPVOID)g_Li.lpStrMin);
+    Ex_MemFree((LPVOID)g_Li.lpStrMax);
+    Ex_MemFree((LPVOID)g_Li.lpStrResMin);
+    Ex_MemFree((LPVOID)g_Li.lpStrResMax);
+    Ex_MemFree((LPVOID)g_Li.lpStrClose);
+    Ex_MemFree((LPVOID)g_Li.lpStrHelp);
     Ex_ThemeFree(g_Li.hThemeDefault);//新增
     Ex_MemFree(g_Li.lpLogFontDefault);
     _canvas_uninit();

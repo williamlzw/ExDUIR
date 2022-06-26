@@ -341,6 +341,7 @@ struct obj_base
 #include "Class_CefBrowser_ex.h"
 #include "Class_ScoreButton_ex.h"
 #include "Class_Carousel_ex.h"
+#include "Class_DrawingBoard_ex.h"
 
 struct LOCALINFO
 {
@@ -369,24 +370,23 @@ struct LOCALINFO
     HMENU hMenuVS;
     HMENU hMenuHS;
     HMENU hMenuEdit;
-    LPVOID hHookMsgBox;
+    HHOOK hHookMsgBox;
     mempool_s *hHandles;
     std::vector<HEXTHEME> aryThemes;
     std::vector<INT> aryColorsAtom;
     std::vector<INT> aryColorsOffset;
-    LPCWSTR lpstr_min;
-    LPCWSTR lpstr_res_min;
-    LPCWSTR lpstr_max;
-    LPCWSTR lpstr_res_max;
-    LPCWSTR lpstr_close;
-    LPCWSTR lpstr_help;
+    LPCWSTR lpStrMin;
+    LPCWSTR lpStrResMin;
+    LPCWSTR lpStrMax;
+    LPCWSTR lpStrResMax;
+    LPCWSTR lpStrClose;
+    LPCWSTR lpStrHelp;
     UINT dwClickTime;
-    size_t hToken;
 };
 
 struct RENDERINFO
 {
-    LPVOID pLocalName;
+    LPVOID pLocaleName;
     IDWriteFactory *pDWriteFactory;
     IWICImagingFactory *pWICFactory;
     ID2D1Factory1 *pD2Dfactory;

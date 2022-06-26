@@ -1336,7 +1336,6 @@ HEXCANVAS _canvas_createfrompwnd(wnd_s *pWnd, INT width, INT height, INT dwFlags
     INT nError = 0;
     if (pCanvas != 0)
     {
-
         hCanvas = _handle_create(HT_CANVAS, pCanvas, &nError);
         if (hCanvas != 0)
         {
