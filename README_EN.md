@@ -32,7 +32,7 @@ Currently,the following two compiling methods are supported:
 * Mimic The Windows messaging mechanism by sending messages and distributing notifications to components, compatible with native Windows messages and constants. Win32 API writing, more flexible than class writing extensibility.
 * Use Win32 style API method to call, support the generation of lib static library and DLL dynamic library. The generated dynamic link library can be called by other languages such as python, Java, go, dephi, C#, VB, easy language, etc.
 * Extension components are free and flexible, and the engine handles the underlying logic. The user only needs to write the drawing code and does not need to worry about complex message processing.
-* Currently support component has a button, switch, radio buttons, select box, edit box, rich text edit box, listview, report listview, template listview, group boxes, combo boxes, menus, tree frame, the slider, radio buttons, select box, TAB, load, animations, rotating picture box, page, picture box, message box, list of ICONS, list button, the toolbar , status bar, date box, color palette, title box, calendar box, score button, cef3 browser box, you can superclass extension components on these components.
+* Currently support component has a button, switch, radio buttons, select box, edit box, rich text edit box, listview, report listview, template listview, group boxes, combo boxes, menus, tree frame, the slider, radio buttons, select box, TAB, load, animations, rotating picture box, page, picture box, message box, list of ICONS, list button, the toolbar , status bar, date box, color palette, title box, calendar box, score button, cef3 browser box, drawing board, you can superclass extension components on these components.
 * Support for layouts that automatically update component positions when window sizes change. Currently, the following layouts are supported: absolute layout, relative layout, linear layout, flow layout, and table layout. Users can extend the layout.
 * Support GIF format images automatically play animation, support image format PNG, JPEG, BMP, GIF, WEBP. Windows or components can use the above format image as the background.
 * Support 34 eases, users can freely write window eases or component eases. Users can extend the easing algorithm.
@@ -132,3 +132,5 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ![image](demo_image/demo_scorebutton.png)
 ### demo template listview:
 ![image](demo_image/demo_template_listview.png)
+### demo drawing board:
+![image](demo_image/demo_drawingboard.png)

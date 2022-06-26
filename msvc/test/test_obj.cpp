@@ -3027,10 +3027,10 @@ LRESULT CALLBACK OnDrawingBoardButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 
 void test_drawingboard(HWND hParent)
 {
-	HWND hWnd_drawingboard = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试鼠标绘制板", 0, 0, 700, 600, 0, 0);
+	HWND hWnd_drawingboard = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试鼠标绘制板", 0, 0, 680, 400, 0, 0);
 	HEXDUI hExDui_drawingboard = Ex_DUIBindWindowEx(hWnd_drawingboard, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_drawingboard, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	hObjDrawingBoard = Ex_ObjCreate(L"drawingboard", 0, -1, 30, 30, 500, 500, hExDui_drawingboard);
+	hObjDrawingBoard = Ex_ObjCreate(L"drawingboard", 0, -1, 30, 30, 500, 350, hExDui_drawingboard);
 	HEXOBJ hObj_switch = Ex_ObjCreate(L"Switch", L"画笔|橡皮擦", -1, 550, 30, 100, 30, hExDui_drawingboard);
 	Ex_ObjSendMessage(hObj_switch, BM_SETCHECK, 1, 0); // 设置选中状态
 	Ex_ObjHandleEvent(hObj_switch, NM_CHECK, OnDrawingBoardSwitchEvent);
