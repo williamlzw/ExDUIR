@@ -1,18 +1,21 @@
 #pragma once
 #include "help_ex.h"
+#pragma comment (lib, "Msimg32.lib")
 
-// 调色板消息_改变颜色
-#define PTM_COLORCHANGE 11111
 
-struct palette_s
-{
-	HEXOBJ hObj;
-	INT nProcessTime;
-};
+// 调色板属性_鼠标开始位置X
+#define PTL_BEGINX 0
+// 调色板属性_鼠标开始位置Y
+#define PTL_BEGINY 1
+// 调色板属性_是否按下
+#define PTL_DOWN 2
+// 调色板属性_画刷句柄
+#define PTL_PEN 3
+// 调色板属性_图片句柄
+#define PTL_IMAGE 4
 
 void _palette_register();
 LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-INT _palette_getcolor(INT index);
-LRESULT CALLBACK _palette_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
-LRESULT CALLBACK _palette_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
-LRESULT CALLBACK _palette_oneditproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+void _palette_genimage(HEXOBJ hObj);
+void _palette_drawgradientrect(HDC hdc, INT left, INT top, INT right, INT bottom, EXARGB startColor, EXARGB endColor, BOOL horizontalGradient);
+void _palette_paint(HEXOBJ hObj);

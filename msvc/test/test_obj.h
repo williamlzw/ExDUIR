@@ -155,8 +155,8 @@ INT_PTR CALLBACK OnDialgWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 LRESULT CALLBACK OnModalButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_modal(HWND hWnd);
 
-LRESULT CALLBACK OnPaletteButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
-void test_palette(HWND hParent);
+LRESULT CALLBACK OnColorPickerButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_colorpicker(HWND hParent);
 
 void test_titlebar(HWND hParent);
 
@@ -183,3 +183,6 @@ void test_templatelistview(HWND hParent);
 
 LRESULT CALLBACK OnDrawingBoardSwitchEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_drawingboard(HWND hParent);
+
+LRESULT CALLBACK OnPaletteEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_palette(HWND hParent);

@@ -1330,11 +1330,13 @@
 // 分组框属性_线宽
 #define GROUPBOX_STROKEWIDTH 2
 
+// 消息_颜色选择器颜色已更改
+#define CPM_COLORCHANGE 100051
+// 事件_颜色选择器颜色已更改
+#define CPN_COLORCHANGE 100052
 
-// 消息_调色板颜色已更改
-#define PTM_COLORCHANGE 100051
-// 事件_调色板颜色已更改
-#define PTN_COLORCHANGE 100052
+// 调色板通知_鼠标移动 wParam返回不带alpha的RGB颜色,用ExRGB2ARGB转换到ARGB
+#define PTN_MOUSEMOVE 100000
 
 // 消息_日期框已更改
 #define DBM_DATETIME 100061
@@ -1418,9 +1420,9 @@
 #define DBM_CLEAR 20003
 #pragma endregion drawingboard message
 
-#define ExGetR(argb) (LOBYTE(argb))
+#define ExGetB(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
-#define ExGetB(argb) (LOBYTE((argb) >> 16))
+#define ExGetR(argb) (LOBYTE((argb) >> 16))
 #define ExGetA(argb) (LOBYTE((argb) >> 24))
 #define ExRGB(r, g, b) ((EXARGB)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((INT)(BYTE)(b)) << 16)))
 #define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))

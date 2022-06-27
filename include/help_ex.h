@@ -336,12 +336,13 @@ struct obj_base
 #include "Class_ListButton_ex.h"
 #include "Class_DateBox_ex.h"
 #include "Class_TitleBar_ex.h"
-#include "Class_Palette_ex.h"
+#include "Class_ColorPicker_ex.h"
 #include "Class_Calendar_ex.h"
 #include "Class_CefBrowser_ex.h"
 #include "Class_ScoreButton_ex.h"
 #include "Class_Carousel_ex.h"
 #include "Class_DrawingBoard_ex.h"
+#include "Class_Palette_ex.h"
 
 struct LOCALINFO
 {

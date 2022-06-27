@@ -357,7 +357,7 @@ HEXCANVAS _canvas_createfromobj(HEXOBJ hObj, INT uWidth, INT uHeight, INT dwFlag
     HEXCANVAS hCanvas = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        hCanvas = _canvas_createfrompwnd(pObj->pWnd_, uWidth, uHeight, 0, &nError);
+        hCanvas = _canvas_createfrompwnd(pObj->pWnd_, uWidth, uHeight, dwFlags, &nError);
     }
     Ex_SetLastError(nError);
     return hCanvas;
@@ -367,11 +367,20 @@ void _canvas_recreate(canvas_s *pCanvas, INT width, INT height, INT *nError)
 {
 
     if (width == pCanvas->width_ && height == pCanvas->height_)
+    {
         return;
+    }
+        
     if (width <= 0)
+    {
         width = 1;
+    }
+       
     if (height <= 0)
+    {
         height = 1;
+    }
+        
     pCanvas->width_ = width;
     pCanvas->height_ = height;
     wnd_s *pWnd = pCanvas->pWnd_;

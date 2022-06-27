@@ -30,12 +30,13 @@ void _object_init()
     _listbuttonex_register();
     _datebox_register();
     _titlebar_register();
-    _palette_register();
+    _color_picker_register();
     _calendar_register();
     _cefbrowser_register();
     _scorebtn_register();
     _carousel_register();
     _drawingboard_register();
+    _palette_register();
 }
 
 void Ex_SetLastError(INT nError)

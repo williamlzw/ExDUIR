@@ -2639,23 +2639,23 @@ void test_modal(HWND hWnd)
 }
 
 
-LRESULT CALLBACK OnPaletteButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OnColorPickerButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	if (nCode == PTN_COLORCHANGE) {
+	if (nCode == CPN_COLORCHANGE) {
 		output(L"颜色已更改", (int)lParam);
 	}
 	return 0;
 }
 
-void test_palette(HWND hParent)
+void test_colorpicker(HWND hParent)
 {
-	HWND hWnd_palette = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试调色板", 0, 0, 300, 300, 0, 0);
-	HEXDUI hExDui_palette = Ex_DUIBindWindowEx(hWnd_palette, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
-	Ex_DUISetLong(hExDui_palette, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj = Ex_ObjCreate(L"Palette", 0, -1, 50, 80, 100, 30, hExDui_palette);
-	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 255), TRUE);
-	Ex_ObjHandleEvent(hObj, PTN_COLORCHANGE, OnPaletteButtonEvent);
-	Ex_DUIShowWindow(hExDui_palette, SW_SHOWNORMAL, 0, 0, 0);
+	HWND hWnd_colorpicker = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试颜色选择器", 0, 0, 200, 100, 0, 0);
+	HEXDUI hExDui_colorpicker = Ex_DUIBindWindowEx(hWnd_colorpicker, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_colorpicker, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	HEXOBJ hObj = Ex_ObjCreate(L"ColorPicker", 0, -1, 50, 40, 80, 30, hExDui_colorpicker);
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), TRUE);
+	Ex_ObjHandleEvent(hObj, CPN_COLORCHANGE, OnColorPickerButtonEvent);
+	Ex_DUIShowWindow(hExDui_colorpicker, SW_SHOWNORMAL, 0, 0, 0);
 }
 
 LRESULT CALLBACK OnDateBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
@@ -3021,6 +3021,14 @@ LRESULT CALLBACK OnDrawingBoardButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 		{
 			Ex_ObjSendMessage(hObjDrawingBoard, DBM_SETPENCOLOR, 0, ExARGB(255, 0, 0, 255));
 		}
+		else if (nID == 103)
+		{
+			HEXCANVAS canvas = Ex_ObjGetLong(hObjDrawingBoard, EOL_HCANVAS);
+			HEXIMAGE img;
+			_img_createfromcanvas(canvas, &img);
+			_img_savetofile(img, L"d:/111.png");
+			_img_destroy(img);
+		}
 	}
 	return 0;
 }
@@ -3041,5 +3049,28 @@ void test_drawingboard(HWND hParent)
 	Ex_ObjHandleEvent(hObj2, NM_CLICK, OnDrawingBoardButtonEvent);
 	auto hObj3 = Ex_ObjCreateEx(-1, L"button", L"改变画刷颜色", -1, 550, 150, 100, 30, hExDui_drawingboard, 102, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(hObj3, NM_CLICK, OnDrawingBoardButtonEvent);
+	auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"保存到图片", -1, 550, 190, 100, 30, hExDui_drawingboard, 103, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj4, NM_CLICK, OnDrawingBoardButtonEvent);
 	Ex_DUIShowWindow(hExDui_drawingboard, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+HEXDUI hExDui_palette;
+
+LRESULT CALLBACK OnPaletteEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == PTN_MOUSEMOVE)
+	{
+		Ex_DUISetLong(hExDui_palette, EWL_CRBKG, ExRGB2ARGB(wParam, 255));
+	}
+	return 0;
+}
+
+void test_palette(HWND hParent)
+{
+	HWND hWnd_palette = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试调色板", 0, 0, 400, 250, 0, 0);
+	hExDui_palette = Ex_DUIBindWindowEx(hWnd_palette, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_palette, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	HEXOBJ hObj = Ex_ObjCreate(L"Palette", 0, -1, 50, 50, 300, 150, hExDui_palette);
+	Ex_ObjHandleEvent(hObj, PTN_MOUSEMOVE, OnPaletteEvent);
+	Ex_DUIShowWindow(hExDui_palette, SW_SHOWNORMAL, 0, 0, 0);
 }

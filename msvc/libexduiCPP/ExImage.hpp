@@ -142,10 +142,6 @@ namespace ExDUIR
 					return _img_getpixel(m_image, x, y, retPixel);
 				}
 
-				inline BOOL ChangeColor(EXARGB color)
-				{
-					return _img_changecolor(m_image, color);
-				}
 			};
 		}
 	}

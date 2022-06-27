@@ -44,13 +44,14 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_modal,           //135测试模态窗口
         test_titlebar,      //136测试标题框
         test_datebox,       //137测试日期框
-        test_palette,        //138测试调色板
+        test_colorpicker,    //138测试颜色选择器
         test_calendar,      //139测试月历
         test_chromium,       //140测试CEF浏览框
         test_scorebtn,          //141测试score打分
         test_carousel,          // 142测试轮播
         test_templatelistview,  // 143测试模板列表
-        test_drawingboard,     // 144 测试鼠标绘制板
+        test_drawingboard,     // 144测试鼠标绘制板
+        test_palette,          // 145测试调色板
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -65,7 +66,7 @@ void test_exdui()
     Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_MENU_ALL, hCursor, 0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
     m_hWnd = Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
-
+    output(ExRGB2ARGB(16711808, 255));
     if (m_hWnd != 0)
     {
         HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
@@ -114,7 +115,7 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模态窗口", -1, 230, 270, 100, 30, hExDui, 135, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标题框", -1, 230, 310, 100, 30, hExDui, 136, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试日期框", -1, 230, 350, 100, 30, hExDui, 137, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 230, 390, 100, 30, hExDui, 138, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试颜色选择器", -1, 230, 390, 100, 30, hExDui, 138, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试月历", -1, 230, 430, 100, 30, hExDui, 139, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试CEF浏览框", -1, 230, 470, 100, 30, hExDui, 140, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试打分按钮", -1, 230, 510, 100, 30, hExDui, 141, DT_VCENTER | DT_CENTER, 0, 0, NULL));
@@ -122,6 +123,7 @@ void test_exdui()
         
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模板列表", -1, 340, 30, 100, 30, hExDui, 143, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试鼠标绘制板", -1, 340, 70, 100, 30, hExDui, 144, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 340, 110, 100, 30, hExDui, 145, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
         for (auto button : buttons)
         {

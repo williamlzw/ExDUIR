@@ -75,7 +75,6 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	else if (uMsg == WM_PAINT)
 	{
 		_drawingboard_paint(hObj);
-		
 	}
 	else if (uMsg == DBM_SETPENTYPE)
 	{

@@ -1040,7 +1040,7 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 								pLocker->GetStride(&cbStride);
 
 								//拷贝点阵数据到WIC位图中
-								UINT cbStride = min(cbStride, mrc.pitch);
+								cbStride = min(cbStride, mrc.pitch);
 								for (UINT y = 0; y < nHeight; y++)
 								{
 									RtlMoveMemory(aBits + cbStride * y, mrc.bits + mrc.pitch * y, cbStride);
@@ -1065,7 +1065,6 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 			{
 				*dstImg = hImg;
 			}
-			m_pWICBitmap->Release();
 		}
 		if (bTempDraw)
 		{
