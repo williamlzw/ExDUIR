@@ -2649,7 +2649,7 @@ LRESULT CALLBACK OnColorPickerButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARA
 
 void test_colorpicker(HWND hParent)
 {
-	HWND hWnd_colorpicker = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试颜色选择器", 0, 0, 200, 100, 0, 0);
+	HWND hWnd_colorpicker = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试颜色选择器", 0, 0, 250, 300, 0, 0);
 	HEXDUI hExDui_colorpicker = Ex_DUIBindWindowEx(hWnd_colorpicker, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_colorpicker, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ hObj = Ex_ObjCreate(L"ColorPicker", 0, -1, 50, 40, 80, 30, hExDui_colorpicker);
