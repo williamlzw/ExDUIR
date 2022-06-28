@@ -9,9 +9,9 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 {
 	if (uMsg == WM_CREATE)
 	{
-		Ex_ObjSetLong(hObj, DBL_PEN_WIDTH, 3);
-		Ex_ObjSetLong(hObj, DBL_PAINT_WIDTH, 3);
-		Ex_ObjSetLong(hObj, DBL_ERASER_WIDTH, 10);
+		Ex_ObjSetLong(hObj, DBL_PEN_WIDTH, Ex_Scale(3));
+		Ex_ObjSetLong(hObj, DBL_PAINT_WIDTH, Ex_Scale(3));
+		Ex_ObjSetLong(hObj, DBL_ERASER_WIDTH, Ex_Scale(10));
 		Ex_ObjSetLong(hObj, DBL_PEN_TYPE, 0);
 		Ex_ObjSetLong(hObj, DBL_PEN_COLOR, ExRGB2ARGB(0, 255));
 		Ex_ObjSetLong(hObj, DBL_DOWN, 0);
@@ -59,12 +59,15 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			auto penType = Ex_ObjGetLong(hObj, DBL_PEN_TYPE);
 			RECT rc;
-			Ex_ObjGetRectEx(hObj, &rc, 1);
+			Ex_ObjGetRect(hObj, &rc);
+			auto dpi = GetSysDpi();
+			auto x = (INT)((FLOAT)LOWORD(lParam) / dpi);
+			auto y = (INT)((FLOAT)HIWORD(lParam) / dpi);
 			if (penType == 0 || penType == 1)
 			{
-				if (LOWORD(lParam) >= rc.left && LOWORD(lParam) <= rc.right)
+				if (x >= rc.left && x <= rc.right)
 				{
-					if (HIWORD(lParam) >= rc.top && HIWORD(lParam) <= rc.bottom)
+					if (y >= rc.top && y <= rc.bottom)
 					{
 						_drawingboard_updatedraw(hObj, LOWORD(lParam), HIWORD(lParam));
 					}
@@ -145,7 +148,7 @@ void _drawingboard_updatedraw(HEXOBJ hObj, INT x, INT y)
 void _drawingboard_paint(HEXOBJ hObj)
 {
 	EX_PAINTSTRUCT ps{ 0 };
-	if (Ex_ObjBeginPaint(hObj, &ps)) 
+	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		HEXCANVAS canvas = (HEXCANVAS)Ex_ObjGetLong(hObj, DBL_CANVAS);
 		_canvas_drawcanvas(ps.hCanvas, canvas, 0, 0, ps.uWidth, ps.uHeight, 0, 0, 155, CV_COMPOSITE_MODE_SRCOVER);

@@ -2418,8 +2418,10 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			auto userdata = Ex_ObjGetLong(hObj, EOL_USERDATA);
 			//获取按下位置
 			POINT ptOrg;
-			ptOrg.x = LOWORD(userdata);
-			ptOrg.y = HIWORD(userdata);
+			auto x = LOWORD(lParam);
+			auto y = HIWORD(lParam);
+			ptOrg.x = x;
+			ptOrg.y = y;
 			//获取当前鼠标位置
 			POINT pt;
 			GetCursorPos(&pt);

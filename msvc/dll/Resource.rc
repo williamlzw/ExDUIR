@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 5,0,22,626
- PRODUCTVERSION 5,0,22,626
+ FILEVERSION 5,0,22,628
+ PRODUCTVERSION 5,0,22,628
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "ExDUIR"
             VALUE "FileDescription", "ExDUIR"
-            VALUE "FileVersion", "5.0.22.626"
+            VALUE "FileVersion", "5.0.22.628"
             VALUE "InternalName", "libexdui.dll"
             VALUE "LegalCopyright", "https://github.com/williamlzw/ExDUIR"
             VALUE "OriginalFilename", "libexdui.dll"
             VALUE "ProductName", "ExDUIR"
-            VALUE "ProductVersion", "5.0.22.626"
+            VALUE "ProductVersion", "5.0.22.628"
         END
     END
     BLOCK "VarFileInfo"

@@ -10,9 +10,28 @@ void _carousel_paint(HEXOBJ hObj)
         INT index = (INT)Ex_ObjGetLong(hObj, ECL_INDEX);
         HEXIMAGE hImage = _imglist_get(hImageList, index);
         _canvas_drawimagerect(ps.hCanvas, hImage, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom, 255);
+        INT count = _imglist_count(hImageList);
+        for (int i = 1; i < count + 1; i++)
+        {
+            int x = ps.rcPaint.right - (count + 1) * Ex_Scale(20) + i * Ex_Scale(20) - Ex_Scale(2);
+            int y = ps.rcPaint.bottom - Ex_Scale(17);
+            if (i == index)
+            {
+                _carousel_drawcircle(ps.hCanvas, x, y, Ex_Scale(5), ExRGB2ARGB(16777215, 255));
+            }
+            else {
+                _carousel_drawcircle(ps.hCanvas, x, y, Ex_Scale(5), ExRGB2ARGB(0, 70));
+            }
+        }
     }
-    
     Ex_ObjEndPaint(hObj, &ps);
+}
+
+void _carousel_drawcircle(HEXCANVAS canvas, INT x, INT y, INT radius, EXARGB color)
+{
+    HEXBRUSH brush = _brush_create(color);
+    _canvas_fillellipse(canvas, brush, x - radius, y - radius, radius, radius);
+    _brush_destroy(brush);
 }
 
 LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -132,6 +151,25 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     else if (uMsg == WM_PAINT)
     {
         _carousel_paint(hObj);
+    }
+    else if (uMsg == WM_LBUTTONDOWN)
+    {
+        HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, ECL_HIMAGELIST);
+        if (hImageList != 0)
+        {
+            INT count = _imglist_count(hImageList);
+            RECT rc;
+            Ex_ObjGetRect(hObj, &rc);
+            auto dpi = GetSysDpi();
+            auto width = rc.right - rc.left;
+            auto height = rc.bottom - rc.top;
+            auto index = (INT)(count - (FLOAT)(width - LOWORD(lParam) / dpi + 8) / 20 + 2);
+            if (index > 0 && index <= count && (HIWORD(lParam) / dpi) >= (height - 27))
+            {
+                Ex_ObjSetLong(hObj, ECL_INDEX, index);
+                Ex_ObjInvalidateRect(hObj, 0);
+            }
+        }
     }
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
