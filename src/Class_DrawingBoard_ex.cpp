@@ -59,7 +59,7 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			auto penType = Ex_ObjGetLong(hObj, DBL_PEN_TYPE);
 			RECT rc;
-			Ex_ObjGetRect(hObj, &rc);
+			Ex_ObjGetClientRect(hObj, &rc);
 			auto dpi = GetSysDpi();
 			auto x = (INT)((FLOAT)LOWORD(lParam) / dpi);
 			auto y = (INT)((FLOAT)HIWORD(lParam) / dpi);

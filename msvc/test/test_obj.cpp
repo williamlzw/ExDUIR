@@ -982,8 +982,7 @@ void test_relative(HWND hWnd)
 	_layout_setchildprop(hLayout, hObj6, ELCP_RELATIVE_RIGHT_ALIGN_OF, hObj4);  // 右对齐于D
 
 	Ex_ObjLayoutSet(hExDui_relative, hLayout, TRUE);
-	RECT rect{ 0 };
-	Ex_ObjGetRect(hObj4, &rect);
+
 	Ex_DUIShowWindow(hExDui_relative, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -2142,7 +2141,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 
 		while (hObjfind != 0)
 		{
-			Ex_ObjGetRect(hObjfind, &rcObj);
+			Ex_ObjGetClientRect(hObjfind, &rcObj);
 			Ex_ObjMove(hObjfind, rc.left, t, rc.right, rcObj.bottom - rcObj.top, TRUE);
 			Ex_ObjSetColor(hObjfind, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
 			Ex_ObjSetLong(hObjfind, EOL_OBJPROC, (size_t)OnMenuItemMsgProc);
@@ -2418,10 +2417,8 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			auto userdata = Ex_ObjGetLong(hObj, EOL_USERDATA);
 			//获取按下位置
 			POINT ptOrg;
-			auto x = LOWORD(lParam);
-			auto y = HIWORD(lParam);
-			ptOrg.x = x;
-			ptOrg.y = y;
+			ptOrg.x = LOWORD(userdata);
+			ptOrg.y = HIWORD(userdata);
 			//获取当前鼠标位置
 			POINT pt;
 			GetCursorPos(&pt);

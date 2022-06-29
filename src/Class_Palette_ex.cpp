@@ -50,7 +50,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 		if (down)
 		{
 			RECT rc;
-			Ex_ObjGetRectEx(hObj, &rc, 1);
+			Ex_ObjGetClientRect(hObj, &rc);
 			auto dpi = GetSysDpi();
 			auto x = (INT)((FLOAT)LOWORD(lParam) / dpi);
 			auto y = (INT)((FLOAT)HIWORD(lParam) / dpi);
