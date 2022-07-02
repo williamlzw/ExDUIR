@@ -168,7 +168,6 @@ void _combobox_notify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, EX_NMHDR *lParam)
         HEXOBJ hObjEdit = _obj_getextralong(pObj, ECBL_HOBJEDIT);
         if (hObjEdit == lParam->hObjFrom)
         {
-
             if (lParam->nCode == NM_HOVER)
             {
                 _obj_setuistate(pObj, STATE_HOVER, FALSE, 0, TRUE, 0);
@@ -226,7 +225,6 @@ INT _combobox_setcursel(obj_s *pObj, size_t nIndex)
     LPCWSTR title = _combobox_getitemtitle(pObj, nIndex);
     _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_SETTEXT, 1, (size_t)title);
     _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, CBN_SELCHANGE, 0, pObj->hObj_);
-
     return cur;
 }
 
@@ -328,7 +326,9 @@ size_t _combobox_getleftbuttontext(obj_s *pObj, size_t nIndex, LPVOID buffer)
     LPCWSTR lpString = _combobox_getitemtitle(pObj, nIndex);
     size_t len = 0;
     if (!lpString)
+    {
         return -1;
+    }
 
     if (buffer)
     {
@@ -343,8 +343,9 @@ INT _combobox_delstring(obj_s *pObj, size_t nIndex)
     INT len = _obj_getextralong(pObj, ECBL_ITEMCOUNT);
     EX_COMBOX_ITEMLIST *itemList = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST);
     if (nIndex <= 0 || nIndex > len)
+    {
         return -1;
-
+    }
     Ex_MemFree((LPVOID)itemList->items[nIndex - 1].lpwzTitle);
     _combobox_realloc(pObj, len - 1, nIndex, FALSE);
     _obj_setextralong(pObj, ECBL_ITEMCOUNT, len - 1);
@@ -366,18 +367,23 @@ LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wPa
         }
         else if (msg->nCode == NM_CUSTOMDRAW)
         {
-            _combobox_wnd_customdraw((obj_s *)Ex_ObjGetLong(hDUI, -7), msg->wParam, (EX_CUSTOMDRAW *)msg->lParam);
+            _combobox_wnd_customdraw((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), msg->wParam, (EX_CUSTOMDRAW *)msg->lParam);
             *lpResult = 1;
             return 1;
         }
         else if (msg->nCode == NM_CLICK && hDUI == msg->hObjFrom)
         {
-            INT sel = Ex_ObjSendMessage(hDUI, 4162, 0, 0);
+            INT sel = Ex_ObjSendMessage(hDUI, LVM_GETSELECTIONMARK, 0, 0);
             if (sel)
             {
                 PostMessageW(hWnd, WM_CLOSE, 0, 0);
-                _combobox_setcursel((obj_s *)Ex_ObjGetLong(hDUI, -7), sel);
+                _combobox_setcursel((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), sel);
+                _obj_setuistate((obj_s*)Ex_ObjGetLong(hDUI, EOL_LPARAM), STATE_FOCUS, TRUE, NULL, TRUE, NULL);
             }
+        }
+        else if (msg->nCode == NM_DESTROY)
+        {
+            _obj_setuistate((obj_s*)Ex_ObjGetLong(hDUI, EOL_LPARAM), STATE_FOCUS, TRUE, NULL, TRUE, NULL);
         }
     }
     return 0;
@@ -390,7 +396,6 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
     {
         if (_obj_queryextra(pObj, ECBL_STATE, 2))
         {
-
             _obj_delextra(pObj, ECBL_STATE, 2);
         }
         else
@@ -460,7 +465,7 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                                                              (FLOAT)tmp.right / g_Li.DpiX - padding.left - padding.right,
                                                              (FLOAT)tmp.bottom / g_Li.DpiY - padding.top - padding.bottom,
                                                              hExBox, 0, -1, (size_t)pObj, 0, _combobox_wnd_proc);
-                        //TODO: Ex_ObjSendMessage(hObjListView, 48, _font_copy(pObj->hFont_), 0);
+                      
                         Ex_ObjSendMessage(hObjListView, LVM_SETITEMCOUNT, _obj_getextralong(pObj, ECBL_ITEMCOUNT), 0);
                         _obj_setextralong(pObj, ECBL_HOBJLISTVIEW, hObjListView);
                         size_t current = _obj_getextralong(pObj, ECBL_CURRENTSELECTED);
@@ -473,7 +478,7 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                         Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_HOVER, _obj_getcolor(pObj, COLOR_EX_TEXT_HOVER), FALSE);
                         Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_DOWN, _obj_getcolor(pObj, COLOR_EX_TEXT_DOWN), FALSE);
                         Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_SELECT, _obj_getcolor(pObj, COLOR_EX_TEXT_SELECT), TRUE);
-
+                        
                         _obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_POPUPLISTWINDOW, (size_t)hWndBox, hExBox);
                         Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
                     }
@@ -552,7 +557,6 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     obj_s *pObj = nullptr;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-
         if (uMsg == WM_CREATE)
         {
             _combobox_init(pObj, hObj);
@@ -615,15 +619,15 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                 _combobox_btndown(hWnd, hObj, pObj);
             }
         }
-        else if (uMsg == 4294967290)
+        else if (uMsg == WM_EX_INITPOPUP)
         {
-            _obj_invalidaterect(pObj, 0, 0);
+            INT nError = 0;
+            _obj_invalidaterect(pObj, 0, &nError);
         }
-        else if (uMsg == 4294967289)
+        else if (uMsg == WM_EX_INITPOPUP)
         {
             if (wParam)
             {
-
                 if (hObj == wParam)
                 {
                     _obj_addextra(pObj, ECBL_STATE, 2);
@@ -631,8 +635,9 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             }
             else
             {
+                INT nError = 0;
                 _obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_CLOSEUP, 0, 0);
-                _obj_invalidaterect(pObj, 0, 0);
+                _obj_invalidaterect(pObj, 0, &nError);
             }
         }
         else if (uMsg == WM_SETTEXT || uMsg == WM_GETTEXT || uMsg == WM_GETTEXTLENGTH)
@@ -730,6 +735,8 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             if (ret)
             {
                 Ex_ObjSendMessage((HEXOBJ)_obj_getextralong(pObj, ECBL_HOBJLISTVIEW), LVM_SETSELECTIONMARK, 0, lParam);
+                _obj_setuistate(pObj, STATE_FOCUS, TRUE, NULL, TRUE, NULL);
+               
             }
             return ret;
         }
@@ -752,7 +759,8 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                     _obj_setextralong(pObj, ECBL_BOXHWND, 0);
                 }
             }
-            _obj_invalidaterect(pObj, 0, 0);
+            INT nError = 0;
+            _obj_invalidaterect(pObj, 0, &nError);
             return 1;
         }
         else if (uMsg == CB_GETLBTEXT)
