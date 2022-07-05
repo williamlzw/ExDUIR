@@ -2421,8 +2421,8 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			ptOrg.y = HIWORD(userdata);
 			//获取当前鼠标位置
 			POINT pt;
-			GetCursorPos(&pt);
-			ScreenToClient(hWnd, &pt);
+			pt.x = LOWORD(lParam);
+			pt.y = HIWORD(lParam);
 			auto parent = Ex_ObjGetParent(hObj);
 			RECT rcParent{ 0 };
 			//获取组件矩形
@@ -2431,19 +2431,49 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			if (parent != 0)
 			{
 				Ex_ObjGetRect(parent, &rcParent);
-				if (pt.x - ptOrg.x > rcParent.left && pt.x - ptOrg.x + rcObj.right - rcObj.left < rcParent.right && pt.y - ptOrg.y > rcParent.top && pt.y - ptOrg.y + rcObj.bottom - rcObj.top < rcParent.bottom)
+				int x = rcObj.left + pt.x - ptOrg.x;
+				int y = rcObj.top + pt.y - ptOrg.y;
+				if (x <= 0)
 				{
-					Ex_ObjSetPos(hObj, 0, pt.x - ptOrg.x - rcParent.left, pt.y - ptOrg.y - rcParent.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+					x = 0;
 				}
+				if (x > rcParent.right - rcParent.left - (rcObj.right - rcObj.left))
+				{
+					x = rcParent.right - rcParent.left - (rcObj.right - rcObj.left);
+				}
+				if (y <= 0)
+				{
+					y = 0;
+				}
+				if (y > rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top))
+				{
+					y = rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top);
+				}
+				Ex_ObjSetPos(hObj, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 			}
 			else
 			{
 				HEXDUI hexdui = Ex_DUIFromWindow(hWnd);
 				Ex_DUIGetClientRect(hexdui, &rcParent);
-				if (pt.x - ptOrg.x > 0 && pt.x - ptOrg.x + rcObj.right - rcObj.left < rcParent.right && pt.y - ptOrg.y > 0 && pt.y - ptOrg.y + rcObj.bottom - rcObj.top < rcParent.bottom)
+				int x = rcObj.left + pt.x - ptOrg.x;
+				int y = rcObj.top + pt.y - ptOrg.y;
+				if (x <= 0)
 				{
-					Ex_ObjSetPos(hObj, 0, pt.x - ptOrg.x, pt.y - ptOrg.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+					x = 0;
 				}
+				if (x > rcParent.right - rcParent.left - (rcObj.right - rcObj.left))
+				{
+					x = rcParent.right - rcParent.left - (rcObj.right - rcObj.left);
+				}
+				if (y <= 0)
+				{
+					y = 0;
+				}
+				if (y > rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top))
+				{
+					y = rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top);
+				}
+				Ex_ObjSetPos(hObj, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 			}
 		}
 	}
