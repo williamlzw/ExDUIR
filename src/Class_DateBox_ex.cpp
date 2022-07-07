@@ -247,8 +247,8 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 				GetWindowRect(hWnd, &lpRect);
 				lpRect.left += pObj->w_left_;
 				lpRect.top += pObj->w_bottom_ + 2;
-				HWND hWndBox = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, (LPCWSTR)GetClassLongPtrW(hWnd, GCW_ATOM), 0, WS_BORDER | WS_SYSMENU | WS_POPUP,
-					0, 0, 300, 200, hWnd, 0, g_Li.hInstance, 0);
+				
+				HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, 0, 0, 300, 200, WS_POPUP, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 				HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW, (size_t)pOwner, _datebox_onwndmsgproc);
 				if (hExBox)
 				{

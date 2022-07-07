@@ -3103,3 +3103,98 @@ void test_palette(HWND hParent)
 	Ex_ObjHandleEvent(hObj, PTN_MOUSEMOVE, OnPaletteEvent);
 	Ex_DUIShowWindow(hExDui_palette, SW_SHOWNORMAL, 0, 0, 0);
 }
+
+HEXOBJ PropertyGrid_hObj = 0;
+
+LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == NM_CLICK)
+	{
+		if (nID == 100)
+		{
+			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(PropertyGrid_hObj, PGN_GETITEMVALUE, 0, (LPARAM)L"名称2");
+			output(L"名称2 对应值:", ret);
+		}
+		else if (nID == 101)
+		{
+			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(PropertyGrid_hObj, PGN_SETITEMVALUE, (WPARAM)L"新数值123", (LPARAM)L"名称2");
+			output(L"置\"名称2\"对应值");
+		}
+		else if (nID == 102)
+			Ex_ObjMove(PropertyGrid_hObj, 20, 30, 350, 360, TRUE);
+	}
+	return 0;
+}
+
+LRESULT CALLBACK OnPropertyGridEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	//output(L"属性框值改变 ,对应行索引=", wParam, (LPCWSTR)__get((void*)lParam, 24));
+	return 0;
+}
+
+void test_propertygrid(HWND hParent)
+{
+	HWND hWnd_propertygrid = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试属性框", 0, 0, 500, 400, 0, 0);
+	HEXDUI hExDui_propertygrid = Ex_DUIBindWindowEx(hWnd_propertygrid, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_propertygrid, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+
+	PropertyGrid_hObj = Ex_ObjCreateEx(-1, L"PropertyGrid", L"PropertyGrid", EOS_VISIBLE | EOS_VSCROLL,
+		50, 50, 300, 300, hExDui_propertygrid, 0, 0, 0, 0, 0);
+	Ex_ObjHandleEvent(PropertyGrid_hObj, PGN_ITEMVALUECHANGE, OnPropertyGridEvent);
+
+	Ex_ObjSetColor(PropertyGrid_hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(14737632, 255), TRUE);
+	//-------------------------------------------
+	auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"取表项内容", -1, 380, 70, 100, 30, hExDui_propertygrid, 100, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
+	hObj1 = Ex_ObjCreateEx(-1, L"button", L"置表项内容", -1, 380, 120, 100, 30, hExDui_propertygrid, 101, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
+	hObj1 = Ex_ObjCreateEx(-1, L"button", L"修改组件大小", -1, 380, 170, 100, 30, hExDui_propertygrid, 102, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
+	//-------------------------------------------
+
+
+	EX_PROGRID_ITEMINFO item;
+	item.title = L"小组A";
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
+	item.title = L"组合框一";
+	item.textComboBox.push_back(L"表项1-1");
+	item.textComboBox.push_back(L"表项1-2");
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
+	item.title = L"颜色";
+	auto color = std::to_wstring(ExRGB2ARGB(167549, 255));
+	item.text = color.c_str();
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
+	item.title = L"日期";
+	item.text = L"2022-7-6";
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_DATEBOX, (LPARAM)&item);
+	for (int i = 0; i < 4; i++)
+	{
+		auto title = L"名称" + std::to_wstring(i + 1);
+		item.title = title.c_str();
+		auto text = L"值" + std::to_wstring(i + 1);
+		item.text = text.c_str();
+		Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
+	}
+	item.title = L"小组B";
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
+	item.title = L"颜色二";
+	item.text = std::to_wstring(ExRGB2ARGB(3523123, 255)).c_str();
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
+	item.title = L"组合框二";
+	item.textComboBox.clear();
+	item.textComboBox.push_back(L"表项2-1");
+	item.textComboBox.push_back(L"表项2-2");
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
+	for (int i = 4; i < 8; i++)
+	{
+		auto title = L"名称" + std::to_wstring(i + 1);
+		item.title = title.c_str();
+		auto text = L"值" + std::to_wstring(i + 1);
+		item.text = text.c_str();
+		Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
+	}
+	item.title = L"最后一个标题";
+	item.text = L"最后一个值";
+	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
+	Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
+}

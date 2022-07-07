@@ -343,6 +343,7 @@ struct obj_base
 #include "Class_Carousel_ex.h"
 #include "Class_DrawingBoard_ex.h"
 #include "Class_Palette_ex.h"
+#include "Class_PropertyGrid_ex.h"
 
 struct LOCALINFO
 {

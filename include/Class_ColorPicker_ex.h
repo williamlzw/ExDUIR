@@ -1,11 +1,14 @@
 #pragma once
 #include "help_ex.h"
 
+#define CPL_STATE 0
+
 struct color_picker_s
 {
 	HEXOBJ hObj;
 	INT nProcessTime;
 };
+
 
 void _color_picker_register();
 LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

@@ -52,6 +52,7 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_templatelistview,  // 143测试模板列表
         test_drawingboard,     // 144测试鼠标绘制板
         test_palette,          // 145测试调色板
+        test_propertygrid       // 146测试属性框
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -124,6 +125,7 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模板列表", -1, 340, 30, 100, 30, hExDui, 143, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试鼠标绘制板", -1, 340, 70, 100, 30, hExDui, 144, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 340, 110, 100, 30, hExDui, 145, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试属性框", -1, 340, 150, 100, 30, hExDui, 146, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
         for (auto button : buttons)
         {

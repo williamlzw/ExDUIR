@@ -378,12 +378,7 @@ LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wPa
             {
                 PostMessageW(hWnd, WM_CLOSE, 0, 0);
                 _combobox_setcursel((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), sel);
-                _obj_setuistate((obj_s*)Ex_ObjGetLong(hDUI, EOL_LPARAM), STATE_FOCUS, TRUE, NULL, TRUE, NULL);
             }
-        }
-        else if (msg->nCode == NM_DESTROY)
-        {
-            _obj_setuistate((obj_s*)Ex_ObjGetLong(hDUI, EOL_LPARAM), STATE_FOCUS, TRUE, NULL, TRUE, NULL);
         }
     }
     return 0;
@@ -449,7 +444,8 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                         tmp.bottom = screen.bottom - tmp.top;
                     }
                 }
-                HWND hWndBox = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, (LPCWSTR)GetClassLongPtrW(hWnd, GCW_ATOM), 0, WS_BORDER | WS_SYSMENU | WS_POPUP, tmp.left, tmp.top, tmp.right, tmp.bottom, hWnd, 0, g_Li.hInstance, 0);
+
+                HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, tmp.left, tmp.top, tmp.right, tmp.bottom, WS_POPUP, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
                 if (hWnd)
                 {
                     HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOSHADOW | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW | EWS_COMBOWINDOW, hObj, NULL);
@@ -624,7 +620,7 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             INT nError = 0;
             _obj_invalidaterect(pObj, 0, &nError);
         }
-        else if (uMsg == WM_EX_INITPOPUP)
+        else if (uMsg == WM_EX_EXITPOPUP)
         {
             if (wParam)
             {

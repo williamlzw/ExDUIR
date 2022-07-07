@@ -1322,27 +1322,41 @@
 #define SBL_BLOCK_SIZE 4
 #pragma endregion soliderbar long constant
 
-
+#pragma region groupbox long
 // 分组框属性_文本左边的偏移
 #define GROUPBOX_TEXT_OFFSET 0
 // 分组框属性_线框圆角度
 #define GROUPBOX_RADIUS 1
 // 分组框属性_线宽
 #define GROUPBOX_STROKEWIDTH 2
+#pragma endregion groupbox long
 
-// 消息_颜色选择器颜色已更改
+#pragma region colorpicker message
+// 消息_颜色选择器改变颜色
 #define CPM_COLORCHANGE 100051
+#pragma endregion colorpicker message
+
+#pragma region colorpicker notify
 // 事件_颜色选择器颜色已更改
 #define CPN_COLORCHANGE 100052
+#pragma endregion colorpicker notify
 
+#pragma region palette notify
 // 调色板通知_鼠标移动 wParam返回不带alpha的RGB颜色,用ExRGB2ARGB转换到ARGB
 #define PTN_MOUSEMOVE 100000
+#pragma endregion palette notify
 
-// 消息_日期框已更改
+#pragma region datebox message
+// 消息_日期框设置日期
 #define DBM_DATETIME 100061
+#pragma endregion datebox message
+
+#pragma region datebox notify
 // 事件_日期框已更改
 #define DBN_DATETIME 100062
+#pragma endregion datebox notify
 
+#pragma region calendar style
 //显示农历
 #define EMCS_SHOWLUNAR  1
 //显示水印
@@ -1351,24 +1365,9 @@
 #define EMCS_NOTODAYCIRCLE  4
 //月历控件不在控件底部显示 "今天" 日期。
 #define EMCS_NOTODAY  8
+#pragma endregion calendar style
 
-#define MCSC_WEEKENDTEXT	1   // 周末文本颜色
-#define MCSC_WEEKDAYTEXT	2	// 工作日文本颜色
-#define MCSC_DAYDEFAULTTEXT	3	// 农历日期默认颜色
-#define MCSC_WEEKTITLEBK	4   // 星期标题背景颜色
-#define MCSC_TITLETEXT		5	// 日历标题和底部字体颜色
-#define	MCSC_SHUJIU			6	// 数九颜色
-#define	MCSC_MEIYU			7	// 入梅、出梅颜色
-#define	MCSC_SANFU			8	// 三伏颜色
-#define	MCSC_MONTHHEADER	9	// 月首颜色
-#define	MCSC_NHOLIDAY		10	// 农历传统节日颜色
-#define	MCSC_GHOLIDAY		11	// 公众、国际节日颜色
-#define	MCSC_DAYGRIDLINE	12	// 日期网格线颜色
-#define	MCSC_WATERPRINT		13	// 水印颜色
-#define MCSC_TODAY			14	// 标注（今日）字体颜色
-#define MCSC_SOLARTERMS		15  // 节气颜色
-
-#pragma region 月历消息
+#pragma region calendar message
 //获得当前选中的日期 wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
 #define MCM_GETCURSEL	4097
 //为月历控件设置当前选定的日期。 如果指定的日期不在视图中，则控件将更新显示以使其显示在视图中。
@@ -1381,21 +1380,25 @@
 #define MCM_GETTODAY	4109
 //设置日历的当前视图;wParam = 0;lParam =MCMV_MONTH
 #define MCM_SETCURRENTVIEW	4128
-#pragma endregion 月历消息
+#pragma endregion calendar message
 
-
+#pragma region cef browser message
 // 消息_Cef浏览框_加载URL
 #define CEFM_LOADURL 100001
 // 消息_Cef浏览框_获取浏览框句柄
 #define CEFM_GETWEBVIEW 100002
+#pragma endregion cef browser message
 
+#pragma region cef browser notify
 // 事件_Cef浏览框_已创建
 #define CEFN_CREATE 100100
 // 事件_Cef浏览框_加载完毕
 #define CEFN_LOADEND 100101
 // 事件_Cef浏览框_加载开始
 #define CEFN_LOADSTART 100102
+#pragma endregion cef browser notify
 
+#pragma region carousel message
 // 消息_轮播_设置尺寸
 #define CM_SIZE 5000
 // 消息_轮播_播放下一张
@@ -1408,6 +1411,7 @@
 #define CM_CLEAR 5004
 // 消息_轮播_设置时钟周期
 #define CM_SETTIMER 5005
+#pragma endregion carousel message
 
 #pragma region drawingboard message
 // 鼠绘板消息_设置画笔类型 lParam 0画笔 1橡皮擦
@@ -1420,9 +1424,33 @@
 #define DBM_CLEAR 20003
 #pragma endregion drawingboard message
 
-#define ExGetB(argb) (LOBYTE(argb))
+#pragma region propertygrid notify
+// 属性框事件_添加表项 添加行到尾部 wParam:组件_类型  lParam: PGITEM 指针 ----------
+#define PGN_ADDITEM  10010
+// 属性框事件_取表项值 wParam: 未定义    lParam:表项名  return:表项值文本指针
+#define PGN_GETITEMVALUE  10011
+// 属性框事件_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
+#define PGN_SETITEMVALUE  10012
+// 属性框事件_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)   lParam:数据指针(可以通过"__get(数据指针,PGL_内存偏移_***)"来获取数据)
+#define PGN_ITEMVALUECHANGE  10012
+#pragma endregion propertygrid notify
+
+#pragma region propertygrid obj type
+// 属性框_组件类型_分组
+#define PGT_OBJ_GROUP -1
+// 属性框_组件类型_编辑框
+#define PGT_OBJ_EDIT 0
+// 属性框_组件类型_组合框
+#define PGT_OBJ_COMBOBOX 1
+// 属性框_组件类型_颜色框
+#define PGT_OBJ_COLORPICKER 2
+// 属性框_组件类型_日期框
+#define PGT_OBJ_DATEBOX 3
+#pragma endregion propertygrid obj type
+
+#define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
-#define ExGetR(argb) (LOBYTE((argb) >> 16))
+#define ExGetB(argb) (LOBYTE((argb) >> 16))
 #define ExGetA(argb) (LOBYTE((argb) >> 24))
 #define ExRGB(r, g, b) ((EXARGB)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((INT)(BYTE)(b)) << 16)))
 #define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
@@ -1764,6 +1792,16 @@ struct EX_DATETIME {
 	INT Mon;				//月   1-12
 	INT Mday;				//日   1-31
 	INT Wday;				//星期 1-7 7=星期日
+};
+
+// 属性框项目结构 
+struct EX_PROGRID_ITEMINFO
+{
+	size_t index = 0;//默认0,为尾部.索引从非表头开始计算,从1开始
+	LPCWSTR title;
+	LPCWSTR text;//注意对于颜色框 为文本数字
+	std::vector<std::wstring> textComboBox; //仅wParam为[PGT_OBJ_COMBOBOX]  有效
+	//其他需求再拓展
 };
 
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name

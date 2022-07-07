@@ -16,6 +16,9 @@ Please refer to[update log](CHANGELOG.txt)
 * AC QQ group::214406227
 * Submit feedback:[Gitee issues](https://gitee.com/william_lzw/ExduiR/issues) or [GitHub issues](https://github.com/laizewei/ExduiR/issues)
 
+## Environment
+win10+, win7 need install KB2670838 patch
+
 ## Compiler
 Currently,the following two compiling methods are supported:
 * Visual Studio 2019(recommended)
@@ -136,3 +139,5 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ![image](demo_image/demo_template_listview.png)
 ### demo drawing board:
 ![image](demo_image/demo_drawingboard.png)
+### demo propertygrid:
+![image](demo_image/demo_propertygrid.png)

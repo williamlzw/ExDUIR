@@ -2,7 +2,7 @@
 
 void _color_picker_register()
 {
-	DWORD cbObjExtra = 5 * sizeof(size_t);
+	DWORD cbObjExtra = 1 * sizeof(size_t);
 	Ex_ObjRegister(L"ColorPicker", EOS_VISIBLE | EOS_BORDER, EOS_EX_FOCUSABLE, DT_LEFT, cbObjExtra, LoadCursor(0, IDC_HAND), ECVF_CANVASANTIALIAS, _color_picker_proc);
 }
 
@@ -15,6 +15,7 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		if (uMsg == WM_CREATE)
 		{
 			_struct_createfromaddr(pObj, offsetof(obj_s, dwOwnerData_), sizeof(color_picker_s), &nError);
+			Ex_ObjSetLong(hObj, CPL_STATE, 0);
 			color_picker_s* pOwner = (color_picker_s*)_obj_pOwner(pObj);
 			pOwner->hObj = hObj;
 
@@ -45,13 +46,16 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			}
 			else
 			{
+				if (Ex_ObjGetLong(hObj, CPL_STATE) == 1)
+				{
+					return 0;
+				}
 				RECT lpRect = { 0 };
 				GetWindowRect(hWnd, &lpRect);
 				lpRect.left += pObj->w_left_;
 				lpRect.top += pObj->w_bottom_ + 2;
 
-				HWND hWndBox = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, (LPCWSTR)GetClassLongPtrW(hWnd, GCW_ATOM), 0, WS_BORDER | WS_SYSMENU | WS_POPUP,
-					0, 0, 300, 200, hWnd, 0, g_Li.hInstance, 0);
+				HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, 0, 0, 300, 200, WS_BORDER | WS_SYSMENU | WS_POPUP, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 				HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW, (size_t)pOwner, _color_picker_onwndmsgproc);
 				if (hExBox)
 				{
@@ -60,8 +64,8 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 
 					SetWindowPos(hWndBox, 0, lpRect.left, lpRect.top, Ex_Scale(180), Ex_Scale(180), SWP_NOZORDER | SWP_NOACTIVATE);
 
-					HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 15, 15, 160, 120, hObj_Static, 76601, -1, 0, 0, _color_picker_onlistproc);
-					Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, 32, 0);
+					HEXOBJ hObjListView = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 15, 15, 160, 120, hObj_Static, 76601, -1, 0, 0, _color_picker_onlistproc);
+					Ex_ObjSendMessage(hObjListView, LVM_SETITEMCOUNT, 32, 0);
 
 					WCHAR lpTitle[12];
 					EXARGB nColor = Ex_ObjGetColor(pOwner->hObj, COLOR_EX_BACKGROUND);
@@ -71,7 +75,9 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					swprintf_s(lpTitle, L"%X %X %X", R, G, B);
 					Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", lpTitle, EOS_VISIBLE, 15, 150, 150, 25, hObj_Static, 76602, DT_SINGLELINE, 0, 0, _color_picker_oneditproc);
 					Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
+					Ex_ObjSetLong(hObj, CPL_STATE, 1);
 				}
+				
 			}
 		}
 	}
@@ -93,6 +99,7 @@ LRESULT CALLBACK _color_picker_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, 
 	{
 		color_picker_s* pOwner = (color_picker_s*)Ex_DUIGetLong(hExDUI, EWL_LPARAM);
 		pOwner->nProcessTime = GetTickCount64();
+		Ex_ObjSetLong(pOwner->hObj, CPL_STATE, 0);
 	}
 	else if (uMsg == WM_ERASEBKGND)
 	{
@@ -105,6 +112,7 @@ LRESULT CALLBACK _color_picker_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, 
 		EXARGB dwColor = _color_picker_getcolor(wParam);
 		Ex_ObjSetColor(pOwner->hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(dwColor, 255), TRUE);
 		Ex_ObjDispatchNotify(pOwner->hObj, CPN_COLORCHANGE, 0, (LPARAM)dwColor);
+		Ex_ObjSetLong(pOwner->hObj, CPL_STATE, 0);
 		PostMessageW(hWnd, WM_CLOSE, 0, 0);
 	}
 	return 0;

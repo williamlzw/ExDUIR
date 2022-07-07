@@ -37,6 +37,7 @@ void _object_init()
     _carousel_register();
     _drawingboard_register();
     _palette_register();
+    _propertygrid_register();
 }
 
 void Ex_SetLastError(INT nError)

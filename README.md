@@ -16,6 +16,9 @@ Windows平台轻量DirectUI框架。
 * 交流QQ群: 214406227
 * 提交反馈：[Gitee issues](https://gitee.com/william_lzw/ExduiR/issues) 或者 [GitHub issues](https://github.com/laizewei/ExduiR/issues)
 
+## 运行系统
+win10+， win7 需要安装KB2670838补丁
+
 ## 编译
 目前支持以下两种方式编译：
 * Visual Studio 2019或2022。
@@ -140,3 +143,5 @@ Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,
 ![image](demo_image/demo_template_listview.png)
 ### demo drawing board:
 ![image](demo_image/demo_drawingboard.png)
+### demo propertygrid:
+![image](demo_image/demo_propertygrid.png)
