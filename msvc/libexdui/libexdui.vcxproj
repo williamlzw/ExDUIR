@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\src\Class_CheckBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_DateBox_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_DrawingBoard_ex.cpp" />
     <ClCompile Include="..\..\src\Class_EditEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Edit_ex.cpp" />
     <ClCompile Include="..\..\src\Class_GroupBox_ex.cpp" />
@@ -40,7 +41,9 @@
     <ClCompile Include="..\..\src\Class_MosaicLoading_ex.cpp" />
     <ClCompile Include="..\..\src\Class_NavButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Palette_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_ColorPicker_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ProgressBar_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_RadioButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ReportListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_RotateImageBox_ex.cpp" />
@@ -92,6 +95,7 @@
     <ClInclude Include="..\..\include\Class_CheckBox_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_DateBox_ex.h" />
+    <ClInclude Include="..\..\include\Class_DrawingBoard_ex.h" />
     <ClInclude Include="..\..\include\Class_EditEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Edit_ex.h" />
     <ClInclude Include="..\..\include\Class_GroupBox_ex.h" />
@@ -102,7 +106,9 @@
     <ClInclude Include="..\..\include\Class_MosaicLoading_ex.h" />
     <ClInclude Include="..\..\include\Class_NavButton_ex.h" />
     <ClInclude Include="..\..\include\Class_Palette_ex.h" />
+    <ClInclude Include="..\..\include\Class_ColorPicker_ex.h" />
     <ClInclude Include="..\..\include\Class_ProgressBar_ex.h" />
+    <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h" />
     <ClInclude Include="..\..\include\Class_RadioButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_ReportListView_ex.h" />
     <ClInclude Include="..\..\include\Class_RotateImageBox_ex.h" />
@@ -155,26 +161,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -254,11 +260,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <CallingConvention>StdCall</CallingConvention>
+      <CallingConvention>Cdecl</CallingConvention>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -268,6 +274,7 @@
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <MinimalRebuild>false</MinimalRebuild>
       <DebugInformationFormat>None</DebugInformationFormat>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
