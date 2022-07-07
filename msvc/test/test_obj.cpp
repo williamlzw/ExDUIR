@@ -3178,7 +3178,8 @@ void test_propertygrid(HWND hParent)
 	item.title = L"小组B";
 	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
 	item.title = L"颜色二";
-	item.text = std::to_wstring(ExRGB2ARGB(3523123, 255)).c_str();
+	color = std::to_wstring(ExRGB2ARGB(3523123, 255));
+	item.text = color.c_str();
 	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
 	item.title = L"组合框二";
 	item.textComboBox.clear();
