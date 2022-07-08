@@ -5,7 +5,7 @@ void _easing_curve_free(LPVOID pCurveInfo)
     Ex_MemFree(pCurveInfo);
 }
 
-void _easing_calc_curve(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, size_t param)
+void CALLBACK _easing_calc_curve(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, size_t param)
 {
     INT dwType = ((easinghead_s *)param)->type_;
     INT nCount = ((easinghead_s *)param)->node_count_;
@@ -126,16 +126,16 @@ void _easing_progress(HEXEASING pEasing)
         {
             fDesc = FALSE;
         }
-        nProcessTime = GetTickCount64();
+        nProcessTime = timeGetTime();
         INT i = 1;
         BOOL fStop = FALSE;
         while (i <= nFrameCount)
         {
-            Ex_Sleep((nInterval - (GetTickCount64() - nProcessTime)) * 1000);
+            Ex_Sleep((nInterval - (timeGetTime() - nProcessTime)) * 1000);
             if (((EX_EASING *)pEasing)->nState == EES_PAUSE)
             {
                 WaitForSingleObject(((EX_EASING *)pEasing)->hEventPause, INFINITE); //停住最大程度节省CPU
-                nProcessTime = GetTickCount64();                                    //如果没停住,则延时一段时间节省CPU
+                nProcessTime = timeGetTime();                                    //如果没停住,则延时一段时间节省CPU
                 continue;
             }
             nProcess = nFrameStep * i;
@@ -171,7 +171,7 @@ void _easing_progress(HEXEASING pEasing)
                 break;
             }
             i = i + 1;
-            nProcessTime = GetTickCount64();
+            nProcessTime = timeGetTime();
         }
         nTimes = nTimes - 1;
     }
@@ -183,7 +183,7 @@ void _easing_progress(HEXEASING pEasing)
     Ex_MemFree(pEasing);
 }
 
-INT  _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE *nCurrent)
+INT _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nStart, INT nStop, DOUBLE nProgress, DOUBLE *nCurrent)
 {
     if (lpEasingProc != 0)
     {
@@ -196,7 +196,7 @@ INT  _easing_calc(LPVOID lpEasingProc, INT nType, LPVOID pEasingContext, INT nSt
     return 1;
 }
 
-void _easing_calc_line(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param)
+void CALLBACK _easing_calc_line(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param)
 {
     DOUBLE nPst = nProgress * 100;
     DOUBLE n = 0;
@@ -212,7 +212,7 @@ void _easing_calc_line(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::vect
     }
 }
 
-void _easing_calc_bezier(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param)
+void CALLBACK _easing_calc_bezier(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param)
 {
     if (nCount <= 0)
         return;
@@ -242,7 +242,7 @@ void _easing_calc_bezier(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::ve
     *nCurrent = tmpTVs[0][1];
 }
 
-void _easing_calc_Bspline(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param)
+void CALLBACK _easing_calc_Bspline(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::vector<FLOAT>> aNodes, INT nCount, LPVOID param)
 {
     DOUBLE nPst = nProgress * 100;
     DOUBLE n = 0;
@@ -264,7 +264,7 @@ void _easing_calc_Bspline(DOUBLE nProgress, DOUBLE *nCurrent, std::vector<std::v
     }
 }
 
-void _easing_calc_Linear(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_Linear(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -274,7 +274,7 @@ void _easing_calc_Linear(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurre
     *nCurrent = _ed1 * nProgress + nStart;
 }
 
-void _easing_calc_InQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -284,7 +284,7 @@ void _easing_calc_InQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurre
     *nCurrent = _ed1 * nProgress * nProgress + nStart;
 }
 
-void _easing_calc_OutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -294,7 +294,7 @@ void _easing_calc_OutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = -_ed1 * nProgress * (nProgress - 2) + nStart;
 }
 
-void _easing_calc_InOutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -310,7 +310,7 @@ void _easing_calc_InOutQuad(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCu
     *nCurrent = -((DOUBLE)(nStop - nStart) / 2 * (_ts * (_ts - 2) - 1)) + nStart;
 }
 
-void _easing_calc_InCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -320,7 +320,7 @@ void _easing_calc_InCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = _ed1 * nProgress * nProgress * nProgress + nStart;
 }
 
-void _easing_calc_OutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -330,7 +330,7 @@ void _easing_calc_OutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCur
     *nCurrent = (DOUBLE)(nStop - nStart) * (_st * _st * _st + 1) + nStart;
 }
 
-void _easing_calc_InOutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -347,7 +347,7 @@ void _easing_calc_InOutCubic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nC
     *nCurrent = (DOUBLE)(_ed1 / 2 * (_st * _st * _st + 2)) + nStart;
 }
 
-void _easing_calc_InQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -357,7 +357,7 @@ void _easing_calc_InQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = _ed1 * nProgress * nProgress * nProgress * nProgress + nStart;
 }
 
-void _easing_calc_OutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -367,7 +367,7 @@ void _easing_calc_OutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCur
     *nCurrent = -((DOUBLE)(nStop - nStart) * (_st * _st * _st * _st - 1)) + nStart;
 }
 
-void _easing_calc_InOutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -384,7 +384,7 @@ void _easing_calc_InOutQuart(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nC
     *nCurrent = -(DOUBLE)(_ed1 / 2 * (_st * _st * _st * _st - 2)) + nStart;
 }
 
-void _easing_calc_InQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -394,7 +394,7 @@ void _easing_calc_InQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = _ed1 * nProgress * nProgress * nProgress * nProgress * nProgress + nStart;
 }
 
-void _easing_calc_OutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -405,7 +405,7 @@ void _easing_calc_OutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCur
     *nCurrent = _ed1 * (_st * _st * _st * _st * _st + 1) + nStart;
 }
 
-void _easing_calc_InOutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -422,7 +422,7 @@ void _easing_calc_InOutQuint(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nC
     *nCurrent = (DOUBLE)(_ed1 / 2 * (_st * _st * _st * _st * _st + 2)) + nStart;
 }
 
-void _easing_calc_InSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -432,7 +432,7 @@ void _easing_calc_InSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurre
     *nCurrent = -(DOUBLE)(_ed1 * cos(nProgress / 1 * 3.1415926 / 2)) + _ed1 + nStart;
 }
 
-void _easing_calc_OutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -442,7 +442,7 @@ void _easing_calc_OutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = -(DOUBLE)(_ed1 * sin(nProgress / 1 * 3.1415926 / 2)) + nStart;
 }
 
-void _easing_calc_InOutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -452,7 +452,7 @@ void _easing_calc_InOutSine(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCu
     *nCurrent = -(DOUBLE)(_ed1 / 2 * (cos(3.1415926 * nProgress / 1) - 1)) + nStart;
 }
 
-void _easing_calc_InExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -462,7 +462,7 @@ void _easing_calc_InExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurre
     *nCurrent = _ed1 * pow(2, 10 * (nProgress / 1 - 1)) + nStart;
 }
 
-void _easing_calc_OutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -472,7 +472,7 @@ void _easing_calc_OutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = _ed1 * (-pow(2, -10 * nProgress / 1) + 1) + nStart;
 }
 
-void _easing_calc_InOutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -489,7 +489,7 @@ void _easing_calc_InOutExpo(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCu
     *nCurrent = (DOUBLE)(_ed1 / 2 * (-pow(2, -10 * _st) + 2)) + nStart;
 }
 
-void _easing_calc_InCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -499,7 +499,7 @@ void _easing_calc_InCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurre
     *nCurrent = -_ed1 * (sqrt(1 - nProgress * nProgress) - 1) + nStart;
 }
 
-void _easing_calc_OutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -510,7 +510,7 @@ void _easing_calc_OutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = _ed1 * sqrt(1 - _st * _st) + nStart;
 }
 
-void _easing_calc_InOutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -527,7 +527,7 @@ void _easing_calc_InOutCirc(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCu
     *nCurrent = (DOUBLE)(_ed1 / 2 * (sqrt(1 - _st * _st) + 1)) + nStart;
 }
 
-void _easing_calc_InBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -536,7 +536,7 @@ void _easing_calc_InBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCur
     *nCurrent = _easing_calc_getInBounce(nStart, nStop, nProgress);
 }
 
-void _easing_calc_OutBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -545,7 +545,7 @@ void _easing_calc_OutBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCu
     *nCurrent = _easing_calc_getOutBounce(nStart, nStop, nProgress);
 }
 
-void _easing_calc_InOutBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutBounce(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -590,7 +590,7 @@ DOUBLE _easing_calc_getInBounce(DOUBLE nStart, DOUBLE nStop, DOUBLE nProgress)
     return _ed - _easing_calc_getOutBounce(0, _ed, 1 - nProgress) + nStart;
 }
 
-void _easing_calc_InBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -601,7 +601,7 @@ void _easing_calc_InBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurre
     *nCurrent = _ed * nProgress * nProgress * ((_s + 1) * nProgress - _s) + nStart;
 }
 
-void _easing_calc_OutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -613,7 +613,7 @@ void _easing_calc_OutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurr
     *nCurrent = _ed * (_st * _st * ((_s + 1) * _st + _s) + 1) + nStart;
 }
 
-void _easing_calc_InOutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -633,7 +633,7 @@ void _easing_calc_InOutBack(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCu
     *nCurrent = (DOUBLE)(_ed / 2 * (_st * _st * ((_s + 1) * _st + _s) + 2)) + nStart;
 }
 
-void _easing_calc_InElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -667,7 +667,7 @@ void _easing_calc_InElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCu
     *nCurrent = -(_a * pow(2, 10 * _st) * sin((DOUBLE)(_st * _d - _s) * 2 * 3.1415926 / _p)) + nStart;
 }
 
-void _easing_calc_OutElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_OutElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -700,7 +700,7 @@ void _easing_calc_OutElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nC
     *nCurrent = _a * pow(2, nProgress * -10) * sin((DOUBLE)(nProgress * _d - _s) * 2 * 3.1415926 / _p) + nStop;
 }
 
-void _easing_calc_InOutElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_InOutElastic(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -750,7 +750,7 @@ DOUBLE _easing_calc_asin(DOUBLE v)
     return atan((DOUBLE)v / sqrt(1 - v * v));
 }
 
-void _easing_calc_Clerp(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_Clerp(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -779,7 +779,7 @@ void _easing_calc_Clerp(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurren
     *nCurrent = _retval;
 }
 
-void _easing_calc_Spring(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_Spring(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;
@@ -789,7 +789,7 @@ void _easing_calc_Spring(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurre
     *nCurrent = nStart + (DOUBLE)(nStop - nStart) * _st;
 }
 
-void _easing_calc_Punch(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
+void CALLBACK _easing_calc_Punch(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE *nCurrent, LPVOID param)
 {
     if (nProgress < 0)
         nProgress = 0;

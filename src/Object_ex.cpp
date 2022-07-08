@@ -3140,6 +3140,7 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s *pObj, LPVOID lpImage, INT dwImag
     }
     else
     {
+        _obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
         HEXIMAGE hImg = 0;
         _img_createfrommemory(lpImage, dwImageLen, &hImg);
         if (hImg != 0)

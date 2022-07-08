@@ -797,7 +797,7 @@ std::vector<HEXOBJ> m_hPageNavbtn(4);
 INT m_nCurIndex = 1;
 
 
-size_t OnNavButtonPageEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
+size_t CALLBACK OnNavButtonPageEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
 {
 	for (INT i = 0; i < m_hPageNavbtn.size(); i++)
 	{
