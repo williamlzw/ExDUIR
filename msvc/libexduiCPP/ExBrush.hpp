@@ -48,7 +48,7 @@ namespace ExDUIR
 					m_brush = _brush_createlinear(xStart, yStart, xEnd, yEnd, crBegin, crEnd);
 				}
 
-				ExBrush(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const INT* arrStopPts, INT cStopPts)
+				ExBrush(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrStopPts, INT cStopPts)
 				{
 					m_brush = _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrStopPts, cStopPts);
 				}
