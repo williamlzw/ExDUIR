@@ -146,17 +146,12 @@ public:
 	//@cmember Create a timer with the specified timeout
 	BOOL TxSetTimer(UINT idTimer, UINT uTimeout)
 	{
-		/*((obj_base*)m_pOwner->pObj_)->timehWnd = _obj_gethwnd(m_pOwner->pObj_);
-		((obj_base*)m_pOwner->pObj_)->timeDelay = uTimeout;
-		((obj_base*)m_pOwner->pObj_)->timeEventTag = timeSetEvent(((obj_base*)m_pOwner->pObj_)->timeDelay, 0, _edit_timer_caret, (DWORD_PTR)m_pOwner->pObj_, TIME_PERIODIC);
-		return ((obj_base*)m_pOwner->pObj_)->timeEventTag == 0;*/
 		return SetTimer(_obj_gethwnd(m_pOwner->pObj_), idTimer, uTimeout, NULL);
 	};
 
 	//@cmember Destroy a timer
 	void TxKillTimer(UINT idTimer)
 	{
-		//timeKillEvent(((obj_base*)m_pOwner->pObj_)->timeEventTag);
 		KillTimer(_obj_gethwnd(m_pOwner->pObj_), idTimer);
 	};
 
@@ -605,32 +600,11 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	}
 }
 
-void CALLBACK _edit_timer_caret(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
-{
-	timeKillEvent(uTimerID);
-	INT nError = 0;
-	obj_s* pObj = (obj_s*)dwUser;
-
-	//obj_s *pObj = (obj_s *)(idEvent - TIMER_EDIT_CARET);
-	edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
-	if ((pOwner->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT)
-	{
-		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EEF_BCARETCONTEXT);
-		pOwner->flags_ = pOwner->flags_ | EEF_BCARETSHHOWED;
-	}
-	else
-	{
-		pOwner->flags_ = pOwner->flags_ | (EEF_BSHOWCARET | EEF_BCARETCONTEXT);
-		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EEF_BCARETSHHOWED);
-	}
-
-	_obj_invalidaterect(pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), &nError);
-}
-
-void CALLBACK _edit_timer_caret2(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+void CALLBACK _edit_timer_caret(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
 	INT nError = 0;
-	obj_s* pObj = (obj_s*)(idEvent - TIMER_EDIT_CARET);
+	obj_s* pObj = (obj_s*)lpParam;
+
 	edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 	if ((pOwner->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT)
 	{
@@ -920,11 +894,10 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			_obj_setuistate(pObj, STATE_FOCUS, FALSE, 0, TRUE, &nError);
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
 			{
-
-				SetTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET, 500, _edit_timer_caret2);
-				//((obj_base*)pObj)->timehWnd = hWnd;
-				//((obj_base*)pObj)->timeDelay = 500;
-				//((obj_base*)pObj)->timeEventTag = timeSetEvent(((obj_base*)pObj)->timeDelay, 0, _edit_timer_caret, (DWORD_PTR)pObj, TIME_PERIODIC);
+				((obj_base*)pObj)->timehWnd = hWnd;
+				((obj_base*)pObj)->timeDelay = 500;
+				CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _edit_timer_caret,
+					(PVOID)pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
 			}
 		}
 
@@ -932,8 +905,13 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		{
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
 			{
-				KillTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET);
-				//timeKillEvent(((obj_base*)pObj)->timeEventTag);
+				if (((obj_base*)pObj)->timerHandle)
+				{
+					if (DeleteTimerQueueTimer(((obj_base*)pObj)->timerQueue, ((obj_base*)pObj)->timerHandle, 0))
+					{
+						((obj_base*)pObj)->timerHandle = 0;
+					}
+				}
 				edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 				if ((pOwner->flags_ & (EEF_BSHOWCARET | EEF_BCARETCONTEXT)) == (EEF_BSHOWCARET | EEF_BCARETCONTEXT))
 				{

@@ -69,9 +69,10 @@ struct obj_base
     INT dwFlags_;
     EX_BACKGROUNDIMAGEINFO *lpBackgroundImage_;
     HEXTHEME hTheme_;
-    MMRESULT timeEventTag;//多媒体时钟ID
-    UINT timeDelay;//多媒体时钟延时时间
-    HWND timehWnd;//多媒体时钟关联的窗口句柄HWND
+    HANDLE timerQueue;//计时器队列
+    HANDLE timerHandle;//计时器句柄   
+    UINT timeDelay;//时钟延时时间
+    HWND timehWnd;//时钟关联的窗口句柄HWND
 };
 
 #define FLAGS_CHECK(a, b) (((a) & (b)) == (b))

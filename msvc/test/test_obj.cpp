@@ -153,11 +153,8 @@ void test_label(HWND hWnd)
 	Ex_ObjGetRect(hObj_label, &rect);
 	output(L"标签矩形:", rect.right, rect.bottom);
 
-	HEXOBJ hObj_label3 = Ex_ObjCreateEx(-1, L"static", NULL, -1, 10, 200, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
-	Ex_ReadFile(L"res/webp.webp", &imgdata);
-	Ex_ObjSetBackgroundImage(hObj_label3, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
 
-	HEXOBJ hObj_label4 = Ex_ObjCreateEx(-1, L"static", L"标签可以填充动画,支持PNG,GIF,JPG,BMP,WEBP格式,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
+	HEXOBJ hObj_label4 = Ex_ObjCreateEx(-1, L"static", L"标签可以填充动画,支持PNG,GIF,JPG,BMP,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
 	Ex_ObjSetFontFromFamily(hObj_label4, L"宋体", 14, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(hObj_label4, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
@@ -3121,14 +3118,18 @@ LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 			output(L"置\"名称2\"对应值");
 		}
 		else if (nID == 102)
+		{
 			Ex_ObjMove(PropertyGrid_hObj, 20, 30, 350, 360, TRUE);
+		}
 	}
 	return 0;
 }
 
 LRESULT CALLBACK OnPropertyGridEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	//output(L"属性框值改变 ,对应行索引=", wParam, (LPCWSTR)__get((void*)lParam, 24));
+	EX_PROGRID_CHANGEITEMINFO itemInfo{ 0 };
+	RtlMoveMemory(&itemInfo, (void*)lParam, sizeof(EX_PROGRID_CHANGEITEMINFO));
+	output(L"属性框值改变, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:", itemInfo.type);
 	return 0;
 }
 
@@ -3143,22 +3144,28 @@ void test_propertygrid(HWND hParent)
 	Ex_ObjHandleEvent(PropertyGrid_hObj, PGN_ITEMVALUECHANGE, OnPropertyGridEvent);
 
 	Ex_ObjSetColor(PropertyGrid_hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(14737632, 255), TRUE);
-	//-------------------------------------------
+
 	auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"取表项内容", -1, 380, 70, 100, 30, hExDui_propertygrid, 100, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
 	hObj1 = Ex_ObjCreateEx(-1, L"button", L"置表项内容", -1, 380, 120, 100, 30, hExDui_propertygrid, 101, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
 	hObj1 = Ex_ObjCreateEx(-1, L"button", L"修改组件大小", -1, 380, 170, 100, 30, hExDui_propertygrid, 102, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
-	//-------------------------------------------
-
 
 	EX_PROGRID_ITEMINFO item;
 	item.title = L"小组A";
 	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
 	item.title = L"组合框一";
-	item.textComboBox.push_back(L"表项1-1");
-	item.textComboBox.push_back(L"表项1-2");
+	EX_PROGRID_ITEMINFO_COMBOBOX a;
+	a.text = L"表项1-1";
+	EX_PROGRID_ITEMINFO_COMBOBOX b;
+	b.text = L"表项1-2";
+
+	item.textComboBox[0] = a;
+	item.textComboBox[1] = b;
+	item.comboboxNum = 2;
+
+
 	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
 	item.title = L"颜色";
 	auto color = std::to_wstring(ExRGB2ARGB(167549, 255));
@@ -3182,9 +3189,16 @@ void test_propertygrid(HWND hParent)
 	item.text = color.c_str();
 	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
 	item.title = L"组合框二";
-	item.textComboBox.clear();
-	item.textComboBox.push_back(L"表项2-1");
-	item.textComboBox.push_back(L"表项2-2");
+
+	EX_PROGRID_ITEMINFO_COMBOBOX c;
+	c.text = L"表项2-1";
+	EX_PROGRID_ITEMINFO_COMBOBOX d;
+	d.text = L"表项2-2";
+
+	item.textComboBox[0] = c;
+	item.textComboBox[1] = d;
+	item.comboboxNum = 3;
+
 	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
 	for (int i = 4; i < 8; i++)
 	{
@@ -3198,4 +3212,50 @@ void test_propertygrid(HWND hParent)
 	item.text = L"最后一个值";
 	Ex_ObjSendMessage(PropertyGrid_hObj, PGN_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
 	Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+LRESULT CALLBACK OnNativeWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_NCLBUTTONDBLCLK)
+	{
+		// 禁用标题栏双击最大化消息
+		return 1;
+	}
+	else if (uMsg == WM_NCLBUTTONDOWN)
+	{
+		// 禁用标题栏鼠标按下拖动消息
+		if (wParam == HTCAPTION)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void test_nativewindow(HWND hParent)
+{
+	HWND hWnd_nativewindow = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试原生子窗口", 0, 0, 300, 320, 0, 0);
+	auto hExDui_nativewindow = Ex_DUIBindWindowEx(hWnd_nativewindow, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW  | EWS_BUTTON_CLOSE | EWS_TITLE, 0, 0);
+	Ex_DUISetLong(hExDui_nativewindow, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	// 子窗口是原生窗口，父窗口需要删除这个WS_EX_LAYERED风格
+	SetWindowLongPtrW(hWnd_nativewindow, GWL_EXSTYLE, GetWindowLongPtrW(hWnd_nativewindow, GWL_EXSTYLE) & ~WS_EX_LAYERED);
+	// 获取父窗口屏幕偏移坐标,设置子窗口起点坐标
+	RECT rc;
+	GetWindowRect(hWnd_nativewindow, &rc);
+	HDC dc = GetDC(NULL);
+	FLOAT dpiy = (FLOAT)GetDeviceCaps(dc, 90) / 96;
+
+	int offsetx = (rc.right - rc.left - 300) / 2;
+	int offsety = (rc.bottom - rc.top - 300) / 2 + 20 * dpiy;
+	auto hWnd_child = Ex_WndCreate(hWnd_nativewindow, 0, 0, -rc.left + offsetx, -rc.top + offsety, 300, 300, WS_CHILD | WS_OVERLAPPEDWINDOW, 0);
+	// 注意给子窗口添加一个回调，禁用移动和最大化
+	auto hExDui_child = Ex_DUIBindWindowEx(hWnd_child, 0, EWS_NOSHADOW, 0, OnNativeWndMsgProc);
+
+	// 可以在子窗口创建原生win32组件,mfc组件,第三方组件诸如cef,miniblink,webview2,锐浪报表,aplayer
+
+	//子窗口也可以设置背景色
+	Ex_DUISetLong(hExDui_child, EWL_CRBKG, ExARGB(0, 0, 0, 255));
+
+	Ex_DUIShowWindow(hExDui_child, SW_SHOWNORMAL, 0, 0, 0);
+	Ex_DUIShowWindow(hExDui_nativewindow, SW_SHOWNORMAL, 0, 0, 0);
 }

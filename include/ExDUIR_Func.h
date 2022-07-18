@@ -2729,9 +2729,9 @@ BOOL Ex_ObjSetTextFormat(HEXOBJ hObj, DWORD dwTextFormat, BOOL bRedraw);
 *
 * @param 1  hObj                    [HEXOBJ]
 * @param 2  uElapse                 [INT]单位毫秒
-* @return [INT]返回索引
+* @return [INT]返回计数器句柄
 */
-INT Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse);
+HANDLE Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse);
 
 /*
 * @fnType ExDirectUI

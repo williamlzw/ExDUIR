@@ -224,7 +224,7 @@ INT _combobox_setcursel(obj_s *pObj, size_t nIndex)
     INT cur = _obj_setextralong(pObj, ECBL_CURRENTSELECTED, nIndex);
     LPCWSTR title = _combobox_getitemtitle(pObj, nIndex);
     _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_SETTEXT, 1, (size_t)title);
-    _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, CBN_SELCHANGE, 0, pObj->hObj_);
+    _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, CBN_SELCHANGE, nIndex, pObj->hObj_);
     return cur;
 }
 

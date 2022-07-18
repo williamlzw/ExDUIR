@@ -14,8 +14,8 @@ BOOL _dx_init(INT *nError)
         D2D1_FACTORY_OPTIONS options;
         options.debugLevel = D2D1_DEBUG_LEVEL_ERROR;
         //创建工厂
-        *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, & g_Ri.pD2Dfactory);
-        //*nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Ri.pD2Dfactory);
+        //*nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, options, & g_Ri.pD2Dfactory);
+        *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Ri.pD2Dfactory);
 #else
         * nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &g_Ri.pD2Dfactory);
 #endif

@@ -1794,14 +1794,27 @@ struct EX_DATETIME {
 	INT Wday;				//星期 1-7 7=星期日
 };
 
+// 属性框项目组合框子结构 
+struct EX_PROGRID_ITEMINFO_COMBOBOX
+{
+	LPCWSTR text = L"test";	// 组合框条目内容, 默认内容为test
+};
+
 // 属性框项目结构 
 struct EX_PROGRID_ITEMINFO
 {
-	size_t index = 0;//默认0,为尾部.索引从非表头开始计算,从1开始
-	LPCWSTR title;
-	LPCWSTR text;//注意对于颜色框 为文本数字
-	std::vector<std::wstring> textComboBox; //仅wParam为[PGT_OBJ_COMBOBOX]  有效
-	//其他需求再拓展
+	size_t index = 0;				//默认0,为尾部.索引从非表头开始计算,从1开始
+	LPCWSTR title;					//标题
+	LPCWSTR text;					//注意对于颜色框 为文本数字
+	EX_PROGRID_ITEMINFO_COMBOBOX textComboBox[50];  //组合框数组内容
+	size_t comboboxNum;							//组合框数组数量
+};
+
+// 属性框项目值改变信息结构 PGN_ITEMVALUECHANGE通知参数lParam
+struct EX_PROGRID_CHANGEITEMINFO
+{
+	INT type;      // 改变类型 
+	LPCWSTR text;  // 改变内容,注意对于颜色框 为文本数字
 };
 
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name

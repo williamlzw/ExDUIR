@@ -34,7 +34,6 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			pObj->dwOwnerData_ = monthCal_;
 		}
 		break;
-
 		case WM_DESTROY:
 		{
 			monthCal_info* monthCal_ = MONTHCAL(pObj->dwOwnerData_);
@@ -42,19 +41,15 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			monthCal_ = nullptr;
 		}
 		break;
-
 		case WM_PAINT:
 			return _calendar_paint(hObj, pObj);
 			break;
-
 		case WM_MOUSEHOVER:
 			Ex_ObjSetUIState(hObj, STATE_HOVER, false, 0, true);
 			break;
-
 		case WM_MOUSELEAVE:
 			Ex_ObjSetUIState(hObj, STATE_HOVER, true, 0, true);
 			break;
-
 		case WM_LBUTTONDOWN:
 			MONTHCAL(pObj->dwOwnerData_)->pt = { LOWORD(lParam), HIWORD(lParam) };
 			if (PtInRect(&MONTHCAL(pObj->dwOwnerData_)->rcTitleBar, MONTHCAL(pObj->dwOwnerData_)->pt))

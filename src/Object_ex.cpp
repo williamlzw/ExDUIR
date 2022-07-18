@@ -1927,8 +1927,13 @@ void _obj_backgroundimage_clear(HWND hWnd, obj_base *pObj)
 
     if (dwTmp != 0)
     {
-        //KillTimer(hWnd, (UINT_PTR)((size_t)pObj + TIMER_BKG));
-        timeKillEvent(pObj->timeEventTag);
+        if (pObj->timerHandle)
+        {
+            if (DeleteTimerQueueTimer(pObj->timerQueue, pObj->timerHandle, 0))
+            {
+                pObj->timerHandle = 0;
+            }  
+        } 
         _img_destroy(((EX_BACKGROUNDIMAGEINFO *)dwTmp)->hImage);
         _struct_destroyfromaddr(dwTmp, offsetof(EX_BACKGROUNDIMAGEINFO, lpDelay));
         _struct_destroyfromaddr(dwTmp, offsetof(EX_BACKGROUNDIMAGEINFO, lpGrid));
@@ -1973,8 +1978,7 @@ void _obj_destroy(HEXOBJ hObj, obj_s *pObj, INT *nError)
     {
         pWnd->objChildFirst_ = pObj->objNext_;
     }
-    //timer
-    KillTimer(hWnd, (UINT_PTR)((size_t)pObj + TIMER_OBJECT));
+
     //backgroundinfo
     _obj_backgroundimage_clear(hWnd, (obj_base *)pObj);
 
@@ -2093,8 +2097,12 @@ HEXOBJ _obj_create_init(HWND hWnd, wnd_s *pWnd, EXATOM atomClass, MsgPROC pfnMsg
     (*pObj)->dwAlphaDisable_ = 128;
     (*pObj)->hCursor_ = pCls->hCursor;
     (*pObj)->lpBackgroundImage_ = 0;
+    //新增 初始化计时器队列
+    ((obj_base*)*pObj)->timerQueue = CreateTimerQueue();
     if (atomClass == ATOM_PAGE)
+    {
         (*pObj)->dwFlags_ = (*pObj)->dwFlags_ | EOF_BPAGE;
+    }
     return hObj;
 }
 
@@ -3094,11 +3102,9 @@ BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO *lpBackgro
     return nError == 0;
 }
 
-void CALLBACK _obj_backgroundimage_timer(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
+void CALLBACK _obj_backgroundimage_timer(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
-    timeKillEvent(uTimerID);
-
-    obj_base* pObj = (obj_base*)dwUser;
+    obj_base* pObj = (obj_base*)lpParam;
     HWND hWnd = pObj->timehWnd;
     EX_BACKGROUNDIMAGEINFO *lpBI = pObj->lpBackgroundImage_;
     if (lpBI != 0)
@@ -3126,7 +3132,6 @@ void CALLBACK _obj_backgroundimage_timer(UINT uTimerID, UINT uMsg, DWORD_PTR dwU
                 _wnd_redraw_bkg(hWnd, (wnd_s *)pObj, 0, TRUE, FALSE);
             }
             UpdateWindow(hWnd);
-            pObj->timeEventTag = timeSetEvent(pObj->timeDelay, 0, _obj_backgroundimage_timer, (DWORD_PTR)pObj, TIME_PERIODIC);
         }
     }
 }
@@ -3177,7 +3182,8 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s *pObj, LPVOID lpImage, INT dwImag
                         {
                             ((obj_base*)pObj)->timehWnd = hWnd;
                             ((obj_base*)pObj)->timeDelay = lpDelay2[0] * 10;
-                            ((obj_base*)pObj)->timeEventTag = timeSetEvent(((obj_base*)pObj)->timeDelay, 0, _obj_backgroundimage_timer, (DWORD_PTR)pObj, TIME_PERIODIC);
+                            CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _obj_backgroundimage_timer,
+                                pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
                         }
                     }
                     else
@@ -3241,8 +3247,13 @@ void _obj_backgroundimage_frames(HWND hWnd, obj_s *pObj, BOOL bResetFrame, BOOL 
         _img_getframecount(hImg, &framecount);
         if (framecount > 1)
         {
-            KillTimer(hWnd, (size_t)pObj + TIMER_BKG);
-            timeKillEvent(((obj_base*)pObj)->timeEventTag);
+            if (((obj_base*)pObj)->timerHandle)
+            {
+                if (DeleteTimerQueueTimer(((obj_base*)pObj)->timerQueue, ((obj_base*)pObj)->timerHandle, NULL))\
+                {
+                    ((obj_base*)pObj)->timerHandle = 0;
+                }
+            }
             if (bResetFrame)
             {
                 _img_selectactiveframe(hImg, 0);
@@ -3252,7 +3263,8 @@ void _obj_backgroundimage_frames(HWND hWnd, obj_s *pObj, BOOL bResetFrame, BOOL 
                 INT *lpdelay = (INT *)lpBI->lpDelay;
                 INT curFrame = lpBI->curFrame;
                 ((obj_base*)pObj)->timeDelay = lpdelay[curFrame] * 10;
-                ((obj_base*)pObj)->timeEventTag = timeSetEvent(((obj_base*)pObj)->timeDelay, 0, _obj_backgroundimage_timer, (DWORD_PTR)pObj, TIME_PERIODIC);
+                CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _obj_backgroundimage_timer,
+                    pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
             }
 
             if (((pObj->dwFlags_ & EOF_OBJECT) == EOF_OBJECT))
@@ -3285,29 +3297,30 @@ BOOL Ex_ObjSetBackgroundPlayState(EXHANDLE handle, BOOL fPlayFrames, BOOL fReset
 }
 
 
-void CALLBACK _obj_mediatimer_object(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
+void CALLBACK _obj_mediatimer_object(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
-    Ex_ObjSendMessage(dwUser, WM_TIMER, 0, 0);
+    Ex_ObjSendMessage((HEXOBJ)lpParam, WM_TIMER, 0, 0);
     INT nError = 0;
     obj_s* pObj = nullptr;
-    if (_handle_validate(dwUser, HT_OBJECT, (LPVOID*)&pObj, &nError))
+    if (_handle_validate((HEXOBJ)lpParam, HT_OBJECT, (LPVOID*)&pObj, &nError))
     {
         UpdateWindow(((obj_base*)pObj)->timehWnd);
     }
 }
 
-INT Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
+HANDLE Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
 {
     obj_s *pObj = nullptr;
     INT nError = 0;
-    INT ret = 0;
+    HANDLE ret = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
         wnd_s *pWnd = pObj->pWnd_;
         ((obj_base*)pObj)->timehWnd = pWnd->hWnd_;
         ((obj_base*)pObj)->timeDelay = uElapse;
-        ret = timeSetEvent(((obj_base*)pObj)->timeDelay, 0, _obj_mediatimer_object, (DWORD_PTR)hObj, TIME_PERIODIC);// | TIME_KILL_SYNCHRONOUS
-        ((obj_base*)pObj)->timeEventTag = ret;
+        CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _obj_mediatimer_object,
+            (void*)hObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
+        ret = ((obj_base*)pObj)->timerHandle;
     }
     Ex_SetLastError(nError);
     return ret;
@@ -3320,8 +3333,13 @@ BOOL Ex_ObjKillTimer(HEXOBJ hObj)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
         wnd_s *pWnd = pObj->pWnd_;
-        //KillTimer(pWnd->hWnd_, (size_t)pObj + TIMER_OBJECT);
-        timeKillEvent(((obj_base*)pObj)->timeEventTag);
+        if (((obj_base*)pObj)->timerHandle)
+        {
+            if (DeleteTimerQueueTimer(((obj_base*)pObj)->timerQueue, ((obj_base*)pObj)->timerHandle, NULL))
+            {
+                ((obj_base*)pObj)->timerHandle = 0;
+            }
+        }
     }
     Ex_SetLastError(nError);
     return nError == 0;
@@ -3444,8 +3462,11 @@ void CALLBACK _obj_tooltips_pop_func(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWO
 
 void CALLBACK _obj_tooltips_popup_func(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-    if (uMsg == 275)
+    if (uMsg == WM_TIMER)
+    {
         KillTimer(hWnd, idEvent);
+    }
+        
     wnd_s *pWnd = (wnd_s *)(idEvent - TIMER_TOOLTIPS_POPUP);
     INT offset;
 
@@ -3504,6 +3525,7 @@ void _obj_tooltips_popup(wnd_s *pWnd, LPCWSTR lpTitle, LPCWSTR lpText, INT x, IN
         else
         {
             SetTimer(hWnd, (size_t)pWnd + TIMER_TOOLTIPS_POPUP, g_Li.dwClickTime / 2, _obj_tooltips_popup_func);
+
         }
     }
 }

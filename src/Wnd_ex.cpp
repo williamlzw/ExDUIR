@@ -290,16 +290,29 @@ WPARAM Ex_WndMsgLoop()
 HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName, INT x, INT y, INT width, INT height, INT dwStyle, INT dwStyleEx)
 {
     if (dwStyle == 0)
+    {
         dwStyle = WS_OVERLAPPEDWINDOW;
-    if (dwStyleEx == 0)
-        dwStyleEx = 768;
-    dwStyleEx = dwStyleEx | WS_EX_LAYERED;
-    if (lpwzClassName == 0)
-        lpwzClassName = (LPCWSTR)g_Li.atomClassName;
-    HINSTANCE hInst = g_Li.hInstance;
+    }
 
+    if (dwStyleEx == 0)
+    {
+        dwStyleEx = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
+    }
+    if ((dwStyle & WS_CHILD) != WS_CHILD)
+    {
+        dwStyleEx = dwStyleEx | WS_EX_LAYERED;
+    }
+
+    if (lpwzClassName == 0)
+    {
+        lpwzClassName = (LPCWSTR)g_Li.atomClassName;
+    }
+
+    HINSTANCE hInst = g_Li.hInstance;
     if (IsWindow(hWndParent))
+    {
         hInst = (HINSTANCE)GetWindowLongPtrW(hWndParent, GWLP_HINSTANCE);
+    }
 
     HWND hWnd = CreateWindowExW(dwStyleEx, lpwzClassName, lpwzWindowName, dwStyle, x, y, width, height, hWndParent, NULL, hInst, NULL);
     if (hWnd != 0)
@@ -307,7 +320,6 @@ HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName
         SendMessageW(hWnd, 128, 0, (LPARAM)g_Li.hIconsm);
         SendMessageW(hWnd, 128, 1, (LPARAM)g_Li.hIcon);
     }
-
     return hWnd;
 }
 
@@ -347,23 +359,22 @@ BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
     INT styleNew = __get_int((LPVOID)lParam, 4);
     INT styleDui = pWnd->dwStyle_;
 
-    if (wParam == -20)
+    if (wParam == GWL_EXSTYLE)
     {
-
+        
         if (((pWnd->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
         {
             pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLAYERED;
         }
         else
         {
-
             if (__query_int((LPVOID)lParam, 4, WS_EX_LAYERED)) //待定有问题
             {
+                
                 pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BLAYERED);
             }
             else
             {
-
                 if (((pWnd->dwFlags_ & EWF_BLAYERED) == EWF_BLAYERED))
                 {
                     pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BLAYERED);
@@ -375,7 +386,7 @@ BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
     else
     {
         styleNew = (styleNew & ~(WS_DLGFRAME | WS_BORDER));
-        if ((styleDui & EWS_BUTTON_MIN) == 0 || (styleDui & EWS_FULLSCREEN) != 0)
+        if ((styleDui & EWS_BUTTON_MIN) == 0 || (styleDui & EWS_FULLSCREEN) == EWS_FULLSCREEN)
         {
             styleNew = (styleNew & ~WS_MINIMIZEBOX);
         }
@@ -384,7 +395,7 @@ BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
             styleNew = styleNew | WS_MINIMIZEBOX;
         }
 
-        if ((styleDui & EWS_BUTTON_MAX) == 0 || (styleDui & EWS_FULLSCREEN) != 0)
+        if ((styleDui & EWS_BUTTON_MAX) == 0 || (styleDui & EWS_FULLSCREEN) == EWS_FULLSCREEN)
         {
             styleNew = (styleNew & ~WS_MAXIMIZEBOX);
         }
@@ -393,7 +404,7 @@ BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
             styleNew = styleNew | WS_MAXIMIZEBOX;
         }
 
-        if ((styleDui & EWS_FULLSCREEN) != 0)
+        if ((styleDui & EWS_FULLSCREEN) == EWS_FULLSCREEN)
         {
             styleNew = (styleNew & ~WS_SYSMENU);
         }
@@ -402,7 +413,7 @@ BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
             styleNew = styleNew | WS_SYSMENU;
         }
 
-        if ((styleDui & EWS_SIZEABLE) != 0)
+        if ((styleDui & EWS_SIZEABLE) == EWS_SIZEABLE)
         {
             styleNew = styleNew | WS_THICKFRAME;
         }
@@ -1016,8 +1027,10 @@ INT _wnd_create(HEXDUI hExDui, wnd_s *pWnd, HWND hWnd, INT dwStyle, HEXTHEME hTh
 
     if (_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE) || ((dwStyle & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
     {
+        
         dwFlags = EWF_BLAYERED;
     }
+   
     if (hWndParent != 0)
     {
         pWnd->hExDuiParent_ = Ex_DUIFromWindow(hWndParent);
@@ -2124,7 +2137,6 @@ void _wnd_wm_size(wnd_s *pWnd, HWND hWnd, WPARAM wParam, INT width, INT height)
         Ex_ObjSetPos(pWnd->objCaption_, 0, 0, 0, rcCaption.right - rcCaption.left, EOP_DEFAULT, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_EX_NODPISCALE);
         if (pWnd->dwWinState_ != wParam)
         {
-
             if (((pWnd->dwStyle_ & EWS_BUTTON_MAX) == EWS_BUTTON_MAX))
             {
                 Ex_ObjInvalidateRect(_obj_getobjfromidorname(pWnd, EWS_BUTTON_MAX), 0);

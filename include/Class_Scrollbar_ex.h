@@ -25,7 +25,7 @@ void _scrollbar_nccalcsize(HWND hWnd, HEXOBJ hObj, obj_s *pObj);
 INT _scrollbar_pointtopos(si_s *psi, INT x, INT y, BOOL bVert, BOOL bCheckPos);
 void _scrollbar_nchittest(obj_s *pObj, INT x, INT y);
 void _scrollbar_mousemove(HWND hWnd, HEXOBJ hObj, obj_s *pObj, WPARAM wParam, INT x, INT y);
-void CALLBACK _scrollbar_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
+void CALLBACK _scrollbar_timer(PVOID lpParam, BOOLEAN TimerOrWaitFired);
 void _scrollbar_leftbuttondown(HWND hWnd, HEXOBJ hObj, obj_s *pObj, LPARAM lParam);
 void _scrollbar_leftbuttonup(HWND hWnd, HEXOBJ hObj, obj_s *pObj, LPARAM lParam);
 void _scrollbar_oncommand(HWND hWnd, HEXOBJ hObj, obj_s *pObj, WPARAM wParam, LPARAM lParam);

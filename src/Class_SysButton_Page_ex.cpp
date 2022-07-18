@@ -17,11 +17,11 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
     EXATOM atomState = 0;
     if (Ex_ObjBeginPaint(hObj, &ps))
     {
-        if ((ps.dwStyle & EWS_BUTTON_CLOSE) != 0)
+        if ((ps.dwStyle & EWS_BUTTON_CLOSE) == EWS_BUTTON_CLOSE)
         {
             atomClass = ATOM_SYSBUTTON_CLOSE;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_MAX) != 0)
+        else if ((ps.dwStyle & EWS_BUTTON_MAX) == EWS_BUTTON_MAX)
         {
             if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
             {
@@ -32,7 +32,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 atomClass = ATOM_SYSBUTTON_MAX;
             }
         }
-        else if ((ps.dwStyle & EWS_BUTTON_MIN) != 0)
+        else if ((ps.dwStyle & EWS_BUTTON_MIN) == EWS_BUTTON_MIN)
         {
             if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
             {
@@ -43,28 +43,28 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 atomClass = ATOM_SYSBUTTON_MIN;
             }
         }
-        else if ((ps.dwStyle & EWS_BUTTON_MENU) != 0)
+        else if ((ps.dwStyle & EWS_BUTTON_MENU) == EWS_BUTTON_MENU)
         {
             atomClass = ATOM_SYSBUTTON_MENU;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_SETTING) != 0)
+        else if ((ps.dwStyle & EWS_BUTTON_SETTING) == EWS_BUTTON_SETTING)
         {
             atomClass = ATOM_SYSBUTTON_SETTING;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_SKIN) != 0)
+        else if ((ps.dwStyle & EWS_BUTTON_SKIN) == EWS_BUTTON_SKIN)
         {
             atomClass = ATOM_SYSBUTTON_SKN;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_HELP) != 0)
+        else if ((ps.dwStyle & EWS_BUTTON_HELP) == EWS_BUTTON_HELP)
         {
             atomClass = ATOM_SYSBUTTON_HELP;
         }
 
-        if ((ps.dwState & STATE_DOWN) != 0)
+        if ((ps.dwState & STATE_DOWN) == STATE_DOWN)
         {
             atomState = ATOM_DOWN;
         }
-        else if ((ps.dwState & STATE_HOVER) != 0)
+        else if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
         {
             atomState = ATOM_HOVER;
         }
