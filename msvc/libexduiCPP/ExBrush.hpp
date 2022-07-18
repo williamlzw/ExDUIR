@@ -38,9 +38,9 @@ namespace ExDUIR
 					m_brush = _brush_createfromcanvas2(Canvas->m_canvas, alpha);
 				}*/
 
-				ExBrush(ExImage* Image)
+				ExBrush(ExImage Image)
 				{
-					m_brush = _brush_createfromimg(Image->m_image);
+					m_brush = _brush_createfromimg(Image.m_image);
 				}
 
 				ExBrush(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, EXARGB crBegin, EXARGB crEnd)
@@ -63,9 +63,9 @@ namespace ExDUIR
 					return m_color;
 				}
 
-				inline void TransFrom(ExMatrix* matrix)
+				inline void TransFrom(ExMatrix matrix)
 				{
-					_brush_settransform(m_brush, matrix->m_matrix);
+					_brush_settransform(m_brush, matrix.m_matrix);
 				}
 
 				inline BOOL Destroy()

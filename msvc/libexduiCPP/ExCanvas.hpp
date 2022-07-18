@@ -28,14 +28,14 @@ namespace ExDUIR
 					m_canvas = canvas;
 				}
 
-				ExCanvas(ExSkin* skin, INT width, INT height, INT dwFlags)
+				ExCanvas(ExSkin skin, INT width, INT height, INT dwFlags)
 				{
-					m_canvas = _canvas_createfromexdui(skin->m_handle, width, height, dwFlags);
+					m_canvas = _canvas_createfromexdui(skin.m_handle, width, height, dwFlags);
 				}
 
-				ExCanvas(ExControl* control, INT width, INT height, INT dwFlags)
+				ExCanvas(ExControl control, INT width, INT height, INT dwFlags)
 				{
-					m_canvas = _canvas_createfromobj(control->m_handle, width, height, dwFlags);
+					m_canvas = _canvas_createfromobj(control.m_handle, width, height, dwFlags);
 				}
 
 				inline BOOL Destroy()
@@ -43,73 +43,73 @@ namespace ExDUIR
 					return _canvas_destroy(m_canvas);
 				}
 
-				inline BOOL DrawCanvas(ExCanvas* canvas, INT dstLeft, INT dstTop, INT dstRight, INT dstBottom, INT srcLeft, INT srcTop, DWORD dwAlpha, DWORD dwCompositeMode)
+				inline BOOL DrawCanvas(ExCanvas canvas, INT dstLeft, INT dstTop, INT dstRight, INT dstBottom, INT srcLeft, INT srcTop, DWORD dwAlpha, DWORD dwCompositeMode)
 				{
-					return _canvas_drawcanvas(m_canvas, canvas->m_canvas, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, dwAlpha, dwCompositeMode);
+					return _canvas_drawcanvas(m_canvas, canvas.m_canvas, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, dwAlpha, dwCompositeMode);
 				}
 
-				inline BOOL DrawEllipse(ExBrush* brush, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY, FLOAT strokeWidth, DWORD strokeStyle)
+				inline BOOL DrawEllipse(ExBrush brush, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY, FLOAT strokeWidth, DWORD strokeStyle)
 				{
-					return _canvas_drawellipse(m_canvas, brush->m_brush, x, y, radiusX, radiusY, strokeWidth, strokeStyle);
+					return _canvas_drawellipse(m_canvas, brush.m_brush, x, y, radiusX, radiusY, strokeWidth, strokeStyle);
 				}
 
-				inline BOOL DrawImage(ExImage* image, FLOAT left, FLOAT top, DWORD alpha)
+				inline BOOL DrawImage(ExImage image, FLOAT left, FLOAT top, DWORD alpha)
 				{
-					return _canvas_drawimage(m_canvas, image->m_image, left, top, alpha);
+					return _canvas_drawimage(m_canvas, image.m_image, left, top, alpha);
 				}
 
-				inline BOOL DrawImageFromGrid(ExImage* image, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
+				inline BOOL DrawImageFromGrid(ExImage image, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
 					FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, FLOAT gridPaddingLeft, FLOAT gridPaddingTop, FLOAT gridPaddingRight,
 					FLOAT gridPaddingBottom, INT dwFlags, DWORD dwAlpha)
 				{
-					return _canvas_drawimagefromgrid(m_canvas, image->m_image, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom,
+					return _canvas_drawimagefromgrid(m_canvas, image.m_image, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom,
 						gridPaddingLeft, gridPaddingTop, gridPaddingRight, gridPaddingBottom, dwFlags, dwAlpha);
 				}
 
-				inline BOOL DrawImageRect(ExImage* image, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, DWORD alpha)
+				inline BOOL DrawImageRect(ExImage image, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, DWORD alpha)
 				{
-					return _canvas_drawimagerect(m_canvas, image->m_image, left, top, right, bottom, alpha);
+					return _canvas_drawimagerect(m_canvas, image.m_image, left, top, right, bottom, alpha);
 				}
 
-				inline BOOL DrawImageRectRect(ExImage* image, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
+				inline BOOL DrawImageRectRect(ExImage image, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
 					FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, DWORD alpha)
 				{
-					return _canvas_drawimagerectrect(m_canvas, image->m_image, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
+					return _canvas_drawimagerectrect(m_canvas, image.m_image, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
 				}
 
-				inline BOOL DrawLine(ExBrush* brush, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT strokeWidth, DWORD strokeStyle)
+				inline BOOL DrawLine(ExBrush brush, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT strokeWidth, DWORD strokeStyle)
 				{
-					return _canvas_drawline(m_canvas, brush->m_brush, x1, y1, x2, y2, strokeWidth, strokeStyle);
+					return _canvas_drawline(m_canvas, brush.m_brush, x1, y1, x2, y2, strokeWidth, strokeStyle);
 				}
 
-				inline BOOL DrawPath(ExPath* path, ExBrush* brush, FLOAT strokeWidth, DWORD strokeStyle)
+				inline BOOL DrawPath(ExPath path, ExBrush brush, FLOAT strokeWidth, DWORD strokeStyle)
 				{
-					return _canvas_drawpath(m_canvas, path->m_path, brush->m_brush, strokeWidth, strokeStyle);
+					return _canvas_drawpath(m_canvas, path.m_path, brush.m_brush, strokeWidth, strokeStyle);
 				}
 
-				inline BOOL DrawRect(ExBrush* brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT strokeWidth, DWORD strokeStyle)
+				inline BOOL DrawRect(ExBrush brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT strokeWidth, DWORD strokeStyle)
 				{
-					return _canvas_drawrect(m_canvas, brush->m_brush, left, top, right, bottom, strokeWidth, strokeStyle);
+					return _canvas_drawrect(m_canvas, brush.m_brush, left, top, right, bottom, strokeWidth, strokeStyle);
 				}
 
-				inline BOOL DrawRoundedRect(ExBrush* brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX, FLOAT radiusY, FLOAT strokeWidth, DWORD strokeStyle)
+				inline BOOL DrawRoundedRect(ExBrush brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX, FLOAT radiusY, FLOAT strokeWidth, DWORD strokeStyle)
 				{
-					return _canvas_drawroundedrect(m_canvas, brush->m_brush, left, top, right, bottom, radiusX, radiusY, strokeWidth, strokeStyle);
+					return _canvas_drawroundedrect(m_canvas, brush.m_brush, left, top, right, bottom, radiusX, radiusY, strokeWidth, strokeStyle);
 				}
 
-				inline BOOL DrawTextFromColor(ExFont* font, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				inline BOOL DrawTextFromColor(ExFont font, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 				{
-					return _canvas_drawtext(m_canvas, font->m_font, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom);
+					return _canvas_drawtext(m_canvas, font.m_font, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom);
 				}
 
-				inline BOOL DrawTextFromColorEx(ExFont* font, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
+				inline BOOL DrawTextFromColorEx(ExFont font, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
 				{
-					return _canvas_drawtextex(m_canvas, font->m_font, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, iGlowsize, crShadom, lParam);
+					return _canvas_drawtextex(m_canvas, font.m_font, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, iGlowsize, crShadom, lParam);
 				}
 
-				inline BOOL DrawTextFromBrush(ExFont* font, ExBrush* brush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				inline BOOL DrawTextFromBrush(ExFont font, ExBrush brush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 				{
-					return _canvas_drawtext2(m_canvas, font->m_font, brush->m_brush, lpwzText, dwLen, dwDTFormat, left, top, right, bottom);
+					return _canvas_drawtext2(m_canvas, font.m_font, brush.m_brush, lpwzText, dwLen, dwDTFormat, left, top, right, bottom);
 				}
 
 				inline BOOL BeginDraw()
@@ -122,34 +122,34 @@ namespace ExDUIR
 					return _canvas_enddraw(m_canvas);
 				}
 
-				inline BOOL FillEllipse(ExBrush* brush, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY)
+				inline BOOL FillEllipse(ExBrush brush, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY)
 				{
-					return _canvas_fillellipse(m_canvas, brush->m_brush, x, y, radiusX, radiusY);
+					return _canvas_fillellipse(m_canvas, brush.m_brush, x, y, radiusX, radiusY);
 				}
 
-				inline BOOL FillPath(ExPath* path, ExBrush* brush)
+				inline BOOL FillPath(ExPath path, ExBrush brush)
 				{
-					return _canvas_fillpath(m_canvas, path->m_path, brush->m_brush);
+					return _canvas_fillpath(m_canvas, path.m_path, brush.m_brush);
 				}
 
-				inline BOOL FillRect(ExBrush* brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				inline BOOL FillRect(ExBrush brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 				{
-					return _canvas_fillrect(m_canvas, brush->m_brush, left, top, right, bottom);
+					return _canvas_fillrect(m_canvas, brush.m_brush, left, top, right, bottom);
 				}
 
-				inline BOOL FillRegion(ExRegion* region, ExBrush* brush)
+				inline BOOL FillRegion(ExRegion region, ExBrush brush)
 				{
-					return _canvas_fillregion(m_canvas, region->m_region, brush->m_brush);
+					return _canvas_fillregion(m_canvas, region.m_region, brush.m_brush);
 				}
 
-				inline BOOL FillRoundedImage(ExImage* image, FLOAT left, FLOAT top, FLOAT width, FLOAT height, FLOAT radiusX, FLOAT radiusY, INT* shadowNum, INT number, EXARGB crShadow)
+				inline BOOL FillRoundedImage(ExImage image, FLOAT left, FLOAT top, FLOAT width, FLOAT height, FLOAT radiusX, FLOAT radiusY, INT* shadowNum, INT number, EXARGB crShadow)
 				{
-					return _canvas_fillroundedimage(m_canvas, image->m_image, left, top, width, height, radiusX, radiusY, shadowNum, number, crShadow);
+					return _canvas_fillroundedimage(m_canvas, image.m_image, left, top, width, height, radiusX, radiusY, shadowNum, number, crShadow);
 				}
 
-				inline BOOL FillRoundedRect(ExBrush* brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX, FLOAT radiusY)
+				inline BOOL FillRoundedRect(ExBrush brush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX, FLOAT radiusY)
 				{
-					return _canvas_fillroundedrect(m_canvas, brush->m_brush, left, top, right, bottom, radiusX, radiusY);
+					return _canvas_fillroundedrect(m_canvas, brush.m_brush, left, top, right, bottom, radiusX, radiusY);
 				}
 
 				inline BOOL Flush()
@@ -182,9 +182,9 @@ namespace ExDUIR
 					return _canvas_clear(m_canvas, color);
 				}
 
-				inline BOOL CalcTextSize(ExFont* font, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight)
+				inline BOOL CalcTextSize(ExFont font, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight)
 				{
-					return _canvas_calctextsize(m_canvas, font->m_font, lpwzText, dwLen, dwDTFormat, lParam, layoutWidth, layoutHeight, lpWidth, lpHeight);
+					return _canvas_calctextsize(m_canvas, font.m_font, lpwzText, dwLen, dwDTFormat, lParam, layoutWidth, layoutHeight, lpWidth, lpHeight);
 				}
 
 				inline BOOL Blur(FLOAT fDeviation, RECT* lprc)
@@ -227,9 +227,9 @@ namespace ExDUIR
 					return _canvas_settextantialiasmode(m_canvas, antialias);
 				}
 
-				inline BOOL SetTransform(ExMatrix* matrix)
+				inline BOOL SetTransform(ExMatrix matrix)
 				{
-					return _canvas_settransform(m_canvas, matrix->m_matrix);
+					return _canvas_settransform(m_canvas, matrix.m_matrix);
 				}
 			};
 		}

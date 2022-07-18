@@ -18,9 +18,9 @@ namespace ExDUIR
 				{
 					m_handle = hObj;
 				}
-				ExControl(ExUIbase* pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszClassName, LPCWSTR lptszObjTitle = NULL, INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = nullptr, MsgPROC lpfnMsgProc = NULL)
+				ExControl(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszClassName, LPCWSTR lptszObjTitle = NULL, INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = nullptr, MsgPROC lpfnMsgProc = NULL)
 				{
-					m_handle = Ex_ObjCreateEx(dwStyleEx, lptszClassName, lptszObjTitle, dwStyle, x, y, width, height, pOwner->m_handle, nID, dwTextFormat, lParam, hTheme, lpfnMsgProc);
+					m_handle = Ex_ObjCreateEx(dwStyleEx, lptszClassName, lptszObjTitle, dwStyle, x, y, width, height, pOwner.m_handle, nID, dwTextFormat, lParam, hTheme, lpfnMsgProc);
 				}
 
 				inline BOOL IsValidate() { return Ex_ObjIsValidate(m_handle); }
@@ -184,7 +184,7 @@ namespace ExDUIR
 					return Ex_ObjInvalidateRect(m_handle, &rc);
 				}
 
-				inline INT SetTimer(INT uElapse)
+				inline HANDLE SetTimer(INT uElapse)
 				{
 					return Ex_ObjSetTimer(m_handle, uElapse);
 				}
