@@ -73,6 +73,8 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
     {
         /*移出则恢复旋转*/
         Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);
+        
+        INT ntimer_ = (INT)Ex_ObjGetLong(hObj, EOL_USERDATA);
         Ex_ObjSetTimer(hObj, 50);
     }
     else if (uMsg == WM_DESTROY)

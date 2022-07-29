@@ -4,10 +4,10 @@ void CALLBACK pfnDefaultFreeFont(LPVOID dwData)
 {
     if (IsBadReadPtr(dwData, sizeof(font_s)))
     {
-        obj_s *pObj = ((font_s *)dwData)->pObj_;
-        if (pObj != 0)
+        IDWriteTextFormat* pObj = ((font_s *)dwData)->pObj_;
+        if (pObj)
         {
-            ((IDWriteFactory *)pObj)->Release();
+            pObj->Release();
         }
         Ex_MemFree(dwData);
     }
@@ -109,7 +109,7 @@ HEXFONT _font_createfromlogfont_ex(LOGFONTW *lpLogfont, INT flags)
             }
             g_Ri.pDWriteFactory->CreateTextFormat(pFont->font_.lfFaceName, NULL,
                                                   (DWRITE_FONT_WEIGHT)pFont->font_.lfWeight, (DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
-                                                  (FLOAT)(-pFont->font_.lfHeight), (WCHAR *)g_Ri.pLocaleName, (IDWriteTextFormat **)&(pFont->pObj_));
+                                                  (FLOAT)(-pFont->font_.lfHeight), (WCHAR *)g_Ri.pLocaleName, &pFont->pObj_);
         }
         else
         {
@@ -138,7 +138,7 @@ BOOL _font_getlogfont(HEXFONT hFont, LOGFONTW *lpLogFont)
 
 LPVOID _font_getcontext(HEXFONT hFont)
 {
-    font_s *pFont = 0;
+    font_s* pFont = nullptr;
     LPVOID ret = nullptr;
     HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t *)&pFont);
     if (pFont != 0)

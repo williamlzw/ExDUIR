@@ -75,31 +75,28 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 void _palette_genimage(HEXOBJ hObj)
 {
 	INT color[8] = { 255, 33023, 65535, 65280, 16776960, 16711680, 16711808, 255 };
-	INT nError = 0;
-	obj_s* pObj = nullptr;
-	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
+	RECT rc;
+	Ex_ObjGetRect(hObj, &rc);
+	auto canvas = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
+	_canvas_begindraw(canvas);
+	auto dc = _canvas_getdc(canvas);
+	auto GridWidth = Ex_Scale(rc.right - rc.left) / 7 + 1;
+	auto GridHeight = Ex_Scale(rc.bottom  - rc.top) / 2;
+	for (int i = 0; i < 7; i++)
 	{
-		auto canvas = _canvas_createfromobj(hObj, pObj->right_, pObj->bottom_, 0);
-		_canvas_begindraw(canvas);
-		auto dc = _canvas_getdc(canvas);
-		auto GridWidth = (pObj->right_ - pObj->left_) / 7 + 1;
-		auto GridHeight = (pObj->bottom_ - pObj->top_) / 2;
-		for (int i = 0; i < 7; i++)
-		{
-			_palette_drawgradientrect(dc, GridWidth * i, GridHeight, GridWidth * i + GridWidth, GridHeight + 1, color[i], color[i + 1], TRUE);
-		}
-		for (int i = 0; i < (pObj->right_ - pObj->left_); i++)
-		{
-			_palette_drawgradientrect(dc, i, 0, i + 1, GridHeight, ExRGB2ARGB(16777125, 0), GetPixel(dc, i, GridHeight), FALSE);
-			_palette_drawgradientrect(dc, i, GridHeight, i + 1, GridHeight * 2, GetPixel(dc, i, GridHeight), ExRGB2ARGB(0, 0), FALSE);
-		}
-		_canvas_releasedc(canvas);
-		_canvas_enddraw(canvas);
-		HEXIMAGE hImg;
-		_img_createfromcanvas(canvas, &hImg);
-		Ex_ObjSetLong(hObj, PTL_IMAGE, hImg);
-		_canvas_destroy(canvas);
+		_palette_drawgradientrect(dc, GridWidth * i, GridHeight, GridWidth * i + GridWidth, GridHeight + 1, color[i], color[i + 1], TRUE);
 	}
+	for (int i = 0; i < Ex_Scale(rc.right - rc.left); i++)
+	{
+		_palette_drawgradientrect(dc, i, 0, i + 1, GridHeight, ExRGB2ARGB(16777125, 0), GetPixel(dc, i, GridHeight), FALSE);
+		_palette_drawgradientrect(dc, i, GridHeight, i + 1, GridHeight * 2, GetPixel(dc, i, GridHeight), ExRGB2ARGB(0, 0), FALSE);
+	}
+	_canvas_releasedc(canvas);
+	_canvas_enddraw(canvas);
+	HEXIMAGE hImg;
+	_img_createfromcanvas(canvas, &hImg);
+	Ex_ObjSetLong(hObj, PTL_IMAGE, hImg);
+	_canvas_destroy(canvas);
 }
 
 void _palette_drawgradientrect(HDC hdc, INT left, INT top, INT right, INT bottom, EXARGB startColor, EXARGB endColor, BOOL horizontalGradient)

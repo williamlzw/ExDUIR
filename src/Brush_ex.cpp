@@ -14,7 +14,7 @@ BOOL _brush_destroy(HEXBRUSH hBrush)
     INT nError = 0;
     if (hBrush != 0)
     {
-        nError = ((ID2D1SolidColorBrush *)hBrush)->Release();
+        nError = ((ID2D1Brush*)hBrush)->Release();
     }
     return nError == 0;
 }

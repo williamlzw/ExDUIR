@@ -42,12 +42,12 @@ void _groupbox_paint(HEXOBJ hObj, obj_s *pObj)
         ps.rcPaint.top += strokewidth;
         ps.rcPaint.left += strokewidth;
 
-        _path_beginfigure2(hPath, static_cast<FLOAT>(ps.rcPaint.left + textoffset + rcText.right + 5 + radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2));
-        _path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.right - radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2), static_cast<FLOAT>(ps.rcPaint.right), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2 + radius), radius, radius, TRUE);
-        _path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.right), static_cast<FLOAT>(ps.rcPaint.bottom - radius), static_cast<FLOAT>(ps.rcPaint.right - radius), static_cast<FLOAT>(ps.rcPaint.bottom), radius, radius, TRUE);
-        _path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.left + radius), static_cast<FLOAT>(ps.rcPaint.bottom), static_cast<FLOAT>(ps.rcPaint.left), static_cast<FLOAT>(ps.rcPaint.bottom - radius), radius, radius, TRUE);
-        _path_addarc(hPath, static_cast<FLOAT>(ps.rcPaint.left), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2 + radius), static_cast<FLOAT>(ps.rcPaint.left + radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2), radius, radius, TRUE);
-        _path_addline(hPath, static_cast<FLOAT>(ps.rcPaint.left + radius), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2), static_cast<FLOAT>(ps.rcText.left + radius + textoffset - 5), static_cast<FLOAT>(ps.rcPaint.top + rcText.bottom / 2));
+        _path_beginfigure2(hPath, ps.rcPaint.left + textoffset + rcText.right + 5 + radius, ps.rcPaint.top + rcText.bottom / 2);
+        _path_addarc(hPath, ps.rcPaint.right - radius, ps.rcPaint.top + rcText.bottom / 2, ps.rcPaint.right, ps.rcPaint.top + rcText.bottom / 2 + radius, radius, radius, TRUE);
+        _path_addarc(hPath, ps.rcPaint.right, ps.rcPaint.bottom - radius, ps.rcPaint.right - radius, ps.rcPaint.bottom, radius, radius, TRUE);
+        _path_addarc(hPath, ps.rcPaint.left + radius, ps.rcPaint.bottom, ps.rcPaint.left, ps.rcPaint.bottom - radius, radius, radius, TRUE);
+        _path_addarc(hPath, ps.rcPaint.left, ps.rcPaint.top + rcText.bottom / 2 + radius, ps.rcPaint.left + radius, ps.rcPaint.top + rcText.bottom / 2, radius, radius, TRUE);
+        _path_addline(hPath, ps.rcPaint.left + radius, ps.rcPaint.top + rcText.bottom / 2, ps.rcText.left + radius + textoffset - 5, ps.rcPaint.top + rcText.bottom / 2);
 
         _path_endfigure(hPath, FALSE);
         _path_close(hPath);

@@ -20,14 +20,11 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(255, 255, 255, 255), FALSE);
 		HEXBRUSH brush = _brush_create(ExRGB2ARGB(0, 255));
 		Ex_ObjSetLong(hObj, DBL_PEN, (LONG_PTR)brush);
-		INT nError = 0;
-		obj_s* pObj = nullptr;
-		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
-		{
-			auto canvas = _canvas_createfromobj(hObj, pObj->right_, pObj->bottom_, 0);
-			_canvas_clear(canvas, ExRGB2ARGB(0, 255));
-			Ex_ObjSetLong(hObj, DBL_CANVAS, canvas);
-		}
+		RECT rc;
+		Ex_ObjGetRect(hObj, &rc);
+		auto canvas = _canvas_createfromobj(hObj, rc.right, rc.bottom, 0);
+		_canvas_clear(canvas, ExRGB2ARGB(0, 255));
+		Ex_ObjSetLong(hObj, DBL_CANVAS, canvas);
 	}
 	else if (uMsg == WM_DESTROY)
 	{

@@ -263,7 +263,7 @@ BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrTex
                 if (bottom > top && right > left)
                 {
                     FLOAT iWidth, iHeight;
-                    LPVOID pLayout = nullptr;
+                    IDWriteTextLayout* pLayout = nullptr;
                     if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, right - left, bottom - top, &iWidth, &iHeight, &pLayout, &nError))
                     {
                         CustomTextRenderer* m_pTextRenderer = new CustomTextRenderer(
@@ -1090,9 +1090,9 @@ BOOL _canvas_getsize(HEXCANVAS hCanvas, INT *width, INT *height)
     return nError == 0;
 }
 
-BOOL _canvas_calctextsize_ex(canvas_s *pCanvas, font_s *pFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT *lpWidth, FLOAT *lpHeight, LPVOID *ppLayout, INT *nError)
+BOOL _canvas_calctextsize_ex(canvas_s *pCanvas, font_s *pFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT *lpWidth, FLOAT *lpHeight, IDWriteTextLayout** ppLayout, INT *nError)
 {
-    obj_s *pObj = pFont->pObj_;
+    IDWriteTextFormat* pObj = pFont->pObj_;
     if (layoutWidth < 0)
         layoutWidth = 0;
     if (layoutHeight < 0)
@@ -1100,37 +1100,37 @@ BOOL _canvas_calctextsize_ex(canvas_s *pCanvas, font_s *pFont, LPCWSTR lpwzText,
     INT nPreFix = 0;
     LPVOID lpwzTextFix = prefixstring(lpwzText, dwDTFormat, &nPreFix);
     FLOAT iWidth = 0, iHeight = 0;
-    *nError = g_Ri.pDWriteFactory->CreateTextLayout((WCHAR *)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, (IDWriteTextFormat *)pObj, layoutWidth, layoutHeight, (IDWriteTextLayout **)ppLayout);
-    void *pLayout = *ppLayout;
+    *nError = g_Ri.pDWriteFactory->CreateTextLayout((WCHAR *)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, pObj, layoutWidth, layoutHeight, (IDWriteTextLayout **)ppLayout);
+    IDWriteTextLayout* pLayout = *ppLayout;
     if (*nError == 0)
     {
         BYTE byte = pFont->font_.lfUnderline;
         if (byte)
         {
             DWRITE_TEXT_RANGE range = {0, dwLen};
-            ((IDWriteTextLayout *)pLayout)->SetUnderline(byte, range);
+            pLayout->SetUnderline(byte, range);
         }
         byte = pFont->font_.lfStrikeOut;
         if (byte)
         {
             DWRITE_TEXT_RANGE range = {0, dwLen};
-            ((IDWriteTextLayout *)pLayout)->SetStrikethrough(byte, range);
+            pLayout->SetStrikethrough(byte, range);
         }
-        ((IDWriteTextLayout *)pLayout)->SetWordWrapping((DWRITE_WORD_WRAPPING)((dwDTFormat & DT_SINGLELINE) != 0 ? DWRITE_WORD_WRAPPING_NO_WRAP : DWRITE_WORD_WRAPPING_WRAP));
+        pLayout->SetWordWrapping((DWRITE_WORD_WRAPPING)((dwDTFormat & DT_SINGLELINE) != 0 ? DWRITE_WORD_WRAPPING_NO_WRAP : DWRITE_WORD_WRAPPING_WRAP));
         if ((dwDTFormat & DT_PATH_ELLIPSIS) != 0 || (dwDTFormat & DT_WORD_ELLIPSIS) != 0)
         {
             IDWriteInlineObject *pEllipsis = nullptr;
-            *nError = g_Ri.pDWriteFactory->CreateEllipsisTrimmingSign((IDWriteTextFormat *)pLayout, &pEllipsis);
+            *nError = g_Ri.pDWriteFactory->CreateEllipsisTrimmingSign(pLayout, &pEllipsis);
             if (*nError == 0)
             {
                 DWRITE_TRIMMING tmp1;
                 tmp1.granularity = DWRITE_TRIMMING_GRANULARITY_CHARACTER;
-                ((IDWriteTextLayout *)pLayout)->SetTrimming(&tmp1, pEllipsis);
+                pLayout->SetTrimming(&tmp1, pEllipsis);
                 pEllipsis->Release();
             }
         }
         DWRITE_TEXT_METRICS Metrics = {0};
-        ((IDWriteTextLayout *)pLayout)->GetMetrics(&Metrics);
+        pLayout->GetMetrics(&Metrics);
         iWidth = Metrics.widthIncludingTrailingWhitespace;
         iHeight = Metrics.height;
         DWRITE_TEXT_ALIGNMENT ALIGNMENT;
@@ -1146,7 +1146,7 @@ BOOL _canvas_calctextsize_ex(canvas_s *pCanvas, font_s *pFont, LPCWSTR lpwzText,
         {
             ALIGNMENT = DWRITE_TEXT_ALIGNMENT_LEADING;
         }
-        ((IDWriteTextLayout *)pLayout)->SetTextAlignment(ALIGNMENT);
+        pLayout->SetTextAlignment(ALIGNMENT);
         DWRITE_PARAGRAPH_ALIGNMENT PALIGNMENT;
         if ((dwDTFormat & DT_VCENTER) != 0)
         {
@@ -1160,11 +1160,11 @@ BOOL _canvas_calctextsize_ex(canvas_s *pCanvas, font_s *pFont, LPCWSTR lpwzText,
         {
             PALIGNMENT = DWRITE_PARAGRAPH_ALIGNMENT_NEAR;
         }
-        ((IDWriteTextLayout *)pLayout)->SetParagraphAlignment(PALIGNMENT);
+        pLayout->SetParagraphAlignment(PALIGNMENT);
         if (nPreFix != 0)
         {
             DWRITE_TEXT_RANGE rangea = {(UINT32)nPreFix / 2, 1};
-            ((IDWriteTextLayout *)pLayout)->SetUnderline(TRUE, rangea);
+            pLayout->SetUnderline(TRUE, rangea);
         }
     }
     if (lpwzTextFix)
@@ -1196,45 +1196,19 @@ BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, LO
         {
             font_s *pFont = 0;
             HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t *)&pFont);
-            if (pFont != 0)
+            if (pFont)
             {
-                LPVOID pLayout = nullptr;
-
+                IDWriteTextLayout* pLayout = nullptr;
                 _canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, layoutWidth, layoutHeight, lpWidth, lpHeight, &pLayout, &nError);
-                if (pLayout != 0)
+                if (pLayout)
                 {
-                    ((IDWriteTextLayout *)pLayout)->Release();
+                    pLayout->Release();
                 }
             }
         }
     }
     Ex_SetLastError(nError);
     return nError == 0;
-}
-
-void _canvas_dx_drawtext_buffer(canvas_s *pCanvas, LPVOID pLayout, EXARGB crText, FLOAT left, FLOAT top, INT iGlowsize, INT crShadow)
-{
-    HEXBRUSH hBrush = _brush_create(crText);
-    if (hBrush != 0)
-    {
-        ID2D1DeviceContext *pContext = _cv_context(pCanvas);
-        D2D1_POINT_2F point = {left, top};
-        pContext->DrawTextLayout(point, (IDWriteTextLayout *)pLayout, (ID2D1Brush *)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
-        _brush_destroy(hBrush);
-    }
-    ((IDWriteTextLayout *)pLayout)->Release();
-}
-
-void _canvas_dx_drawtext_buffer2(canvas_s *pCanvas, LPVOID pLayout, HEXBRUSH hBrush, FLOAT left, FLOAT top, INT iGlowsize, INT crShadow)
-{
-    if (hBrush != 0)
-    {
-        ID2D1DeviceContext *pContext = _cv_context(pCanvas);
-        D2D1_POINT_2F point = {left, top};
-        pContext->DrawTextLayout(point, (IDWriteTextLayout *)pLayout, (ID2D1Brush *)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
-        _brush_destroy(hBrush);
-    }
-    ((IDWriteTextLayout *)pLayout)->Release();
 }
 
 BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
@@ -1256,10 +1230,21 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
                 if (bottom > top && right > left)
                 {
                     FLOAT iWidth, iHeight;
-                    LPVOID pLayout = nullptr;
+                    IDWriteTextLayout* pLayout = nullptr;
                     if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, right - left, bottom - top, &iWidth, &iHeight, &pLayout, &nError))
                     {
-                        _canvas_dx_drawtext_buffer(pCanvas, pLayout, crText, left, top, iGlowsize, crShadom);
+                        HEXBRUSH hBrush = _brush_create(crText);
+                        if (hBrush)
+                        {
+                            ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+                            D2D1_POINT_2F point = { left, top };
+                            pContext->DrawTextLayout(point, pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+                            _brush_destroy(hBrush);
+                        }
+                    }
+                    if (pLayout)
+                    {
+                        pLayout->Release();
                     }
                 }
             }
@@ -1269,7 +1254,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
     return nError == 0;
 }
 
-BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
+BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
 {
     if (dwLen == -1)
     {
@@ -1288,10 +1273,16 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCW
                 if (bottom > top && right > left)
                 {
                     FLOAT iWidth, iHeight;
-                    LPVOID pLayout = nullptr;
+                    IDWriteTextLayout* pLayout = nullptr;
                     if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, right - left, bottom - top, &iWidth, &iHeight, &pLayout, &nError))
                     {
-                        _canvas_dx_drawtext_buffer2(pCanvas, pLayout, hBursh, left, top, iGlowsize, crShadom);
+                        ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+                        D2D1_POINT_2F point = { left, top };
+                        pContext->DrawTextLayout(point, (IDWriteTextLayout*)pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+                    }
+                    if (pLayout)
+                    {
+                        pLayout->Release();
                     }
                 }
             }

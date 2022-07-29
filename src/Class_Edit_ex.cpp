@@ -600,11 +600,10 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	}
 }
 
-void CALLBACK _edit_timer_caret(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+void CALLBACK _edit_timer_caret(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
 	INT nError = 0;
-	obj_s* pObj = (obj_s*)lpParam;
-
+	obj_s* pObj = (obj_s*)(idEvent - TIMER_EDIT_CARET);
 	edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 	if ((pOwner->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT)
 	{
@@ -894,10 +893,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			_obj_setuistate(pObj, STATE_FOCUS, FALSE, 0, TRUE, &nError);
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
 			{
-				((obj_base*)pObj)->timehWnd = hWnd;
-				((obj_base*)pObj)->timeDelay = 500;
-				CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _edit_timer_caret,
-					(PVOID)pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
+				SetTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET, 500, _edit_timer_caret);
 			}
 		}
 
@@ -905,13 +901,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		{
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
 			{
-				if (((obj_base*)pObj)->timerHandle)
-				{
-					if (DeleteTimerQueueTimer(((obj_base*)pObj)->timerQueue, ((obj_base*)pObj)->timerHandle, 0))
-					{
-						((obj_base*)pObj)->timerHandle = 0;
-					}
-				}
+				KillTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET);
 				edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 				if ((pOwner->flags_ & (EEF_BSHOWCARET | EEF_BCARETCONTEXT)) == (EEF_BSHOWCARET | EEF_BCARETCONTEXT))
 				{

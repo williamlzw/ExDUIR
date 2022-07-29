@@ -69,7 +69,6 @@ struct obj_base
     INT dwFlags_;
     EX_BACKGROUNDIMAGEINFO *lpBackgroundImage_;
     HEXTHEME hTheme_;
-    HANDLE timerQueue;//计时器队列
     HANDLE timerHandle;//计时器句柄   
     UINT timeDelay;//时钟延时时间
     HWND timehWnd;//时钟关联的窗口句柄HWND
@@ -385,6 +384,7 @@ struct LOCALINFO
     LPCWSTR lpStrClose;
     LPCWSTR lpStrHelp;
     UINT dwClickTime;
+    HANDLE timerQueue;//计时器队列
 };
 
 struct RENDERINFO
@@ -460,4 +460,18 @@ LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT *nOffset);
 std::wstring a2w(const std::string& str);
 std::wstring u2w(const std::string& str);
 std::wstring WStringFormat(const std::wstring format, ...);
-BOOL SystemTimeToWstring(const SYSTEMTIME& st, const std::wstring& date_fmt, std::wstring& result);
+
+const TCHAR Chjrmc[][4] = { L"", L"元旦", L"情人",L"妇女",L"植树",L"愚人",L"劳动",L"青年",L"护士",L"儿童",L"建党",L"建军",L"教师",L"国庆",L"平安",L"圣诞",
+                    L"春节",L"元宵",L"清明",L"端午",L"七夕",L"中秋",L"重阳",L"祭祖",L"腊八",L"小年",L"除夕" };
+const TCHAR Chjqmc[][4] = { L"", L"冬至", L"小寒", L"大寒", L"立春", L"雨水", L"惊蛰", L"春分", L"清明", L"谷雨", L"立夏", L"小满", L"芒种", L"夏至", L"小暑",
+                    L"大暑", L"立秋", L"处暑", L"白露", L"秋分", L"寒露", L"霜降", L"立冬", L"小雪", L"大雪" };
+const TCHAR ChDay[][4] = { L"", L"初一", L"初二", L"初三", L"初四", L"初五",
+                          L"初六", L"初七", L"初八", L"初九", L"初十",
+                          L"十一", L"十二", L"十三", L"十四", L"十五",
+                          L"十六", L"十七", L"十八", L"十九", L"二十",
+                          L"廿一", L"廿二", L"廿三", L"廿四", L"廿五",
+                          L"廿六", L"廿七", L"廿八", L"廿九", L"三十" };
+const TCHAR ChMonth[][4] = { L"", L"正月", L"二月", L"三月", L"四月", L"五月", L"六月", L"七月", L"八月", L"九月", L"十月", L"冬月", L"腊月" };
+INT GetLunarCalendar(INT nYear, INT nMonth, INT nDay, INT* jr, INT* jq);
+INT GetMdayCount(INT year, INT mon);
+INT GetWeekOfDate(INT year, INT month, INT day);

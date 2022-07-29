@@ -323,7 +323,7 @@ BOOL _obj_autosize(obj_s *pObj, HEXOBJ hObj, INT *width, INT *height)
 
 size_t _obj_sendmessage(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam, LPARAM lParam, INT dwReserved)
 {
-    mempoolmsg_s *p = (mempoolmsg_s *)MemPool_Alloc(g_Li.hMemPoolMsg, FALSE);
+    mempoolmsg_s *p = (mempoolmsg_s *)MemPool_Alloc(g_Li.hMemPoolMsg, TRUE);
     size_t ret = 0;
     if (p != 0)
     {
@@ -339,9 +339,8 @@ size_t _obj_sendmessage(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wP
 
 BOOL _obj_postmessage(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam, LPARAM lParam, INT dwReserved)
 {
-    mempoolmsg_s *p = (mempoolmsg_s *)MemPool_Alloc(g_Li.hMemPoolMsg, FALSE);
+    mempoolmsg_s *p = (mempoolmsg_s *)MemPool_Alloc(g_Li.hMemPoolMsg, TRUE);
     BOOL ret = FALSE;
-
     if (p != 0)
     {
         p->pObj = pObj;
@@ -1929,7 +1928,7 @@ void _obj_backgroundimage_clear(HWND hWnd, obj_base *pObj)
     {
         if (pObj->timerHandle)
         {
-            if (DeleteTimerQueueTimer(pObj->timerQueue, pObj->timerHandle, 0))
+            if (DeleteTimerQueueTimer(g_Li.timerQueue, pObj->timerHandle, 0))
             {
                 pObj->timerHandle = 0;
             }  
@@ -1981,8 +1980,9 @@ void _obj_destroy(HEXOBJ hObj, obj_s *pObj, INT *nError)
 
     //backgroundinfo
     _obj_backgroundimage_clear(hWnd, (obj_base *)pObj);
+   
 
-    //4.1.20.430
+
     //Clean EventHandler
     EX_HASHTABLE *hTableEvent = pWnd->hTableEvent_;
     std::vector<size_t> aKey;
@@ -2097,8 +2097,7 @@ HEXOBJ _obj_create_init(HWND hWnd, wnd_s *pWnd, EXATOM atomClass, MsgPROC pfnMsg
     (*pObj)->dwAlphaDisable_ = 128;
     (*pObj)->hCursor_ = pCls->hCursor;
     (*pObj)->lpBackgroundImage_ = 0;
-    //新增 初始化计时器队列
-    ((obj_base*)*pObj)->timerQueue = CreateTimerQueue();
+
     if (atomClass == ATOM_PAGE)
     {
         (*pObj)->dwFlags_ = (*pObj)->dwFlags_ | EOF_BPAGE;
@@ -2833,8 +2832,8 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS)
                              DT_LEFT | DT_TOP | DT_SINGLELINE,
                              0,
                              0,
-                             static_cast<FLOAT>(pObj->right_),
-                             static_cast<FLOAT>(pObj->bottom_));
+                             pObj->right_,
+                             pObj->bottom_);
             _font_destroy(F);
         }
         if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG))
@@ -3182,7 +3181,7 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s *pObj, LPVOID lpImage, INT dwImag
                         {
                             ((obj_base*)pObj)->timehWnd = hWnd;
                             ((obj_base*)pObj)->timeDelay = lpDelay2[0] * 10;
-                            CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _obj_backgroundimage_timer,
+                            CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, g_Li.timerQueue, _obj_backgroundimage_timer,
                                 pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
                         }
                     }
@@ -3247,25 +3246,26 @@ void _obj_backgroundimage_frames(HWND hWnd, obj_s *pObj, BOOL bResetFrame, BOOL 
         _img_getframecount(hImg, &framecount);
         if (framecount > 1)
         {
-            if (((obj_base*)pObj)->timerHandle)
+           /* if (((obj_base*)pObj)->timerHandle)
             {
-                if (DeleteTimerQueueTimer(((obj_base*)pObj)->timerQueue, ((obj_base*)pObj)->timerHandle, NULL))\
+                if (DeleteTimerQueueTimer(g_Li.timerQueue, ((obj_base*)pObj)->timerHandle, INVALID_HANDLE_VALUE))
                 {
                     ((obj_base*)pObj)->timerHandle = 0;
+                    
                 }
-            }
+            }*/
             if (bResetFrame)
             {
                 _img_selectactiveframe(hImg, 0);
             }
-            if (bPlayFrames)
+           /* if (bPlayFrames)
             {
                 INT *lpdelay = (INT *)lpBI->lpDelay;
                 INT curFrame = lpBI->curFrame;
                 ((obj_base*)pObj)->timeDelay = lpdelay[curFrame] * 10;
-                CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _obj_backgroundimage_timer,
+                CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, g_Li.timerQueue, _obj_backgroundimage_timer,
                     pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
-            }
+            }*/
 
             if (((pObj->dwFlags_ & EOF_OBJECT) == EOF_OBJECT))
             {
@@ -3299,13 +3299,8 @@ BOOL Ex_ObjSetBackgroundPlayState(EXHANDLE handle, BOOL fPlayFrames, BOOL fReset
 
 void CALLBACK _obj_mediatimer_object(PVOID lpParam, BOOLEAN TimerOrWaitFired)
 {
-    Ex_ObjSendMessage((HEXOBJ)lpParam, WM_TIMER, 0, 0);
-    INT nError = 0;
-    obj_s* pObj = nullptr;
-    if (_handle_validate((HEXOBJ)lpParam, HT_OBJECT, (LPVOID*)&pObj, &nError))
-    {
-        UpdateWindow(((obj_base*)pObj)->timehWnd);
-    }
+    _obj_baseproc(((obj_base*)lpParam)->timehWnd, ((obj_s*)lpParam)->hObj_, (obj_s*)lpParam, WM_TIMER, 0, 0);
+    UpdateWindow(((obj_base*)lpParam)->timehWnd);
 }
 
 HANDLE Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
@@ -3318,8 +3313,8 @@ HANDLE Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
         wnd_s *pWnd = pObj->pWnd_;
         ((obj_base*)pObj)->timehWnd = pWnd->hWnd_;
         ((obj_base*)pObj)->timeDelay = uElapse;
-        CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _obj_mediatimer_object,
-            (void*)hObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
+        CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, g_Li.timerQueue, _obj_mediatimer_object,
+            (void*)pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
         ret = ((obj_base*)pObj)->timerHandle;
     }
     Ex_SetLastError(nError);
@@ -3335,7 +3330,7 @@ BOOL Ex_ObjKillTimer(HEXOBJ hObj)
         wnd_s *pWnd = pObj->pWnd_;
         if (((obj_base*)pObj)->timerHandle)
         {
-            if (DeleteTimerQueueTimer(((obj_base*)pObj)->timerQueue, ((obj_base*)pObj)->timerHandle, NULL))
+            if (DeleteTimerQueueTimer(g_Li.timerQueue, ((obj_base*)pObj)->timerHandle, 0))
             {
                 ((obj_base*)pObj)->timerHandle = 0;
             }

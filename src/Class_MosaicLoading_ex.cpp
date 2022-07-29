@@ -3,17 +3,15 @@
 void _mosaic_loading_register()
 {
     WCHAR wzCls[] = L"MosaicLoading";
-    Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, 0, 0, 0, 0, _mosaic_loading_proc);
+    Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, 0, 2 * sizeof(size_t), 0, 0, _mosaic_loading_proc);
 }
-
-INT m_ItemIndex = NULL;
-INT m_ItemCount = 8;
-MosaicRect m_ItemArray[8];
 
 LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (uMsg == WM_CREATE)
     {
+        Ex_ObjSetLong(hObj, 0, 1);
+        Ex_ObjSetLong(hObj, 1, (LONG_PTR)malloc(sizeof(MosaicRect[8])));
         Ex_ObjSetTimer(hObj, 180);
     }
     else if (uMsg == WM_PAINT)
@@ -22,27 +20,27 @@ LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
     }
     else if (uMsg == WM_TIMER)
     {
-        static INT i;
-        m_ItemIndex = m_ItemIndex + 1;
-        if (m_ItemIndex > m_ItemCount)
+        int index = Ex_ObjGetLong(hObj, 0);
+        Ex_ObjSetLong(hObj, 0, index + 1);
+        if (index > 8)
         {
-            m_ItemIndex = 1;
+            Ex_ObjSetLong(hObj, 0, 1);
         }
         INT nAlpha = 30;
-
-        for (i = 0; i < m_ItemCount; i++)
+        MosaicRect* ptr = (MosaicRect*)Ex_ObjGetLong(hObj, 1);
+        for (int i = 0; i < 8; i++)
         {
-            if (i >= m_ItemIndex)
+            if (i >= index)
             {
-                m_ItemArray[i].alpha = nAlpha;
+                ptr[i].alpha = nAlpha;
                 nAlpha = nAlpha + 10;
             }
         }
-        for (i = 0; i < m_ItemCount; i++)
+        for (int i = 0; i < 8; i++)
         {
-            if (i < m_ItemIndex)
+            if (i < index)
             {
-                m_ItemArray[i].alpha = nAlpha;
+                ptr[i].alpha = nAlpha;
                 nAlpha = nAlpha + 10;
             }
         }
@@ -51,6 +49,8 @@ LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
     else if (uMsg == WM_DESTROY)
     {
         Ex_ObjKillTimer(hObj);
+        MosaicRect* ptr = (MosaicRect*)Ex_ObjGetLong(hObj, 1);
+        free(ptr);
     }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
@@ -58,14 +58,10 @@ LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 void _mosaic_loading_paint(HEXOBJ hObj)
 {
     EX_PAINTSTRUCT ps{0};
+    MosaicRect* ptr = (MosaicRect*)Ex_ObjGetLong(hObj, 1);
     if (Ex_ObjBeginPaint(hObj, &ps))
     {
         INT x[3], y[3];
-
-        if (m_ItemCount < 1)
-        {
-            return;
-        }
 
         INT nWidth = ps.uWidth, nHeight = ps.uHeight;
         INT nSize = NULL;
@@ -84,25 +80,25 @@ void _mosaic_loading_paint(HEXOBJ hObj)
         x[2] = x[0] + (nSize + 1) * 2;
         y[2] = y[0] + (nSize + 1) * 2;
 
-        m_ItemArray[0].rc = RECT{x[0], y[0], x[0] + nSize, y[0] + nSize};
-        m_ItemArray[1].rc = RECT{x[1], y[0], x[1] + nSize, y[0] + nSize};
-        m_ItemArray[2].rc = RECT{x[2], y[0], x[2] + nSize, y[0] + nSize};
-        m_ItemArray[3].rc = RECT{x[2], y[1], x[2] + nSize, y[1] + nSize};
-        m_ItemArray[4].rc = RECT{x[2], y[2], x[2] + nSize, y[2] + nSize};
-        m_ItemArray[5].rc = RECT{x[1], y[2], x[1] + nSize, y[2] + nSize};
-        m_ItemArray[6].rc = RECT{x[0], y[2], x[0] + nSize, y[2] + nSize};
-        m_ItemArray[7].rc = RECT{x[0], y[1], x[0] + nSize, y[1] + nSize};
+        ptr[0].rc = RECT{x[0], y[0], x[0] + nSize, y[0] + nSize};
+        ptr[1].rc = RECT{x[1], y[0], x[1] + nSize, y[0] + nSize};
+        ptr[2].rc = RECT{x[2], y[0], x[2] + nSize, y[0] + nSize};
+        ptr[3].rc = RECT{x[2], y[1], x[2] + nSize, y[1] + nSize};
+        ptr[4].rc = RECT{x[2], y[2], x[2] + nSize, y[2] + nSize};
+        ptr[5].rc = RECT{x[1], y[2], x[1] + nSize, y[2] + nSize};
+        ptr[6].rc = RECT{x[0], y[2], x[0] + nSize, y[2] + nSize};
+        ptr[7].rc = RECT{x[0], y[1], x[0] + nSize, y[1] + nSize};
 
-        for (INT i = 0; i < m_ItemCount; i++)
+        for (INT i = 0; i < 8; i++)
         {
-            INT iAlphaValue = m_ItemArray[i].alpha * 255 / 100;
+            INT iAlphaValue = ptr[i].alpha * 255 / 100;
             COLORREF ThemeColor = Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND);
             if (ThemeColor == 0)
             {
                 ThemeColor = RGB(58, 144, 210);
             }
             HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(ThemeColor, iAlphaValue));
-            _canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)m_ItemArray[i].rc.left, (FLOAT)m_ItemArray[i].rc.top, (FLOAT)m_ItemArray[i].rc.right, (FLOAT)m_ItemArray[i].rc.bottom);
+            _canvas_fillrect(ps.hCanvas, hBrush, ptr[i].rc.left, ptr[i].rc.top, ptr[i].rc.right, ptr[i].rc.bottom);
             _brush_destroy(hBrush);
         }
 

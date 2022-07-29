@@ -1352,34 +1352,14 @@
 #pragma endregion datebox message
 
 #pragma region datebox notify
-// 事件_日期框已更改
+// 事件_日期框日期选中
 #define DBN_DATETIME 100062
 #pragma endregion datebox notify
 
-#pragma region calendar style
-//显示农历
-#define EMCS_SHOWLUNAR  1
-//显示水印
-#define EMCS_SHOWWATERMARK  2
-//不圈今天
-#define EMCS_NOTODAYCIRCLE  4
-//月历控件不在控件底部显示 "今天" 日期。
-#define EMCS_NOTODAY  8
-#pragma endregion calendar style
 
 #pragma region calendar message
-//获得当前选中的日期 wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
-#define MCM_GETCURSEL	4097
-//为月历控件设置当前选定的日期。 如果指定的日期不在视图中，则控件将更新显示以使其显示在视图中。
-#define MCM_SETCURSEL	4098
-//设置颜色wParam = (WPARAM)(INT)iColor，见:MCSC_;lParam = (LPARAM)(COLORREF)clr;
-#define MCM_SETCOLOR	4106
-//为月历控件设置 "今天" 选择,wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
-#define MCM_SETTODAY	4108
-//检索为月历控件指定为 "今日" 的日期的日期信息。wParam = 0;lParam = (LPARAM)(LPSYSTEMTIME)lpSysTime;
-#define MCM_GETTODAY	4109
-//设置日历的当前视图;wParam = 0;lParam =MCMV_MONTH
-#define MCM_SETCURRENTVIEW	4128
+// 事件_月历日期选中
+#define MCN_DATETIME 100062
 #pragma endregion calendar message
 
 #pragma region cef browser message

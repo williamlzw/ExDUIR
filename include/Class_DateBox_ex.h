@@ -4,6 +4,7 @@
 
 // 日期框属性_状态
 #define DBL_STATE 0
+#define DBL_DATA 1
 
 struct datebox_s
 {

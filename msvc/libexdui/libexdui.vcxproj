@@ -51,7 +51,6 @@
     <ClCompile Include="..\..\src\Class_Scrollbar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SoliderBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Static_SysLink_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_SuperListview_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Switch_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SysButton_Page_ex.cpp" />
     <ClCompile Include="..\..\src\Class_TitleBar_ex.cpp" />
@@ -84,7 +83,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\Array_ex.h" />
     <ClInclude Include="..\..\include\Brush_ex.h" />
-    <ClInclude Include="..\..\include\CalendarHelper.hpp" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
     <ClInclude Include="..\..\include\CkBrowser.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
@@ -116,7 +114,6 @@
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h" />
     <ClInclude Include="..\..\include\Class_SoliderBar_ex.h" />
     <ClInclude Include="..\..\include\Class_Static_SysLink_ex.h" />
-    <ClInclude Include="..\..\include\Class_SuperListview_ex.h" />
     <ClInclude Include="..\..\include\Class_Switch_ex.h" />
     <ClInclude Include="..\..\include\Class_SysButton_Page_ex.h" />
     <ClInclude Include="..\..\include\Class_TitleBar_ex.h" />
@@ -138,7 +135,6 @@
     <ClInclude Include="..\..\include\Image_ex.h" />
     <ClInclude Include="..\..\include\Layout_ex.h" />
     <ClInclude Include="..\..\include\LunarData.h" />
-    <ClInclude Include="..\..\include\lunarday.h" />
     <ClInclude Include="..\..\include\Matrix_ex.h" />
     <ClInclude Include="..\..\include\MemPool_ex.h" />
     <ClInclude Include="..\..\include\Object_ex.h" />

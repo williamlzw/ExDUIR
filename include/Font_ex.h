@@ -8,7 +8,7 @@ struct font_s
 {
     size_t dwFlags_;
     size_t dwCount_;
-    obj_s *pObj_;
+    IDWriteTextFormat* pObj_;
     LOGFONT font_;
 };
 

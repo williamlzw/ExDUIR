@@ -53,11 +53,13 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_drawingboard,     // 144测试鼠标绘制板
         test_palette,          // 145测试调色板
         test_propertygrid,       // 146测试属性框
-        test_nativewindow       // 147测试原生子窗口
+        test_nativewindow,       // 147测试原生子窗口
+        test_fullscreen            // 148 测试全屏
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
 }
+
 
 void test_exdui()
 {
@@ -76,7 +78,9 @@ void test_exdui()
         std::vector<CHAR> imgdata;
         Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
-        Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
+        Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, 0, 255, TRUE);
+
+        
         std::vector<HEXOBJ> buttons;
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试按钮开关", -1, 10, 30, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标签", -1, 10, 70, 100, 30, hExDui, 102, DT_VCENTER | DT_CENTER, 0, 0, NULL));
@@ -128,7 +132,8 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 340, 110, 100, 30, hExDui, 145, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试属性框", -1, 340, 150, 100, 30, hExDui, 146, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试原生子窗口", -1, 340, 190, 100, 30, hExDui, 147, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试全屏置顶", -1, 340, 230, 100, 30, hExDui, 148, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+
         for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);

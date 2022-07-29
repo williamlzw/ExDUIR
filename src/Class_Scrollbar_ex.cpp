@@ -391,10 +391,9 @@ void _scrollbar_mousemove(HWND hWnd, HEXOBJ hObj, obj_s *pObj, WPARAM wParam, IN
     }
 }
 
-void CALLBACK _scrollbar_timer(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+void CALLBACK _scrollbar_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-    obj_base* pObj = (obj_base*)lpParam;
-    HWND hWnd = pObj->timehWnd;
+    obj_s* pObj = (obj_s*)(idEvent - TIMER_SCROLLBAR);
     si_s *psi = (si_s *)_obj_pOwner((obj_s*)pObj);
     INT nTrack;
     if (psi->httype_ == SBCT_ADJUSTBUTTON1)
@@ -411,14 +410,14 @@ void CALLBACK _scrollbar_timer(PVOID lpParam, BOOLEAN TimerOrWaitFired)
     {
         if (nTrack <= psi->nMin_)
         {          
-            //KillTimer(hWnd, idEvent);
+            KillTimer(hWnd, idEvent);
         }
     }
     else
     {
         if (nTrack >= psi->nMax_ - psi->nPage_)
         {
-            //KillTimer(hWnd, idEvent);
+            KillTimer(hWnd, idEvent);
         }
     }
 }
@@ -466,11 +465,7 @@ void _scrollbar_leftbuttondown(HWND hWnd, HEXOBJ hObj, obj_s *pObj, LPARAM lPara
         }
         if (fTimer)
         {
-            //SetTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR, 200, _scrollbar_timer);
-            ((obj_base*)pObj)->timehWnd = hWnd;
-            ((obj_base*)pObj)->timeDelay = 200;
-            CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, ((obj_base*)pObj)->timerQueue, _scrollbar_timer,
-                pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
+            SetTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR, 200, _scrollbar_timer);
         }
     }
 }
@@ -481,10 +476,7 @@ void _scrollbar_leftbuttonup(HWND hWnd, HEXOBJ hObj, obj_s *pObj, LPARAM lParam)
     _obj_setuistate(pObj, STATE_DOWN, TRUE, 0, TRUE, &nError);
     si_s *psi = (si_s *)_obj_pOwner(pObj);
     psi->nTrackPos_ = 0;
-    if (DeleteTimerQueueTimer(((obj_base*)pObj)->timerQueue, ((obj_base*)pObj)->timerHandle, INVALID_HANDLE_VALUE))
-    {
-        ((obj_base*)pObj)->timerHandle = 0;
-    }
+    KillTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR);
 }
 
 void _scrollbar_oncommand(HWND hWnd, HEXOBJ hObj, obj_s *pObj, WPARAM wParam, LPARAM lParam)

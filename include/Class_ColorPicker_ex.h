@@ -2,6 +2,7 @@
 #include "help_ex.h"
 
 #define CPL_STATE 0
+#define CPL_DATA 1
 
 struct color_picker_s
 {

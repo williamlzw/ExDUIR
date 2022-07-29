@@ -27,10 +27,8 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 BOOL _canvas_drawimagefrombkgimg(HEXCANVAS hCanvas, EX_BACKGROUNDIMAGEINFO *lpBkgImg);
 BOOL _canvas_bitblt(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight, INT dstBottom, INT srcLeft, INT srcTop);
 BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, INT alpha);
-BOOL _canvas_calctextsize_ex(canvas_s *pCanvas, font_s *pFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT *lpWidth, FLOAT *lpHeight, LPVOID *pLayout, INT *nError);
+BOOL _canvas_calctextsize_ex(canvas_s *pCanvas, font_s *pFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT *lpWidth, FLOAT *lpHeight, IDWriteTextLayout** pLayout, INT *nError);
 BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam);
-void _canvas_dx_drawtext_buffer(canvas_s *pCanvas, LPVOID pLayout, EXARGB crText, FLOAT left, FLOAT top, INT iGlowsize, INT crShadow);
-void _canvas_dx_drawtext_buffer2(canvas_s *pCanvas, LPVOID pLayout, HEXBRUSH hBrush, FLOAT left, FLOAT top, INT iGlowsize, INT crShadow);
 HEXCANVAS _canvas_createfrompwnd(wnd_s *pWnd, INT width, INT height, INT dwFlags, INT *nError);
 HDC _canvas_getdc_ex(canvas_s *pCanvas, INT *nError);
 void _canvas_releasedc_ex(canvas_s *pCanvas, INT *nError);
