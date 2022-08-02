@@ -561,7 +561,7 @@ void _reportlistview_head_paint(HEXOBJ hObj)
 		{
 			LPVOID pTCs = (LPVOID)Ex_ObjGetLong(hObjList, ERLVL_TCINFO);
 			INT cTCs = Ex_ObjGetLong(hObjList, ERLVL_CTCS);
-			_canvas_clear(ps.hCanvas, Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_HOT));
+			_canvas_clear(ps.hCanvas, Ex_ObjGetColor(hObjList, COLOR_EX_RLV_HEAD));
 			if (pTCs != 0 && cTCs > 0)
 			{
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObjList, COLOR_EX_BORDER));

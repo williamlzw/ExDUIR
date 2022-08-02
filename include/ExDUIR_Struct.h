@@ -388,9 +388,9 @@
 #define EES_UNDERLINE 0x4000
 #pragma endregion edit style constant
 
-// 通知_编辑框_超链接事件
+// 事件_编辑框_超链接事件
 #define EN_LINK 1803
-// 通知_编辑框_选中区域改变
+// 事件_编辑框_选中区域改变
 #define EN_SELCHANGE 1794
 
 #pragma region edit message constant
@@ -533,12 +533,14 @@
 #define COLOR_EX_TEXT_CHECKED 6
 // 颜色索引_文本颜色_选择
 #define COLOR_EX_TEXT_SELECT 7
-// 颜色索引_文本颜色_悬浮
-#define COLOR_EX_TEXT_HOT 8
+// 颜色索引_文本颜色_备用
+#define COLOR_EX_TEXT_RESERVE 8
 // 颜色索引_文本颜色_已访问
 #define COLOR_EX_TEXT_VISTED 9
 // 颜色索引_文本颜色_阴影
 #define COLOR_EX_TEXT_SHADOW 10
+// 颜色索引_报表_表头背景色
+#define COLOR_EX_RLV_HEAD COLOR_EX_TEXT_RESERVE
 // 颜色索引_编辑框_光标原色
 #define COLOR_EX_EDIT_CARET 30
 // 颜色索引_编辑框_提示文本颜色
@@ -1167,7 +1169,7 @@
 #define LVM_SETIMAGELIST 4099
 // 消息_列表_重新计算尺寸
 #define LVM_CALCITEMSIZE 5150
-// 取消主题 不绘制列表主题 1为取消
+// 消息_列表_取消主题 不绘制列表主题 1为取消
 #define LVM_CANCELTHEME 5151
 #pragma endregion listview message constant
 
@@ -1332,12 +1334,12 @@
 #pragma endregion groupbox long
 
 #pragma region colorpicker message
-// 消息_颜色选择器改变颜色
+// 消息_颜色选择器_改变颜色
 #define CPM_COLORCHANGE 100051
 #pragma endregion colorpicker message
 
 #pragma region colorpicker notify
-// 事件_颜色选择器颜色已更改
+// 事件_颜色选择器_颜色已更改
 #define CPN_COLORCHANGE 100052
 #pragma endregion colorpicker notify
 
@@ -1347,18 +1349,17 @@
 #pragma endregion palette notify
 
 #pragma region datebox message
-// 消息_日期框设置日期
+// 消息_日期框_设置日期
 #define DBM_DATETIME 100061
 #pragma endregion datebox message
 
 #pragma region datebox notify
-// 事件_日期框日期选中
+// 事件_日期框_日期选中
 #define DBN_DATETIME 100062
 #pragma endregion datebox notify
 
-
 #pragma region calendar message
-// 事件_月历日期选中
+// 事件_月历_日期选中
 #define MCN_DATETIME 100062
 #pragma endregion calendar message
 
@@ -1394,24 +1395,24 @@
 #pragma endregion carousel message
 
 #pragma region drawingboard message
-// 鼠绘板消息_设置画笔类型 lParam 0画笔 1橡皮擦
+// 消息_鼠绘板_设置画笔类型 lParam 0画笔 1橡皮擦
 #define DBM_SETPENTYPE 20000
-// 鼠绘板消息_设置画笔宽度 lParam
+// 消息_鼠绘板_设置画笔宽度 lParam
 #define DBM_SETPENWIDTH 20001
-// 鼠绘板消息_设置画笔颜色 lParam
+// 消息_鼠绘板_设置画笔颜色 lParam
 #define DBM_SETPENCOLOR 20002
-// 鼠绘板消息_清空画板
+// 消息_鼠绘板_清空画板
 #define DBM_CLEAR 20003
 #pragma endregion drawingboard message
 
 #pragma region propertygrid notify
-// 属性框事件_添加表项 添加行到尾部 wParam:组件_类型  lParam: PGITEM 指针 ----------
+// 事件_属性框添加表项 添加行到尾部 wParam:组件_类型  lParam: PGITEM 指针 ----------
 #define PGN_ADDITEM  10010
-// 属性框事件_取表项值 wParam: 未定义    lParam:表项名  return:表项值文本指针
+// 事件_属性框_取表项值 wParam: 未定义    lParam:表项名  return:表项值文本指针
 #define PGN_GETITEMVALUE  10011
-// 属性框事件_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
+// 事件_属性框_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
 #define PGN_SETITEMVALUE  10012
-// 属性框事件_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)   lParam:数据指针(可以通过"__get(数据指针,PGL_内存偏移_***)"来获取数据)
+// 事件_属性框_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)   lParam:数据指针(可以通过"__get(数据指针,PGL_内存偏移_***)"来获取数据)
 #define PGN_ITEMVALUECHANGE  10012
 #pragma endregion propertygrid notify
 

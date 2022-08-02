@@ -1551,7 +1551,7 @@ void test_reportlistview(HWND hWnd)
 	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", EOS_BORDER | EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGBA(120, 120, 120, 255), FALSE);
-	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOT, ExRGB2ARGB(16777215, 250), FALSE);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_RLV_HEAD, ExRGB2ARGB(16777215, 250), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(12632256, 50), FALSE);
 
 	m_hReportListViewImgList = _imglist_create(30, 30);
@@ -2899,31 +2899,8 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 	if (uMsg == WM_NOTIFY)
 	{
 		EX_NMHDR* ni = (EX_NMHDR*)lParam;
-		if (ni->hObjFrom != hObj)
-		{
-			if (ni->nCode == NM_LEAVE && ni->hObjFrom != selectedItem[1])
-				Ex_ObjSetColor(ni->hObjFrom, COLOR_EX_BACKGROUND, ExARGB(150, 150, 150, 255), TRUE);
-			if (ni->nCode == NM_HOVER && ni->hObjFrom != selectedItem[1])
-				Ex_ObjSetColor(ni->hObjFrom, COLOR_EX_BACKGROUND, ExRGB2ARGB(15066083, 200), TRUE);
-			if (ni->nCode == NM_CLICK && ni->hObjFrom != selectedItem[1])
-			{
-				Ex_ObjSetColor(selectedItem[1], COLOR_EX_BACKGROUND, ExARGB(150, 150, 150, 255), TRUE);//改变为选中颜色
-				if (ni->hObjFrom != 0)
-					Ex_ObjSetColor(ni->hObjFrom, COLOR_EX_BACKGROUND, ExRGB2ARGB(15066083, 250), TRUE);  // 清空上个选中的颜色
-				selectedItem[0] = selectedItem[1];//记录上个点击的组件，清空选中颜色
-				selectedItem[1] = ni->hObjFrom; //记录当前点击的组件，改变颜色
-			}
-
-		}
 		if (ni->hObjFrom == hObj)
 		{
-			if (ni->nCode == NM_CLICK && ni->wParam)
-			{
-				output(L"按下表项改变", ni->wParam, ni->lParam);
-				if (selectedItem[1] != 0)
-					Ex_ObjSetColor(selectedItem[1], COLOR_EX_BACKGROUND, ExRGB2ARGB(16448250, 20), TRUE);  // 清空上个选中的颜色
-
-			}
 			if (ni->nCode == NM_CALCSIZE)//设置表项尺寸事件 默认为列表框宽度/一行文字的高度
 			{
 				__set((void*)ni->lParam, 4, 40);//ni->lParam指向一个size结构,偏移0为宽度,4为高度
@@ -2933,9 +2910,14 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 			}
 			else if (ni->nCode == LVN_ITEMCHANGED)
 			{
-				output(L"TList表项改变", ni->wParam, ni->lParam);
+				output(L"TList表项改变", hObj, ni->hObjFrom, ni->wParam, ni->lParam);
 			}
-			return 1;
+			else if (ni->nCode == LVN_HOTTRACK)//ni->wParam:当前悬浮表项句柄   ni->lParam:索引
+			{
+				Ex_ObjSetColor(selectedItem[0], COLOR_EX_BACKGROUND, Ex_ObjGetColor(ni->wParam, COLOR_EX_BACKGROUND), TRUE);
+				Ex_ObjSetColor(ni->wParam, COLOR_EX_BACKGROUND, ExRGB2ARGB(15066083, 200), TRUE);
+				selectedItem[0] = ni->wParam;
+			}
 		}
 
 	}
@@ -2971,10 +2953,6 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 				Ex_ObjSetText(hObjTmp, m_tlistViewItemInfo[wParam - 1].btnTitle.c_str(), true);
 
 		}
-	}
-	else if (uMsg == WM_MOUSEHOVER)
-	{
-		output(L"WM_MOUSEHOVER ");
 	}
 	*lpResult = 0;
 	return 0;

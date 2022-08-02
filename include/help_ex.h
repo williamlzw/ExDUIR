@@ -475,3 +475,8 @@ const TCHAR ChMonth[][4] = { L"", L"正月", L"二月", L"三月", L"四月", L"
 INT GetLunarCalendar(INT nYear, INT nMonth, INT nDay, INT* jr, INT* jq);
 INT GetMdayCount(INT year, INT mon);
 INT GetWeekOfDate(INT year, INT month, INT day);
+BOOL Flag_Query(INT dwFlag);
+void Flag_Add(INT dwFlag);
+void Flag_Del(INT dwFlag);
+LPCWSTR GetErrorMessage(DWORD error);
+void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable);

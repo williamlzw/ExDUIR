@@ -123,10 +123,10 @@ ID2D1Bitmap *_dx_createbitmap(ID2D1DeviceContext *pDeviceContext, INT width, INT
 
 void _dx_settarget(ID2D1DeviceContext *pDeviceContext, ID2D1Bitmap *pBitmap)
 {
-    if (pBitmap)
-    {
+    //if (pBitmap)
+   // {
         pDeviceContext->SetTarget(pBitmap);
-    }
+   // }
 }
 
 void _dx_getsize(ID2D1Bitmap *pBitmap, FLOAT *width, FLOAT *height)

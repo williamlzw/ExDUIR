@@ -187,7 +187,7 @@ void _syslink_paint(HEXOBJ hObj, obj_s *pObj)
                 {
                     if (__query(lpBlocks, index + offsetof(slb_s, dwFlags_), slbf_hover))
                     {
-                        crText = _obj_getcolor(pObj, COLOR_EX_TEXT_HOT);
+                        crText = _obj_getcolor(pObj, COLOR_EX_RLV_HEAD);
                     }
                     else if (__query(lpBlocks, index + offsetof(slb_s, dwFlags_), slbf_visted))
                     {

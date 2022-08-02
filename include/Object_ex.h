@@ -251,6 +251,7 @@ struct si_s
     INT wArrows_;
 };
 
+void _object_init();
 size_t _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void _obj_register(EXATOM atomClass, INT dwStyle, INT dwStyleEx, INT dwTextFormat, DWORD cbObjExtra, HCURSOR hCursor, ClsPROC pfnClsProc, DWORD dwFlags, INT *nError);
 void _obj_z_clear(HEXOBJ hObj, obj_s *pObj, EXHANDLE *hParent, obj_base **pParent);

@@ -11,7 +11,7 @@ void _tlv_array_del(array_s* hArray, int index, HEXOBJ pvData, int type)
 	}
 }
 
-void _tlv__killfocus_ifischild(obj_s* pObj)
+void _tlv_killfocus_ifischild(obj_s* pObj)
 {
 	wnd_s* pWnd = pObj->pWnd_;
 	HEXOBJ hObjFocus = pWnd->objFocus_;
@@ -29,7 +29,7 @@ void _tlv__killfocus_ifischild(obj_s* pObj)
 	}
 }
 
-bool  _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld)
+bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld)
 {
 	int nIndex = 0;
 	array_s* arr = (array_s*)Ex_ObjGetLong(hObj, 0);
@@ -53,7 +53,6 @@ bool  _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart,
 				HEXOBJ hObjItem = Ex_ObjSendMessage(hObj, TLVM_ITEM_CREATE, 0, 0);
 				Array_AddMember(arr, hObjItem);
 			}
-
 		}
 		fRepos = true;
 	}
@@ -75,9 +74,11 @@ bool  _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart,
 				Ex_ObjShow(hObjItem, true);
 			}
 			else
+			{
 				Ex_ObjShow(hObjItem, false);
+			}
 		}
-		_tlv__killfocus_ifischild(pObj);
+		_tlv_killfocus_ifischild(pObj);
 		fRepos = true;
 	}
 	return fRepos;
@@ -107,7 +108,7 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
 		Ex_ObjSetLong(hObj, 7, nOffsetY);
 
 		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, 0);
-		int  count = Array_GetCount(arr);
+		int count = Array_GetCount(arr);
 		//数组从1开始
 		for (int i = 1; i <= count; i++)
 		{
@@ -126,6 +127,56 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
 		}
 	}
 }
+
+void _tlv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam)
+{
+	INT x = LOWORD(lParam);
+	INT y = HIWORD(lParam);
+	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
+	LPVOID lpItems = pOwner->lpItems_;
+	INT iSelect = pOwner->index_select_;
+	INT iLast = pOwner->index_mouse_;
+	BOOL vLast = _listview_checkitem(pOwner, iLast);
+	INT ox = 0;
+	INT oy = 0;
+	INT iCur = _listview_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
+	BOOL vCur = _listview_checkitem(pOwner, iCur);
+	INT iHitTest = LVHT_NOWHERE;
+	INT tmp = 0;
+	if (vCur)
+	{
+		tmp = _obj_baseproc(hWnd, hObj, pObj, LVM_HITTEST, iCur, MAKELONG(ox, oy));
+		iHitTest = tmp == 0 ? LVHT_ONITEM : tmp;
+	}
+	pOwner->nHittest_ = iHitTest;
+	if (wParam != 1)
+	{
+		if (iCur != iLast)
+		{
+			if (vCur)
+			{
+				if (_listview_queryitemstate(lpItems, iCur, STATE_DISABLE))
+				{
+					iCur = 0;
+				}
+				else
+				{
+					array_s* arr = (array_s*)Ex_ObjGetLong(hObj, 0);
+					if (arr)
+					{
+						listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
+						INT iStart = pOwner->index_start_;
+						auto num = Array_GetCount(arr);
+						HEXOBJ hobjitem = Array_GetMember(arr, iCur - iStart + 1);
+						_obj_dispatchnotify(hWnd, pObj, hObj, 0, LVN_HOTTRACK, hobjitem, iCur);
+					}
+				}
+			}
+		}
+	}
+	pOwner->index_mouse_ = iCur;
+}
+
 LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	HEXOBJ handle = 0;
@@ -133,7 +184,7 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 	obj_s* pObj = nullptr;
 	array_s* arr = nullptr;
 	void* ptr = nullptr;
-	LONG_PTR  tmp = 0;
+	LONG_PTR tmp = 0;
 	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 	{
 		if (uMsg == WM_CREATE)
@@ -165,6 +216,11 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 				Ex_ObjEndPaint(hObj, &ps);
 			}
 			return 0;
+		}
+		else if (uMsg == WM_MOUSEMOVE)
+		{
+			_tlv_mousemove(hWnd, hObj, pObj, wParam, lParam);
+			return 0;//不执行父类的WM_MOUSEMOVE
 		}
 		else if (uMsg == TLVM_ITEM_CREATE)
 		{
@@ -207,12 +263,12 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			size_t tmp = 0;
 			if (__get((void*)lParam, 0) != hObj)
 			{
-				tmp = _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, hObj, 0, 1001,
-					_obj_getextralong(pObj, 0), lParam);
+				tmp = _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, hObj, 0, 1001, _obj_getextralong(pObj, 0), lParam);
 			}
 			return tmp;
 		}
 	}
+	
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
@@ -222,10 +278,8 @@ void _listview_regsiter()
 	EX_CLASSINFO clsInfo{ 0 };
 	Ex_ObjGetClassInfoEx(L"ListView", &clsInfo);
 	m_pfnTListView = clsInfo.pfnClsProc;
-	_obj_register(Ex_Atom(L"TListView"), clsInfo.dwStyle, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 10 * sizeof(size_t),
-		clsInfo.hCursor, _tlv_proc, clsInfo.dwFlags, 0);
-	_obj_register(Ex_Atom(L"LISTITEM"), EOS_VISIBLE, 0, DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE | DT_CENTER, 10 * sizeof(size_t),
-		clsInfo.hCursor, _tlvi_proc, clsInfo.dwFlags, 0);
+	_obj_register(Ex_Atom(L"TListView"), clsInfo.dwStyle, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 10 * sizeof(size_t), clsInfo.hCursor, _tlv_proc, clsInfo.dwFlags, 0);
+	_obj_register(Ex_Atom(L"LISTITEM"), EOS_VISIBLE, EOS_EX_TRANSPARENT, DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE | DT_CENTER, 10 * sizeof(size_t), clsInfo.hCursor, _tlvi_proc, clsInfo.dwFlags, 0);
 }
 
 void _listview_setitemstate(LPVOID lpItems, INT iItem, INT dwState, BOOL bRemove)
@@ -259,14 +313,18 @@ void _listview_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT*
 	{
 		nVS = height / iHeight;
 		if (nVS == 0)
+		{
 			nVS = 1;
+		}
 		nHS = width / iWidth + 1;
 	}
 	else
 	{
 		nHS = width / iWidth;
 		if (nHS == 0)
+		{
 			nHS = 1;
+		}
 		nVS = height / iHeight + 1;
 	}
 	INT vWidth = 0;
@@ -411,7 +469,9 @@ void _listview_rectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bH
 void _listview_lprectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bHView, RECT* lpRc)
 {
 	if (lpRc == 0)
+	{
 		return;
+	}
 	RECT rcItem{ 0 };
 	_listview_rectfromiitem(pObj, pOwner, iItem, bHView, &rcItem);
 	RtlMoveMemory(lpRc, &rcItem, 16);
@@ -534,7 +594,9 @@ INT _listview_checkpos(INT nPos, INT nView, INT nPage)
 		nPos = nView - nPage;
 	}
 	if (nPos < 0)
+	{
 		nPos = 0;
+	}
 	return nPos;
 }
 
@@ -765,7 +827,7 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
 			else
 			{
 				//判断功能键
-				if ((iKey & 2) != 0 && !bSingleSel) //shift
+				if ((iKey & 2) != 0 && !bSingleSel) // shift
 				{
 					INT nStep = iCur > iSelect ? 1 : -1;
 					for (INT i = iSelect; i != iCur; i = i + nStep)
@@ -1021,20 +1083,7 @@ void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner,
 		}
 		if (atomRect && pObj->crChecked_ != TRUE)
 		{
-			Ex_ThemeDrawControlEx(
-				ecd.hTheme,
-				ecd.hCanvas,
-				ecd.rcPaint.left,
-				ecd.rcPaint.top,
-				ecd.rcPaint.right,
-				ecd.rcPaint.bottom,
-				ATOM_ITEM,
-				atomRect,
-				0,
-				0,
-				0,
-				0,
-				255);
+			Ex_ThemeDrawControlEx(ecd.hTheme, ecd.hCanvas, ecd.rcPaint.left, ecd.rcPaint.top, ecd.rcPaint.right, ecd.rcPaint.bottom, ATOM_ITEM, atomRect, 0, 0, 0, 0, 255);
 		}
 	}
 }
@@ -1088,9 +1137,15 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		iHeight = (FLOAT)iHeight / g_Li.DpiY + 8;
 	}
 	if (iWidth <= 0)
+	{
 		iWidth = 1;
+	}
+
 	if (iHeight <= 0)
+	{
 		iHeight = 1;
+	}
+
 	//项目尺寸
 	pOwner->width_item_ = Ex_Scale(iWidth);
 	pOwner->height_item_ = Ex_Scale(iHeight);

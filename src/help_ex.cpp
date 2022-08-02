@@ -885,3 +885,40 @@ INT GetMdayCount(INT year, INT mon) {
 INT GetWeekOfDate(INT year, INT month, INT day) {
 	return (day + 2 * month + 3 * (month + 1) / 5 + year + year / 4 - year / 100 + year / 400) % 7 + 1;
 }
+
+BOOL Flag_Query(INT dwFlag)
+{
+	return (g_Li.dwFlags & dwFlag) == dwFlag;
+}
+
+void Flag_Add(INT dwFlag)
+{
+	g_Li.dwFlags = g_Li.dwFlags | dwFlag;
+}
+
+void Flag_Del(INT dwFlag)
+{
+	g_Li.dwFlags = g_Li.dwFlags - (g_Li.dwFlags & dwFlag);
+}
+
+void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable)
+{
+	ImmAssociateContext(hWnd, (bEnable ? pWnd->hImc_ : 0));
+}
+
+LPCWSTR GetErrorMessage(DWORD error)
+{
+	WCHAR szBuf[1024];
+	WCHAR* lpMsgBuf;
+	FormatMessageW(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		error,
+		0,
+		(LPWSTR)&lpMsgBuf,
+		1024, NULL);
+	swprintf_s(szBuf, L"%s", lpMsgBuf);
+	return (LPCWSTR)szBuf;
+}
