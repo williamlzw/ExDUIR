@@ -2886,7 +2886,10 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
 		INT nIndex = Ex_ObjGetLong(hObjItem, 0);// 获得表项当前代表的索引
 		if (nIndex > 0 && nIndex <= (m_tlistViewItemInfo.size()))
 		{
-			output(L"TList 按钮点击", nIndex - 1, nID, wParam, lParam);
+			m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex -1);
+			output(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam, m_tlistViewItemInfo.size());
+			Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), LVM_SETITEMCOUNT, m_tlistViewItemInfo.size(), 0);
+			Ex_ObjInvalidateRect(Ex_ObjGetParent(hObjItem),0);
 		}
 	}
 	return 0;
@@ -2908,18 +2911,15 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 				*lpResult = 1;//拦截这个事件
 				return 1;
 			}
-			else if (ni->nCode == LVN_ITEMCHANGED)
+			else if (ni->nCode == LVN_ITEMCHANGED)//ni->wParam:上次选中索引   ni->lParam:当前选中索引  索引从1开始
 			{
-				output(L"TList表项改变", hObj, ni->hObjFrom, ni->wParam, ni->lParam);
+				output(L"TList表项改变", ni->wParam, ni->lParam);
 			}
-			else if (ni->nCode == LVN_HOTTRACK)//ni->wParam:当前悬浮表项句柄   ni->lParam:索引
+			else if (ni->nCode == LVN_HOTTRACK)//ni->wParam:上次悬浮索引   ni->lParam:当前悬浮索引  索引从1开始
 			{
-				Ex_ObjSetColor(selectedItem[0], COLOR_EX_BACKGROUND, Ex_ObjGetColor(ni->wParam, COLOR_EX_BACKGROUND), TRUE);
-				Ex_ObjSetColor(ni->wParam, COLOR_EX_BACKGROUND, ExRGB2ARGB(15066083, 200), TRUE);
-				selectedItem[0] = ni->wParam;
+
 			}
 		}
-
 	}
 	else if (uMsg == TLVM_ITEM_CREATED)
 	{
@@ -2932,9 +2932,9 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 3);
 		Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
 
-		hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 39, 648, 1, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
+		/*hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 39, 648, 1, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
 		Ex_ObjSetColor(hObjTmp, COLOR_EX_BACKGROUND, ExRGB2ARGB(14868961, 250), TRUE);
-		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 4);
+		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 4);*/
 		*lpResult = 1;
 		return 1;
 	}
@@ -2944,17 +2944,23 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		{
 			hObjTmp = Ex_ObjGetFromNodeID(lParam, 1);
 			if (hObjTmp)
+			{
 				Ex_ObjSetText(hObjTmp, L"TEST", true);
+			}
+				
 			hObjTmp = Ex_ObjGetFromNodeID(lParam, 2);
 			if (hObjTmp)
+			{
 				Ex_ObjSetText(hObjTmp, m_tlistViewItemInfo[wParam - 1].text.c_str(), true);
+			}
+				
 			hObjTmp = Ex_ObjGetFromNodeID(lParam, 3);
 			if (hObjTmp)
+			{
 				Ex_ObjSetText(hObjTmp, m_tlistViewItemInfo[wParam - 1].btnTitle.c_str(), true);
-
+			}
 		}
 	}
-	*lpResult = 0;
 	return 0;
 }
 
@@ -2966,7 +2972,7 @@ void test_templatelistview(HWND hParent)
 	HEXOBJ hobj_listview = Ex_ObjCreateEx(-1, L"TListView",
 		NULL, -1, 30, 50, 650, 520,
 		hExDui_listview, 0, -1, 0, 0, OnTemplateListViewProc);
-	if (m_tlistViewItemInfo.size() == 0)//
+	if (m_tlistViewItemInfo.size() == 0)
 	{
 		for (int i = 0; i < 20; i++)
 		{
@@ -2974,7 +2980,8 @@ void test_templatelistview(HWND hParent)
 		}
 	}
 	Ex_ObjSendMessage(hobj_listview, LVM_SETITEMCOUNT, m_tlistViewItemInfo.size(), m_tlistViewItemInfo.size());
-
+	Ex_ObjSendMessage(hobj_listview, TLVM_SET_ITEM_HOVERCOLOR, 0, ExRGB2ARGB(15066083, 200));//表项悬浮色
+	Ex_ObjSendMessage(hobj_listview, TLVM_SET_ITEM_SELECTCOLOR, 0, ExRGB2ARGB(124123, 250));//表项选中色
 	Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL, 0, 0, 0);
 }
 

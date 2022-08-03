@@ -32,7 +32,7 @@ void _tlv_killfocus_ifischild(obj_s* pObj)
 bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld)
 {
 	int nIndex = 0;
-	array_s* arr = (array_s*)Ex_ObjGetLong(hObj, 0);
+	array_s* arr = (array_s*)Ex_ObjGetLong(hObj, TLVL_ITEM_ARRAY);
 	int nItemCount = pOwner->count_items_;
 	int nCount = iEnd - iStart;
 	int nCountOld = iEndOld - iStartOld;
@@ -56,8 +56,9 @@ bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, 
 		}
 		fRepos = true;
 	}
-	if (iStart != iStartOld || iEnd != iEndOld)
+	//if (iStart != iStartOld || iEnd != iEndOld)
 	{
+		INT iSelect = pOwner->index_select_;
 		Ex_ObjSetLong(hObj, 4, (LONG_PTR)iStart);
 		Ex_ObjSetLong(hObj, 5, (LONG_PTR)iEnd);
 		for (int i = 1; i <= Array_GetCount(arr); i++)
@@ -66,9 +67,17 @@ bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, 
 			nIndex = iStart + i - 1;
 			if (nIndex >= iStart && nIndex <= iEnd && nIndex <= nItemCount)
 			{
-				if (Ex_ObjGetLong(hObjItem, 0) != nIndex)
+				//if (Ex_ObjGetLong(hObjItem, 0) != nIndex)
 				{
 					Ex_ObjSendMessage(hObj, TLVM_ITEM_FILL, nIndex, hObjItem);
+					if (nIndex > 0 && nIndex == iSelect && iSelect != 0)//多选还需要修改判断
+					{
+						Ex_ObjSetColor(hObjItem, COLOR_EX_BACKGROUND, (EXARGB)Ex_ObjGetLong(hObj, TLVL_ITEM_SELECTCOLOR), TRUE);//新增
+					}
+					else
+					{
+						Ex_ObjSetColor(hObjItem, COLOR_EX_BACKGROUND, 0, TRUE);//新增
+					}
 					Ex_ObjSetLong(hObjItem, 0, nIndex);
 				}
 				Ex_ObjShow(hObjItem, true);
@@ -98,7 +107,7 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
 	INT nOffsetXOld = Ex_ObjGetLong(hObj, 6);
 	INT nOffsetYOld = Ex_ObjGetLong(hObj, 7);
 	bool fRepos = false;
-	if (iStart != iStartOld || iEnd != iEndOld)
+	//if (iStart != iStartOld || iEnd != iEndOld)
 	{
 		fRepos = _tlv_refill(hObj, pObj, pOwner, iStart, iStartOld, iEnd, iEndOld);
 	}
@@ -107,7 +116,7 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
 		Ex_ObjSetLong(hObj, 6, nOffsetX);
 		Ex_ObjSetLong(hObj, 7, nOffsetY);
 
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, 0);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, TLVL_ITEM_ARRAY);
 		int count = Array_GetCount(arr);
 		//数组从1开始
 		for (int i = 1; i <= count; i++)
@@ -124,6 +133,132 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
 					Ex_ObjMove(hObjItem, rcItem.left, rcItem.top, rcItem.right - rcItem.left, rcItem.bottom - rcItem.top, false);
 				}
 			}
+		}
+	}
+}
+
+void _tlv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam)
+{
+	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
+	INT x = LOWORD(lParam);
+	INT y = HIWORD(lParam);
+	LPVOID lpItems = pOwner->lpItems_;
+	INT ox = 0;
+	INT oy = 0;
+	INT iCur = _listview_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
+	BOOL vCur = _listview_checkitem(pOwner, iCur);
+	if (vCur)
+	{
+		if (_listview_queryitemstate(lpItems, iCur, STATE_DISABLE))
+		{
+			return;
+		}
+	}
+	INT iSelect = pOwner->index_select_;
+	BOOL vSelect = _listview_checkitem(pOwner, iSelect);
+	INT nCount = pOwner->count_items_;
+	BOOL bSingleSel = !((pObj->dwStyle_ & ELVS_ALLOWMULTIPLE) == ELVS_ALLOWMULTIPLE);
+	BOOL bShowAllwasy = ((pObj->dwStyle_ & ELVS_SHOWSELALWAYS) == ELVS_SHOWSELALWAYS);
+	INT iKey = _wnd_getfunctionkeys();
+	if (!bSingleSel && uMsg == WM_RBUTTONDOWN)
+	{
+		if ((iKey & 1) != 0 || (iKey & 2) != 0)
+		{
+			return;
+		}
+	}
+	if (vCur && iCur == iSelect)
+	{
+		if ((pObj->dwStyle_ & ELVS_ITEMTRACKING) == ELVS_ITEMTRACKING)
+		{
+			return;
+		}
+	}
+	else
+	{
+		//取消选中
+		INT nSelects = pOwner->count_selects_;
+		if (bSingleSel)
+		{
+			if (vSelect)
+			{
+				if (!((pObj->dwStyle_ & ELVS_SHOWSELALWAYS) == ELVS_SHOWSELALWAYS) || vCur)
+				{
+					_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iSelect, STATE_SELECT, TRUE, 0, 0, 0);
+					nSelects = nSelects - 1;
+				}
+				else
+				{
+					return;
+				}
+			}
+		}
+		else
+		{
+			if ((iKey & 1) == 0) // ctrl没有按下,则取消所有选择
+			{
+				_listview_reselect(hWnd, hObj, pObj, pOwner, 0, FALSE);
+			}
+		}
+		uMsg = 0;
+		if (vCur)
+		{
+			if (bSingleSel && !vSelect)
+			{
+				_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, uMsg, iCur, iSelect);
+				nSelects = nSelects + 1;
+			}
+			else
+			{
+				//判断功能键
+				if ((iKey & 2) != 0 && !bSingleSel) //shift
+				{
+					INT nStep = iCur > iSelect ? 1 : -1;
+					for (INT i = iSelect; i != iCur; i = i + nStep)
+					{
+						if (!_listview_queryitemstate(lpItems, i, STATE_SELECT))
+						{
+							if (!_listview_queryitemstate(lpItems, i, STATE_DISABLE))
+							{
+								_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, FALSE, i == iCur ? uMsg : 0, i, iSelect);
+								nSelects = nSelects + 1;
+							}
+						}
+					}
+					pOwner->count_selects_ = nSelects;
+					return;
+				}
+				else
+				{
+					_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE, uMsg, iCur, iSelect);
+				}
+			}
+		}
+		pOwner->index_select_ = iCur;
+		pOwner->count_selects_ = nSelects;
+	}
+	array_s* arr = (array_s*)Ex_ObjGetLong(hObj, TLVL_ITEM_ARRAY);
+	if (arr)
+	{
+		INT iStart = pOwner->index_start_;
+		auto num = Array_GetCount(arr);
+		HEXOBJ hobjitem = Array_GetMember(arr, iCur - iStart + 1);
+		if (iCur != iSelect)
+		{
+			if ((iKey & 2) != 0 && !bSingleSel)//shift
+			{
+				//..多选处理
+			}
+			else
+			{
+				Ex_ObjSetColor(Array_GetMember(arr, iSelect - iStart + 1), COLOR_EX_BACKGROUND, 0, TRUE);
+			}
+			Ex_ObjSetColor(hobjitem, COLOR_EX_BACKGROUND, (EXARGB)Ex_ObjGetLong(hObj, TLVL_ITEM_SELECTCOLOR), TRUE);
+			_obj_dispatchnotify(hWnd, pObj, hObj, 0, LVN_ITEMCHANGED, iSelect, iCur); //iSelect有可能是0,为上次选中  // hobjitem
+		}
+		else
+		{
+			///....多选处理
 		}
 	}
 }
@@ -161,20 +296,55 @@ void _tlv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM l
 				}
 				else
 				{
-					array_s* arr = (array_s*)Ex_ObjGetLong(hObj, 0);
+					array_s* arr = (array_s*)Ex_ObjGetLong(hObj, TLVL_ITEM_ARRAY);
 					if (arr)
 					{
 						listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 						INT iStart = pOwner->index_start_;
-						auto num = Array_GetCount(arr);
 						HEXOBJ hobjitem = Array_GetMember(arr, iCur - iStart + 1);
-						_obj_dispatchnotify(hWnd, pObj, hObj, 0, LVN_HOTTRACK, hobjitem, iCur);
+						if (iSelect != iLast)
+						{
+							Ex_ObjSetColor(Array_GetMember(arr, iLast - iStart + 1), COLOR_EX_BACKGROUND, 0, TRUE);
+						}
+							
+						if (iSelect != iCur)
+						{
+							Ex_ObjSetColor(hobjitem, COLOR_EX_BACKGROUND, (EXARGB)Ex_ObjGetLong(hObj, TLVL_ITEM_HOVERCOLOR), TRUE);//ExRGB2ARGB(15066083, 200)
+						}
+						else
+						{
+							Ex_ObjSetColor(hobjitem, COLOR_EX_BACKGROUND, (EXARGB)Ex_ObjGetLong(hObj, TLVL_ITEM_SELECTCOLOR), TRUE);//ExRGB2ARGB(255, 255)
+						}
+						_obj_dispatchnotify(hWnd, pObj, hObj, 0, LVN_HOTTRACK, iLast, iCur);
 					}
 				}
 			}
 		}
 	}
 	pOwner->index_mouse_ = iCur;
+}
+
+void _tlv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
+{
+	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
+	LPVOID lpItems = pOwner->lpItems_;
+	INT iLast = pOwner->index_mouse_;
+	if (_listview_checkitem(pOwner, iLast))
+	{
+		_listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0, 0, 0);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, TLVL_ITEM_ARRAY);
+		if (arr)
+		{
+			listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
+			INT iStart = pOwner->index_start_;
+			INT iSelect = pOwner->index_select_;
+			if (iSelect != iLast)//选中项不清除颜色  多选还需要额外判断
+			{
+				Ex_ObjSetColor(Array_GetMember(arr, iLast - iStart + 1), COLOR_EX_BACKGROUND, 0, TRUE);
+			}
+		}
+		pOwner->index_mouse_ = 0;
+	}
 }
 
 LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -192,11 +362,13 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 			arr = Array_Create(0);
 			Array_BindEvent(arr, eae_delmember, _tlv_array_del);
 			Array_SetExtra(arr, hObj);
-			Ex_ObjSetLong(hObj, 0, (LONG_PTR)arr);
+			Ex_ObjSetLong(hObj, TLVL_ITEM_ARRAY, (LONG_PTR)arr);
+			Ex_ObjSetLong(hObj, TLVL_ITEM_HOVERCOLOR, ExRGB2ARGB(15066083, 200));//表项悬浮色
+			Ex_ObjSetLong(hObj, TLVL_ITEM_SELECTCOLOR, ExRGB2ARGB(255, 250));//表项选中色
 		}
 		else if (uMsg == WM_DESTROY)
 		{
-			arr = (array_s*)Ex_ObjGetLong(hObj, 0);
+			arr = (array_s*)Ex_ObjGetLong(hObj, TLVL_ITEM_ARRAY);
 			if (arr)
 			{
 				Array_Destroy(arr);
@@ -222,6 +394,16 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 			_tlv_mousemove(hWnd, hObj, pObj, wParam, lParam);
 			return 0;//不执行父类的WM_MOUSEMOVE
 		}
+		else if (uMsg == WM_MOUSELEAVE)
+		{
+			_tlv_mouseleave(hWnd, hObj, pObj);
+			return 0;//不执行父类
+		}
+		else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN)
+		{
+			_tlv_btndown(hWnd, hObj, pObj, uMsg, wParam, lParam);
+			return 0;//不执行父类
+		}
 		else if (uMsg == TLVM_ITEM_CREATE)
 		{
 			handle = Ex_ObjCreate((LPCWSTR)Ex_Atom(L"LISTITEM"), 0, -1, 0, 0, 0, 0, hObj);
@@ -239,6 +421,14 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 		else if (uMsg == TLVM_SETTEMPLATE)
 		{
 			return 0;
+		}
+		else if (uMsg == TLVM_SET_ITEM_HOVERCOLOR)
+		{
+			Ex_ObjSetLong(hObj, TLVL_ITEM_HOVERCOLOR, lParam);//表项悬浮色
+		}
+		else if (uMsg == TLVM_SET_ITEM_SELECTCOLOR)
+		{
+			Ex_ObjSetLong(hObj, TLVL_ITEM_SELECTCOLOR, lParam);//表项选中色
 		}
 	}
 	return m_pfnTListView(hWnd, hObj, uMsg, wParam, lParam);
@@ -652,7 +842,7 @@ size_t _listview_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, L
 	INT nPage = 0;
 	INT nView = 0;
 	INT nLine = 0;
-	if ((LOWORD(lParam) & LVSICF_NOSCROLL) != 0)
+	if ((LOWORD(lParam) & LVSICF_NOSCROLL) != LVSICF_NOSCROLL)
 	{
 		HEXOBJ hSB = 0;
 		_listview_getscrollbarvalue(pObj, pOwner, TRUE, &hSB, &nPosX, &nLine, &nPage, &nView);

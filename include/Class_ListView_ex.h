@@ -1,6 +1,14 @@
 #pragma once
 #include "help_ex.h"
 
+
+// 属性_模板列表_表项数组指针
+#define TLVL_ITEM_ARRAY 0 
+// 属性_模板列表_表项悬浮背景色
+#define TLVL_ITEM_HOVERCOLOR 1
+// 属性_模板列表_表项选中背景色
+#define TLVL_ITEM_SELECTCOLOR 2
+
 struct listview_s
 {
 	INT width_item_; //项目宽度
@@ -62,3 +70,5 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps);
 bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld);
 void _tlv_killfocus_ifischild(obj_s* pObj);
 void _tlv_array_del(array_s* hArray, int index, HEXOBJ pvData, int type);
+void _tlv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
+void _tlv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam);

@@ -1090,7 +1090,12 @@
 #define TLVM_SETTEMPLATE 10020
 // 消息_模板列表_取项目句柄 wParam:表项索引,返回表项容器句柄(不在可视区返回0)
 #define TLVM_GETITEMOBJ 10021
+// 消息_模板列表_设置表项悬浮背景色 lParam:ARGB颜色
+#define TLVM_SET_ITEM_HOVERCOLOR 100022
+// 消息_模板列表_设置表项选中背景色 lParam:ARGB颜色
+#define TLVM_SET_ITEM_SELECTCOLOR 100023
 #pragma endregion template listview message constant
+
 
 #pragma region listview message constant
 // 消息_列表_取表项总数
@@ -1139,7 +1144,7 @@
 #define LVM_GETITEMTEXT 4141
 // 消息_报表_设置表项文本 (wParam若不为0则为表项索引,lParam为EX_REPORTLIST_ITEMINFO指针)
 #define LVM_SETITEMTEXT 4142
-// 消息_列表_设置表项总数 wParam为表项条数,lParmam为是否立即刷新
+// 消息_列表_设置表项总数 wParam为表项条数,lParmam为MAKELONG(LVSICF_NOSCROLL, 表项条数)
 #define LVM_SETITEMCOUNT 4143
 // 消息_报表_排序 (lParam为EX_REPORTLIST_SORTINFO指针)
 #define LVM_SORTITEMS 4144

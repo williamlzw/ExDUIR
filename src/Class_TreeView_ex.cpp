@@ -890,7 +890,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                         index = Ex_ObjSendMessage(hObj, LVM_GETHOTITEM, 0, 0);
                     }
 
-                    _obj_baseproc(hWnd, hObj, pObj, LVM_SETITEMCOUNT, count, MAKELONG(2, index));
+                    _obj_baseproc(hWnd, hObj, pObj, LVM_SETITEMCOUNT, count, MAKELONG(LVSICF_NOSCROLL, index));
                 }
             }
         }
