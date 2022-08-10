@@ -435,8 +435,8 @@ void _scrollbar_leftbuttondown(HWND hWnd, HEXOBJ hObj, obj_s *pObj, LPARAM lPara
         BOOL fTimer = FALSE;
         if (httype == SBCT_CONTROL)
         {
-            x = LOWORD(lParam) - psi->rcThumb_left_;
-            y = HIWORD(lParam) - psi->rcThumb_top_;
+            x = GET_X_LPARAM(lParam) - psi->rcThumb_left_;
+            y = GET_Y_LPARAM(lParam) - psi->rcThumb_top_;
             psi->nTrackPosOffset_ = ((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL) ? y : x;
             psi->nTrackPos_ = psi->nPos_;
         }
@@ -545,7 +545,7 @@ void _scrollbar_oncontextmenu(HEXOBJ hObj, obj_s *pObj, LPARAM lParam)
     EnableMenuItem(hMenu, 3, wEnable); //底部
     EnableMenuItem(hMenu, 6, wEnable); //下页
     EnableMenuItem(hMenu, 9, wEnable); //下行
-    Ex_TrackPopupMenu(hMenu, 0, LOWORD(lParam), HIWORD(lParam), 0, hObj, 0, 0, 0);
+    Ex_TrackPopupMenu(hMenu, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hObj, 0, 0, 0);
 }
 
 INT _scrollbar_paint(HEXOBJ hObj, obj_s *pObj)
@@ -690,12 +690,12 @@ LRESULT CALLBACK _scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         }
         else if (uMsg == WM_NCHITTEST)
         {
-            _scrollbar_nchittest(pObj, LOWORD(lParam), HIWORD(lParam));
+            _scrollbar_nchittest(pObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         else if (uMsg == WM_MOUSEMOVE)
         {
-            INT x = LOWORD(lParam);
-            INT y = HIWORD(lParam);
+            INT x = GET_X_LPARAM(lParam);
+            INT y = GET_Y_LPARAM(lParam);
             si_s *psi = (si_s *)_obj_pOwner(pObj);
             if (((pObj->dwStyle_ & ESS_VERTICALSCROLL) == ESS_VERTICALSCROLL))
             {

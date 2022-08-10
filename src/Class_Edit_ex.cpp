@@ -833,8 +833,8 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		{
 			edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 			POINT pt;
-			pt.x = LOWORD(wParam);
-			pt.y = HIWORD(wParam);
+			pt.x = GET_X_LPARAM(wParam);
+			pt.y = GET_Y_LPARAM(wParam);
 			if (PtInRect((RECT*)pOwner->prctext_, pt) ? FALSE : TRUE)
 			{
 				return 0;
@@ -938,7 +938,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		}
 		else if (uMsg == WM_CONTEXTMENU)
 		{
-			_edit_contextmenu(hWnd, pObj->pWnd_, hObj, pObj, wParam, LOWORD(lParam), HIWORD(lParam));
+			_edit_contextmenu(hWnd, pObj->pWnd_, hObj, pObj, wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		}
 		else if (uMsg == WM_COMMAND)
 		{

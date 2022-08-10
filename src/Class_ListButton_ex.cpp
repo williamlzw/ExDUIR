@@ -531,7 +531,7 @@ void _listbuttonex_recovery(HEXOBJ hObj, INT nType, array_s* hArr, INT Index, BO
 
 void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam)
 {
-	POINT pt = { LOWORD(lParam), HIWORD(lParam) };
+	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
 	INT Index = Ex_ObjGetLong(hObj, ELBL_INDEX);
 	INT Heatindex = _listbuttonex_hittest(hObj, hArr, pt);
@@ -601,7 +601,7 @@ void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam)
 
 void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 {
-	POINT pt = { LOWORD(lParam), HIWORD(lParam) };
+	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
 	INT Heatindex = _listbuttonex_hittest(hObj, hArr, pt);
 
@@ -653,7 +653,7 @@ void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 
 void _listbuttonex_mouseup(HEXOBJ hObj, INT nType, LPARAM lParam)
 {
-	POINT pt = { LOWORD(lParam), HIWORD(lParam) };
+	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
 	INT Heatindex = _listbuttonex_hittest(hObj, hArr, pt);
 

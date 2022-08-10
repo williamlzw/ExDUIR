@@ -350,7 +350,7 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	{
 		if (hWebView != 0)
 		{
-			Ck_Browser_Move(hWebView, LOWORD(lParam), HIWORD(lParam), EOP_DEFAULT, EOP_DEFAULT);
+			Ck_Browser_Move(hWebView, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), EOP_DEFAULT, EOP_DEFAULT);
 		}
 	}
 	else if (uMsg == WM_SIZE) 

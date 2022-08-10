@@ -329,7 +329,7 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 	else if (uMsg == WM_EX_LCLICK) //当单击表头
 	{
 		INT nHitBlock = 0;
-		size_t nIndex = _reportlistview_head_hittest(hObj, LOWORD(lParam), HIWORD(lParam), TRUE, &nHitBlock);
+		size_t nIndex = _reportlistview_head_hittest(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), TRUE, &nHitBlock);
 		HEXOBJ hObjList = Ex_ObjGetLong(hObj, ERLVHL_HLISTVIEW);
 		if (hObjList == 0)
 		{
@@ -361,7 +361,7 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 	{
 		Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, FALSE);
 		INT rHitBlock = 0;
-		size_t nIndex = _reportlistview_head_hittest(hObj, LOWORD(lParam), HIWORD(lParam), FALSE, &rHitBlock);
+		size_t nIndex = _reportlistview_head_hittest(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), FALSE, &rHitBlock);
 		if (rHitBlock == 2) //如果命中位置是分割线,则开始拖动
 		{
 			Ex_ObjSetUIState(hObj, STATE_ALLOWDRAG, FALSE, 0, FALSE);
@@ -372,7 +372,7 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 		Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, FALSE);
 		Ex_ObjSetUIState(hObj, STATE_ALLOWDRAG, TRUE, 0, FALSE);
 		INT rHitBlock = 0;
-		_reportlistview_head_hittest(hObj, LOWORD(lParam), HIWORD(lParam), FALSE, &rHitBlock);
+		_reportlistview_head_hittest(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), FALSE, &rHitBlock);
 		HEXOBJ hObjList = Ex_ObjGetLong(hObj, ERLVHL_HLISTVIEW);
 		if (hObjList == 0)
 		{
@@ -388,7 +388,7 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 	else if (uMsg == WM_MOUSEMOVE)
 	{
 		INT rHitBlock = 0;
-		INT nIndex = _reportlistview_head_hittest(hObj, LOWORD(lParam), HIWORD(lParam), TRUE, &rHitBlock);
+		INT nIndex = _reportlistview_head_hittest(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), TRUE, &rHitBlock);
 
 		if (nIndex != 0)
 		{
@@ -413,7 +413,7 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 							EX_REPORTLIST_COLUMNINFO* p = (EX_REPORTLIST_COLUMNINFO*)__ptr_index(pTCs, nIndex, i + 1, sizeof(EX_REPORTLIST_COLUMNINFO));
 							if (nIndex == i + 1)
 							{
-								INT x = LOWORD(lParam);
+								INT x = GET_X_LPARAM(lParam);
 								RECT rc;
 								Ex_ObjGetRect(hObj, &rc);
 								if (x > 1 && x < rc.right - 1)
@@ -653,7 +653,7 @@ BOOL _reportlistview_notify_proc(HEXOBJ hObj, EX_NMHDR* pNotifyInfo)
 				rc.right = rc.bottom - rc.top;
 				rc.bottom += rc.bottom - rc.top;
 				// 命中检查框
-				if (PtInRect(&rc, { ((int)(short)LOWORD(lParam)),((int)(short)HIWORD(lParam)) }))
+				if (PtInRect(&rc, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }))
 				{
 					if ((pData->dwStyle_ & ERLV_RS_CHECKBOX_CHECK))
 					{

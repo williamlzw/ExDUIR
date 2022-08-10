@@ -163,8 +163,8 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             auto dpi = GetSysDpi();
             auto width = rc.right - rc.left;
             auto height = rc.bottom - rc.top;
-            auto index = (INT)(count - (FLOAT)(width - LOWORD(lParam) / dpi + 8) / 20 + 2);
-            if (index > 0 && index <= count && (HIWORD(lParam) / dpi) >= (height - 27))
+            auto index = (INT)(count - (FLOAT)(width - GET_X_LPARAM(lParam) / dpi + 8) / 20 + 2);
+            if (index > 0 && index <= count && (GET_Y_LPARAM(lParam) / dpi) >= (height - 27))
             {
                 Ex_ObjSetLong(hObj, ECL_INDEX, index);
                 Ex_ObjInvalidateRect(hObj, 0);

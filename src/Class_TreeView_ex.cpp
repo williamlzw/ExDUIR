@@ -946,12 +946,12 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     }
     else if (uMsg == TVM_HITTEST)
     {
-        return (size_t)_treeview_hittest(pObj, {LOWORD(lParam), HIWORD(lParam)}, (INT *)wParam);
+        return (size_t)_treeview_hittest(pObj, {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}, (INT *)wParam);
     }
     else if (uMsg == WM_LBUTTONDOWN)
     {
         INT hitType = 0;
-        EX_TREEVIEW_NODEITEM *pItem = _treeview_hittest(pObj, {LOWORD(lParam), HIWORD(lParam)}, &hitType);
+        EX_TREEVIEW_NODEITEM *pItem = _treeview_hittest(pObj, {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}, &hitType);
 
         if (pItem && hitType == 64)
         {

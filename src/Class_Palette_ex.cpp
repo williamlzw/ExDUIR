@@ -52,18 +52,18 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			RECT rc;
 			Ex_ObjGetClientRect(hObj, &rc);
 			auto dpi = GetSysDpi();
-			auto x = (INT)((FLOAT)LOWORD(lParam) / dpi);
-			auto y = (INT)((FLOAT)HIWORD(lParam) / dpi);
+			auto x = (INT)((FLOAT)GET_X_LPARAM(lParam) / dpi);
+			auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam) / dpi);
 			if (x >= rc.left && x <= rc.right)
 			{
 				if (y >= rc.top && y <= rc.bottom)
 				{
-					Ex_ObjSetLong(hObj, PTL_BEGINX, LOWORD(lParam));
-					Ex_ObjSetLong(hObj, PTL_BEGINY, HIWORD(lParam));
+					Ex_ObjSetLong(hObj, PTL_BEGINX, GET_X_LPARAM(lParam));
+					Ex_ObjSetLong(hObj, PTL_BEGINY, GET_Y_LPARAM(lParam));
 					Ex_ObjInvalidateRect(hObj, 0);
 					HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PTL_IMAGE);
 					EXARGB pixel;
-					_img_getpixel(img, LOWORD(lParam), HIWORD(lParam), &pixel);
+					_img_getpixel(img, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &pixel);
 					Ex_ObjDispatchNotify(hObj, PTN_MOUSEMOVE, pixel, 0);
 				}
 			}

@@ -564,8 +564,8 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         else if (uMsg == WM_NCHITTEST)
         {
             POINT tmp;
-            tmp.x = LOWORD(lParam);
-            tmp.y = HIWORD(lParam);
+            tmp.x = GET_X_LPARAM(lParam);
+            tmp.y = GET_Y_LPARAM(lParam);
             RECT rc;
             rc.left = _obj_getextralong(pObj, ECBL_LEFT);
             rc.top = _obj_getextralong(pObj, ECBL_TOP);

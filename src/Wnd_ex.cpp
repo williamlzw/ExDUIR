@@ -1418,8 +1418,8 @@ INT _wnd_wm_nchittest(wnd_s *pWnd, HWND hWnd, LPARAM lParam)
     }
     else
     {
-        pt.x = LOWORD(lParam);
-        pt.y = HIWORD(lParam);
+        pt.x = GET_X_LPARAM(lParam);
+        pt.y = GET_Y_LPARAM(lParam);
     }
     ScreenToClient(hWnd, &pt);
     if (_rgn_hittest(pWnd->hrgn_client_, pt.x, pt.y) || pWnd->dwWinState_ == 2)
@@ -2636,7 +2636,7 @@ void _wnd_wm_mouse(wnd_s *pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lPara
 
         if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT))
         {
-            lParam = MAKELONG(LOWORD(lParam) - pObj->w_left_, HIWORD(lParam) - pObj->w_top_);
+            lParam = MAKELONG(GET_X_LPARAM(lParam) - pObj->w_left_, GET_Y_LPARAM(lParam) - pObj->w_top_);
             pWnd->dwHitObjPos_Abs_ = lParam;
         }
         else

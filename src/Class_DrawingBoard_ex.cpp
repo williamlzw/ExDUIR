@@ -42,8 +42,8 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	else if (uMsg == WM_LBUTTONDOWN)
 	{
 		Ex_ObjSetLong(hObj, DBL_DOWN, 1);
-		Ex_ObjSetLong(hObj, DBL_BEGINX, LOWORD(lParam));
-		Ex_ObjSetLong(hObj, DBL_BEGINY, HIWORD(lParam));
+		Ex_ObjSetLong(hObj, DBL_BEGINX, GET_X_LPARAM(lParam));
+		Ex_ObjSetLong(hObj, DBL_BEGINY, GET_Y_LPARAM(lParam));
 	}
 	else if (uMsg == WM_LBUTTONUP)
 	{
@@ -58,15 +58,15 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			RECT rc;
 			Ex_ObjGetClientRect(hObj, &rc);
 			auto dpi = GetSysDpi();
-			auto x = (INT)((FLOAT)LOWORD(lParam) / dpi);
-			auto y = (INT)((FLOAT)HIWORD(lParam) / dpi);
+			auto x = (INT)((FLOAT)GET_X_LPARAM(lParam) / dpi);
+			auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam) / dpi);
 			if (penType == 0 || penType == 1)
 			{
 				if (x >= rc.left && x <= rc.right)
 				{
 					if (y >= rc.top && y <= rc.bottom)
 					{
-						_drawingboard_updatedraw(hObj, LOWORD(lParam), HIWORD(lParam));
+						_drawingboard_updatedraw(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 					}
 				}
 			}

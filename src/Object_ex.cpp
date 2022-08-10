@@ -403,11 +403,11 @@ INT _obj_wm_nchittest(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wPar
 
         if (((pObj->dwFlags_ & EOF_BPATH) == EOF_BPATH))
         {
-            fHit = _path_hittest(pObj->hPath_Client_, LOWORD(lParam), HIWORD(lParam));
+            fHit = _path_hittest(pObj->hPath_Client_, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         else
         {
-            POINT aa = {LOWORD(lParam), HIWORD(lParam)};
+            POINT aa = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
             fHit = PtInRect((RECT *)((size_t)pObj + offsetof(obj_s, c_left_)), aa);
         }
         if (fHit)
@@ -1813,7 +1813,7 @@ size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam
             {
                 tmp = tmp | SWP_NOREDRAW;
             }
-            _obj_setpos_org(pObj, hObj, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, tmp, &nError);
+            _obj_setpos_org(pObj, hObj, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, 0, tmp, &nError);
             return 0;
         }
     }
@@ -1823,7 +1823,7 @@ size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam
         if (((pObj->dwFlags_ & EOF_BSENDSIZEMOVEMSGS) == EOF_BSENDSIZEMOVEMSGS))
         {
             INT tmp = SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE;
-            _obj_setpos_org(pObj, hObj, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, tmp, &nError);
+            _obj_setpos_org(pObj, hObj, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, 0, tmp, &nError);
             return 0;
         }
     }

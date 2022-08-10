@@ -2414,12 +2414,12 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			auto userdata = Ex_ObjGetLong(hObj, EOL_USERDATA);
 			//获取按下位置
 			POINT ptOrg;
-			ptOrg.x = LOWORD(userdata);
-			ptOrg.y = HIWORD(userdata);
+			ptOrg.x = GET_X_LPARAM(userdata);
+			ptOrg.y = GET_Y_LPARAM(userdata);
 			//获取当前鼠标位置
 			POINT pt;
-			pt.x = LOWORD(lParam);
-			pt.y = HIWORD(lParam);
+			pt.x = GET_X_LPARAM(lParam);
+			pt.y = GET_Y_LPARAM(lParam);
 			auto parent = Ex_ObjGetParent(hObj);
 			RECT rcParent{ 0 };
 			//获取组件矩形
@@ -2581,7 +2581,7 @@ LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPAR
 {
 	if (uMsg == WM_NCHITTEST)
 	{
-		if (!(LOWORD(lParam) >= 20 && LOWORD(lParam) <= 60 && HIWORD(lParam) >= 20 && HIWORD(lParam) <= 60))
+		if (!(GET_X_LPARAM(lParam) >= 20 && GET_X_LPARAM(lParam) <= 60 && GET_Y_LPARAM(lParam) >= 20 && GET_Y_LPARAM(lParam) <= 60))
 		{
 			return HTTRANSPARENT;
 		}

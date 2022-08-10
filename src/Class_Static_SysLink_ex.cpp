@@ -85,8 +85,8 @@ LRESULT CALLBACK _syslink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 
 size_t _syslink_hittest(obj_s *pObj, WPARAM wParam, LPARAM lParam)
 {
-    INT x = LOWORD(lParam);
-    INT y = HIWORD(lParam);
+    INT x = GET_X_LPARAM(lParam);
+    INT y = GET_Y_LPARAM(lParam);
     sli_s *pOwner = (sli_s *)_obj_pOwner(pObj);
     INT nBlock = pOwner->nCount_;
     LPVOID lpBlocks = pOwner->lpBlocks_;

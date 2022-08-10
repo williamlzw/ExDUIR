@@ -273,7 +273,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         {
             if (((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
             {
-                _sysbutton_remove_proc(pObj, LOWORD(lParam), HIWORD(lParam));
+                _sysbutton_remove_proc(pObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             }
         }
     }

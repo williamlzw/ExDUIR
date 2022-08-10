@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include "olectl.h"
+#include <Windowsx.h>
 #pragma comment(lib, "OleAut32.lib")
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")

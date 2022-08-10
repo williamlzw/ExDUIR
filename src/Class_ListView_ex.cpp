@@ -140,8 +140,8 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
 void _tlv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
-	INT x = LOWORD(lParam);
-	INT y = HIWORD(lParam);
+	INT x = GET_X_LPARAM(lParam) / g_Li.DpiX;
+	INT y = GET_Y_LPARAM(lParam) / g_Li.DpiY;
 	LPVOID lpItems = pOwner->lpItems_;
 	INT ox = 0;
 	INT oy = 0;
@@ -265,8 +265,8 @@ void _tlv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram,
 
 void _tlv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam)
 {
-	INT x = LOWORD(lParam);
-	INT y = HIWORD(lParam);
+	INT x = GET_X_LPARAM(lParam) / g_Li.DpiX;
+	INT y = GET_Y_LPARAM(lParam) / g_Li.DpiY;
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	LPVOID lpItems = pOwner->lpItems_;
 	INT iSelect = pOwner->index_select_;
@@ -945,8 +945,8 @@ void _listview_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARA
 void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam)
 {
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
-	INT x = LOWORD(lParam);
-	INT y = HIWORD(lParam);
+	INT x = GET_X_LPARAM(lParam);
+	INT y = GET_Y_LPARAM(lParam);
 	LPVOID lpItems = pOwner->lpItems_;
 	INT ox = 0;
 	INT oy = 0;
@@ -1173,8 +1173,8 @@ void _listview_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 
 void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam)
 {
-	INT x = LOWORD(lParam);
-	INT y = HIWORD(lParam);
+	INT x = GET_X_LPARAM(lParam);
+	INT y = GET_Y_LPARAM(lParam);
 	listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 	LPVOID lpItems = pOwner->lpItems_;
 	INT iSelect = pOwner->index_select_;
