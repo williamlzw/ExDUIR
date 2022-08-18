@@ -18,7 +18,6 @@ INT Ex_GetLastError()
 BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme, size_t dwDefaultThemeLen, LPVOID lpDefaultI18N, size_t dwDefaultI18NLen)
 {
     CoInitialize(NULL);
-    g_Li.timerQueue = CreateTimerQueue();
     g_Li.csError = Thread_InitializeCriticalSection();
 
     g_Li.hInstance = hInstance;
@@ -120,7 +119,6 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
 
 void Ex_UnInit()
 {   
-    DeleteTimerQueueEx(g_Li.timerQueue, INVALID_HANDLE_VALUE);//INVALID_HANDLE_VALUE
     UnhookWindowsHookEx(g_Li.hHookMsgBox);
     Ex_MemFree((LPVOID)g_Li.lpStrMin);
     Ex_MemFree((LPVOID)g_Li.lpStrMax);

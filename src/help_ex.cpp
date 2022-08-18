@@ -287,7 +287,7 @@ void _wstr_deletechar(LPVOID lpstr, INT* dwsize, WCHAR wchar)
 		else
 		{
 			lpend = (WCHAR*)((size_t)lpend - 2);
-			memmove(lpstart, (WCHAR*)((size_t)lpstart + 2), (size_t)lpend - (size_t)lpstart);
+			RtlMoveMemory(lpstart, (WCHAR*)((size_t)lpstart + 2), (size_t)lpend - (size_t)lpstart);
 			fMoved = TRUE;
 		}
 	}

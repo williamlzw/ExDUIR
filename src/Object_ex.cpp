@@ -45,7 +45,9 @@ EXATOM Ex_ObjRegister(LPCWSTR lptszClassName, INT dwStyle, INT dwStyleEx, INT dw
 {
     EXATOM atom = Ex_Atom(lptszClassName);
     if (atom == 0)
+    {
         return 0;
+    }
     INT nError = 0;
     _obj_register(atom, dwStyle, dwStyleEx, dwTextFormat, cbObjExtra, hCursor, pfnObjProc, dwFlags, &nError);
     Ex_SetLastError(nError);
@@ -165,9 +167,13 @@ void _obj_z_clear(HEXOBJ hObj, obj_s *pObj, EXHANDLE *hParent, obj_base **pParen
     if (pParent)
     {
         if ((*pParent)->objChildFirst_ == hObj)
+        {
             (*pParent)->objChildFirst_ = objNext;
+        }
         if ((*pParent)->objChildLast_ == hObj)
+        {
             (*pParent)->objChildLast_ = objPrev;
+        }
     }
 
     //修复兄弟层组件链表
@@ -345,9 +351,14 @@ BOOL _obj_autosize(obj_s *pObj, HEXOBJ hObj, INT *width, INT *height)
         iWidth = iWidth - pObj->left_;
         iHeight = iHeight - pObj->top_;
         if (iWidth < 0)
+        {
             iWidth = 0;
+        }
         if (iHeight < 0)
+        {
             iHeight = 0;
+        }
+            
         LPCWSTR ptitle = pObj->pstrTitle_;
         FLOAT w = 0;
         FLOAT h = 0;
@@ -606,7 +617,7 @@ void _obj_setchildrenpostion(obj_s *pObj, INT x, INT y)
         pchildObj->w_bottom_ = pchildObj->bottom_;
         OffsetRect((RECT *)((size_t)pchildObj + offsetof(obj_s, w_left_)), x, y);
         if (FLAGS_CHECK(pchildObj->dwFlags_, 32))
-        { // TODO: UNKNOWN FLAG
+        { 
             _obj_reset_path(pchildObj, pchildObj->w_left_, pchildObj->w_top_, pchildObj->w_right_, pchildObj->w_bottom_, offsetof(obj_s, hPath_Window_));
         }
         _obj_setchildrenpostion(pchildObj, __get_int(pchildObj, offsetof(obj_s, w_left_)), __get_int(pchildObj, offsetof(obj_s, w_top_)));
@@ -633,7 +644,9 @@ void _obj_update(obj_s *pObj, BOOL fUpdateWindow)
     {
         InvalidateRect(hWnd, (RECT *)prc, FALSE);
         if (fUpdateWindow)
+        {
             UpdateWindow(hWnd);
+        }
     }
     MemPool_Free(g_Li.hMemPoolMsg, prc);
 }
@@ -692,12 +705,16 @@ BOOL _obj_z_compositedcheck(LPVOID prc, EXHANDLE objLast, EXHANDLE objStop, LPVO
     while (_handle_validate(objPrev, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
         if (objStop == objPrev)
+        {
             return TRUE;
+        } 
         objLast = pObj->objChildLast_;
         if (objLast != 0)
         {
             if (_obj_z_compositedcheck(prc, objLast, objStop, lpsrcInsert))
+            {
                 return TRUE;
+            }
         }
 
         if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
@@ -840,8 +857,10 @@ BOOL _obj_makeupinvalidaterect(wnd_s *pWnd, obj_s *pObj, LPVOID prc)
     obj_s *ppObj = nullptr;
     while (_handle_validate(objParent, HT_OBJECT, (LPVOID *)&ppObj, &nError))
     {
-        if (!IntersectRect((LPRECT)prc, (RECT *)prc, (RECT *)((size_t)ppObj + offsetof(obj_s, w_left_))))
+        if (!IntersectRect((LPRECT)prc, (RECT*)prc, (RECT*)((size_t)ppObj + offsetof(obj_s, w_left_))))
+        {
             return FALSE;
+        }
         objParent = ppObj->objParent_;
     }
     //Z序混合检测-blur
@@ -1395,7 +1414,6 @@ void _obj_scroll_updatepostion(HEXOBJ hSB, obj_s *pSB, BOOL bVScroll, INT cLeft,
 
 void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x, INT y, INT width, INT height, INT flags, INT *nError)
 {
-
     //' SWP_ASNCWINDOWPOS：[异步请求]如果调用进程不拥有窗口，系统会向拥有窗口的线程发出需求。这就防止调用线程在其他线程处理需求的时候发生死锁。
     //' SWP_DEFERERASE：防止产生WM_SYNCPAINT消息。
     //' SWP_DRAWFRAME：在窗口周围画一个边框（定义在窗口类描述中）。
@@ -1414,9 +1432,14 @@ void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
     //' 注意事项：使用SetWindowPos()如果设置了SWP_SHOWWINDOWS或者SWP_HIDEWINDOW，那么窗口将不能被移动和改变大小，我使用时就是设置了SWP_SHOWWINDOW,从而导致不能重绘背景。
 
     if (width < 0 && width != EOP_DEFAULT)
+    {
         width = 0;
+    }
     if (height < 0 && height != EOP_DEFAULT)
+    {
         height = 0;
+    }
+
     wnd_s *pWnd = pObj->pWnd_;
     HWND hWnd = pWnd->hWnd_;
     BOOL fAsyn = (flags & SWP_ASYNCWINDOWPOS) != 0;
@@ -1804,7 +1827,6 @@ size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam
     INT nError = 0;
     if (uMsg == WM_MOVE)
     {
-
         if (((pObj->dwFlags_ & EOF_BSENDSIZEMOVEMSGS) == EOF_BSENDSIZEMOVEMSGS))
         {
             INT tmp = SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE;
@@ -1934,10 +1956,14 @@ size_t _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCo
         {
             ret = _obj_baseproc(hWnd, hParent, pParent, WM_NOTIFY, nID, (size_t)&nmhdr); //逐层通知父控件
             if (ret != 0)
+            {
                 break;
+            }
 
             if ((pObj->dwFlags_ & EOF_BEVENTBUBBLE) != EOF_BEVENTBUBBLE)
+            {
                 break;
+            } 
             hParent = pParent->objParent_;
         }
         if (ret == 0)
@@ -1967,13 +1993,7 @@ void _obj_backgroundimage_clear(HWND hWnd, obj_base *pObj)
 
     if (dwTmp != 0)
     {
-        if (pObj->timerHandle)
-        {
-            if (DeleteTimerQueueTimer(g_Li.timerQueue, pObj->timerHandle, 0))
-            {
-                pObj->timerHandle = 0;
-            }  
-        } 
+        KillTimer(hWnd, (UINT_PTR)((size_t)pObj + TIMER_BKG));
         _img_destroy(((EX_BACKGROUNDIMAGEINFO *)dwTmp)->hImage);
         _struct_destroyfromaddr(dwTmp, offsetof(EX_BACKGROUNDIMAGEINFO, lpDelay));
         _struct_destroyfromaddr(dwTmp, offsetof(EX_BACKGROUNDIMAGEINFO, lpGrid));
@@ -2021,8 +2041,6 @@ void _obj_destroy(HEXOBJ hObj, obj_s *pObj, INT *nError)
 
     //backgroundinfo
     _obj_backgroundimage_clear(hWnd, (obj_base *)pObj);
-   
-
 
     //Clean EventHandler
     EX_HASHTABLE *hTableEvent = pWnd->hTableEvent_;
@@ -2041,7 +2059,7 @@ void _obj_destroy(HEXOBJ hObj, obj_s *pObj, INT *nError)
                 {
                     if (len - j - 1 > 0)
                     {
-                        memmove(&pEventHandlerTable->handler[j], &pEventHandlerTable->handler[j + 1], (len - j - 1) * sizeof(EX_EVENT_HANDLER));
+                        RtlMoveMemory(&pEventHandlerTable->handler[j], &pEventHandlerTable->handler[j + 1], (len - j - 1) * sizeof(EX_EVENT_HANDLER));
                     }
                 }
                 else
@@ -3142,10 +3160,10 @@ BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO *lpBackgro
     return nError == 0;
 }
 
-void CALLBACK _obj_backgroundimage_timer(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-    obj_base* pObj = (obj_base*)lpParam;
-    HWND hWnd = pObj->timehWnd;
+    KillTimer(hWnd, idEvent);
+    obj_base* pObj = (obj_base*)(idEvent - TIMER_BKG);
     EX_BACKGROUNDIMAGEINFO *lpBI = pObj->lpBackgroundImage_;
     if (lpBI != 0)
     {
@@ -3172,6 +3190,7 @@ void CALLBACK _obj_backgroundimage_timer(PVOID lpParam, BOOLEAN TimerOrWaitFired
                 _wnd_redraw_bkg(hWnd, (wnd_s *)pObj, 0, TRUE, FALSE);
             }
             UpdateWindow(hWnd);
+            SetTimer(hWnd, idEvent, pDelay[iCur] * 10, _obj_backgroundimage_timer);
         }
     }
 }
@@ -3218,12 +3237,9 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s *pObj, LPVOID lpImage, INT dwImag
                     {
                         ((EX_BACKGROUNDIMAGEINFO *)lpBI)->lpDelay = lpDelay2;
                         ((EX_BACKGROUNDIMAGEINFO *)lpBI)->maxFrame = nFrames;
-                        if ((dwFlags & BIF_PLAYIMAGE) != 0)
+                        if ((dwFlags & BIF_PLAYIMAGE) == BIF_PLAYIMAGE)
                         {
-                            ((obj_base*)pObj)->timehWnd = hWnd;
-                            ((obj_base*)pObj)->timeDelay = lpDelay2[0] * 10;
-                            CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, g_Li.timerQueue, _obj_backgroundimage_timer,
-                                pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
+                            SetTimer(hWnd, ((size_t)pObj + TIMER_BKG), lpDelay2[0] * 10, _obj_backgroundimage_timer);
                         }
                     }
                     else
@@ -3287,26 +3303,17 @@ void _obj_backgroundimage_frames(HWND hWnd, obj_s *pObj, BOOL bResetFrame, BOOL 
         _img_getframecount(hImg, &framecount);
         if (framecount > 1)
         {
-           /* if (((obj_base*)pObj)->timerHandle)
-            {
-                if (DeleteTimerQueueTimer(g_Li.timerQueue, ((obj_base*)pObj)->timerHandle, INVALID_HANDLE_VALUE))
-                {
-                    ((obj_base*)pObj)->timerHandle = 0;
-                    
-                }
-            }*/
+            KillTimer(hWnd, (size_t)pObj + TIMER_BKG);
             if (bResetFrame)
             {
                 _img_selectactiveframe(hImg, 0);
             }
-           /* if (bPlayFrames)
+            if (bPlayFrames)
             {
-                INT *lpdelay = (INT *)lpBI->lpDelay;
+                INT* lpdelay = (INT*)lpBI->lpDelay;
                 INT curFrame = lpBI->curFrame;
-                ((obj_base*)pObj)->timeDelay = lpdelay[curFrame] * 10;
-                CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, g_Li.timerQueue, _obj_backgroundimage_timer,
-                    pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
-            }*/
+                SetTimer(hWnd, (size_t)pObj + TIMER_BKG, lpdelay[curFrame] * 10, _obj_backgroundimage_timer);
+            }
 
             if (((pObj->dwFlags_ & EOF_OBJECT) == EOF_OBJECT))
             {
@@ -3338,25 +3345,21 @@ BOOL Ex_ObjSetBackgroundPlayState(EXHANDLE handle, BOOL fPlayFrames, BOOL fReset
 }
 
 
-void CALLBACK _obj_mediatimer_object(PVOID lpParam, BOOLEAN TimerOrWaitFired)
+void CALLBACK _obj_timer_object(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-    _obj_baseproc(((obj_base*)lpParam)->timehWnd, ((obj_s*)lpParam)->hObj_, (obj_s*)lpParam, WM_TIMER, 0, 0);
-    UpdateWindow(((obj_base*)lpParam)->timehWnd);
+    obj_s* pObj = (obj_s*)(idEvent - TIMER_OBJECT);
+    _obj_baseproc(hWnd, pObj->hObj_, pObj, WM_TIMER, idEvent, dwTime);
 }
 
-HANDLE Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
+INT Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
 {
     obj_s *pObj = nullptr;
     INT nError = 0;
-    HANDLE ret = 0;
+    INT ret = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
         wnd_s *pWnd = pObj->pWnd_;
-        ((obj_base*)pObj)->timehWnd = pWnd->hWnd_;
-        ((obj_base*)pObj)->timeDelay = uElapse;
-        CreateTimerQueueTimer(&((obj_base*)pObj)->timerHandle, g_Li.timerQueue, _obj_mediatimer_object,
-            (void*)pObj, ((obj_base*)pObj)->timeDelay, ((obj_base*)pObj)->timeDelay, WT_EXECUTEINTIMERTHREAD);
-        ret = ((obj_base*)pObj)->timerHandle;
+        ret = SetTimer(pWnd->hWnd_, (size_t)pObj + TIMER_OBJECT, uElapse, _obj_timer_object);
     }
     Ex_SetLastError(nError);
     return ret;
@@ -3369,13 +3372,7 @@ BOOL Ex_ObjKillTimer(HEXOBJ hObj)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
         wnd_s *pWnd = pObj->pWnd_;
-        if (((obj_base*)pObj)->timerHandle)
-        {
-            if (DeleteTimerQueueTimer(g_Li.timerQueue, ((obj_base*)pObj)->timerHandle, 0))
-            {
-                ((obj_base*)pObj)->timerHandle = 0;
-            }
-        }
+        KillTimer(pWnd->hWnd_, (size_t)pObj + TIMER_OBJECT);
     }
     Ex_SetLastError(nError);
     return nError == 0;
@@ -4346,7 +4343,7 @@ BOOL Ex_ObjHandleEvent(HEXOBJ hObj, INT nEvent, EventHandlerPROC pfnCallback)
                     }
                     else if (--pEventHandlerTable->len)
                     {
-                        memmove(&pEventHandlerTable->handler[i], &pEventHandlerTable->handler[i + 1], (len - i - 1) * sizeof(EX_EVENT_HANDLER));
+                        RtlMoveMemory(&pEventHandlerTable->handler[i], &pEventHandlerTable->handler[i + 1], (len - i - 1) * sizeof(EX_EVENT_HANDLER));
                     }
                     else
                     {
@@ -4439,19 +4436,27 @@ HEXOBJ Ex_ObjGetFromNodeID(EXHANDLE hExDUIOrObj, INT nNodeID)
     else
     {
         nError = 0;
-        if (_handle_validate(hExDUIOrObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
+        if (_handle_validate(hExDUIOrObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
+        {
             hChild = pObj->objChildFirst_;
+        }
         else
+        {
             Ex_SetLastError(ERROR_EX_HANDLE_INVALID);
+        }
     }
     while (1)
     {
         nError = 0;
-        if (!_handle_validate(hChild, HT_OBJECT, (LPVOID *)&pObj, &nError))
+        if (!_handle_validate(hChild, HT_OBJECT, (LPVOID*)&pObj, &nError))
+        {
             break;
+        }
 
-        if (((obj_s *)pObj)->nodeid_ == nNodeID)
+        if (((obj_s*)pObj)->nodeid_ == nNodeID)
+        {
             break;
+        }   
         hChild = ((obj_s *)pObj)->objNext_;
     }
     return hChild;
@@ -4494,10 +4499,8 @@ LONG_PTR _obj_setextralong(obj_s *pObj, INT nIndex, LONG_PTR dwNewLong)
 // 获取组件附加数据
 LONG_PTR _obj_getextralong(obj_s *pObj, INT nIndex)
 {
-
     EX_ASSERT(pObj, L"_obj_getextralong: error pObj: %ld", pObj);
     EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra, L"_obj_getextralong: error index: %ld,%d,%d", nIndex, pObj->pCls_->cbObjExtra, pObj->pCls_->atomName);
-
     return pObj->extraData_[nIndex];
 }
 

@@ -70,9 +70,6 @@ struct obj_base
     INT dwFlags_;
     EX_BACKGROUNDIMAGEINFO *lpBackgroundImage_;
     HEXTHEME hTheme_;
-    HANDLE timerHandle;//计时器句柄   
-    UINT timeDelay;//时钟延时时间
-    HWND timehWnd;//时钟关联的窗口句柄HWND
 };
 
 #define FLAGS_CHECK(a, b) (((a) & (b)) == (b))
@@ -385,7 +382,6 @@ struct LOCALINFO
     LPCWSTR lpStrClose;
     LPCWSTR lpStrHelp;
     UINT dwClickTime;
-    HANDLE timerQueue;//计时器队列
 };
 
 struct RENDERINFO

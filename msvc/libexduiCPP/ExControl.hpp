@@ -184,7 +184,7 @@ namespace ExDUIR
 					return Ex_ObjInvalidateRect(m_handle, &rc);
 				}
 
-				inline HANDLE SetTimer(INT uElapse)
+				inline INT SetTimer(INT uElapse)
 				{
 					return Ex_ObjSetTimer(m_handle, uElapse);
 				}
