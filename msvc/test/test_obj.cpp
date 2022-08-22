@@ -401,7 +401,7 @@ void test_edit(HWND hWnd)
 	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 
 	HEXOBJ hObj_edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"测试透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
-	m_hEditFont = _font_createfromfamily(L"微软雅黑", 16, EFS_UNDERLINE);
+	m_hEditFont = _font_createfromfamily(L"微软雅黑", 16, EFS_UNDERLINE | EFS_ITALIC);
 	Ex_ObjSetFont(hObj_edit5, m_hEditFont, FALSE);
 	Ex_ObjSetColor(hObj_edit5, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
 	Ex_ObjSetColor(hObj_edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);

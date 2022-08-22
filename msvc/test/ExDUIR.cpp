@@ -73,7 +73,6 @@ void test_exdui()
     if (m_hWnd != 0)
     {
         HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
-       
         std::vector<CHAR> imgdata;
         Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);

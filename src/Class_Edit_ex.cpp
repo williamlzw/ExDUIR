@@ -1004,27 +1004,32 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			pObj->hFont_ = (HEXFONT)wParam;
 			_font_getlogfont(pObj->hFont_, &logfont);
 			CHARFORMAT2W* pcf = (CHARFORMAT2W*)pOwner->pcf_;
-
+			DWORD dwMask = CFM_SIZE | CFM_COLOR | CFM_FACE;
 			DWORD dwEffects = 0;
 			if (logfont.lfWeight != 400)
 			{
 				dwEffects = dwEffects | CFE_BOLD;
+				dwMask = dwMask | CFM_BOLD;
 			}
 
 			if (logfont.lfItalic != 0)
 			{
 				dwEffects = dwEffects | CFE_ITALIC;
+				dwMask = dwMask | CFM_ITALIC;
 			}
 
 			if (logfont.lfUnderline != 0)
 			{
 				dwEffects = dwEffects | CFE_UNDERLINE;
+				dwMask = dwMask | CFM_UNDERLINE;
 			}
 
 			if (logfont.lfStrikeOut != 0)
 			{
 				dwEffects = dwEffects | CFE_STRIKEOUT;
+				dwMask = dwMask | CFM_STRIKEOUT;
 			}
+			pcf->dwMask = dwMask;
 			pcf->dwEffects = dwEffects;
 			pcf->yHeight = -logfont.lfHeight * 1440 / 96;
 			pcf->bCharSet = logfont.lfCharSet;
