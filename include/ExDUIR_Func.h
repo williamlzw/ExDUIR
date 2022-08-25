@@ -1905,6 +1905,14 @@ BOOL Ex_ObjDestroy(HEXOBJ hObj);
 
 /*
 * @fnType ExDirectUI
+* @brief Ex_ObjDestroyBackground 销毁背景
+* @param 1  handle                  [EXHANDLE]界面或组件句柄
+* @return [BOOL]返回是否成功
+*/
+BOOL Ex_ObjDestroyBackground(EXHANDLE handle);
+
+/*
+* @fnType ExDirectUI
 * @brief Ex_ObjDisableTranslateSpaceAndEnterToClick 设置控件是否禁止转换空格和回车为单击事件
 * @param 1  hObj                    [HEXOBJ]
 * @param 2  fDisable                [BOOL]

@@ -62,6 +62,7 @@ Ex_ObjHandleEvent
 Ex_ObjSendMessage
 Ex_ObjPostMessage
 Ex_ObjDestroy
+Ex_ObjDestroyBackground
 Ex_ObjCreate
 Ex_ObjCreateEx
 Ex_ObjDrawBackgroundProc

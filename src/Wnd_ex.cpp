@@ -541,7 +541,7 @@ void _wnd_calc_captionrect(wnd_s *pWnd, RECT *rcCaption)
 
 void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-    KillTimer(hWnd, idEvent);
+   // KillTimer(hWnd, idEvent);
     wnd_s *pWnd = (wnd_s *)(idEvent - TIMER_BKG_INHERIT);
 
     if (!((pWnd->dwStyle_ & EWS_NOINHERITBKG) == EWS_NOINHERITBKG))
@@ -558,8 +558,7 @@ void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR 
                 {
                     _wnd_redraw_bkg(hWnd, pWnd, 0, TRUE, FALSE);
                     UpdateWindow(hWnd);
-                    SetTimer(hWnd, idEvent, pDelay[lpBI->curFrame] * 10, _wnd_backgroundimage_timer_inherit);
-                    
+                    //SetTimer(hWnd, idEvent, pDelay[lpBI->curFrame] * 10, _wnd_backgroundimage_timer_inherit);
                 }
             }
         }
