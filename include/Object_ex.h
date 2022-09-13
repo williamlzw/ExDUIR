@@ -252,7 +252,7 @@ struct si_s
 };
 
 void _object_init();
-size_t _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+LRESULT _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void _obj_register(EXATOM atomClass, INT dwStyle, INT dwStyleEx, INT dwTextFormat, DWORD cbObjExtra, HCURSOR hCursor, ClsPROC pfnClsProc, DWORD dwFlags, INT *nError);
 void _obj_z_clear(HEXOBJ hObj, obj_s *pObj, EXHANDLE *hParent, obj_base **pParent);
 void _obj_z_set_before_topmost(EXHANDLE objChildFirst, LPVOID pObjChildFirst, EXHANDLE objChildLast, obj_s *pObjChildLast, EXHANDLE hObj, obj_s *pObj, obj_base *pParent);

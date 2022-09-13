@@ -67,8 +67,7 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _tlv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam);
 void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps);
-bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld);
-void _tlv_killfocus_ifischild(obj_s* pObj);
+void _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld);
 void _tlv_array_del(array_s* hArray, int index, HEXOBJ pvData, int type);
 void _tlv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
 void _tlv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam);

@@ -1916,10 +1916,10 @@ size_t Ex_ObjDispatchMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam
     return ret;
 }
 
-size_t _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+LRESULT _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
     nID = pObj->id_;
-    INT ret = 0;
+    LRESULT ret = 0;
     wnd_s *pWnd = pObj->pWnd_;
     EX_EVENT_HANDLER_TABLE *pEventHandlerTable = NULL;
     if (HashTable_Get(pWnd->hTableEvent_, nCode, (size_t *)&pEventHandlerTable))
@@ -1930,6 +1930,7 @@ size_t _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCo
             if (pEventHandlerTable->handler[i].hObj == hObj)
             {
                 ret = pEventHandlerTable->handler[i].pfnCallback(hObj, nID, nCode, wParam, lParam);
+                
                 if (!ret)
                 {
                     break;
@@ -1959,7 +1960,6 @@ size_t _obj_dispatchnotify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT nID, INT nCo
             {
                 break;
             }
-
             if ((pObj->dwFlags_ & EOF_BEVENTBUBBLE) != EOF_BEVENTBUBBLE)
             {
                 break;

@@ -2783,11 +2783,13 @@ void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> 
 
 void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam)
 {
-	if (uMsg == 1) {
+	if (uMsg == 1) 
+	{
 		//Ck_CommandLine_AppendSwitch((HCOMMAND)handler, Ck_WCharToChar(L"single - process"));
 		output(L"加载命令行：", uMsg);
 	}
 	else if (uMsg == 2) {
+		
 		HV8VALUE window = Ck_V8CGetGlobal((HV8CONTEXE)attach1);
 		HV8VALUE v8 = Ck_V8CreateString(L"say yes");
 		Ck_V8SetValue(window, L"say_yes", v8, 0);
@@ -2813,7 +2815,7 @@ void test_chromium(HWND hParent)
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
 	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
 	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"123456.MP4");
-	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"d:/res/xccefjs.html");
+	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"J:/ExDUIR/msvc/test/res/xccefjs.html");
 	Ex_ObjHandleEvent(m_hObjChromium, CEFN_LOADEND, OnChromiumEvent);
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -2880,6 +2882,7 @@ std::vector<TLISTVIEW_ITEM> m_tlistViewItemInfo;
 
 LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
+	
 	if (Ex_ObjGetLong(hObj, EOL_NODEID) == 3)//点了某项的按钮
 	{
 		HEXOBJ hObjItem = Ex_ObjGetParent(hObj);// 表项句柄
@@ -2931,7 +2934,7 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		hObjTmp = Ex_ObjCreateEx(-1, L"Button", 0, -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 3);
 		Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
-
+		
 		/*hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 39, 648, 1, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
 		Ex_ObjSetColor(hObjTmp, COLOR_EX_BACKGROUND, ExRGB2ARGB(14868961, 250), TRUE);
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 4);*/
@@ -2969,9 +2972,11 @@ void test_templatelistview(HWND hParent)
 	HWND hWnd_listview = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试模板列表", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	HEXOBJ hobj_groupbox = Ex_ObjCreate(L"groupbox", L"分组框", -1, 10, 40, 780, 550, hExDui_listview);
+
 	HEXOBJ hobj_listview = Ex_ObjCreateEx(-1, L"TListView",
-		NULL, -1, 30, 50, 650, 520,
-		hExDui_listview, 0, -1, 0, 0, OnTemplateListViewProc);
+		NULL, -1, 20, 10, 650, 520,
+		hobj_groupbox, 0, -1, 0, 0, OnTemplateListViewProc);
 	if (m_tlistViewItemInfo.size() == 0)
 	{
 		for (int i = 0; i < 20; i++)

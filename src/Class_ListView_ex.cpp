@@ -11,32 +11,14 @@ void _tlv_array_del(array_s* hArray, int index, HEXOBJ pvData, int type)
 	}
 }
 
-void _tlv_killfocus_ifischild(obj_s* pObj)
-{
-	wnd_s* pWnd = pObj->pWnd_;
-	HEXOBJ hObjFocus = pWnd->objFocus_;
-	obj_s* pObjFocus = nullptr;
-	INT nError = 0;
-	while (_handle_validate(hObjFocus, HT_OBJECT, (LPVOID*)&pObjFocus, &nError))
-	{
-		//如果为列表的子控件,则去除焦点
-		if (pObjFocus == pObj)
-		{
-			Ex_ObjKillFocus(pWnd->objFocus_);
-			break;
-		}
-		hObjFocus = pObj->objParent_;
-	}
-}
-
-bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld)
+void _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld)
 {
 	int nIndex = 0;
 	array_s* arr = (array_s*)Ex_ObjGetLong(hObj, TLVL_ITEM_ARRAY);
 	int nItemCount = pOwner->count_items_;
 	int nCount = iEnd - iStart;
 	int nCountOld = iEndOld - iStartOld;
-	bool fRepos = false;
+
 	if (nCount != nCountOld)
 	{
 		if (nCount < nCountOld)
@@ -54,43 +36,36 @@ bool _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, 
 				Array_AddMember(arr, hObjItem);
 			}
 		}
-		fRepos = true;
 	}
-	//if (iStart != iStartOld || iEnd != iEndOld)
+
+	INT iSelect = pOwner->index_select_;
+	Ex_ObjSetLong(hObj, 4, (LONG_PTR)iStart);
+	Ex_ObjSetLong(hObj, 5, (LONG_PTR)iEnd);
+	for (int i = 1; i <= Array_GetCount(arr); i++)
 	{
-		INT iSelect = pOwner->index_select_;
-		Ex_ObjSetLong(hObj, 4, (LONG_PTR)iStart);
-		Ex_ObjSetLong(hObj, 5, (LONG_PTR)iEnd);
-		for (int i = 1; i <= Array_GetCount(arr); i++)
+		HEXOBJ hObjItem = Array_GetMember(arr, i);
+		nIndex = iStart + i - 1;
+		if (nIndex >= iStart && nIndex <= iEnd && nIndex <= nItemCount)
 		{
-			HEXOBJ hObjItem = Array_GetMember(arr, i);
-			nIndex = iStart + i - 1;
-			if (nIndex >= iStart && nIndex <= iEnd && nIndex <= nItemCount)
+
+			Ex_ObjSendMessage(hObj, TLVM_ITEM_FILL, nIndex, hObjItem);
+			if (nIndex > 0 && nIndex == iSelect && iSelect != 0)//多选还需要修改判断
 			{
-				//if (Ex_ObjGetLong(hObjItem, 0) != nIndex)
-				{
-					Ex_ObjSendMessage(hObj, TLVM_ITEM_FILL, nIndex, hObjItem);
-					if (nIndex > 0 && nIndex == iSelect && iSelect != 0)//多选还需要修改判断
-					{
-						Ex_ObjSetColor(hObjItem, COLOR_EX_BACKGROUND, (EXARGB)Ex_ObjGetLong(hObj, TLVL_ITEM_SELECTCOLOR), TRUE);//新增
-					}
-					else
-					{
-						Ex_ObjSetColor(hObjItem, COLOR_EX_BACKGROUND, 0, TRUE);//新增
-					}
-					Ex_ObjSetLong(hObjItem, 0, nIndex);
-				}
-				Ex_ObjShow(hObjItem, true);
+				Ex_ObjSetColor(hObjItem, COLOR_EX_BACKGROUND, (EXARGB)Ex_ObjGetLong(hObj, TLVL_ITEM_SELECTCOLOR), TRUE);//新增
 			}
 			else
 			{
-				Ex_ObjShow(hObjItem, false);
+				Ex_ObjSetColor(hObjItem, COLOR_EX_BACKGROUND, 0, TRUE);//新增
 			}
+			Ex_ObjSetLong(hObjItem, 0, nIndex);
+
+			Ex_ObjShow(hObjItem, true);
 		}
-		_tlv_killfocus_ifischild(pObj);
-		fRepos = true;
+		else
+		{
+			Ex_ObjShow(hObjItem, false);
+		}
 	}
-	return fRepos;
 }
 
 void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
@@ -106,12 +81,10 @@ void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps)
 	INT iEndOld = Ex_ObjGetLong(hObj, 5);
 	INT nOffsetXOld = Ex_ObjGetLong(hObj, 6);
 	INT nOffsetYOld = Ex_ObjGetLong(hObj, 7);
-	bool fRepos = false;
-	//if (iStart != iStartOld || iEnd != iEndOld)
-	{
-		fRepos = _tlv_refill(hObj, pObj, pOwner, iStart, iStartOld, iEnd, iEndOld);
-	}
-	if (fRepos || nOffsetX != nOffsetXOld || nOffsetY != nOffsetYOld)
+
+	_tlv_refill(hObj, pObj, pOwner, iStart, iStartOld, iEnd, iEndOld);
+	
+	if (nOffsetX != nOffsetXOld || nOffsetY != nOffsetYOld)
 	{
 		Ex_ObjSetLong(hObj, 6, nOffsetX);
 		Ex_ObjSetLong(hObj, 7, nOffsetY);
@@ -349,7 +322,6 @@ void _tlv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 
 LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	HEXOBJ handle = 0;
 	INT nError = 0;
 	obj_s* pObj = nullptr;
 	array_s* arr = nullptr;
@@ -406,8 +378,8 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 		}
 		else if (uMsg == TLVM_ITEM_CREATE)
 		{
-			handle = Ex_ObjCreate((LPCWSTR)Ex_Atom(L"LISTITEM"), 0, -1, 0, 0, 0, 0, hObj);
-			_obj_msgproc(_obj_gethwnd(pObj), hObj, pObj, TLVM_ITEM_CREATED, 0, handle);
+			HEXOBJ handle = Ex_ObjCreate((LPCWSTR)Ex_Atom(L"LISTITEM"), 0, -1, 0, 0, 0, 0, hObj);
+			_obj_baseproc(hWnd, hObj, pObj, TLVM_ITEM_CREATED, 0, handle);
 			return handle;
 		}
 		else if (uMsg == TLVM_ITEM_DESTROY)
