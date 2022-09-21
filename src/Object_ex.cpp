@@ -38,6 +38,7 @@ void _object_init()
     _drawingboard_register();
     _palette_register();
     _propertygrid_register();
+    _miniblink_register();
 }
 
 

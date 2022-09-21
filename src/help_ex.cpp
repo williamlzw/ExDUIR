@@ -458,6 +458,19 @@ std::wstring a2w(const std::string& str) {
 	return std::wstring(result.data(), result.size());
 }
 
+std::string w2u(const std::wstring& wstr) {
+	if (wstr.empty()) {
+		return "";
+	}
+	int len = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), NULL, 0, 0, 0);
+	if (len <= 0) {
+		return "";
+	}
+	std::vector<char> result(len);
+	::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), result.data(), len, 0, 0);
+	return std::string(result.data(), result.size());
+}
+
 std::wstring u2w(const std::string& str)
 {
 	if (str.empty()) {
@@ -472,20 +485,34 @@ std::wstring u2w(const std::string& str)
 	return std::wstring(result.data(), result.size());
 }
 
-std::wstring WStringFormat(const std::wstring format, ...)
+void format_args(const wchar_t* fmt, va_list args, std::wstring& dstStr)
 {
-	std::wstring tmp;
-	va_list args = 0;
-	va_start(args, format);
-
-	size_t len = _vscwprintf(format.c_str(), args);
-	if (len > tmp.capacity())
-	{
-		tmp.resize(len + 1);
+	if (fmt == 0) {
+		return;
 	}
-	vswprintf_s((wchar_t*)tmp.data(), tmp.capacity(), format.c_str(), args);
-	va_end(args);
-	return tmp;
+	va_list args2;
+	va_copy(args2, args);
+	size_t nLength = _vscwprintf(fmt, args2);
+	va_end(args2);
+	dstStr.resize(nLength);
+	vswprintf_s(&dstStr[0], nLength + 1, fmt, args);
+}
+
+std::wstring format_args(const wchar_t* fmt, va_list args)
+{
+	std::wstring s;
+	format_args(fmt, args, s);
+	return s;
+}
+
+std::wstring WStringFormat(const wchar_t* fmt, ...)
+{
+	std::wstring s;
+	va_list argList;
+	va_start(argList, fmt);
+	format_args(fmt, argList, s);
+	va_end(argList);
+	return s;
 }
 
 void CALLBACK pfnDefaultFreeData(LPVOID dwData)
