@@ -13,7 +13,7 @@ namespace ExDUIR
 			{
 				if (!Ex_Init(GetModuleHandleW(NULL), dwGlobalFlags, 0, 0, theme.data(), theme.size(), 0, 0))
 				{
-					Ex_MessageBox(0, L"引擎初始化失败", L"引擎初始化失败", MB_ICONWARNING, EMBF_CENTEWINDOW);
+					Ex_MessageBox(0, L"engine init failed", L"engine init failed", MB_ICONWARNING, EMBF_CENTEWINDOW);
 				}
 			}
 
