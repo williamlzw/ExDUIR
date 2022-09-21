@@ -3393,7 +3393,7 @@ void test_miniblink(HWND hWnd)
 	Ex_DUISetLong(hExDui_miniblink, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	Ex_ObjMiniblinkBrowserInitialize(0, 0);
 	m_hObjBrowser = Ex_ObjCreate(L"mbBrowser", NULL, -1, 50, 50, 700, 500, hExDui_miniblink);
-	Ex_ObjSendMessage(m_hObjBrowser, MBBM_LOAD, MBBL_TYPE_URL, (LPARAM)L"C:/Users/william/Downloads/ExDUIR-master/x64/Release/MP4.html");
+	Ex_ObjSendMessage(m_hObjBrowser, MBBM_LOAD, MBBL_TYPE_URL, (LPARAM)L"D:/ExduiR/msvc/test/res/MP4.html");
 	auto btn = Ex_ObjCreate(L"button", NULL, -1, 50, 550, 100, 30, hExDui_miniblink);
 	Ex_ObjHandleEvent(btn, NM_CLICK, OnMiniblinkBtnEnevt);
 	Ex_DUIShowWindow(hExDui_miniblink, SW_SHOWNORMAL, 0, 0, 0);
