@@ -2343,6 +2343,15 @@ BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
 
 /*
 * @fnType ExDirectUI
+* @brief Ex_ObjMiniblinkBrowserInitialize 初始化Miniblink浏览器
+* @param 1  libPath                    [LPCWSTR]
+* @param 2  dllName                    [LPCWSTR]
+* @return [BOOL]返回是否成功
+*/
+BOOL Ex_ObjMiniblinkBrowserInitialize(LPCWSTR libPath, LPCWSTR dllName);
+
+/*
+* @fnType ExDirectUI
 * @brief Ex_ObjPointTransform 坐标转换
 * @param 1  hObjSrc                 [HEXOBJ]
 * @param 2  hObjDst                 [HEXOBJ]                 0为所属窗口

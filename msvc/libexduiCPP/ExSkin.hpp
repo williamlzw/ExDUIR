@@ -20,7 +20,7 @@ namespace ExDUIR
 			}
 			ExSkin(HWND pOwner, INT x, INT y, INT width, INT height, LPCWSTR sWindowName, int dwStyleDui, DWORD dwStyleWindow = NULL, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
 			{
-				m_hWnd = Ex_WndCreate((HWND)0, 0, sWindowName, x, y, width, height, dwStyleWindow, dwStyleExWindow);
+				m_hWnd = Ex_WndCreate(pOwner, 0, sWindowName, x, y, width, height, dwStyleWindow, dwStyleExWindow);
 				m_handle = Ex_DUIBindWindowEx(m_hWnd, 0, dwStyleDui, 0, lpfnMsgProc);
 			}
 			inline size_t SetLong(INT nIndex, size_t dwNewLong) { return Ex_DUISetLong(m_handle, nIndex, dwNewLong); }

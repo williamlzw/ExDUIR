@@ -28,7 +28,7 @@ namespace ExDUIR
 				inline BOOL Visible(BOOL bVisible) { return Ex_ObjShow(m_handle, bVisible); }
 				inline BOOL IsEnable() { return Ex_ObjIsEnable(m_handle); }
 				inline BOOL Enable(BOOL bEnable) { return Ex_ObjEnable(m_handle, bEnable); }
-				inline BOOL Move(INT left, INT top, INT width, INT height, BOOL bRepaint) { Ex_ObjMove(m_handle, left, top, width, height, bRepaint); }
+				inline BOOL Move(INT left, INT top, INT width, INT height, BOOL bRepaint) { return Ex_ObjMove(m_handle, left, top, width, height, bRepaint); }
 
 				RECT GetRect()
 				{
@@ -48,8 +48,8 @@ namespace ExDUIR
 				{
 					size_t len = Ex_ObjGetTextLength(m_handle);
 					std::wstring str;
-					str.resize(len * 2 + 2 );
-					Ex_ObjGetText(m_handle, str.c_str(), len *2+ 2 );
+					str.resize(len * 2);
+					Ex_ObjGetText(m_handle, str.c_str(), len * 2);
 					return str;
 				}
 
@@ -218,6 +218,18 @@ namespace ExDUIR
 				{
 					auto hObj = Ex_ObjGetFromID(m_handle, nID);
 
+					return ExControl(hObj);
+				}
+
+				inline ExControl GetFromNodeID(INT nID)
+				{
+					auto hObj = Ex_ObjGetFromNodeID(m_handle, nID);
+					return ExControl(hObj);
+				}
+
+				inline ExControl GetParent()
+				{
+					auto hObj = Ex_ObjGetParent(m_handle);
 					return ExControl(hObj);
 				}
 			};

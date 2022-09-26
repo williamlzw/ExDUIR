@@ -148,6 +148,7 @@ Ex_ObjEditSetSelCharFormat
 Ex_ObjEditSetSelParFormat
 
 Ex_ObjCefBrowserInitialize
+Ex_ObjMiniblinkBrowserInitialize
 
 ;----------------------------------------
 ;theme

@@ -458,6 +458,19 @@ std::wstring a2w(const std::string& str) {
 	return std::wstring(result.data(), result.size());
 }
 
+std::string w2u(const std::wstring& wstr) {
+	if (wstr.empty()) {
+		return "";
+	}
+	int len = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), NULL, 0, 0, 0);
+	if (len <= 0) {
+		return "";
+	}
+	std::vector<char> result(len);
+	::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), result.data(), len, 0, 0);
+	return std::string(result.data(), result.size());
+}
+
 std::wstring u2w(const std::string& str)
 {
 	if (str.empty()) {

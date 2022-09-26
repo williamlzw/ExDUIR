@@ -342,6 +342,7 @@ struct obj_base
 #include "Class_DrawingBoard_ex.h"
 #include "Class_Palette_ex.h"
 #include "Class_PropertyGrid_ex.h"
+#include "Class_Miniblink_ex.h"
 
 struct LOCALINFO
 {
@@ -455,6 +456,7 @@ void RC4(LPVOID dest, size_t dstlen, const LPVOID pwd, size_t pwdlen);
 UINT Crc32_Addr(LPVOID buf, UINT nLength);
 LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT *nOffset);
 std::wstring a2w(const std::string& str);
+std::string w2u(const std::wstring& wstr);
 std::wstring u2w(const std::string& str);
 std::wstring WStringFormat(const wchar_t* fmt, ...);
 

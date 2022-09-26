@@ -1,3 +1,4 @@
+#pragma once
 #include "ExUIbase.hpp"
 #include "ExApp.hpp"
 #include "ExBrush.hpp"

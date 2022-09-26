@@ -1434,6 +1434,16 @@
 #define PGT_OBJ_DATEBOX 3
 #pragma endregion propertygrid obj type
 
+// mibiblink浏览框加载类型_URL
+#define MBBL_TYPE_URL 0
+
+// 消息_mibiblink浏览框_获取浏览框句柄
+#define MBBM_GETWEBVIEW 100011
+// 消息_mibiblink浏览框_加载
+#define MBBM_LOAD 100012
+// 消息_mibiblink浏览框_执行js
+#define MBBM_JS 100013
+
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
 #define ExGetB(argb) (LOBYTE((argb) >> 16))
