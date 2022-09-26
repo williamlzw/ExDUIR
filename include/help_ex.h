@@ -444,7 +444,7 @@ LPVOID __ptr_ins(LPVOID *ptr, INT nCount, INT *nIndexInsert, INT cbBlock, LPVOID
 LPVOID __ptr_del(LPVOID *ptr, INT nCount, INT nIndex, INT cbBlock);
 LPVOID __ptr_index(LPVOID ptr, INT nCount, INT nIndex, INT cbBlock);
 void _wstr_deletechar(LPVOID lpstr, INT *dwsize, WCHAR wchar);
-std::vector<std::wstring> ws_split(const std::wstring &str, const std::wstring &delim);
+std::vector<std::wstring> WStringSplit(const std::wstring &str, const std::wstring &delim);
 void _struct_destroyfromaddr(LPVOID lpAddr, size_t Offset);
 LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT *nError);
 INT DtoHimetric(INT d, INT PerInchc);
@@ -456,7 +456,7 @@ UINT Crc32_Addr(LPVOID buf, UINT nLength);
 LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT *nOffset);
 std::wstring a2w(const std::string& str);
 std::wstring u2w(const std::string& str);
-std::wstring WStringFormat(const std::wstring format, ...);
+std::wstring WStringFormat(const wchar_t* fmt, ...);
 
 const TCHAR Chjrmc[][4] = { L"", L"元旦", L"情人",L"妇女",L"植树",L"愚人",L"劳动",L"青年",L"护士",L"儿童",L"建党",L"建军",L"教师",L"国庆",L"平安",L"圣诞",
                     L"春节",L"元宵",L"清明",L"端午",L"七夕",L"中秋",L"重阳",L"祭祖",L"腊八",L"小年",L"除夕" };

@@ -177,7 +177,7 @@ void _switch_paint(HEXOBJ hObj)
             title = L"是|否";
         }
 
-        std::vector<std::wstring> tokens = ws_split(title, L"|");
+        std::vector<std::wstring> tokens = WStringSplit(title, L"|");
 
         if ((FLOAT)nProgress / 100 * 255)
         {
