@@ -285,13 +285,13 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		size_t	ptr = Array_GetMember(hArr, wParam);
 		if (ptr != 0 && __query((LPVOID)ptr, 4, ERLV_RS_CHECKBOX))
 		{
-			if (lParam != 0)
+			if (lParam)
 			{
-				__del((LPVOID)ptr, 4, ERLV_RS_CHECKBOX_CHECK);
+				__add((LPVOID)ptr, 4, ERLV_RS_CHECKBOX_CHECK);
 			}
 			else
 			{
-				__add((LPVOID)ptr, 4, ERLV_RS_CHECKBOX_CHECK);
+				__del((LPVOID)ptr, 4, ERLV_RS_CHECKBOX_CHECK);
 			}
 
 		}
