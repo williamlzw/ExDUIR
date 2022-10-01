@@ -219,8 +219,9 @@ LRESULT CALLBACK _miniblink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 	}
 	else if (uMsg == MBBM_LOAD)
 	{
-		auto ustr = w2u((LPCWSTR)lParam);
-		mbLoadURL(hWebView, ustr.c_str());
+		std::wstring path = (LPCWSTR)lParam;
+		auto encoded = UrlEncode(path, 1, 1, 1);
+		mbLoadURL(hWebView, encoded.c_str());
 		fResult = TRUE;
 	}
 	else if (uMsg == MBBM_JS)

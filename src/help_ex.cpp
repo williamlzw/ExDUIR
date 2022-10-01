@@ -458,6 +458,41 @@ std::wstring a2w(const std::string& str) {
 	return std::wstring(result.data(), result.size());
 }
 
+std::string w2a(const std::wstring& wstr) {
+	if (wstr.empty()) {
+		return "";
+	}
+	int len = ::WideCharToMultiByte(CP_ACP, 0, wstr.data(), (int)wstr.size(), NULL, 0, 0, 0);
+	if (len <= 0) {
+		return "";
+	}
+	std::vector<char> result(len);
+	::WideCharToMultiByte(CP_ACP, 0, wstr.data(), (int)wstr.size(), result.data(), len, 0, 0);
+	return std::string(result.data(), result.size());
+}
+
+std::wstring a2w2(std::vector<UCHAR> str) {
+	if (str.empty()) {
+		return L"";
+	}
+	int wlen = ::MultiByteToWideChar(CP_ACP, 0, (LPCCH)str.data(), (int)str.size(), NULL, 0);
+	if (wlen <= 0) {
+		return L"";
+	}
+	std::vector<wchar_t> result(wlen);
+	::MultiByteToWideChar(CP_ACP, 0, (LPCCH)str.data(), (int)str.size(), result.data(), wlen);
+	return std::wstring(result.data(), result.size());
+}
+
+std::string a2u(const std::string& str) {
+	return w2u(a2w(str));
+}
+
+std::string u2a(const std::string& str)
+{
+	return w2a(u2w(str));
+}
+
 std::string w2u(const std::wstring& wstr) {
 	if (wstr.empty()) {
 		return "";
@@ -471,8 +506,21 @@ std::string w2u(const std::wstring& wstr) {
 	return std::string(result.data(), result.size());
 }
 
-std::wstring u2w(const std::string& str)
-{
+std::vector<UCHAR> w2u2(const std::wstring& wstr) {
+	std::vector<UCHAR> ret;
+	if (wstr.empty()) {
+		return ret;
+	}
+	int len = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), NULL, 0, 0, 0);
+	if (len <= 0) {
+		return ret;
+	}
+	ret.resize(len);
+	::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), (int)wstr.size(), (LPSTR)ret.data(), len, 0, 0);
+	return ret;
+}
+
+std::wstring u2w(const std::string& str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -482,6 +530,19 @@ std::wstring u2w(const std::string& str)
 	}
 	std::vector<wchar_t> result(wlen);
 	::MultiByteToWideChar(CP_UTF8, 0, str.data(), (int)str.size(), result.data(), wlen);
+	return std::wstring(result.data(), result.size());
+}
+
+std::wstring u2w2(std::vector<UCHAR> str) {
+	if (str.empty()) {
+		return L"";
+	}
+	int wlen = ::MultiByteToWideChar(CP_UTF8, 0, (LPCCH)str.data(), (int)str.size(), NULL, 0);
+	if (wlen <= 0) {
+		return L"";
+	}
+	std::vector<wchar_t> result(wlen);
+	::MultiByteToWideChar(CP_UTF8, 0, (LPCCH)str.data(), (int)str.size(), result.data(), wlen);
 	return std::wstring(result.data(), result.size());
 }
 
@@ -948,4 +1009,219 @@ LPCWSTR GetErrorMessage(DWORD error)
 		1024, NULL);
 	swprintf_s(szBuf, L"%s", lpMsgBuf);
 	return (LPCWSTR)szBuf;
+}
+
+const int HEXINT[16] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70};
+
+std::wstring UrlDecode(const std::wstring& url, BOOL utf8)
+{
+	std::vector<UCHAR> data = w2u2(url);
+	auto dataLen = data.size();
+	DWORD pos = 0;
+	DWORD retLen = 0;
+	DWORD tmpPos = 0;
+	std::vector<UCHAR> retData;
+	retData.resize(dataLen);
+	while (pos < dataLen)
+	{
+		pos += 1;
+		auto index = data[pos - 1];
+		if (index == 37)
+		{
+			if (pos + 2 > dataLen)
+			{
+				retLen += 1;
+
+				retData[retLen - 1] = index;
+			}
+			else {
+				tmpPos = pos + 1;
+				auto index2 = data[tmpPos - 1];
+				DWORD high = 0;
+				DWORD low = 0;
+				if (48 <= index2 && index2 <= 57)
+				{
+					high = index2 - 48;
+				}
+				else if (65 <= index2 && index2 <= 70)
+				{
+					high = index2 - 55;
+				}
+				else if (97 <= index2 && index2 <= 102)
+				{
+					high = index2 - 87;
+				}
+				else {
+					retLen += 1;
+
+					retData[retLen - 1] = index;
+					continue;
+				}
+				tmpPos = pos + 2;
+				index2 = data[tmpPos - 1];
+				if (48 <= index2 && index2 <= 57)
+				{
+					low = index2 - 48;
+				}
+				else if (65 <= index2 && index2 <= 70)
+				{
+					low = index2 - 55;
+				}
+				else if (97 <= index2 && index2 <= 102)
+				{
+					low = index2 - 87;
+				}
+				else {
+					retLen += 1;
+
+					retData[retLen - 1] = index;
+					continue;
+				}
+				pos += 2;
+				retLen += 1;
+				retData[retLen - 1] = (UCHAR)(high * 16 + low);
+			}
+		}
+		else {
+			retLen += 1;
+			retData[retLen - 1] = index;
+		}
+	}
+	retData.resize(retLen);
+	if (utf8)
+	{
+		return u2w2(retData);
+	}
+	return a2w2(retData);
+}
+
+std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, INT mode)
+{
+	//encodeURIComponent('!@#$ % ^&*()_ + -= [] {}; :\'\"<>,./?\\? ') = !% 40 % 23 % 24 % 25 % 5E % 26 * ()_ % 2B - % 3D % 5B % 5D % 7B % 7D % 3B % 3A'%22%3C%3E%2C.%2F%3F%5C%3F%20
+	//encodeURI('!@#$ % ^&*()_ + -= [] {}; :\'\"<>,./?\\? ') = !@#$ % 25 % 5E & *()_ + -= % 5B % 5D % 7B % 7D; :'%22%3C%3E,./?%5C?%20
+	//escape('!@#$ % ^&*()_ + -= [] {}; :\'\"<>,./?\\? ') = % 21@ % 23 % 24 % 25 % 5E % 26 * %28 % 29_ + -% 3D % 5B % 5D % 7B % 7D % 3B % 3A % 27 % 22 % 3C % 3E % 2C. / % 3F % 5C % 3F % 20
+	if (mode < 0 || mode > 2)
+	{
+		mode = 0;
+	}
+	std::wstring text(url);
+	std::string utext;
+	utext = w2u(text);
+	size_t len = utext.length();
+	std::string decoded = "";
+	bool tempBool = false;
+	for (size_t i = 0; i < len; i++)
+	{
+		if (notEncodeAlphanumeric)
+		{
+			unsigned char wch = utext.at(i);
+			if ('A' <= wch && wch <= 'Z') {
+				tempBool = true;
+			}
+			else if ('a' <= wch && wch <= 'z') {
+				tempBool = true;
+			}
+			else if ('0' <= wch && wch <= '9') {
+				tempBool = true;
+			}
+			else if (wch == '*')
+			{
+				tempBool = true;
+			}
+			else if (wch == '-')
+			{
+				tempBool = true;
+			}
+			else if (wch == '.')
+			{
+				tempBool = true;
+			}
+			else if (wch == '_')
+			{
+				tempBool = true;
+			}
+			else if (mode < 2 && wch == '!')
+			{
+				tempBool = true;
+			}
+			else if (mode < 2 && wch == '\'')
+			{
+				tempBool = true;
+			}
+			else if (mode < 2 && wch == '(')
+			{
+				tempBool = true;
+			}
+			else if (mode < 2 && wch == ')')
+			{
+				tempBool = true;
+			}
+			else if (mode < 2 && wch == '~')
+			{
+				tempBool = true;
+			}
+			else if (mode > 0 && wch == '+')
+			{
+				tempBool = true;
+			}
+			else if (mode > 0 && wch == '/')
+			{
+				tempBool = true;
+			}
+			else if (mode > 0 && wch == '@')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == '#')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == '$')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == '&')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == ',')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == ':')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == ';')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == '=')
+			{
+				tempBool = true;
+			}
+			else if (mode == 1 && wch == '?')
+			{
+				tempBool = true;
+			}
+			else {
+				tempBool = false;
+			}
+		}
+		if (tempBool)
+		{
+			decoded += (unsigned char)utext.at(i);
+		}
+		else {
+			decoded += '%';
+			decoded += (unsigned char)HEXINT[((unsigned char)utext.at(i) >> 4)];
+			decoded += (unsigned char)HEXINT[((unsigned char)utext.at(i) & 15)];
+		}
+	}
+	return decoded;
+}
+
+std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, INT mode)
+{
+	return u2w(UrlEncode(url, notEncodeAlphanumeric, utf8, mode));
 }

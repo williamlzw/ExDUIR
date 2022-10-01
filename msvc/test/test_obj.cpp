@@ -3377,7 +3377,6 @@ LRESULT CALLBACK OnMiniblinkWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARA
 	return 0;
 }
 
-
 LRESULT CALLBACK OnMiniblinkBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	//auto js = L"https://media.w3.org/2010/05/sintel/trailer.mp4";
@@ -3391,9 +3390,11 @@ void test_miniblink(HWND hWnd)
 	HWND hWndminiblink = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试miniblink浏览框", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_miniblink = Ex_DUIBindWindowEx(hWndminiblink, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnMiniblinkWndMsgProc);
 	Ex_DUISetLong(hExDui_miniblink, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_ObjMiniblinkBrowserInitialize(0, 0);
-	m_hObjBrowser = Ex_ObjCreate(L"mbBrowser", NULL, -1, 50, 50, 700, 500, hExDui_miniblink);
-	Ex_ObjSendMessage(m_hObjBrowser, MBBM_LOAD, MBBL_TYPE_URL, (LPARAM)L"D:/ExduiR/msvc/test/res/MP4.html");
+	//Ex_ObjMiniblinkBrowserInitialize(0, L"miniblink_4975_x64.dll"); // 64位
+	Ex_ObjMiniblinkBrowserInitialize(0, L"miniblink_4975_x32.dll");
+	m_hObjBrowser = Ex_ObjCreate(L"MbBrowser", NULL, -1, 50, 50, 700, 500, hExDui_miniblink);
+	std::wstring path = L"file:///J:/ExduiR/msvc/test/res/MP4.html"; //注意,本地路径带#符号不支持
+	Ex_ObjSendMessage(m_hObjBrowser, MBBM_LOAD, MBBL_TYPE_URL, (LPARAM)path.c_str());
 	auto btn = Ex_ObjCreate(L"button", NULL, -1, 50, 550, 100, 30, hExDui_miniblink);
 	Ex_ObjHandleEvent(btn, NM_CLICK, OnMiniblinkBtnEnevt);
 	Ex_DUIShowWindow(hExDui_miniblink, SW_SHOWNORMAL, 0, 0, 0);
