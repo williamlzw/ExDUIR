@@ -17,7 +17,11 @@ Please refer to[update log](CHANGELOG.txt)
 * Submit feedback:[Gitee issues](https://gitee.com/william_lzw/ExduiR/issues) or [GitHub issues](https://github.com/laizewei/ExduiR/issues)
 
 ## Environment
-win10+, win7 need install KB2670838 patch
+win10+
+
+win7 need install KB2670838 patch
+
+VMware win7 run ExDUIR, install kb2670838 and kb4474419 patches, and then install VMware Tools.
 
 ## Compiler
 Currently,the following two compiling methods are supported:

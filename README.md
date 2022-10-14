@@ -17,7 +17,11 @@ Windows平台轻量DirectUI框架。
 * 提交反馈：[Gitee issues](https://gitee.com/william_lzw/ExduiR/issues) 或者 [GitHub issues](https://github.com/laizewei/ExduiR/issues)
 
 ## 运行系统
-win10+， win7 需要安装KB2670838补丁
+win10+
+
+win7需要安装KB2670838补丁
+
+虚拟机VMware win7运行ExDUIR，先安装kb2670838和kb4474419补丁，然后安装VMware Tools。
 
 ## 编译
 目前支持以下两种方式编译：
