@@ -546,32 +546,17 @@ std::wstring u2w2(std::vector<UCHAR> str) {
 	return std::wstring(result.data(), result.size());
 }
 
-void format_args(const wchar_t* fmt, va_list args, std::wstring& dstStr)
+std::wstring WStringFormat(const wchar_t* format, ...)
 {
-	if (fmt == 0) {
-		return;
+	std::wstring s;
+	if (format == 0) {
+		return s;
 	}
-	va_list args2;
-	va_copy(args2, args);
-	size_t nLength = _vscwprintf(fmt, args2);
-	va_end(args2);
-	dstStr.resize(nLength);
-	vswprintf_s(&dstStr[0], nLength + 1, fmt, args);
-}
-
-std::wstring format_args(const wchar_t* fmt, va_list args)
-{
-	std::wstring s;
-	format_args(fmt, args, s);
-	return s;
-}
-
-std::wstring WStringFormat(const wchar_t* fmt, ...)
-{
-	std::wstring s;
 	va_list argList;
-	va_start(argList, fmt);
-	format_args(fmt, argList, s);
+	va_start(argList, format);
+	size_t nLength = _vscwprintf(format, argList);
+	s.resize(nLength);
+	vswprintf_s(&s[0], nLength + 1, format, argList);
 	va_end(argList);
 	return s;
 }
