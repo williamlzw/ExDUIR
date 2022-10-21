@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-#include "olectl.h"
+#include <olectl.h>
+
 #include <Windowsx.h>
 #pragma comment(lib, "OleAut32.lib")
 #include <shlwapi.h>
@@ -28,7 +29,6 @@
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule, #NAME)		//获取函数指针
-
 #include "ExDUIR_Struct.h"
 
 struct wnd_s;
@@ -496,3 +496,5 @@ void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable);
 std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric = TRUE, BOOL utf8 = TRUE, INT mode = 1);
 std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, INT mode);
 std::wstring UrlDecode(const std::wstring& url, BOOL utf8 = TRUE);
+
+void PrintDebugStringW(const wchar_t* file, const wchar_t* func, int lineno, const wchar_t* pszFmt, ...);

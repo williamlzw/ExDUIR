@@ -148,12 +148,10 @@ void test_label(HWND hWnd)
 	Ex_ObjSetRadius(hObj_label, 10, 10, 15, 10, TRUE);
 	EX_BACKGROUNDIMAGEINFO bkg{ 0 };
 	Ex_ObjGetBackgroundImage(hObj_label, &bkg);
-	output(L"背景信息:", bkg.x, bkg.y, bkg.dwAlpha, bkg.dwRepeat, bkg.hImage, bkg.curFrame, bkg.maxFrame);
+	OUTPUTW(L"背景信息:", bkg.x, bkg.y, bkg.dwAlpha, bkg.dwRepeat, bkg.hImage, bkg.curFrame, bkg.maxFrame);
 	RECT rect;
 	Ex_ObjGetRect(hObj_label, &rect);
-	output(L"标签矩形:", rect.right, rect.bottom);
-
-
+	OUTPUTW(L"标签矩形:", rect.right, rect.bottom);
 	HEXOBJ hObj_label4 = Ex_ObjCreateEx(-1, L"static", L"标签可以填充动画,支持PNG,GIF,JPG,BMP,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
 	Ex_ObjSetFontFromFamily(hObj_label4, L"宋体", 14, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(hObj_label4, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
@@ -338,7 +336,7 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 		}
 		else if (nID == 224) //取行数
 		{
-			output(L"编辑框行数:", Ex_ObjSendMessage(hEdit, EM_GETLINECOUNT, 0, 0));
+			OUTPUTW(L"编辑框行数:", Ex_ObjSendMessage(hEdit, EM_GETLINECOUNT, 0, 0));
 		}
 		else if (nID == 225) //寻找文本
 		{
@@ -369,7 +367,7 @@ LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 {
 	if (nCode == EN_SELCHANGE)
 	{
-		output(L"选中区域改变:", ((EX_SELCHANGE*)lParam)->chrg.cpMin, ((EX_SELCHANGE*)lParam)->chrg.cpMax);
+		OUTPUTW(L"选中区域改变:", ((EX_SELCHANGE*)lParam)->chrg.cpMin, ((EX_SELCHANGE*)lParam)->chrg.cpMax);
 	}
 	else if (nCode == EN_LINK)
 	{
@@ -379,7 +377,7 @@ LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			TextRange.chrg = ((EX_ENLINK*)lParam)->chrg;
 			TextRange.pwzText = (LPCWSTR)Ex_AllocBuffer((TextRange.chrg.cpMax - TextRange.chrg.cpMin + 2) * 2);
 			Ex_ObjSendMessage(hObj, EM_GETTEXTRANGE, 0, (LPARAM)&TextRange);
-			output(L"链接被按下:", TextRange.chrg.cpMax, TextRange.chrg.cpMin, TextRange.pwzText);
+			OUTPUTW(L"链接被按下:", TextRange.chrg.cpMax, TextRange.chrg.cpMin, TextRange.pwzText);
 			Ex_FreeBuffer((LPVOID)TextRange.pwzText);
 		}
 	}
@@ -496,11 +494,11 @@ LRESULT CALLBACK OnListButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 {
 	if (nCode == LBN_CLICK)
 	{
-		output(L"点击", wParam, lParam);
+		OUTPUTW(L"点击", wParam, lParam);
 	}
 	else if (nCode == LBN_CHECK)
 	{
-		output(L"选择", wParam, lParam);
+		OUTPUTW(L"选择", wParam, lParam);
 	}
 
 	return 0;
@@ -720,7 +718,7 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 			else if (ni.nCode == LVN_ITEMCHANGED)
 			{
 				//wParam 新选中项,lParam 旧选中项
-				output(L"改变选中ID:", ni.idFrom, L"新选中项:", ni.wParam, L"旧选中项:", ni.lParam);
+				OUTPUTW(L"改变选中ID:", ni.idFrom, L"新选中项:", ni.wParam, L"旧选中项:", ni.lParam);
 			}
 		}
 	}
@@ -1106,7 +1104,7 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 		std::wstring text;
 		text.resize(len);
 		Ex_ObjGetText(m_hComboBox, text.c_str(), len);
-		output(text);
+		OUTPUTW(text);
 	}
 	else if (hObj == m_hComboBoxButton[3])
 	{
@@ -1511,7 +1509,7 @@ LRESULT CALLBACK OnReportListViewItemChecked(HEXOBJ hObj, INT nID, INT nCode, WP
 	if (nCode == RLVN_CHECK)
 	{
 		auto str = L"第" + std::to_wstring(wParam) + L"项选择框状态发生变化,选中状态：" + std::to_wstring(lParam);
-		output(str);
+		OUTPUTW(str);
 	}
 	return 0;
 }
@@ -1521,7 +1519,7 @@ LRESULT CALLBACK OnReportListViewItemChange(HEXOBJ hObj, INT nID, INT nCode, WPA
 	if (nCode == LVN_ITEMCHANGED)
 	{
 		auto str = L"你选择了第" + std::to_wstring(wParam) + L"项";
-		output(str);
+		OUTPUTW(str);
 	}
 	return 0;
 }
@@ -1531,7 +1529,7 @@ LRESULT CALLBACK OnReportListViewColumnClick(HEXOBJ hObj, INT nID, INT nCode, WP
 	if (nCode == RLVN_COLUMNCLICK)
 	{
 		auto str = L"你点击了第" + std::to_wstring(wParam) + L"列表头";
-		output(str);
+		OUTPUTW(str);
 	}
 	return 0;
 }
@@ -1951,11 +1949,11 @@ LRESULT CALLBACK OnEditChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 {
 	if (nCode == EN_CHANGE)
 	{
-		output(L"编辑框内容改变", nID);
+		OUTPUTW(L"编辑框内容改变", nID);
 	}
 	else if (nCode == NM_CHAR)
 	{
-		output(L"编辑框输入字符", nID, wParam);
+		OUTPUTW(L"编辑框输入字符", nID, wParam);
 	}
 	return 0;
 }
@@ -2509,7 +2507,7 @@ LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 				std::wstring str;
 				str.resize(len * 2 + 2);
 				Ex_ObjGetDropString(hObj, di.pDataObject, (LPWSTR)str.c_str(), len + 1);
-				output(L"接收到文本拖拽:", str);
+				OUTPUTW(L"接收到文本拖拽:", str);
 				*lpResult = DROPEFFECT_COPY; //按复制模式处理
 				return 1;
 			}
@@ -2526,7 +2524,7 @@ LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 				std::wstring fileName;
 				fileName.resize(fileNameLength);
 				DragQueryFileW((HDROP)wParam, index, (LPWSTR)fileName.c_str(), fileNameLength + 2);
-				output(L"接收到文件拖拽:", fileName);
+				OUTPUTW(L"接收到文件拖拽:", fileName);
 			}
 		}
 		*lpResult = DROPEFFECT_LINK; //按建立快捷方式处理
@@ -2599,11 +2597,11 @@ LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPAR
 	}
 	else if (uMsg == WM_LBUTTONDOWN)
 	{
-		output(L"被按下");
+		OUTPUTW(L"被按下");
 	}
 	else if (uMsg == WM_LBUTTONUP)
 	{
-		output(L"被放开");
+		OUTPUTW(L"被放开");
 	}
 	return 0;
 }
@@ -2668,7 +2666,7 @@ void test_modal(HWND hWnd)
 LRESULT CALLBACK OnColorPickerButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode == CPN_COLORCHANGE) {
-		output(L"颜色已更改", (int)lParam);
+		OUTPUTW(L"颜色已更改", (int)lParam);
 	}
 	return 0;
 }
@@ -2688,7 +2686,7 @@ LRESULT CALLBACK OnDateBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 {
 	if (nCode == DBN_DATETIME) {
 		EX_DATETIME* dt = (EX_DATETIME*)lParam;
-		output(L"日期已更改", dt->Year, dt->Mon, dt->Mday, dt->Wday);
+		OUTPUTW(L"日期已更改", dt->Year, dt->Mon, dt->Mday, dt->Wday);
 	}
 	return 0;
 }
@@ -2739,7 +2737,7 @@ LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 	if (nCode == DBN_DATETIME) 
 	{
 		EX_DATETIME* dt = (EX_DATETIME*)lParam;
-		output(L"日期已更改", dt->Year, dt->Mon, dt->Mday, dt->Wday);
+		OUTPUTW(L"日期已更改", dt->Year, dt->Mon, dt->Mday, dt->Wday);
 	}
 	return 0;
 }
@@ -2786,7 +2784,7 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
 	if (uMsg == 1) 
 	{
 		//Ck_CommandLine_AppendSwitch((HCOMMAND)handler, Ck_WCharToChar(L"single - process"));
-		output(L"加载命令行：", uMsg);
+		OUTPUTW(L"加载命令行：", uMsg);
 	}
 	else if (uMsg == 2) {
 		
@@ -2801,7 +2799,7 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
 
 LRESULT CALLBACK OnChromiumEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	output(L"加载完毕");
+	OUTPUTW(L"加载完毕");
 	return 0;
 }
 
@@ -2827,7 +2825,7 @@ LRESULT CALLBACK OnScoreButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM
 	if (lParam != 0)
 	{
 		INT nIndex = Ex_ObjGetLong(hObj, EOL_LPARAM);
-		output(L"选择分数", nIndex);
+		OUTPUTW(L"选择分数", nIndex);
 	}
 	return 0;
 }
@@ -2890,7 +2888,7 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
 		if (nIndex > 0 && nIndex <= (m_tlistViewItemInfo.size()))
 		{
 			m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex -1);
-			output(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam, m_tlistViewItemInfo.size());
+			OUTPUTW(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam, m_tlistViewItemInfo.size());
 			Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), LVM_SETITEMCOUNT, m_tlistViewItemInfo.size(), 0);
 			Ex_ObjInvalidateRect(Ex_ObjGetParent(hObjItem),0);
 		}
@@ -2916,7 +2914,7 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 			}
 			else if (ni->nCode == LVN_ITEMCHANGED)//ni->wParam:上次选中索引   ni->lParam:当前选中索引  索引从1开始
 			{
-				output(L"TList表项改变", ni->wParam, ni->lParam);
+				OUTPUTW(L"TList表项改变", ni->wParam, ni->lParam);
 			}
 			else if (ni->nCode == LVN_HOTTRACK)//ni->wParam:上次悬浮索引   ni->lParam:当前悬浮索引  索引从1开始
 			{
@@ -3087,12 +3085,12 @@ LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 		if (nID == 100)
 		{
 			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_GETITEMVALUE, 0, (LPARAM)L"名称2");
-			output(L"名称2 对应值:", ret);
+			OUTPUTW(L"名称2 对应值:", ret);
 		}
 		else if (nID == 101)
 		{
 			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_SETITEMVALUE, (WPARAM)L"新数值123", (LPARAM)L"名称2");
-			output(L"置\"名称2\"对应值");
+			OUTPUTW(L"置\"名称2\"对应值");
 		}
 		else if (nID == 102)
 		{
@@ -3106,7 +3104,7 @@ LRESULT CALLBACK OnPropertyGridEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 {
 	EX_PROGRID_CHANGEITEMINFO itemInfo{ 0 };
 	RtlMoveMemory(&itemInfo, (void*)lParam, sizeof(EX_PROGRID_CHANGEITEMINFO));
-	output(L"属性框值改变, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:", itemInfo.type);
+	OUTPUTW(L"属性框值改变, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:", itemInfo.type);
 	return 0;
 }
 

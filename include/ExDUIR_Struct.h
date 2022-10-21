@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <tchar.h>
 #include <Windows.h>
 #pragma warning(disable : 4005)
+#define OUTPUTW(...) output(_T(__FILE__),_T(__FUNCTION__),__LINE__, __VA_ARGS__)
 
 #pragma region engine flag constant
 // 引擎标识_启用DPI缩放
@@ -1845,5 +1847,16 @@ static void output(T... args)
 	std::wstring str = L"";
 	std::initializer_list<INT>{(pt(str, std::forward<T>(args)), 0)...};
 	str.append(L"\r\n");
+	OutputDebugStringW(str.c_str());
+}
+
+template <class... T>
+static void output(const wchar_t* file, const wchar_t* func, int lineno, T... args)
+{
+	wchar_t buf[4096];
+	swprintf_s(buf, 4096, L"[%s][%s:%d] ", file, func, lineno);
+	std::wstring str = buf;
+	std::initializer_list<INT>{(pt(str, std::forward<T>(args)), 0)...};
+	str.append(L"\n");
 	OutputDebugStringW(str.c_str());
 }

@@ -95,7 +95,7 @@ public:
 		}
 		case 102:
 		{
-			output(L"102");
+			OUTPUTW(L"102");
 			break;
 		}
 		default:
