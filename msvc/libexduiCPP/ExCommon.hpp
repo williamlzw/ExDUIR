@@ -799,25 +799,6 @@ namespace ExDUIR
 				}
 			};
 
-			class ExComboBox : public ExControl
-			{
-			public:
-				ExComboBox() = default;
-				~ExComboBox() = default;
-				ExComboBox(EXHANDLE hObj)
-				{
-					m_handle = hObj;
-				}
-				ExComboBox(ExControl obj)
-				{
-					m_handle = obj.m_handle;
-				}
-				ExComboBox(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
-					:ExControl(pOwner, x, y, width, height, L"ComboBox", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
-				{
-				}
-			};
-
 			class ExDateBox : public ExControl
 			{
 			public:

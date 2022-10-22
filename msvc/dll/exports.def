@@ -226,6 +226,8 @@ _canvas_drawline
 _canvas_drawrect
 _canvas_fillrect
 _canvas_drawroundedrect
+_canvas_drawshadow
+_canvas_drawshadow2
 _canvas_fillroundedrect
 _canvas_drawellipse
 _canvas_fillellipse

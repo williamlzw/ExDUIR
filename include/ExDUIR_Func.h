@@ -335,6 +335,54 @@ BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 
 /*
 * @fnType ExDirectUI
+* @brief _canvas_drawshadow 画布画阴影
+* @param 1  hCanvas                  [HEXCANVAS]        画布句柄
+* @param 2  fLeft                    [FLOAT]            阴影包围左边
+* @param 3  fTop                     [FLOAT]            阴影包围顶边
+* @param 4  fRight                   [FLOAT]            阴影包围右边
+* @param 5  fBottom                  [FLOAT]            阴影包围底边
+* @param 6  fShadowSize              [FLOAT]			阴影尺寸
+* @param 7  crShadow                 [EXARGB]			阴影颜色
+* @param 9  radiusTopLeft            [FLOAT]			左上角圆角度
+* @param 9 radiusTopRight            [FLOAT]            右上角圆角度
+* @param 10 radiusBottomLeft         [FLOAT]            左下角圆角度
+* @param 11 radiusBottomRight        [FLOAT]            右上角圆角度
+* @param 12 radiusBottomRight        [FLOAT]            右上角圆角度
+* @param 13 OffsetX                  [FLOAT]            阴影横向偏移
+* @param 14 OffsetY                  [FLOAT]            阴影纵向偏移
+* @return [BOOL]返回是否成功
+*/
+BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
+	FLOAT fLeft, FLOAT fTop, FLOAT fRight, FLOAT fBottom,
+	FLOAT fShadowSize, EXARGB crShadow,
+	FLOAT radiusTopLeft, FLOAT radiusTopRight, FLOAT radiusBottomLeft, FLOAT radiusBottomRight, FLOAT OffsetX, FLOAT OffsetY);
+
+/*
+* @fnType ExDirectUI
+* @brief _canvas_drawshadow2 画布画阴影
+* @param 1  hCanvas                  [HEXCANVAS]        画布句柄
+* @param 2  fLeft                    [FLOAT]            阴影包围左边
+* @param 3  fTop                     [FLOAT]            阴影包围顶边
+* @param 4  fRight                   [FLOAT]            阴影包围右边
+* @param 5  fBottom                  [FLOAT]            阴影包围底边
+* @param 6  fShadowSize              [FLOAT]			阴影尺寸
+* @param 7  crShadow                 [EXARGB]			阴影颜色
+* @param 9  radiusTopLeft            [FLOAT]			左上角圆角度
+* @param 9 radiusTopRight            [FLOAT]            右上角圆角度
+* @param 10 radiusBottomLeft         [FLOAT]            左下角圆角度
+* @param 11 radiusBottomRight        [FLOAT]            右上角圆角度
+* @param 12 radiusBottomRight        [FLOAT]            右上角圆角度
+* @param 13 OffsetX                  [FLOAT]            阴影横向偏移
+* @param 14 OffsetY                  [FLOAT]            阴影纵向偏移
+* @return [BOOL]返回是否成功
+*/
+BOOL _canvas_drawshadow2(HEXCANVAS hCanvas,
+	FLOAT fLeft, FLOAT fTop, FLOAT fRight, FLOAT fBottom,
+	FLOAT fShadowSize, EXARGB crShadow,
+	FLOAT radiusTopLeft, FLOAT radiusTopRight, FLOAT radiusBottomLeft, FLOAT radiusBottomRight, FLOAT OffsetX, FLOAT OffsetY);
+
+/*
+* @fnType ExDirectUI
 * @brief _canvas_drawtext 画布画文本
 * @param 1  hCanvas                 [HEXCANVAS]
 * @param 2  hFont                   [HEXFONT]             如果为0则使用默认字体句柄

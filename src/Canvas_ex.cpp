@@ -1632,3 +1632,208 @@ BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOA
     }
     return ret;
 }
+
+BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
+FLOAT fLeft, FLOAT fTop, FLOAT fRight, FLOAT fBottom,
+    FLOAT fShadowSize, EXARGB crShadow,
+    FLOAT radiusTopLeft, FLOAT radiusTopRight, FLOAT radiusBottomLeft, FLOAT radiusBottomRight, FLOAT OffsetX, FLOAT OffsetY)
+{
+    canvas_s* pCanvas = nullptr;
+    INT nError = 0;
+    if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
+    {
+        ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+        pContext->Flush();
+
+        ID2D1Bitmap1* pCopyBitmap = nullptr;
+
+        pContext->CreateBitmap(
+            D2D1::SizeU(fRight - fLeft, fBottom - fTop),
+            NULL,
+            0,
+            D2D1::BitmapProperties1(
+                D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_GDI_COMPATIBLE,
+                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
+            ),
+            &pCopyBitmap
+        );
+        D2D1_RECT_U rcu = D2D1::RectU(fLeft, fTop, fRight, fBottom);
+        pCopyBitmap->CopyFromBitmap(NULL, pCanvas->pBitmap_, &rcu);
+
+        //创建兼容渲染目标
+        ID2D1BitmapRenderTarget* bmpRenderTarget = nullptr;
+        pContext->CreateCompatibleRenderTarget(
+            D2D1::SizeF(fRight - fLeft, fBottom - fTop), &bmpRenderTarget);
+
+        bmpRenderTarget->BeginDraw();
+        bmpRenderTarget->Clear(0);
+        ID2D1BitmapBrush* BitmapBrush = nullptr;
+        g_Ri.pD2DDeviceContext->CreateBitmapBrush(pCopyBitmap, &BitmapBrush);
+        
+        pCopyBitmap->Release();
+        if (BitmapBrush)
+        {
+            HEXPATH hPath;
+            _path_create(1, &hPath);
+            _path_open(hPath);
+            _path_beginfigure(hPath);
+            _path_addroundedrect(hPath, fLeft, fTop, fRight, fBottom, radiusTopLeft, radiusTopRight, radiusBottomLeft, radiusBottomRight);
+            _path_endfigure(hPath, true);
+            _path_close(hPath);
+            path_s* pPath = nullptr;
+            if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
+            {
+                bmpRenderTarget->FillGeometry(pPath->pGeometry_, BitmapBrush);
+            }
+            _path_destroy(hPath);
+            bmpRenderTarget->EndDraw();
+            BitmapBrush->Release();
+        }
+        //获取阴影位图
+        ID2D1Bitmap* bkBitmap = nullptr;
+        bmpRenderTarget->GetBitmap(&bkBitmap);
+        bmpRenderTarget->Release();
+        if (bkBitmap)
+        { //创建阴影效果
+            ID2D1Effect* mShadowEffect = nullptr;
+            ID2D1Effect* mAffineTransEffect = nullptr;
+
+            pContext->CreateEffect(CLSID_D2D1Shadow, &mShadowEffect);
+            pContext->CreateEffect(CLSID_D2D12DAffineTransform, &mAffineTransEffect);
+            if (mAffineTransEffect)
+            {
+                mShadowEffect->SetInput(0, bkBitmap);
+                mShadowEffect->SetValue(D2D1_SHADOW_PROP_BLUR_STANDARD_DEVIATION, fShadowSize);
+                D2D1_COLOR_F CLR{};
+
+                ARGB2ColorF(crShadow, &CLR);
+                mShadowEffect->SetValue(D2D1_SHADOW_PROP_COLOR, D2D1::Vector4F(CLR.r, CLR.g, CLR.b, CLR.a));
+
+                D2D1_MATRIX_3X2_F matrix = D2D1::Matrix3x2F::Translation(OffsetX, OffsetY);
+                mAffineTransEffect->SetInputEffect(0, mShadowEffect);
+                mAffineTransEffect->SetValue(D2D1_2DAFFINETRANSFORM_PROP_TRANSFORM_MATRIX, matrix);
+
+                pContext->DrawImage(mAffineTransEffect, D2D1::Point2F(fLeft, fTop));
+                pContext->DrawBitmap(bkBitmap, D2D1::RectF(fLeft, fTop, fRight, fBottom));
+                bkBitmap->Release();
+                mShadowEffect->Release();
+                mAffineTransEffect->Release();
+            }
+        }
+    }
+    Ex_SetLastError(nError);
+    return nError == 0;
+}
+
+BOOL _canvas_drawshadow2(HEXCANVAS hCanvas,
+    FLOAT fLeft, FLOAT fTop, FLOAT fRight, FLOAT fBottom,
+    FLOAT fShadowSize, EXARGB crShadow,
+    FLOAT radiusTopLeft, FLOAT radiusTopRight, FLOAT radiusBottomLeft, FLOAT radiusBottomRight, FLOAT OffsetX, FLOAT OffsetY)
+{
+    canvas_s* pCanvas = nullptr;
+    INT nError = 0;
+    if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
+    {
+        ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+
+        //创建兼容渲染目标
+        ID2D1BitmapRenderTarget* bmpRenderTarget = nullptr;
+        pContext->CreateCompatibleRenderTarget(&bmpRenderTarget);
+
+        HEXPATH hPath;
+        _path_create(1, &hPath);
+        _path_open(hPath);
+        _path_beginfigure(hPath);
+        _path_addroundedrect(hPath, fLeft, fTop, fRight, fBottom, radiusTopLeft, radiusTopRight, radiusBottomLeft, radiusBottomRight);
+        _path_endfigure(hPath, true);
+        _path_close(hPath);
+
+        ID2D1SolidColorBrush* br = NULL;
+        D2D1_COLOR_F CLR{};
+        ARGB2ColorF(crShadow, &CLR);
+        HRESULT  hr = g_Ri.pD2DDeviceContext->CreateSolidColorBrush(CLR, &br);
+        if (SUCCEEDED(hr))
+        {
+            bmpRenderTarget->BeginDraw();
+            bmpRenderTarget->Clear(0);
+            path_s* pPath = nullptr;
+            if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
+            {
+                bmpRenderTarget->SetTransform(D2D1::Matrix3x2F::Translation(OffsetX, OffsetY));
+                bmpRenderTarget->FillGeometry(pPath->pGeometry_, br);
+            }
+
+            br->Release();
+            hr = bmpRenderTarget->EndDraw();
+        }
+        if (SUCCEEDED(hr))
+        {
+            path_s* pPath = nullptr;
+            if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
+            {
+                //创建与画布同尺寸的区域
+                ID2D1RectangleGeometry* pRectGeometry = NULL;
+                if (SUCCEEDED(g_Ri.pD2Dfactory->CreateRectangleGeometry(D2D1::RectF(0, 0, pCanvas->width_, pCanvas->height_), &pRectGeometry)))
+                {
+                    //创建裁剪目标区域
+                    ID2D1PathGeometry* pGeometry = NULL;
+                    if (SUCCEEDED(g_Ri.pD2Dfactory->CreatePathGeometry(&pGeometry)))
+                    {
+                        ID2D1GeometrySink* pSink = NULL;
+                        if (SUCCEEDED(pGeometry->Open(&pSink)))
+                        {
+                            //用大区域排除中心圆角区域,得到剪辑区
+                            if (SUCCEEDED(pRectGeometry->CombineWithGeometry(pPath->pGeometry_,
+                                D2D1_COMBINE_MODE_EXCLUDE, D2D1::Matrix3x2F::Identity(), pSink)))
+                            {
+                                pSink->Close();
+
+                                //获取阴影位图
+                                ID2D1Bitmap* bitmap;
+                                bmpRenderTarget->GetBitmap(&bitmap);
+
+                                //创建模糊效果
+                                ID2D1Effect* effect;
+                                if (SUCCEEDED(pContext->CreateEffect(CLSID_D2D1GaussianBlur, &effect)))
+                                {
+                                    effect->SetInput(0, bitmap);
+                                    effect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, fShadowSize * 0.5F);
+
+                                    //创建层，并设置剪辑区
+                                    ID2D1Layer* layer;
+                                    if (SUCCEEDED(pContext->CreateLayer(&layer)))
+                                    {
+                                        pContext->PushLayer(D2D1::LayerParameters(D2D1::InfiniteRect(), pGeometry, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE), layer);
+
+                                        //将模糊后的阴影图绘制到画布上
+                                        pContext->DrawImage(effect, D2D1_INTERPOLATION_MODE_LINEAR);
+
+                                        //取消剪辑
+                                        pContext->PopLayer();
+                                        layer->Release();
+                                    }
+
+                                    effect->Release();
+                                }
+
+                                bitmap->Release();
+                            }
+
+                            pSink->Release();
+                        }
+
+                        pGeometry->Release();
+                    }
+
+                    pRectGeometry->Release();
+                }
+            }
+
+        }
+
+        _path_destroy(hPath);
+        bmpRenderTarget->Release();
+    }
+    Ex_SetLastError(nError);
+    return nError == 0;
+}
