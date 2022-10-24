@@ -398,14 +398,14 @@ void test_edit(HWND hWnd)
 	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试数值输入编辑框", EOS_VISIBLE | EES_NUMERICINPUT, 10, 110, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 
-	HEXOBJ hObj_edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"测试透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
-	m_hEditFont = _font_createfromfamily(L"微软雅黑", 16, EFS_UNDERLINE | EFS_ITALIC);
+	HEXOBJ hObj_edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 44, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	m_hEditFont = _font_createfromfamily(L"微软雅黑", 24, EFS_UNDERLINE | EFS_ITALIC);
 	Ex_ObjSetFont(hObj_edit5, m_hEditFont, FALSE);
 	Ex_ObjSetColor(hObj_edit5, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
 	Ex_ObjSetColor(hObj_edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);
 	Ex_ObjSetRadius(hObj_edit5, 10, 10, 10, 0, FALSE);
 
-	HEXOBJ hobj_edit_multiline = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\n", EOS_VISIBLE | EOS_VSCROLL, 10, 230, 150, 100, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	HEXOBJ hobj_edit_multiline = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\n", EOS_VISIBLE | EOS_VSCROLL, 10, 245, 150, 100, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
 	Ex_ObjSendMessage(hobj_edit_multiline, EM_SETSEL, -1, -1);                        //移动到最后一行
 	Ex_ObjSendMessage(hobj_edit_multiline, EM_REPLACESEL, -1, (LPARAM)L"新添加一行"); //添加一行
 	Ex_ObjSetFocus(hobj_edit_multiline);                                              //添加焦点自动滚动到最后一行
@@ -3396,4 +3396,17 @@ void test_miniblink(HWND hWnd)
 	auto btn = Ex_ObjCreate(L"button", NULL, -1, 50, 550, 100, 30, hExDui_miniblink);
 	Ex_ObjHandleEvent(btn, NM_CLICK, OnMiniblinkBtnEnevt);
 	Ex_DUIShowWindow(hExDui_miniblink, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+void test_mediaPlay(HWND hWnd)
+{
+	HWND hWndmedia = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试媒体播放器", 0, 0, 800, 600, 0, 0);
+	HEXDUI hExDui_media = Ex_DUIBindWindowEx(hWndmedia, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnMiniblinkWndMsgProc);
+	Ex_DUISetLong(hExDui_media, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	auto hObjMedia = Ex_ObjCreate(L"MediaFoundation", NULL, -1, 50, 50, 700, 500, hExDui_media);
+	OUTPUTW(hObjMedia);
+	Ex_ObjSendMessage(hObjMedia, 10010, 0, (LPARAM)L"d:/44030123123.mp4");
+
+
+	Ex_DUIShowWindow(hExDui_media, SW_SHOWNORMAL, 0, 0, 0);
 }

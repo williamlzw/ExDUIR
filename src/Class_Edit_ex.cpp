@@ -460,7 +460,7 @@ void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height)
 			dwEffects = dwEffects | CFE_STRIKEOUT;
 		}
 		pcf->dwEffects = dwEffects;
-		pcf->yHeight = -logfont.lfHeight * 1440 / 96;
+		pcf->yHeight = -logfont.lfHeight / GetSysDpi() * 1440 / 96;
 		pcf->bCharSet = logfont.lfCharSet;
 		pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
 		pcf->crTextColor = ExARGB2RGB(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
@@ -571,7 +571,7 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	pOwner->height_ = DtoHimetric(height, 96);
 	pOwner->width_ = DtoHimetric(width, 96);
 	DWORD tmp = TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE;
-	if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE)
+	if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE || (pObj->dwTextFormat_ & DT_VCENTER) == DT_VCENTER)
 	{
 		TEXTMETRICW tmrc = {};
 		if (pOwner->mDc_)
@@ -1031,12 +1031,12 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			}
 			pcf->dwMask = dwMask;
 			pcf->dwEffects = dwEffects;
-			pcf->yHeight = -logfont.lfHeight * 1440 / 96;
+			pcf->yHeight = -logfont.lfHeight / GetSysDpi() * 1440 / 96;
 			pcf->bCharSet = logfont.lfCharSet;
 			pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
 			RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, LF_FACESIZE);
 			((ITextServices*)_edit_its(pObj))->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
-            _edit_size(hWnd, hObj, pObj);
+			_edit_size(hWnd, hObj, pObj);
 			return 0;
 		}
 		else
