@@ -1036,6 +1036,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
 			RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, LF_FACESIZE);
 			((ITextServices*)_edit_its(pObj))->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
+            _edit_size(hWnd, hObj, pObj);
 			return 0;
 		}
 		else
