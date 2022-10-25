@@ -571,7 +571,8 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	pOwner->height_ = DtoHimetric(height, 96);
 	pOwner->width_ = DtoHimetric(width, 96);
 	DWORD tmp = TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE;
-	if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE || (pObj->dwTextFormat_ & DT_VCENTER) == DT_VCENTER)
+	
+	if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE || (pObj->dwTextFormat_ & DT_VCENTER) == DT_VCENTER && (pObj->dwStyle_ & EOS_VSCROLL) != EOS_VSCROLL)
 	{
 		TEXTMETRICW tmrc = {};
 		if (pOwner->mDc_)
