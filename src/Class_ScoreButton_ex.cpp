@@ -42,10 +42,10 @@ void _scorebtn_notify_brother(HEXOBJ hObj)
             {
                 if (set)
                 {
-                    Ex_ObjDispatchMessage(hObjTmp, BM_SETCHECK, 1, 0); //·¢ËÍÒ»¸öÈ¡ÏûÑ¡ÖĞµÄÏûÏ¢
+                    Ex_ObjDispatchMessage(hObjTmp, BM_SETCHECK, 1, 0); //å‘é€ä¸€ä¸ªå–æ¶ˆé€‰ä¸­çš„æ¶ˆæ¯
                 }
                 else {
-                    Ex_ObjSetUIState(hObjTmp, BM_SETCHECK, FALSE, 0, TRUE); //·¢ËÍÒ»¸öÈ¡ÏûÑ¡ÖĞµÄÏûÏ¢
+                    Ex_ObjSetUIState(hObjTmp, BM_SETCHECK, FALSE, 0, TRUE); //å‘é€ä¸€ä¸ªå–æ¶ˆé€‰ä¸­çš„æ¶ˆæ¯
                 }
                
             }
@@ -53,7 +53,7 @@ void _scorebtn_notify_brother(HEXOBJ hObj)
         else {
             set = TRUE;
         }
-        hObjTmp = Ex_ObjGetObj(hObjTmp, GW_HWNDNEXT); //ÕÒÏÂÒ»¸öĞÖµÜ×é¼ş
+        hObjTmp = Ex_ObjGetObj(hObjTmp, GW_HWNDNEXT); //æ‰¾ä¸‹ä¸€ä¸ªå…„å¼Ÿç»„ä»¶
     }
     
 }

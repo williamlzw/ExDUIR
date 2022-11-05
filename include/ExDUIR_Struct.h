@@ -1007,7 +1007,7 @@
 #define TVM_GETNEXTITEM 4362
 // 消息_树形框_置选中项 (lParam为选中的节点句柄)
 #define TVM_SELECTITEM 4363
-// 消息_树形框_命中测试
+// 消息_树形框_取展开可视节点个数
 #define TVM_GETVISIBLECOUNT 4368
 // 消息_树形框_命中测试 (wParam低位为x高位为y[相对控件],lParam为 返回#TVHT_开头常量 的指针,消息返回值为命中的节点句柄)
 #define TVM_HITTEST 4369
@@ -1447,14 +1447,14 @@
 #define MBBM_JS 100013
 
 #define ExGetR(argb) (LOBYTE(argb))
-#define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
-#define ExGetB(argb) (LOBYTE((argb) >> 16))
-#define ExGetA(argb) (LOBYTE((argb) >> 24))
+#define ExGetG(argb) (LOBYTE(argb >> 8))
+#define ExGetB(argb) (LOBYTE(argb >> 16))
+#define ExGetA(argb) (LOBYTE(argb >> 24))
 #define ExRGB(r, g, b) ((EXARGB)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((INT)(BYTE)(b)) << 16)))
-#define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
-#define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
-#define ExARGB2RGB(argb) ExRGB((BYTE)(argb >> 16), (BYTE)(argb >> 8), (BYTE)(argb))
-#define ExRGB2ARGB(rgb, a) ((EXARGB)(BYTE(ExGetR(rgb)) << 16 | BYTE(ExGetG(rgb)) << 8 | BYTE(ExGetB(rgb)) | (a << 24)))
+#define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(r, g, b) | (a << 24)))
+#define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(r, g, b) | (a << 24)))
+#define ExARGB2RGB(argb) ExRGB(ExGetR(argb), ExGetG(argb), ExGetB(argb))
+#define ExRGB2ARGB(rgb, a) ((EXARGB)(rgb | (a << 24)))
 
 typedef UINT8 CHANNEL;       // 通道
 typedef COLORREF EXARGB;     // 颜色
