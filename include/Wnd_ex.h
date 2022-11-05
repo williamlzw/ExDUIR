@@ -138,6 +138,8 @@ struct wnd_s
     size_t hJSObjMap_;
 
     INT menu_maxwidth_;
+    INT crSD_;
+    INT Radius_;
 };
 
 LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);

@@ -133,6 +133,10 @@
 #define EWL_OBJCAPTION -54
 // 引擎数值_焦点组件句柄
 #define EWL_OBJFOCUS -53
+// 引擎数值_阴影颜色
+#define EWL_CRSD -35
+// 引擎数值_阴影圆角大小
+#define EWL_RADIUS -11
 #pragma endregion engine long constant
 
 #pragma region image type constant
