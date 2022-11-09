@@ -38,7 +38,7 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
         if (tmp2 != tmp) // 若当前位置变化,则发送通知
         {
             Ex_ObjDispatchNotify(hObj, SBN_VALUE, 0, (LPARAM)tmp);
-            Ex_ObjInvalidateRect(hObj, 0); //  ' 重绘控件
+            Ex_ObjInvalidateRect(hObj, 0);
         }
     }
     else if (uMsg == WM_LBUTTONUP)

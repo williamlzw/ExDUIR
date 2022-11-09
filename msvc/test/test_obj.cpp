@@ -358,7 +358,7 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			textformat.codePage = 1200; //Unicode code page
 			Ex_ObjSendMessage(hEdit, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为我");
 		}
-		
+
 	}
 	return 0;
 }
@@ -816,7 +816,7 @@ LRESULT CALLBACK OnNavButtonMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM w
 {
 	if (uMsg == WM_DESTROY)
 	{
-		
+
 	}
 
 	return 0;
@@ -826,7 +826,7 @@ void test_navbutton(HWND hWnd)
 {
 	HWND hWnd_navbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试选项卡", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(hWnd_navbutton, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
-	
+
 	for (INT i = 0; i < 4; i++)
 	{
 		HEXIMAGE hImage = 0;
@@ -837,16 +837,16 @@ void test_navbutton(HWND hWnd)
 
 		auto file = L"./navbtn/大图标" + std::to_wstring(i + 1) + L".png";
 		_img_createfromfile(file.c_str(), &hImage);
-		
+
 		Ex_ObjSendMessage(m_hNavBtn[i], WM_SETICON, 0, hImage);
 		Ex_ObjSetColor(m_hNavBtn[i], COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);
-		
+
 		_img_createfromfile(L"./navbtn/顶部按钮背景C.png", &hImg1);
-		
+
 		Ex_ObjSendMessage(m_hNavBtn[i], BM_SETIMAGE, 1, hImg1);
 
 		_img_createfromfile(L"./navbtn/顶部按钮背景D.png", &hImg2);
-		
+
 		Ex_ObjSendMessage(m_hNavBtn[i], BM_SETIMAGE, 2, hImg2);
 
 		Ex_ObjInvalidateRect(m_hNavBtn[i], 0);
@@ -2700,7 +2700,7 @@ void test_datebox(HWND hParent)
 	HEXOBJ hObj = Ex_ObjCreate(L"DateBox", 0, -1, 50, 80, 150, 30, hExDui_datebox);
 	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, -1, FALSE);
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16711680, 255), TRUE);
-	
+
 	Ex_ObjHandleEvent(hObj, DBN_DATETIME, OnDateBoxButtonEvent);
 
 	Ex_DUIShowWindow(hExDui_datebox, SW_SHOWNORMAL, 0, 0, 0);
@@ -2734,7 +2734,7 @@ void test_titlebar(HWND hParent)
 
 LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	if (nCode == DBN_DATETIME) 
+	if (nCode == DBN_DATETIME)
 	{
 		EX_DATETIME* dt = (EX_DATETIME*)lParam;
 		OUTPUTW(L"日期已更改", dt->Year, dt->Mon, dt->Mday, dt->Wday);
@@ -2748,7 +2748,7 @@ void test_calendar(HWND hParent)
 	HEXDUI hExDui_calendar = Ex_DUIBindWindowEx(hWnd_calendar, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_calendar, EWL_CRBKG, ExARGB(200, 200, 200, 255));
 
-	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER , 50, 50, 310, 320, hExDui_calendar, 100, -1, 0, 0, 0);
+	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER, 50, 50, 310, 320, hExDui_calendar, 100, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(MonthCal, MCN_DATETIME, OnCalendarEvent);
 	Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -2781,13 +2781,13 @@ void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> 
 
 void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam)
 {
-	if (uMsg == 1) 
+	if (uMsg == 1)
 	{
 		//Ck_CommandLine_AppendSwitch((HCOMMAND)handler, Ck_WCharToChar(L"single - process"));
 		OUTPUTW(L"加载命令行：", uMsg);
 	}
 	else if (uMsg == 2) {
-		
+
 		HV8VALUE window = Ck_V8CGetGlobal((HV8CONTEXE)attach1);
 		HV8VALUE v8 = Ck_V8CreateString(L"say yes");
 		Ck_V8SetValue(window, L"say_yes", v8, 0);
@@ -2859,8 +2859,8 @@ void test_carousel(HWND hParent)
 	HWND hWnd_carousel = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试轮播", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_carousel = Ex_DUIBindWindowEx(hWnd_carousel, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_carousel, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20 , 40, 760, 550, hExDui_carousel);
-	
+	HEXOBJ hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20, 40, 760, 550, hExDui_carousel);
+
 	Ex_ObjSendMessage(hObj, CM_SIZE, 500, 500);
 	HEXIMAGE hImg = 0;
 	_img_createfromfile(L"res/1.png", &hImg);
@@ -2880,17 +2880,17 @@ std::vector<TLISTVIEW_ITEM> m_tlistViewItemInfo;
 
 LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	
+
 	if (Ex_ObjGetLong(hObj, EOL_NODEID) == 3)//点了某项的按钮
 	{
 		HEXOBJ hObjItem = Ex_ObjGetParent(hObj);// 表项句柄
 		INT nIndex = Ex_ObjGetLong(hObjItem, 0);// 获得表项当前代表的索引
 		if (nIndex > 0 && nIndex <= (m_tlistViewItemInfo.size()))
 		{
-			m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex -1);
+			m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex - 1);
 			OUTPUTW(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam, m_tlistViewItemInfo.size());
 			Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), LVM_SETITEMCOUNT, m_tlistViewItemInfo.size(), 0);
-			Ex_ObjInvalidateRect(Ex_ObjGetParent(hObjItem),0);
+			Ex_ObjInvalidateRect(Ex_ObjGetParent(hObjItem), 0);
 		}
 	}
 	return 0;
@@ -2932,7 +2932,7 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		hObjTmp = Ex_ObjCreateEx(-1, L"Button", 0, -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 3);
 		Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
-		
+
 		/*hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 39, 648, 1, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
 		Ex_ObjSetColor(hObjTmp, COLOR_EX_BACKGROUND, ExRGB2ARGB(14868961, 250), TRUE);
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 4);*/
@@ -2948,13 +2948,13 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 			{
 				Ex_ObjSetText(hObjTmp, L"TEST", true);
 			}
-				
+
 			hObjTmp = Ex_ObjGetFromNodeID(lParam, 2);
 			if (hObjTmp)
 			{
 				Ex_ObjSetText(hObjTmp, m_tlistViewItemInfo[wParam - 1].text.c_str(), true);
 			}
-				
+
 			hObjTmp = Ex_ObjGetFromNodeID(lParam, 3);
 			if (hObjTmp)
 			{
@@ -2997,7 +2997,7 @@ LRESULT CALLBACK OnDrawingBoardSwitchEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 		if (wParam != 0)
 		{
 			Ex_ObjSendMessage(m_hObjDrawingBoard, DBM_SETPENTYPE, 0, 0);
-			
+
 		}
 		else {
 			Ex_ObjSendMessage(m_hObjDrawingBoard, DBM_SETPENTYPE, 0, 1);
@@ -3037,7 +3037,7 @@ LRESULT CALLBACK OnDrawingBoardButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 void test_drawingboard(HWND hParent)
 {
 	HWND hWnd_drawingboard = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试鼠标绘制板", 0, 0, 680, 400, 0, 0);
-	HEXDUI hExDui_drawingboard = Ex_DUIBindWindowEx(hWnd_drawingboard, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON , 0, 0);
+	HEXDUI hExDui_drawingboard = Ex_DUIBindWindowEx(hWnd_drawingboard, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_drawingboard, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hObjDrawingBoard = Ex_ObjCreate(L"drawingboard", 0, -1, 30, 30, 500, 350, hExDui_drawingboard);
 	HEXOBJ hObj_switch = Ex_ObjCreate(L"Switch", L"画笔|橡皮擦", -1, 550, 30, 100, 30, hExDui_drawingboard);
@@ -3356,7 +3356,7 @@ void test_fullscreen(HWND hWnd)
 	HWND hWnd_fullscreen = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试全屏,最大化,置顶,不可移动改变大小,只能右上角关闭", 0, 0, 200, 200, 0, 0);
 	HEXDUI hExDui_fullscreen = Ex_DUIBindWindowEx(hWnd_fullscreen, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_TITLE | EWS_CENTERWINDOW | EWS_FULLSCREEN | EWS_NOSHADOW | EWS_BUTTON_CLOSE, 0, OnFullScreenWndMsgProc);
 	Ex_DUISetLong(hExDui_fullscreen, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	
+
 	// 最大化
 	PostMessageW(hWnd_fullscreen, 274, 61488, 0);
 	// 置顶
@@ -3398,15 +3398,54 @@ void test_miniblink(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_miniblink, SW_SHOWNORMAL, 0, 0, 0);
 }
 
+HEXOBJ m_hObjMedia;
+HEXOBJ m_hObjMediaButton1;
+HEXOBJ m_hObjMediaButton2;
+HEXOBJ m_hObjMediaButton3;
+HEXOBJ m_hObjMediaButton4;
+HEXOBJ m_hObjMediaButton5;
+
+LRESULT CALLBACK OnMediaBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (hObj == m_hObjMediaButton1)
+	{
+		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_PLAY, 0, (LPARAM)L"d:/44030123123.mp4");
+	}
+	else if (hObj == m_hObjMediaButton2)
+	{
+		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_PAUSE, 0, 0);
+	}
+	else if (hObj == m_hObjMediaButton3)
+	{
+		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_CONTINUE, 0, 0);
+	}
+	else if (hObj == m_hObjMediaButton4)
+	{
+		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_STOP, 0, 0);
+	}
+	else if (hObj == m_hObjMediaButton5)
+	{
+		Ex_ObjSendMessage(m_hObjMedia, MFM_SET_POSITION, 0, 20);
+	}
+	return 0;
+}
+
 void test_mediaPlay(HWND hWnd)
 {
 	HWND hWndmedia = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试媒体播放器", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_media = Ex_DUIBindWindowEx(hWndmedia, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnMiniblinkWndMsgProc);
 	Ex_DUISetLong(hExDui_media, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	auto hObjMedia = Ex_ObjCreate(L"MediaFoundation", NULL, -1, 50, 50, 700, 500, hExDui_media);
-	OUTPUTW(hObjMedia);
-	Ex_ObjSendMessage(hObjMedia, 10010, 0, (LPARAM)L"d:/44030123123.mp4");
+	m_hObjMedia = Ex_ObjCreate(L"MediaFoundation", NULL, -1, 50, 50, 700, 500, hExDui_media);
 
-
+	m_hObjMediaButton1 = Ex_ObjCreate(L"button", L"播放", -1, 50, 560, 100, 30, hExDui_media);
+	m_hObjMediaButton2 = Ex_ObjCreate(L"button", L"暂停", -1, 160, 560, 100, 30, hExDui_media);
+	m_hObjMediaButton3 = Ex_ObjCreate(L"button", L"继续", -1, 270, 560, 100, 30, hExDui_media);
+	m_hObjMediaButton4 = Ex_ObjCreate(L"button", L"停止", -1, 380, 560, 100, 30, hExDui_media);
+	m_hObjMediaButton5 = Ex_ObjCreate(L"button", L"置位置", -1, 490, 560, 100, 30, hExDui_media);
+	Ex_ObjHandleEvent(m_hObjMediaButton1, NM_CLICK, OnMediaBtnEnevt);
+	Ex_ObjHandleEvent(m_hObjMediaButton2, NM_CLICK, OnMediaBtnEnevt);
+	Ex_ObjHandleEvent(m_hObjMediaButton3, NM_CLICK, OnMediaBtnEnevt);
+	Ex_ObjHandleEvent(m_hObjMediaButton4, NM_CLICK, OnMediaBtnEnevt);
+	Ex_ObjHandleEvent(m_hObjMediaButton5, NM_CLICK, OnMediaBtnEnevt);
 	Ex_DUIShowWindow(hExDui_media, SW_SHOWNORMAL, 0, 0, 0);
 }

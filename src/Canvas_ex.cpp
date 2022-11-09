@@ -1745,3 +1745,69 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
     Ex_SetLastError(nError);
     return nError == 0;
 }
+
+HEXPATH create_polygonpath(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle)
+{
+    HEXPATH p = NULL;
+
+    _path_create(1, &p);
+    if (p != NULL)
+    {
+
+        if (NumberOfEdges > 2)
+        {
+            UINT i;
+            FLOAT rx = (right - left) / 2;// x半径
+            FLOAT ry = (bottom - top) / 2;// y半径
+            FLOAT theta = NULL;// 夹角θ
+            D2D1_POINT_2F ptOrg{ left + rx,top + ry };// 坐标系原点
+            D2D1_POINT_2F pPoints{};// 多边形顶点XY序列
+            _path_open(p);
+
+            // 求与x正方向夹角θ
+            theta = Angle;
+            // 求点坐标
+            pPoints.x = cos(theta * PI / 180) * rx + ptOrg.x;
+            pPoints.y = sin(theta * PI / 180) * ry + ptOrg.y;
+            _path_beginfigure2(p, pPoints.x, pPoints.y);
+            for (i = 0; i < NumberOfEdges; i++)
+            {
+                // 求与x正方向夹角θ
+                theta = Angle + 360 / NumberOfEdges * i;
+                // 求点坐标
+                pPoints.x = cos(theta * PI / 180) * rx + ptOrg.x;
+                pPoints.y = sin(theta * PI / 180) * ry + ptOrg.y;
+                _path_addline(p, pPoints.x, pPoints.y, pPoints.x, pPoints.y);
+            }
+            _path_endfigure(p, TRUE);
+            _path_close(p);
+        }
+    }
+    return p;
+}
+
+BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle, FLOAT strokeWidth, UINT strokeStyle)
+{
+    BOOL ret = false;
+    HEXPATH p = create_polygonpath(left, top, right, bottom, NumberOfEdges, Angle);
+    if (p)
+    {
+        _canvas_drawpath(hCanvas, p, hBrush, strokeWidth, strokeStyle);
+        _path_destroy(p);
+        ret = true;
+    }
+    return ret;
+}
+
+BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle)
+{
+    BOOL ret = false;
+    HEXPATH p = create_polygonpath(left, top, right, bottom, NumberOfEdges, Angle);
+    if (p)
+    {
+        _canvas_fillpath(hCanvas, p, hBrush);
+        _path_destroy(p);
+        ret = true;
+    }
+    return ret;
+}

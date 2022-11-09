@@ -117,6 +117,8 @@
 #define EWL_CRBKG -31
 // 引擎数值_边框颜色
 #define EWL_CRBORDER -30
+// 引擎数值_阴影颜色
+#define EWL_CRSD -35
 // 引擎数值_主题包句柄
 #define EWL_HTHEME 2
 // 引擎数值_窗口句柄
@@ -133,8 +135,6 @@
 #define EWL_OBJCAPTION -54
 // 引擎数值_焦点组件句柄
 #define EWL_OBJFOCUS -53
-// 引擎数值_阴影颜色
-#define EWL_CRSD -35
 // 引擎数值_阴影圆角大小
 #define EWL_RADIUS -11
 #pragma endregion engine long constant
@@ -1450,15 +1450,30 @@
 // 消息_mibiblink浏览框_执行js
 #define MBBM_JS 100013
 
+// 消息_媒体播放状态_播放
+#define MFM_STATE_PLAY 10010
+// 消息_媒体播放状态_暂停
+#define MFM_STATE_PAUSE 10011
+// 消息_媒体播放状态_继续播放
+#define MFM_STATE_CONTINUE 10012
+// 消息_媒体播放状态_停止
+#define MFM_STATE_STOP 10013
+// 消息_播放速率 lParam: (int)fRate
+#define MFM_RATE 10014
+// 消息_置播放位置 lParam: 单位 秒
+#define MFM_SET_POSITION 10015
+// 消息_取视频时长 单位 秒
+#define MFM_GET_DURATION 10016
+
 #define ExGetR(argb) (LOBYTE(argb))
-#define ExGetG(argb) (LOBYTE(argb >> 8))
-#define ExGetB(argb) (LOBYTE(argb >> 16))
-#define ExGetA(argb) (LOBYTE(argb >> 24))
+#define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
+#define ExGetB(argb) (LOBYTE((argb) >> 16))
+#define ExGetA(argb) (LOBYTE((argb) >> 24))
 #define ExRGB(r, g, b) ((EXARGB)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((INT)(BYTE)(b)) << 16)))
-#define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(r, g, b) | (a << 24)))
-#define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(r, g, b) | (a << 24)))
-#define ExARGB2RGB(argb) ExRGB(ExGetR(argb), ExGetG(argb), ExGetB(argb))
-#define ExRGB2ARGB(rgb, a) ((EXARGB)(rgb | (a << 24)))
+#define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
+#define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
+#define ExARGB2RGB(argb) ExRGB((BYTE)(argb >> 16), (BYTE)(argb >> 8), (BYTE)(argb))
+#define ExRGB2ARGB(rgb, a) ((EXARGB)(BYTE(ExGetR(rgb)) << 16 | BYTE(ExGetG(rgb)) << 8 | BYTE(ExGetB(rgb)) | (a << 24)))
 
 typedef UINT8 CHANNEL;       // 通道
 typedef COLORREF EXARGB;     // 颜色

@@ -72,6 +72,7 @@ struct obj_base
     HEXTHEME hTheme_;
 };
 
+#define PI 3.1415926F
 #define FLAGS_CHECK(a, b) (((a) & (b)) == (b))
 #define FLAGS_ADD(a, b) (a |= (b))
 #define FLAGS_DEL(a, b) (a &= ~(b))

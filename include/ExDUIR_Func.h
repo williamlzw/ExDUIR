@@ -301,6 +301,22 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 */
 BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth, DWORD strokeStyle);
 
+/// <summary>
+/// 在画布上画一个多边形
+/// </summary>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hBrush">画刷句柄</param>
+/// <param name="left">绘制多边形外接椭圆的坐标</param>
+/// <param name="top">绘制多边形外接椭圆的坐标</param>
+/// <param name="right">绘制多边形外接椭圆的坐标</param>
+/// <param name="bottom">绘制多边形外接椭圆的坐标</param>
+/// <param name="NumberOfEdges">边数</param>
+/// <param name="Angle">角度</param>
+/// <param name="strokeWidth">绘制的线宽</param>
+/// <param name="strokeStyle">绘制的线型</param>
+/// <returns></returns>
+BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle, FLOAT strokeWidth, UINT strokeStyle);
+
 /*
 * @fnType ExDirectUI
 * @brief _canvas_drawrect 画布画矩形
@@ -441,6 +457,20 @@ BOOL _canvas_fillellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, F
 * @return [BOOL]返回是否成功
 */
 BOOL _canvas_fillpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush);
+
+/// <summary>
+/// 在画布上填充一个多边形
+/// </summary>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hBrush">画刷句柄</param>
+/// <param name="left">填充多边形外接椭圆的坐标</param>
+/// <param name="top">填充多边形外接椭圆的坐标</param>
+/// <param name="right">填充多边形外接椭圆的坐标</param>
+/// <param name="bottom">填充多边形外接椭圆的坐标</param>
+/// <param name="NumberOfEdges">边数</param>
+/// <param name="Angle">角度</param>
+/// <returns></returns>
+BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle);
 
 /*
 * @fnType ExDirectUI

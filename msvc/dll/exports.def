@@ -255,6 +255,8 @@ _canvas_setantialias
 _canvas_setimageantialias
 _canvas_settextantialiasmode
 _canvas_fillroundedimage
+_canvas_drawpolygon
+_canvas_fillpolygon
 
 ;----------------------------------------
 ;img

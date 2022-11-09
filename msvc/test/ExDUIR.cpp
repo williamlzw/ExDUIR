@@ -55,7 +55,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_propertygrid,       // 146测试属性框
         test_nativewindow,       // 147测试原生子窗口
         test_fullscreen,           // 148 测试全屏
-        test_miniblink          //149 测试miniblink
+        test_miniblink,         //149 测试miniblink
+        test_mediaPlay          //150 测试媒体播放器
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -73,7 +74,8 @@ void test_exdui()
     m_hWnd = Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
     if (m_hWnd != 0)
     {
-        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
+        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON , 0, 0);
+        Ex_DUISetLong(hExDui, EWL_CRSD, ExARGB(0, 0, 0, 240));
         std::vector<CHAR> imgdata;
         Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
@@ -133,12 +135,12 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试原生子窗口", -1, 340, 190, 100, 30, hExDui, 147, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试全屏置顶", -1, 340, 230, 100, 30, hExDui, 148, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试miniblink", -1, 340, 270, 100, 30, hExDui, 149, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试媒体播放器", -1, 340, 310, 100, 30, hExDui, 150, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);
         }
-
+       
         Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL, 0, 0, 0);
     }
     Ex_WndMsgLoop();

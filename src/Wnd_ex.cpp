@@ -2376,18 +2376,6 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
                 sz.cy = sz.cy + rcPadding.top + rcPadding.bottom;
             }
             MoveWindow(hWnd, ptDst.x, ptDst.y, sz.cx, sz.cy, FALSE);
-            //if (bUpdateRgn)
-            //{
-                //HRGN hRgn = CreateRectRgn(0, 0, sz.cx, sz.cy);
-                //HRGN hRgnClient;
-                //hRgnClient = CreateRectRgn(rcPadding.left, rcPadding.top, sz.cx - rcPadding.right, sz.cy - rcPadding.bottom);
-                //HRGN hRgnNC = CreateRectRgn(0, 0, 0, 0);
-                //CombineRgn(hRgnNC, hRgn, hRgnClient, 3);
-                //SetWindowRgn(hWnd, hRgnNC, 1);
-                //DeleteObject(hRgn);
-                //DeleteObject(hRgnClient);
-                //DeleteObject(hRgnNC);
-            //}
             if (bUpdateRgn || bFlush)
             {
                 auto hDC = GetDC(hWnd);
@@ -2404,7 +2392,6 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
                         {
                             _canvas_setantialias(cvShadow, TRUE);
                             _canvas_setimageantialias(cvShadow, TRUE);
-                            //Ex_ThemeDrawControlEx(pWnd->hTheme_, cvShadow, 1, 1, sz.cx - 2, sz.cy - 2, (((pWnd->dwStyle_ & EWS_MENU) == EWS_MENU) ? ATOM_DUIMENU : ATOM_WINDOW), ATOM_RECT, 0, 0, ATOM_BACKGROUND_GRID, 0, alpha);
                             _canvas_drawshadow(cvShadow,11,11,sz.cx-11,sz.cy-11,11,pWnd->crSD_,pWnd->Radius_,pWnd->Radius_,pWnd->Radius_,pWnd->Radius_,0,0);
                             LPVOID mDC = _canvas_getdc(cvShadow);
                             if (mDC != 0)
@@ -3572,13 +3559,13 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong)
         else if (nIndex == EWL_CRSD)
         {
             ret = (size_t)pWnd->crSD_;
-            pWnd->crSD_ = dwNewlong;
+            pWnd->crSD_ = dwNewLong;
             bRedraw = TRUE;
         }
         else if (nIndex == EWL_RADIUS)
         {
             ret = (size_t)pWnd->Radius_;
-            pWnd->Radius_ = dwNewlong;
+            pWnd->Radius_ = dwNewLong;
             bRedraw = TRUE;
         }
         else
