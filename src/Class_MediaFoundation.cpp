@@ -367,7 +367,57 @@ HRESULT MFMediaPlayer::ConfigureDecoderV()
 		if (FAILED(hr))  goto done;
 		hr = MFGetAttributeSize(inputVideoMediaType, MF_MT_FRAME_SIZE, &m_uVideoWidth, &m_uVideoHeight);//取尺寸
 		if (FAILED(hr))  goto done;
-
+        //处理非标尺寸的视频
+		int VideoWidtharr[12] = {480,640,800,1024,1280,1920,360,480,480,534,720,1080};
+		int VideoHeightarr[12] = {360,480,480,534,720,1080,480,640,800,1024,1280,1920};
+		BOOL isnormal = FALSE;
+		for (int i=0; i<12; i++)
+		{
+			if(m_uVideoWidth == VideoWidtharr[i] && m_uVideoHeight == VideoHeightarr[i])
+			{
+				isnormal =TRUE;
+				break;
+			}
+		}
+		if(isnormal == FALSE)
+		{
+			if(m_uVideoWidth >= m_uVideoHeight)
+			{
+				if(m_uVideoWidth > 1024)
+				{
+					m_uVideoWidth = 1280;
+					m_uVideoHeight = 720;
+				}
+				else if(m_uVideoWidth > 800)
+				{
+					m_uVideoWidth = 1024;
+					m_uVideoHeight = 534;
+				}
+				else
+				{
+					m_uVideoWidth = 800;
+					m_uVideoHeight = 480;
+				}
+			}
+			else
+			{
+				if(m_uVideoHeight > 1024)
+				{
+					m_uVideoHeight = 1280;
+					m_uVideoWidth = 720;
+				}
+				else if(m_uVideoHeight > 800)
+				{
+					m_uVideoHeight = 1024;
+					m_uVideoWidth = 534;
+				}
+				else
+				{
+					m_uVideoHeight = 800;
+					m_uVideoWidth = 480;
+				}
+			}
+		}
 		outputVideoMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Video);
 		outputVideoMediaType->SetGUID(MF_MT_SUBTYPE, MFVideoFormat_RGB32); //置输出格式
 		outputVideoMediaType->SetUINT32(MF_MT_INTERLACE_MODE, MFVideoInterlace_Progressive);//置帧交错模式
