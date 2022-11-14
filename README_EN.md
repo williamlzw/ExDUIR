@@ -23,6 +23,8 @@ win7 need install KB2670838 patch
 
 VMware win7 run ExDUIR, install kb2670838 and kb4474419 patches, and then install VMware Tools.
 
+The media component needs to install Microsoft.HEVCVideoExtension.Appx to play H265 format mp4 video.
+
 ## Compiler
 Currently,the following two compiling methods are supported:
 * Visual Studio 2019(recommended)

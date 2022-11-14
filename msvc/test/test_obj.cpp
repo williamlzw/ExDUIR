@@ -3409,7 +3409,7 @@ LRESULT CALLBACK OnMediaBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 {
 	if (hObj == m_hObjMediaButton1)
 	{
-		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_PLAY, 0, (LPARAM)L"d:/44030123123.mp4");
+		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_PLAY, 0, (LPARAM)L"file:///d:/44030123123.mp4");//可不带file:///前缀
 	}
 	else if (hObj == m_hObjMediaButton2)
 	{

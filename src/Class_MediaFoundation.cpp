@@ -21,11 +21,11 @@ LRESULT CALLBACK _mediafoundation_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 				IMFMediaBuffer* buffer;
 				IMF2DBuffer* buffer2;
 				BYTE* buf;
-				LONG currentLength;
+				LONG currentLength = 0;
 				HRESULT hr = pSample->ConvertToContiguousBuffer(&buffer);
 				if (SUCCEEDED(hr))
 				{
-					hr = buffer->QueryInterface(IID_IMF2DBuffer, (void**)&buffer2);
+					buffer->QueryInterface(IID_IMF2DBuffer, (void**)&buffer2);
 					hr = buffer2->Lock2D(&buf, &currentLength);
 					if (SUCCEEDED(hr))
 					{
@@ -221,6 +221,26 @@ HRESULT MFMediaPlayer::OnReadSample(HRESULT hrStatus, DWORD dwStreamIndex, DWORD
 			}
 		}
 	}
+	else {
+		if (dwStreamFlags & MF_SOURCE_READERF_ENDOFSTREAM)//有MF_SOURCE_READERF_ENDOFSTREAM标识表示结尾
+		{
+			if (SampleEvent && dwStreamIndex == 1)
+			{
+				SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
+			}
+		}
+		else if (dwStreamFlags & MF_SOURCE_READERF_STREAMTICK)//流中存在间隙
+		{
+			if (m_pWriter)
+			{
+				m_pWriter->SendStreamTick(0, llTimeStamp);
+			}
+			if (m_pReader)
+			{
+				m_pReader->ReadSample((DWORD)MF_SOURCE_READER_ANY_STREAM, 0, NULL, NULL, NULL, NULL);
+			}
+		}
+	}
 done:
 	if (FAILED(hr))
 	{
@@ -363,7 +383,7 @@ HRESULT MFMediaPlayer::ConfigureDecoderV()
 	{
 		UINT frameRateNumerator, frameRateDenominator;
 		hr = MFGetAttributeRatio(inputVideoMediaType, MF_MT_FRAME_RATE, &frameRateNumerator, &frameRateDenominator);//取速率
-		m_fps = 1000 / (frameRateNumerator / frameRateDenominator) - 13;
+		m_fps = 1000 / (frameRateNumerator / frameRateDenominator) - 11;
 		if (FAILED(hr))  goto done;
 		hr = MFGetAttributeSize(inputVideoMediaType, MF_MT_FRAME_SIZE, &m_uVideoWidth, &m_uVideoHeight);//取尺寸
 		if (FAILED(hr))  goto done;
@@ -451,30 +471,30 @@ HRESULT MFMediaPlayer::ConfigureDecoderA()
 	const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
 	const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 	HRESULT  hr = CoCreateInstance(CLSID_MMDeviceEnumerator, NULL, CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&pEnumerator);
-	hr = pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDevice);
+	pEnumerator->GetDefaultAudioEndpoint(eRender, eConsole, &pDevice);
 
 	LPWSTR ppstrId;
-	hr = pDevice->GetId(&ppstrId);
+	pDevice->GetId(&ppstrId);
 	IMFAttributes* pAttributes;
 	MFCreateAttributes(&pAttributes, 0);
 	IMFMediaSink* pIMFMediaSink = NULL;
 
-	hr = pAttributes->SetString(MF_AUDIO_RENDERER_ATTRIBUTE_ENDPOINT_ID, ppstrId);
-	hr = pAttributes->SetUINT32(MF_AUDIO_RENDERER_ATTRIBUTE_STREAM_CATEGORY, AUDIO_STREAM_CATEGORY::AudioCategory_Media);
-	hr = pAttributes->SetUINT32(MF_AUDIO_RENDERER_ATTRIBUTE_FLAGS, 0);
-	hr = pAttributes->SetGUID(MF_AUDIO_RENDERER_ATTRIBUTE_SESSION_ID, GUID_NULL);
-	hr = MFCreateAudioRenderer(pAttributes, &pIMFMediaSink);
+	pAttributes->SetString(MF_AUDIO_RENDERER_ATTRIBUTE_ENDPOINT_ID, ppstrId);
+	pAttributes->SetUINT32(MF_AUDIO_RENDERER_ATTRIBUTE_STREAM_CATEGORY, AUDIO_STREAM_CATEGORY::AudioCategory_Media);
+	pAttributes->SetUINT32(MF_AUDIO_RENDERER_ATTRIBUTE_FLAGS, 0);
+	pAttributes->SetGUID(MF_AUDIO_RENDERER_ATTRIBUTE_SESSION_ID, GUID_NULL);
+	MFCreateAudioRenderer(pAttributes, &pIMFMediaSink);
 
 	DWORD pcStreamSinkCount;
 	pIMFMediaSink->GetStreamSinkCount(&pcStreamSinkCount);
-	hr = pIMFMediaSink->GetStreamSinkByIndex(0, &m_pStreamSink);
+	pIMFMediaSink->GetStreamSinkByIndex(0, &m_pStreamSink);
 	DWORD pdwCharacteristics;
 	pIMFMediaSink->GetCharacteristics(&pdwCharacteristics);
 	IMFMediaTypeHandler* pMediaTypeHandler = NULL;
 	m_pStreamSink->GetMediaTypeHandler(&pMediaTypeHandler);
 
 	DWORD TypeCount;
-	hr = pMediaTypeHandler->GetMediaTypeCount(&TypeCount);
+	pMediaTypeHandler->GetMediaTypeCount(&TypeCount);
 
 	for (UINT i = 0; i < TypeCount; i++)
 	{
@@ -493,23 +513,23 @@ HRESULT MFMediaPlayer::ConfigureDecoderA()
 	if (FAILED(hr))  goto done;
 
 	GUID majorType;
-	hr = inputAudioMediaType->GetGUID(MF_MT_MAJOR_TYPE, &majorType);
+	inputAudioMediaType->GetGUID(MF_MT_MAJOR_TYPE, &majorType);
 
 	if (majorType == MFMediaType_Audio)
 	{
 		outputAudioMediaType->SetGUID(MF_MT_MAJOR_TYPE, MFMediaType_Audio);
 		outputAudioMediaType->SetGUID(MF_MT_SUBTYPE, MFAudioFormat_PCM);
 		pMediaTypeHandler->SetCurrentMediaType(outputAudioMediaType);
-		hr = m_pReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, outputAudioMediaType);
+		m_pReader->SetCurrentMediaType(MF_SOURCE_READER_FIRST_AUDIO_STREAM, NULL, outputAudioMediaType);
 		m_pReader->SetStreamSelection((DWORD)MF_SOURCE_READER_FIRST_AUDIO_STREAM, TRUE);
 	}
 
 	MediaEventType mediaEventType;
-	hr = MFCreatePresentationClock(&m_ppClock);
-	hr = MFCreateSystemTimeSource(&pTimeSource);
+	MFCreatePresentationClock(&m_ppClock);
+	MFCreateSystemTimeSource(&pTimeSource);
 	m_ppClock->SetTimeSource(pTimeSource);
-	hr = pIMFMediaSink->SetPresentationClock(m_ppClock);
-	hr = m_ppClock->Start(0);
+	pIMFMediaSink->SetPresentationClock(m_ppClock);
+	m_ppClock->Start(0);
 	
 done:
 	SAFE_RELEASE(inputAudioMediaType);

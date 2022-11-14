@@ -90,7 +90,7 @@ protected:
 	IMFSinkWriter* m_pWriter = nullptr;
 	IMFStreamSink* m_pStreamSink = nullptr;
 	IMFPresentationClock* m_ppClock = nullptr;
-	UINT32		m_uVideoWidth = 0;
+	UINT32	m_uVideoWidth = 0;
 	UINT32 	m_uVideoHeight = 0;
 };
 

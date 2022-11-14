@@ -23,6 +23,8 @@ win7需要安装KB2670838补丁
 
 虚拟机VMware win7运行ExDUIR，先安装kb2670838和kb4474419补丁，然后安装VMware Tools。
 
+媒体组件播放H265格式mp4需要安装Microsoft.HEVCVideoExtension.Appx。
+
 ## 编译
 目前支持以下两种方式编译：
 * Visual Studio 2019或2022。

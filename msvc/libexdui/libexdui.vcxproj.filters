@@ -198,6 +198,9 @@
     <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Class_MediaFoundation.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -396,6 +399,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\mb.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_MediaFoundation.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
