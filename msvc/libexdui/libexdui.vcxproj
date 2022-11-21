@@ -73,6 +73,8 @@
     <ClCompile Include="..\..\src\Layout_ex.cpp" />
     <ClCompile Include="..\..\src\Matrix_ex.cpp" />
     <ClCompile Include="..\..\src\MemPool_ex.cpp" />
+    <ClCompile Include="..\..\src\nanosvg.cpp" />
+    <ClCompile Include="..\..\src\nanosvgrast.cpp" />
     <ClCompile Include="..\..\src\Object_ex.cpp" />
     <ClCompile Include="..\..\src\Path_ex.cpp" />
     <ClCompile Include="..\..\src\Region_ex.cpp" />
@@ -142,6 +144,8 @@
     <ClInclude Include="..\..\include\Matrix_ex.h" />
     <ClInclude Include="..\..\include\mb.h" />
     <ClInclude Include="..\..\include\MemPool_ex.h" />
+    <ClInclude Include="..\..\include\nanosvg.h" />
+    <ClInclude Include="..\..\include\nanosvgrast.h" />
     <ClInclude Include="..\..\include\Object_ex.h" />
     <ClInclude Include="..\..\include\Path_ex.h" />
     <ClInclude Include="..\..\include\Region_ex.h" />

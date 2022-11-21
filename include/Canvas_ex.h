@@ -2,6 +2,7 @@
 #include "help_ex.h"
 #include "ExDUIR_Func.h"
 
+
 struct canvas_s
 {
 	INT dwFlags_;
@@ -32,6 +33,8 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBursh, LPCW
 HEXCANVAS _canvas_createfrompwnd(wnd_s *pWnd, INT width, INT height, INT dwFlags, INT *nError);
 HDC _canvas_getdc_ex(canvas_s *pCanvas, INT *nError);
 void _canvas_releasedc_ex(canvas_s *pCanvas, INT *nError);
+void _canvas_paintsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+void _canvas_paintsvg2(HEXCANVAS hCanvas, LPCSTR svgName, EXARGB color, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 ID2D1Bitmap *_cv_dx_bmp(canvas_s *pCanvas);
 ID2D1DeviceContext *_cv_context(canvas_s *pCanvas);
 ID2D1GdiInteropRenderTarget *_cv_dx_gdiinterop(canvas_s *pCanvas);

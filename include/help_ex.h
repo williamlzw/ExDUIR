@@ -308,6 +308,8 @@ struct obj_base
 #include "Matrix_ex.h"
 #include "Easing_ex.h"
 #include "ImageList_ex.h"
+#include "nanosvg.h"
+#include "nanosvgrast.h"
 
 #include "Class_Static_SysLink_ex.h"
 #include "Class_SysButton_Page_ex.h"
