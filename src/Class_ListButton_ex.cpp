@@ -95,7 +95,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		}
 		else
 		{
-			pTR->wzText = L"";
+			pTR->wzText = NULL;
 		}
 		if (nType == 1)//菜单条
 		{
@@ -113,7 +113,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			}
 			else
 			{
-				pTR->wzTips = L"";
+				pTR->wzTips = NULL;
 			}
 			pTR->dwState = pItemInfo->dwState;
 			UINT nWidth = 11;
@@ -190,7 +190,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					}
 					else
 					{
-						pTR->wzText = L"";
+						pTR->wzText = NULL;
 					}
 				}
 				if ((pItemInfo->dwMask & 4) == 4)
@@ -205,7 +205,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					}
 					else
 					{
-						pTR->wzTips = L"";
+						pTR->wzTips = NULL;
 					}
 				}
 				if ((pItemInfo->dwMask & 8) == 8)
@@ -364,7 +364,7 @@ INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText)
 		{
 			nWidth = Ex_ObjGetLong(hObj, ELBL_HIMAGWIDTH) + 10;
 		}
-		if (wzText != L"")
+		if (wzText != NULL)
 		{
 			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 			{
@@ -451,7 +451,7 @@ void _listbuttonex_paint(HEXOBJ hObj)
 						nLeft += 5;
 						nWidth -= 10;
 
-						if (pTR->wzText != L"")
+						if (pTR->wzText != NULL)
 						{
 							EXARGB crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
 							if (pTR->dwState == STATE_DISABLE)
@@ -586,7 +586,7 @@ void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam)
 				}
 				Ex_ObjInvalidateRect(hObj, 0);
 
-				if (pTR->wzTips != L"")
+				if (pTR->wzTips != NULL)
 				{
 					Ex_ObjTooltipsPop(hObj, pTR->wzTips);
 				}
