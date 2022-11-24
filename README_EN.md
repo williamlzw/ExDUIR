@@ -147,3 +147,5 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ![image](demo_image/demo_drawingboard.png)
 ### demo propertygrid:
 ![image](demo_image/demo_propertygrid.png)
+### demo media player:
+![image](demo_image/demo_mediaplayer.png)

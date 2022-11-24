@@ -151,3 +151,5 @@ Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,
 ![image](demo_image/demo_drawingboard.png)
 ### demo propertygrid:
 ![image](demo_image/demo_propertygrid.png)
+### demo media player:
+![image](demo_image/demo_mediaplayer.png)
