@@ -1811,3 +1811,45 @@ BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT t
     }
     return ret;
 }
+
+void _canvas_paintsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom) {
+    NSVGimage* image = nsvgParse(input, "px", 96);
+    if (image)
+    {
+        int w = (int)image->width;
+        int h = (int)image->height;
+        image->shapes->fill.color = nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
+        NSVGrasterizer* rast = nsvgCreateRasterizer();
+        unsigned char* img = (unsigned char*)malloc(w * h * 4);
+        nsvgRasterize(rast, image, 0, 0, 1, img, w, h, w * 4);
+        HEXIMAGE Himg;
+        _img_createfrompngbits2(w, h, img, &Himg);
+
+        _canvas_drawimagerect(hCanvas, Himg, left, top, right, bottom, 255);
+        free(img);
+        nsvgDeleteRasterizer(rast);
+        nsvgDelete(image);
+        _img_destroy(Himg);
+    }
+}
+
+void _canvas_paintsvg2(HEXCANVAS hCanvas, LPCSTR svgName, EXARGB color, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom) {
+    NSVGimage* image = nsvgParseFromFile(svgName, "px", 96);
+    if (image)
+    {
+        int w = (int)image->width;
+        int h = (int)image->height;
+        image->shapes->fill.color = nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
+        NSVGrasterizer* rast = nsvgCreateRasterizer();
+        unsigned char* img = (unsigned char*)malloc(w * h * 4);
+        nsvgRasterize(rast, image, 0, 0, 1, img, w, h, w * 4);
+        HEXIMAGE Himg;
+        _img_createfrompngbits2(w, h, img, &Himg);
+
+        _canvas_drawimagerect(hCanvas, Himg, left, top, right, bottom, 255);
+        free(img);
+        nsvgDeleteRasterizer(rast);
+        nsvgDelete(image);
+        _img_destroy(Himg);
+    }
+}
