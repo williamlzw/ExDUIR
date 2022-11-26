@@ -9,6 +9,7 @@ struct font_s
     size_t dwFlags_;
     size_t dwCount_;
     IDWriteTextFormat* pObj_;
+    IDWriteFontCollection* m_fontCollection;
     LOGFONT font_;
 };
 

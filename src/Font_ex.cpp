@@ -9,6 +9,7 @@ void CALLBACK pfnDefaultFreeFont(LPVOID dwData)
         {
             pObj->Release();
         }
+        SafeRelease(((font_s*)dwData)->m_fontCollection);
         Ex_MemFree(dwData);
     }
 }
@@ -146,4 +147,55 @@ LPVOID _font_getcontext(HEXFONT hFont)
         ret = pFont->pObj_;
     }
     return ret;
+}
+
+
+HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFontStyle) {
+
+	HEXFONT hFont = Crc32_Addr((UCHAR*)FontFilePaths,sizeof(FontFilePaths));
+	font_s* pFont = nullptr;
+	font_s* pFonta = 0;
+
+	if (HashTable_Get(g_Li.hTableFont, hFont, (size_t*)&pFonta))
+	{
+
+		pFont = pFonta;
+		if (pFont != 0)
+		{
+			InterlockedExchangeAdd((size_t*)&(pFont->dwCount_), 1);
+		}
+	}
+	else
+	{
+		pFont = (font_s*)Ex_MemAlloc(sizeof(font_s));
+		if (pFont != 0)
+		{
+			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
+			pFont->dwCount_ = 1;
+
+			MFFontContext fContext(g_Ri.pDWriteFactory);
+			std::vector<std::wstring> filePaths; // vector containing ABSOLUTE file paths of the font files which are to be added to the collection
+			filePaths.push_back(FontFilePaths);
+			fContext.CreateFontCollection(filePaths, &pFont->m_fontCollection); // create custom font collection
+
+			UINT32 count = pFont->m_fontCollection->GetFontFamilyCount();
+			//output(L"count", count);
+			for (UINT32 i = 0; i < count; i++)
+			{
+				IDWriteFontFamily* fontFamily = nullptr;
+				pFont->m_fontCollection->GetFontFamily(i, &fontFamily);
+				IDWriteLocalizedStrings* names = nullptr;
+				fontFamily->GetFamilyNames(&names);
+				UINT32 len = 0;
+				names->GetStringLength(0, &len);
+				len = len + 1;
+				WCHAR* fontName = new WCHAR[len]();
+				names->GetString(0, fontName, len);
+				g_Ri.pDWriteFactory->CreateTextFormat(fontName, pFont->m_fontCollection, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, dwFontSize==-1? abs(g_Li.lpLogFontDefault->lfHeight): dwFontSize, (WCHAR*)g_Ri.pLocaleName, &pFont->pObj_);
+				fontFamily->Release();
+				names->Release();
+			}
+		}
+	}
+	return (HEXFONT)hFont;
 }
