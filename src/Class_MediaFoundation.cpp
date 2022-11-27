@@ -212,8 +212,20 @@ HRESULT MFMediaPlayer::OnReadSample(HRESULT hrStatus, DWORD dwStreamIndex, DWORD
 			}
 			if (SampleEvent && dwStreamIndex == 1)
 			{
-				SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
-				Sleep(m_fps);
+                //使用“视频同步到音频”算法实现音画同步
+				MFTIME phnsClockTime=0;
+				m_ppClock->GetTime(&phnsClockTime);
+				if(abs(llTimeStamp-phnsClockTime)/10000 <= 25)
+				{
+					SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
+				}
+				else if (abs(llTimeStamp-phnsClockTime)/10000 >= 25 && abs(llTimeStamp-phnsClockTime)/10000 <= 1000)
+				{
+					SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
+					Sleep((DWORD)m_fps);
+				}
+				//SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
+				//Sleep(m_fps);
 			}
 			if (m_pReader)
 			{
@@ -383,7 +395,7 @@ HRESULT MFMediaPlayer::ConfigureDecoderV()
 	{
 		UINT frameRateNumerator, frameRateDenominator;
 		hr = MFGetAttributeRatio(inputVideoMediaType, MF_MT_FRAME_RATE, &frameRateNumerator, &frameRateDenominator);//取速率
-		m_fps = 1000 / (frameRateNumerator / frameRateDenominator) - 11;
+		m_fps = 1000 / (frameRateNumerator / frameRateDenominator);
 		if (FAILED(hr))  goto done;
 		hr = MFGetAttributeSize(inputVideoMediaType, MF_MT_FRAME_SIZE, &m_uVideoWidth, &m_uVideoHeight);//取尺寸
 		if (FAILED(hr))  goto done;
