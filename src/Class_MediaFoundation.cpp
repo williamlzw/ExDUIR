@@ -212,20 +212,19 @@ HRESULT MFMediaPlayer::OnReadSample(HRESULT hrStatus, DWORD dwStreamIndex, DWORD
 			}
 			if (SampleEvent && dwStreamIndex == 1)
 			{
-                //使用“视频同步到音频”算法实现音画同步
-				MFTIME phnsClockTime=0;
+				//使用“视频同步到音频”算法实现音画同步
+				MFTIME phnsClockTime = 0;
 				m_ppClock->GetTime(&phnsClockTime);
-				if(abs(llTimeStamp-phnsClockTime)/10000 <= 25)
+				if (abs(llTimeStamp - phnsClockTime) / 10000 <= 25)
 				{
 					SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
 				}
-				else if (abs(llTimeStamp-phnsClockTime)/10000 >= 25 && abs(llTimeStamp-phnsClockTime)/10000 <= 1000)
+				else if (abs(llTimeStamp - phnsClockTime) / 10000 >= 25 && abs(llTimeStamp - phnsClockTime) / 10000 <= 1000)
 				{
 					SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
 					Sleep((DWORD)m_fps);
 				}
-				//SampleEvent(dwStreamIndex, dwStreamFlags, llTimeStamp, pSample);
-				//Sleep(m_fps);
+
 			}
 			if (m_pReader)
 			{
@@ -314,7 +313,7 @@ HRESULT MFMediaPlayer::Endplay()
 	SAFE_RELEASE(m_ppClock);
 	SAFE_RELEASE(m_pReader);
 	SAFE_RELEASE(m_pWriter);
-	
+
 	LeaveCriticalSection(&m_critsec);
 	return hr;
 }
@@ -399,28 +398,28 @@ HRESULT MFMediaPlayer::ConfigureDecoderV()
 		if (FAILED(hr))  goto done;
 		hr = MFGetAttributeSize(inputVideoMediaType, MF_MT_FRAME_SIZE, &m_uVideoWidth, &m_uVideoHeight);//取尺寸
 		if (FAILED(hr))  goto done;
-        //处理非标尺寸的视频
-		int VideoWidtharr[12] = {480,640,800,1024,1280,1920,360,480,480,534,720,1080};
-		int VideoHeightarr[12] = {360,480,480,534,720,1080,480,640,800,1024,1280,1920};
+		//处理非标尺寸的视频
+		int VideoWidtharr[12] = { 480,640,800,1024,1280,1920,360,480,480,534,720,1080 };
+		int VideoHeightarr[12] = { 360,480,480,534,720,1080,480,640,800,1024,1280,1920 };
 		BOOL isnormal = FALSE;
-		for (int i=0; i<12; i++)
+		for (int i = 0; i < 12; i++)
 		{
-			if(m_uVideoWidth == VideoWidtharr[i] && m_uVideoHeight == VideoHeightarr[i])
+			if (m_uVideoWidth == VideoWidtharr[i] && m_uVideoHeight == VideoHeightarr[i])
 			{
-				isnormal =TRUE;
+				isnormal = TRUE;
 				break;
 			}
 		}
-		if(isnormal == FALSE)
+		if (isnormal == FALSE)
 		{
-			if(m_uVideoWidth >= m_uVideoHeight)
+			if (m_uVideoWidth >= m_uVideoHeight)
 			{
-				if(m_uVideoWidth > 1024)
+				if (m_uVideoWidth > 1024)
 				{
 					m_uVideoWidth = 1280;
 					m_uVideoHeight = 720;
 				}
-				else if(m_uVideoWidth > 800)
+				else if (m_uVideoWidth > 800)
 				{
 					m_uVideoWidth = 1024;
 					m_uVideoHeight = 534;
@@ -433,12 +432,12 @@ HRESULT MFMediaPlayer::ConfigureDecoderV()
 			}
 			else
 			{
-				if(m_uVideoHeight > 1024)
+				if (m_uVideoHeight > 1024)
 				{
 					m_uVideoHeight = 1280;
 					m_uVideoWidth = 720;
 				}
-				else if(m_uVideoHeight > 800)
+				else if (m_uVideoHeight > 800)
 				{
 					m_uVideoHeight = 1024;
 					m_uVideoWidth = 534;
@@ -542,7 +541,7 @@ HRESULT MFMediaPlayer::ConfigureDecoderA()
 	m_ppClock->SetTimeSource(pTimeSource);
 	pIMFMediaSink->SetPresentationClock(m_ppClock);
 	m_ppClock->Start(0);
-	
+
 done:
 	SAFE_RELEASE(inputAudioMediaType);
 	SAFE_RELEASE(outputAudioMediaType);

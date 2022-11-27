@@ -58,6 +58,7 @@
     <ClCompile Include="..\..\src\Class_TitleBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_TreeView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Win10Loading_ex.cpp" />
+    <ClCompile Include="..\..\src\CustomFont.cpp" />
     <ClCompile Include="..\..\src\DirectX_ex.cpp" />
     <ClCompile Include="..\..\src\DropTarget_ex.cpp" />
     <ClCompile Include="..\..\src\Easing_ex.cpp" />
@@ -125,6 +126,7 @@
     <ClInclude Include="..\..\include\Class_TitleBar_ex.h" />
     <ClInclude Include="..\..\include\Class_TreeView_ex.h" />
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h" />
+    <ClInclude Include="..\..\include\CustomFont.h" />
     <ClInclude Include="..\..\include\DropTarget_ex.h" />
     <ClInclude Include="..\..\include\ExDUIR_Struct.h" />
     <ClInclude Include="..\..\include\DirectX_ex.h" />

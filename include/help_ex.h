@@ -310,6 +310,7 @@ struct obj_base
 #include "ImageList_ex.h"
 #include "nanosvg.h"
 #include "nanosvgrast.h"
+#include "CustomFont.h"
 
 #include "Class_Static_SysLink_ex.h"
 #include "Class_SysButton_Page_ex.h"
@@ -347,6 +348,7 @@ struct obj_base
 #include "Class_PropertyGrid_ex.h"
 #include "Class_Miniblink_ex.h"
 #include "Class_MediaFoundation.h"
+
 
 struct LOCALINFO
 {
