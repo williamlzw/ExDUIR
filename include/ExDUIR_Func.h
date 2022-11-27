@@ -690,6 +690,16 @@ HEXFONT _font_createfromfamily(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFon
 
 /*
 * @fnType ExDirectUI
+* @brief _font_createfromfile 创建字体自文件
+* @param 1  FontFilePaths            [LPCWSTR]
+* @param 2  dwFontSize              [INT]
+* @param 3  dwFontStyle             [DWORD]
+* @return [HEXFONT]返回字体句柄
+*/
+HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize = -1, DWORD dwFontStyle = -1);
+
+/*
+* @fnType ExDirectUI
 * @brief _font_createfromlogfont 创建字体自逻辑字体
 * @param 1  lpLogfont               [LPVOID]
 * @return [HEXFONT]返回字体句柄
