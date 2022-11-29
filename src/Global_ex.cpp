@@ -113,6 +113,8 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
 
     g_Li.hHookMsgBox = SetWindowsHookExW(WH_CBT, (HOOKPROC)_hook_proc, 0, GetCurrentThreadId());
+    
+    g_Li.fContext = new MFFontContext(g_Ri.pDWriteFactory);
     Ex_SetLastError(nError);
     return nError == 0;
 }
@@ -136,6 +138,7 @@ void Ex_UnInit()
     MemPool_Destroy(g_Li.hMemPoolMsg);
     Thread_DeleteCriticalSection(g_Li.csError);
     FreeLibrary(g_Ri.hRiched20);
+    delete g_Li.fContext;
     CoUninitialize();
 }
 

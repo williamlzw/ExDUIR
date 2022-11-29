@@ -1,6 +1,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <algorithm>
+#include <vector>
 #include "nanosvgrast.h"
 
 #define NSVG__SUBSAMPLES	5
@@ -775,16 +777,16 @@ static void nsvg__flattenShapeStroke(NSVGrasterizer* r, NSVGshape* shape, float 
 	}
 }
 
-static int nsvg__cmpEdge(const void* p, const void* q)
+static bool nsvg__cmpEdge(NSVGedge p, NSVGedge q)
 {
-	const NSVGedge* a = (const NSVGedge*)p;
-	const NSVGedge* b = (const NSVGedge*)q;
-
-	if (a->y0 < b->y0) return -1;
-	if (a->y0 > b->y0) return  1;
-	return 0;
+	if (p.y0 < q.y0)
+	{
+		return true;
+	}
+	else {
+		return false;
+	}	
 }
-
 
 static NSVGactiveEdge* nsvg__addActive(NSVGrasterizer* r, NSVGedge* e, float startPoint)
 {
@@ -1318,9 +1320,14 @@ void nsvgRasterize(NSVGrasterizer* r,
 				e->x1 = tx + e->x1;
 				e->y1 = (ty + e->y1) * NSVG__SUBSAMPLES;
 			}
-
+			
 			// Rasterize edges
-			qsort(r->edges, r->nedges, sizeof(NSVGedge), (_CoreCrtNonSecureSearchSortCompareFunction)nsvg__cmpEdge);
+			std::vector<NSVGedge> data;
+			data.resize(r->nedges);
+			memmove(data.data(), r->edges, r->nedges * sizeof(NSVGedge));
+
+			std::sort(data.begin(), data.end(), nsvg__cmpEdge);
+			memmove(r->edges, data.data(), r->nedges * sizeof(NSVGedge));
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shape->fill, shape->opacity);
@@ -1344,9 +1351,13 @@ void nsvgRasterize(NSVGrasterizer* r,
 				e->x1 = tx + e->x1;
 				e->y1 = (ty + e->y1) * NSVG__SUBSAMPLES;
 			}
-
+			
 			// Rasterize edges
-			qsort(r->edges, r->nedges, sizeof(NSVGedge), (_CoreCrtNonSecureSearchSortCompareFunction)nsvg__cmpEdge);
+			std::vector<NSVGedge> data;
+			data.resize(r->nedges);
+			memmove(data.data(), r->edges, r->nedges * sizeof(NSVGedge));
+			std::sort(data.begin(), data.end(), nsvg__cmpEdge);
+			memmove(r->edges, data.data(), r->nedges * sizeof(NSVGedge));
 
 			// now, traverse the scanlines and find the intersections on each scanline, use non-zero rule
 			nsvg__initPaint(&cache, &shape->stroke, shape->opacity);

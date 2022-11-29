@@ -12,6 +12,30 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "winmm.lib")
+
+#pragma region 警告禁用
+
+// 禁用警告：类型转换可能导致数据/精度丢失
+#pragma warning(disable:4244)
+
+#pragma warning(disable:4267)
+#pragma warning(disable:4838)
+#pragma warning(disable:4996)
+#pragma warning(disable:4311)
+#pragma warning(disable:4302)
+#pragma warning(disable:4312)
+#pragma warning(disable:4309)
+#pragma warning(disable:4018)
+
+// 禁用警告：返回值被忽略
+#pragma warning(disable:6031)
+// 禁用警告：行为更改: 使用 () 形式的初始值设定项构造的 POD 类型的对象将被默认初始化
+#pragma warning(disable:4345)
+// 禁用警告：忽略未引用的参数，因为它们在实现回调时非常常见。
+#pragma warning(disable : 4100)
+
+#pragma endregion
+
 //断言
 #ifndef _DEBUG
 #ifndef EX_ASSERT
@@ -282,7 +306,7 @@ struct obj_base
 #define EMIS_SEPARATOR 2
 
 #include "ExDUIR_Func.h"
-
+#include "CustomFont.h"
 #include "Array_ex.h"
 #include "Thread_ex.h"
 #include "HashTable_ex.h"
@@ -389,6 +413,7 @@ struct LOCALINFO
     LPCWSTR lpStrClose;
     LPCWSTR lpStrHelp;
     UINT dwClickTime;
+    MFFontContext* fContext;
 };
 
 struct RENDERINFO

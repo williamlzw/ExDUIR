@@ -24,6 +24,7 @@ BOOL _font_destroy(HEXFONT hFont)
             if (InterlockedExchangeAdd((size_t *)&(pFont->dwCount_), -1) == 1)
             {
                 HashTable_Remove(g_Li.hTableFont, (size_t)hFont);
+                SafeRelease(pFont->m_fontCollection);
             }
         }
     }
@@ -173,10 +174,9 @@ HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFont
 			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
 			pFont->dwCount_ = 1;
 
-			MFFontContext fContext(g_Ri.pDWriteFactory);
 			std::vector<std::wstring> filePaths; // vector containing ABSOLUTE file paths of the font files which are to be added to the collection
 			filePaths.push_back(FontFilePaths);
-			fContext.CreateFontCollection(filePaths, &pFont->m_fontCollection); // create custom font collection
+			g_Li.fContext->CreateFontCollection(filePaths, &pFont->m_fontCollection); // create custom font collection
 
 			UINT32 count = pFont->m_fontCollection->GetFontFamilyCount();
 			//output(L"count", count);

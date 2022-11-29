@@ -204,3 +204,6 @@ void test_miniblink(HWND hWnd);
 
 LRESULT CALLBACK OnMediaBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_mediaPlay(HWND hWnd);
+
+LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+void test_svgAndfont(HWND hWnd);

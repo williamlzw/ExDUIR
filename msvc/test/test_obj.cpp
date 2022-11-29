@@ -1293,9 +1293,9 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 		Ex_DUIGetClientRect(hExDui, &rc);
 		FLOAT arrStopPts[2][2];
 		arrStopPts[0][0] = 0;
-		arrStopPts[0][1] = ExRGB2ARGB(ExRGB(10, 127, 213), 200);
+		arrStopPts[0][1] = ExRGB2ARGB(ExRGB(10, 127, 213), 220);
 		arrStopPts[1][0] = 1.0;
-		arrStopPts[1][1] = ExRGB2ARGB(ExRGB(200, 10, 10), 200);
+		arrStopPts[1][1] = ExRGB2ARGB(ExRGB(200, 10, 10), 220);
 		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, &arrStopPts[0][0], 2);
 		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 		_brush_destroy(hBrush);
@@ -2812,7 +2812,7 @@ void test_chromium(HWND hParent)
 	Ex_ObjCefBrowserInitialize(0, L"J:/ExDUIR/Release", L"FTBrowser.dll", NULL, 0, 0, OnBeforeCommandLine);
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
 	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
-	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"123456.MP4");
+	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"d:/test.mp4");
 	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"J:/ExDUIR/msvc/test/res/xccefjs.html");
 	Ex_ObjHandleEvent(m_hObjChromium, CEFN_LOADEND, OnChromiumEvent);
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
@@ -2863,11 +2863,11 @@ void test_carousel(HWND hParent)
 
 	Ex_ObjSendMessage(hObj, CM_SIZE, 500, 500);
 	HEXIMAGE hImg = 0;
-	_img_createfromfile(L"res/1.png", &hImg);
+	_img_createfromfile(L"res/1.jpeg", &hImg);
 	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
-	_img_createfromfile(L"res/2.jpg", &hImg);
+	_img_createfromfile(L"res/2.jpeg", &hImg);
 	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
-	_img_createfromfile(L"res/3.jpg", &hImg);
+	_img_createfromfile(L"res/3.jpeg", &hImg);
 	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
 	Ex_ObjSendMessage(hObj, CM_SETTIMER, 0, 5000);
 	// 全部销毁用下面的
@@ -3409,7 +3409,7 @@ LRESULT CALLBACK OnMediaBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 {
 	if (hObj == m_hObjMediaButton1)
 	{
-		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_PLAY, 0, (LPARAM)L"file:///G:/35.mp4");//可不带file:///前缀
+		Ex_ObjSendMessage(m_hObjMedia, MFM_STATE_PLAY, 0, (LPARAM)L"./res/test.mp4");//可不带file:///前缀
 	}
 	else if (hObj == m_hObjMediaButton2)
 	{
@@ -3448,4 +3448,34 @@ void test_mediaPlay(HWND hWnd)
 	Ex_ObjHandleEvent(m_hObjMediaButton4, NM_CLICK, OnMediaBtnEnevt);
 	Ex_ObjHandleEvent(m_hObjMediaButton5, NM_CLICK, OnMediaBtnEnevt);
 	Ex_DUIShowWindow(hExDui_media, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
+	{
+		_canvas_clear(wParam, ExRGBA(150,150,150,255));
+		HEXFONT hFont = _font_createfromfile(L"res/文道灵飞小楷.ttf", 64);
+		_canvas_drawtext(wParam, hFont, ExRGBA(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
+		_font_destroy(hFont);
+
+		_canvas_paintsvgfromfile(wParam, L"./res/niu1.svg", 0, 50, 50, 200, 200);
+		std::vector<CHAR> data;
+		Ex_ReadFile(L"./res/niu1.svg", &data);
+		_canvas_paintsvg(wParam, data.data(), ExRGBA(55, 250, 20, 255), 250, 50, 400, 200);
+		_canvas_paintsvgfromfile(wParam, L"./res/niu1.svg", ExRGBA(55, 0, 250, 255), 50, 250, 200, 400);
+		_canvas_paintsvgfromfile(wParam, L"./res/niu.svg",0, 250, 250, 400, 450);
+
+		*lpResult = 1;
+		return 1;
+	}
+	return 0;
+}
+
+void test_svgAndfont(HWND hWnd)
+{
+	HWND hWnd_svgAndfont = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"自定义字体和SVG测试", 0, 0, 500, 600, 0, 0);
+	HEXDUI hExDui_svgAndfont = Ex_DUIBindWindowEx(hWnd_svgAndfont, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE, 0, OnsvgAndfontProc);
+	Ex_DUISetLong(hExDui_svgAndfont, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL, 0, 0, 0);
 }

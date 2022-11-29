@@ -1,4 +1,5 @@
 #include "CustomFont.h"
+#include <new>
 
 IDWriteFontCollectionLoader* Resource_FontCollectionLoader::instance_(
 	new(std::nothrow) Resource_FontCollectionLoader()
