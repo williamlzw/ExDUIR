@@ -156,7 +156,7 @@ HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFont
     std::wstring fileInfo = L"fontPath:" + std::wstring(FontFilePaths);
     fileInfo += L";fontSize:" + std::to_wstring(dwFontSize);
     fileInfo += L";fontStyle:" + std::to_wstring(dwFontStyle);
-	HEXFONT hFont = Crc32_Addr((LPVOID)fileInfo.data(), fileInfo.size());
+	HEXFONT hFont = Crc32_Addr((LPVOID)fileInfo.data(), fileInfo.length() * 2);
 	font_s* pFont = nullptr;
 	font_s* pFonta = 0;
 
