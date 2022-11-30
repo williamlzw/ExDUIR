@@ -258,7 +258,7 @@ _canvas_fillroundedimage
 _canvas_drawpolygon
 _canvas_fillpolygon
 _canvas_paintsvg
-_canvas_paintsvg2
+_canvas_paintsvgfromfile
 
 ;----------------------------------------
 ;img
