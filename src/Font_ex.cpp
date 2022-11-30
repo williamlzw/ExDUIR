@@ -159,7 +159,6 @@ HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFont
 
 	if (HashTable_Get(g_Li.hTableFont, hFont, (size_t*)&pFonta))
 	{
-
 		pFont = pFonta;
 		if (pFont != 0)
 		{
@@ -173,13 +172,11 @@ HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFont
 		{
 			HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
 			pFont->dwCount_ = 1;
-
 			std::vector<std::wstring> filePaths; // vector containing ABSOLUTE file paths of the font files which are to be added to the collection
 			filePaths.push_back(FontFilePaths);
 			g_Li.fContext->CreateFontCollection(filePaths, &pFont->m_fontCollection); // create custom font collection
 
 			UINT32 count = pFont->m_fontCollection->GetFontFamilyCount();
-			//output(L"count", count);
 			for (UINT32 i = 0; i < count; i++)
 			{
 				IDWriteFontFamily* fontFamily = nullptr;
