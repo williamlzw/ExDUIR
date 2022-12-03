@@ -3,8 +3,7 @@
 #include <vector>
 #include <tchar.h>
 #include <Windows.h>
-#pragma warning(disable : 4005)
-#define OUTPUTW(...) output(_T(__FILE__),_T(__FUNCTION__),__LINE__, __VA_ARGS__)
+
 
 #pragma region engine flag constant
 // 引擎标识_启用DPI缩放
@@ -1879,3 +1878,5 @@ static void output(const wchar_t* file, const wchar_t* func, int lineno, T... ar
 	str.append(L"\n");
 	OutputDebugStringW(str.c_str());
 }
+
+#define OUTPUTW(...) output(_T(__FILE__),_T(__FUNCTION__),__LINE__, __VA_ARGS__)

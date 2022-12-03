@@ -14,10 +14,10 @@
 #pragma comment(lib, "winmm.lib")
 
 #pragma region 警告禁用
+#pragma warning(disable:4005)
 
 // 禁用警告：类型转换可能导致数据/精度丢失
 #pragma warning(disable:4244)
-
 #pragma warning(disable:4267)
 #pragma warning(disable:4838)
 #pragma warning(disable:4996)

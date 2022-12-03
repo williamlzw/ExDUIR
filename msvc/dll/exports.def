@@ -257,8 +257,8 @@ _canvas_settextantialiasmode
 _canvas_fillroundedimage
 _canvas_drawpolygon
 _canvas_fillpolygon
-_canvas_paintsvg
-_canvas_paintsvgfromfile
+_canvas_drawsvg
+_canvas_drawsvgfromfile
 
 ;----------------------------------------
 ;img

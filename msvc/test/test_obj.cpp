@@ -3459,12 +3459,12 @@ LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 		_canvas_drawtext(wParam, hFont, ExRGBA(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
 		_font_destroy(hFont);
 
-		_canvas_paintsvgfromfile(wParam, L"./res/niu1.svg", 0, 50, 50, 200, 200);
+		_canvas_drawsvgfromfile(wParam, L"./res/niu1.svg", 0, 50, 50, 200, 200);
 		std::vector<CHAR> data;
 		Ex_ReadFile(L"./res/niu1.svg", &data);
-		_canvas_paintsvg(wParam, data.data(), ExRGBA(55, 250, 20, 255), 250, 50, 400, 200);
-		_canvas_paintsvgfromfile(wParam, L"./res/niu1.svg", ExRGBA(55, 0, 250, 255), 50, 250, 200, 400);
-		_canvas_paintsvgfromfile(wParam, L"./res/niu.svg",0, 250, 250, 400, 450);
+		_canvas_drawsvg(wParam, data.data(), ExRGBA(55, 250, 20, 255), 250, 50, 400, 200);
+		_canvas_drawsvgfromfile(wParam, L"./res/niu1.svg", ExRGBA(55, 0, 250, 255), 50, 250, 200, 400);
+		_canvas_drawsvgfromfile(wParam, L"./res/niu.svg",0, 250, 250, 400, 450);
 
 		*lpResult = 1;
 		return 1;
