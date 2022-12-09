@@ -40,6 +40,7 @@ void _object_init()
     _propertygrid_register();
     _miniblink_register();
     _mediafoundation_register();
+    _rollmenu_register();
 }
 
 

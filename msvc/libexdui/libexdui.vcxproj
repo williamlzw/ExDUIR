@@ -48,6 +48,7 @@
     <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_RadioButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ReportListView_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_RollMenu.cpp" />
     <ClCompile Include="..\..\src\Class_RotateImageBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ScoreButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Scrollbar_ex.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h" />
     <ClInclude Include="..\..\include\Class_RadioButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_ReportListView_ex.h" />
+    <ClInclude Include="..\..\include\Class_RollMenu.h" />
     <ClInclude Include="..\..\include\Class_RotateImageBox_ex.h" />
     <ClInclude Include="..\..\include\Class_ScoreButton_ex.h" />
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h" />

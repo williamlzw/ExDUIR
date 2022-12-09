@@ -372,6 +372,7 @@ struct obj_base
 #include "Class_PropertyGrid_ex.h"
 #include "Class_Miniblink_ex.h"
 #include "Class_MediaFoundation.h"
+#include "Class_RollMenu.h"
 
 
 struct LOCALINFO

@@ -1464,6 +1464,28 @@
 // 消息_取视频时长 单位 秒
 #define MFM_GET_DURATION 10016
 
+#pragma region rollmenu notify
+// 事件_卷帘菜单_单击子项   wParam: 子项索引 (索引从1开始,0为分组)  lParam: 分组索引 (索引从1开始)
+#define RMN_CLICK  -2
+#pragma endregion rollmenu notify 
+
+#pragma region rollmenu message
+// 消息_卷帘菜单_添加分组  wParam :索引(从1开始)  lParam: ROLLMENU_DATA * 指针
+#define RM_ADDGROUP 10010
+// 消息_卷帘菜单_添加子项  wParam :分组索引(从1开始)  lParam: ROLLMENU_ITEM * 指针
+#define RM_ADDITEM 10011
+// 消息_卷帘菜单_删除分组  wParam :分组索引(从1开始)  lParam:未定义   return: BOOL 
+#define RM_DELGROUP 10012
+// 消息_卷帘菜单_删除子项  wParam :分组索引(从1开始)  lParam:子项索引(从1开始) return: BOOL 
+#define RM_DELITEM 10013
+// 消息_卷帘菜单_设置分组状态(展开/收缩)  wParam :分组索引(从1开始)  lParam: 状态(BOOL)
+#define RM_SETEXPAND 10014
+// 消息_卷帘菜单_取当前选中子项  wParam: [int*] 分组索引(从1开始)  lParam: [int*] 子项索引(从1开始)  return:子项标题
+#define RM_GETSEL 10015
+// 消息_卷帘菜单_置当前选中子项  wParam: 分组索引(从1开始)  lParam : 子项索引(从1开始) return: BOOL 
+#define RM_SETSEL 10016
+#pragma endregion rollmenu message
+
 #define ExGetR(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
 #define ExGetB(argb) (LOBYTE((argb) >> 16))
@@ -1831,6 +1853,37 @@ struct EX_PROGRID_CHANGEITEMINFO
 {
 	INT type;      // 改变类型 
 	LPCWSTR text;  // 改变内容,注意对于颜色框 为文本数字
+};
+
+//卷帘菜单_附加用户图标
+struct RM_EXTRA_ICON
+{
+	HEXIMAGE icon;// 附加用户图标;
+	RECT rc; //图标的坐标,坐标值从0开始计算,高度不得超过分组的高度,例如{ 0, 0, 32, 32 }
+};
+//卷帘菜单_状态图标
+struct RM_STATE_ICON
+{
+	HEXIMAGE sicon;// 对于分组:收缩图标; 对于子项:选中图标
+	HEXIMAGE eicon;// 对于分组:展开图标; 对于子项:未选中图标
+	RECT rc; //图标的坐标,坐标值从0开始计算,高度不得超过分组的高度,例如{ 0, 0, 32, 32 }
+};
+//卷帘菜单_子项结构 
+struct ROLLMENU_ITEM
+{
+	LPCWSTR title;//项目标题
+	FLOAT left_; //标题左边的距离,受组件DT_风格影响
+	RM_STATE_ICON stateico;//子项状态图标(是否选中)
+	RM_EXTRA_ICON extraico;//附加用户图标
+};
+//卷帘菜单分组结构
+struct ROLLMENU_DATA
+{
+	LPCWSTR title; //分组标题;
+	FLOAT left_; //标题左边的距离,受组件DT_风格影响
+	BOOL expand; //是否展开;
+	RM_STATE_ICON stateico;//分组状态图标(是否展开)
+	RM_EXTRA_ICON extraico; //附加用户图标
 };
 
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
