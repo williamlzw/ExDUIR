@@ -526,7 +526,5 @@ void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable);
 /// <param name="mode"> 0 encodeURIComponent ; 1 encodeURI ; 2 escape 默认为1</param>
 /// <returns></returns>
 std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric = TRUE, BOOL utf8 = TRUE, INT mode = 1);
-std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, INT mode);
+std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric = TRUE, BOOL utf8 = TRUE, INT mode = 1);
 std::wstring UrlDecode(const std::wstring& url, BOOL utf8 = TRUE);
-
-void PrintDebugStringW(const wchar_t* file, const wchar_t* func, int lineno, const wchar_t* pszFmt, ...);

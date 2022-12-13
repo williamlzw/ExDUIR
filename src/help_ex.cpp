@@ -301,12 +301,21 @@ void _wstr_deletechar(LPVOID lpstr, INT* dwsize, WCHAR wchar)
 INT GetNearestPrime(INT value)
 {
 	INT prime = 0;
-	INT i = 0;
-	while (value >= prime)
-	{
-		i = i + 1;
+
+	// 如果输入的值小于41，则返回41 
+	if (value < 41) {
+		return 41;
+	}
+
+	// 计算最小的质数，该质数大于或等于输入值 
+	int i = 0;
+	while (value >= prime) {
+		i++;
+
+		// 通过以下公式计算最接近的质数 n^2 + n + 41  
 		prime = i * i + i + 41;
 	}
+
 	return prime;
 }
 
@@ -934,30 +943,24 @@ INT GetLunarCalendar(INT nYear, INT nMonth, INT nDay, INT* jr, INT* jq)
 
 //取当月天数
 INT GetMdayCount(INT year, INT mon) {
-	INT nCount = 0;
-
-	if (mon == 1 || mon == 3 || mon == 5 || mon == 7 || mon == 8 || mon == 10 || mon == 12) { //大月
-		nCount = 31;
-	}
-	else if (mon == 4 || mon == 6 || mon == 9 || mon == 11) { //小月
-		nCount = 30;
-	}
-	else {
-		//以下两种情况之一都可以判断是闰年
+	//取当月天数
+	INT daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	
+	// 如果是 2 月份，判断是否是闰年
+	if (mon == 2) {
 		if ((year % 400) == 0 || (year % 4) == 0 && (year % 100) != 0) {
-			nCount = 29;
-		}
-		else {
-			nCount = 28;
+			return 29;
 		}
 	}
-	return nCount;
+	
+	return daysInMonth[mon - 1];
 }
 
-//取指定时间的星期
+////取指定时间的星期
 INT GetWeekOfDate(INT year, INT month, INT day) {
 	return (day + 2 * month + 3 * (month + 1) / 5 + year + year / 4 - year / 100 + year / 400) % 7 + 1;
 }
+
 
 BOOL Flag_Query(INT dwFlag)
 {
@@ -982,7 +985,6 @@ void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable)
 LPCWSTR GetErrorMessage(DWORD error)
 {
 	WCHAR szBuf[1024];
-	WCHAR* lpMsgBuf;
 	FormatMessageW(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM |
@@ -990,13 +992,25 @@ LPCWSTR GetErrorMessage(DWORD error)
 		NULL,
 		error,
 		0,
-		(LPWSTR)&lpMsgBuf,
+		(LPWSTR)&szBuf,
 		1024, NULL);
-	swprintf_s(szBuf, L"%s", lpMsgBuf);
+	wcscpy_s(szBuf, szBuf);
 	return (LPCWSTR)szBuf;
 }
 
-const int HEXINT[16] = {48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70};
+int HexToInt(char c)
+{
+	if (c >= '0' && c <= '9')
+		return c - '0';
+
+	if (c >= 'a' && c <= 'f')
+		return (c - 'a') + 10;
+
+	if (c >= 'A' && c <= 'F')
+		return (c - 'A') + 10;
+
+	return 0; // 如果不是有效的十六进制字符，就返回 0  
+}
 
 std::wstring UrlDecode(const std::wstring& url, BOOL utf8)
 {
@@ -1004,75 +1018,23 @@ std::wstring UrlDecode(const std::wstring& url, BOOL utf8)
 	auto dataLen = data.size();
 	DWORD pos = 0;
 	DWORD retLen = 0;
-	DWORD tmpPos = 0;
 	std::vector<UCHAR> retData;
 	retData.resize(dataLen);
-	while (pos < dataLen)
-	{
-		pos += 1;
-		auto index = data[pos - 1];
-		if (index == 37)
-		{
-			if (pos + 2 > dataLen)
-			{
-				retLen += 1;
 
-				retData[retLen - 1] = index;
-			}
-			else {
-				tmpPos = pos + 1;
-				auto index2 = data[tmpPos - 1];
-				DWORD high = 0;
-				DWORD low = 0;
-				if (48 <= index2 && index2 <= 57)
-				{
-					high = index2 - 48;
-				}
-				else if (65 <= index2 && index2 <= 70)
-				{
-					high = index2 - 55;
-				}
-				else if (97 <= index2 && index2 <= 102)
-				{
-					high = index2 - 87;
-				}
-				else {
-					retLen += 1;
-
-					retData[retLen - 1] = index;
-					continue;
-				}
-				tmpPos = pos + 2;
-				index2 = data[tmpPos - 1];
-				if (48 <= index2 && index2 <= 57)
-				{
-					low = index2 - 48;
-				}
-				else if (65 <= index2 && index2 <= 70)
-				{
-					low = index2 - 55;
-				}
-				else if (97 <= index2 && index2 <= 102)
-				{
-					low = index2 - 87;
-				}
-				else {
-					retLen += 1;
-
-					retData[retLen - 1] = index;
-					continue;
-				}
-				pos += 2;
-				retLen += 1;
-				retData[retLen - 1] = (UCHAR)(high * 16 + low);
-			}
+	while (pos < dataLen)  // 遍历字符串中每一个字符 
+	{ 					   // 一行代码就可以实现所有逻辑： 
+		if (data[pos] == 37 && pos + 2 < dataLen)  // 如果遇到'%'字符，并且当前位置在字符串末尾之前  
+		{                                          // 就将该字符解码成一个字节：
+			retData[retLen++] = (UCHAR)(HexToInt(data[pos + 1]) * 16 + HexToInt(data[pos + 2]));
+			pos += 3;     // 向前跳过三个字节
 		}
-		else {
-			retLen += 1;
-			retData[retLen - 1] = index;
+		else {         // 否则直接将当前字节复制到目标数组中：
+			retData[retLen++] = data[pos++];
 		}
 	}
-	retData.resize(retLen);
+
+	retData.resize(retLen);      // 确保目标数组的大小正好是里面有效内容的大小  
+
 	if (utf8)
 	{
 		return u2w2(retData);
@@ -1080,129 +1042,63 @@ std::wstring UrlDecode(const std::wstring& url, BOOL utf8)
 	return a2w2(retData);
 }
 
+
+const int HEXINT[16] = { 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70 };
+
 std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, INT mode)
 {
 	//encodeURIComponent('!@#$ % ^&*()_ + -= [] {}; :\'\"<>,./?\\? ') = !% 40 % 23 % 24 % 25 % 5E % 26 * ()_ % 2B - % 3D % 5B % 5D % 7B % 7D % 3B % 3A'%22%3C%3E%2C.%2F%3F%5C%3F%20
 	//encodeURI('!@#$ % ^&*()_ + -= [] {}; :\'\"<>,./?\\? ') = !@#$ % 25 % 5E & *()_ + -= % 5B % 5D % 7B % 7D; :'%22%3C%3E,./?%5C?%20
 	//escape('!@#$ % ^&*()_ + -= [] {}; :\'\"<>,./?\\? ') = % 21@ % 23 % 24 % 25 % 5E % 26 * %28 % 29_ + -% 3D % 5B % 5D % 7B % 7D % 3B % 3A % 27 % 22 % 3C % 3E % 2C. / % 3F % 5C % 3F % 20
+	// set default mode if mode is invalid
 	if (mode < 0 || mode > 2)
-	{
 		mode = 0;
-	}
+
 	std::wstring text(url);
 	std::string utext;
 	utext = w2u(text);
 	size_t len = utext.length();
 	std::string decoded = "";
-	bool tempBool = false;
+
+	// iterate through characters in string
 	for (size_t i = 0; i < len; i++)
 	{
+		// check if character should be encoded
+		bool shouldEncode = false;
 		if (notEncodeAlphanumeric)
 		{
 			unsigned char wch = utext.at(i);
-			if ('A' <= wch && wch <= 'Z') {
-				tempBool = true;
-			}
-			else if ('a' <= wch && wch <= 'z') {
-				tempBool = true;
-			}
-			else if ('0' <= wch && wch <= '9') {
-				tempBool = true;
-			}
-			else if (wch == '*')
-			{
-				tempBool = true;
-			}
-			else if (wch == '-')
-			{
-				tempBool = true;
-			}
-			else if (wch == '.')
-			{
-				tempBool = true;
-			}
-			else if (wch == '_')
-			{
-				tempBool = true;
-			}
-			else if (mode < 2 && wch == '!')
-			{
-				tempBool = true;
-			}
-			else if (mode < 2 && wch == '\'')
-			{
-				tempBool = true;
-			}
-			else if (mode < 2 && wch == '(')
-			{
-				tempBool = true;
-			}
-			else if (mode < 2 && wch == ')')
-			{
-				tempBool = true;
-			}
-			else if (mode < 2 && wch == '~')
-			{
-				tempBool = true;
-			}
-			else if (mode > 0 && wch == '+')
-			{
-				tempBool = true;
-			}
-			else if (mode > 0 && wch == '/')
-			{
-				tempBool = true;
-			}
-			else if (mode > 0 && wch == '@')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == '#')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == '$')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == '&')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == ',')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == ':')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == ';')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == '=')
-			{
-				tempBool = true;
-			}
-			else if (mode == 1 && wch == '?')
-			{
-				tempBool = true;
-			}
-			else {
-				tempBool = false;
-			}
+			bool isAlphanumeric = (('A' <= wch && wch <= 'Z') ||
+				('a' <= wch && wch <= 'z') ||
+				('0' <= wch && wch <= '9'));
+
+			shouldEncode = !isAlphanumeric &&
+				(wch != '*' && wch != '-' && wch != '.' && wch != '_');
+
+			if (mode < 2)
+				shouldEncode = shouldEncode &&
+				(wch != '!' && wch != '\'' && wch != '(' && wch != ')');
+			if (mode > 0)
+				shouldEncode = shouldEncode &&
+				(wch != '+' && wch != '/' && wch != '@');
+			if (mode == 1)
+				shouldEncode = shouldEncode &&
+				(wch != '#' && wch != '$' && wch != '&' && wch != ',' &&
+					wch != ':' && wch != ';' && wch != '=' && wch != '?');
 		}
-		if (tempBool)
+
+		// append encoded/not encoded character to output
+		if (shouldEncode)
 		{
-			decoded += (unsigned char)utext.at(i);
-		}
-		else {
 			decoded += '%';
 			decoded += (unsigned char)HEXINT[((unsigned char)utext.at(i) >> 4)];
 			decoded += (unsigned char)HEXINT[((unsigned char)utext.at(i) & 15)];
 		}
+		else {
+			decoded += (unsigned char)utext.at(i);
+		}
 	}
+
 	return decoded;
 }
 

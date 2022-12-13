@@ -1,7 +1,6 @@
 #include <iostream>
 #include "test_obj.h"
 
-
 HWND m_hWnd;
 
 LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
@@ -144,10 +143,10 @@ void test_exdui()
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);
         }
-       
+
         Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL, 0, 0, 0);
     }
-   
+
     Ex_WndMsgLoop();
     Ex_UnInit();
 }
