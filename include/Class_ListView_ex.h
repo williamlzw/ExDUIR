@@ -28,8 +28,6 @@ struct listview_s
 	INT index_mouse_;	//悬浮项目
 	INT index_start_;
 	INT index_end_;
-	INT index_track_start_;
-	INT index_track_end_;
 	INT nHittest_;
 	INT nOffsetX_;
 	INT nOffsetY_;

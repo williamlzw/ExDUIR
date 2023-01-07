@@ -87,7 +87,6 @@ EX_DECLEAR_API(Ck_CommandLine_GetProgram);
 EX_DECLEAR_API(Ck_CommandLine_HasSwitch);
 EX_DECLEAR_API(Ck_CommandLine_HasSwitches);
 
-
 HMODULE _cefbrowser_init_(LPCWSTR wzDllName)
 {
 	HMODULE hModule;

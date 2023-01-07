@@ -805,8 +805,6 @@ size_t _listview_setitemcount(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT nCount, L
 	pOwner->count_items_ = nCount;
 	pOwner->index_select_ = 0;
 	pOwner->index_mouse_ = 0;
-	pOwner->index_track_start_ = 0;
-	pOwner->index_track_end_ = 0;
 	pOwner->count_selects_ = 0;
 	_listview_updatesbvalue(hObj, pObj, pOwner, (RECT*)&pObj->c_left_);
 	INT nPosX = 0;

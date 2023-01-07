@@ -5,7 +5,6 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 #include "ExDUIR_Func.h"
-#include "Class_CefBrowser_ex.h"
 
 #define Random(min, max) (rand() % (max - min)) + min + 1
 

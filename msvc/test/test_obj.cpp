@@ -685,7 +685,7 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 		{
 			if (ni.nCode == NM_CALCSIZE)
 			{
-				__set_int((LPVOID)ni.lParam, 4, 25); //改变项目高度
+				((EX_LISTVIEW_INFO*)ni.lParam)->heightItem = 40;
 				*lpResult = 1;
 				return 1;
 			}
@@ -2792,7 +2792,7 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
 		HV8VALUE v8 = Ck_V8CreateString(L"say yes");
 		Ck_V8SetValue(window, L"say_yes", v8, 0);
 
-		v8 = Ck_V8CreateFunction(L"addFunction", OnFunction, NULL);
+		v8 = Ck_V8CreateFunction(L"addFunction", (void*)OnFunction, NULL);
 		Ck_V8SetValue(window, L"add_Function", v8, 0);
 	}
 }
@@ -3576,7 +3576,7 @@ void test_rollmenu(HWND hWnd)
 	Ex_ReadFile(L"navbtn/大图标4.png", &imgdata);
 	emoji.push_back(_imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0));
 
-	ROLLMENU_DATA rollmenu = { 0 };
+	EX_ROLLMENU_DATA rollmenu = { 0 };
 	rollmenu.title = L"账号信息";
 	rollmenu.stateico.eicon = _imglist_get(m_hImageListRollMenu, nImageAccountIndex);
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageAccountIndex);
@@ -3588,13 +3588,13 @@ void test_rollmenu(HWND hWnd)
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageVideoIndex);
 	rollmenu.stateico.rc = { 40, 4, 72, 36 };
 	size_t groupVideoIndex = Ex_ObjSendMessage(m_hObjRM, RM_ADDGROUP, 0, (LPARAM)&rollmenu);
-	ROLLMENU_ITEM rollitemAuth = { 0 };
+	EX_ROLLMENU_ITEM rollitemAuth = { 0 };
 	rollitemAuth.title = L"视频权限";
 	rollitemAuth.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageAuthIndex);
 	rollitemAuth.stateico.eicon = _imglist_get(m_hImageListRollMenu, nImageAuthIndex);
 	rollitemAuth.stateico.rc = { 55, 0, 83, 28 };
 	Ex_ObjSendMessage(m_hObjRM, RM_ADDITEM, groupVideoIndex, (LPARAM)&rollitemAuth);
-	ROLLMENU_ITEM rollitem = { 0 };
+	EX_ROLLMENU_ITEM rollitem = { 0 };
 	rollitem.title = L"视频列表";
 	Ex_ObjSendMessage(m_hObjRM, RM_ADDITEM, groupVideoIndex, (LPARAM)&rollitem);
 

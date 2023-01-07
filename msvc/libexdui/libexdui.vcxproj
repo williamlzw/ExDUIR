@@ -90,7 +90,6 @@
     <ClInclude Include="..\..\include\Array_ex.h" />
     <ClInclude Include="..\..\include\Brush_ex.h" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
-    <ClInclude Include="..\..\include\CkBrowser.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
     <ClInclude Include="..\..\include\Class_Calendar_ex.h" />

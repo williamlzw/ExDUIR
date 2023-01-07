@@ -392,9 +392,6 @@
     <ClInclude Include="..\..\include\Class_ScoreButton_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\CkBrowser.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Class_Carousel_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
