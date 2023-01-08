@@ -570,8 +570,8 @@ void test_listbutton(HWND hWnd)
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
 	item2.nType = 1;
 	item2.nImage = 0;
-	item2.wzText = L"普通按钮2";
-	item2.wzTips = L"普通按钮2";
+	item2.wzText = L"普通按钮不带图标";
+	item2.wzTips = L"普通按钮不带图标";
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
 	item2.nType = 2;
 	item2.nImage = nImageIndex;
@@ -580,8 +580,8 @@ void test_listbutton(HWND hWnd)
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
 	item2.nType = 2;
 	item2.nImage = 0;
-	item2.wzText = L"选择按钮2";
-	item2.wzTips = L"选择按钮2";
+	item2.wzText = L"选择按钮不带图标";
+	item2.wzTips = L"选择按钮不带图标";
 	item2.dwState = STATE_DOWN;
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
 	item2.nType = 0;
@@ -592,41 +592,31 @@ void test_listbutton(HWND hWnd)
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
 	item2.nType = 1;
 	item2.nImage = nImageIndex;
-	item2.wzText = L"测试3";
-	item2.wzTips = L"测试3";
+	item2.wzText = L"禁用按钮带图标";
+	item2.wzTips = L"禁用按钮带图标";
 	item2.dwState = STATE_DISABLE;
-	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item2);
-	item2.nType = 1;
-	item2.nImage = 0;
-	item2.wzText = L"普通4";
-	item2.wzTips = L"普通4";
-	item2.dwState = STATE_NORMAL;
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item2);
 	Ex_ObjHandleEvent(hObj, LBN_CLICK, OnListButtonEvent);
 	Ex_ObjHandleEvent(hObj, LBN_CHECK, OnListButtonEvent);
 
 	//创建状态条
-	hObj = Ex_ObjCreate(L"Statusbar", 0, -1, 0, 120, 430, 22, hExDui_listbutton);
+	hObj = Ex_ObjCreate(L"Statusbar", 0, -1, 0, 120, 300, 22, hExDui_listbutton);
 	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(12557930, 255), FALSE);   //背景色
 	Ex_ObjSetColor(hObj, COLOR_EX_BORDER, ExARGB(255, 255, 255, 255), FALSE);      //分割色
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE); //文本色
 	EX_LISTBUTTON_ITEMINFO item3 = { 0 };
-	item3.wzText = L"asdasda";
+	item3.wzText = L"左对齐";
 	item3.nWidth = 100;
 	item3.TextFormat = DT_LEFT;
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item3);
-	item3.wzText = L"xxxx";
-	item3.nWidth = 80;
+	item3.wzText = L"居中";
+	item3.nWidth = 100;
 	item3.TextFormat = DT_CENTER;
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item3);
-	item3.wzText = L"测试";
-	item3.nWidth = 150;
-	item3.TextFormat = DT_RIGHT;
-	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 0, (size_t)&item3);
-	item3.wzText = L"asdas99";
+	item3.wzText = L"右对齐";
 	item3.nWidth = 100;
 	item3.nIndex = 2;
-	item3.TextFormat = DT_LEFT;
+	item3.TextFormat = DT_RIGHT;
 	Ex_ObjSendMessage(hObj, LVM_INSERTITEM, 1, (size_t)&item3);
 
 	//设置菜单条目图标

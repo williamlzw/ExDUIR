@@ -1818,7 +1818,7 @@ struct EX_LISTBUTTON_ITEMINFO
 {
 	UINT dwMask;     // 1,图片 2,标题 4,提示文本 8,状态 16,菜单 32,文本格式 64,宽度
 	UINT nType;      //项目类型   0,分隔条 1,普通按钮 2,选择按钮
-	UINT nIndex;     //插入索引
+	UINT nIndex;     //插入索引,从1开始
 	UINT nImage;     //图片索引
 	LPCWSTR wzText;  //项目标题
 	LPCWSTR wzTips;  //项目提示文本

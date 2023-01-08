@@ -419,21 +419,59 @@ namespace ExDUIR
 				}
 			};
 
-			class ExListButton : public ExControl
+			class ExMenuBar : public ExControl
 			{
 			public:
-				ExListButton() = default;
-				~ExListButton() = default;
-				ExListButton(EXHANDLE hObj)
+				ExMenuBar() = default;
+				~ExMenuBar() = default;
+				ExMenuBar(EXHANDLE hObj)
 				{
 					m_handle = hObj;
 				}
-				ExListButton(ExControl obj)
+				ExMenuBar(ExControl obj)
 				{
 					m_handle = obj.m_handle;
 				}
-				ExListButton(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
-					:ExControl(pOwner, x, y, width, height, L"ListButton", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
+				ExMenuBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"MenuBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
+				{
+				}
+			};
+
+			class ExToolBar : public ExControl
+			{
+			public:
+				ExToolBar() = default;
+				~ExToolBar() = default;
+				ExToolBar(EXHANDLE hObj)
+				{
+					m_handle = hObj;
+				}
+				ExToolBar(ExControl obj)
+				{
+					m_handle = obj.m_handle;
+				}
+				ExToolBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"ToolBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
+				{
+				}
+			};
+
+			class ExStatusBar : public ExControl
+			{
+			public:
+				ExStatusBar() = default;
+				~ExStatusBar() = default;
+				ExStatusBar(EXHANDLE hObj)
+				{
+					m_handle = hObj;
+				}
+				ExStatusBar(ExControl obj)
+				{
+					m_handle = obj.m_handle;
+				}
+				ExStatusBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"StatusBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
 			};

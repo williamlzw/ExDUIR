@@ -15,7 +15,7 @@
 
 #pragma region 警告禁用
 #pragma warning(disable:4005)
-
+#pragma warning(disable:4308)
 // 禁用警告：类型转换可能导致数据/精度丢失
 #pragma warning(disable:4244)
 #pragma warning(disable:4267)
