@@ -693,25 +693,24 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 			{
 				EX_CUSTOMDRAW cd{ 0 };
 				RtlMoveMemory(&cd, (LPVOID)ni.lParam, sizeof(EX_CUSTOMDRAW));
-				if (cd.iItem > 0 && cd.iItem <= 100)
+				
+				EXARGB crItemBkg = 0;
+				if ((cd.dwState & STATE_SELECT) != 0)
 				{
-					EXARGB crItemBkg = 0;
-					if ((cd.dwState & STATE_SELECT) != 0)
-					{
-						crItemBkg = ExRGB2ARGB(16777215, 255);
-					}
-					else if ((cd.dwState & STATE_HOVER) != 0)
-					{
-						crItemBkg = ExRGB2ARGB(16777215, 150);
-					}
-					if (crItemBkg != 0)
-					{
-						HEXBRUSH hBrush = _brush_create(crItemBkg);
-						_canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
-						_brush_destroy(hBrush);
-					}
-					_canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), m_listViewItemInfo[cd.iItem - 1].color, m_listViewItemInfo[cd.iItem - 1].text, -1, DT_SINGLELINE | DT_VCENTER, cd.rcPaint.left + m_listViewItemInfo[cd.iItem - 1].depth * 5, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
+					crItemBkg = ExRGB2ARGB(16777215, 255);
 				}
+				else if ((cd.dwState & STATE_HOVER) != 0)
+				{
+					crItemBkg = ExRGB2ARGB(16777215, 150);
+				}
+				if (crItemBkg != 0)
+				{
+					HEXBRUSH hBrush = _brush_create(crItemBkg);
+					_canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
+					_brush_destroy(hBrush);
+				}
+				_canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), m_listViewItemInfo[cd.iItem - 1].color, m_listViewItemInfo[cd.iItem - 1].text, -1, DT_SINGLELINE | DT_VCENTER, cd.rcPaint.left + m_listViewItemInfo[cd.iItem - 1].depth * 5, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
+				
 				*lpResult = 1;
 				return 1;
 			}
@@ -756,7 +755,7 @@ void test_listview(HWND hWnd)
 	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ hobj_listview = Ex_ObjCreateEx(EOS_EX_COMPOSITED, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST | EOS_VSCROLL, 30, 30, 150, 150, hExDui_listview, 0, -1, 0, 0, OnListViewMsgProc);
-	Ex_ObjSetColor(hobj_listview, COLOR_EX_BACKGROUND, ExARGB(255, 255, 255, 150), TRUE);
+	Ex_ObjSetColor(hobj_listview, COLOR_EX_BACKGROUND, ExARGB(120, 255, 240, 150), TRUE);
 	const INT itemCount = 100;
 	m_listViewItemInfo.resize(itemCount);
 	for (INT index = 0; index < m_listViewItemInfo.size(); index++)
@@ -2341,42 +2340,42 @@ void test_loading(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_loading, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-HEXOBJ m_hSoliderBarLabel;
+HEXOBJ m_hSliderBarLabel;
 
-LRESULT CALLBACK OnSoliderBarPosChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK OnSliderBarPosChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	std::wstring t = L"滑块条,当前值是：" + std::to_wstring(lParam);
-	Ex_ObjSetText(m_hSoliderBarLabel, t.c_str(), TRUE);
+	Ex_ObjSetText(m_hSliderBarLabel, t.c_str(), TRUE);
 	return 0;
 }
 
-void test_soliderbar(HWND hWnd)
+void test_sliderbar(HWND hWnd)
 {
-	HWND hWnd_soliderbar = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试滑块条", 0, 0, 400, 200, 0, 0);
-	HEXDUI hExDui_soliderbar = Ex_DUIBindWindowEx(hWnd_soliderbar, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
-	Ex_DUISetLong(hExDui_soliderbar, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	WCHAR ATOM_SoliderBarEx[] = L"SoliderBarEx"; /*滑块条*/
-	HEXOBJ hObj_soliderbarex1 = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, -1, 80, 50, 250, 20, hExDui_soliderbar);
-	Ex_ObjSetColor(hObj_soliderbarex1, COLOR_EX_BACKGROUND, ExARGB(100, 36, 255, 250), TRUE);
-	Ex_ObjHandleEvent(hObj_soliderbarex1, SBN_VALUE, OnSoliderBarPosChangeEvent);
+	HWND hWnd_sliderbar = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试滑块条", 0, 0, 400, 200, 0, 0);
+	HEXDUI hExDui_sliderbar = Ex_DUIBindWindowEx(hWnd_sliderbar, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	Ex_DUISetLong(hExDui_sliderbar, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	WCHAR ATOM_sliderbarEx[] = L"sliderbar"; /*滑块条*/
+	HEXOBJ hObj_sliderbarex1 = Ex_ObjCreate(ATOM_sliderbarEx, NULL, -1, 80, 50, 250, 20, hExDui_sliderbar);
+	Ex_ObjSetColor(hObj_sliderbarex1, COLOR_EX_BACKGROUND, ExARGB(100, 36, 255, 250), TRUE);
+	Ex_ObjHandleEvent(hObj_sliderbarex1, SBN_VALUE, OnSliderBarPosChangeEvent);
 
-	HEXOBJ hObj_soliderbarex2 = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, EOS_VISIBLE | ESBS_VERTICAL, 50, 60, 20, 100, hExDui_soliderbar);
-	Ex_ObjSetColor(hObj_soliderbarex2, COLOR_EX_BACKGROUND, ExARGB(100, 236, 255, 250), TRUE);
-	Ex_ObjHandleEvent(hObj_soliderbarex2, SBN_VALUE, OnSoliderBarPosChangeEvent);
-	Ex_ObjSetLong(hObj_soliderbarex2, SBL_BLOCK_POINT, 1);
+	HEXOBJ hObj_sliderbarex2 = Ex_ObjCreate(ATOM_sliderbarEx, NULL, EOS_VISIBLE | ESBS_VERTICAL, 50, 60, 20, 100, hExDui_sliderbar);
+	Ex_ObjSetColor(hObj_sliderbarex2, COLOR_EX_BACKGROUND, ExARGB(100, 236, 255, 250), TRUE);
+	Ex_ObjHandleEvent(hObj_sliderbarex2, SBN_VALUE, OnSliderBarPosChangeEvent);
+	Ex_ObjSetLong(hObj_sliderbarex2, SBL_BLOCK_POINT, 1);
 
-	HEXOBJ hObj_soliderbarex3 = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, EOS_VISIBLE | ESBS_VERTICAL, 350, 60, 20, 100, hExDui_soliderbar);
-	Ex_ObjSetColor(hObj_soliderbarex3, COLOR_EX_BACKGROUND, ExARGB(100, 136, 255, 250), TRUE);
-	Ex_ObjHandleEvent(hObj_soliderbarex3, SBN_VALUE, OnSoliderBarPosChangeEvent);
-	Ex_ObjSetColor(hObj_soliderbarex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 125), TRUE); /*滑块条底色*/
-	Ex_ObjSetColor(hObj_soliderbarex3, COLOR_EX_TEXT_CHECKED, ExARGB(200, 16, 25, 250), TRUE);  /*滑块条走过的颜色*/
+	HEXOBJ hObj_sliderbarex3 = Ex_ObjCreate(ATOM_sliderbarEx, NULL, EOS_VISIBLE | ESBS_VERTICAL, 350, 60, 20, 100, hExDui_sliderbar);
+	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_BACKGROUND, ExARGB(100, 136, 255, 250), TRUE);
+	Ex_ObjHandleEvent(hObj_sliderbarex3, SBN_VALUE, OnSliderBarPosChangeEvent);
+	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 125), TRUE); /*滑块条底色*/
+	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_CHECKED, ExARGB(200, 16, 25, 250), TRUE);  /*滑块条走过的颜色*/
 
-	HEXOBJ hObj_soliderbarex4 = Ex_ObjCreate(ATOM_SoliderBarEx, NULL, -1, 80, 150, 250, 20, hExDui_soliderbar);
-	Ex_ObjSetColor(hObj_soliderbarex4, COLOR_EX_BACKGROUND, ExARGB(0, 136, 255, 250), TRUE);
-	Ex_ObjHandleEvent(hObj_soliderbarex4, SBN_VALUE, OnSoliderBarPosChangeEvent);
-	Ex_ObjSetLong(hObj_soliderbarex4, SBL_BLOCK_POINT, 1);
-	m_hSoliderBarLabel = Ex_ObjCreate(L"static", L"滑块条,当前值是：", -1, 80, 80, 300, 30, hExDui_soliderbar);
-	Ex_DUIShowWindow(hExDui_soliderbar, SW_SHOWNORMAL, 0, 0, 0);
+	HEXOBJ hObj_sliderbarex4 = Ex_ObjCreate(ATOM_sliderbarEx, NULL, -1, 80, 150, 250, 20, hExDui_sliderbar);
+	Ex_ObjSetColor(hObj_sliderbarex4, COLOR_EX_BACKGROUND, ExARGB(0, 136, 255, 250), TRUE);
+	Ex_ObjHandleEvent(hObj_sliderbarex4, SBN_VALUE, OnSliderBarPosChangeEvent);
+	Ex_ObjSetLong(hObj_sliderbarex4, SBL_BLOCK_POINT, 1);
+	m_hSliderBarLabel = Ex_ObjCreate(L"static", L"滑块条,当前值是：", -1, 80, 80, 300, 30, hExDui_sliderbar);
+	Ex_DUIShowWindow(hExDui_sliderbar, SW_SHOWNORMAL, 0, 0, 0);
 }
 
 void test_rotateimgbox(HWND hWnd)

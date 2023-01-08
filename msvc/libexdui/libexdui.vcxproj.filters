@@ -150,7 +150,7 @@
     <ClCompile Include="..\..\src\Class_Win10Loading_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_SoliderBar_ex.cpp">
+    <ClCompile Include="..\..\src\Class_SliderBar_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Class_RotateImageBox_ex.cpp">
@@ -353,7 +353,7 @@
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_SoliderBar_ex.h">
+    <ClInclude Include="..\..\include\Class_SliderBar_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_RotateImageBox_ex.h">

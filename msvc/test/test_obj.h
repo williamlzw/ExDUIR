@@ -133,8 +133,8 @@ void test_event(HWND hWnd);
 
 void test_loading(HWND hWnd);
 
-LRESULT CALLBACK OnSoliderBarPosChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
-void test_soliderbar(HWND hWnd);
+LRESULT CALLBACK OnSliderBarPosChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+void test_sliderbar(HWND hWnd);
 
 void test_rotateimgbox(HWND hWnd);
 

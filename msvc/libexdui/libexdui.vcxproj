@@ -52,7 +52,7 @@
     <ClCompile Include="..\..\src\Class_RotateImageBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ScoreButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Scrollbar_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_SoliderBar_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_SliderBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Static_SysLink_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Switch_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SysButton_Page_ex.cpp" />
@@ -120,7 +120,7 @@
     <ClInclude Include="..\..\include\Class_RotateImageBox_ex.h" />
     <ClInclude Include="..\..\include\Class_ScoreButton_ex.h" />
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h" />
-    <ClInclude Include="..\..\include\Class_SoliderBar_ex.h" />
+    <ClInclude Include="..\..\include\Class_SliderBar_ex.h" />
     <ClInclude Include="..\..\include\Class_Static_SysLink_ex.h" />
     <ClInclude Include="..\..\include\Class_Switch_ex.h" />
     <ClInclude Include="..\..\include\Class_SysButton_Page_ex.h" />

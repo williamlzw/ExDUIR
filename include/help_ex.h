@@ -354,7 +354,7 @@ struct obj_base
 #include "Class_Switch_ex.h"
 #include "Class_MosaicLoading_ex.h"
 #include "Class_Win10Loading_ex.h"
-#include "Class_SoliderBar_ex.h"
+#include "Class_SliderBar_ex.h"
 #include "Class_RotateImageBox_ex.h"
 #include "Class_ProgressBar_ex.h"
 #include "Class_ListButton_ex.h"

@@ -34,7 +34,7 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_custommenu,     //126测试自定义菜单
         test_event,          //127测试事件分发
         test_loading,        //128测试加载动画
-        test_soliderbar,     //129测试滑块条
+        test_sliderbar,     //129测试滑块条
         test_rotateimgbox,   //130测试旋转图片框
         test_dragobj,        //131测试拖动组件
         test_dropobj,        //132测试接收拖曳信息

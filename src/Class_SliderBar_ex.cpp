@@ -1,12 +1,12 @@
-#include "Class_soliderBar_ex.h"
+#include "Class_sliderBar_ex.h"
 
-void _soliderbar_register()
+void _sliderbar_register()
 {
-    WCHAR wzCls[] = L"SoliderBarEx";
-    Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, 5 * sizeof(size_t), NULL, NULL, _soliderbar_proc);
+    WCHAR wzCls[] = L"SliderBar";
+    Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, 5 * sizeof(size_t), NULL, NULL, _sliderbar_proc);
 }
 
-LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _sliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     long tmp, tmp2;
     if (uMsg == WM_CREATE)
@@ -20,7 +20,7 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
     }
     else if (uMsg == WM_PAINT)
     {
-        _soliderbar_paint(hObj);
+        _sliderbar_paint(hObj);
     }
     else if (uMsg == WM_MOUSEHOVER)
     {
@@ -33,7 +33,7 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
     else if (uMsg == WM_LBUTTONDOWN)
     {
         Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
-        tmp = (long)_soliderbar_getvalueofthepoint(hObj, lParam);
+        tmp = (long)_sliderbar_getvalueofthepoint(hObj, lParam);
         tmp2 = Ex_ObjSetLong(hObj, SBL_POS, tmp);
         if (tmp2 != tmp) // 若当前位置变化,则发送通知
         {
@@ -49,7 +49,7 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
     {
         if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)
         {
-            tmp = (long)_soliderbar_getvalueofthepoint(hObj, lParam);
+            tmp = (long)_sliderbar_getvalueofthepoint(hObj, lParam);
             tmp2 = Ex_ObjSetLong(hObj, SBL_POS, tmp);
             if (tmp2 != tmp)
             {
@@ -111,16 +111,16 @@ LRESULT CALLBACK _soliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
     }
     else if (uMsg == SBM_GETBLOCKRECT)
     {
-        _soliderbar_getrect(hObj, (RECT *)lParam);
+        _sliderbar_getrect(hObj, (RECT *)lParam);
     }
     else if (uMsg == SBM_PT2VALUE)
     {
-        return ((LONG)_soliderbar_getvalueofthepoint(hObj, lParam));
+        return ((LONG)_sliderbar_getvalueofthepoint(hObj, lParam));
     }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
-void _soliderbar_paint(HEXOBJ hObj)
+void _sliderbar_paint(HEXOBJ hObj)
 {
     EX_PAINTSTRUCT ps{0};
     RECT RC = {0};
@@ -156,7 +156,7 @@ void _soliderbar_paint(HEXOBJ hObj)
             y = Ex_Scale((FLOAT)RC.bottom / 2);
         }
         _brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED));
-        _soliderbar_getrect(hObj, &RC);
+        _sliderbar_getrect(hObj, &RC);
         _canvas_fillellipse(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2, Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, Ex_Scale(Ex_ObjGetLong(hObj, SBL_BLOCK_SIZE)), Ex_Scale(Ex_ObjGetLong(hObj, SBL_BLOCK_SIZE)));
         _canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2, Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, x, y, Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
         _brush_destroy(hBrush);
@@ -165,7 +165,7 @@ void _soliderbar_paint(HEXOBJ hObj)
 }
 
 /*滑块条_取滑块矩形*/
-void _soliderbar_getrect(HEXOBJ hObj, RECT *rc)
+void _sliderbar_getrect(HEXOBJ hObj, RECT *rc)
 {
     FLOAT value = NULL;
     Ex_ObjGetClientRect(hObj, rc);
@@ -209,7 +209,7 @@ void _soliderbar_getrect(HEXOBJ hObj, RECT *rc)
 }
 
 /*滑块条_取点所在值*/
-FLOAT _soliderbar_getvalueofthepoint(HEXOBJ hObj, LPARAM lParam)
+FLOAT _sliderbar_getvalueofthepoint(HEXOBJ hObj, LPARAM lParam)
 {
     RECT RC = {0};
     FLOAT value = NULL;

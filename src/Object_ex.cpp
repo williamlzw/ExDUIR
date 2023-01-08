@@ -24,7 +24,7 @@ void _object_init()
     _switch_register();
     _mosaic_loading_register();
     _win10_loading_register();
-    _soliderbar_register();
+    _sliderbar_register();
     _rotateimagebox_register();
     _progressbar_register();
     _listbuttonex_register();
