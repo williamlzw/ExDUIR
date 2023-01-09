@@ -742,25 +742,25 @@
 #define ELCP_LINEAR_ALIGN 2
 // 线性布局属性_布局方向对齐方式
 #define ELP_LINEAR_DALIGN 2
-// 线性布局对齐方式_左上
+// 线性布局属性_对齐方式_左上
 #define ELP_LINEAR_DALIGN_LEFT_TOP 0
-// 线性布局对齐方式_居中
+// 线性布局属性_对齐方式_居中
 #define ELP_LINEAR_DALIGN_CENTER 1
-// 线性布局对齐方式_右下
+// 线性布局属性_对齐方式_右下
 #define ELP_LINEAR_DALIGN_RIGHT_BOTTOM 2
 
-// 线性布局另一个方向对齐方式_填满
+// 线性布局子属性_另一个方向对齐方式_填满
 #define ELCP_LINEAR_ALGIN_FILL 0
-// 线性布局另一个方向对齐方式_左上
+// 线性布局子属性_另一个方向对齐方式_左上
 #define ELCP_LINEAR_ALIGN_LEFT_TOP 1
-// 线性布局另一个方向对齐方式_居中
+// 线性布局子属性_另一个方向对齐方式_居中
 #define ELCP_LINEAR_ALIGN_CENTER 2
-// 线性布局另一个方向对齐方式_右下
+// 线性布局子属性_另一个方向对齐方式_右下
 #define ELCP_LINEAR_ALIGN_RIGHT_BOTTOM 3
 
-// 布局排布方向_水平
+// 布局属性_排布方向_水平
 #define ELP_DIRECTION_H 0
-// 布局排布方向_垂直
+// 布局属性_排布方向_垂直
 #define ELP_DIRECTION_V 1
 
 // 流式布局属性_排布方向
@@ -770,7 +770,7 @@
 // 流式布局子属性_组件强制换行
 #define ELCP_FLOW_NEW_LINE 2
 
-// 页面布局属性_当前显示页面索引
+// 页面布局属性_当前显示页面索引,从1开始
 #define ELP_PAGE_CURRENT 1
 // 页面布局子属性_是否填充整个布局
 #define ELCP_PAGE_FILL 1
@@ -779,78 +779,78 @@
 #define ELP_TABLE_ARRAY_ROW 1
 // 表格布局属性:列宽数组
 #define ELP_TABLE_ARRAY_CELL 2
-// 表格布局属性_所在行
+// 表格布局子属性_所在行
 #define ELCP_TABLE_ROW 1
-// 表格布局属性_所在列
+// 表格布局子属性_所在列
 #define ELCP_TABLE_CELL 2
-// 表格布局属性_跨行数
+// 表格布局子属性_跨行数
 #define ELCP_TABLE_ROW_SPAN 3
-// 表格布局属性_跨列数
+// 表格布局子属性_跨列数
 #define ELCP_TABLE_CELL_SPAN 4
-// 表格布局属性_是否填满
+// 表格布局子属性_是否填满
 #define ELCP_TABLE_FILL 5
 
-// 相对布局属性_左侧于组件
+// 相对布局子属性_左侧于组件
 #define ELCP_RELATIVE_LEFT_OF 1
-// 相对布局属性_之上于组件
+// 相对布局子属性_之上于组件
 #define ELCP_RELATIVE_TOP_OF 2
-// 相对布局属性_右侧于组件
+// 相对布局子属性_右侧于组件
 #define ELCP_RELATIVE_RIGHT_OF 3
-// 相对布局属性_之下于组件
+// 相对布局子属性_之下于组件
 #define ELCP_RELATIVE_BOTTOM_OF 4
-// 相对布局属性_左对齐于组件
+// 相对布局子属性_左对齐于组件
 #define ELCP_RELATIVE_LEFT_ALIGN_OF 5
-// 相对布局属性_顶对齐于组件
+// 相对布局子属性_顶对齐于组件
 #define ELCP_RELATIVE_TOP_ALIGN_OF 6
-// 相对布局属性_右对齐于组件
+// 相对布局子属性_右对齐于组件
 #define ELCP_RELATIVE_RIGHT_ALIGN_OF 7
-// 相对布局属性_底对齐于组件
+// 相对布局子属性_底对齐于组件
 #define ELCP_RELATIVE_BOTTOM_ALIGN_OF 8
-// 相对布局属性_水平居中于父
+// 相对布局子属性_水平居中于父
 #define ELCP_RELATIVE_CENTER_PARENT_H 9
-// 相对布局属性_垂直居中于父
+// 相对布局子属性_垂直居中于父
 #define ELCP_RELATIVE_CENTER_PARENT_V 10
 
-// 绝对布局属性_左侧
+// 绝对布局子属性_左侧
 #define ELCP_ABSOLUTE_LEFT 1
-// 绝对布局属性_位置类型_左侧
+// 绝对布局子属性_位置类型_左侧
 #define ELCP_ABSOLUTE_LEFT_TYPE 2
-// 绝对布局属性_顶部
+// 绝对布局子属性_顶部
 #define ELCP_ABSOLUTE_TOP 3
-// 绝对布局属性_位置类型_顶部
+// 绝对布局子属性_位置类型_顶部
 #define ELCP_ABSOLUTE_TOP_TYPE 4
-// 绝对布局属性_右侧
+// 绝对布局子属性_右侧
 #define ELCP_ABSOLUTE_RIGHT 5
-// 绝对布局属性_位置类型_右侧
+// 绝对布局子属性_位置类型_右侧
 #define ELCP_ABSOLUTE_RIGHT_TYPE 6
-// 绝对布局属性_底部
+// 绝对布局子属性_底部
 #define ELCP_ABSOLUTE_BOTTOM 7
-// 绝对布局属性_位置类型_底部
+// 绝对布局子属性_位置类型_底部
 #define ELCP_ABSOLUTE_BOTTOM_TYPE 8
-// 绝对布局属性_宽度（优先级低于右侧）
+// 绝对布局子属性_宽度（优先级低于右侧）
 #define ELCP_ABSOLUTE_WIDTH 9
-// 绝对布局属性_位置类型_宽度
+// 绝对布局子属性_位置类型_宽度
 #define ELCP_ABSOLUTE_WIDTH_TYPE 10
-// 绝对布局属性_高度（优先级低于底部）
+// 绝对布局子属性_高度（优先级低于底部）
 #define ELCP_ABSOLUTE_HEIGHT 11
-// 绝对布局属性_位置类型_高度
+// 绝对布局子属性_位置类型_高度
 #define ELCP_ABSOLUTE_HEIGHT_TYPE 12
-// 绝对布局属性_水平偏移量
+// 绝对布局子属性_水平偏移量
 #define ELCP_ABSOLUTE_OFFSET_H 13
-// 绝对布局属性_位置类型_水平偏移量
+// 绝对布局子属性_位置类型_水平偏移量
 #define ELCP_ABSOLUTE_OFFSET_H_TYPE 14
-// 绝对布局属性_垂直偏移量
+// 绝对布局子属性_垂直偏移量
 #define ELCP_ABSOLUTE_OFFSET_V 15
-// 绝对布局属性_位置类型_垂直偏移量
+// 绝对布局子属性_位置类型_垂直偏移量
 #define ELCP_ABSOLUTE_OFFSET_V_TYPE 16
 
-// 绝对布局位置类型_未知 (未设置或保持不变)
+// 绝对布局子属性_位置类型_未知 (未设置或保持不变)
 #define ELCP_ABSOLUTE_TYPE_UNKNOWN 0
-// 绝对布局位置类型_像素
+// 绝对布局子属性_位置类型_像素
 #define ELCP_ABSOLUTE_TYPE_PX 1
-// 绝对布局位置类型_百分比
+// 绝对布局子属性_位置类型_百分比
 #define ELCP_ABSOLUTE_TYPE_PS 2
-// 绝对布局位置类型_组件尺寸百分比，仅OFFSET可用
+// 绝对布局子属性_位置类型_组件尺寸百分比，仅OFFSET可用
 #define ELCP_ABSOLUTE_TYPE_OBJPS 3
 
 // 位置信息标识_组件位置默认值

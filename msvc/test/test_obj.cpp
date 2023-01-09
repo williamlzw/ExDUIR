@@ -779,24 +779,15 @@ void test_groupbox(HWND hWnd)
 std::vector<HEXOBJ> m_hNavBtn(4);
 std::vector<HEXOBJ> m_hPageNavBtn(4);
 INT m_nCurIndex = 1;
-
-
-size_t CALLBACK OnNavButtonPageEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent, LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2, size_t p3, size_t p4)
-{
-	for (INT i = 0; i < m_hPageNavBtn.size(); i++)
-	{
-		Ex_ObjSetPos(m_hPageNavBtn[i], 0, i * 760 - nCurrent, 0, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
-	}
-	return m_nCurIndex != p1;
-}
+HEXLAYOUT m_hLayout;
 
 LRESULT CALLBACK OnNavButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (lParam != 0)
 	{
-		INT nIndex = Ex_ObjGetLong(hObj, EOL_LPARAM);
-		HEXEASING pEasing = _easing_create(ET_InOutQuart, 0, ES_SINGLE | ES_THREAD | ES_CALLFUNCTION, (size_t)OnNavButtonPageEasing, 200, 20, EES_PLAY, m_nCurIndex * 760, nIndex * 760, nIndex, 0, 0, 0);
-		m_nCurIndex = nIndex;
+		m_nCurIndex = Ex_ObjGetLong(hObj, EOL_LPARAM);
+		_layout_setprop(m_hLayout, ELP_PAGE_CURRENT, m_nCurIndex + 1);
+		_layout_update(m_hLayout);
 	}
 	return 0;
 }
@@ -843,15 +834,25 @@ void test_navbutton(HWND hWnd)
 		Ex_ObjHandleEvent(m_hNavBtn[i], NM_CHECK, OnNavButtonCheckEvent);
 	}
 	HEXOBJ hPageNavbtnContainer = Ex_ObjCreate(L"page", 0, -1, 20, 120, 760, 600 - 120 - 20, hExDui_navbutton);
+	//创建一个页面布局,绑定容器页面
+	m_hLayout = _layout_create(ELT_PAGE, hPageNavbtnContainer);
 	for (INT i = 0; i < 4; i++)
 	{
 		auto str = L"页面" + std::to_wstring(i);
-		m_hPageNavBtn[i] = Ex_ObjCreateEx(-1, L"static", str.c_str(), -1, 760 * i, 0, 760, 600 - 120 - 20, hPageNavbtnContainer, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
+		m_hPageNavBtn[i] = Ex_ObjCreateEx(-1, L"static", str.c_str(), -1, 0, 0, 760, 600 - 120 - 20, hPageNavbtnContainer, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
 		Ex_ObjSetFontFromFamily(m_hPageNavBtn[i], 0, 40, 0, TRUE);
 		Ex_ObjSetColor(m_hPageNavBtn[i], COLOR_EX_BACKGROUND, ExRGB2ARGB(Random(0, 16777215), 255), TRUE);
 		Ex_ObjSetColor(m_hPageNavBtn[i], COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), TRUE);
+		//布局添加子页面
+		_layout_addchild(m_hLayout, m_hPageNavBtn[i]);
 	}
-	m_nCurIndex = 0;
+	//容器页面设置布局对象
+	Ex_ObjLayoutSet(hPageNavbtnContainer, m_hLayout, TRUE);
+	//设置布局显示页面索引,从1开始
+	m_nCurIndex = 1;
+	_layout_setprop(m_hLayout, ELP_PAGE_CURRENT, m_nCurIndex);
+	
+	
 	Ex_ObjSendMessage(m_hNavBtn[0], BM_SETCHECK, 1, 1);
 	Ex_DUISetLong(hExDui_navbutton, EWL_CRBKG, ExRGB2ARGB(0, 255));
 	Ex_DUIShowWindow(hExDui_navbutton, SW_SHOWNORMAL, 0, 0, 0);
@@ -939,7 +940,7 @@ void test_relative(HWND hWnd)
 	Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 100), TRUE);
 	_layout_setchildprop(hLayout, hObj2, ELCP_RELATIVE_TOP_ALIGN_OF, -1);   //顶部与父容器对齐
 	_layout_setchildprop(hLayout, hObj2, ELCP_RELATIVE_CENTER_PARENT_H, 1); // 水平居中于父容器
-
+	
 	HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"Static", L"控件C：右侧与A对齐,宽度150,在A和B之间", -1, 0, 0, 150, 150, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(65280, 100), TRUE);
 	_layout_setchildprop(hLayout, hObj3, ELCP_RELATIVE_TOP_OF, hObj1);         //在A控件顶部

@@ -814,7 +814,7 @@ LRESULT CALLBACK __layout_page_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
             HEXOBJ hObj = (HEXOBJ)__get(pInfo, 0);
             if (hObj == 0)
                 continue;
-            if (i == nCurrentPage) //疑问
+            if (i == nCurrentPage)
             {
                 if (__get(pInfo, ELCP_PAGE_FILL * sizeof(size_t)) != 0)
                 {
@@ -1840,6 +1840,7 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
                 if (Ex_ObjGetParent(hObj) == pLayout->hBind_)
                 {
                     fIsChild = TRUE;
+                    
                 }
             }
             else
