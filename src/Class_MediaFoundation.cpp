@@ -101,7 +101,8 @@ LRESULT CALLBACK _mediafoundation_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 	}
 	else if (uMsg == MFM_GET_DURATION)
 	{
-
+		MFMediaPlayer* pPlayer = (MFMediaPlayer*)Ex_ObjGetLong(hObj, MFL_OBJ);
+		return pPlayer->GetDuration();
 
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
@@ -363,6 +364,23 @@ void MFMediaPlayer::SetPosition(int position)
 	}
 	m_bPosition = true;
 	m_bPositionc = position;
+}
+int MFMediaPlayer::GetDuration()
+{
+	if (Isplaying() && m_PlayState != 0)
+	{
+		ULONG flags = 0;
+		PROPVARIANT var;
+		PropVariantInit(&var);
+		HRESULT hr = m_pReader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &var);
+		if (SUCCEEDED(hr))
+		{
+			PropVariantToUInt32(var, &flags);
+			PropVariantClear(&var);
+			return (int)floor(flags/10000000);
+		}
+	}
+	return 0;
 }
 
 BOOL MFMediaPlayer::Isplaying()
