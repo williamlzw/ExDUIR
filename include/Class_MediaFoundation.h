@@ -59,7 +59,7 @@ public:
 	HRESULT	Endplay();
 	void Pause(BOOL bPause);
 	void SetPosition(int position);
-	void GetDuration();
+	int GetDuration();
 	BOOL	Isplaying();
 	UINT32	GetVideoWidth() const { return m_uVideoWidth; }
 	UINT32 GetVideoHeight() const { return m_uVideoHeight; }

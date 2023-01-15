@@ -2,7 +2,7 @@
 
 void _mediafoundation_register()
 {
-	Ex_ObjRegister(L"MediaFoundation", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 4 * sizeof(size_t), NULL, 0, _mediafoundation_proc);
+	Ex_ObjRegister(L"MediaFoundation", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 2 * sizeof(size_t), NULL, 0, _mediafoundation_proc);
 }
 
 LRESULT CALLBACK _mediafoundation_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -348,14 +348,6 @@ void MFMediaPlayer::Pause(BOOL bPause)
 	}
 }
 
-void MFMediaPlayer::GetDuration()
-{
-	if (!Isplaying())
-	{
-		return;
-	}
-}
-
 void MFMediaPlayer::SetPosition(int position)
 {
 	if (!Isplaying())
@@ -367,7 +359,7 @@ void MFMediaPlayer::SetPosition(int position)
 }
 int MFMediaPlayer::GetDuration()
 {
-	if (Isplaying() && m_PlayState != 0)
+	if (Isplaying())
 	{
 		ULONG flags = 0;
 		PROPVARIANT var;
