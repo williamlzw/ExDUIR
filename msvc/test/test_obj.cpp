@@ -390,14 +390,17 @@ void test_edit(HWND hWnd)
 	m_hExDuiEdit = Ex_DUIBindWindowEx(hWnd_edit, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	Ex_DUISetLong(m_hExDuiEdit, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
-	HEXOBJ hObj_edit1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", L"背景图片编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 30, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	HEXOBJ hObj_edit1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", 0, EOS_VISIBLE | EES_HIDESELECTION, 10, 30, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
+	Ex_ObjSendMessage(hObj_edit1, EM_SETCUEBANNER, ExARGB(150, 150, 150, 255), (LPARAM)L"背景图片编辑框");
 	Ex_ObjSetBackgroundImage(hObj_edit1, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_DEFAULT, 255, TRUE);
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试数值输入编辑框", EOS_VISIBLE | EES_NUMERICINPUT, 10, 110, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
-
+	HEXOBJ hObj_edit2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", 0, EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	Ex_ObjSendMessage(hObj_edit2, EM_SETCUEBANNER, ExARGB(150, 150, 150, 255), (LPARAM)L"测试密码输入编辑框");
+	HEXOBJ hObj_edit3 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", 0, EOS_VISIBLE | EES_NUMERICINPUT, 10, 110, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	Ex_ObjSendMessage(hObj_edit3, EM_SETCUEBANNER, ExARGB(150, 150, 150, 255), (LPARAM)L"测试数值输入编辑框");
+	HEXOBJ hObj_edit4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	Ex_ObjSendMessage(hObj_edit4, EM_SETCUEBANNER, ExARGB(150, 150, 150, 255), (LPARAM)L"测试只读编辑框");
 	HEXOBJ hObj_edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 44, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
 	m_hEditFont = _font_createfromfamily(L"微软雅黑", 24, EFS_UNDERLINE | EFS_ITALIC);
 	Ex_ObjSetFont(hObj_edit5, m_hEditFont, FALSE);
@@ -2035,10 +2038,13 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	}
 	else if (uMsg == WM_EX_LCLICK)
 	{
+		auto id = Ex_ObjGetLong(hObj, EOL_ID);
+		output(L"菜单按钮点击,id:", id);
 		EndMenu();
 		*lpResult = 1;
 		return 1;
 	}
+	
 	return 0;
 }
 
@@ -2067,7 +2073,8 @@ LRESULT CALLBACK OnMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	}
 	else if (uMsg == WM_EX_LCLICK)
 	{
-		Ex_ObjGetLong(hObj, EOL_ID);
+		auto id = Ex_ObjGetLong(hObj, EOL_ID);
+		output(L"菜单项目点击,id:", id);
 	}
 	return 0;
 }
@@ -2077,9 +2084,6 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 	if (uMsg == WM_INITMENUPOPUP)
 	{
 		RECT rc{ 0 };
-		HDC dc = GetDC(NULL);
-		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
-		ReleaseDC(NULL, dc);
 		if (wParam == (size_t)m_hMenu) //主菜单
 		{
 			size_t value = 1;
@@ -2094,13 +2098,13 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 			HEXIMAGE hImg;
 			_img_createfromfile(L"custommenu/btn1.png", &hImg);
 
-			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, -1, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 100, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn2.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, rc.left + rc.right * 0.333, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, -2, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, rc.left + rc.right * 0.333, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 101, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn3.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, -3, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 102, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_TRANSPARENT | EOS_EX_TOPMOST, L"Static", 0, EOS_VISIBLE, 0, 0, 45, 38, hExDUI, 0, -1, 0, 0, 0);
 			std::vector<CHAR> data;
