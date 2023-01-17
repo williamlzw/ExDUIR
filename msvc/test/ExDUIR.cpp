@@ -70,7 +70,8 @@ void test_exdui()
     Ex_ReadFile(L"res/cursor.cur", &data);
     HCURSOR hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
     Ex_ReadFile(L"res/Default.ext", &data);
-    Ex_Init(GetModuleHandleW(NULL), EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_MENU_ALL, hCursor, 0, data.data(), data.size(), 0, 0);
+    //开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
+    Ex_Init(GetModuleHandleW(NULL), EXGF_DPI_ENABLE | EXGF_MENU_ALL, hCursor, 0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
     m_hWnd = Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
     if (m_hWnd != 0)
@@ -81,6 +82,7 @@ void test_exdui()
         Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, 0, 255, TRUE);
+
         std::vector<HEXOBJ> buttons;
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试按钮开关", -1, 10, 30, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标签", -1, 10, 70, 100, 30, hExDui, 102, DT_VCENTER | DT_CENTER, 0, 0, NULL));

@@ -97,17 +97,17 @@ namespace ExDUIR
 					return _canvas_drawroundedrect(m_canvas, brush.m_brush, left, top, right, bottom, radiusX, radiusY, strokeWidth, strokeStyle);
 				}
 
-				inline BOOL DrawTextFromColor(ExFont font, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				inline BOOL DrawTextFromColor(ExFont font, EXARGB crText, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 				{
 					return _canvas_drawtext(m_canvas, font.m_font, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom);
 				}
 
-				inline BOOL DrawTextFromColorEx(ExFont font, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
+				inline BOOL DrawTextFromColorEx(ExFont font, EXARGB crText, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
 				{
 					return _canvas_drawtextex(m_canvas, font.m_font, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, iGlowsize, crShadom, lParam);
 				}
 
-				inline BOOL DrawTextFromBrush(ExFont font, ExBrush brush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				inline BOOL DrawTextFromBrush(ExFont font, ExBrush brush, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 				{
 					return _canvas_drawtext2(m_canvas, font.m_font, brush.m_brush, lpwzText, dwLen, dwDTFormat, left, top, right, bottom);
 				}
@@ -182,7 +182,7 @@ namespace ExDUIR
 					return _canvas_clear(m_canvas, color);
 				}
 
-				inline BOOL CalcTextSize(ExFont font, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight)
+				inline BOOL CalcTextSize(ExFont font, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight)
 				{
 					return _canvas_calctextsize(m_canvas, font.m_font, lpwzText, dwLen, dwDTFormat, lParam, layoutWidth, layoutHeight, lpWidth, lpHeight);
 				}

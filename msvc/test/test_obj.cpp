@@ -1118,34 +1118,34 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 
 void test_combobox(HWND hWnd)
 {
-	HWND hWnd_combobox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试组合框", 0, 0, 400, 300, 0, 0);
+	HWND hWnd_combobox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试组合框", 0, 0, 450, 300, 0, 0);
 	HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(hWnd_combobox, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_combobox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 30, 100, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"TESTa");
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"1234");
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"qwer他！（）");
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"uiop[");
+	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 30, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"特殊字符[！（）");
 
-	m_hComboBoxButton[0] = Ex_ObjCreate(L"button", L"添加项目", -1, 130, 30, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[0] = Ex_ObjCreate(L"button", L"添加项目", -1, 230, 30, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[0], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[1] = Ex_ObjCreate(L"button", L"插入项目", -1, 130, 70, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[1] = Ex_ObjCreate(L"button", L"插入项目", -1, 230, 70, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[1], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[2] = Ex_ObjCreate(L"button", L"取内容", -1, 130, 110, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[2] = Ex_ObjCreate(L"button", L"取内容", -1, 230, 110, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[2], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[3] = Ex_ObjCreate(L"button", L"置内容", -1, 240, 30, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[3] = Ex_ObjCreate(L"button", L"置内容", -1, 340, 30, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[3], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[4] = Ex_ObjCreate(L"button", L"清空表项", -1, 240, 70, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[4] = Ex_ObjCreate(L"button", L"清空表项", -1, 340, 70, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[4], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[5] = Ex_ObjCreate(L"button", L"弹出列表", -1, 240, 110, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[5] = Ex_ObjCreate(L"button", L"弹出列表", -1, 340, 110, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[5], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[6] = Ex_ObjCreate(L"button", L"删除项目", -1, 130, 150, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[6] = Ex_ObjCreate(L"button", L"删除项目", -1, 230, 150, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[6], NM_CLICK, OnComboBoxButtonEvent);
 
 	Ex_DUIShowWindow(hExDui_combobox, SW_SHOWNORMAL, 0, 0, 0);
@@ -1283,9 +1283,9 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 		Ex_DUIGetClientRect(hExDui, &rc);
 		FLOAT arrStopPts[2][2];
 		arrStopPts[0][0] = 0;
-		arrStopPts[0][1] = ExRGB2ARGB(ExRGB(10, 127, 213), 220);
+		arrStopPts[0][1] = ExRGBA(10, 127, 213, 220);
 		arrStopPts[1][0] = 1.0;
-		arrStopPts[1][1] = ExRGB2ARGB(ExRGB(200, 10, 10), 220);
+		arrStopPts[1][1] = ExRGBA(200, 10, 10, 220);
 		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, &arrStopPts[0][0], 2);
 		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 		_brush_destroy(hBrush);
@@ -1870,7 +1870,7 @@ void test_buttonex(HWND hWnd)
 	Ex_ObjSendMessage(hObj_btnex4, WM_SETICON, 0, (LPARAM)hImg); /* 设置图标; */
 
 	EX_IMAGEINFO IMG0 = { 0 };
-	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal); //注意用完销毁
+	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal); 
 	_img_createfromfile(L"buttonex/4点燃.png", &IMG0.imgHover);
 	_img_createfromfile(L"buttonex/4按下.png", &IMG0.imgDownOrChecked);
 	HEXOBJ hObj_btnex5 = Ex_ObjCreate(L"ButtonEx", NULL, -1, 50, 250, 100, 30, hExDui_buttonex); /*图片按钮*/
@@ -1881,7 +1881,7 @@ void test_buttonex(HWND hWnd)
 	Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(65535, 255), FALSE);
 	Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(65535, 255), FALSE);
 	EX_IMAGEINFO IMG = { 0 };
-	_img_createfromfile(L"buttonex/正常.png", &IMG.imgNormal); //注意用完销毁
+	_img_createfromfile(L"buttonex/正常.png", &IMG.imgNormal); 
 	_img_createfromfile(L"buttonex/进入.png", &IMG.imgHover);
 	_img_createfromfile(L"buttonex/按下.png", &IMG.imgDownOrChecked);
 	Ex_ObjSendMessage(hObj_btnex6, BM_SETIMAGE, 0, (LPARAM)&IMG);
@@ -2079,6 +2079,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 		RECT rc{ 0 };
 		HDC dc = GetDC(NULL);
 		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
+		ReleaseDC(NULL, dc);
 		if (wParam == (size_t)m_hMenu) //主菜单
 		{
 			size_t value = 1;

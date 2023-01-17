@@ -126,7 +126,6 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
         if ((Ex_ObjGetUIState(hObj) & STATE_FOCUS) != 0)
         {
-
             _brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERDOWNORCHECKED));
         }
 
