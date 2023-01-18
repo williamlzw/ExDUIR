@@ -1575,22 +1575,19 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
 	canvas_s* pCanvas = NULL;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if (Ex_IsDxRender())
+		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		if (pMatrix)
 		{
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
-			if (pMatrix)
-			{
-				D2D1::Matrix3x2F mx;
-				_matrix_init(&mx, pMatrix);
-				pContext->SetTransform(&mx);
-			}
-			else
-			{
-				D2D1_MATRIX_3X2_F matrix = { 0 };
-				matrix.m11 = 1.0f;
-				matrix.m22 = 1.0f;
-				pContext->SetTransform(&matrix);
-			}
+			D2D1::Matrix3x2F mx;
+			_matrix_init(&mx, pMatrix);
+			pContext->SetTransform(&mx);
+		}
+		else
+		{
+			D2D1_MATRIX_3X2_F matrix = { 0 };
+			matrix.m11 = 1.0f;
+			matrix.m22 = 1.0f;
+			pContext->SetTransform(&matrix);
 		}
 	}
 	return nError == 0;
