@@ -2194,9 +2194,11 @@ void _wnd_menu_setpos(HWND hWnd, wnd_s *pWnd, tagWINDOWPOS *pos)
             GetWindowRect(hWnd, &rcParent);
             INT height = rcParent.bottom - rcParent.top - GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
             _wnd_getscreenrect(hWnd, &rcParent);
+            
             if (y + height > rcParent.bottom)
             {
                 y = pObj->w_bottom_ - height + __get_int(padding_client, 12);
+                
             }
         }
     }
@@ -2260,6 +2262,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
             mii.fMask = MIIM_FTYPE | MIIM_SUBMENU | MIIM_ID;
             RECT rcItem{0};
             INT eos;
+            INT offsetTop = 0;
             for (INT i = 0; i < nCount; i++)
             {
                 if (GetMenuItemRect(hParent, (HMENU)hMenu, i, &rcItem))
@@ -2280,25 +2283,28 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
                         }
                     }
                     WCHAR buff[520];
-                    
-                    if (rcItem.left > 0 && rcItem.top >= 0)
-                    {
-                        OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
-                       
-                    }
-                    else if(rcItem.left < 0 && rcItem.top >= 0) {
-                        OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
-                        
-                    }
 
-                    if (rcItem.left < 0) //这里解决WIN10缩放DPI后GetMenuItemRect取值负数问题。
+                    OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
+                    //组件超出屏幕左边会出现菜单项目左边负数
+                    if (rcItem.left < 0)
                     {
                         INT offset = abs(rcItem.left);
                         rcItem.left = rcItem.left + offset;
-                        rcItem.top = rcItem.top + offset;
                         rcItem.right = rcItem.right + offset;
-                        rcItem.bottom = rcItem.bottom + offset;
                     }
+                    else if (rcItem.left > 0)
+                    {
+                        INT offset = abs(rcItem.left);
+                        rcItem.left = rcItem.left -offset;
+                        rcItem.right = rcItem.right -offset;
+                    }
+                    //判断第一项，取第一项顶边偏移,组件移到屏幕最顶端二级子菜单第一项会负数
+                    if (rcItem.top < 0 && i == 0)
+                    {
+                        offsetTop = abs(rcItem.top);
+                    }
+                    rcItem.top = rcItem.top + offsetTop;
+                    rcItem.bottom = rcItem.bottom + offsetTop;
                     GetMenuStringW((HMENU)hMenu, i, buff, 520, MF_BYPOSITION);
                     obj_s *pObj = nullptr;
                     nError = 0;

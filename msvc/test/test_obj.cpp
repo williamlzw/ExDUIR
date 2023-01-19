@@ -485,7 +485,7 @@ LRESULT CALLBACK OnListButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		RECT rcObj{ 0 };
 		GetWindowRect(hWnd, &rcWindow);
 		Ex_ObjGetRectEx(hObj, &rcObj, 2);
-		Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + rcObj.bottom, 0, hObj, NULL, OnListButtonWndMsgProc, EMNF_NOSHADOW);
+		Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + Ex_Scale(rcObj.bottom), 0, hObj, NULL, OnListButtonWndMsgProc, EMNF_NOSHADOW);
 		*lpResult = 1;
 		return 1;
 	}
@@ -503,7 +503,6 @@ LRESULT CALLBACK OnListButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 	{
 		OUTPUTW(L"选择", wParam, lParam);
 	}
-
 	return 0;
 }
 
@@ -2402,7 +2401,7 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)
+		if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) == STATE_DOWN)
 		{
 			auto userdata = Ex_ObjGetLong(hObj, EOL_USERDATA);
 			//获取按下位置
