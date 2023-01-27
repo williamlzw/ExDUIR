@@ -2263,7 +2263,6 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
             RECT rcItem{0};
             INT eos;
             INT offsetTop = 0;
-            INT offsetTop = 0;
             for (INT i = 0; i < nCount; i++)
             {
                 if (GetMenuItemRect(hParent, (HMENU)hMenu, i, &rcItem))

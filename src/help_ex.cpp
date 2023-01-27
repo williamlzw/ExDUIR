@@ -958,6 +958,11 @@ INT GetMdayCount(INT year, INT mon) {
 
 ////取指定时间的星期
 INT GetWeekOfDate(INT year, INT month, INT day) {
+	if (month == 1 || month == 2)
+	{
+		month += 12;
+		--year;
+	}
 	return (day + 2 * month + 3 * (month + 1) / 5 + year + year / 4 - year / 100 + year / 400) % 7 + 1;
 }
 
