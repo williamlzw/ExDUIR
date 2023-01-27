@@ -3095,12 +3095,12 @@ LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 	{
 		if (nID == 100)
 		{
-			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_GETITEMVALUE, 0, (LPARAM)L"名称2");
+			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_GETITEMVALUE, 0, (LPARAM)L"名称2");
 			OUTPUTW(L"名称2 对应值:", ret);
 		}
 		else if (nID == 101)
 		{
-			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_SETITEMVALUE, (WPARAM)L"新数值123", (LPARAM)L"名称2");
+			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_SETITEMVALUE, (WPARAM)L"新数值123", (LPARAM)L"名称2");
 			OUTPUTW(L"置\"名称2\"对应值");
 		}
 		else if (nID == 102)
@@ -3140,7 +3140,7 @@ void test_propertygrid(HWND hParent)
 
 	EX_PROGRID_ITEMINFO item;
 	item.title = L"小组A";
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
 	item.title = L"组合框一";
 	EX_PROGRID_ITEMINFO_COMBOBOX a;
 	a.text = L"表项1-1";
@@ -3152,28 +3152,28 @@ void test_propertygrid(HWND hParent)
 	item.comboboxNum = 2;
 
 
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
 	item.title = L"颜色";
 	auto color = std::to_wstring(ExRGB2ARGB(167549, 255));
 	item.text = color.c_str();
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
 	item.title = L"日期";
 	item.text = L"2022-7-6";
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_DATEBOX, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_DATEBOX, (LPARAM)&item);
 	for (int i = 0; i < 4; i++)
 	{
 		auto title = L"名称" + std::to_wstring(i + 1);
 		item.title = title.c_str();
 		auto text = L"值" + std::to_wstring(i + 1);
 		item.text = text.c_str();
-		Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
+		Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
 	}
 	item.title = L"小组B";
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&item);
 	item.title = L"颜色二";
 	color = std::to_wstring(ExRGB2ARGB(3523123, 255));
 	item.text = color.c_str();
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_COLORPICKER, (LPARAM)&item);
 	item.title = L"组合框二";
 
 	EX_PROGRID_ITEMINFO_COMBOBOX c;
@@ -3185,18 +3185,18 @@ void test_propertygrid(HWND hParent)
 	item.textComboBox[1] = d;
 	item.comboboxNum = 3;
 
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
 	for (int i = 4; i < 8; i++)
 	{
 		auto title = L"名称" + std::to_wstring(i + 1);
 		item.title = title.c_str();
 		auto text = L"值" + std::to_wstring(i + 1);
 		item.text = text.c_str();
-		Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
+		Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
 	}
 	item.title = L"最后一个标题";
 	item.text = L"最后一个值";
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGN_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
+	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
 	Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
 }
 
