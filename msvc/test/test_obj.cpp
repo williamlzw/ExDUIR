@@ -390,13 +390,16 @@ void test_edit(HWND hWnd)
 	m_hExDuiEdit = Ex_DUIBindWindowEx(hWnd_edit, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	Ex_DUISetLong(m_hExDuiEdit, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
-	HEXOBJ hObj_edit1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", L"背景图片编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 30, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	HEXOBJ hObj_edit1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", L"", EOS_VISIBLE | EES_HIDESELECTION, 10, 30, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
+	Ex_ObjSendMessage(hObj_edit1, EM_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"背景图片编辑框");
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
 	Ex_ObjSetBackgroundImage(hObj_edit1, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_DEFAULT, 255, TRUE);
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试数值输入编辑框", EOS_VISIBLE | EES_NUMERICINPUT, 10, 110, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
-	Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	HEXOBJ hObj_edit2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	Ex_ObjSendMessage(hObj_edit2, EM_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"测试密码输入编辑框");
+	HEXOBJ hObj_edit3 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"", EOS_VISIBLE | EES_NUMERICINPUT, 10, 110, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	Ex_ObjSendMessage(hObj_edit3, EM_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"测试数值输入编辑框");
+	HEXOBJ hObj_edit4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试只读编辑框", EOS_VISIBLE | EES_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 
 	HEXOBJ hObj_edit5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW, L"edit", L"透明圆角编辑框", EOS_VISIBLE | EES_HIDESELECTION, 10, 190, 150, 44, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
 	m_hEditFont = _font_createfromfamily(L"微软雅黑", 24, EFS_UNDERLINE | EFS_ITALIC);
@@ -1118,34 +1121,34 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 
 void test_combobox(HWND hWnd)
 {
-	HWND hWnd_combobox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试组合框", 0, 0, 400, 300, 0, 0);
+	HWND hWnd_combobox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试组合框", 0, 0, 450, 300, 0, 0);
 	HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(hWnd_combobox, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_combobox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 30, 100, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"TESTa");
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"1234");
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"qwer他！（）");
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"uiop[");
+	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 30, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"特殊字符[！（）");
 
-	m_hComboBoxButton[0] = Ex_ObjCreate(L"button", L"添加项目", -1, 130, 30, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[0] = Ex_ObjCreate(L"button", L"添加项目", -1, 230, 30, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[0], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[1] = Ex_ObjCreate(L"button", L"插入项目", -1, 130, 70, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[1] = Ex_ObjCreate(L"button", L"插入项目", -1, 230, 70, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[1], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[2] = Ex_ObjCreate(L"button", L"取内容", -1, 130, 110, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[2] = Ex_ObjCreate(L"button", L"取内容", -1, 230, 110, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[2], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[3] = Ex_ObjCreate(L"button", L"置内容", -1, 240, 30, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[3] = Ex_ObjCreate(L"button", L"置内容", -1, 340, 30, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[3], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[4] = Ex_ObjCreate(L"button", L"清空表项", -1, 240, 70, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[4] = Ex_ObjCreate(L"button", L"清空表项", -1, 340, 70, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[4], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[5] = Ex_ObjCreate(L"button", L"弹出列表", -1, 240, 110, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[5] = Ex_ObjCreate(L"button", L"弹出列表", -1, 340, 110, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[5], NM_CLICK, OnComboBoxButtonEvent);
 
-	m_hComboBoxButton[6] = Ex_ObjCreate(L"button", L"删除项目", -1, 130, 150, 100, 30, hExDui_combobox);
+	m_hComboBoxButton[6] = Ex_ObjCreate(L"button", L"删除项目", -1, 230, 150, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[6], NM_CLICK, OnComboBoxButtonEvent);
 
 	Ex_DUIShowWindow(hExDui_combobox, SW_SHOWNORMAL, 0, 0, 0);
@@ -1761,16 +1764,18 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		EX_PAINTSTRUCT ps{ 0 };
 		Ex_ObjBeginPaint(hObj, &ps);
 		_canvas_clear(ps.hCanvas, ExRGB2ARGB(16777215, 100));
-		DOUBLE nCurent = (DOUBLE)Ex_ObjGetLong(hObj, EOL_LPARAM) / 100;
+		DOUBLE nCurrent = (DOUBLE)Ex_ObjGetLong(hObj, EOL_LPARAM) / 100;
+		
 		HEXMATRIX mx = _matrix_create();
 
 		_matrix_translate(mx, (FLOAT)ps.uWidth / 2, (FLOAT)ps.uHeight / 2);
-		_matrix_rotate(mx, (FLOAT)nCurent * 90);
-		_matrix_scale(mx, 1 + (FLOAT)nCurent * 0.25, 1 + (FLOAT)nCurent * 0.25);
+		_matrix_rotate(mx, (FLOAT)nCurrent * 90);
+		_matrix_scale(mx, 1 + (FLOAT)nCurrent * 0.25, 1 + (FLOAT)nCurrent * 0.25);
 		_matrix_translate(mx, -(FLOAT)ps.uWidth / 2, -(FLOAT)ps.uHeight / 2);
 		_canvas_settransform(ps.hCanvas, mx);
 
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
+		output(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
 		_canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)ps.uWidth / 2, (FLOAT)ps.uHeight / 2, 75.f, 50.f);
 		_brush_destroy(hBrush);
 
@@ -1870,7 +1875,7 @@ void test_buttonex(HWND hWnd)
 	Ex_ObjSendMessage(hObj_btnex4, WM_SETICON, 0, (LPARAM)hImg); /* 设置图标; */
 
 	EX_IMAGEINFO IMG0 = { 0 };
-	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal); //注意用完销毁
+	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal); 
 	_img_createfromfile(L"buttonex/4点燃.png", &IMG0.imgHover);
 	_img_createfromfile(L"buttonex/4按下.png", &IMG0.imgDownOrChecked);
 	HEXOBJ hObj_btnex5 = Ex_ObjCreate(L"ButtonEx", NULL, -1, 50, 250, 100, 30, hExDui_buttonex); /*图片按钮*/
@@ -1881,7 +1886,7 @@ void test_buttonex(HWND hWnd)
 	Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(65535, 255), FALSE);
 	Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(65535, 255), FALSE);
 	EX_IMAGEINFO IMG = { 0 };
-	_img_createfromfile(L"buttonex/正常.png", &IMG.imgNormal); //注意用完销毁
+	_img_createfromfile(L"buttonex/正常.png", &IMG.imgNormal);
 	_img_createfromfile(L"buttonex/进入.png", &IMG.imgHover);
 	_img_createfromfile(L"buttonex/按下.png", &IMG.imgDownOrChecked);
 	Ex_ObjSendMessage(hObj_btnex6, BM_SETIMAGE, 0, (LPARAM)&IMG);
@@ -2859,7 +2864,8 @@ void test_carousel(HWND hParent)
 	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
 	_img_createfromfile(L"res/3.jpeg", &hImg);
 	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);
-	Ex_ObjSendMessage(hObj, CM_SETTIMER, 0, 5000);
+	Ex_ObjSetTimer(hObj, 5000);
+
 	// 全部销毁用下面的
 	//Ex_ObjSendMessage(hObj, CM_CLEAR, 0, 0);
 
@@ -2879,9 +2885,14 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
 		{
 			m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex - 1);
 			OUTPUTW(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam, m_tlistViewItemInfo.size());
-			Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), LVM_SETITEMCOUNT, m_tlistViewItemInfo.size(), 0);
-			Ex_ObjInvalidateRect(Ex_ObjGetParent(hObjItem), 0);
+			Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), WM_PAINT, 0, 1);
+			//Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), LVM_SETITEMCOUNT, m_tlistViewItemInfo.size(), 0);
+			//Ex_ObjInvalidateRect(Ex_ObjGetParent(hObjItem), 0);
 		}
+	}
+	if (nCode == NM_DBLCLK)
+	{
+		output(L"OnTemplateListViewItemBtnClick NM_DBLCLK", wParam, lParam);
 	}
 	return 0;
 }
@@ -2897,18 +2908,30 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		{
 			if (ni->nCode == NM_CALCSIZE)//设置表项尺寸事件 默认为列表框宽度/一行文字的高度
 			{
-				__set((void*)ni->lParam, 4, 40);//ni->lParam指向一个size结构,偏移0为宽度,4为高度
+				__set((void*)ni->lParam, 4, 60);//ni->lParam指向一个size结构,偏移0为宽度,4为高度
 				__set((void*)ni->lParam, 12, 0);//  ' 纵间距
 				*lpResult = 1;//拦截这个事件
 				return 1;
 			}
-			else if (ni->nCode == LVN_ITEMCHANGED)//ni->wParam:上次选中索引   ni->lParam:当前选中索引  索引从1开始
+			else if (ni->nCode == LVN_ITEMSELECTD)//ni->wParam:当前选中索引   ni->lParam:上次选中索引  索引从1开始
 			{
-				OUTPUTW(L"TList表项改变", ni->wParam, ni->lParam);
+				output(L"TList表项选中改变", ni->wParam, ni->lParam);
 			}
-			else if (ni->nCode == LVN_HOTTRACK)//ni->wParam:上次悬浮索引   ni->lParam:当前悬浮索引  索引从1开始
+			else if (ni->nCode == LVN_ITEMSELECTC)//ni->wParam:当前选中索引   ni->lParam:上次选中索引  索引从1开始
 			{
-
+				output(L"TList表项取消选中", ni->wParam, ni->lParam);
+			}
+			else if (ni->nCode == LVN_ITEMCHANGED)//ni->wParam:当前选中索引   ni->lParam:上次选中索引  索引从1开始
+			{
+				output(L"TList现行选中项被改变", ni->wParam, ni->lParam);
+			}
+			else if (ni->nCode == LVN_ITEMRCLICK)//ni->wParam:当前选中索引   ni->lParam:当前选中数目
+			{
+				output(L"TList表项被右击", ni->wParam, ni->lParam);
+			}
+			else if (ni->nCode == LVN_ITEMDCLICK)
+			{
+				output(L"TList NM_DBLCLK", ni->wParam, ni->lParam);
 			}
 		}
 	}
@@ -2922,10 +2945,6 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		hObjTmp = Ex_ObjCreateEx(-1, L"Button", 0, -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 3);
 		Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
-
-		/*hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 39, 648, 1, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
-		Ex_ObjSetColor(hObjTmp, COLOR_EX_BACKGROUND, ExRGB2ARGB(14868961, 250), TRUE);
-		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 4);*/
 		*lpResult = 1;
 		return 1;
 	}
@@ -2961,9 +2980,9 @@ void test_templatelistview(HWND hParent)
 	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ hobj_groupbox = Ex_ObjCreate(L"groupbox", L"分组框", -1, 10, 40, 780, 550, hExDui_listview);
-
+	//ELVS_ITEMTRACKING风格需启用
 	HEXOBJ hobj_listview = Ex_ObjCreateEx(-1, L"TListView",
-		NULL, -1, 20, 10, 650, 520,
+		NULL, EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL| ELVS_ITEMTRACKING, 20, 10, 650, 520,
 		hobj_groupbox, 0, -1, 0, 0, OnTemplateListViewProc);
 	if (m_tlistViewItemInfo.size() == 0)
 	{

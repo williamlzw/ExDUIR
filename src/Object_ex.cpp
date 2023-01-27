@@ -2845,7 +2845,7 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS)
                 HEXPATH hPath = NULL;
                 _path_create(EPF_DISABLESCALE, &hPath);
                 _path_open(hPath);
-                _path_beginfigure2(hPath, pObj->c_left_, pObj->c_top_ - pObj->radius_topleft_);
+                _path_beginfigure2(hPath, pObj->c_left_, pObj->c_top_ + pObj->radius_topleft_);
                 _path_addroundedrect(
                     hPath,
                     pObj->c_left_,
@@ -4583,23 +4583,25 @@ BOOL Ex_ObjEnableIME(HEXOBJ hObj, BOOL fEnable)
 BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
 {
     HWND hWnd2 = 0;
-    wnd_s *pWnd = nullptr;
-    wnd_s *pWnd2 = nullptr;
-    obj_s *pObj = nullptr;
-    obj_s *pObj2 = nullptr;
+    wnd_s* pWnd = nullptr;
+    wnd_s* pWnd2 = nullptr;
+    obj_s* pObj = nullptr;
+    obj_s* pObj2 = nullptr;
     INT nError = 0;
     BOOL isObj;
-    if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
+    if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
     {
-        if (pObj->objParent_ != hParent)
+        EXHANDLE OldhParent = pObj->objParent_;
+        if (_wnd_getfromhandle(hParent, &hWnd2, &pWnd2, &pObj2, &isObj, &nError))
         {
-            if (_wnd_getfromhandle(hParent, &hWnd2, &pWnd2, &pObj2, &isObj, &nError))
+            LPARAM SendhParent = hParent;
+            pWnd = pObj->pWnd_;
+            if (pWnd == pWnd2)
             {
-                pWnd = pObj->pWnd_;
-                if (pWnd == pWnd2)
+                if (pObj->objParent_ != hParent)
                 {
                     EXHANDLE Parent = 0;
-                    obj_base *pParnet = nullptr;
+                    obj_base* pParnet = nullptr;
                     _obj_z_clear(hObj, pObj, &Parent, &pParnet);
                     if (isObj)
                     {
@@ -4614,6 +4616,127 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                     _obj_setpos_org(pObj, pObj->hObj_, 0, pObj->left_, pObj->top_, pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_, SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS | SWP_FRAMECHANGED | EOP_DEFAULT, &nError);
                     Ex_ObjUpdate(pObj->objParent_);
                 }
+            }
+            else // 跨窗口置父
+            {
+                EXHANDLE Parent = 0;
+                obj_base* pParnet = nullptr;
+                Ex_ObjSendMessage(hObj, WM_SETPARENTBEFORE, 0, SendhParent); // 通知组件父句柄即将改变
+                {
+                    // Clean EventHandler
+                    EX_HASHTABLE* hTableEvent = pWnd->hTableEvent_;
+                    std::vector<size_t> aKey;
+                    std::vector<size_t> aValue;
+                    HashTable_GetAllKeysAndValues(hTableEvent, aKey, aValue);
+                    for (INT i = 0; i < aValue.size(); i++)
+                    {
+                        EX_EVENT_HANDLER_TABLE* pEventHandlerTable = (EX_EVENT_HANDLER_TABLE*)aValue[i];
+                        INT len = pEventHandlerTable->len;
+                        for (INT j = 0; j < len; j++)
+                        {
+                            if (pEventHandlerTable->handler[j].hObj == hObj)
+                            {
+                                if (--pEventHandlerTable->len)
+                                {
+                                    if (len - j - 1 > 0)
+                                    {
+                                        RtlMoveMemory(&pEventHandlerTable->handler[j], &pEventHandlerTable->handler[j + 1], (len - j - 1) * sizeof(EX_EVENT_HANDLER));
+                                    }
+                                }
+                                else
+                                {
+                                    HashTable_Remove(hTableEvent, aKey[i]);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                _obj_z_clear(hObj, pObj, &Parent, &pParnet); // 先清除链表
+                _layout_deletechild(pWnd->hLayout_, hObj);   // 更换窗口,布局需删除本组件
+                //_path_destroy 路径不涉及窗口 应该不需要销毁(和重建)
+                auto dwTmp = pObj->lpBackgroundImage_;
+                if (dwTmp != 0) // 先停止可能存在的动图时钟,在置父完成后再恢复时钟
+                {
+                    KillTimer(pWnd->hWnd_, (UINT_PTR)((size_t)pObj + TIMER_BKG));
+                    // SetTimer(pWnd2->hWnd_, ((size_t)pObj + TIMER_BKG), ((INT*)dwTmp->lpDelay)[0] * 10, _obj_backgroundimage_timer);
+                }
+                pObj->pWnd_ = pWnd2;
+                // 需要修改主题
+                pObj->hTheme_ = pWnd2->hTheme_;
+                pObj->base.hTheme_ = pWnd2->hTheme_;
+                pObj->base.hexdui_ = pWnd2->hexdui_;
+                // 需要修改本组件的*->初始化画布
+                EX_CLASSINFO* pCls = pObj->pCls_;
+                INT flags = 0;
+                flags = ECVF_GDI_COMPATIBLE;
+                _canvas_destroy(pObj->canvas_obj_); // 先释放本组件原来的画布
+                if (((EX_CLASSINFO*)pCls)->atomName == ATOM_PAGE)
+                {
+                    pObj->canvas_obj_ = _canvas_createfrompwnd(pWnd2, 1, 1, flags, &nError);
+                }
+                else
+                {
+                    pObj->canvas_obj_ = _canvas_createfrompwnd(pWnd2, pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_, flags, &nError);
+                }
+                if (isObj == FALSE) // 不是obj组件,则为窗口,则置父句柄为0
+                    hParent = 0;
+                pObj->objParent_ = hParent;
+                if (pObj->id_ != 0)
+                {
+                    HashTable_Remove(pWnd->hTableObjects_, pObj->id_); // 删除原来的键值对
+                    pObj->id_ = 0;
+                    // HashTable_Set(pWnd2->hTableObjects_, pObj->id_, hObj);//改写到新窗口里面
+                }
+                if (pObj->atomName_ != 0)
+                {
+                    HashTable_Remove(pWnd->hTableObjects_, pObj->atomName_); // 删除原来的键值对
+                    pObj->atomName_ = 0;
+                    // HashTable_Set(pWnd2->hTableObjects_, pObj->atomName_, hObj);//改写到新窗口里面
+                }
+                //_font_destroy(pObj->hFont_);
+                //_obj_theme_load_color_font(pWnd2, pObj, pObj->hTheme_);
+                //_obj_baseproc(pWnd2->hWnd_, hObj, pObj, WM_NCCREATE, 0, (size_t)&pObj->dwStyleEx_);
+                //_obj_baseproc(pWnd2->hWnd_, hObj, pObj, WM_CREATE, 0, (size_t)&pObj->dwStyleEx_);
+                if ((pObj->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP)
+                {
+                    if (!pWnd2->lpIDropTarget_)
+                    {
+                        OleInitialize(0); // 可能已经初始化
+                        pWnd2->lpIDropTarget_ = new DropTarget(pWnd2);
+                        HRESULT hr = RegisterDragDrop(pWnd2->hWnd_, (DropTarget*)(pWnd2->lpIDropTarget_));
+                    }
+                }
+                if (pObj->objVScroll_) //------- 滑块条可能会丢失数据 ,可以嵌套本方法?
+                {
+                    Ex_ObjDestroy(pObj->objVScroll_);
+                    // Ex_ObjSetParent(pObj->objVScroll_, hObj);
+                }
+                if (pObj->objHScroll_)
+                {
+                    Ex_ObjDestroy(pObj->objHScroll_);
+                    // Ex_ObjSetParent(pObj->objHScroll_, hObj);
+                }
+                _obj_create_scrollbar(pWnd2->hWnd_, pWnd2, pObj, hObj, pObj->hTheme_); //-------
+                Ex_ObjSendMessage(hObj, WM_SETPARENTAFTER, 0, SendhParent);            // 通知组件父句柄改变了,如果组件有(存储)子组件也需要修改
+                if (isObj)
+                {
+                    _obj_z_clear(hObj, pObj, &Parent, &pParnet);
+                    _obj_z_set(hObj, pObj, 0, 0, &nError);
+                }
+                //_obj_baseproc(pWnd2->hWnd_, hObj, pObj, WM_SETFONT, (size_t)pObj->hFont_, 0);
+                //_obj_setpos_org(pObj, pObj->hObj_, 0, pObj->left_, pObj->top_, pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_, SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS | SWP_FRAMECHANGED | EOP_DEFAULT, &nError);
+                _obj_baseproc(pWnd2->hWnd_, hObj, pObj, WM_SETTEXT, 0, (size_t)(pObj->pstrTitle_));
+                if (dwTmp != 0)
+                {
+                    if (dwTmp->lpDelay && dwTmp->maxFrame > 1) // 恢复动图
+                        SetTimer(pWnd2->hWnd_, ((size_t)pObj + TIMER_BKG), ((INT*)dwTmp->lpDelay)[0] * 10, _obj_backgroundimage_timer);
+                }
+                InvalidateRect(pWnd2->hWnd_, 0, 1);
+                InvalidateRect(pWnd->hWnd_, 0, 1);
+                // Ex_ObjUpdate(pObj->objParent_);
+                // Ex_ObjUpdate(OldhParent);
+                _obj_invalidaterect(pObj, 0, &nError);
             }
         }
         else

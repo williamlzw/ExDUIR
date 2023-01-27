@@ -460,7 +460,7 @@ void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height)
 			dwEffects = dwEffects | CFE_STRIKEOUT;
 		}
 		pcf->dwEffects = dwEffects;
-		pcf->yHeight = -logfont.lfHeight / GetSysDpi() * 1440 / 96;
+		pcf->yHeight = -logfont.lfHeight * 1440 / 96;
 		pcf->bCharSet = logfont.lfCharSet;
 		pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
 		pcf->crTextColor = ExARGB2RGB(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
@@ -847,6 +847,10 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			_edit_sendmessage(pObj, uMsg, wParam, lParam, &ret);
 			_edit_unint(pObj);
 		}
+		else if (uMsg == WM_SETPARENTAFTER)
+		{
+			_edit_size(hWnd, hObj, pObj);
+		}
 		else if (uMsg == WM_SIZE)
 		{
 			_edit_size(hWnd, hObj, pObj);
@@ -953,6 +957,22 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		}
 		else if (uMsg == WM_SETTEXT)
 		{
+			if (lParam)
+			{
+				if ((pObj->dwStyle_ & EES_NEWLINE) != EES_NEWLINE)//禁止回车时,删除\r\n
+				{
+					std::wstring strValue = (LPCWSTR)lParam;
+					std::wstring::size_type iFind = 0;
+					while (true)
+					{
+						iFind = strValue.find(L"\r\n", iFind);
+						if (std::wstring::npos == iFind)
+							break;
+						strValue.replace(iFind, 2, L"");
+					}
+					return ((ITextServices*)_edit_its(pObj))->TxSetText(strValue.data());
+				}
+			}
 			return ((ITextServices*)_edit_its(pObj))->TxSetText((LPCWSTR)lParam);
 		}
 		else if (uMsg == EM_SETCUEBANNER)
@@ -1032,7 +1052,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			}
 			pcf->dwMask = dwMask;
 			pcf->dwEffects = dwEffects;
-			pcf->yHeight = -logfont.lfHeight / GetSysDpi() * 1440 / 96;
+			pcf->yHeight = -logfont.lfHeight * 1440 / 96;
 			pcf->bCharSet = logfont.lfCharSet;
 			pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
 			RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, LF_FACESIZE);
@@ -1042,6 +1062,16 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		}
 		else
 		{
+			if (uMsg == WM_KEYDOWN)
+			{
+				if (wParam == VK_RETURN)
+				{
+					if ((pObj->dwStyle_ & EES_NEWLINE) != EES_NEWLINE)//拦截回车
+					{
+						return 1;
+					}
+				}
+			}
 			LRESULT ret = _edit_sendmessage(pObj, uMsg, wParam, lParam, &bFree);
 			if (bFree)
 			{

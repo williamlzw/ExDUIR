@@ -10,6 +10,11 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	{
 		_reportlistview_init(hObj);
 	}
+	else if (uMsg == WM_SETPARENTAFTER)
+	{
+		HEXOBJ head = Ex_ObjGetLong(hObj, ERLVL_HOBJHEAD);
+		Ex_ObjSetParent(head, hObj);
+	}
 	else if (uMsg == WM_DESTROY)
 	{
 		_reportlistview_uninit(hObj);
@@ -102,9 +107,75 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	else if (uMsg == LVM_INSERTITEM)
 	{
 		size_t ret = _reportlistview_tr_ins(hObj, (EX_REPORTLIST_ROWINFO*)lParam);
-		if (ret != 0 && wParam != 0)
+		if (ret)
 		{
-			_reportlistview_tr_update(hObj);
+			//_reportlistview_tr_update(hObj);
+			INT nCount = Array_GetCount((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO));
+			obj_s* pObj = nullptr;
+			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
+			{
+				//Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, nCount, LVSICF_NOSCROLL);
+				listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
+				BOOL bHView = (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST;
+				LPVOID pOld = pOwner->lpItems_;
+				if (pOld != 0)
+				{
+					Ex_MemFree(pOld);
+				}
+				pOld = Ex_MemAlloc(nCount * 4);
+				pOwner->lpItems_ = pOld;
+				pOwner->count_items_ = nCount;
+				pOwner->index_select_ = 0;
+				pOwner->index_mouse_ = 0;
+				pOwner->count_selects_ = 0;
+				if (wParam != 0)//是否刷新
+				{
+					_listview_updatesbvalue(hObj, pObj, pOwner, (RECT*)&pObj->c_left_);
+					INT nPosX = 0;
+					INT nPosY = 0;
+					INT nPage = 0;
+					INT nView = 0;
+					INT nLine = 0;
+					if ((LVSICF_NOSCROLL & LVSICF_NOSCROLL) != LVSICF_NOSCROLL)
+					{
+						HEXOBJ hSB = 0;
+						_listview_getscrollbarvalue(pObj, pOwner, TRUE, &hSB, &nPosX, &nLine, &nPage, &nView);
+						nPosX = _listview_checkpos(nPosX, nView, nPage);
+						_listview_getscrollbarvalue(pObj, pOwner, FALSE, &hSB, &nPosY, &nLine, &nPage, &nView);
+						nPosY = _listview_checkpos(nPosY, nView, nPage);
+					}
+					else
+					{
+						nPosX = 0;
+						nPosY = 0;
+					}
+					pOwner->nOffsetX_ = nPosX;
+					pOwner->nOffsetY_ = nPosY;
+					Ex_ObjScrollSetPos(hObj, SB_HORZ, nPosX, TRUE);
+					Ex_ObjScrollSetPos(hObj, SB_VERT, nPosY, TRUE);
+					_listview_updateviewindex(hObj, pObj, pOwner, bHView, (RECT*)&pObj->c_left_);
+					INT nError = 0;
+					_obj_invalidaterect(pObj, 0, &nError);
+					//取 提交的项目索引和当前项目索引
+					int index = 0;
+					if (nCount < 1)
+					{
+						index = 0;
+					}//判断是否需要选中项目
+					if (nCount > 0 && index > 0)
+					{
+						if (index >= nCount)
+						{
+							_listview_reselect(hWnd, hObj, pObj, pOwner, index, TRUE);
+						}
+					}
+					//Ex_ObjSendMessage(hObj, LVM_REDRAWITEMS, 1, nCount);
+					for (INT i = 1; i < nCount; i++)
+					{
+						_listview_redrawitem(pObj, (listview_s*)_obj_pOwner(pObj), i);
+					}
+				}
+			}
 		}
 		return ret;
 	}
@@ -444,6 +515,10 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 					Ex_ObjInvalidateRect(hObj, 0);
 				}
 			}
+		}
+		else
+		{
+			SetCursor(LoadCursorW(0, IDC_ARROW));
 		}
 	}
 	else if (uMsg == WM_SETCURSOR) //禁控件自身再次设置光标产生闪烁

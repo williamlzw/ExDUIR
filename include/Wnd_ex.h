@@ -140,6 +140,7 @@ struct wnd_s
     INT menu_maxwidth_;
     INT crSD_;
     INT Radius_;
+    void* vol_wndptr_;//-143
 };
 
 LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
@@ -177,7 +178,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s *pWnd, ID2D1DeviceContext *pContext, HEXCA
                      EXHANDLE objChildFirst, INT offsetX, INT offsetY, INT pAlpha, BOOL fDX, LPVOID hBorderBrush);
 BOOL _wnd_wm_setcursor(HWND hWnd, wnd_s *pWnd, LPARAM lParam);
 void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
-void _wnd_wm_leavecheck(HWND hWnd, wnd_s *pWnd, HEXOBJ objCheck, HEXOBJ objHittest, obj_s *pObjHittest, BOOL fTrack);
+void _wnd_wm_leavecheck(HWND hWnd, wnd_s *pWnd, HEXOBJ objCheck, HEXOBJ objHittest, obj_s *pObjHittest, LPARAM lParam, BOOL fTrack);
 INT _wnd_destroy(HWND hWnd, wnd_s *pWnd);
 void _wnd_paint_bkg(HWND hWnd, wnd_s *pWnd);
 void _wnd_render_dc(HWND hWnd, wnd_s *pWnd, LPVOID hDC, HEXCANVAS cvDisplay, RECT rcPaint, BOOL fLayer);
@@ -190,8 +191,8 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush);
 BOOL _wnd_wm_paint(wnd_s *pWnd, HWND hWnd);
 BOOL _wnd_wm_getminmaxinfo(wnd_s *pWnd, HWND hWnd, LPARAM lParam);
 void _wnd_wm_buttondown(HWND hWnd, wnd_s *pWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _wnd_obj_untrack(HWND hWnd, wnd_s *pWnd, BOOL fMsgDispatch);
-void _wnd_wm_captionchange(HWND hWnd, wnd_s *pWnd);
+void _wnd_obj_untrack(HWND hWnd, wnd_s *pWnd, LPARAM lParam, BOOL fMsgDispatch);
+void _wnd_wm_captionchange(HWND hWnd, wnd_s *pWnd, LPARAM lParam);
 void _wnd_wm_mouse(wnd_s *pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _wnd_wm_menucontext(HWND hWnd, wnd_s *pWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _wnd_wm_mousewheel(HWND hWnd, wnd_s *pWnd, INT uMsg, WPARAM wParam, LPARAM lParam);

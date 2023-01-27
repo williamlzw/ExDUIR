@@ -181,6 +181,8 @@
 #define WM_EX_PAINTING -10
 // 消息_扩展_属性消息 lParam为EX_OBJ_PROPS结构体
 #define WM_EX_PROPS -11
+// 消息_扩展_左键双击组件
+#define WM_EX_LDCLICK -12
 #pragma endregion msg ex constant
 
 #pragma region paint progress constant
@@ -490,6 +492,13 @@
 #pragma region listview notify constant
 // 事件_列表_现行选中项被改变
 #define LVN_ITEMCHANGED -101
+#define LVN_ITEMSELECTD -102
+// 事件_列表_表项选中状态取消
+#define LVN_ITEMSELECTC -103
+// 事件_列表_表项被右击
+#define LVN_ITEMRCLICK -104
+// 事件_列表_表项被双击
+#define LVN_ITEMDCLICK -105
 // 事件_列表_悬浮跟踪
 #define LVN_HOTTRACK -121
 #pragma endregion listview notify constant
@@ -1095,6 +1104,8 @@
 #define TLVM_SETTEMPLATE 10020
 // 消息_模板列表_取项目句柄 wParam:表项索引,返回表项容器句柄(不在可视区返回0)
 #define TLVM_GETITEMOBJ 10021
+// 消息_模板列表_取鼠标位置表项索引 wParam:X  lParam:Y
+#define TLVM_GETCUIINDEX 10022
 // 消息_模板列表_设置表项悬浮背景色 lParam:ARGB颜色
 #define TLVM_SET_ITEM_HOVERCOLOR 100022
 // 消息_模板列表_设置表项选中背景色 lParam:ARGB颜色
@@ -1155,6 +1166,8 @@
 #define LVM_SORTITEMS 4144
 // 消息_列表_取被选择表项数
 #define LVM_GETSELECTEDCOUNT 4146
+// 消息_列表_取表项选中状态
+#define LVM_GETITEMSELECT 4147
 // 消息_列表_取鼠标所在表项
 #define LVM_GETHOTITEM 4157
 // 消息_列表_取现行选中项
@@ -1485,6 +1498,11 @@
 // 消息_卷帘菜单_置当前选中子项  wParam: 分组索引(从1开始)  lParam : 子项索引(从1开始) return: BOOL 
 #define RM_SETSEL 10016
 #pragma endregion rollmenu message
+
+// 消息_父组件改变前   lParam :EXHANDLE hParent HWND或HEXDUI句柄
+#define WM_SETPARENTBEFORE   55554 
+// 消息_父组件改变后   lParam :EXHANDLE hParent HWND或HEXDUI句柄
+#define WM_SETPARENTAFTER   55555 
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	

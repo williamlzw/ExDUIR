@@ -1,13 +1,44 @@
 #pragma once
 #include "help_ex.h"
 
-
 // 属性_模板列表_表项数组指针
-#define TLVL_ITEM_ARRAY 0 
-// 属性_模板列表_表项悬浮背景色
-#define TLVL_ITEM_HOVERCOLOR 1
-// 属性_模板列表_表项选中背景色
-#define TLVL_ITEM_SELECTCOLOR 2
+#define TLVL_ITEMARRAY 0
+// 属性_模板列表_悬浮背景色
+#define TLVL_HOVERCOLOR 1
+// 属性_模板列表_选中背景色
+#define TLVL_SELECTCOLOR 2
+// 属性_模板列表_边框色
+#define TLVL_BORDERCOLOR 3
+// 属性_模板列表_可视起始索引
+#define TLVL_INDEX_START 4
+// 属性_模板列表_可视起始索引
+#define TLVL_INDEX_END 5
+// 属性_模板列表_横向偏移
+#define TLVL_OFFSETX 6
+// 属性_模板列表_纵向偏移
+#define TLVL_OFFSETY 7
+
+// 属性_模板列表_表项索引
+#define TLVL_ITEM_INDEX 0 
+// 属性_模板列表_表项圆角值1
+#define TLVL_ITEM_RADIUS1 1
+// 属性_模板列表_表项圆角值2
+#define TLVL_ITEM_RADIUS2 2
+// 属性_模板列表_表项圆角值3
+#define TLVL_ITEM_RADIUS3 3
+// 属性_模板列表_表项圆角值4
+#define TLVL_ITEM_RADIUS4 4
+// 属性_模板列表_表项填充色
+#define TLVL_ITEM_FILLCOLOR 5
+// 属性_模板列表_表项启用圆角
+#define TLVL_ITEM_ENABLERADIUS 6
+// 属性_模板列表_表项启用边框
+#define TLVL_ITEM_ENABLEBORDER 7
+// 属性_模板列表_表项边框色
+#define TLVL_ITEM_BORDERCOLOR 8
+// 属性_模板列表_表项边框粗细
+#define TLVL_ITEM_BORDERTHICKNESS 9
+
 
 struct listview_s
 {
@@ -62,10 +93,12 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s *pObj);
 void _listview_lvm_setitemstate(obj_s *pObj, listview_s *pOwner, INT iItem, INT dwState);
 LRESULT CALLBACK _listview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK _tlv_scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _tlv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM lParam);
-void _tlv_repos_items(HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps);
-void _tlv_refill(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld);
+void _tlv_repos_items(HWND hWnd, HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps, BOOL update);
+void _tlv_refill(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_PTR iStart, LONG_PTR iStartOld, LONG_PTR iEnd, LONG_PTR iEndOld, BOOL NeedUpdate, BOOL update);
 void _tlv_array_del(array_s* hArray, int index, HEXOBJ pvData, int type);
-void _tlv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
-void _tlv_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wParram, LPARAM lParam);
+void _tlv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam);
+LRESULT CALLBACK _tlv_childhObj_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+INT CALLBACK _tlv_EnumChild(size_t hObj, size_t lParam);

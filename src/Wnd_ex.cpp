@@ -660,11 +660,11 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM
     }
     else if (uMsg == WM_DESTROY)
     {
-        SetWindowLongPtrW(hWnd, GWLP_WNDPROC, (size_t)pOld);
         if (_wnd_destroy(hWnd, pWnd) != 0)
         {
             PostQuitMessage(0);
         }
+        SetWindowLongPtrW(hWnd, GWLP_WNDPROC, (size_t)pOld);
         VirtualFree(pData, 0, MEM_RELEASE);
     }
     else if (uMsg == WM_ERASEBKGND)
@@ -724,7 +724,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM
     else if (uMsg == WM_NCACTIVATE) //134
     {
         obj_s Obj;
-        _wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittest_, -1, &Obj, TRUE);
+        _wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittest_, -1, &Obj, lParam, TRUE);
         if (wParam == 0)
         {
             HEXOBJ focus = pWnd->objFocus_;
@@ -823,7 +823,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM
     }
     else if (uMsg == WM_CAPTURECHANGED) //533
     {
-        _wnd_wm_captionchange(hWnd, pWnd);
+        _wnd_wm_captionchange(hWnd, pWnd, lParam);
     }
     else if (uMsg == WM_CONTEXTMENU) //被动接受消息123
     {
@@ -883,7 +883,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM
         size_t objHittest = pWnd->objHittest_;
         _wnd_wm_nchittest(pWnd, hWnd, -1);
         obj_s Obj;
-        _wnd_wm_leavecheck(hWnd, pWnd, objHittest, -1, &Obj, TRUE);
+        _wnd_wm_leavecheck(hWnd, pWnd, objHittest, -1, &Obj, lParam, TRUE);
         pWnd->dx_counts_ = 0;
     }
     else if (uMsg == WM_IME_COMPOSITION) //271
@@ -935,7 +935,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM
             {
                 if (((pMenuTrackWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT))
                 {
-                    _wnd_obj_untrack(pMenuTrackWnd->hWnd_, pMenuTrackWnd, TRUE);
+                    _wnd_obj_untrack(pMenuTrackWnd->hWnd_, pMenuTrackWnd, lParam, TRUE);
                     return CallWindowProcW(pOld, hWnd, 0x1EF, -1, 0);
                 }
             }
@@ -1828,7 +1828,7 @@ void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWOR
     }
 }
 
-void _wnd_wm_leavecheck(HWND hWnd, wnd_s *pWnd, HEXOBJ objCheck, HEXOBJ objHittest, obj_s *pObjHittest, BOOL fTrack)
+void _wnd_wm_leavecheck(HWND hWnd, wnd_s *pWnd, HEXOBJ objCheck, HEXOBJ objHittest, obj_s *pObjHittest, LPARAM lParam, BOOL fTrack)
 {
     INT nError = 0;
     if (objHittest == -1)
@@ -1846,14 +1846,14 @@ void _wnd_wm_leavecheck(HWND hWnd, wnd_s *pWnd, HEXOBJ objCheck, HEXOBJ objHitte
             if ((pWnd->dwFlags_ & EWF_BLEAVESENT) != EWF_BLEAVESENT)
             {
                 pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEAVESENT;
-                _obj_baseproc(hWnd, objCheck, pObjCheck, WM_MOUSELEAVE, 0, 0);
+                _obj_baseproc(hWnd, objCheck, pObjCheck, WM_MOUSELEAVE, 0, lParam);
             }
         }
         if (objHittest != 0)
         {
             pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BLEAVESENT);
             pWnd->objHittestPrev_ = objHittest;
-            _obj_baseproc(hWnd, objHittest, pObjHittest, WM_MOUSEHOVER, 0, 0);
+            _obj_baseproc(hWnd, objHittest, pObjHittest, WM_MOUSEHOVER, 0, lParam);
         }
     }
 
@@ -2260,6 +2260,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
             mii.fMask = MIIM_FTYPE | MIIM_SUBMENU | MIIM_ID;
             RECT rcItem{0};
             INT eos;
+            INT offsetTop = 0;
             for (INT i = 0; i < nCount; i++)
             {
                 if (GetMenuItemRect(hParent, (HMENU)hMenu, i, &rcItem))
@@ -2280,25 +2281,27 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
                         }
                     }
                     WCHAR buff[520];
-                    
-                    if (rcItem.left > 0 && rcItem.top >= 0)
-                    {
-                        OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
-                       
-                    }
-                    else if(rcItem.left < 0 && rcItem.top >= 0) {
-                        OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
-                        
-                    }
-
-                    if (rcItem.left < 0) //这里解决WIN10缩放DPI后GetMenuItemRect取值负数问题。
+                    OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
+                    // 组件超出屏幕左边会出现菜单项目左边负数
+                    if (rcItem.left < 0)
                     {
                         INT offset = abs(rcItem.left);
                         rcItem.left = rcItem.left + offset;
-                        rcItem.top = rcItem.top + offset;
                         rcItem.right = rcItem.right + offset;
-                        rcItem.bottom = rcItem.bottom + offset;
                     }
+                    else if (rcItem.left > 0)
+                    {
+                        INT offset = abs(rcItem.left);
+                        rcItem.left = rcItem.left - offset;
+                        rcItem.right = rcItem.right - offset;
+                    }
+                    // 判断第一项，取第一项顶边偏移,组件移到屏幕最顶端二级子菜单第一项会负数
+                    if (rcItem.top < 0 && i == 0)
+                    {
+                        offsetTop = abs(rcItem.top);
+                    }
+                    rcItem.top = rcItem.top + offsetTop;
+                    rcItem.bottom = rcItem.bottom + offsetTop;
                     GetMenuStringW((HMENU)hMenu, i, buff, 520, MF_BYPOSITION);
                     obj_s *pObj = nullptr;
                     nError = 0;
@@ -2505,11 +2508,16 @@ void _wnd_wm_buttondown(HWND hWnd, wnd_s *pWnd, HEXOBJ hObj, obj_s *pObj, INT uM
 {
     if ((pWnd->dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT)
     {
-        pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & (EWF_BLEFTTRACK | EWF_BRIGHTTRACK | EWF_BMIDTRACK));
+        pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & (EWF_BLEFTTRACK | EWF_BRIGHTTRACK | EWF_BMIDTRACK | EWF_BLEFTDTRACK));
         pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BTRACKOBJECT;
         if (uMsg == WM_LBUTTONDOWN)
         {
             pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEFTTRACK;
+            _obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE);
+        }
+        else if (uMsg == WM_LBUTTONDBLCLK)
+        {
+            pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEFTDTRACK;
             _obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE);
         }
         else if (uMsg == WM_RBUTTONDOWN)
@@ -2530,7 +2538,7 @@ void _wnd_wm_buttondown(HWND hWnd, wnd_s *pWnd, HEXOBJ hObj, obj_s *pObj, INT uM
     }
 }
 
-void _wnd_obj_untrack(HWND hWnd, wnd_s *pWnd, BOOL fMsgDispatch)
+void _wnd_obj_untrack(HWND hWnd, wnd_s *pWnd, LPARAM lParam, BOOL fMsgDispatch)
 {
 
     if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT))
@@ -2569,18 +2577,22 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s *pWnd, BOOL fMsgDispatch)
 
                 _wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
                 obj_s Obj;
-                _wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, FALSE);
+                _wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, lParam, FALSE);
             }
             else
             {
                 _wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
                 obj_s Obj;
-                _wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, FALSE);
+                _wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, lParam, FALSE);
                 if (pWnd->objHittest_ == objTrack)
                 {
                     if (((pWnd->dwFlags_ & EWF_BLEFTTRACK) == EWF_BLEFTTRACK))
                     {
                         uMsg = WM_EX_LCLICK;
+                    }
+                    else if (((pWnd->dwFlags_ & EWF_BLEFTDTRACK) == EWF_BLEFTDTRACK))
+                    {
+                        uMsg = WM_EX_LDCLICK;
                     }
                     else if (((pWnd->dwFlags_ & EWF_BRIGHTTRACK) == EWF_BRIGHTTRACK))
                     {
@@ -2598,15 +2610,15 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s *pWnd, BOOL fMsgDispatch)
     }
 }
 
-void _wnd_wm_captionchange(HWND hWnd, wnd_s *pWnd)
+void _wnd_wm_captionchange(HWND hWnd, wnd_s *pWnd, LPARAM lParam)
 {
-    _wnd_obj_untrack(hWnd, pWnd, FALSE);
+    _wnd_obj_untrack(hWnd, pWnd, lParam, FALSE);
 }
 
 void _wnd_wm_mouse(wnd_s *pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     HEXOBJ hObj;
-
+    LPARAM OldlParam = lParam;
     if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) //是否按住组件
     {
         hObj = pWnd->objTrack_;
@@ -2635,7 +2647,7 @@ void _wnd_wm_mouse(wnd_s *pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lPara
     {
         if (wParam == 0)
         {
-            _wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittestPrev_, hObj, pObj, TRUE);
+            _wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittestPrev_, hObj, pObj, OldlParam, TRUE);
         }
         if (hObj != 0)
         {
@@ -2658,7 +2670,7 @@ void _wnd_wm_mouse(wnd_s *pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lPara
             else if (uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONUP || uMsg == WM_MBUTTONUP)
             {
                 _obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
-                _wnd_obj_untrack(hWnd, pWnd, FALSE);
+                _wnd_obj_untrack(hWnd, pWnd, lParam, FALSE);
             }
             else if (uMsg == WM_LBUTTONDBLCLK || uMsg == WM_RBUTTONDBLCLK || uMsg == WM_MBUTTONDBLCLK)
             {
@@ -2666,7 +2678,7 @@ void _wnd_wm_mouse(wnd_s *pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lPara
                 INT newMsg = uMsg;
                 if (uMsg == WM_LBUTTONDBLCLK)
                 {
-                    newMsg = WM_LBUTTONDOWN;
+                    newMsg = WM_LBUTTONDBLCLK;
                 }
                 else if (uMsg == WM_RBUTTONDBLCLK)
                 {
@@ -2894,7 +2906,10 @@ BOOL _wnd_wm_keyboard(wnd_s *pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lP
                 GetKeyboardState(bs);
                 WCHAR charactersPressed[2] = {};
                 ToUnicode(wParam, lParam, bs, charactersPressed, 2, 0);
-                _obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, (WPARAM)charactersPressed[0], lParam);
+                if (pObj != 0)
+                {
+                    _obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, (WPARAM)charactersPressed[0], lParam);
+                }
             }
         }
     }
@@ -3468,6 +3483,10 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex)
         {
             ret = (size_t)pWnd->Radius_;
         }
+        else if (nIndex == -143)
+        {
+            ret = (size_t)pWnd->vol_wndptr_;
+        }
         else
         {
             EX_ASSERT(false, L"Ex_DUIGetLong: unknown EWL index: %ld", nIndex);
@@ -3566,6 +3585,12 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong)
         {
             ret = (size_t)pWnd->Radius_;
             pWnd->Radius_ = dwNewLong;
+            bRedraw = TRUE;
+        }
+        else if (nIndex == -143)
+        {
+            ret = (size_t)pWnd->vol_wndptr_;
+            pWnd->vol_wndptr_ = (void*)dwNewLong;
             bRedraw = TRUE;
         }
         else

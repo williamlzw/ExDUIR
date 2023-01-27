@@ -198,11 +198,6 @@ BOOL Ex_FreeBuffer(LPVOID lpBuffer)
     return Ex_MemFree(lpBuffer);
 }
 
-BOOL Ex_IsDxRender()
-{
-    return ((g_Li.dwFlags & EXGF_RENDER_METHOD_D2D) != 0);
-}
-
 LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex)
 {
     LPVOID ret = 0;

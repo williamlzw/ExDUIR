@@ -244,7 +244,7 @@ public:
 	}
 };
 
-BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, HEXBRUSH hrShadom, LPARAM lParam)
+BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrText, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, HEXBRUSH hrShadom, LPARAM lParam)
 {
 	if (dwLen == -1)
 	{
@@ -1090,7 +1090,7 @@ BOOL _canvas_getsize(HEXCANVAS hCanvas, INT* width, INT* height)
 	return nError == 0;
 }
 
-BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight, IDWriteTextLayout** ppLayout, INT* nError)
+BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight, IDWriteTextLayout** ppLayout, INT* nError)
 {
 	IDWriteTextFormat* pObj = pFont->pObj_;
 	if (layoutWidth < 0)
@@ -1254,7 +1254,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
 	return nError == 0;
 }
 
-BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
+BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
 {
 	if (dwLen == -1)
 	{
@@ -1575,22 +1575,19 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
 	canvas_s* pCanvas = NULL;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if (Ex_IsDxRender())
+		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		if (pMatrix)
 		{
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
-			if (pMatrix)
-			{
-				D2D1::Matrix3x2F mx;
-				_matrix_init(&mx, pMatrix);
-				pContext->SetTransform(&mx);
-			}
-			else
-			{
-				D2D1_MATRIX_3X2_F matrix = { 0 };
-				matrix.m11 = 1.0f;
-				matrix.m22 = 1.0f;
-				pContext->SetTransform(&matrix);
-			}
+			D2D1::Matrix3x2F mx;
+			_matrix_init(&mx, pMatrix);
+			pContext->SetTransform(&mx);
+		}
+		else
+		{
+			D2D1_MATRIX_3X2_F matrix = { 0 };
+			matrix.m11 = 1.0f;
+			matrix.m22 = 1.0f;
+			pContext->SetTransform(&matrix);
 		}
 	}
 	return nError == 0;

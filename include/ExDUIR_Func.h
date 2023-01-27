@@ -1647,12 +1647,6 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
 	LPVOID lpDefaultTheme, size_t dwDefaultThemeLen, LPVOID lpDefaultI18N, size_t dwDefaultI18NLen);
 
 /// <summary>
-/// 是否使用D2D渲染
-/// </summary>
-/// <returns></returns>
-BOOL Ex_IsDxRender();
-
-/// <summary>
 /// 加载位图对象自内存
 /// </summary>
 /// <param name="lpData"></param>
