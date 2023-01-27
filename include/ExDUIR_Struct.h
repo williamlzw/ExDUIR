@@ -674,7 +674,7 @@
 #define NM_KEYDOWN -15
 // 事件_取消鼠标捕获
 #define NM_RELEASEDCAPTURE -16
-// 事件_字符输入
+// 事件_字符输入 wParam 字符码
 #define NM_CHAR -18
 // 事件_提示框即将弹出
 #define NM_TOOLTIPSCREATED -19

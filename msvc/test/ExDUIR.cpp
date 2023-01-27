@@ -82,6 +82,7 @@ void test_exdui()
         Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, 0, 255, TRUE);
+
         std::vector<HEXOBJ> buttons;
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试按钮开关", -1, 10, 30, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标签", -1, 10, 70, 100, 30, hExDui, 102, DT_VCENTER | DT_CENTER, 0, 0, NULL));

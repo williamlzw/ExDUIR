@@ -106,7 +106,7 @@ BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc);
 /// <param name="lpWidth"></param>
 /// <param name="lpHeight"></param>
 /// <returns></returns>
-BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight);
+BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight);
 
 /// <summary>
 /// 画布清除背景
@@ -357,7 +357,7 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
 /// <param name="right"></param>
 /// <param name="bottom"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布画文本2
@@ -373,7 +373,7 @@ BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR l
 /// <param name="right"></param>
 /// <param name="bottom"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布画文本Ex
@@ -392,7 +392,7 @@ BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWST
 /// <param name="crShadom"></param>
 /// <param name="lParam"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, LONG_PTR dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam);
+BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam);
 
 /// <summary>
 /// 画布结束绘制

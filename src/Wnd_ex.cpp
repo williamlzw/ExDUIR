@@ -2194,9 +2194,11 @@ void _wnd_menu_setpos(HWND hWnd, wnd_s *pWnd, tagWINDOWPOS *pos)
             GetWindowRect(hWnd, &rcParent);
             INT height = rcParent.bottom - rcParent.top - GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
             _wnd_getscreenrect(hWnd, &rcParent);
+            
             if (y + height > rcParent.bottom)
             {
                 y = pObj->w_bottom_ - height + __get_int(padding_client, 12);
+                
             }
         }
     }
@@ -2260,6 +2262,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
             mii.fMask = MIIM_FTYPE | MIIM_SUBMENU | MIIM_ID;
             RECT rcItem{0};
             INT eos;
+            INT offsetTop = 0;
             INT offsetTop = 0;
             for (INT i = 0; i < nCount; i++)
             {

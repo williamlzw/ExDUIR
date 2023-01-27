@@ -394,6 +394,7 @@ void test_edit(HWND hWnd)
 	Ex_ObjSendMessage(hObj_edit1, EM_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"背景图片编辑框");
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
+	Ex_ObjSendMessage(hObj_edit1, EM_SETCUEBANNER, ExARGB(150, 150, 150, 255), (LPARAM)L"背景图片编辑框");
 	Ex_ObjSetBackgroundImage(hObj_edit1, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_DEFAULT, 255, TRUE);
 	HEXOBJ hObj_edit2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", EOS_VISIBLE | EES_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 	Ex_ObjSendMessage(hObj_edit2, EM_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"测试密码输入编辑框");
@@ -485,7 +486,7 @@ LRESULT CALLBACK OnListButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		RECT rcObj{ 0 };
 		GetWindowRect(hWnd, &rcWindow);
 		Ex_ObjGetRectEx(hObj, &rcObj, 2);
-		Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + rcObj.bottom, 0, hObj, NULL, OnListButtonWndMsgProc, EMNF_NOSHADOW);
+		Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + Ex_Scale(rcObj.bottom), 0, hObj, NULL, OnListButtonWndMsgProc, EMNF_NOSHADOW);
 		*lpResult = 1;
 		return 1;
 	}
@@ -503,7 +504,6 @@ LRESULT CALLBACK OnListButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 	{
 		OUTPUTW(L"选择", wParam, lParam);
 	}
-
 	return 0;
 }
 
@@ -1286,9 +1286,9 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 		Ex_DUIGetClientRect(hExDui, &rc);
 		FLOAT arrStopPts[2][2];
 		arrStopPts[0][0] = 0;
-		arrStopPts[0][1] = ExRGB2ARGB(ExRGB(10, 127, 213), 220);
+		arrStopPts[0][1] = ExRGBA(10, 127, 213, 220);
 		arrStopPts[1][0] = 1.0;
-		arrStopPts[1][1] = ExRGB2ARGB(ExRGB(200, 10, 10), 220);
+		arrStopPts[1][1] = ExRGBA(200, 10, 10, 220);
 		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, &arrStopPts[0][0], 2);
 		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 		_brush_destroy(hBrush);
@@ -2040,10 +2040,13 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	}
 	else if (uMsg == WM_EX_LCLICK)
 	{
+		auto id = Ex_ObjGetLong(hObj, EOL_ID);
+		output(L"菜单按钮点击,id:", id);
 		EndMenu();
 		*lpResult = 1;
 		return 1;
 	}
+	
 	return 0;
 }
 
@@ -2072,7 +2075,8 @@ LRESULT CALLBACK OnMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	}
 	else if (uMsg == WM_EX_LCLICK)
 	{
-		Ex_ObjGetLong(hObj, EOL_ID);
+		auto id = Ex_ObjGetLong(hObj, EOL_ID);
+		output(L"菜单项目点击,id:", id);
 	}
 	return 0;
 }
@@ -2082,8 +2086,6 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 	if (uMsg == WM_INITMENUPOPUP)
 	{
 		RECT rc{ 0 };
-		HDC dc = GetDC(NULL);
-		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
 		if (wParam == (size_t)m_hMenu) //主菜单
 		{
 			size_t value = 1;
@@ -2098,13 +2100,13 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 			HEXIMAGE hImg;
 			_img_createfromfile(L"custommenu/btn1.png", &hImg);
 
-			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, -1, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"消息", EOS_VISIBLE, rc.left, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 100, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn2.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, rc.left + rc.right * 0.333, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, -2, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"收藏", EOS_VISIBLE, rc.left + rc.right * 0.333, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 101, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			_img_createfromfile(L"custommenu/btn3.png", &hImg);
-			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, -3, -1, hImg, 0, OnMenuBtnMsgProc);
+			Ex_ObjCreateEx(-1, L"button", L"文件", EOS_VISIBLE, rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 102, -1, hImg, 0, OnMenuBtnMsgProc);
 
 			HEXOBJ hObj = Ex_ObjCreateEx(EOS_EX_TRANSPARENT | EOS_EX_TOPMOST, L"Static", 0, EOS_VISIBLE, 0, 0, 45, 38, hExDUI, 0, -1, 0, 0, 0);
 			std::vector<CHAR> data;
@@ -2402,7 +2404,7 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)
+		if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) == STATE_DOWN)
 		{
 			auto userdata = Ex_ObjGetLong(hObj, EOL_USERDATA);
 			//获取按下位置
