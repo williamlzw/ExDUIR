@@ -1428,13 +1428,16 @@
 #define DBM_CLEAR 20003
 #pragma endregion drawingboard message
 
+#pragma region propertygrid message
+// 消息_属性框添加表项 添加行到尾部 wParam:组件_类型  lParam: PGITEM 指针 ----------
+#define PGM_ADDITEM  10010
+// 消息_属性框_取表项值 wParam: 未定义    lParam:表项名  return:表项值文本指针
+#define PGM_GETITEMVALUE  10011
+// 消息_属性框_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
+#define PGM_SETITEMVALUE  10012
+#pragma endregion propertygrid message
+
 #pragma region propertygrid notify
-// 事件_属性框添加表项 添加行到尾部 wParam:组件_类型  lParam: PGITEM 指针 ----------
-#define PGN_ADDITEM  10010
-// 事件_属性框_取表项值 wParam: 未定义    lParam:表项名  return:表项值文本指针
-#define PGN_GETITEMVALUE  10011
-// 事件_属性框_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
-#define PGN_SETITEMVALUE  10012
 // 事件_属性框_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)   lParam:数据指针(可以通过"__get(数据指针,PGL_内存偏移_***)"来获取数据)
 #define PGN_ITEMVALUECHANGE  10012
 #pragma endregion propertygrid notify
