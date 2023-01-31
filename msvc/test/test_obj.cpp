@@ -2888,8 +2888,6 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
 			m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex - 1);
 			OUTPUTW(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam, m_tlistViewItemInfo.size());
 			Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), WM_PAINT, 0, 1);
-			//Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), LVM_SETITEMCOUNT, m_tlistViewItemInfo.size(), 0);
-			//Ex_ObjInvalidateRect(Ex_ObjGetParent(hObjItem), 0);
 		}
 	}
 	if (nCode == NM_DBLCLK)
@@ -3593,7 +3591,7 @@ void test_rollmenu(HWND hWnd)
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageAccountIndex);
 	rollmenu.stateico.rc = { 40, 4, 72, 36 };
 	Ex_ObjSendMessage(m_hObjRM, RM_ADDGROUP, 0, (LPARAM)&rollmenu);
-
+	
 	rollmenu.title = L"视频管理";
 	rollmenu.stateico.eicon = _imglist_get(m_hImageListRollMenu, nImageVideoIndex);
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageVideoIndex);
@@ -3608,7 +3606,7 @@ void test_rollmenu(HWND hWnd)
 	EX_ROLLMENU_ITEM rollitem = { 0 };
 	rollitem.title = L"视频列表";
 	Ex_ObjSendMessage(m_hObjRM, RM_ADDITEM, groupVideoIndex, (LPARAM)&rollitem);
-
+	
 	rollmenu.title = L"数据分析";
 	rollmenu.stateico.eicon = _imglist_get(m_hImageListRollMenu, nImageInfoIndex);
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageInfoIndex);
@@ -3632,4 +3630,54 @@ void test_rollmenu(HWND hWnd)
 	}
 
 	Ex_DUIShowWindow(hExDui_RM, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+HEXDUI m_hExDui_tray;
+HICON m_icon = 0;
+
+LRESULT CALLBACK OnTrayButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	std::vector<CHAR> data;
+	Ex_ReadFile(L"res\\icon.ico", &data);
+	m_icon = (HICON)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_ICON, 0);
+	Ex_DUITrayIconSet(m_hExDui_tray, m_icon, L"ExDuiR");
+	return 0;
+}
+
+LRESULT CALLBACK OnTrayWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_CLOSE)
+	{
+		if (m_icon != 0)
+		{
+			//销毁图标
+			DeleteObject(m_icon);
+			m_icon = 0;
+		}
+	}
+	else if (uMsg == WM_NOTIFY)
+	{
+		EX_NMHDR ni{ 0 };
+		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
+		if (ni.nCode == NM_TRAYICON)
+		{
+			INT16 nType = LOWORD(ni.lParam);
+			if (nType == WM_RBUTTONDOWN)//右键按下托盘图标
+			{
+				Ex_DUITrayIconPopup(m_hExDui_tray, L"弹出托盘内容", L"弹出托盘标题", NIIF_INFO);
+			}
+		}
+	}
+	return 0;
+}
+
+void test_tray(HWND hWnd)
+{
+	HWND hWnd_tray = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试托盘图标", 0, 0, 250, 150, 0, 0);
+	m_hExDui_tray = Ex_DUIBindWindowEx(hWnd_tray, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE, 0, OnTrayWndMsgProc);
+	Ex_DUISetLong(m_hExDui_tray, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	auto button1 = Ex_ObjCreateEx(-1, L"button", L"设置托盘", -1, 50, 30, 120, 30, m_hExDui_tray, 0, DT_VCENTER | DT_CENTER, 0, 0, NULL);
+	Ex_ObjHandleEvent(button1, NM_CLICK, OnTrayButtonEvent);
+	Ex_ObjCreateEx(-1, L"static", L"右击托盘图标可以弹出托盘", -1, 10, 70, 200, 30, m_hExDui_tray, 0, DT_VCENTER | DT_CENTER, 0, 0, NULL);
+	Ex_DUIShowWindow(m_hExDui_tray, SW_SHOWNORMAL, 0, 0, 0);
 }

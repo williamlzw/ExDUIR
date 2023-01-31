@@ -492,6 +492,7 @@
 #pragma region listview notify constant
 // 事件_列表_现行选中项被改变
 #define LVN_ITEMCHANGED -101
+// 事件_列表_表项选中状态
 #define LVN_ITEMSELECTD -102
 // 事件_列表_表项选中状态取消
 #define LVN_ITEMSELECTC -103
@@ -642,7 +643,7 @@
 #define NM_TIMER -90
 // 事件_选中
 #define NM_CHECK -89
-// 事件_托盘图标
+// 事件_托盘图标,WM_NOTIFY窗口消息转换EX_NMHDR结构体nCode
 #define NM_TRAYICON -88
 // 事件_对话框初始化完毕
 #define NM_INTDLG -87

@@ -584,7 +584,7 @@ size_t _wnd_dispatch_msg(HWND hWnd, wnd_s *pWnd, INT uMsg, WPARAM wParam, LPARAM
             ///////////return (size_t)(&_res_pack);
         }
     }
-    else if (nType >= WM_MOUSEFIRST && nType <= WM_MOUSELAST || nType >= 1024 && nType <= 1027)
+    else if (nType >= WM_MOUSEFIRST && nType <= WM_MOUSELAST || nType >= NIN_SELECT && nType <= NIN_BALLOONUSERCLICK)
     {
         _wnd_dispatch_notify(hWnd, pWnd, pWnd->hexdui_, -1, NM_TRAYICON, wParam, lParam, 0);
     }
@@ -3334,9 +3334,10 @@ BOOL Ex_DUITrayIconSet(HEXDUI hExDui, HICON hIcon, LPCWSTR lpwzTips)
             ((NOTIFYICONDATAW *)lpNid)->cbSize = sizeof(NOTIFYICONDATAW);
             ((NOTIFYICONDATAW *)lpNid)->hWnd = hWnd;
             ((NOTIFYICONDATAW *)lpNid)->uID = 1;
-            ((NOTIFYICONDATAW *)lpNid)->uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+            ((NOTIFYICONDATAW *)lpNid)->uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_SHOWTIP;
             ((NOTIFYICONDATAW *)lpNid)->uCallbackMessage = g_Li.dwMessage;
             ((NOTIFYICONDATAW *)lpNid)->hIcon = hIcon;
+            ((NOTIFYICONDATAW*)lpNid)->uVersion = NOTIFYICON_VERSION_4;
             if (len != 0)
             {
                 if (len > 127)
