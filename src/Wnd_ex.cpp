@@ -2371,10 +2371,6 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
             if (prcPadding != 0)
             {
                 RtlMoveMemory(&rcPadding, prcPadding, sizeof(RECT));
-                rcPadding.left = Ex_Scale(rcPadding.left);
-                rcPadding.top = Ex_Scale(rcPadding.top);
-                rcPadding.right = Ex_Scale(rcPadding.right);
-                rcPadding.bottom = Ex_Scale(rcPadding.bottom);
                 ptDst.x = ptDst.x - rcPadding.left;
                 ptDst.y = ptDst.y - rcPadding.top;
                 sz.cx = sz.cx + rcPadding.left + rcPadding.right;
@@ -2390,7 +2386,6 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
                     HEXCANVAS cvShadow = _canvas_createfrompwnd(pWnd, sz.cx, sz.cy, ECVF_GDI_COMPATIBLE, &nError);
                     if (cvShadow != 0)
                     {
-
                         INT alpha = ((pWnd->dwFlags_ & EWF_ACTIVE) == EWF_ACTIVE) ? 255 : 204;
                         alpha = alpha * pWnd->alpha_ / 255;
                         if (_canvas_begindraw(cvShadow))
