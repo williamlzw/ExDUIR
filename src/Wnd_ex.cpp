@@ -3473,10 +3473,6 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex)
         {
             ret = (size_t)pWnd->objFocus_;
         }
-        else if (nIndex == EWL_CRSD)
-        {
-            ret = (size_t)pWnd->crSD_;
-        }
         else if (nIndex == EWL_RADIUS)
         {
             ret = (size_t)pWnd->Radius_;
