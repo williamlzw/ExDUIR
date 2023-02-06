@@ -91,11 +91,11 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         INT width = LOWORD(lParam);
         if (width < 10)
             width = 10;
-        Ex_ObjSetLong(hObj, EILVL_WIDTH, Ex_Scale(width));
+        Ex_ObjSetLong(hObj, EILVL_WIDTH, (width));//Ex_Scale
         INT height = HIWORD(lParam);
         if (height < 10)
             height = 10;
-        Ex_ObjSetLong(hObj, EILVL_HEIGHT, Ex_Scale(height));
+        Ex_ObjSetLong(hObj, EILVL_HEIGHT, (height));//Ex_Scale
         RECT rc{0};
         Ex_ObjGetRect(hObj, &rc);
         Ex_ObjDispatchMessage(hObj, WM_SIZE, 0, MAKELONG(rc.right - rc.left, rc.bottom - rc.top));

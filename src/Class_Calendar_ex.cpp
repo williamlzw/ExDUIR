@@ -378,18 +378,17 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			}
 			EX_PAINTSTRUCT ps{ 0 };
 			RtlMoveMemory(&ps, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT));
-
 			INT nLeft = 0;
 			LPCWSTR wzText = L"";
 			for (INT i = 1; i <= 7; i++)
 			{
 				if (i == 1)
 				{
-					nLeft = 15;
+					nLeft = 15 * g_Li.DpiX;
 				}
 				else
 				{
-					nLeft += Ex_Scale(42);
+					nLeft += 42 * g_Li.DpiX;
 				}
 				switch (i)
 				{
@@ -415,7 +414,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 					wzText = L"日";
 					break;
 				}
-				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 255), wzText, -1, DT_LEFT | DT_VCENTER, nLeft, 0, nLeft + 30, 16);
+				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 255), wzText, -1, DT_LEFT | DT_VCENTER, nLeft, 0, nLeft + 30 * g_Li.DpiX, 16 * g_Li.DpiX);
 			}
 		}
 	}
@@ -430,15 +429,15 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			{
 				if (ni.idFrom == 77704)
 				{
-					__set_int((LPVOID)ni.lParam, 0, Ex_Scale(40));//改变项目宽度
-					__set_int((LPVOID)ni.lParam, 4, Ex_Scale(40));//改变项目高度
+					__set_int((LPVOID)ni.lParam, 0, 40);//改变项目宽度  Ex_Scale
+					__set_int((LPVOID)ni.lParam, 4, 40);//改变项目高度  Ex_Scale
 					__set_int((LPVOID)ni.lParam, 8, 2);//改变项目间隔宽度
 					__set_int((LPVOID)ni.lParam, 12, 1);//改变项目间隔高度
 				}
 				else if (ni.idFrom == 77705)
 				{
-					__set_int((LPVOID)ni.lParam, 0, Ex_Scale(72));//改变项目宽度
-					__set_int((LPVOID)ni.lParam, 4, Ex_Scale(72));//改变项目高度
+					__set_int((LPVOID)ni.lParam, 0, 72);//改变项目宽度  Ex_Scale
+					__set_int((LPVOID)ni.lParam, 4, 72);//改变项目高度  Ex_Scale
 					__set_int((LPVOID)ni.lParam, 8, 2);//改变项目间隔宽度
 					__set_int((LPVOID)ni.lParam, 12, 2);//改变项目间隔高度
 				}
@@ -450,7 +449,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			{
 				EX_CUSTOMDRAW cd{ 0 };
 				RtlMoveMemory(&cd, (LPVOID)ni.lParam, sizeof(EX_CUSTOMDRAW));
-
+				//_canvas_clear(cd.hCanvas, 0);
 				if (ni.idFrom == 77704)
 				{
 					LPVOID lpItems = pOwner->Items;
@@ -464,7 +463,8 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 
 					HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(14120960, 255));
 					EXARGB crText = -1;
-					if (year == pOwner->Year && mon == pOwner->Mon && Mday == pOwner->Mday) {
+					if (year == pOwner->Year && mon == pOwner->Mon && Mday == pOwner->Mday) 
+					{
 						_canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3, cd.rcPaint.top + 3, cd.rcPaint.right - 3, cd.rcPaint.bottom - 3);
 					}
 					else
@@ -480,7 +480,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 					}
 					if (cd.dwState & STATE_HOVER)
 					{
-						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
+						//_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
 						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1, cd.rcPaint.top + 1, cd.rcPaint.right - 1, cd.rcPaint.bottom - 1, 1, 0);
 					}
 					_brush_destroy(hBrush);

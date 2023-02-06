@@ -50,8 +50,8 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			GetWindowRect(hWnd, &lpRect);
 			RECT objRect;
 			Ex_ObjGetRectEx(hObj, &objRect, 2);
-			lpRect.left += objRect.left;
-			lpRect.top += objRect.bottom + 2;
+			lpRect.left += Ex_Scale(objRect.left);//修复弹出定位
+			lpRect.top += Ex_Scale(objRect.bottom + 2);//修复弹出定位
 				
 			HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, 0, 0, 300, 200, WS_BORDER | WS_SYSMENU | WS_POPUP, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 			HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW, (size_t)ptr, _color_picker_onwndmsgproc);
@@ -146,10 +146,10 @@ LRESULT CALLBACK _color_picker_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPAR
 		{
 			if (ni.nCode == NM_CALCSIZE)
 			{
-				__set_int((LPVOID)ni.lParam, 0, Ex_Scale(16));//改变项目宽度
-				__set_int((LPVOID)ni.lParam, 4, Ex_Scale(16));//改变项目高度
-				__set_int((LPVOID)ni.lParam, 8, Ex_Scale(10));//改变项目间隔宽度
-				__set_int((LPVOID)ni.lParam, 12, Ex_Scale(10));//改变项目间隔高度
+				__set_int((LPVOID)ni.lParam, 0, 16);//改变项目宽度 
+				__set_int((LPVOID)ni.lParam, 4, 16);//改变项目高度 
+				__set_int((LPVOID)ni.lParam, 8, 10);//改变项目间隔宽度
+				__set_int((LPVOID)ni.lParam, 12,10);//改变项目间隔高度
 				nIndex = 0;
 				*lpResult = 1;
 				return 1;

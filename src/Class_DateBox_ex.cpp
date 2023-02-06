@@ -278,8 +278,8 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 				GetWindowRect(hWnd, &lpRect);
 				RECT objRect;
 				Ex_ObjGetRectEx(hObj, &objRect, 2);
-				lpRect.left += objRect.left;
-				lpRect.top += objRect.bottom + 2;
+				lpRect.left += Ex_Scale(objRect.left);//修复弹出定位
+				lpRect.top += Ex_Scale(objRect.bottom + 2);//修复弹出定位
 				
 				HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, 0, 0, 300, 200, WS_POPUP, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
 				HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW, (size_t)ptr, _datebox_onwndmsgproc);
@@ -288,7 +288,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 					//创建一个底部标签，防止点击空白标题处，窗口会关闭。
 					HEXOBJ hObj_Static = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 0, 0, 400, 400, hExBox, 0, -1, 0, 0, 0);
 					ptr->nSohwType = 0;
-					SetWindowPos(hWndBox, 0, lpRect.left, lpRect.top, Ex_Scale(310), Ex_Scale(342), SWP_NOZORDER | SWP_NOACTIVATE);
+					SetWindowPos(hWndBox, 0, (lpRect.left), (lpRect.top), Ex_Scale(310), Ex_Scale(342), SWP_NOZORDER | SWP_NOACTIVATE);
 
 					HEXOBJ hObj1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22, hObj_Static, 77701, -1, (LPARAM)ptr, 0, _datebox_onbuttonproc);
 					Ex_ObjSetFontFromFamily(hObj1, 0, 14, -1, FALSE);
@@ -497,11 +497,11 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			{
 				if (i == 1) 
 				{
-					nLeft = 15;
+					nLeft = 15 * g_Li.DpiX;
 				}
 				else 
 				{
-					nLeft += Ex_Scale(42);
+					nLeft += 42 * g_Li.DpiX;
 				}
 				switch (i) 
 				{
@@ -527,7 +527,7 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 					wzText = L"日";
 					break;
 				}
-				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 255), wzText, -1, DT_LEFT | DT_VCENTER, nLeft, 0, nLeft + 30, 16);
+				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 255), wzText, -1, DT_LEFT | DT_VCENTER, nLeft, 0, nLeft + 30 * g_Li.DpiX, 16 * g_Li.DpiX);
 			}
 		}
 	}
@@ -542,15 +542,15 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			{
 				if (ni.idFrom == 77704) 
 				{
-					__set_int((LPVOID)ni.lParam, 0, Ex_Scale(40));//改变项目宽度
-					__set_int((LPVOID)ni.lParam, 4, Ex_Scale(40));//改变项目高度
+					__set_int((LPVOID)ni.lParam, 0, 40);//改变项目宽度 Ex_Scale
+					__set_int((LPVOID)ni.lParam, 4, 40);//改变项目高度 Ex_Scale
 					__set_int((LPVOID)ni.lParam, 8, 2);//改变项目间隔宽度
 					__set_int((LPVOID)ni.lParam, 12, 1);//改变项目间隔高度
 				}
 				else if (ni.idFrom == 77705) 
 				{
-					__set_int((LPVOID)ni.lParam, 0, Ex_Scale(72));//改变项目宽度
-					__set_int((LPVOID)ni.lParam, 4, Ex_Scale(72));//改变项目高度
+					__set_int((LPVOID)ni.lParam, 0, (72));//改变项目宽度 Ex_Scale
+					__set_int((LPVOID)ni.lParam, 4, (72));//改变项目高度 Ex_Scale
 					__set_int((LPVOID)ni.lParam, 8, 2);//改变项目间隔宽度
 					__set_int((LPVOID)ni.lParam, 12, 2);//改变项目间隔高度
 				}
@@ -592,7 +592,7 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 					}
 					if (cd.dwState & STATE_HOVER) 
 					{
-						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
+						//_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
 						_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1, cd.rcPaint.top + 1, cd.rcPaint.right - 1, cd.rcPaint.bottom - 1, 1, 0);
 					}
 					_brush_destroy(hBrush);

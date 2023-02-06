@@ -508,7 +508,7 @@ void _listview_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT*
 	INT height = lpRcClient->bottom - lpRcClient->top;
 	BOOL bHView = ((pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST);
 	INT nCount = pOwner->count_items_;
-	INT iWidth = pOwner->width_item_ + pOwner->width_split_;
+	INT iWidth = (pOwner->width_item_ + pOwner->width_split_) * g_Li.DpiX;
 	INT iHeight = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiX;
 	INT nVS = 0;
 	INT nHS = 0;
@@ -590,7 +590,7 @@ void _listview_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT*
 
 void _listview_updateviewindex(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, BOOL bHView, RECT* lpRcClient)
 {
-	INT nWidth = pOwner->width_item_ + pOwner->width_split_;
+	INT nWidth = (pOwner->width_item_ + pOwner->width_split_) * g_Li.DpiX;
 	INT nHeight = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiY;
 	INT nOffset = 0;
 	INT iStart = 0;
@@ -645,7 +645,7 @@ BOOL _listview_checkitem_view(listview_s* pOwner, INT iItem)
 void _listview_rectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bHView, RECT* rcItem)
 {
 	INT i = iItem - 1;
-	INT nWidth = pOwner->width_item_ + pOwner->width_split_;
+	INT nWidth = (pOwner->width_item_ + pOwner->width_split_) * g_Li.DpiX;//修改
 	INT nHeight = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiY;
 	if (bHView)
 	{
@@ -657,7 +657,7 @@ void _listview_rectfromiitem(obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bH
 		(*rcItem).left = pObj->c_left_ + (i % pOwner->count_view_h_) * nWidth - pOwner->nOffsetX_;
 		(*rcItem).top = pObj->c_top_ + (i / pOwner->count_view_h_) * nHeight - pOwner->nOffsetY_;
 	}
-	(*rcItem).right = (*rcItem).left + pOwner->width_item_;
+	(*rcItem).right = (*rcItem).left + pOwner->width_item_ * g_Li.DpiX;
 	(*rcItem).bottom = (*rcItem).top + pOwner->height_item_ * g_Li.DpiY;
 }
 
@@ -682,7 +682,7 @@ INT _listview_itemfrompos(obj_s* pObj, listview_s* pOwner, INT x, INT y, INT* of
 	INT uItem = 0;
 	if (PtInRect((RECT*)((size_t)pObj + offsetof(obj_s, c_left_)), pt))
 	{
-		INT nWidth = pOwner->width_item_ + pOwner->width_split_;
+		INT nWidth = (pOwner->width_item_ + pOwner->width_split_) * g_Li.DpiX;
 		INT nHeight = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiY;
 		INT realleft = 0;
 		INT offsety = 0;
@@ -692,7 +692,7 @@ INT _listview_itemfrompos(obj_s* pObj, listview_s* pOwner, INT x, INT y, INT* of
 		{
 			realleft = x - pObj->c_left_ + pOwner->nOffsetX_;
 			offsetx = realleft % nWidth;
-			if (offsetx <= pOwner->width_item_)
+			if (offsetx <= pOwner->width_item_ * g_Li.DpiX)
 			{
 				realtop = y - pObj->c_top_ + pOwner->nOffsetY_;
 				offsety = realtop % nHeight;
@@ -723,7 +723,7 @@ INT _listview_itemfrompos(obj_s* pObj, listview_s* pOwner, INT x, INT y, INT* of
 			{
 				realleft = x - pObj->c_left_ + pOwner->nOffsetX_;
 				offsetx = realleft % nWidth;
-				if (offsetx <= pOwner->width_item_)
+				if (offsetx <= pOwner->width_item_ * g_Li.DpiX)
 				{
 					INT tmp = realleft / nWidth;
 					if (tmp < pOwner->count_view_h_)
@@ -763,7 +763,7 @@ void _listview_getscrollbarvalue(obj_s* pObj, listview_s* pOwner, BOOL bHSB, HEX
 		*oPos = pOwner->nOffsetX_;
 		*hSB = pObj->objHScroll_;
 		*nPage = pObj->c_right_ - pObj->c_left_;
-		*nLine = pOwner->width_item_ + pOwner->width_split_;
+		*nLine = (pOwner->width_item_ + pOwner->width_split_) * g_Li.DpiX;
 		*nView = pOwner->width_view_;
 	}
 	else

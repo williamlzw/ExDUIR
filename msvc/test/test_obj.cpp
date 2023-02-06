@@ -678,7 +678,10 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 		{
 			if (ni.nCode == NM_CALCSIZE)
 			{
+				((EX_LISTVIEW_INFO*)ni.lParam)->widthItem = 120;
 				((EX_LISTVIEW_INFO*)ni.lParam)->heightItem = 40;
+				((EX_LISTVIEW_INFO*)ni.lParam)->widthInterval = 0;
+				((EX_LISTVIEW_INFO*)ni.lParam)->heightInterval = 0;
 				*lpResult = 1;
 				return 1;
 			}
@@ -744,10 +747,10 @@ LRESULT CALLBACK OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 void test_listview(HWND hWnd)
 {
-	HWND hWnd_listview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试列表框", 0, 0, 200, 200, 0, 0);
+	HWND hWnd_listview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试列表框", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_listview = Ex_DUIBindWindowEx(hWnd_listview, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_listview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hobj_listview = Ex_ObjCreateEx(EOS_EX_COMPOSITED, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST | EOS_VSCROLL, 30, 30, 150, 150, hExDui_listview, 0, -1, 0, 0, OnListViewMsgProc);
+	HEXOBJ hobj_listview = Ex_ObjCreateEx(EOS_EX_COMPOSITED, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST | EOS_VSCROLL, 30, 30, 550, 450, hExDui_listview, 0, -1, 0, 0, OnListViewMsgProc);
 	Ex_ObjSetColor(hobj_listview, COLOR_EX_BACKGROUND, ExARGB(120, 255, 240, 150), TRUE);
 	const INT itemCount = 100;
 	m_listViewItemInfo.resize(itemCount);
@@ -2745,7 +2748,7 @@ void test_calendar(HWND hParent)
 	HEXDUI hExDui_calendar = Ex_DUIBindWindowEx(hWnd_calendar, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_calendar, EWL_CRBKG, ExARGB(200, 200, 200, 255));
 
-	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER, 50, 50, 310, 320, hExDui_calendar, 100, -1, 0, 0, 0);
+	HEXOBJ MonthCal = Ex_ObjCreateEx(-1, L"Calendar", NULL, EOS_VISIBLE | EOS_BORDER, 50, 50, 336, 336, hExDui_calendar, 100, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(MonthCal, MCN_DATETIME, OnCalendarEvent);
 	Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL, 0, 0, 0);
 }

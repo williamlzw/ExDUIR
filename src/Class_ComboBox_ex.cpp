@@ -359,7 +359,7 @@ LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wPa
         EX_NMHDR *msg = (EX_NMHDR *)lParam;
         if (msg->nCode == NM_CALCSIZE && hDUI == msg->hObjFrom)
         {
-            __set_int((LPVOID)msg->lParam, 4, _obj_getextralong((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), ECBL_ITEMHEIGHT));
+            __set_int((LPVOID)msg->lParam, 4, _obj_getextralong((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), ECBL_ITEMHEIGHT) / g_Li.DpiY);
             __set_int((LPVOID)msg->lParam, 8, 0);
             __set_int((LPVOID)msg->lParam, 12, 0);
             *lpResult = 1;
