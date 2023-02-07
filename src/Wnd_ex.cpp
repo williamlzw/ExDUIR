@@ -422,9 +422,9 @@ BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
             styleNew = styleNew & ~WS_THICKFRAME;
         }
 
-        if (styleNew != __get_int((LPVOID)lParam, 4))
+        if (styleNew != ((STYLESTRUCT*)lParam)->styleNew)
         {
-            __set_int((LPVOID)lParam, 4, styleNew);
+            ((STYLESTRUCT*)lParam)->styleNew = styleNew;
             ret = TRUE;
         }
     }
@@ -2480,22 +2480,25 @@ BOOL _wnd_wm_getminmaxinfo(wnd_s *pWnd, HWND hWnd, LPARAM lParam)
             RtlMoveMemory(&rcDesk, &rcMonitor, 16);
         }
         OffsetRect(&rcDesk, -rcMonitor.left, -rcMonitor.top);
+        sizeof(MINMAXINFO);
+        
         //左边，顶边
-        __set_int((LPVOID)lParam, 16, rcDesk.left - 1);
-        __set_int((LPVOID)lParam, 20, rcDesk.top - 1);
+        ((MINMAXINFO*)lParam)->ptMaxPosition.x = rcDesk.left - 1;
+        ((MINMAXINFO*)lParam)->ptMaxPosition.y = rcDesk.top - 1;
 
         //最大宽度，高度
         INT nMaxWidth = rcDesk.right - rcDesk.left + 2;
         INT nMaxHeight = rcDesk.bottom - rcDesk.top + 2;
-        __set_int((LPVOID)lParam, 8, nMaxWidth);
-        __set_int((LPVOID)lParam, 12, nMaxHeight);
+        ((MINMAXINFO*)lParam)->ptMaxSize.x = nMaxWidth;
+        ((MINMAXINFO*)lParam)->ptMaxSize.y = nMaxHeight;
 
         //允许调整的最小尺寸
-        __set_int((LPVOID)lParam, 24, pWnd->minWidth_);
-        __set_int((LPVOID)lParam, 28, pWnd->minHeight_);
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.x = pWnd->minWidth_;
+        ((MINMAXINFO*)lParam)->ptMinTrackSize.y = pWnd->minHeight_;
+
         //允许调整的最大尺寸
-        __set_int((LPVOID)lParam, 32, nMaxWidth);
-        __set_int((LPVOID)lParam, 36, nMaxHeight);
+        ((MINMAXINFO*)lParam)->ptMaxTrackSize.x = nMaxWidth;
+        ((MINMAXINFO*)lParam)->ptMaxTrackSize.y = nMaxHeight;
         ret = TRUE;
     }
     return ret;
