@@ -2479,9 +2479,9 @@ BOOL _wnd_wm_getminmaxinfo(wnd_s *pWnd, HWND hWnd, LPARAM lParam)
         {
             RtlMoveMemory(&rcDesk, &rcMonitor, 16);
         }
+
         OffsetRect(&rcDesk, -rcMonitor.left, -rcMonitor.top);
-        sizeof(MINMAXINFO);
-        
+
         //左边，顶边
         ((MINMAXINFO*)lParam)->ptMaxPosition.x = rcDesk.left - 1;
         ((MINMAXINFO*)lParam)->ptMaxPosition.y = rcDesk.top - 1;
