@@ -78,6 +78,12 @@ void test_exdui()
     if (m_hWnd != 0)
     {
         HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON , 0, 0);
+        //改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
+        HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, EWL_OBJCAPTION);
+        //标题栏窗口风格就是标题栏子组件的ID
+        HEXOBJ hObjTitle = Ex_ObjGetFromID(hObjCaption, EWS_TITLE);
+        Ex_ObjSetColor(hObjTitle, COLOR_EX_TEXT_NORMAL, ExARGB(120, 230, 21, 255), TRUE);
+        //改变阴影颜色
         Ex_DUISetLong(hExDui, EWL_CRSD, ExARGB(0, 0, 0, 240));
         std::vector<CHAR> imgdata;
         Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
