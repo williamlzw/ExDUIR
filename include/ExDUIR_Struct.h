@@ -1395,12 +1395,26 @@
 #pragma endregion cef browser message
 
 #pragma region cef browser notify
-// 事件_Cef浏览框_已创建
+// 事件_Cef浏览框_已创建,lParam返回HWEBVIEW
 #define CEFN_CREATE 100100
-// 事件_Cef浏览框_加载完毕
+// 事件_Cef浏览框_加载完毕,lParam返回HWEBVIEW
 #define CEFN_LOADEND 100101
-// 事件_Cef浏览框_加载开始
+// 事件_Cef浏览框_加载开始,lParam返回HWEBVIEW
 #define CEFN_LOADSTART 100102
+// 事件_Cef浏览框_加载状态被改变,wParam是否加载bool, lParam是否前进bool
+#define CEFN_LOADINGSTATECHANGE 100103
+// 事件_Cef浏览框_接收到状态信息,lParam返回状态信息LPCWSTR
+#define CEFN_LOADERROR 100104
+// 事件_Cef浏览框_网页图标被改变,wParam返回图标地址LPCWSTR,lParam返回图标备用地址LPCWSTR
+#define CEFN_FAVICONURLCHANGE 100105
+// 事件_Cef浏览框_即将打开新窗口,wParam返回HFRAME框架句柄,lParam返回链接地址
+#define CEFN_BEFOREPOPUP 100106
+// 事件_Cef浏览框_关闭浏览器,lParam返回HWEBVIEW
+#define CEFN_DOCLOSE 100107
+// 事件_Cef浏览框_标题被改变,lParam返回标题LPCWSTR
+#define CEFN_TITLECHANGE 100108
+// 事件_Cef浏览框_地址被改变,lParam返回地址LPCWSTR
+#define CEFN_ADDRESSCHANGE 100109
 #pragma endregion cef browser notify
 
 #pragma region carousel message

@@ -2,8 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>炫彩CEF浏览器-->c++和js相互调用方法测试</title>
-		<script type="text/javascript" src="./kingwolfofsky.js"></script>
+		<title>CEF浏览器-->c++和js相互调用方法测试</title>
 		<script type="text/javascript" >
 			function showValue()
 			{
@@ -37,32 +36,13 @@
             }
             function registerCallBack()
             {
-               // window.register(registerfunction);
                 alert("registerCallBack:" + window.register(registerfunction) );
             }
-            function asyregisterfunction(a, b) {
- 
-                return a + b + 2;
-            }
-            function asyregisterCallBack() {
-                var asyr = window.asyregister("test",asyregisterfunction)
-                alert("registerCallBack:" + asyr);
-            }
-			function show(elem) {
-				var p = kingwolfofsky.getInputPositon(elem);
-				console.dir("光标起始位置：" + elem.selectionStart);
-				console.dir("光标结束位置：" + elem.selectionEnd);
-				console.dir("光标X坐标：" + p.left);
-				console.dir("光标Y坐标：" + p.top);
-			}
 		</script>
 	</head>
 	<body style="width:100%;height:100%;background-color:green;">
 		<p>这是c++与JS交互测试脚本</p>
         <div>
-            <p>
-                <input id="input">cef调用js-点击自动填表试试</input>
-            </p>
             <p>
                 <button onclick="showValue();">window bind 变量say_yes</button>
             </p>
@@ -82,10 +62,6 @@
             <p>
                 <button onclick="registerCallBack();">回调</button>
             </p>
-            <p>
-                <button onclick="asyregisterCallBack();">异步回调暂时没有实现</button>
-            </p>
-				<textarea id="text" onkeyup="show(this)" style="width: 360px; height: 50px;"></textarea>
         </div>
 	</body>
 </html>

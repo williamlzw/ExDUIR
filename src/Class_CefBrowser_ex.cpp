@@ -284,6 +284,16 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
 	{
 		int command_id = attach1;
 	}
+	else if (uMsg == type_TitleChange)
+	{
+		auto title = std::wstring((TCHAR*)attach1);
+		Ex_ObjDispatchNotify(hObj, CEFN_TITLECHANGE, 0, (LPARAM)title.c_str());
+	}
+	else if (uMsg == type_AddressChange)
+	{
+		auto address = std::wstring((TCHAR*)attach1);
+		Ex_ObjDispatchNotify(hObj, CEFN_ADDRESSCHANGE, 0, (LPARAM)address.c_str());
+	}
 	else if (uMsg == type_LoadEnd)
 	{
 		Ex_ObjDispatchNotify(hObj, CEFN_LOADEND, 0, (LPARAM)handler);
@@ -291,6 +301,34 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
 	else if (uMsg == type_LoadStart)
 	{
 		Ex_ObjDispatchNotify(hObj, CEFN_LOADSTART, 0, (LPARAM)handler);
+	}
+	else if (uMsg == type_LoadingStateChange)
+	{
+		bool bLoad = attach1;
+		bool bForward = attach3;
+		Ex_ObjDispatchNotify(hObj, CEFN_LOADINGSTATECHANGE, bLoad, bForward);
+	}
+	else if (uMsg == type_LoadError)
+	{
+		auto status = std::wstring((TCHAR*)attach2);
+		auto url = std::wstring((TCHAR*)attach3);
+		Ex_ObjDispatchNotify(hObj, CEFN_LOADERROR, (WPARAM)status.c_str(), (LPARAM)url.c_str());
+	}
+	else if (uMsg == type_FaviconURLChange)
+	{
+		auto icon1 = std::wstring((TCHAR*)attach1);
+		auto icon2 = std::wstring((TCHAR*)attach2);
+		Ex_ObjDispatchNotify(hObj, CEFN_FAVICONURLCHANGE, (WPARAM)icon1.c_str(), (LPARAM)icon2.c_str());
+	}
+	else if (uMsg == type_BeforePopup)
+	{
+		HFRAME frame = (HFRAME)attach1;
+		auto url = std::wstring((TCHAR*)attach2);
+		Ex_ObjDispatchNotify(hObj, CEFN_BEFOREPOPUP, (WPARAM)frame, (LPARAM)url.c_str());
+	}
+	else if (uMsg == type_DoClose)
+	{
+		Ex_ObjDispatchNotify(hObj, CEFN_DOCLOSE, 0, (LPARAM)handler);
 	}
 	return 0;
 }
