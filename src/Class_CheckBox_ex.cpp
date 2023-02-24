@@ -26,10 +26,12 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
     if (uMsg == WM_CREATE)
     {
-        Ex_ObjInitPropList(hObj, 4);
+        Ex_ObjInitPropList(hObj, 6);
         Ex_ObjSetProp(hObj, ECBP_CRNORMAL, ExARGB(190, 190, 190, 255));
         Ex_ObjSetProp(hObj, ECBP_CRHOVER, ExARGB(200, 200, 200, 255));
         Ex_ObjSetProp(hObj, ECBP_CRCHECKED, ExARGB(0, 200, 200, 255));
+        Ex_ObjSetProp(hObj, ECBP_TEXT, ExARGB(255, 255, 255, 255));
+        Ex_ObjSetProp(hObj, ECBP_CRHOVERCHECK, ExARGB(194, 194, 194, 255));
     }
     else if (uMsg == WM_DESTROY)
     {
@@ -89,13 +91,13 @@ void _checkbox_paint(HEXOBJ hObj)
         rcBlock.right = ps.rcPaint.right;
         rcBlock.bottom = ps.rcPaint.bottom;
 
-        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_HOVER) != 0)
+        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_HOVER) == STATE_HOVER)
         {
             _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ECBP_CRHOVER));
-            crText = ExARGB(194, 194, 194, 255);
+            crText = Ex_ObjGetProp(hObj, ECBP_CRHOVERCHECK);
         }
 
-        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
+        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) == STATE_CHECKED)
         {
             /* 定义选中色 */
             crText = Ex_ObjGetProp(hObj, ECBP_CRCHECKED);
@@ -116,7 +118,7 @@ void _checkbox_paint(HEXOBJ hObj)
         /* 绘制组件文本 */
         _canvas_drawtext(ps.hCanvas,
                          Ex_ObjGetFont(hObj),
-                         ExARGB(255, 255, 255, 255),
+                         Ex_ObjGetProp(hObj, ECBP_TEXT),
                          (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
                          -1,
                          DT_CENTER | DT_VCENTER | DT_SINGLELINE,

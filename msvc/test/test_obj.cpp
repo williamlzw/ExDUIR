@@ -210,7 +210,13 @@ void test_checkbutton(HWND hWnd)
 
 	HEXOBJ hObj_checkbox1 = Ex_ObjCreate(L"CheckBox", L"记住账号", -1, 10, 200, 100, 30, hExDui_checkbutton);
 	Ex_ObjHandleEvent(hObj_checkbox1, NM_CHECK, OnCheckButtonCheckedEvent);
-
+	Ex_ObjSetProp(hObj_checkbox1, ECBP_TEXT, ExARGB(120, 40, 160, 255));
+	Ex_ObjSetProp(hObj_checkbox1, ECBP_CRHOVERCHECK, ExARGB(66, 66, 66, 255));
+	EX_OBJ_PROPS prop;
+	prop.crBkgNormal = ExARGB(120, 80, 55, 255);
+	prop.crBkgHover = ExARGB(150, 100, 80, 255);
+	prop.crBkgDownOrChecked = ExARGB(250, 150, 180, 255);
+	Ex_ObjSendMessage(hObj_checkbox1, WM_EX_PROPS, 0, (size_t)&prop);
 	HEXOBJ hObj_checkbox2 = Ex_ObjCreate(L"CheckBox", L"记住密码", -1, 150, 200, 100, 30, hExDui_checkbutton);
 	Ex_ObjSendMessage(hObj_checkbox2, BM_SETCHECK, 1, 0);
 
@@ -3499,7 +3505,7 @@ void test_miniblink(HWND hWnd)
 	HEXDUI hExDui_miniblink = Ex_DUIBindWindowEx(hWndminiblink, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnMiniblinkWndMsgProc);
 	Ex_DUISetLong(hExDui_miniblink, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	//Ex_ObjMiniblinkBrowserInitialize(0, L"miniblink_4975_x64.dll"); // 64位
-	Ex_ObjMiniblinkBrowserInitialize(0, L"miniblink_4975_x32.dll");
+	Ex_ObjMiniblinkBrowserInitialize(0, L"miniblink_4975_x64.dll");
 	m_hObjBrowser = Ex_ObjCreate(L"MbBrowser", NULL, -1, 50, 50, 700, 500, hExDui_miniblink);
 	std::wstring path = L"file:///J:/ExduiR/msvc/test/res/MP4.html"; //注意,本地路径带#符号不支持
 	Ex_ObjSendMessage(m_hObjBrowser, MBBM_LOAD, MBBL_TYPE_URL, (LPARAM)path.c_str());

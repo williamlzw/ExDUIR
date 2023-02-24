@@ -1517,6 +1517,19 @@
 #define RM_SETSEL 10016
 #pragma endregion rollmenu message
 
+#pragma region checkbox prop
+// 扩展选择盒属性_正常颜色
+#define ECBP_CRNORMAL 1
+// 扩展选择盒属性_悬浮颜色
+#define ECBP_CRHOVER 2
+// 扩展选择盒属性_选中颜色
+#define ECBP_CRCHECKED 3
+// 扩展选择盒属性_字体颜色
+#define ECBP_TEXT 4
+// 扩展选择盒属性_悬浮打钩颜色
+#define ECBP_CRHOVERCHECK 5
+#pragma endregion checkbox prop
+
 // 消息_父组件改变前   lParam :EXHANDLE hParent HWND或HEXDUI句柄
 #define WM_SETPARENTBEFORE   55554 
 // 消息_父组件改变后   lParam :EXHANDLE hParent HWND或HEXDUI句柄

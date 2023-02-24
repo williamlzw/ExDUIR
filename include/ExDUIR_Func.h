@@ -2090,7 +2090,7 @@ BOOL Ex_ObjHandleEvent(HEXOBJ hObj, INT nEvent, EventHandlerPROC pfnCallback);
 /// 初始化属性列表,要注意每次初始化都会清空之前存储的内容,若存储的是指针需要自己先行释放
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nPropCount">-1为哈希表模式,0为不存储属性,正数为属性个数(每个4字节)</param>
+/// <param name="nPropCount">-1为哈希表模式,0为不存储属性,正数为属性个数(每个sizeof(size_t)字节)</param>
 /// <returns></returns>
 BOOL Ex_ObjInitPropList(HEXOBJ hObj, INT nPropCount);
 
