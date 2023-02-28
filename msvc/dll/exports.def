@@ -289,6 +289,8 @@ _img_copyrect
 _img_scale
 _img_clip
 _img_rotateflip
+_img_createfrompngbits
+_img_createfrompngbits2
 ;_img_getthumbnail
 
 ;----------------------------------------

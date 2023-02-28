@@ -27,8 +27,6 @@ struct img_s
 };
 
 HEXIMAGE _img_init(IWICBitmapSource* pObj, INT curframe, INT frames, IWICBitmapDecoder *pDecoder, INT *nError);
-BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE *dstImg);
-BOOL _img_createfrompngbits2(INT nWidth, INT nHeight, BYTE* pbBuffer, HEXIMAGE* dstImg);
 LPSTREAM _img_createfromstream_init(LPVOID lpData, INT dwLen, INT *nError);
 LPVOID _img_getcontext(HEXIMAGE hImage);
 HEXIMAGE _wic_create(INT width, INT height, GUID pFormat, INT *nError);

@@ -780,6 +780,24 @@ BOOL _img_createfromhicon(HICON hIcon, HEXIMAGE* phImg);
 BOOL _img_createfrommemory(LPVOID lpData, size_t dwLen, HEXIMAGE* phImg);
 
 /// <summary>
+/// 图像创建自缓冲区
+/// </summary>
+/// <param name="lpmem">缓冲区,前4字节是width,4-8字节是height,8字节之后是数据</param>
+/// <param name="dstImg">输出图像句柄</param>
+/// <returns></returns>
+BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE* dstImg);
+
+/// <summary>
+/// 图像创建自缓冲区2
+/// </summary>
+/// <param name="nWidth">图像宽度</param>
+/// <param name="nHeight">图像高度</param>
+/// <param name="pbBuffer">数据</param>
+/// <param name="dstImg">输出图像句柄</param>
+/// <returns></returns>
+BOOL _img_createfrompngbits2(INT nWidth, INT nHeight, BYTE* pbBuffer, HEXIMAGE* dstImg);
+
+/// <summary>
 /// 图像创建自资源包
 /// </summary>
 /// <param name="hRes"></param>
