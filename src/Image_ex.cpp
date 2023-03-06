@@ -1075,16 +1075,18 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 	return hImg != 0 ? TRUE : FALSE;
 }
 
-void _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask)
+BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask, HEXIMAGE* phImg)
 {
+	BOOL ret = FALSE;
 	if (nChannel < 0 || nChannel > 3)
 	{
 		nChannel = 0;
 	}
 	nChannel = 3 - nChannel;
 	EX_BITMAPDATA* bdDst = (EX_BITMAPDATA*)Ex_MemAlloc(sizeof(EX_BITMAPDATA));
-
-	if (_img_lock(hImgDst, NULL, WICBitmapLockRead | WICBitmapLockWrite, 2498570, bdDst)) //PixelFormat32bppARGB
+	HEXIMAGE hImg;
+	_img_copy(hImgDst, &hImg);
+	if (_img_lock(hImg, NULL, WICBitmapLockRead | WICBitmapLockWrite, 2498570, bdDst)) //PixelFormat32bppARGB
 	{
 		HEXIMAGE hImgTemp;
 		if (_img_scale(hImgSrc, bdDst->width, bdDst->height, &hImgTemp))
@@ -1106,12 +1108,25 @@ void _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMa
 						bdDst->scan0[y * bdDst->stride + x * 4 + 3] = (BYTE)(chDst * chSrc / 255);
 					}
 				}
+				
+				
 				_img_unlock(hImgTemp, bdSrc);
+				ret = TRUE;
 			}
 			_img_destroy(hImgTemp);
 			Ex_MemFree(bdSrc);
 		}
-		_img_unlock(hImgDst, bdDst);
+		_img_unlock(hImg, bdDst);
+	}
+	if (ret)
+	{
+		auto len = _img_savetomemory(hImg, 0);
+		auto buf = Ex_AllocBuffer(len);
+		_img_savetomemory(hImg, buf);
+		_img_createfrommemory(buf, len, phImg);
+		Ex_FreeBuffer(buf);
 	}
 	Ex_MemFree(bdDst);
+	_img_destroy(hImg);
+	return ret;
 }

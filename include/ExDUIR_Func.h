@@ -882,7 +882,9 @@ BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BI
 /// <param name="hImgSrc">原图句柄</param>
 /// <param name="nChannel">蒙板通道：0:Alpha,1:R,2:G,3:B</param>
 /// <param name="bBlackMask">蒙版通道是否为 黑色/透明</param>
-void _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask);
+/// <param name="phImg">返回图像</param>
+/// <returns></returns>
+BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask, HEXIMAGE* phImg);
 
 /// <summary>
 /// 图像旋转翻转
