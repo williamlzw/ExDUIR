@@ -451,24 +451,21 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	}
 	else if (uMsg == WM_IME_COMPOSITION)
 	{
-		/*auto hImc = ImmGetContext(hWnd);
+		auto hImc = ImmGetContext(hWnd);
 		if (hImc != 0)
 		{
 			POINT pt;
 			GetCursorPos(&pt);
-			RECT rc;
-			Ex_ObjGetRectEx(hObj, &rc, 2);
+			HWND currentWnd = WindowFromPoint(pt);
+			ScreenToClient(currentWnd, &pt);
 
-			Ex_ObjPointTransform(hObj, 0, (INT*)&pt.x, (INT*)&pt.y);
-
-			COMPOSITIONFORM   cf;
+			COMPOSITIONFORM cf;
 			cf.dwStyle = CFS_POINT;
 			cf.ptCurrentPos.x = pt.x;
 			cf.ptCurrentPos.y = pt.y;
-			cf.rcArea = { pt.x,pt.y,pt.x+300,pt.y+300 };
 			ImmSetCompositionWindow(hImc, &cf);
 			ImmReleaseContext(hWnd, hImc);
-		}*/
+		}
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
