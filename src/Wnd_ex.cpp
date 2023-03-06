@@ -3010,6 +3010,7 @@ void _wnd_wm_ime_composition(HWND hWnd, wnd_s *pWnd)
                 LOGFONTW Logfont{0};
                 _font_getlogfont(pObj->hFont_, &Logfont);
                 ImmSetCompositionFontW(hImc, &Logfont);
+                _obj_baseproc(hWnd, hObj, pObj, WM_IME_COMPOSITION, 0, 0);
             }
         }
         ImmReleaseContext(hWnd, hImc);

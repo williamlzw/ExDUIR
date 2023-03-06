@@ -213,3 +213,6 @@ void test_rollmenu(HWND hWnd);
 
 LRESULT CALLBACK OnTrayButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void test_tray(HWND hWnd);
+
+LRESULT CALLBACK OnMaskObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
+void test_mask(HWND hWnd);

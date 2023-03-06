@@ -1074,3 +1074,44 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 	}
 	return hImg != 0 ? TRUE : FALSE;
 }
+
+void _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask)
+{
+	if (nChannel < 0 || nChannel > 3)
+	{
+		nChannel = 0;
+	}
+	nChannel = 3 - nChannel;
+	EX_BITMAPDATA* bdDst = (EX_BITMAPDATA*)Ex_MemAlloc(sizeof(EX_BITMAPDATA));
+
+	if (_img_lock(hImgDst, NULL, WICBitmapLockRead | WICBitmapLockWrite, 2498570, bdDst)) //PixelFormat32bppARGB
+	{
+		HEXIMAGE hImgTemp;
+		if (_img_scale(hImgSrc, bdDst->width, bdDst->height, &hImgTemp))
+		{
+			EX_BITMAPDATA* bdSrc = (EX_BITMAPDATA*)Ex_MemAlloc(sizeof(EX_BITMAPDATA));
+
+			if (_img_lock(hImgTemp, NULL, WICBitmapLockRead, 925707, bdSrc)) //PixelFormat32bppARGB
+			{
+				for (int y = 0; y < bdDst->height; y++)
+				{
+					for (int x = 0; x < bdDst->width; x++)
+					{
+						BYTE chSrc = bdSrc->scan0[y * bdSrc->stride + x * 4 + nChannel];
+						if (bBlackMask)
+						{
+							chSrc = 255 - chSrc;
+						}
+						BYTE chDst = bdDst->scan0[y * bdDst->stride + x * 4 + 3];
+						bdDst->scan0[y * bdDst->stride + x * 4 + 3] = (BYTE)(chDst * chSrc / 255);
+					}
+				}
+				_img_unlock(hImgTemp, bdSrc);
+			}
+			_img_destroy(hImgTemp);
+			Ex_MemFree(bdSrc);
+		}
+		_img_unlock(hImgDst, bdDst);
+	}
+	Ex_MemFree(bdDst);
+}

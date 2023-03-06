@@ -876,6 +876,15 @@ INT _img_height(HEXIMAGE hImg);
 BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BITMAPDATA* lpLockedBitmapData);
 
 /// <summary>
+/// 图像蒙板
+/// </summary>
+/// <param name="hImgDst">目标图句柄</param>
+/// <param name="hImgSrc">原图句柄</param>
+/// <param name="nChannel">蒙板通道：0:Alpha,1:R,2:G,3:B</param>
+/// <param name="bBlackMask">蒙版通道是否为 黑色/透明</param>
+void _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask);
+
+/// <summary>
 /// 图像旋转翻转
 /// </summary>
 /// <param name="hImg"></param>

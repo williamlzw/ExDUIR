@@ -58,7 +58,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_mediaPlay ,         //150 测试媒体播放器
         test_svgAndfont ,          //151 自定义字体和SVG测试
         test_rollmenu ,            //152 测试卷帘菜单
-        test_tray                   //153 测试托盘
+        test_tray,                   //153 测试托盘
+        test_mask                   //154测试蒙板
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -148,6 +149,7 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"自定字体和SVG", -1, 340, 350, 100, 30, hExDui, 151, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试卷帘菜单", -1, 340, 390, 100, 30, hExDui, 152, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试托盘图标", -1, 340, 430, 100, 30, hExDui, 153, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试蒙板", -1, 340, 470, 100, 30, hExDui, 154, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);

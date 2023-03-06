@@ -2914,9 +2914,9 @@ void test_chromium(HWND hParent)
 	Ex_DUISetLong(hExDui_chromium, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	Ex_ObjCefBrowserInitialize(0, L"D:/ExDUIR/Release", L"FTBrowser.dll", NULL, 0, 0, OnBeforeCommandLine);
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
-	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.baidu.com");
+	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.bing.com");
 	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"d:/test.mp4");
-	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"d:/ExDUIR/msvc/test/res/cefjs.html");
+	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"d:/ExDUIR/msvc/test/res/cefjs.html");
 	Ex_ObjHandleEvent(m_hObjChromium, CEFN_LOADEND, OnChromiumEvent);
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -3787,4 +3787,39 @@ void test_tray(HWND hWnd)
 	Ex_ObjHandleEvent(button1, NM_CLICK, OnTrayButtonEvent);
 	Ex_ObjCreateEx(-1, L"static", L"右击托盘图标可以弹出托盘", -1, 10, 70, 200, 30, m_hExDui_tray, 0, DT_VCENTER | DT_CENTER, 0, 0, NULL);
 	Ex_DUIShowWindow(m_hExDui_tray, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+LRESULT CALLBACK OnMaskObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_ERASEBKGND)
+	{
+		HEXIMAGE hImg1 = 0;
+		HEXIMAGE hImg2 = 0;
+		_img_createfromfile(L"mask/mask4.jpg", &hImg1);
+		_img_createfromfile(L"mask/mask1.png", &hImg2);
+		_img_mask(hImg1, hImg2, 0, FALSE);
+		auto len = _img_savetomemory(hImg1, 0);
+		auto buf = Ex_AllocBuffer(len);
+		_img_savetomemory(hImg1, buf);
+		HEXIMAGE hImg3;
+		_img_createfrommemory(buf, len, &hImg3);
+		_canvas_drawimagerect(wParam, hImg3, 0, 0, 250, 250, 255);
+		_img_destroy(hImg1);
+		_img_destroy(hImg2);
+		_img_destroy(hImg3);
+		Ex_FreeBuffer(buf);
+		*lpResult = 1;
+		return 1;
+	}
+	return 0;
+}
+
+void test_mask(HWND hWnd)
+{
+	HWND hWnd_mask = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试蒙板", 0, 0, 400, 400, 0, 0);
+	auto hExDui_mask = Ex_DUIBindWindowEx(hWnd_mask, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE, 0, 0);
+	Ex_DUISetLong(hExDui_mask, EWL_CRBKG, ExRGB2ARGB(16711680, 255));
+
+	Ex_ObjCreateEx(-1, L"static", L"", -1, 50, 50, 300, 300, hExDui_mask, 0, DT_VCENTER | DT_CENTER, 0, 0, OnMaskObjMsgProc);
+	Ex_DUIShowWindow(hExDui_mask, SW_SHOWNORMAL, 0, 0, 0);
 }
