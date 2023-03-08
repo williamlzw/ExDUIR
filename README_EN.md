@@ -155,3 +155,7 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ![image](demo_image/demo_carousel.png)
 ### demo rollmenu:
 ![image](demo_image/demo_rollmenu.png)
+### demo tray:
+![image](demo_image/demo_trayicon.png)
+### demo mask:
+![image](demo_image/demo_mask.png)

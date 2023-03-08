@@ -1084,6 +1084,8 @@
 #define ERLS_DRAWVERTICALLINE 0x200
 // 报表风格_无表头
 #define ERLS_NOHEAD 0x400
+// 报表风格_可编辑
+#define ERLS_EDIT 0x800
 
 // 报表表头风格_可点击
 #define ERLV_CS_CLICKABLE 0x01
@@ -1091,6 +1093,8 @@
 #define ERLV_CS_LOCKWIDTH 0x02
 // 报表表头风格_可排序 (前提是得可点击)
 #define ERLV_CS_SORTABLE 0x04
+// 报表表头风格_自定义列表头背景色
+#define ERLV_CS_COLCOR 0x08
 
 #pragma region template listview message constant
 // 消息_模板列表_创建 返回值将作为列表项控件
@@ -1127,6 +1131,14 @@
 #define LVM_DELETEITEM 4104
 // 消息_列表_清空表项
 #define LVM_DELETEALLITEMS 4105
+// 消息_报表_获取单元格信息   lParam: EX_REPORTLIST_CELLINFO*
+#define LVM_GETCELL 4106
+// 消息_报表_设置单元格信息   wParam:是否排除文本  lParam: EX_REPORTLIST_CELLINFO*
+#define LVM_SETCELL 4107
+// 消息_报表_获取单元格lParam   wParam :iRow lParam:iCol  return: LPARAM
+#define LVM_GETCELLLPARAM 4108
+// 消息_报表_设置单元格lParam    wParam :新值  lParam: 低位 行 高位 列
+#define LVM_SETCELLLPARAM 4109 
 // 消息_列表_取表项矩形
 #define LVM_GETITEMRECT 4110
 // 消息_列表_命中测试 lParam为 返回列表命中测试_
@@ -1221,6 +1233,15 @@
 #define ERLV_RS_CHECKBOX 0x01
 // 报表表行风格_检查框为选中状态
 #define ERLV_RS_CHECKBOX_CHECK 0x02
+//报表表行风格_自定义整行格背景色
+#define ERLV_RS_ROWCOLCOR 0x04
+
+//报表单元格风格_背景色
+#define ERLV_RS_CELLCOLCOR 0x01
+//报表单元格风格_文本色
+#define ERLV_RS_CELLTEXTCOLCOR 0x02
+//报表单元格风格_字体
+#define ERLV_RS_CELLFONT 0x04
 
 // 图标列表风格_表项以按钮形式呈现
 #define EILVS_BUTTON 0x400
@@ -1581,9 +1602,6 @@ typedef LRESULT(CALLBACK* ReportListViewOrderPROC)(HEXOBJ, UINT, LPVOID, UINT, L
 typedef void(CALLBACK* CefPROC)(void* command_line);
 
 
-
-
-
 // 接收WM_NOTIFY通知信息结构
 struct EX_NMHDR
 {
@@ -1669,27 +1687,41 @@ struct EX_REPORTLIST_COLUMNINFO
 	DWORD dwTextFormat; //列文本格式
 	EXARGB crText;      //列文本颜色
 	UINT nInsertIndex;  //插入位置,0为在最后
+	EXARGB crBkg;		//列表头背景颜色, dwStyle具有ERLV_CS_COLCOR风格时生效
 };
 
 // 报表项目信息结构
 struct EX_REPORTLIST_ITEMINFO
 {
 	UINT iRow;         //所在行[IN / OUT]
-	UINT iCol;         //所在列[IN / OUT]
 	DWORD dwStyle;     //项目行风格(同行共用)
-	LPCWSTR pwzText;   //项目文本
 	DWORD nImageIndex; //项目图片组索引(同行共用)
 	LPARAM lParam;     //项目参数(同行共用)
 	DWORD dwState;     //项目状态(同行共用)
+	EXARGB rowBkgCr;   //dwStyle具有ERLV_RS_ROWCOLCOR风格时,整行的背景色
 };
 
-// 报表行信息结构
+// 报表单元格信息 (用户取/置数据时使用)  对应内部 结构体 reportlistview_td_s
+struct EX_REPORTLIST_CELLINFO
+{
+	UINT iRow;         //所在行[IN / OUT]
+	UINT iCol;         //所在列[IN / OUT]
+	LPCWSTR pwzText;   //项目文本
+	DWORD cellStyle;   //单元格风格
+	EXARGB cellBkgCr;   //cellStyle具有"ERLV_RS_CELLCOLCOR"风格时,单元格的背景色
+	EXARGB cellTextCr; //cellStyle具有"ERLV_RS_CELLTEXTCOLCOR"风格时,单元格的文本色
+	HEXFONT cellFont;   //cellStyle具有"ERLV_RS_CELLFONT"风格时,单元格的字体,该字体(修改时)无需手动释放
+	LPARAM lParam;     //单元格参数
+};
+
+// 报表插入表项结构体
 struct EX_REPORTLIST_ROWINFO
 {
 	UINT nInsertIndex = 0; //插入位置,0为最后
 	DWORD dwStyle;         //项目行风格 ERLV_RS_
 	LPARAM lParam;         //项目附加参数
 	DWORD nImageIndex;     //图片组索引
+	EXARGB rowBkgCr;	   //dwStyle具有"ERLV_RS_ROWCOLCOR"风格时,整行的背景色
 };
 
 // 报表排序信息结构

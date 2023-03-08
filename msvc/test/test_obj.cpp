@@ -1548,7 +1548,7 @@ void test_reportlistview(HWND hWnd)
 	HWND hWnd_reportlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 400, 0, 0);
 	HEXDUI hExDui_reportlistview = Ex_DUIBindWindowEx(hWnd_reportlistview, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_reportlistview, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", EOS_BORDER | EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
+	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", EOS_BORDER | EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL | ERLS_EDIT | ERLS_DRAWVERTICALLINE, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGBA(120, 120, 120, 255), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_RLV_HEAD, ExRGB2ARGB(16777215, 250), FALSE);
@@ -1581,8 +1581,9 @@ void test_reportlistview(HWND hWnd)
 	col.pwzText = L"居中可点击";
 	col.nWidth = 100;
 	col.crText = ExRGB2ARGB(65535, 255);
-	col.dwStyle = ERLV_CS_CLICKABLE;
+	col.dwStyle = ERLV_CS_CLICKABLE | ERLV_CS_COLCOR;
 	col.dwTextFormat = DT_CENTER | DT_VCENTER;
+	col.crBkg = ExRGBA(120, 230, 180, 255);
 	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
 
 	col.pwzText = L"可排序";
@@ -1594,33 +1595,46 @@ void test_reportlistview(HWND hWnd)
 
 	EX_REPORTLIST_ROWINFO row = { 0 };
 	EX_REPORTLIST_ITEMINFO item = { 0 };
-
+	EX_REPORTLIST_CELLINFO cell = { 0 };
 	for (INT i = 1; i <= 10000; i++)
 	{
 		//先插入表项
 		row.lParam = i + 1;
 		item.nImageIndex = i;
-		// 下面这句控制项目是否带选择框
-		item.dwStyle = (i % 3 == 0 ? ERLV_RS_CHECKBOX | ERLV_RS_CHECKBOX_CHECK : 0);
+		// 下面这句控制项目是否带选择框及整行背景色
+		item.dwStyle = (i % 3 == 0 ? ERLV_RS_CHECKBOX | ERLV_RS_CHECKBOX_CHECK | ERLV_RS_ROWCOLCOR : 0);
+		item.rowBkgCr = ExRGBA(31, 100, 200, 255);
 		item.iRow = Ex_ObjSendMessage(m_hReportListView, LVM_INSERTITEM, 0, (size_t)&row);
 		//先插入表项
-		item.iCol = 1;
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
+		cell.iCol = 1;
+		cell.iRow = i;
 		std::wstring wstr = L"第" + std::to_wstring(i) + L"项";
-		item.pwzText = wstr.c_str();
-		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
+		cell.pwzText = wstr.c_str();
+		cell.cellStyle = 0;
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 
-		item.iCol = 2;
-		item.pwzText = L"第二列";
-		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
+		cell.iCol = 2;
+		cell.iRow = i;
+		cell.pwzText = L"第二列";
+		cell.cellStyle = ERLV_RS_CELLCOLCOR;
+		cell.cellBkgCr = ExRGBA(130, 130, 25, 255);
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 
-		item.iCol = 3;
-		item.pwzText = L"第三列";
-		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
+		cell.iCol = 3;
+		cell.iRow = i;
+		cell.pwzText = L"第三列";
+		cell.cellStyle = ERLV_RS_CELLTEXTCOLCOR;
+		cell.cellTextCr = ExRGBA(130, 25, 130, 255);
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 
-		item.iCol = 4;
+		cell.iCol = 4;
+		cell.iRow = i;
 		auto str = std::to_wstring(Random(0, 1000));
-		item.pwzText = str.c_str();
-		Ex_ObjSendMessage(m_hReportListView, LVM_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
+		cell.pwzText = str.c_str();
+		cell.cellStyle = ERLV_RS_CELLFONT;
+		cell.cellFont = _font_createfromfamily(L"微软雅黑", 20, 0);
+		Ex_ObjSendMessage(m_hReportListView, LVM_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 	}
 	Ex_ObjSendMessage(m_hReportListView, LVM_UPDATE, 0, 0); //整体更新,以加快绘制速度
 	Ex_ObjHandleEvent(m_hReportListView, LVN_ITEMCHANGED, OnReportListViewItemChange);

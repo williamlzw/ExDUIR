@@ -54,16 +54,55 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	}
 	else if (uMsg == LVM_GETITEM)
 	{
-		return _reportlistview_li_get(hObj, (EX_REPORTLIST_ITEMINFO*)lParam, FALSE) ? 1 : 0;
+		return _reportlistview_li_get(hObj, (EX_REPORTLIST_ITEMINFO*)lParam);
 	}
 	else if (uMsg == LVM_SETITEM)
 	{
-		BOOL ret = _reportlistview_li_set(hObj, (EX_REPORTLIST_ITEMINFO*)lParam, FALSE);
+		EX_REPORTLIST_ITEMINFO* iteminfo = (EX_REPORTLIST_ITEMINFO*)lParam;
+		INT nIndexTR = iteminfo->iRow;
+		reportlistview_tr_s* pTR = (reportlistview_tr_s*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO), nIndexTR);
+		if (pTR != 0)
+		{
+			pTR->nImageIndex_ = iteminfo->nImageIndex;
+			pTR->dwStyle_ = iteminfo->dwStyle;
+			pTR->lParam_ = iteminfo->lParam;
+			pTR->rowbkcr_ = iteminfo->rowBkgCr;
+		}
 		if (wParam != 0)
 		{
 			Ex_ObjInvalidateRect(hObj, 0);
 		}
-		return ret;
+		return TRUE;
+	}
+	else if (uMsg == LVM_GETCELL)
+	{
+		return _reportlistview_li_getcell(hObj, (EX_REPORTLIST_CELLINFO*)lParam, FALSE);
+	}
+	else if (uMsg == LVM_SETCELL)
+	{
+		return _reportlistview_li_setcell(hObj, (EX_REPORTLIST_CELLINFO*)lParam, FALSE, wParam);
+	}
+	else if (uMsg == LVM_GETCELLLPARAM)
+	{
+		reportlistview_tr_s* pTR = (reportlistview_tr_s*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO), wParam);
+		if (pTR != 0)
+		{
+			reportlistview_td_s* pTD = _reportlistview_td_get(hObj, wParam, lParam);
+			return pTD->lParam_;
+		}
+		return 0;
+	}
+	else if (uMsg == LVM_SETCELLLPARAM)
+	{
+		INT nIndexTR = LOWORD(lParam);// iRow;
+		INT nIndexTC = HIWORD(lParam);//iCol;
+		reportlistview_td_s* pTD = _reportlistview_td_get(hObj, nIndexTR, nIndexTC);
+		if (pTD != 0)
+		{
+			pTD->lParam_ = wParam;
+			return TRUE;
+		}
+		return FALSE;
 	}
 	else if (uMsg == LVM_SETIMAGELIST) //设置列表图片组 wParam为是否立即重画，lParam为图片组句柄
 	{
@@ -94,7 +133,7 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		{
 			((EX_REPORTLIST_ITEMINFO*)lParam)->iRow = wParam;
 		}
-		return _reportlistview_li_get(hObj, (EX_REPORTLIST_ITEMINFO*)lParam, TRUE) ? 1 : 0;
+		return _reportlistview_li_getcell(hObj, (EX_REPORTLIST_CELLINFO*)lParam, TRUE);
 	}
 	else if (uMsg == LVM_SETITEMTEXT)
 	{
@@ -102,19 +141,17 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		{
 			((EX_REPORTLIST_ITEMINFO*)lParam)->iRow = wParam;
 		}
-		return _reportlistview_li_set(hObj, (EX_REPORTLIST_ITEMINFO*)lParam, TRUE) ? 1 : 0;
+		return _reportlistview_li_setcell(hObj, (EX_REPORTLIST_CELLINFO*)lParam, TRUE);
 	}
 	else if (uMsg == LVM_INSERTITEM)
 	{
 		size_t ret = _reportlistview_tr_ins(hObj, (EX_REPORTLIST_ROWINFO*)lParam);
 		if (ret)
 		{
-			//_reportlistview_tr_update(hObj);
 			INT nCount = Array_GetCount((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO));
 			obj_s* pObj = nullptr;
 			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 			{
-				//Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, nCount, LVSICF_NOSCROLL);
 				listview_s* pOwner = (listview_s*)_obj_pOwner(pObj);
 				BOOL bHView = (pObj->dwStyle_ & ELVS_HORIZONTALLIST) == ELVS_HORIZONTALLIST;
 				LPVOID pOld = pOwner->lpItems_;
@@ -169,7 +206,7 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 							_listview_reselect(hWnd, hObj, pObj, pOwner, index, TRUE);
 						}
 					}
-					//Ex_ObjSendMessage(hObj, LVM_REDRAWITEMS, 1, nCount);
+
 					for (INT i = 1; i < nCount; i++)
 					{
 						_listview_redrawitem(pObj, (listview_s*)_obj_pOwner(pObj), i);
@@ -263,14 +300,19 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	}
 	else if (uMsg == LVM_SETCOLUMN)
 	{
+		EX_REPORTLIST_COLUMNINFO* info = (EX_REPORTLIST_COLUMNINFO*)lParam;
 		EX_REPORTLIST_COLUMNINFO* ptr = (EX_REPORTLIST_COLUMNINFO*)__ptr_index((LPVOID)Ex_ObjGetLong(hObj, ERLVL_TCINFO), Ex_ObjGetLong(hObj, ERLVL_CTCS), LOWORD(wParam), sizeof(EX_REPORTLIST_COLUMNINFO));
 		size_t ret = 0;
 		if (ptr != 0)
 		{
-			RtlMoveMemory(ptr, (LPVOID)lParam, sizeof(EX_REPORTLIST_COLUMNINFO));
 			LPCWSTR old = ptr->pwzText;
-			ptr->pwzText = StrDupW(((EX_REPORTLIST_COLUMNINFO*)lParam)->pwzText);
+			ptr->pwzText = StrDupW(info->pwzText);
 			Ex_MemFree((LPVOID)old);
+			ptr->nWidth = info->nWidth;
+			ptr->dwStyle = info->dwStyle;
+			ptr->dwTextFormat = info->dwTextFormat;
+			ptr->crText = info->crText;
+			ptr->crBkg = info->crBkg;
 			ret = 1;
 		}
 		if (ret != 0 && HIWORD(wParam) != 0)
@@ -303,10 +345,6 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		if (ptr != 0)
 		{
 			ret = (size_t)ptr->pwzText;
-		}
-		if (ret != 0 && HIWORD(wParam) != 0)
-		{
-			_reportlistview_tc_update(hObj);
 		}
 		return ret;
 	}
@@ -350,6 +388,65 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	{
 		return _reportlistview_gethitcol(hObj, lParam);
 	}
+	else if (uMsg == WM_EX_LDCLICK)
+	{
+		if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ERLS_EDIT) == ERLS_EDIT)//可编辑 
+		{
+			obj_s* pObj = nullptr;
+			int nError = 0;
+			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
+			{
+				listview_s* pOwner = (listview_s*)Ex_ObjGetLong(hObj, EOL_OWNER);
+				INT nCount = pOwner->count_items_;//项目总数
+				if (nCount > 0 && lParam)//有这么巧点击了(0,0)位置?
+				{
+					INT x = GET_X_LPARAM(lParam);
+					INT y = GET_Y_LPARAM(lParam);
+					INT ox = 0;
+					INT oy = 0;
+					INT iCur = _listview_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
+					LPVOID pTCs = (LPVOID)Ex_ObjGetLong(hObj, ERLVL_TCINFO);
+					INT cTCs = Ex_ObjGetLong(hObj, ERLVL_CTCS);
+					INT nOffsetX = -Ex_ObjScrollGetPos(hObj, SB_HORZ);
+					INT itemhight = (Ex_ObjGetLong(hObj, ERLVL_ITEMHEIGHT) + ((listview_s*)pOwner)->height_split_) * g_Li.DpiY;
+					INT ColWidth = 0;
+					INT Colindex = 0;
+					if (pTCs != 0 && cTCs > 0)
+					{
+						for (INT i = 0; i < cTCs; i++)
+						{
+							EX_REPORTLIST_COLUMNINFO* ptr = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTCs + sizeof(EX_REPORTLIST_COLUMNINFO) * i);
+							INT nColWidth = ptr->nWidth;
+							if (nColWidth > 0)
+							{
+								if (x >= nOffsetX && x < nOffsetX + nColWidth)
+								{
+									ColWidth = nColWidth; Colindex = i + 1;
+									break;
+								}
+							}
+							nOffsetX = nOffsetX + nColWidth;
+						}
+					}
+					if (Colindex && iCur)
+					{
+						HEXOBJ edit = Ex_ObjGetLong(hObj, ERLVL_HEDIT);
+						INT nIndexTC = Colindex;
+						reportlistview_tr_s* pTR = (reportlistview_tr_s*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO), iCur);
+						if (pTR != 0)
+						{
+							LPCWSTR pwzText = ((reportlistview_td_s*)((size_t)pTR->pTDInfo_ + (nIndexTC - 1) * sizeof(reportlistview_td_s)))->wzText_;
+							Ex_ObjSetText(edit, pwzText, TRUE);
+						}
+						Ex_ObjSetLong(edit, EOL_USERDATA, MAKELPARAM(iCur, Colindex));
+						Ex_ObjSetPos(edit, 0, nOffsetX - g_Li.DpiY, y - oy - 2 * g_Li.DpiY, ColWidth + 2 * g_Li.DpiY, itemhight + 2 * g_Li.DpiY, SWP_EX_NODPISCALE);
+						Ex_ObjShow(edit, TRUE);
+					}
+				}
+			}
+			return 0;//可编辑时不再执行双击判断了
+		}
+	}
 	else if (uMsg == RLVM_SETCHECK)
 	{
 		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO);
@@ -364,7 +461,6 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			{
 				__del((LPVOID)ptr, 4, ERLV_RS_CHECKBOX_CHECK);
 			}
-
 		}
 		Ex_ObjInvalidateRect(hObj, 0);
 		return 0;
@@ -460,12 +556,10 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 	{
 		INT rHitBlock = 0;
 		INT nIndex = _reportlistview_head_hittest(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), TRUE, &rHitBlock);
-
 		if (nIndex != 0)
 		{
 			if (rHitBlock == 2 || (Ex_ObjGetUIState(hObj) & STATE_ALLOWDRAG) != 0) //如果是正在拖动,则更新拖动列的宽度,并更新列表
 			{
-
 				SetCursor(LoadCursorW(0, IDC_SIZEWE));
 				if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0)
 				{
@@ -477,7 +571,6 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 					if (hObjList != 0)
 					{
 						INT w = -Ex_ObjScrollGetPos(hObjList, SB_HORZ);
-
 						LPVOID pTCs = (LPVOID)Ex_ObjGetLong(hObjList, ERLVL_TCINFO);
 						for (INT i = 0; i < nIndex; i++)
 						{
@@ -647,9 +740,22 @@ void _reportlistview_head_paint(HEXOBJ hObj)
 					INT nColWidth = ptr->nWidth;
 					if (nColWidth > 0)
 					{
+						if ((ptr->dwStyle & ERLV_CS_COLCOR) == ERLV_CS_COLCOR)
+						{
+							_brush_setcolor(hBrush, ptr->crBkg);
+							_canvas_fillrect(ps.hCanvas, hBrush, nOffsetX + 1.5, 0.5, nOffsetX + nColWidth + 1.0, ps.uHeight);
+							_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_BORDER));
+						}
 						if (nIndexHit == i + 1 && (ptr->dwStyle & ERLV_CS_CLICKABLE) == ERLV_CS_CLICKABLE)
 						{
-							_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_HOVER));
+							if ((ptr->dwStyle & ERLV_CS_COLCOR) == ERLV_CS_COLCOR)
+							{
+								_brush_setcolor(hBrush, ptr->crBkg);
+							}
+							else
+							{
+								_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_TEXT_HOVER));
+							}
 							_canvas_fillrect(ps.hCanvas, hBrush, nOffsetX, 0, nOffsetX + nColWidth, ps.uHeight);
 							_brush_setcolor(hBrush, Ex_ObjGetColor(hObjList, COLOR_EX_BORDER));
 						}
@@ -753,6 +859,57 @@ BOOL _reportlistview_notify_proc(HEXOBJ hObj, EX_NMHDR* pNotifyInfo)
 	return TRUE;
 }
 
+void _reportlistview_edit_killfous_settext(HWND hWnd, HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
+{
+	obj_s* pObj = nullptr;
+	int nError = 0;
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
+	{
+		_obj_baseproc(hWnd, hObj, pObj, WM_KILLFOCUS, wParam, lParam);
+		Ex_ObjShow(hObj, FALSE);
+		pObj->pWnd_->objFocus_ = pObj->objParent_;
+		size_t len = Ex_ObjGetTextLength(hObj) * 2 + 2;
+		std::wstring text; text.resize(len);
+		Ex_ObjGetText(hObj, (LPCWSTR)text.data(), len);
+		obj_s* pObjRL = nullptr;
+		if (_handle_validate(pObj->objParent_, HT_OBJECT, (LPVOID*)&pObjRL, 0))
+		{
+			LPARAM dx = (LPARAM)pObj->dwUserData_;
+			INT nIndexTR = LOWORD(dx);
+			INT nIndexTC = HIWORD(dx);
+			_reportlistview_td_settext(pObj->objParent_, nIndexTR, nIndexTC, text.data());
+			_obj_invalidaterect(pObjRL, 0, 0);
+		}
+	}
+}
+
+LRESULT CALLBACK _reportlistview_edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_MOUSELEAVE)
+	{
+		_reportlistview_edit_killfous_settext(hWnd, hObj, wParam, lParam);
+		return 1;
+	}
+	return 0;
+}
+
+LRESULT CALLBACK _reportlistview_edit_enter(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == NM_KEYDOWN)
+	{
+		if (wParam == 13)
+		{
+			obj_s* pObj = nullptr;
+			int nError = 0;
+			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
+			{
+				_reportlistview_edit_killfous_settext(pObj->pWnd_->hWnd_, hObj, wParam, lParam);
+			}
+		}
+	}
+	return 0;
+}
+
 void _reportlistview_init(HEXOBJ hObj)
 {
 	Ex_ObjSetLong(hObj, ERLVL_TCINFO, 0);
@@ -762,6 +919,13 @@ void _reportlistview_init(HEXOBJ hObj)
 	Ex_ObjSetLong(hObj, ERLVL_HEADHEIGHT, 25);
 	HEXOBJ head = Ex_ObjCreate((LPCWSTR)ATOM_REPORTLISTVIEW_HEAD, 0, -1, 0, 0, 0, 0, hObj);
 	Ex_ObjSetLong(hObj, ERLVL_HOBJHEAD, head);
+	HEXOBJ edit = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"edit", 0,
+		EOS_VISIBLE | EES_HIDESELECTION | EES_DISABLEMENU //| EOS_HSCROLL
+		, 10, 30, 150, 30, hObj, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0, _reportlistview_edit_proc);
+	Ex_ObjHandleEvent(edit, NM_KEYDOWN, _reportlistview_edit_enter);
+	Ex_ObjShow(edit, FALSE);
+	Ex_ObjSetLong(hObj, ERLVL_HEDIT, edit);
+
 	Ex_ObjShow(head, (Ex_ObjGetLong(hObj, EOL_STYLE) & ERLS_NOHEAD) == 0);
 	Ex_ObjSetLong(hObj, ERLVL_TCIDXSORTED, 0);
 	array_s* hArr = Array_Create(0);
@@ -784,7 +948,15 @@ void _reportlistview_arr_del(array_s* hArr, INT nIndex, reportlistview_tr_s* pvD
 		for (INT i = 0; i < nCount; i++)
 		{
 			reportlistview_td_s* pTD = (reportlistview_td_s*)((size_t)pTDs + i * sizeof(reportlistview_td_s));
-			Ex_MemFree((LPVOID)pTD->wzText_);
+			if (pTD->font_)
+			{
+				_font_destroy(pTD->font_);
+			}
+			if (pTD->wzText_)
+			{
+				Ex_MemFree((LPVOID)pTD->wzText_);
+			}
+			
 		}
 		Ex_MemFree(pTDs);
 	}
@@ -868,39 +1040,64 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
 		{
 			HEXIMAGELIST hImgList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, ERLVL_HIMAGELIST);
 			INT itemHeight = pDrawInfo->rcPaint.bottom - pDrawInfo->rcPaint.top;
+			if ((pTR->dwStyle_ & ERLV_RS_ROWCOLCOR) == ERLV_RS_ROWCOLCOR)//新增
+			{
+				HEXBRUSH hBrush = _brush_create(pTR->rowbkcr_);
+				_canvas_fillrect(pDrawInfo->hCanvas, hBrush,
+					pDrawInfo->rcPaint.left + 1.5, pDrawInfo->rcPaint.top - 0.5, pDrawInfo->rcPaint.right, pDrawInfo->rcPaint.bottom + 0.5);
+				_brush_destroy(hBrush);
+			}
+			HEXIMAGE hImage = 0;
+			RECT checkrc = { rcTD.left + itemHeight / 4, rcTD.top, rcTD.left + itemHeight / 4 * 3, rcTD.bottom };
+			RECT imgrc = { rcTD.left + itemHeight / 4, rcTD.top + itemHeight / 4, rcTD.left + itemHeight / 4 * 3, rcTD.top + itemHeight / 4 * 3 };
+
 			if (pTR->dwStyle_ & ERLV_RS_CHECKBOX)
 			{
-				Ex_ThemeDrawControl(pDrawInfo->hTheme, pDrawInfo->hCanvas, rcTD.left + itemHeight / 4, rcTD.top, rcTD.left + itemHeight / 4 * 3, rcTD.bottom, ATOM_CHECKBUTTON, (pTR->dwStyle_ & ERLV_RS_CHECKBOX_CHECK) ? ATOM_CHECK_NORMAL : ATOM_NORMAL, 255);
+				rcTD.left = rcTD.left + itemHeight / 4 * 3;
 			}
 			else
 			{
-				HEXIMAGE hImage = _imglist_get(hImgList, pTR->nImageIndex_);
+				hImage = _imglist_get(hImgList, pTR->nImageIndex_);
 				if (hImage != 0)
 				{
-					INT imgWidth;
-					INT imgHeight;
-					_imglist_size(hImgList, &imgWidth, &imgHeight);
-					_canvas_drawimagerectrect(pDrawInfo->hCanvas, hImage, rcTD.left + itemHeight / 4, rcTD.top + itemHeight / 4, rcTD.left + itemHeight / 4 * 3, rcTD.top + itemHeight / 4 * 3, 0, 0, imgWidth, imgHeight, 255);
+					rcTD.left = rcTD.left + itemHeight / 4 * 3;
 				}
 			}
-			rcTD.left = rcTD.left + itemHeight;
+
 			EX_REPORTLIST_COLUMNINFO* pTC = (EX_REPORTLIST_COLUMNINFO*)Ex_ObjGetLong(hObj, ERLVL_TCINFO);
+
 			for (INT i = 1; i <= nCount; i++)
 			{
 				rcTD.right = rcTD.left + pTC->nWidth;
-				if (i == 1)
+				if (i == 1 && ((pTR->dwStyle_ & ERLV_RS_CHECKBOX) || hImage != 0))
 				{
-					rcTD.right = rcTD.right - (pDrawInfo->rcPaint.bottom - pDrawInfo->rcPaint.top);
+					rcTD.right = rcTD.right - itemHeight / 4 * 3; 
 				}
 				_reportlistview_draw_td(hObj, pDrawInfo, pDrawInfo->iItem, i, pTC, &rcTD);
 				rcTD.left = rcTD.right;
 				pTC = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTC + sizeof(EX_REPORTLIST_COLUMNINFO));
 			}
+
 			if ((pDrawInfo->dwStyle & ERLS_DRAWHORIZONTALLINE) == ERLS_DRAWHORIZONTALLINE)
 			{
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BORDER));
 				_canvas_drawline(pDrawInfo->hCanvas, hBrush, pDrawInfo->rcPaint.left, pDrawInfo->rcPaint.bottom, pDrawInfo->rcPaint.right, pDrawInfo->rcPaint.bottom, 1.5, D2D1_DASH_STYLE_SOLID);
 				_brush_destroy(hBrush);
+			}
+			if (pTR->dwStyle_ & ERLV_RS_CHECKBOX)
+			{
+				Ex_ThemeDrawControl(pDrawInfo->hTheme, pDrawInfo->hCanvas,
+					checkrc.left, checkrc.top, checkrc.right, checkrc.bottom,
+					ATOM_CHECKBUTTON, (pTR->dwStyle_ & ERLV_RS_CHECKBOX_CHECK) ? ATOM_CHECK_NORMAL : ATOM_NORMAL, 255);
+			}
+			else
+			{
+				INT imgWidth;
+				INT imgHeight;
+				_imglist_size(hImgList, &imgWidth, &imgHeight);
+				_canvas_drawimagerectrect(pDrawInfo->hCanvas, hImage,
+					imgrc.left, imgrc.top, imgrc.right, imgrc.bottom,
+					0, 0, imgWidth, imgHeight, 255);
 			}
 		}
 		_canvas_resetclip(pDrawInfo->hCanvas);
@@ -914,18 +1111,41 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
 	{
 		if (Ex_ObjDispatchNotify(hObj, RLVN_DRAW_TD, nIndexTC, (size_t)cd) == 0)
 		{
+			if ((pTD->cellStyle_ & ERLV_RS_CELLCOLCOR) == ERLV_RS_CELLCOLCOR)//新增
+			{
+				HEXBRUSH hBrush = _brush_create(pTD->crbk_);
+				_canvas_fillrect(cd->hCanvas, hBrush,
+					nIndexTC == 1 ? 0 : rcTD->left + 2.0, rcTD->top, rcTD->right + 1.0, rcTD->bottom - 0.5);
+				_brush_destroy(hBrush);
+			}
 			LPCWSTR wzText = pTD->wzText_;
 			if (wzText != 0)
 			{
-				INT crText = pTC->crText;
-				if (crText == 0)
-					crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
-				_canvas_drawtext(cd->hCanvas, Ex_ObjGetFont(hObj), crText, wzText, -1, pTC->dwTextFormat, rcTD->left + 1, rcTD->top, rcTD->right - 3, rcTD->bottom);
+				INT crText = 0;
+				if ((pTD->cellStyle_ & ERLV_RS_CELLTEXTCOLCOR) == ERLV_RS_CELLTEXTCOLCOR)//新增
+				{
+					crText = pTD->crText_;
+				}
+				else
+				{
+					crText = pTC->crText;
+					if (crText == 0)
+						crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
+				}
+				HEXOBJ Font = Ex_ObjGetFont(hObj);
+				if ((pTD->cellStyle_ & ERLV_RS_CELLFONT) == ERLV_RS_CELLFONT)//新增
+				{
+					if (pTD->font_)//防止 未设置字体时出错,使用默认字体
+					{
+						Font = pTD->font_;
+					}
+				}
+				_canvas_drawtext(cd->hCanvas, Font, crText, wzText, -1, pTC->dwTextFormat, rcTD->left + 3.5, rcTD->top, rcTD->right + 1, rcTD->bottom);
 			}
 			if ((cd->dwStyle & ERLS_DRAWVERTICALLINE) == ERLS_DRAWVERTICALLINE)
 			{
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BORDER));
-				_canvas_drawline(cd->hCanvas, hBrush, rcTD->right, rcTD->top, rcTD->right, rcTD->bottom, 1.5, D2D1_DASH_STYLE_SOLID);
+				_canvas_drawline(cd->hCanvas, hBrush, rcTD->right + 1.0, rcTD->top, rcTD->right + 1., rcTD->bottom, 1.0, D2D1_DASH_STYLE_SOLID);
 				_brush_destroy(hBrush);
 			}
 		}
@@ -980,7 +1200,18 @@ BOOL _reportlistview_tc_del(HEXOBJ hObj, INT nIndex)
 	{
 		reportlistview_tr_s* ptr = (reportlistview_tr_s*)Array_GetMember(hArr, i + 1);
 		LPVOID pTDs = ptr->pTDInfo_;
-		Ex_MemFree((LPVOID)((reportlistview_td_s*)((size_t)pTDs + (nIndex - 1) * sizeof(reportlistview_td_s)))->wzText_);
+		reportlistview_td_s* pTD = ((reportlistview_td_s*)((size_t)pTDs + (nIndex - 1) * sizeof(reportlistview_td_s)));//---修改
+		if (pTD)
+		{
+			if (pTD->font_)
+			{
+				_font_destroy(pTD->font_);
+			}
+			if (pTD->wzText_)
+			{
+				Ex_MemFree((LPVOID)pTD->wzText_);
+			}
+		}
 		__ptr_del(&pTDs, nCount + 1, nIndex, sizeof(reportlistview_td_s));
 		ptr->pTDInfo_ = pTDs;
 	}
@@ -1011,7 +1242,18 @@ void _reportlistview_tc_clear(HEXOBJ hObj)
 		pTDs = ptr->pTDInfo_;
 		for (INT j = 0; j < nCount; j++)
 		{
-			Ex_MemFree((LPVOID)((reportlistview_td_s*)((size_t)pTDs + j * sizeof(reportlistview_td_s)))->wzText_);
+			reportlistview_td_s* pTD = ((reportlistview_td_s*)((size_t)pTDs + j * sizeof(reportlistview_td_s)));//---修改
+			if (pTD)
+			{
+				if (pTD->font_)
+				{
+					_font_destroy(pTD->font_);
+				}
+				if (pTD->wzText_)
+				{
+					Ex_MemFree((LPVOID)pTD->wzText_);
+				}
+			}
 		}
 		Ex_MemFree(pTDs);
 		ptr->pTDInfo_ = 0;
@@ -1048,6 +1290,7 @@ INT _reportlistview_tr_ins(HEXOBJ hObj, EX_REPORTLIST_ROWINFO* pInsertInfo)
 	pTR->dwStyle_ = pInsertInfo->dwStyle;
 	pTR->nImageIndex_ = pInsertInfo->nImageIndex;
 	pTR->lParam_ = pInsertInfo->lParam;
+	pTR->rowbkcr_ = pInsertInfo->rowBkgCr;
 	pTR->nInsertIndex_ = pInsertInfo->nInsertIndex;
 	LPVOID pTDs = nullptr;
 	if (nCount > 0)
@@ -1118,57 +1361,99 @@ void _reportlistview_td_settext(HEXOBJ hObj, INT nIndexTR, INT nIndexTC, LPCWSTR
 	if (pTD != 0)
 	{
 		LPCWSTR wzText_ = pTD->wzText_;
-		pTD->wzText_ = StrDupW(wzText);
 		Ex_MemFree((LPVOID)wzText_);
+		pTD->wzText_ = StrDupW(wzText);
 	}
 }
 
-BOOL _reportlistview_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJustText)
+BOOL _reportlistview_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam)
 {
 	INT nIndexTR = lParam->iRow;
-	INT nIndexTC = lParam->iCol;
 	BOOL ret = FALSE;
 	reportlistview_tr_s* pTR = (reportlistview_tr_s*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO), nIndexTR);
 	if (pTR != 0)
 	{
-		if (fJustText == FALSE)
-		{
-			lParam->nImageIndex = pTR->nImageIndex_;
-			lParam->dwStyle = pTR->dwStyle_;
-			lParam->lParam = pTR->lParam_;
-			lParam->pwzText = ((reportlistview_td_s*)((size_t)pTR->pTDInfo_ + (nIndexTC - 1) * sizeof(reportlistview_td_s)))->wzText_;
-		}
-		INT nError = 0;
-		obj_s* pObj = nullptr;
-		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
-		{
-			LPVOID pOwner = pObj->dwOwnerData_;
-			LPVOID lpItems = ((listview_s*)pOwner)->lpItems_;
-			lParam->dwState = _listview_getitemstate(lpItems, nIndexTR);
-			ret = TRUE;
-		}
-	}
-	return ret;
-}
-
-BOOL _reportlistview_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam, BOOL fJustText)
-{
-	INT nIndexTR = lParam->iRow;
-	INT nIndexTC = lParam->iCol;
-	BOOL ret = FALSE;
-	reportlistview_tr_s* pTR = (reportlistview_tr_s*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO), nIndexTR);
-	if (pTR != 0)
-	{
-		if (fJustText == FALSE)
-		{
-			pTR->nImageIndex_ = lParam->nImageIndex;
-			pTR->dwStyle_ = lParam->dwStyle;
-			pTR->lParam_ = lParam->lParam;
-		}
-		_reportlistview_td_settext(hObj, nIndexTR, nIndexTC, lParam->pwzText);
+		lParam->nImageIndex = pTR->nImageIndex_;
+		lParam->dwStyle = pTR->dwStyle_;
+		lParam->lParam = pTR->lParam_;
+		LPVOID pOwner = (LPVOID)Ex_ObjGetLong(hObj, EOL_OWNER);
+		LPVOID lpItems = ((listview_s*)pOwner)->lpItems_;
+		lParam->dwState = _listview_getitemstate(lpItems, nIndexTR);
 		ret = TRUE;
 	}
 	return ret;
+}
+
+BOOL _reportlistview_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO* lParam)
+{
+	INT nIndexTR = lParam->iRow;
+	BOOL ret = FALSE;
+	reportlistview_tr_s* pTR = (reportlistview_tr_s*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO), nIndexTR);
+	if (pTR != 0)
+	{
+		pTR->nImageIndex_ = lParam->nImageIndex;
+		pTR->dwStyle_ = lParam->dwStyle;
+		pTR->lParam_ = lParam->lParam;
+		pTR->rowbkcr_ = lParam->rowBkgCr;
+		ret = TRUE;
+	}
+	return ret;
+}
+
+BOOL _reportlistview_li_getcell(HEXOBJ hObj, EX_REPORTLIST_CELLINFO* lParam, BOOL fJustText)
+{
+	INT nIndexTR = lParam->iRow;
+	INT nIndexTC = lParam->iCol;
+	reportlistview_tr_s* pTR = (reportlistview_tr_s*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ERLVL_TRINFO), nIndexTR);
+	if (pTR != 0)
+	{
+		reportlistview_td_s* pTD = _reportlistview_td_get(hObj, nIndexTR, nIndexTC);
+		lParam->pwzText = pTD->wzText_;
+		if (fJustText)
+			return TRUE;
+		lParam->cellStyle = pTD->cellStyle_;
+		lParam->cellBkgCr = pTD->crbk_;
+		lParam->cellTextCr = pTD->crText_;
+		lParam->cellFont = pTD->font_;
+		lParam->lParam = pTD->lParam_;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+BOOL _reportlistview_li_setcell(HEXOBJ hObj, EX_REPORTLIST_CELLINFO* lParam, BOOL fJustText, BOOL withoutText)
+{
+	INT nIndexTR = lParam->iRow;
+	INT nIndexTC = lParam->iCol;
+	reportlistview_td_s* pTD = _reportlistview_td_get(hObj, nIndexTR, nIndexTC);
+	if (pTD != 0)
+	{
+		LPCWSTR wzText_ = pTD->wzText_;
+		if (withoutText)
+		{
+			goto TEXT;
+		}
+
+		pTD->wzText_ = StrDupW(lParam->pwzText);
+		Ex_MemFree((LPVOID)wzText_);
+		if (fJustText)
+		{
+			return TRUE;
+		}
+
+	TEXT:
+		pTD->cellStyle_ = lParam->cellStyle;
+		pTD->crbk_ = lParam->cellBkgCr;
+		pTD->crText_ = lParam->cellTextCr;
+		if (pTD->font_)
+		{
+			_font_destroy(pTD->font_);
+		}
+		pTD->font_ = lParam->cellFont;
+		pTD->lParam_ = lParam->lParam;
+		return TRUE;
+	}
+	return FALSE;
 }
 
 void _reportlistview_regsiter()
@@ -1176,6 +1461,6 @@ void _reportlistview_regsiter()
 	EX_CLASSINFO clsInfo{ 0 };
 	Ex_ObjGetClassInfoEx(L"listview", &clsInfo);
 	m_pfnListView = clsInfo.pfnClsProc;
-	Ex_ObjRegister(L"ReportListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 10 * sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _reportlistview_proc);
+	Ex_ObjRegister(L"ReportListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 11 * sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _reportlistview_proc);
 	Ex_ObjRegister(L"ReportListView.Header", EOS_VISIBLE, EOS_EX_FOCUSABLE, 0, 2 * sizeof(size_t), 0, 0, _reportlistview_head_proc);
 }

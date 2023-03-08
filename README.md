@@ -159,3 +159,7 @@ Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,
 ![image](demo_image/demo_carousel.png)
 ### demo rollmenu:
 ![image](demo_image/demo_rollmenu.png)
+### demo tray:
+![image](demo_image/demo_trayicon.png)
+### demo mask:
+![image](demo_image/demo_mask.png)

@@ -21,6 +21,8 @@
 #define ERLVL_FTCSORTEDDESC 8
 // 报表列表属性_图片组句柄
 #define ERLVL_HIMAGELIST 9
+// 报表列表属性_编辑框句柄
+#define ERLVL_HEDIT 10
 
 // 报表列表表头属性_列表句柄
 #define ERLVHL_HLISTVIEW 0
@@ -34,12 +36,19 @@ struct reportlistview_tr_s
 	DWORD dwStyle_;
 	LPARAM lParam_;
 	DWORD nImageIndex_;
+	EXARGB rowbkcr_;        //具有ERLV_RS_ROWCOLCOR风格时,整行的背景色
 	LPVOID pTDInfo_; //行文本数组信息
 };
 
+//报表的单元格属性
 struct reportlistview_td_s
 {
 	LPCWSTR wzText_;
+	DWORD cellStyle_;   //ERLV_RS_CELLCOLCOR风格
+	EXARGB crbk_;       //cellStyle 具有 ERLV_RS_CELLCOLCOR 风格时,单元格的背景色
+	EXARGB crText_;     //cellStyle 具有 ERLV_RS_CELLTEXTCOLCOR 风格时,单元格的文本色
+	HEXFONT font_;       //cellStyle 具有 ERLV_RS_CELLFONT 风格时,单元格的字体
+	LPARAM lParam_;     //单元格参数
 };
 
 LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
@@ -64,6 +73,8 @@ void _reportlistview_tr_clear(HEXOBJ hObj);
 void _reportlistview_tr_update(HEXOBJ hObj);
 reportlistview_td_s *_reportlistview_td_get(HEXOBJ hObj, INT nIndexTR, INT nIndexTC);
 void _reportlistview_td_settext(HEXOBJ hObj, INT nIndexTR, INT nIndexTC, LPCWSTR wzText);
-BOOL _reportlistview_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO *lParam, BOOL fJustText);
-BOOL _reportlistview_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO *lParam, BOOL fJustText);
+BOOL _reportlistview_li_get(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO *lParam);
+BOOL _reportlistview_li_set(HEXOBJ hObj, EX_REPORTLIST_ITEMINFO *lParam);
+BOOL _reportlistview_li_getcell(HEXOBJ hObj, EX_REPORTLIST_CELLINFO* lParam, BOOL fJustText);
+BOOL _reportlistview_li_setcell(HEXOBJ hObj, EX_REPORTLIST_CELLINFO* lParam, BOOL fJustText, BOOL withoutText = FALSE);
 void _reportlistview_regsiter();
