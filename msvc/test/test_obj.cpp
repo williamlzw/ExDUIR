@@ -695,7 +695,7 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 			{
 				EX_CUSTOMDRAW cd{ 0 };
 				RtlMoveMemory(&cd, (LPVOID)ni.lParam, sizeof(EX_CUSTOMDRAW));
-				
+
 				EXARGB crItemBkg = 0;
 				if ((cd.dwState & STATE_SELECT) != 0)
 				{
@@ -712,7 +712,7 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 					_brush_destroy(hBrush);
 				}
 				_canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), m_listViewItemInfo[cd.iItem - 1].color, m_listViewItemInfo[cd.iItem - 1].text, -1, DT_SINGLELINE | DT_VCENTER, cd.rcPaint.left + m_listViewItemInfo[cd.iItem - 1].depth * 5, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
-				
+
 				*lpResult = 1;
 				return 1;
 			}
@@ -863,8 +863,8 @@ void test_navbutton(HWND hWnd)
 	//设置布局显示页面索引,从1开始
 	m_nCurIndex = 1;
 	_layout_setprop(m_hLayout, ELP_PAGE_CURRENT, m_nCurIndex);
-	
-	
+
+
 	Ex_ObjSendMessage(m_hNavBtn[0], BM_SETCHECK, 1, 1);
 	Ex_DUISetLong(hExDui_navbutton, EWL_CRBKG, ExRGB2ARGB(0, 255));
 	Ex_DUIShowWindow(hExDui_navbutton, SW_SHOWNORMAL, 0, 0, 0);
@@ -952,7 +952,7 @@ void test_relative(HWND hWnd)
 	Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 100), TRUE);
 	_layout_setchildprop(hLayout, hObj2, ELCP_RELATIVE_TOP_ALIGN_OF, -1);   //顶部与父容器对齐
 	_layout_setchildprop(hLayout, hObj2, ELCP_RELATIVE_CENTER_PARENT_H, 1); // 水平居中于父容器
-	
+
 	HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"Static", L"控件C：右侧与A对齐,宽度150,在A和B之间", -1, 0, 0, 150, 150, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(65280, 100), TRUE);
 	_layout_setchildprop(hLayout, hObj3, ELCP_RELATIVE_TOP_OF, hObj1);         //在A控件顶部
@@ -1789,7 +1789,7 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		Ex_ObjBeginPaint(hObj, &ps);
 		_canvas_clear(ps.hCanvas, ExRGB2ARGB(16777215, 100));
 		DOUBLE nCurrent = (DOUBLE)Ex_ObjGetLong(hObj, EOL_LPARAM) / 100;
-		
+
 		HEXMATRIX mx = _matrix_create();
 
 		_matrix_translate(mx, (FLOAT)ps.uWidth / 2, (FLOAT)ps.uHeight / 2);
@@ -1899,7 +1899,7 @@ void test_buttonex(HWND hWnd)
 	Ex_ObjSendMessage(hObj_btnex4, WM_SETICON, 0, (LPARAM)hImg); /* 设置图标; */
 
 	EX_IMAGEINFO IMG0 = { 0 };
-	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal); 
+	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal);
 	_img_createfromfile(L"buttonex/4点燃.png", &IMG0.imgHover);
 	_img_createfromfile(L"buttonex/4按下.png", &IMG0.imgDownOrChecked);
 	HEXOBJ hObj_btnex5 = Ex_ObjCreate(L"ButtonEx", NULL, -1, 50, 250, 100, 30, hExDui_buttonex); /*图片按钮*/
@@ -2070,7 +2070,7 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		*lpResult = 1;
 		return 1;
 	}
-	
+
 	return 0;
 }
 
@@ -2789,13 +2789,13 @@ LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
 		HDC dc = GetDC(NULL);
 		FLOAT dpiy = (FLOAT)GetDeviceCaps(dc, 90) / 96;
 		ReleaseDC(0, dc);
-		Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100)/ dpiy, (HIWORD(lParam) - 100)/ dpiy, FALSE);
+		Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100) / dpiy, (HIWORD(lParam) - 100) / dpiy, FALSE);
 	}
 	return 0;
 }
 
 void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> arguments, uintptr_t* retval, LPCWSTR exception, bool* pbHandled, void* lParam) {
-	if (std::wstring(name) == L"add_Function") 
+	if (std::wstring(name) == L"add_Function")
 	{
 		//演示接收js传入两个整数变量并运算返回
 		int nSum = 0;
@@ -2830,7 +2830,7 @@ void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> 
 			*retval = (uintptr_t)Ck_V8CreateString(L"test.myfunc返回addFunction1的值");
 			*pbHandled = TRUE;
 		}
-		
+
 	}
 }
 
@@ -2857,7 +2857,7 @@ void CALLBACK OnFunAccessor(int uMsg, LPCWSTR name, HV8VALUE object, uintptr_t* 
 			*pbHandled = TRUE;
 		}
 	}
-	
+
 }
 
 void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam)
@@ -2917,7 +2917,7 @@ LRESULT CALLBACK OnChromiumEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 	{
 		OUTPUTW(L"cef浏览框加载完毕");
 	}
-	
+
 	return 0;
 }
 
@@ -3102,7 +3102,7 @@ void test_templatelistview(HWND hParent)
 	HEXOBJ hobj_groupbox = Ex_ObjCreate(L"groupbox", L"分组框", -1, 10, 40, 780, 550, hExDui_listview);
 	//ELVS_ITEMTRACKING风格需启用
 	HEXOBJ hobj_listview = Ex_ObjCreateEx(-1, L"TListView",
-		NULL, EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL| ELVS_ITEMTRACKING, 20, 10, 650, 520,
+		NULL, EOS_VISIBLE | EOS_HSCROLL | EOS_VSCROLL | ELVS_ITEMTRACKING, 20, 10, 650, 520,
 		hobj_groupbox, 0, -1, 0, 0, OnTemplateListViewProc);
 	if (m_tlistViewItemInfo.size() == 0)
 	{
@@ -3584,7 +3584,7 @@ LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 {
 	if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
-		_canvas_clear(wParam, ExRGBA(150,150,150,255));
+		_canvas_clear(wParam, ExRGBA(150, 150, 150, 255));
 		HEXFONT hFont = _font_createfromfile(L"res/文道灵飞小楷.ttf", 64);
 		_canvas_drawtext(wParam, hFont, ExRGBA(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
 		_font_destroy(hFont);
@@ -3594,7 +3594,7 @@ LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 		Ex_ReadFile(L"./res/niu1.svg", &data);
 		_canvas_drawsvg(wParam, data.data(), ExRGBA(55, 250, 20, 255), 250, 50, 400, 200);
 		_canvas_drawsvgfromfile(wParam, L"./res/niu1.svg", ExRGBA(55, 0, 250, 255), 50, 250, 200, 400);
-		_canvas_drawsvgfromfile(wParam, L"./res/niu.svg",0, 250, 250, 400, 450);
+		_canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 250, 250, 400, 450);
 
 		*lpResult = 1;
 		return 1;
@@ -3712,7 +3712,7 @@ void test_rollmenu(HWND hWnd)
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageAccountIndex);
 	rollmenu.stateico.rc = { 40, 4, 72, 36 };
 	Ex_ObjSendMessage(m_hObjRM, RM_ADDGROUP, 0, (LPARAM)&rollmenu);
-	
+
 	rollmenu.title = L"视频管理";
 	rollmenu.stateico.eicon = _imglist_get(m_hImageListRollMenu, nImageVideoIndex);
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageVideoIndex);
@@ -3727,7 +3727,7 @@ void test_rollmenu(HWND hWnd)
 	EX_ROLLMENU_ITEM rollitem = { 0 };
 	rollitem.title = L"视频列表";
 	Ex_ObjSendMessage(m_hObjRM, RM_ADDITEM, groupVideoIndex, (LPARAM)&rollitem);
-	
+
 	rollmenu.title = L"数据分析";
 	rollmenu.stateico.eicon = _imglist_get(m_hImageListRollMenu, nImageInfoIndex);
 	rollmenu.stateico.sicon = _imglist_get(m_hImageListRollMenu, nImageInfoIndex);

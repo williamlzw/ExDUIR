@@ -191,6 +191,7 @@
     <ClInclude Include="ExRegion.hpp" />
     <ClInclude Include="ExSkin.hpp" />
     <ClInclude Include="ExUIbase.hpp" />
+    <ClInclude Include="ExWindow.hpp" />
     <ClInclude Include="MainWindow.hpp" />
   </ItemGroup>
   <ItemGroup>

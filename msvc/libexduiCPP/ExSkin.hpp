@@ -1,8 +1,10 @@
 #pragma once
 #include "ExUIbase.hpp"
 #include "ExControl.hpp"
+#include "ExWindow.hpp"
 
 using namespace ExDUIR::FrameWorks::Control;
+using namespace ExDUIR::FrameWorks;
 
 namespace ExDUIR
 {
@@ -18,10 +20,24 @@ namespace ExDUIR
 			{
 				m_handle = hObj;
 			}
+
+			ExSkin(ExSkin pOwner, int dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
+			{
+				auto hWndParent = pOwner == NULL ? 0 : pOwner.m_hWnd;
+				auto a = ExWindow();
+				ExWindow.
+				m_handle = Ex_DUIBindWindowEx(pWindow.m_hWnd, 0, dwStyleDui, 0, lpfnMsgProc);
+			}
+
 			ExSkin(HWND pOwner, INT x, INT y, INT width, INT height, LPCWSTR sWindowName, int dwStyleDui, DWORD dwStyleWindow = NULL, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
 			{
 				m_hWnd = Ex_WndCreate(pOwner, 0, sWindowName, x, y, width, height, dwStyleWindow, dwStyleExWindow);
 				m_handle = Ex_DUIBindWindowEx(m_hWnd, 0, dwStyleDui, 0, lpfnMsgProc);
+			}
+
+			ExSkin(ExWindow pWindow, int dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
+			{
+				m_handle = Ex_DUIBindWindowEx(pWindow.m_hWnd, 0, dwStyleDui, 0, lpfnMsgProc);
 			}
 			inline size_t SetLong(INT nIndex, size_t dwNewLong) { return Ex_DUISetLong(m_handle, nIndex, dwNewLong); }
 			inline BOOL Show(INT nCmdShow = SW_SHOWNORMAL, INT dwTimer = NULL, INT dwFrames = NULL, INT dwFlags = NULL) { return Ex_DUIShowWindow(m_handle, nCmdShow, dwTimer, dwFrames, dwFlags); };
