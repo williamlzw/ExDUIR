@@ -270,53 +270,49 @@ BOOL _path_addarc3(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY
     return nError == 0;
 }
 
-BOOL _path_addarc2(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT width, FLOAT height, FLOAT startAngle, FLOAT sweepAngle)
-{
+BOOL _path_addarc2(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right,
+                   FLOAT bottom, FLOAT nAngleBegin, FLOAT nAngleEnd) {
     INT nError = 0;
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
-        {
-            if (g_Li.DpiX > 1)
-            {
-                x = x * g_Li.DpiX;
-                y = y * g_Li.DpiX;
-            }
-        }
-
         ID2D1GeometrySink *s = pPath->pObj_;
         D2D1_ARC_SEGMENT arc = {};
-        FLOAT rx = width / 2;                // x半径
-        FLOAT ry = height / 2;               // y半径
-        FLOAT theta = NULL;                  // 夹角θ
-        D2D1_POINT_2F ptOrg{x + rx, y + ry}; // 坐标系原点
-        D2D1_POINT_2F pPoints{};             // 椭圆顶点XY序列
-        FLOAT pi = 3.141592654f;
+
+        FLOAT rx = (right - left) / 2;            // x半径
+        FLOAT ry = (bottom - top) / 2;            // y半径
+        FLOAT theta = NULL;                       // 夹角θ
+        D2D1_POINT_2F ptOrg{left + rx, top + ry}; // 坐标系原点
+        D2D1_POINT_2F pPoints{};                  // 椭圆顶点XY序列
 
         // 求与x正方向夹角θ
-        theta = startAngle;
+        theta = nAngleBegin;
         // 求点坐标
-        pPoints.x = cos(theta * pi / 180) * rx + ptOrg.x;
-        pPoints.y = sin(theta * pi / 180) * ry + ptOrg.y;
+        pPoints.x = cos(theta * PI / 180) * rx + ptOrg.x;
+        pPoints.y = sin(theta * PI / 180) * ry + ptOrg.y;
+        s->SetSegmentFlags(D2D1_PATH_SEGMENT_FORCE_UNSTROKED);
         s->AddLine({pPoints.x, pPoints.y});
-
-        theta = sweepAngle;
+        s->SetSegmentFlags(D2D1_PATH_SEGMENT_NONE);
+        theta = nAngleEnd;
         // 求点坐标
-        pPoints.x = cos(theta * pi / 180) * rx + ptOrg.x;
-        pPoints.y = sin(theta * pi / 180) * ry + ptOrg.y;
+        pPoints.x = cos(theta * PI / 180) * rx + ptOrg.x;
+        pPoints.y = sin(theta * PI / 180) * ry + ptOrg.y;
         arc.point.x = pPoints.x;
         arc.point.y = pPoints.y;
         arc.size.width = rx;
         arc.size.height = ry;
         arc.rotationAngle = 0.0F;
-        arc.sweepDirection = D2D1_SWEEP_DIRECTION::D2D1_SWEEP_DIRECTION_CLOCKWISE;
-        arc.arcSize = (((sweepAngle - startAngle) > 180) == TRUE ? D2D1_ARC_SIZE_LARGE : D2D1_ARC_SIZE_SMALL);
+        arc.sweepDirection =
+            D2D1_SWEEP_DIRECTION::D2D1_SWEEP_DIRECTION_CLOCKWISE;
+        arc.arcSize =
+            (((nAngleEnd - nAngleBegin) > 180) == TRUE ? D2D1_ARC_SIZE_LARGE
+                                                       : D2D1_ARC_SIZE_SMALL);
         s->AddArc(&arc);
     }
     Ex_SetLastError(nError);
     return nError == 0;
 }
+
 
 BOOL _path_addrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {

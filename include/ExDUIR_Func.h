@@ -1286,15 +1286,16 @@ BOOL _path_addarc(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT r
 /// <summary>
 /// 路径添加弧 v2
 /// </summary>
-/// <param name="hPath"></param>
-/// <param name="x"></param>
-/// <param name="y"></param>
-/// <param name="width">宽度</param>
-/// <param name="height">高度</param>
-/// <param name="startAngle">开始角度</param>
-/// <param name="sweepAngle">扫描角度</param>
+/// <param name="hPath">路径句柄</param>
+/// <param name="left">弧所在椭圆的左边</param>
+/// <param name="top">弧所在椭圆的顶边</param>
+/// <param name="right">弧所在椭圆的右边</param>
+/// <param name="bottom">弧所在椭圆的底边</param>
+/// <param name="nAngleBegin">弧的起始角度</param>
+/// <param name="nAngleEnd">弧的终止角度</param>
 /// <returns></returns>
-BOOL _path_addarc2(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT width, FLOAT height, FLOAT startAngle, FLOAT sweepAngle);
+BOOL _path_addarc2(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right,
+                   FLOAT bottom, FLOAT nAngleBegin, FLOAT nAngleEnd);
 
 /// <summary>
 /// 路径添加弧 v3
