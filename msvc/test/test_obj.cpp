@@ -2978,7 +2978,7 @@ void test_carousel(HWND hParent)
 	Ex_DUISetLong(hExDui_carousel, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20, 40, 760, 550, hExDui_carousel);
 
-	Ex_ObjSendMessage(hObj, CM_SIZE, 500, 500);
+	Ex_ObjSendMessage(hObj, CM_SIZE, 1600, 1200);
 	HEXIMAGE hImg = 0;
 	_img_createfromfile(L"res/1.jpeg", &hImg);
 	Ex_ObjSendMessage(hObj, CM_ADDIMG, 0, hImg);

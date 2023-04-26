@@ -4,12 +4,14 @@ void _carousel_paint(HEXOBJ hObj)
 {
     EX_PAINTSTRUCT ps{ 0 };
     Ex_ObjBeginPaint(hObj, &ps);
+	_canvas_setantialias(ps.hCanvas, TRUE);
+	_canvas_setimageantialias(ps.hCanvas, TRUE);
     HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, ECL_HIMAGELIST);
     if (hImageList != 0)
     {
         INT index = (INT)Ex_ObjGetLong(hObj, ECL_INDEX);
         HEXIMAGE hImage = _imglist_get(hImageList, index);
-        _canvas_drawimagerect(ps.hCanvas, hImage, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom, 255);
+        _canvas_drawimagerect(ps.hCanvas, hImage, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right, ps.rcPaint.bottom, 255);
         INT count = _imglist_count(hImageList);
         for (int i = 1; i < count + 1; i++)
         {
@@ -120,6 +122,9 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             HEXIMAGELIST hImageList = _imglist_create(wParam, lParam);
             Ex_ObjSetLong(hObj, ECL_HIMAGELIST, (size_t)hImageList);
         }
+		else {
+			_imglist_setsize(hImageList, wParam, lParam);
+		}
     }
     else if (uMsg == CM_ADDIMG)
     {
