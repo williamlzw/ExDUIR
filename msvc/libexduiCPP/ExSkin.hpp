@@ -23,10 +23,8 @@ namespace ExDUIR
 
 			ExSkin(ExSkin pOwner, int dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
 			{
-				auto hWndParent = pOwner == NULL ? 0 : pOwner.m_hWnd;
-				auto a = ExWindow();
-				ExWindow.
-				m_handle = Ex_DUIBindWindowEx(pWindow.m_hWnd, 0, dwStyleDui, 0, lpfnMsgProc);
+				auto hWndParent = pOwner.m_hWnd == NULL ? 0 : pOwner.m_hWnd;
+				m_handle = Ex_DUIBindWindowEx(hWndParent, 0, dwStyleDui, 0, lpfnMsgProc);
 			}
 
 			ExSkin(HWND pOwner, INT x, INT y, INT width, INT height, LPCWSTR sWindowName, int dwStyleDui, DWORD dwStyleWindow = NULL, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)

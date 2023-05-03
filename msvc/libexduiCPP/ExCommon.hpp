@@ -64,6 +64,20 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"ButtonEx", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+				void SetProps(EX_OBJ_PROPS props)
+				{
+					Ex_ObjSendMessage(m_handle, WM_EX_PROPS, 0, (LPARAM)&props);
+				}
+
+				void SetImageInfo(EX_IMAGEINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, BM_SETIMAGE, 0, (LPARAM)&info);
+				}
+
+				void SetIcon(ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, (LPARAM)&img.m_image);
+				}
 			};
 
 			class ExRadioButton : public ExControl
@@ -140,6 +154,10 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"CheckButtonEx", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+				void SetCheck(bool check)
+				{
+					Ex_ObjSendMessage(m_handle, BM_SETCHECK, check ? 1 : 0, 0);
+				}
 			};
 
 
@@ -159,6 +177,16 @@ namespace ExDUIR
 				ExCheckBox(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"CheckBox", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
+				}
+
+				void SetCheck(bool check)
+				{
+					Ex_ObjSendMessage(m_handle, BM_SETCHECK, check ? 1 : 0, 0);
+				}
+
+				bool GetCheck()
+				{
+					return Ex_ObjSendMessage(m_handle, BM_GETCHECK, 0, 0);
 				}
 			};
 
@@ -247,6 +275,21 @@ namespace ExDUIR
 				{
 					return Ex_ObjSendMessage(m_handle, CB_GETCOUNT, 0, 0);
 				}
+
+				void DropDown(bool drop)
+				{
+					Ex_ObjSendMessage(m_handle, CB_SHOWDROPDOWN, drop ? 1 : 0, 0);
+				}
+
+				void SetItemHeight(int height)
+				{
+					Ex_ObjSendMessage(m_handle, CB_SETITEMHEIGHT, 0, height);
+				}
+
+				int GetItemHeight()
+				{
+					return Ex_ObjSendMessage(m_handle, CB_GETITEMHEIGHT, 0, 0);
+				}
 			};
 
 			class ExSwitch : public ExControl
@@ -270,6 +313,16 @@ namespace ExDUIR
 				void SetCheck(BOOL check)
 				{
 					Ex_ObjSendMessage(m_handle, BM_SETCHECK, check, 0);
+				}
+
+				bool GetCheck()
+				{
+					return Ex_ObjSendMessage(m_handle, BM_GETCHECK, 0, 0);
+				}
+
+				void SetProps(EX_OBJ_PROPS props)
+				{
+					Ex_ObjSendMessage(m_handle, WM_EX_PROPS, 0, (size_t)&props);
 				}
 			};
 
@@ -329,6 +382,147 @@ namespace ExDUIR
 				{
 				}
 
+				void SetBanner(LPCWSTR text, int color)
+				{
+					Ex_ObjSendMessage(m_handle, EM_SETCUEBANNER, color, (LPARAM)text);
+				}
+
+				void SelectAll()
+				{
+					EX_CHARRANGE charRange;
+					charRange.cpMin = 0;
+					charRange.cpMax = -1;
+					Ex_ObjSendMessage(m_handle, EM_EXSETSEL, 0, (LPARAM)&charRange);
+				}
+
+				void CancelSelect()
+				{
+					Ex_ObjSendMessage(m_handle, EM_SETSEL, 0, 0);
+				}
+
+				void Select(int start, int end)
+				{
+					Ex_ObjSendMessage(m_handle, EM_SETSEL, start, end);
+				}
+
+				void Undo()
+				{
+					Ex_ObjSendMessage(m_handle, EM_UNDO, 0, 0);
+				}
+
+				void Redo()
+				{
+					Ex_ObjSendMessage(m_handle, EM_REDO, 0, 0);
+				}
+
+				void Copy()
+				{
+					Ex_ObjSendMessage(m_handle, WM_COPY, 0, 0);
+				}
+
+				void Cut()
+				{
+					Ex_ObjSendMessage(m_handle, WM_CUT, 0, 0);
+				}
+
+				void Paste()
+				{
+					Ex_ObjSendMessage(m_handle, WM_PASTE, 0, 0);
+				}
+
+				void Clear()
+				{
+					Ex_ObjSendMessage(m_handle, WM_CLEAR, 0, 0);
+				}
+
+				int GetLineCount()
+				{
+					return Ex_ObjSendMessage(m_handle, EM_GETLINECOUNT, 0, 0);
+				}
+
+				void ReplaceTextLine(LPCWSTR text)
+				{
+					EX_SETTEXTEX textformat;
+					textformat.flags = 2;       
+					textformat.codePage = 1200; 
+					Ex_ObjSendMessage(m_handle, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)text);
+				}
+
+				void AlignLeft()
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_LEFT);
+				}
+
+				void AlignRight()
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_RIGHT);
+				}
+
+				void AlignCenter()
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_CENTER);
+				}
+
+				void SetSelParStartIndentation(int size)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_STARTINDENT, 0, size, 0, 0, 0);
+				}
+
+				void SetSelParRightIndentation(int size)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_RIGHTINDENT, 0, 0, size, 0, 0);
+				}
+
+				void SetSelParOffset(int size)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_OFFSET, 0, 0, 0, size, 0);
+				}
+
+				void SetSelParNumbering(USHORT type)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_NUMBERING, type, 0, 0, 0, 0);
+				}
+
+				void SetSelCharColor(int crText)
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_COLOR, crText, 0, 0, 0, 0, 0, 0, 0, 0);
+				}
+
+				void SetSelCharBold()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_BOLD, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+				}
+
+				void SetSelCharItalic()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_ITALIC, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+				}
+
+				void SetSelCharUnderLine()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_UNDERLINE, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+				}
+
+				void SetSelCharStrikeOut()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_STRIKEOUT, 0, 0, 0, 0, 0, 0, 0, 1, 0);
+				}
+
+				void SetSelCharLink()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_LINK, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+				}
+
+				void SetSelCharFont(LPCWSTR fontName, int size)
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_FACE | CFM_SIZE, 0, fontName, size, 0, 0, 0, 0, 0, 0);
+				}
+
+				void LoadRtf(std::vector<CHAR> rtf)
+				{
+					Ex_ObjSendMessage(m_handle, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
+				}
+
 				std::wstring GetText()
 				{
 					size_t len = Ex_ObjGetTextLength(m_handle);
@@ -364,6 +558,147 @@ namespace ExDUIR
 				{
 				}
 
+				void SetBanner(LPCWSTR text, int color)
+				{
+					Ex_ObjSendMessage(m_handle, EM_SETCUEBANNER, color, (LPARAM)text);
+				}
+
+				void SelectAll()
+				{
+					EX_CHARRANGE charRange;
+					charRange.cpMin = 0;
+					charRange.cpMax = -1;
+					Ex_ObjSendMessage(m_handle, EM_EXSETSEL, 0, (LPARAM)&charRange);
+				}
+
+				void CancelSelect()
+				{
+					Ex_ObjSendMessage(m_handle, EM_SETSEL, 0, 0);
+				}
+
+				void Select(int start, int end)
+				{
+					Ex_ObjSendMessage(m_handle, EM_SETSEL, start, end);
+				}
+
+				void Undo()
+				{
+					Ex_ObjSendMessage(m_handle, EM_UNDO, 0, 0);
+				}
+
+				void Redo()
+				{
+					Ex_ObjSendMessage(m_handle, EM_REDO, 0, 0);
+				}
+
+				void Copy()
+				{
+					Ex_ObjSendMessage(m_handle, WM_COPY, 0, 0);
+				}
+
+				void Cut()
+				{
+					Ex_ObjSendMessage(m_handle, WM_CUT, 0, 0);
+				}
+
+				void Paste()
+				{
+					Ex_ObjSendMessage(m_handle, WM_PASTE, 0, 0);
+				}
+
+				void Clear()
+				{
+					Ex_ObjSendMessage(m_handle, WM_CLEAR, 0, 0);
+				}
+
+				int GetLineCount()
+				{
+					return Ex_ObjSendMessage(m_handle, EM_GETLINECOUNT, 0, 0);
+				}
+
+				void ReplaceTextLine(LPCWSTR text)
+				{
+					EX_SETTEXTEX textformat;
+					textformat.flags = 2;
+					textformat.codePage = 1200;
+					Ex_ObjSendMessage(m_handle, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)text);
+				}
+
+				void AlignLeft()
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_LEFT);
+				}
+
+				void AlignRight()
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_RIGHT);
+				}
+
+				void AlignCenter()
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_CENTER);
+				}
+
+				void SetSelParStartIndentation(int size)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_STARTINDENT, 0, size, 0, 0, 0);
+				}
+
+				void SetSelParRightIndentation(int size)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_RIGHTINDENT, 0, 0, size, 0, 0);
+				}
+
+				void SetSelParOffset(int size)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_OFFSET, 0, 0, 0, size, 0);
+				}
+
+				void SetSelParNumbering(USHORT type)
+				{
+					Ex_ObjEditSetSelParFormat(m_handle, PFM_NUMBERING, type, 0, 0, 0, 0);
+				}
+
+				void SetSelCharColor(int crText)
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_COLOR, crText, 0, 0, 0, 0, 0, 0, 0, 0);
+				}
+
+				void SetSelCharBold()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_BOLD, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+				}
+
+				void SetSelCharItalic()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_ITALIC, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+				}
+
+				void SetSelCharUnderLine()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_UNDERLINE, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+				}
+
+				void SetSelCharStrikeOut()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_STRIKEOUT, 0, 0, 0, 0, 0, 0, 0, 1, 0);
+				}
+
+				void SetSelCharLink()
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_LINK, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+				}
+
+				void SetSelCharFont(LPCWSTR fontName, int size)
+				{
+					Ex_ObjEditSetSelCharFormat(m_handle, CFM_FACE | CFM_SIZE, 0, fontName, size, 0, 0, 0, 0, 0, 0);
+				}
+
+				void LoadRtf(std::vector<CHAR> rtf)
+				{
+					Ex_ObjSendMessage(m_handle, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
+				}
+
 				std::wstring GetText()
 				{
 					size_t len = Ex_ObjGetTextLength(m_handle);
@@ -378,6 +713,16 @@ namespace ExDUIR
 					Ex_ObjSendMessage(m_handle, EM_SETSEL, -1, -1);                        //移动到最后一行
 					Ex_ObjSendMessage(m_handle, EM_REPLACESEL, -1, (LPARAM)line); //添加一行
 					Ex_ObjSetFocus(m_handle);                                              //添加焦点自动滚动到最后一行
+				}
+
+				void SetProps(EX_OBJ_PROPS props)
+				{
+					Ex_ObjSendMessage(m_handle, WM_EX_PROPS, 0, (LPARAM)&props);
+				}
+
+				void SetIcon(ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, (LPARAM)img.m_image);
 				}
 			};
 
@@ -398,6 +743,36 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"GroupBox", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void SetTextOffset(int offset)
+				{
+					Ex_ObjSetLong(m_handle, GROUPBOX_TEXT_OFFSET, offset);
+				}
+
+				int GetTextOffset()
+				{
+					return Ex_ObjGetLong(m_handle, GROUPBOX_TEXT_OFFSET);
+				}
+
+				void SetRadius(int radius)
+				{
+					Ex_ObjSetLong(m_handle, GROUPBOX_RADIUS, radius);
+				}
+
+				int GetRadius()
+				{
+					return Ex_ObjGetLong(m_handle, GROUPBOX_RADIUS);
+				}
+
+				void SetStrokeWidth(int strokeWidth)
+				{
+					Ex_ObjSetLong(m_handle, GROUPBOX_STROKEWIDTH, strokeWidth);
+				}
+
+				int GetStrokeWidth()
+				{
+					return Ex_ObjGetLong(m_handle, GROUPBOX_STROKEWIDTH);
+				}
 			};
 
 			class ExIconListView : public ExControl
@@ -416,6 +791,21 @@ namespace ExDUIR
 				ExIconListView(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"IconListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
+				}
+
+				void SetImageSize(int width, int height)
+				{
+					Ex_ObjSendMessage(m_handle, ILVM_SETITEMSIZE, 0, MAKELONG(width, height));
+				}
+
+				void SetItem(EX_ICONLISTVIEW_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+				}
+
+				void Update()
+				{
+					Ex_ObjSendMessage(m_handle, LVM_UPDATE, 0, 0);
 				}
 			};
 
@@ -436,6 +826,11 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"MenuBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void InsertItem(EX_LISTBUTTON_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+				}
 			};
 
 			class ExToolBar : public ExControl
@@ -454,6 +849,11 @@ namespace ExDUIR
 				ExToolBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"ToolBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
+				}
+
+				void InsertItem(EX_LISTBUTTON_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
 				}
 			};
 
@@ -474,6 +874,65 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"StatusBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void InsertItem(EX_LISTBUTTON_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+				}
+			};
+
+			class ExRollMenu : public ExControl
+			{
+			public:
+				ExRollMenu() = default;
+				~ExRollMenu() = default;
+				ExRollMenu(EXHANDLE hObj)
+				{
+					m_handle = hObj;
+				}
+				ExRollMenu(ExControl obj)
+				{
+					m_handle = obj.m_handle;
+				}
+				ExRollMenu(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"RollMenu", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
+				{
+				}
+
+				void AddGroup(EX_ROLLMENU_DATA info)
+				{
+					Ex_ObjSendMessage(m_handle, RM_ADDGROUP, 0, (LPARAM)&info);
+				}
+
+				void AddItem(int indexGroup, EX_ROLLMENU_ITEM info)
+				{
+					Ex_ObjSendMessage(m_handle, RM_ADDITEM, indexGroup, (LPARAM)&info);
+				}
+
+				void GetSelect(int& group, int& item)
+				{
+					Ex_ObjSendMessage(m_handle, RM_GETSEL, (WPARAM)&group, (LPARAM)&item);
+				}
+
+				void SetSelect(int indexGroup, int indexItem)
+				{
+					Ex_ObjSendMessage(m_handle, RM_SETSEL, indexGroup, indexItem);
+				}
+
+				void DelGroup(int index)
+				{
+					Ex_ObjSendMessage(m_handle, RM_DELGROUP, index, 0);
+				}
+
+				void DelItem(int indexGroup, int indexItem)
+				{
+					Ex_ObjSendMessage(m_handle, RM_DELITEM, indexGroup, indexItem);
+				}
+
+				void SetExpand(int indexGroup, bool expand)
+				{
+					Ex_ObjSendMessage(m_handle, RM_SETEXPAND, indexGroup, expand ? 1 : 0);
+				}
 			};
 
 			class ExListView : public ExControl
@@ -493,6 +952,11 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"ListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void SetItemCount(int count)
+				{
+				    Ex_ObjSendMessage(m_handle, LVM_SETITEMCOUNT, 0, count);
+				}
 			};
 
 			class ExTreeView : public ExControl
@@ -510,6 +974,35 @@ namespace ExDUIR
 				}
 				ExTreeView(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"TreeView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
+				{
+				}
+
+				void InsertItem(EX_TREEVIEW_INSERTINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, TVM_INSERTITEM, 0, (size_t)&info);
+				}
+
+				void Update()
+				{
+					Ex_ObjSendMessage(m_handle, TVM_UPDATE, 0, 0);
+				}
+			};
+
+			class ExTemplateListView : public ExControl
+			{
+			public:
+				ExTemplateListView() = default;
+				~ExTemplateListView() = default;
+				ExTemplateListView(EXHANDLE hObj)
+				{
+					m_handle = hObj;
+				}
+				ExTemplateListView(ExControl obj)
+				{
+					m_handle = obj.m_handle;
+				}
+				ExTemplateListView(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"TListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
 			};
@@ -550,6 +1043,41 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"ReportListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void SetColorListViewHead(int color)
+				{
+					Ex_ObjSetColor(m_handle, COLOR_EX_RLV_HEAD, color, FALSE);
+				}
+
+				int GetColorListViewHead()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_RLV_HEAD);
+				}
+
+				void SetColumn(EX_REPORTLIST_COLUMNINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_INSERTCOLUMN, 0, (size_t)&info);
+				}
+
+				void SetRow(EX_REPORTLIST_ROWINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+				}
+
+				void SetItem(EX_REPORTLIST_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_SETITEM, 0, (size_t)&info);
+				}
+
+				void SetCell(EX_REPORTLIST_CELLINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, LVM_SETCELL, 0, (size_t)&info);
+				}
+
+				void Update()
+				{
+					Ex_ObjSendMessage(m_handle, LVM_UPDATE, 0, 0);
+				}
 			};
 
 			class ExRotateImageBox : public ExControl
@@ -587,6 +1115,40 @@ namespace ExDUIR
 				ExScoreButton(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"ScoreButton", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
+				}
+
+				void SetImage(int type, ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, BM_SETIMAGE, type, img.m_image);
+				}
+			};
+
+			class ExSliderBar : public ExControl
+			{
+			public:
+				ExSliderBar() = default;
+				~ExSliderBar() = default;
+				ExSliderBar(EXHANDLE hObj)
+				{
+					m_handle = hObj;
+				}
+				ExSliderBar(ExControl obj)
+				{
+					m_handle = obj.m_handle;
+				}
+				ExSliderBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"SliderBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
+				{
+				}
+
+				void SetBlockDirection(int direction)
+				{
+					Ex_ObjSetLong(m_handle, SBL_BLOCK_POINT, direction);
+				}
+
+				int GetBlockDirection()
+				{
+					return Ex_ObjGetLong(m_handle, SBL_BLOCK_POINT);
 				}
 			};
 
@@ -664,6 +1226,21 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"NavButton", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void SetIcon(ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, img.m_image);
+				}
+
+				void SetCheck(bool check)
+				{
+					Ex_ObjSendMessage(m_handle, BM_SETCHECK, 1, check ? 1 : 0);
+				}
+
+				void SetImage(int type, ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, BM_SETIMAGE, type, img.m_image);
+				}
 			};
 
 			class ExPalette : public ExControl
@@ -702,6 +1279,41 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"ProgressBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void SetRadius(int radius)
+				{
+					Ex_ObjSendMessage(m_handle, PBM_SETRADIUS, radius, 0);
+				}
+
+				void SetColorBackground(int color)
+				{
+					Ex_ObjSendMessage(m_handle, PBM_SETBKCOLOR, color, 0);
+				}
+
+				void SetColorFont(int color)
+				{
+					Ex_ObjSendMessage(m_handle, PBM_SETBARCOLOR, color, 0);
+				}
+
+				void SetPos(int pos)
+				{
+					Ex_ObjSendMessage(m_handle, PBM_SETPOS, pos, 0);
+				}
+
+				int GetPos()
+				{
+					return Ex_ObjSendMessage(m_handle, PBM_GETPOS, 0, 0);
+				}
+
+				void SetRange(int range)
+				{
+					Ex_ObjSendMessage(m_handle, PBM_SETRANGE, range, 0);
+				}
+
+				int GetRange()
+				{
+					return Ex_ObjSendMessage(m_handle, PBM_GETRANGE, 0, 0);
+				}
 			};
 
 			class ExPropertyGrid : public ExControl
@@ -720,6 +1332,22 @@ namespace ExDUIR
 				ExPropertyGrid(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"PropertyGrid", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
+				}
+
+				std::wstring GetItemValue(LPCWSTR itemName)
+				{
+					LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_handle, PGM_GETITEMVALUE, 0, (LPARAM)itemName);
+					return std::wstring(ret);
+				}
+
+				void SetItemValue(LPCWSTR itemName, LPCWSTR itemValue)
+				{
+					Ex_ObjSendMessage(m_handle, PGM_SETITEMVALUE, (WPARAM)itemValue, (LPARAM)itemName);
+				}
+
+				void AddItem(EX_PROGRID_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, PGM_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&info);
 				}
 			};
 
@@ -778,6 +1406,16 @@ namespace ExDUIR
 					:ExControl(pOwner, x, y, width, height, L"Carousel", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
+
+				void SetSize(int width, int height)
+				{
+					Ex_ObjSendMessage(m_handle, CM_SIZE, width, height);
+				}
+
+				void AddImage(ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, CM_ADDIMG, 0, img.m_image);
+				}
 			};
 
 			class ExCefBrowser : public ExControl
@@ -815,6 +1453,21 @@ namespace ExDUIR
 				ExMiniblinkBrowser(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"MbBrowser", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
+				}
+
+				void Initialize(LPCWSTR libPath, LPCWSTR dllName)
+				{
+					Ex_ObjMiniblinkBrowserInitialize(libPath, dllName);
+				}
+
+				void LoadUrl(LPCWSTR url)
+				{
+					Ex_ObjSendMessage(m_handle, MBBM_LOAD, 0, (LPARAM)url);
+				}
+
+				void RunJS(LPCWSTR js)
+				{
+					Ex_ObjSendMessage(m_handle, MBBM_JS, 0, (LPARAM)js);
 				}
 			};
 
@@ -871,6 +1524,45 @@ namespace ExDUIR
 				}
 				ExDrawingBoard(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"DrawingBoard", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
+				{
+				}
+
+				void Clear()
+				{
+					Ex_ObjSendMessage(m_handle, DBM_CLEAR, 0, 0);
+				}
+
+				void SetPenWidth(int penWidth)
+				{
+					Ex_ObjSendMessage(m_handle, DBM_SETPENWIDTH, 0, penWidth);
+				}
+
+				void SetPenColor(int penColor)
+				{
+					Ex_ObjSendMessage(m_handle, DBM_SETPENCOLOR, 0, penColor);
+				}
+
+				void SetPenType(int penType)
+				{
+					Ex_ObjSendMessage(m_handle, DBM_SETPENTYPE, 0, penType);
+				}
+			};
+
+			class ExMediaPlay : public ExControl
+			{
+			public:
+				ExMediaPlay() = default;
+				~ExMediaPlay() = default;
+				ExMediaPlay(EXHANDLE hObj)
+				{
+					m_handle = hObj;
+				}
+				ExMediaPlay(ExControl obj)
+				{
+					m_handle = obj.m_handle;
+				}
+				ExMediaPlay(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"MediaFoundation", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
 				{
 				}
 			};
