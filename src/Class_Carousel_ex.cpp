@@ -122,9 +122,6 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             HEXIMAGELIST hImageList = _imglist_create(wParam, lParam);
             Ex_ObjSetLong(hObj, ECL_HIMAGELIST, (size_t)hImageList);
         }
-		else {
-			_imglist_setsize(hImageList, wParam, lParam);
-		}
     }
     else if (uMsg == CM_ADDIMG)
     {
