@@ -156,11 +156,11 @@ void test_label(HWND hWnd)
 	RECT rect;
 	Ex_ObjGetRect(hObj_label, &rect);
 	OUTPUTW(L"标签矩形:", rect.right, rect.bottom);
-	
+
 	HEXOBJ hObj_label2 = Ex_ObjCreateEx(-1, L"static", NULL, EOS_BORDER | EOS_VISIBLE, 200, 30, 180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
 	Ex_ReadFile(L"res/409.dds", &imgdata);
 	Ex_ObjSetBackgroundImage(hObj_label2, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
-	
+
 	HEXOBJ hObj_label4 = Ex_ObjCreateEx(-1, L"static", L"基础组件可以填充动画,支持PNG,GIF,JPG,BMP,DDS,ICO,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
 	Ex_ObjSetFontFromFamily(hObj_label4, L"宋体", 14, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(hObj_label4, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
@@ -3840,4 +3840,76 @@ void test_mask(HWND hWnd)
 
 	Ex_ObjCreateEx(-1, L"static", L"", -1, 50, 50, 200, 200, hExDui_mask, 0, DT_VCENTER | DT_CENTER, 0, 0, OnMaskObjMsgProc);
 	Ex_DUIShowWindow(hExDui_mask, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+HEXOBJ hObj_taggingBoard;
+
+LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nID == 1010)
+	{
+		Ex_ObjSendMessage(hObj_taggingBoard, TBM_START, 0, 0);
+	}
+	else if (nID == 1020)
+	{
+		Ex_ObjSendMessage(hObj_taggingBoard, TBM_STOP, 0, 0);
+	}
+	else if (nID == 1030)
+	{
+		Ex_ObjSendMessage(hObj_taggingBoard, TBM_CLEAR, 0, 0);
+	}
+	else if (nID == 1040)
+	{
+		auto arr = (EX_POLYGON_ARRAY*)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_DATA, 0, 0);
+		auto offsetLeft = Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_LEFT_OFFSET, 0, 0);
+		auto offsetTop = Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_TOP_OFFSET, 0, 0);
+		float scale;
+		auto scalePtr = (LPVOID)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_SCALE, 0, 0);
+		RtlMoveMemory(&scale, scalePtr, 4);
+		//最后一个是不闭合路径,不需要
+		for (int i = 0; i < arr->count - 1; i++)
+		{
+			size_t ptrValue = 0;
+			RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+			EX_POlYGON* ptr = (EX_POlYGON*)ptrValue;
+			if (ptr->count > 0)
+			{
+				for (int j = 0; j < ptr->count; j++)
+				{
+					int x = 0, y = 0;
+					RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
+					RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
+					output(L"原图坐标 arr", i, L"index", j, L"x", (x - offsetLeft) * scale , L"y", (y - offsetTop) * scale);
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+void test_tagging(HWND hWnd)
+{
+	HWND hWnd_tagging = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试标注画板", 0, 0, 1200, 850, 0, 0);
+	auto hExDui_tagging = Ex_DUIBindWindowEx(hWnd_tagging, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE, 0, 0);
+	Ex_DUISetLong(hExDui_tagging, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+
+	hObj_taggingBoard = Ex_ObjCreateEx(-1, L"TaggingBoard", L"", -1, 30, 30, 1000, 800, hExDui_tagging, 0, DT_VCENTER | DT_CENTER, 0, 0, 0);
+	auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"开始绘图", -1, 1050, 30, 100, 30, hExDui_tagging, 1010, -1, 0, 0, 0);
+	auto hObj2 = Ex_ObjCreateEx(-1, L"button", L"结束绘图", -1, 1050, 70, 100, 30, hExDui_tagging, 1020, -1, 0, 0, 0);
+	auto hObj3 = Ex_ObjCreateEx(-1, L"button", L"清空绘图", -1, 1050, 110, 100, 30, hExDui_tagging, 1030, -1, 0, 0, 0);
+	auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"取出数据", -1, 1050, 150, 100, 30, hExDui_tagging, 1040, -1, 0, 0, 0);
+	auto hObj5 = Ex_ObjCreateEx(-1, L"static", L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标", -1, 1050, 190, 130, 600, hExDui_tagging, 1050, DT_WORDBREAK, 0, 0, 0);
+	Ex_ObjSetFontFromFamily(hObj5, L"微软雅黑", 16, EFS_BOLD, FALSE);
+	Ex_ObjSetColor(hObj5, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
+	
+	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnTaggingButtonEvent);
+	Ex_ObjHandleEvent(hObj2, NM_CLICK, OnTaggingButtonEvent);
+	Ex_ObjHandleEvent(hObj3, NM_CLICK, OnTaggingButtonEvent);
+	Ex_ObjHandleEvent(hObj4, NM_CLICK, OnTaggingButtonEvent);
+
+	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_PEN_COLOR, 0, ExARGB(0, 255, 0, 255));
+	HEXIMAGE img;
+	_img_createfromfile(L"res/3.jpeg", &img);
+	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_BKG, 0, img);
+	Ex_DUIShowWindow(hExDui_tagging, SW_SHOWNORMAL, 0, 0, 0);
 }

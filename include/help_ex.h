@@ -371,7 +371,7 @@ struct obj_base
 #include "Class_Miniblink_ex.h"
 #include "Class_MediaFoundation.h"
 #include "Class_RollMenu.h"
-
+#include "Class_TaggingBoard.h"
 
 struct LOCALINFO
 {

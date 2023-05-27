@@ -15,7 +15,7 @@
     <Filter Include="源文件\Layout">
       <UniqueIdentifier>{ba4aff8e-346f-4e48-8f94-cc42fd159613}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\global">
+    <Filter Include="源文件\Global">
       <UniqueIdentifier>{640a3a2d-37d9-4624-9a6f-b97dd4441054}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -48,25 +48,25 @@
       <Filter>源文件\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="ExApp.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
     <ClInclude Include="ExCommon.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
     <ClInclude Include="ExControl.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
     <ClInclude Include="ExDUIRCPP.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
     <ClInclude Include="ExMessageBox.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
     <ClInclude Include="ExSkin.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
     <ClInclude Include="ExUIbase.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
     <ClInclude Include="ButtonWindow.hpp">
       <Filter>源文件</Filter>
@@ -75,7 +75,7 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="ExWindow.hpp">
-      <Filter>源文件\global</Filter>
+      <Filter>源文件\Global</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

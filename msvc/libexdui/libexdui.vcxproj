@@ -56,6 +56,7 @@
     <ClCompile Include="..\..\src\Class_Static_SysLink_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Switch_ex.cpp" />
     <ClCompile Include="..\..\src\Class_SysButton_Page_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_TaggingBoard.cpp" />
     <ClCompile Include="..\..\src\Class_TitleBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_TreeView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Win10Loading_ex.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="..\..\include\Class_Static_SysLink_ex.h" />
     <ClInclude Include="..\..\include\Class_Switch_ex.h" />
     <ClInclude Include="..\..\include\Class_SysButton_Page_ex.h" />
+    <ClInclude Include="..\..\include\Class_TaggingBoard.h" />
     <ClInclude Include="..\..\include\Class_TitleBar_ex.h" />
     <ClInclude Include="..\..\include\Class_TreeView_ex.h" />
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h" />

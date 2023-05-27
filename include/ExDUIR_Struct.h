@@ -1556,6 +1556,27 @@
 // 消息_父组件改变后   lParam :EXHANDLE hParent HWND或HEXDUI句柄
 #define WM_SETPARENTAFTER   55555 
 
+#pragma region taggingboard message
+// 消息_标注板_开始绘制
+#define TBM_START 10000
+// 消息_标注板_结束绘制
+#define TBM_STOP 10001
+// 消息_标注板_清空
+#define TBM_CLEAR 10002
+// 消息_标注板_设置背景图片
+#define TBM_SET_BKG 10003
+// 消息_标注板_设置画笔颜色, lParam颜色
+#define TBM_SET_PEN_COLOR 10004
+// 消息_标注板_取闭合路径点数组EX_POLYGON_ARRAY*指针, ret返回,不要释放
+#define TBM_GET_DATA 10005
+// 消息_标注板_取图像缩放系数,ret返回小数指针,不要释放
+#define TBM_GET_IMG_SCALE 10006
+// 消息_标注板_取图像缩放后横坐标偏移, ret返回
+#define TBM_GET_IMG_LEFT_OFFSET 10007
+// 消息_标注板_取图像缩放后纵坐标偏移, ret返回
+#define TBM_GET_IMG_TOP_OFFSET 10008
+#pragma endregion taggingboard message
+
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule, #NAME)		//获取函数指针
@@ -1996,6 +2017,20 @@ struct EX_LISTVIEW_INFO
 	INT nOffsetX; //列表水平偏移
 	INT nOffsetY; //列表垂直偏移
 	LPVOID lpItems; //列表项目状态信息
+};
+
+// 标注板路径数组信息结构
+struct EX_POLYGON_ARRAY
+{
+	INT count;
+	LPVOID polygons; //保存有count个EX_POlYGON*指针,注意最后一个是不闭合路径
+};
+
+// 标注板路径信息结构
+struct EX_POlYGON
+{
+	INT count;
+	LPVOID points;//保存有count个POINT结构体数据:x,y
 };
 
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
