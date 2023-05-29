@@ -56,7 +56,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
 		if (arr->count > 0)
 		{
-			for (int i = 0; i < arr->count; i++) {
+			for (int i = 0; i < arr->count; i++) 
+			{
 				size_t ptrValue = 0;
 				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
 				auto ptr = (EX_POlYGON*)ptrValue;
@@ -179,6 +180,39 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	else if (uMsg == TBM_GET_DATA)
 	{
 		return Ex_ObjGetLong(hObj, TBL_ARRAY);
+	}
+	else if (uMsg == TBM_SET_DATA)
+	{
+		auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
+		if (arr->count > 0)
+		{
+			for (int i = 0; i < arr->count; i++)
+			{
+				size_t ptrValue = 0;
+				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+				auto ptr = (EX_POlYGON*)ptrValue;
+				free(ptr->points);
+				free(ptr);
+			}
+		}
+		free(arr->polygons);
+		free(arr);
+
+		//新建临时点
+		auto newPtr = malloc(sizeof(EX_POlYGON));
+		((EX_POlYGON*)newPtr)->points = malloc(sizeof(POINT));
+		((EX_POlYGON*)newPtr)->count = 0;
+		Ex_ObjSetLong(hObj, TBL_DATA, (LONG_PTR)newPtr);
+
+		//添加临时点
+		auto newArr = (EX_POLYGON_ARRAY*)lParam;
+		newArr->polygons = realloc(newArr->polygons, (newArr->count + 1) * sizeof(size_t));
+		size_t newPtrValue = (size_t)newPtr;
+		RtlMoveMemory((LPVOID)((size_t)newArr->polygons + newArr->count * sizeof(size_t)), &newPtrValue, sizeof(size_t));
+		newArr->count = newArr->count + 1;
+
+		Ex_ObjSetLong(hObj, TBL_ARRAY, lParam);
+		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == TBM_GET_IMG_SCALE)
 	{

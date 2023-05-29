@@ -1569,12 +1569,14 @@
 #define TBM_SET_PEN_COLOR 10004
 // 消息_标注板_取闭合路径点数组EX_POLYGON_ARRAY*指针, ret返回,不要释放
 #define TBM_GET_DATA 10005
+// 消息_标注板_置闭合路径点数组EX_POLYGON_ARRAY*指针,lParam设置,内部原指针释放,无需设置临时点,只需设置闭合路径。
+#define TBM_SET_DATA 10006
 // 消息_标注板_取图像缩放系数,ret返回小数指针,不要释放
-#define TBM_GET_IMG_SCALE 10006
+#define TBM_GET_IMG_SCALE 10007
 // 消息_标注板_取图像缩放后横坐标偏移, ret返回
-#define TBM_GET_IMG_LEFT_OFFSET 10007
+#define TBM_GET_IMG_LEFT_OFFSET 10008
 // 消息_标注板_取图像缩放后纵坐标偏移, ret返回
-#define TBM_GET_IMG_TOP_OFFSET 10008
+#define TBM_GET_IMG_TOP_OFFSET 10009
 #pragma endregion taggingboard message
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
