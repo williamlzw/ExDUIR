@@ -777,6 +777,7 @@ void test_listview(HWND hWnd)
 		m_listViewItemInfo[index].depth = index % 5;
 	}
 	Ex_ObjSendMessage(hobj_listview, LVM_SETITEMCOUNT, itemCount, itemCount);
+
 	HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hobj_listview, SB_VERT);
 	Ex_ObjPostMessage(hObj_scroll, SBM_SETVISIBLE, 0, 0);            //隐藏滚动条
 	Ex_ObjSetLong(hObj_scroll, EOL_OBJPROC, (size_t)OnScrollBarMsg); //改变滚动条回调

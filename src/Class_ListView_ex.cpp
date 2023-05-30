@@ -1145,11 +1145,10 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
 
 size_t _listview_reselect(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, INT iItem, BOOL bShow)
 {
-	INT nCount = pOwner->count_selects_;
+	INT nCount = pOwner->count_items_;
 	LPVOID lpItems = pOwner->lpItems_;
 	if (nCount > 0)
 	{
-		INT nSelect = pOwner->count_items_;
 		for (INT i = 1; i < nCount + 1; i++)
 		{
 			if (_listview_queryitemstate(lpItems, i, STATE_SELECT))
