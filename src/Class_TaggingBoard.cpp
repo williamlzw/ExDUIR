@@ -147,13 +147,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		heightRC = (INT)((FLOAT)heightRC * dpi);
 
 		INT edge;
-		if (heightRC > widthRC)
-		{
-			edge = heightRC;
-		}
-		else {
-			edge = widthRC;
-		}
+		edge = heightRC;
 		INT edgeImg;
 		if (height > width)
 		{
