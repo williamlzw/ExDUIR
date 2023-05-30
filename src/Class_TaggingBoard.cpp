@@ -176,6 +176,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjSetLong(hObj, TBL_IMG_BKG, lParam);
 		auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TBL_IMG_SCALE);
 		RtlMoveMemory(scalePtr, &scaleImg, 4);
+		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == TBM_GET_DATA)
 	{
