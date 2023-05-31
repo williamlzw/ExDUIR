@@ -3953,7 +3953,7 @@ void test_tagging(HWND hWnd)
 	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_PEN_COLOR, 0, ExARGB(0, 255, 0, 255));
 	HEXIMAGE img;
 
-	_img_createfromfile(L"C://laizewei//ExDUIR-master//msvc//test//res//6.bmp", &img);
+	_img_createfromfile(L"res//3.jpeg", &img);
 	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_BKG, 0, img);
 	Ex_DUIShowWindow(hExDui_tagging, SW_SHOWNORMAL, 0, 0, 0);
 }
