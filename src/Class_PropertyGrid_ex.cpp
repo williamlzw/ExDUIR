@@ -343,6 +343,16 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, PGL_ITEMARRAY);
 		Array_Destroy(arr);
 	}
+	else if (uMsg == PGM_CLEAR)
+	{
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, PGL_ITEMARRAY);
+		Array_Destroy(arr);
+		array_s* arr1 = Array_Create(0);
+		Array_BindEvent(arr1, eae_delmember, _propertygrid_ondelmember);
+		Ex_ObjSetLong(hObj, PGL_ITEMARRAY, (LONG_PTR)arr1);
+		Ex_ObjSetLong(hObj, PGL_ITEMNUM, 0);
+		Ex_ObjInvalidateRect(hObj, 0);
+	}
 	else if (uMsg == WM_PAINT)
 	{
 		EX_PAINTSTRUCT ps{ 0 };

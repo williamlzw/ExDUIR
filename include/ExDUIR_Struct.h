@@ -1471,6 +1471,8 @@
 #define PGM_GETITEMVALUE  10011
 // 消息_属性框_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
 #define PGM_SETITEMVALUE  10012
+// 消息_属性框_清空项目
+#define PGM_CLEAR  10013
 #pragma endregion propertygrid message
 
 #pragma region propertygrid notify
@@ -1578,6 +1580,11 @@
 // 消息_标注板_取图像缩放后纵坐标偏移, ret返回
 #define TBM_GET_IMG_TOP_OFFSET 10009
 #pragma endregion taggingboard message
+
+#pragma region taggingboard notify
+// 事件_标注板_激活闭合路径,lParam返回路径索引,从1开始
+#define TBN_HIT_PATH 20000
+#pragma endregion taggingboard notify
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	

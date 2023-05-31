@@ -159,7 +159,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		float scaleImg = (float)edgeImg / edge;
 		INT left = (widthRC - width / scaleImg) / 2;
 		INT top = (heightRC - height / scaleImg) / 2;
-		
+
 		Ex_ObjSetLong(hObj, TBL_IMG_LEFT_OFFSET, left);
 		Ex_ObjSetLong(hObj, TBL_IMG_TOP_OFFSET, top);
 		auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
@@ -331,6 +331,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			if (hitPath != 0)
 			{
 				Ex_ObjSetLong(hObj, TBL_CHECK_PATH, hitPath);
+				Ex_ObjDispatchNotify(hObj, TBN_HIT_PATH, 0, hitPath);
 			}
 		}
 	}

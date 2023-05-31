@@ -777,7 +777,6 @@ void test_listview(HWND hWnd)
 		m_listViewItemInfo[index].depth = index % 5;
 	}
 	Ex_ObjSendMessage(hobj_listview, LVM_SETITEMCOUNT, itemCount, itemCount);
-
 	HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hobj_listview, SB_VERT);
 	Ex_ObjPostMessage(hObj_scroll, SBM_SETVISIBLE, 0, 0);            //隐藏滚动条
 	Ex_ObjSetLong(hObj_scroll, EOL_OBJPROC, (size_t)OnScrollBarMsg); //改变滚动条回调
@@ -3845,6 +3844,12 @@ void test_mask(HWND hWnd)
 
 HEXOBJ hObj_taggingBoard;
 
+LRESULT CALLBACK OnTaggingBoardEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	output(L"命中闭合路径", (size_t)lParam);
+	return 0;
+}
+
 LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nID == 1010)
@@ -3931,7 +3936,7 @@ void test_tagging(HWND hWnd)
 	auto hObj3 = Ex_ObjCreateEx(-1, L"button", L"清空绘图", -1, 1050, 110, 100, 30, hExDui_tagging, 1030, -1, 0, 0, 0);
 	auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"取出数据", -1, 1050, 150, 100, 30, hExDui_tagging, 1040, -1, 0, 0, 0);
 	auto hObj5 = Ex_ObjCreateEx(-1, L"button", L"设置数据", -1, 1050, 190, 100, 30, hExDui_tagging, 1050, -1, 0, 0, 0);
-
+	
 
 	auto hObj6 = Ex_ObjCreateEx(-1, L"static", L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标", -1, 1050, 230, 130, 550, hExDui_tagging, 1060, DT_WORDBREAK, 0, 0, 0);
 	Ex_ObjSetFontFromFamily(hObj6, L"微软雅黑", 16, EFS_BOLD, FALSE);
@@ -3943,9 +3948,12 @@ void test_tagging(HWND hWnd)
 	Ex_ObjHandleEvent(hObj4, NM_CLICK, OnTaggingButtonEvent);
 	Ex_ObjHandleEvent(hObj5, NM_CLICK, OnTaggingButtonEvent);
 
+	Ex_ObjHandleEvent(hObj_taggingBoard, TBN_HIT_PATH, OnTaggingBoardEvent);
+
 	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_PEN_COLOR, 0, ExARGB(0, 255, 0, 255));
 	HEXIMAGE img;
-	_img_createfromfile(L"res/3.jpeg", &img);
+	//_img_createfromfile(L"C://data//data//20220718_172352440_FP_287_1201-凸点-重-明显//FP/3.bmp", &img);
+	_img_createfromfile(L"C://laizewei//ExDUIR-master//msvc//test//res//6.bmp", &img);
 	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_BKG, 0, img);
 	Ex_DUIShowWindow(hExDui_tagging, SW_SHOWNORMAL, 0, 0, 0);
 }
