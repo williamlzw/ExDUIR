@@ -393,6 +393,10 @@
 #define EES_HIDDENCARET 0x2000
 // 编辑框风格_下划线
 #define EES_UNDERLINE 0x4000
+// 编辑框风格_字母输入
+#define EES_LETTER 0x8000
+// 编辑框风格_数字字母输入
+#define EES_NUMERIC_LETTER 0x10000
 #pragma endregion edit style constant
 
 // 事件_编辑框_超链接事件
@@ -1960,6 +1964,7 @@ struct EX_PROGRID_ITEMINFO
 	size_t index = 0;				//默认0,为尾部.索引从非表头开始计算,从1开始
 	LPCWSTR title;					//标题
 	LPCWSTR text;					//注意对于颜色框 为文本数字
+	int editStyle = 0;				// 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读
 	EX_PROGRID_ITEMINFO_COMBOBOX textComboBox[50];  //组合框数组内容
 	size_t comboboxNum;							//组合框数组数量
 };

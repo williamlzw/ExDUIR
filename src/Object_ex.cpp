@@ -1315,6 +1315,7 @@ LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong)
             if (Ex_ObjSendMessage(hObj, WM_STYLECHANGING, EOL_STYLE, dwNewLong) == 0)
             {
                 ret = pObj->dwStyle_;
+                pObj->dwStyle_ = dwNewLong;
                 Ex_ObjSendMessage(hObj, WM_STYLECHANGED, EOL_STYLE, dwNewLong);
             }
         }

@@ -3273,7 +3273,7 @@ void test_propertygrid(HWND hParent)
 	a.text = L"表项1-1";
 	EX_PROGRID_ITEMINFO_COMBOBOX b;
 	b.text = L"表项1-2";
-
+	
 	item.textComboBox[0] = a;
 	item.textComboBox[1] = b;
 	item.comboboxNum = 2;
@@ -3287,12 +3287,17 @@ void test_propertygrid(HWND hParent)
 	item.title = L"日期";
 	item.text = L"2022-7-6";
 	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_DATEBOX, (LPARAM)&item);
-	for (int i = 0; i < 4; i++)
+
+	std::vector<std::wstring> titles = { L"普通编辑框",L"数字输入编辑框",L"字母输入编辑框",L"字母数字编辑框",L"只读编辑框" };
+	std::vector<std::wstring> texts = { L"中文123abc",L"1234567890",L"aA",L"aA123",L"测试只读" };
+	std::vector<int> editStyles = { 0, 1,2,3,4 };
+	for (int i = 0; i < 5; i++)
 	{
-		auto title = L"名称" + std::to_wstring(i + 1);
+		auto title = titles[i];
 		item.title = title.c_str();
-		auto text = L"值" + std::to_wstring(i + 1);
+		auto text = texts[i];
 		item.text = text.c_str();
+		item.editStyle = editStyles[i];
 		Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
 	}
 	item.title = L"小组B";
@@ -3313,17 +3318,15 @@ void test_propertygrid(HWND hParent)
 	item.comboboxNum = 3;
 
 	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_COMBOBOX, (LPARAM)&item);
-	for (int i = 4; i < 8; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		auto title = L"名称" + std::to_wstring(i + 1);
+		auto title = L"项目" + std::to_wstring(i + 1);
 		item.title = title.c_str();
-		auto text = L"值" + std::to_wstring(i + 1);
-		item.text = text.c_str();
+		item.text = L"aA";
+		item.editStyle = 0;
 		Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
 	}
-	item.title = L"最后一个标题";
-	item.text = L"最后一个值";
-	Ex_ObjSendMessage(m_hObjPropertyGrid, PGM_ADDITEM, PGT_OBJ_EDIT, (LPARAM)&item);
+
 	Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
 }
 

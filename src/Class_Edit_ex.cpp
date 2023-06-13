@@ -901,7 +901,6 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 				SetTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET, 500, _edit_timer_caret);
 			}
 		}
-
 		else if (uMsg == WM_KILLFOCUS)
 		{
 			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
@@ -927,6 +926,20 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			if ((pObj->dwStyle_ & EES_NUMERICINPUT) == EES_NUMERICINPUT)
 			{
 				if (!(wParam > 44 && wParam < 58 && wParam != 47))
+				{
+					return 1;
+				}
+			}
+			if ((pObj->dwStyle_ & EES_LETTER) == EES_LETTER)
+			{
+				if (!(wParam > 64 && wParam < 91 || wParam > 96 && wParam < 123))
+				{
+					return 1;
+				}
+			}
+			if ((pObj->dwStyle_ & EES_NUMERIC_LETTER) == EES_NUMERIC_LETTER)
+			{
+				if (!(wParam > 47 && wParam < 58 || wParam > 64 && wParam < 91 || wParam > 96 && wParam < 123))
 				{
 					return 1;
 				}

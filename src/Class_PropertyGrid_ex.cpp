@@ -285,7 +285,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjSetLong(hObj, PGL_ITEMTEXTCOLOR, ExRGB2ARGB(0, 255));
 		Ex_ObjSetLong(hObj, PGL_HEADERBACKGROUNDCOLOR, ExRGB2ARGB(5263440, 255));
 		//-------组件创建---------------
-		HEXOBJ hobjEdit = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", 0, EOS_VISIBLE | EES_HIDESELECTION,
+		HEXOBJ hobjEdit = Ex_ObjCreateEx(EOS_EX_FOCUSABLE | EOS_EX_COMPOSITED | EOS_EX_CUSTOMDRAW, L"edit", 0, EOS_VISIBLE | EES_HIDESELECTION | EES_NUMERIC_LETTER,
 			320, 0, 110, lineHeight, hObj, 0, DT_VCENTER, 0, 0, 0);
 		Ex_ObjShow(hobjEdit, FALSE);
 		Ex_ObjSetLong(hObj, PGL_HOBJEDIT, hobjEdit);
@@ -663,6 +663,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			}
 			void* ptr = (void*)Array_GetMember(arr, L);
 			INT itemType = __get(ptr, PGITEM_STRUCT_OFFSET_TYPE);
+			INT editStyle = __get(ptr, PGITEM_STRUCT_OFFSET_EDITSTYLE);
 			INT offsetLeft = lineHeight / 3 * 2;//非小组行则需要在移动组件宽度时减去边距
 			BOOL isgroup = __get(ptr, PGITEM_STRUCT_OFFSET_SHRINK);
 			if (itemType == PGT_OBJ_GROUP)
@@ -727,6 +728,28 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				if (itemType == PGT_OBJ_EDIT)
 				{
 					HEXOBJ edit = Ex_ObjGetLong(hObj, PGL_HOBJEDIT);
+					// 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4密码输入 5只读
+	
+					if (editStyle == 0)
+					{
+						Ex_ObjSetLong(edit, EOL_STYLE, EOS_VISIBLE);
+					}
+					else if (editStyle == 1)
+					{
+						Ex_ObjSetLong(edit, EOL_STYLE, EOS_VISIBLE | EES_NUMERICINPUT);
+					}
+					else if (editStyle == 2)
+					{
+						Ex_ObjSetLong(edit, EOL_STYLE, EOS_VISIBLE | EES_LETTER);
+					}
+					else if (editStyle == 3)
+					{
+						Ex_ObjSetLong(edit, EOL_STYLE, EOS_VISIBLE | EES_NUMERIC_LETTER);
+					}
+					else if (editStyle == 4)
+					{
+						continue;
+					}
 					Ex_ObjShow(edit, TRUE);
 					Ex_ObjMove(edit, itemRC2.left, itemRC2.top, itemRC2.right - itemRC2.left, itemRC2.bottom - itemRC2.top, TRUE);
 					Ex_ObjSetText(edit, itemText, TRUE);
@@ -902,9 +925,9 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					Ex_ObjSetLong(hObj, PGL_SHOWEND, start == 1 ? showNum + offset : end - 1);
 				}
 				else
-
+				{
 					nPos = oPos;
-
+				}
 			}
 			else if (nCode == SB_LINEDOWN)
 			{
@@ -956,7 +979,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			__set(ptr, PGITEM_STRUCT_OFFSET_TITLE, (LONG_PTR)StrDupW(item->title));
 		}
-
+		__set(ptr, PGITEM_STRUCT_OFFSET_EDITSTYLE, item->editStyle);
 		__set(ptr, PGITEM_STRUCT_OFFSET_COMBOBOXARRAY, 0);
 		__set(ptr, PGITEM_STRUCT_OFFSET_SHRINK, 0);
 		if (wParam == PGT_OBJ_GROUP)

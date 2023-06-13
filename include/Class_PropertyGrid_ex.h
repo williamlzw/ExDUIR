@@ -41,7 +41,7 @@
 
 //----------数组成员结构体----内存偏移----------------------
 // 属性框项目结构_内存大小
-#define PGITEM_STRUCT_SIZE   40   //下面的大小,指针均按8字节算
+#define PGITEM_STRUCT_SIZE   44   //下面的大小,指针均按8字节算
 // 属性框项目结构_内存偏移_类型
 #define PGITEM_STRUCT_OFFSET_TYPE 0
 // 属性框项目结构_内存偏移_收缩 0表示未收缩 -1表示收缩
@@ -52,6 +52,8 @@
 #define PGITEM_STRUCT_OFFSET_TEXT 24
 // 属性框项目结构_内存偏移_组合框内容指针 对于"组合框":指向一个成员为文本指针的数组的指针(array_s*) 
 #define PGITEM_STRUCT_OFFSET_COMBOBOXARRAY 32
+// 属性框项目结构_内存偏移_编辑框风格 (int)
+#define PGITEM_STRUCT_OFFSET_EDITSTYLE 40
 
 void _propertygrid_register();
 LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
