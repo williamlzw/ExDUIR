@@ -887,6 +887,17 @@ BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BI
 BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask, HEXIMAGE* phImg);
 
 /// <summary>
+/// 图形粘贴,将小图粘贴到大图并输出新图像
+/// </summary>
+/// <param name="dstImg">大图</param>
+/// <param name="srcImg">小图</param>
+/// <param name="destX">粘贴到大图横坐标</param>
+/// <param name="destY">粘贴到大图纵坐标</param>
+/// <param name="phImg">输出图像</param>
+/// <returns></returns>
+BOOL _img_paste(HEXIMAGE dstImg, HEXIMAGE srcImg, INT destX, INT destY, HEXIMAGE* phImg);
+
+/// <summary>
 /// 图像旋转翻转
 /// </summary>
 /// <param name="hImg"></param>

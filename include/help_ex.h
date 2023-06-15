@@ -6,7 +6,6 @@
 #include <vector>
 #include <string>
 #include <olectl.h>
-
 #include <Windowsx.h>
 #pragma comment(lib, "OleAut32.lib")
 #include <shlwapi.h>
@@ -426,6 +425,7 @@ struct RENDERINFO
     ID2D1GdiInteropRenderTarget *pGDIInterop;
     ID2D1Effect *pEffectGaussianBlur;
     ID2D1Effect *pEffectHueRotation;
+	ID2D1Effect* pEffectComposite;
     HMODULE hRiched20;
 };
 

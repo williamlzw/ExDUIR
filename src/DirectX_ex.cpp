@@ -227,6 +227,23 @@ void _dx_blur(ID2D1DeviceContext *pDeviceContext, ID2D1Bitmap *pBitmap, FLOAT fD
     }
 }
 
+void _dx_composite(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap1, ID2D1Bitmap* pBitmap2, D2D1_COMPOSITE_MODE mode, INT* nError)
+{
+	_dx_flush(pDeviceContext);
+	if (g_Ri.pEffectComposite == 0)
+	{
+		_dx_createeffect(pDeviceContext, CLSID_D2D1Composite, &g_Ri.pEffectComposite, nError);
+	}
+	if (*nError == 0)
+	{
+		g_Ri.pEffectComposite->SetInput(0, pBitmap1);
+		g_Ri.pEffectComposite->SetInput(1, pBitmap2);
+		pDeviceContext->BeginDraw();
+		pDeviceContext->DrawImage(g_Ri.pEffectComposite, D2D1_INTERPOLATION_MODE_LINEAR, mode);
+		pDeviceContext->EndDraw();
+	}
+}
+
 void _dx_cliprect(ID2D1DeviceContext *pDeviceContext, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
     D2D1_RECT_F rect = {0};

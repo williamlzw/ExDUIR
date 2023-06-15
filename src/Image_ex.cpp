@@ -1108,8 +1108,8 @@ BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMa
 						bdDst->scan0[y * bdDst->stride + x * 4 + 3] = (BYTE)(chDst * chSrc / 255);
 					}
 				}
-				
-				
+
+
 				_img_unlock(hImgTemp, bdSrc);
 				ret = TRUE;
 			}
@@ -1126,7 +1126,129 @@ BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMa
 		_img_createfrommemory(buf, len, phImg);
 		Ex_FreeBuffer(buf);
 	}
+	_img_destroy(hImg);
 	Ex_MemFree(bdDst);
 	_img_destroy(hImg);
 	return ret;
+}
+
+BOOL _img_paste(HEXIMAGE dstImg, HEXIMAGE srcImg, INT destX, INT destY, HEXIMAGE* phImg)
+{
+	// 检查参数合法性
+	if (dstImg == 0 || srcImg == 0 || phImg == nullptr)
+	{
+		return FALSE;
+	}
+
+	img_s* pDstImage = nullptr;
+	img_s* pSrcImage = nullptr;
+	INT nError = 0;
+	HEXIMAGE hImg = 0;
+	_img_copy(dstImg, &hImg);
+	// 获取目标图像
+	if (!_handle_validate(hImg, HT_IMAGE, (LPVOID*)&pDstImage, &nError))
+	{
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	IWICBitmap* pDestBitmap = (IWICBitmap*)(pDstImage->pBitmapSource_);
+	// 获取源图像
+	if (!_handle_validate(srcImg, HT_IMAGE, (LPVOID*)&pSrcImage, &nError))
+	{
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	IWICBitmap* pSrcBitmap = (IWICBitmap*)(pSrcImage->pBitmapSource_);
+
+	UINT srcWidth = 0;
+	UINT srcHeight = 0;
+	UINT destWidth = 0;
+	UINT destHeight = 0;
+
+	// 获取源图像和目标图像的宽度和高度
+	if (FAILED(pSrcBitmap->GetSize(&srcWidth, &srcHeight)) ||
+		FAILED(pDestBitmap->GetSize(&destWidth, &destHeight)))
+	{
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	// 检查是否越界
+	if (destX + srcWidth > destWidth || destY + srcHeight > destHeight)
+	{
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	// 锁定目标图像
+	IWICBitmapLock* pDestLock = nullptr;
+	if (FAILED(pDestBitmap->Lock(nullptr, WICBitmapLockWrite, &pDestLock)))
+	{
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	IWICBitmapLock* pSrcLock = nullptr;
+	if (FAILED(pSrcBitmap->Lock(nullptr, WICBitmapLockRead, &pSrcLock)))
+	{
+		pDestLock->Release();
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	BYTE* pSrcData = nullptr;
+	BYTE* pDestData = nullptr;
+	UINT cbSrcFrame = 0;
+	UINT cbDestFrame = 0;
+
+	if (FAILED(pSrcLock->GetDataPointer(&cbSrcFrame, &pSrcData)) ||
+		FAILED(pDestLock->GetDataPointer(&cbDestFrame, &pDestData)))
+	{
+		pSrcLock->Release();
+		pDestLock->Release();
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	UINT srcStride, destStride;
+	if (FAILED(pSrcLock->GetStride(&srcStride)) ||
+		FAILED(pDestLock->GetStride(&destStride)))
+	{
+		pSrcLock->Release();
+		pDestLock->Release();
+		_img_destroy(hImg);
+		return FALSE;
+	}
+
+	for (UINT row = 0; row < srcHeight; row++)
+	{
+		BYTE* pSrcRow = pSrcData + row * srcStride;
+		BYTE* pDestRow = pDestData + (row + destY) * destStride;
+		// 混合当前行的像素数据
+		for (UINT col = 0; col < srcWidth; col++)
+		{
+			BYTE* pSrcPixel = pSrcRow + col * 4;
+			BYTE* pDestPixel = pDestRow + (col + destX) * 4;
+
+			// Alpha混合计算
+			BYTE alpha = pSrcPixel[3];
+			FLOAT srcAlpha = alpha / 255.0f;
+			FLOAT destAlpha = 1.0f - srcAlpha;
+
+			pDestPixel[0] = static_cast<BYTE>(pSrcPixel[0] * srcAlpha + pDestPixel[0] * destAlpha);  // Blue
+			pDestPixel[1] = static_cast<BYTE>(pSrcPixel[1] * srcAlpha + pDestPixel[1] * destAlpha);  // Green
+			pDestPixel[2] = static_cast<BYTE>(pSrcPixel[2] * srcAlpha + pDestPixel[2] * destAlpha);  // Red
+			pDestPixel[3] = static_cast<BYTE>(alpha);  // Alpha
+		}
+	}
+	pSrcLock->Release();
+	pDestLock->Release();
+	if (phImg)
+	{
+		*phImg = hImg;
+	}
+	Ex_SetLastError(nError);
+	return TRUE;
 }
