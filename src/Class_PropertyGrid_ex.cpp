@@ -728,7 +728,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				if (itemType == PGT_OBJ_EDIT)
 				{
 					HEXOBJ edit = Ex_ObjGetLong(hObj, PGL_HOBJEDIT);
-					// 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4密码输入 5只读
+					// 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读
 	
 					if (editStyle == 0)
 					{
@@ -1026,14 +1026,16 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		array_s* itemArr = (array_s*)Ex_ObjGetLong(hObj, PGL_ITEMARRAY);
 		LPCWSTR text = 0;
 		LPCWSTR title = (LPCWSTR)lParam;
-		for (int index = Ex_ObjGetLong(hObj, PGL_SHOWBEGIN); index < Ex_ObjGetLong(hObj, PGL_SHOWEND); index++)
+		int count = Array_GetCount(itemArr);
+			
+		for (int index = 1; index <= count; index++)
 		{
 			void* itemValue = (void*)Array_GetMember(itemArr, index);
 			if (itemValue == 0)
 			{
 				continue;
 			}
-
+			
 			LPCWSTR itemTitle = (LPCWSTR)__get(itemValue, PGITEM_STRUCT_OFFSET_TITLE);
 			if (wcscmp(itemTitle, title) == 0)
 			{
@@ -1048,7 +1050,8 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		array_s* itemArr = (array_s*)Ex_ObjGetLong(hObj, PGL_ITEMARRAY);
 		LPCWSTR text = 0;
 		LPCWSTR title = (LPCWSTR)lParam;
-		for (int index = Ex_ObjGetLong(hObj, PGL_SHOWBEGIN); index < Ex_ObjGetLong(hObj, PGL_SHOWEND); index++)
+		int count = Array_GetCount(itemArr);
+		for (int index = 1; index <= count; index++)
 		{
 			void* itemValue = (void*)Array_GetMember(itemArr, index);
 			if (itemValue == 0)
