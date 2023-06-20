@@ -136,41 +136,74 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == TBM_SET_BKG)
 	{
-		INT width, height;
-		_img_getsize(lParam, &width, &height);
-		RECT rc;
-		Ex_ObjGetClientRect(hObj, &rc);
-		auto dpi = GetSysDpi();
-		auto widthRC = rc.right - rc.left;
-		auto heightRC = rc.bottom - rc.top;
-		widthRC = (INT)((FLOAT)widthRC * dpi);
-		heightRC = (INT)((FLOAT)heightRC * dpi);
-
-		INT edge;
-		edge = heightRC;
-		INT edgeImg;
-		if (height > width)
+		if (lParam == 0)
 		{
-			edgeImg = height;
+			auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+			if (old != 0)
+			{
+				_img_destroy(old);
+				Ex_ObjSetLong(hObj, TBL_IMG_BKG, 0);
+				Ex_ObjSetLong(hObj, TBL_TAGGING, 0);
+				Ex_ObjSetLong(hObj, TBL_HIT_POINT, 0);
+				Ex_ObjSetLong(hObj, TBL_HIT_PATH, 0);
+				Ex_ObjSetLong(hObj, TBL_CHECK_PATH, 0);
+				Ex_ObjSetLong(hObj, TBL_BEGINX, 0);
+				Ex_ObjSetLong(hObj, TBL_BEGINY, 0);
+				Ex_ObjSetLong(hObj, TBL_ENDX, 0);
+				Ex_ObjSetLong(hObj, TBL_ENDY, 0);
+				auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
+				if (ptr->count > 0)
+				{
+					//清空临时点
+					ptr->points = realloc(ptr->points, 1 * 8);
+					ptr->count = 0;
+					Ex_ObjSetLong(hObj, TBL_POINT_NULL, 1);
+				}
+				auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
+				arr->polygons = realloc(arr->polygons, 1 * sizeof(size_t));
+				size_t ptrValue = (size_t)ptr;
+				RtlMoveMemory(arr->polygons, &ptrValue, sizeof(size_t));
+				arr->count = 1;
+				Ex_ObjInvalidateRect(hObj, 0);
+			}
 		}
 		else {
-			edgeImg = width;
-		}
-		float scaleImg = (float)edgeImg / edge;
-		INT left = (widthRC - width / scaleImg) / 2;
-		INT top = (heightRC - height / scaleImg) / 2;
+			INT width, height;
+			_img_getsize(lParam, &width, &height);
+			RECT rc;
+			Ex_ObjGetClientRect(hObj, &rc);
+			auto dpi = GetSysDpi();
+			auto widthRC = rc.right - rc.left;
+			auto heightRC = rc.bottom - rc.top;
+			widthRC = (INT)((FLOAT)widthRC * dpi);
+			heightRC = (INT)((FLOAT)heightRC * dpi);
 
-		Ex_ObjSetLong(hObj, TBL_IMG_LEFT_OFFSET, left);
-		Ex_ObjSetLong(hObj, TBL_IMG_TOP_OFFSET, top);
-		auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
-		if (old != 0)
-		{
-			_img_destroy(old);
+			INT edge;
+			edge = heightRC;
+			INT edgeImg;
+			if (height > width)
+			{
+				edgeImg = height;
+			}
+			else {
+				edgeImg = width;
+			}
+			float scaleImg = (float)edgeImg / edge;
+			INT left = (widthRC - width / scaleImg) / 2;
+			INT top = (heightRC - height / scaleImg) / 2;
+
+			Ex_ObjSetLong(hObj, TBL_IMG_LEFT_OFFSET, left);
+			Ex_ObjSetLong(hObj, TBL_IMG_TOP_OFFSET, top);
+			auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+			if (old != 0)
+			{
+				_img_destroy(old);
+			}
+			Ex_ObjSetLong(hObj, TBL_IMG_BKG, lParam);
+			auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TBL_IMG_SCALE);
+			RtlMoveMemory(scalePtr, &scaleImg, 4);
+			Ex_ObjInvalidateRect(hObj, 0);
 		}
-		Ex_ObjSetLong(hObj, TBL_IMG_BKG, lParam);
-		auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TBL_IMG_SCALE);
-		RtlMoveMemory(scalePtr, &scaleImg, 4);
-		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == TBM_GET_DATA)
 	{
@@ -178,36 +211,40 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == TBM_SET_DATA)
 	{
-		auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
-		if (arr->count > 0)
+		auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+		if (old != 0)
 		{
-			for (int i = 0; i < arr->count; i++)
+			auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
+			if (arr->count > 0)
 			{
-				size_t ptrValue = 0;
-				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-				auto ptr = (EX_POlYGON*)ptrValue;
-				free(ptr->points);
-				free(ptr);
+				for (int i = 0; i < arr->count; i++)
+				{
+					size_t ptrValue = 0;
+					RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+					auto ptr = (EX_POlYGON*)ptrValue;
+					free(ptr->points);
+					free(ptr);
+				}
 			}
+			free(arr->polygons);
+			free(arr);
+
+			//新建临时点
+			auto newPtr = malloc(sizeof(EX_POlYGON));
+			((EX_POlYGON*)newPtr)->points = malloc(sizeof(POINT));
+			((EX_POlYGON*)newPtr)->count = 0;
+			Ex_ObjSetLong(hObj, TBL_DATA, (LONG_PTR)newPtr);
+
+			//添加临时点
+			auto newArr = (EX_POLYGON_ARRAY*)lParam;
+			newArr->polygons = realloc(newArr->polygons, (newArr->count + 1) * sizeof(size_t));
+			size_t newPtrValue = (size_t)newPtr;
+			RtlMoveMemory((LPVOID)((size_t)newArr->polygons + newArr->count * sizeof(size_t)), &newPtrValue, sizeof(size_t));
+			newArr->count = newArr->count + 1;
+
+			Ex_ObjSetLong(hObj, TBL_ARRAY, lParam);
+			Ex_ObjInvalidateRect(hObj, 0);
 		}
-		free(arr->polygons);
-		free(arr);
-
-		//新建临时点
-		auto newPtr = malloc(sizeof(EX_POlYGON));
-		((EX_POlYGON*)newPtr)->points = malloc(sizeof(POINT));
-		((EX_POlYGON*)newPtr)->count = 0;
-		Ex_ObjSetLong(hObj, TBL_DATA, (LONG_PTR)newPtr);
-
-		//添加临时点
-		auto newArr = (EX_POLYGON_ARRAY*)lParam;
-		newArr->polygons = realloc(newArr->polygons, (newArr->count + 1) * sizeof(size_t));
-		size_t newPtrValue = (size_t)newPtr;
-		RtlMoveMemory((LPVOID)((size_t)newArr->polygons + newArr->count * sizeof(size_t)), &newPtrValue, sizeof(size_t));
-		newArr->count = newArr->count + 1;
-
-		Ex_ObjSetLong(hObj, TBL_ARRAY, lParam);
-		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == TBM_GET_IMG_SCALE)
 	{
@@ -227,126 +264,132 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		RECT rc;
-		Ex_ObjGetClientRect(hObj, &rc);
-		auto dpi = GetSysDpi();
-		auto x = (INT)((FLOAT)GET_X_LPARAM(lParam));
-		auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam));
-		if (x >= rc.left * dpi && x <= rc.right * dpi)
+		auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+		if (old != 0)
 		{
-			if (y >= rc.top * dpi && y <= rc.bottom * dpi)
+			RECT rc;
+			Ex_ObjGetClientRect(hObj, &rc);
+			auto dpi = GetSysDpi();
+			auto x = (INT)((FLOAT)GET_X_LPARAM(lParam));
+			auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam));
+			if (x >= rc.left * dpi && x <= rc.right * dpi)
 			{
-				INT hitTest = 0;
-				auto ret = _taggingboard_ptinregion(hObj, x, y, &hitTest);
-				Ex_ObjSetLong(hObj, TBL_HIT_PATH, hitTest);
-				auto tagging = Ex_ObjGetLong(hObj, TBL_TAGGING);
-				if (tagging == 1)
+				if (y >= rc.top * dpi && y <= rc.bottom * dpi)
 				{
-					Ex_ObjSetLong(hObj, TBL_ENDX, x);
-					Ex_ObjSetLong(hObj, TBL_ENDY, y);
-					auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
-
-					if (ptr->count > 2)
+					INT hitTest = 0;
+					auto ret = _taggingboard_ptinregion(hObj, x, y, &hitTest);
+					Ex_ObjSetLong(hObj, TBL_HIT_PATH, hitTest);
+					auto tagging = Ex_ObjGetLong(hObj, TBL_TAGGING);
+					if (tagging == 1)
 					{
-						int startX, startY;
-						RtlMoveMemory(&startX, (LPVOID)((size_t)ptr->points), 4);
-						RtlMoveMemory(&startY, (LPVOID)((size_t)ptr->points + 4), 4);
-						RECT rc = { startX - 3, startY - 3, startX + 3, startY + 3 };
-						POINT pt = { GET_X_LPARAM(lParam) , GET_Y_LPARAM(lParam) };
-						if (PtInRect(&rc, pt))
+						Ex_ObjSetLong(hObj, TBL_ENDX, x);
+						Ex_ObjSetLong(hObj, TBL_ENDY, y);
+						auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
+
+						if (ptr->count > 2)
 						{
-							Ex_ObjSetLong(hObj, TBL_HIT_POINT, 1);
-						}
-						else
-						{
-							Ex_ObjSetLong(hObj, TBL_HIT_POINT, 0);
+							int startX, startY;
+							RtlMoveMemory(&startX, (LPVOID)((size_t)ptr->points), 4);
+							RtlMoveMemory(&startY, (LPVOID)((size_t)ptr->points + 4), 4);
+							RECT rc = { startX - 3, startY - 3, startX + 3, startY + 3 };
+							POINT pt = { GET_X_LPARAM(lParam) , GET_Y_LPARAM(lParam) };
+							if (PtInRect(&rc, pt))
+							{
+								Ex_ObjSetLong(hObj, TBL_HIT_POINT, 1);
+							}
+							else
+							{
+								Ex_ObjSetLong(hObj, TBL_HIT_POINT, 0);
+							}
 						}
 					}
+					_taggingboard_updatedraw(hObj);
 				}
-				_taggingboard_updatedraw(hObj);
 			}
 		}
 	}
 	else if (uMsg == WM_LBUTTONUP)
 	{
-		auto x = (INT)((FLOAT)GET_X_LPARAM(lParam));
-		auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam));
-		auto tagging = Ex_ObjGetLong(hObj, TBL_TAGGING);
-		if (tagging == 1)
+		auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+		if (old != 0)
 		{
-			int left = Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
-			int top = Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
-			auto bkg = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
-			auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TBL_IMG_SCALE);
-			float scale;
-			RtlMoveMemory(&scale, scalePtr, 4);
-			INT width, height;
-			_img_getsize(bkg, &width, &height);
-			int newWidth = (int)((float)width / scale);
-			int newHeight = (int)((float)height / scale);
-			//限制在背景图区域内标注
-			if (x > left && x < left + newWidth && y > top && y < top + newHeight)
+			auto x = (INT)((FLOAT)GET_X_LPARAM(lParam));
+			auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam));
+			auto tagging = Ex_ObjGetLong(hObj, TBL_TAGGING);
+			if (tagging == 1)
 			{
-				INT hitTest = 0;
-				if (!_taggingboard_ptinregion(hObj, x, y, &hitTest))
+				int left = Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
+				int top = Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
+				auto bkg = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+				auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TBL_IMG_SCALE);
+				float scale;
+				RtlMoveMemory(&scale, scalePtr, 4);
+				INT width, height;
+				_img_getsize(bkg, &width, &height);
+				int newWidth = (int)((float)width / scale);
+				int newHeight = (int)((float)height / scale);
+				//限制在背景图区域内标注
+				if (x > left && x < left + newWidth && y > top && y < top + newHeight)
 				{
-					auto hit = Ex_ObjGetLong(hObj, TBL_HIT_POINT);
-					auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
-					if (hit == 0)
+					INT hitTest = 0;
+					if (!_taggingboard_ptinregion(hObj, x, y, &hitTest))
 					{
-						if (ptr->count == 0)
+						auto hit = Ex_ObjGetLong(hObj, TBL_HIT_POINT);
+						auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
+						if (hit == 0)
 						{
-							Ex_ObjSetLong(hObj, TBL_POINT_NULL, 0);
-							//first point
-							RtlMoveMemory(ptr->points, &x, 4);
-							RtlMoveMemory((LPVOID)((size_t)ptr->points + 4), &y, 4);
-							ptr->count = ptr->count + 1;
+							if (ptr->count == 0)
+							{
+								Ex_ObjSetLong(hObj, TBL_POINT_NULL, 0);
+								//first point
+								RtlMoveMemory(ptr->points, &x, 4);
+								RtlMoveMemory((LPVOID)((size_t)ptr->points + 4), &y, 4);
+								ptr->count = ptr->count + 1;
+							}
+							else {
+								//add point
+								ptr->points = realloc(ptr->points, (ptr->count + 1) * 8);
+								RtlMoveMemory((LPVOID)((size_t)ptr->points + ptr->count * 8), &x, 4);
+								RtlMoveMemory((LPVOID)((size_t)ptr->points + ptr->count * 8 + 4), &y, 4);
+								ptr->count = ptr->count + 1;
+							}
+
+							Ex_ObjSetLong(hObj, TBL_BEGINX, x);
+							Ex_ObjSetLong(hObj, TBL_BEGINY, y);
 						}
 						else {
-							//add point
-							ptr->points = realloc(ptr->points, (ptr->count + 1) * 8);
-							RtlMoveMemory((LPVOID)((size_t)ptr->points + ptr->count * 8), &x, 4);
-							RtlMoveMemory((LPVOID)((size_t)ptr->points + ptr->count * 8 + 4), &y, 4);
-							ptr->count = ptr->count + 1;
+							//close polygon
+							Ex_ObjSetLong(hObj, TBL_POINT_NULL, 1);
+							Ex_ObjSetLong(hObj, TBL_TAGGING, 0);
+							Ex_ObjSetLong(hObj, TBL_HIT_POINT, 0);
+							Ex_ObjSetLong(hObj, TBL_BEGINX, 0);
+							Ex_ObjSetLong(hObj, TBL_BEGINY, 0);
+							Ex_ObjSetLong(hObj, TBL_ENDX, 0);
+							Ex_ObjSetLong(hObj, TBL_ENDY, 0);
+							//add polygon
+							auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
+							//realloc point
+							auto newPtr = malloc(sizeof(EX_POlYGON));
+							((EX_POlYGON*)newPtr)->points = malloc(sizeof(POINT));
+							((EX_POlYGON*)newPtr)->count = 0;
+							Ex_ObjSetLong(hObj, TBL_DATA, (LONG_PTR)newPtr);
+
+							//add polygon
+							arr->polygons = realloc(arr->polygons, (arr->count + 1) * sizeof(size_t));
+							size_t ptrValue = (size_t)newPtr;
+							RtlMoveMemory((LPVOID)((size_t)arr->polygons + arr->count * sizeof(size_t)), &ptrValue, sizeof(size_t));
+							arr->count = arr->count + 1;
 						}
-
-						Ex_ObjSetLong(hObj, TBL_BEGINX, x);
-						Ex_ObjSetLong(hObj, TBL_BEGINY, y);
-					}
-					else {
-						//close polygon
-						Ex_ObjSetLong(hObj, TBL_POINT_NULL, 1);
-						Ex_ObjSetLong(hObj, TBL_TAGGING, 0);
-						Ex_ObjSetLong(hObj, TBL_HIT_POINT, 0);
-						Ex_ObjSetLong(hObj, TBL_BEGINX, 0);
-						Ex_ObjSetLong(hObj, TBL_BEGINY, 0);
-						Ex_ObjSetLong(hObj, TBL_ENDX, 0);
-						Ex_ObjSetLong(hObj, TBL_ENDY, 0);
-						//add polygon
-						auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
-						//realloc point
-						auto newPtr = malloc(sizeof(EX_POlYGON));
-						((EX_POlYGON*)newPtr)->points = malloc(sizeof(POINT));
-						((EX_POlYGON*)newPtr)->count = 0;
-						Ex_ObjSetLong(hObj, TBL_DATA, (LONG_PTR)newPtr);
-
-						//add polygon
-						arr->polygons = realloc(arr->polygons, (arr->count + 1) * sizeof(size_t));
-						size_t ptrValue = (size_t)newPtr;
-						RtlMoveMemory((LPVOID)((size_t)arr->polygons + arr->count * sizeof(size_t)), &ptrValue, sizeof(size_t));
-						arr->count = arr->count + 1;
 					}
 				}
 			}
-
-
-		}
-		else {
-			auto hitPath = Ex_ObjGetLong(hObj, TBL_HIT_PATH);
-			if (hitPath != 0)
-			{
-				Ex_ObjSetLong(hObj, TBL_CHECK_PATH, hitPath);
-				Ex_ObjDispatchNotify(hObj, TBN_HIT_PATH, 0, hitPath);
+			else {
+				auto hitPath = Ex_ObjGetLong(hObj, TBL_HIT_PATH);
+				if (hitPath != 0)
+				{
+					Ex_ObjSetLong(hObj, TBL_CHECK_PATH, hitPath);
+					Ex_ObjDispatchNotify(hObj, TBN_HIT_PATH, 0, hitPath);
+				}
 			}
 		}
 	}

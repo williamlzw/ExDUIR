@@ -3273,7 +3273,7 @@ void test_propertygrid(HWND hParent)
 	a.text = L"表项1-1";
 	EX_PROGRID_ITEMINFO_COMBOBOX b;
 	b.text = L"表项1-2";
-	
+
 	item.textComboBox[0] = a;
 	item.textComboBox[1] = b;
 	item.comboboxNum = 2;
@@ -3866,6 +3866,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 	else if (nID == 1030)
 	{
 		Ex_ObjSendMessage(hObj_taggingBoard, TBM_CLEAR, 0, 0);
+		Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_BKG, 0, 0);
 	}
 	else if (nID == 1040)
 	{
@@ -3889,13 +3890,16 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 					RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
 					RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
 					//缩放图坐标转原图坐标
-					output(L"原图坐标 arr", i, L"index", j, L"x", (x - offsetLeft) * scale , L"y", (y - offsetTop) * scale);
+					output(L"原图坐标 arr", i, L"index", j, L"x", (x - offsetLeft) * scale, L"y", (y - offsetTop) * scale);
 				}
 			}
 		}
 	}
 	else if (nID == 1050)
 	{
+		HEXIMAGE img;
+		_img_createfromfile(L"res//3.jpeg", &img);
+		Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_BKG, 0, img);
 		float scale;
 		auto scalePtr = (LPVOID)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_SCALE, 0, 0);
 		RtlMoveMemory(&scale, scalePtr, 4);
@@ -3905,7 +3909,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 		auto ptr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
 		ptr->points = malloc(5 * sizeof(POINT));
 		ptr->count = 5;
-		int pointArrX[5] = {356, 329, 331, 388, 388};
+		int pointArrX[5] = { 356, 329, 331, 388, 388 };
 		int pointArrY[5] = { 377, 398, 419, 419, 392 };
 		for (int i = 0; i < 5; i++)
 		{
@@ -3939,12 +3943,12 @@ void test_tagging(HWND hWnd)
 	auto hObj3 = Ex_ObjCreateEx(-1, L"button", L"清空绘图", -1, 1050, 110, 100, 30, hExDui_tagging, 1030, -1, 0, 0, 0);
 	auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"取出数据", -1, 1050, 150, 100, 30, hExDui_tagging, 1040, -1, 0, 0, 0);
 	auto hObj5 = Ex_ObjCreateEx(-1, L"button", L"设置数据", -1, 1050, 190, 100, 30, hExDui_tagging, 1050, -1, 0, 0, 0);
-	
+
 
 	auto hObj6 = Ex_ObjCreateEx(-1, L"static", L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标", -1, 1050, 230, 130, 550, hExDui_tagging, 1060, DT_WORDBREAK, 0, 0, 0);
 	Ex_ObjSetFontFromFamily(hObj6, L"微软雅黑", 16, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(hObj6, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
-	
+
 	Ex_ObjHandleEvent(hObj1, NM_CLICK, OnTaggingButtonEvent);
 	Ex_ObjHandleEvent(hObj2, NM_CLICK, OnTaggingButtonEvent);
 	Ex_ObjHandleEvent(hObj3, NM_CLICK, OnTaggingButtonEvent);
