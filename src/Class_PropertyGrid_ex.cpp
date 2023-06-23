@@ -351,6 +351,19 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Array_BindEvent(arr1, eae_delmember, _propertygrid_ondelmember);
 		Ex_ObjSetLong(hObj, PGL_ITEMARRAY, (LONG_PTR)arr1);
 		Ex_ObjSetLong(hObj, PGL_ITEMNUM, 0);
+		INT lineHeight = 26;//PGL_LINEHEIGHT
+		Ex_ObjSetLong(hObj, PGL_LINEHEIGHT, lineHeight);
+		RECT objRC = { 0 };
+		Ex_ObjGetClientRect(hObj, &objRC);
+		int width = (objRC.right - objRC.left) / 2;
+		Ex_ObjSetLong(hObj, PGL_COLUMNWIDTH, width);
+		int showNum = (objRC.bottom - objRC.top) / lineHeight;
+		int offset = 1;
+		Ex_ObjSetLong(hObj, PGL_OFFSET, offset);
+		Ex_ObjSetLong(hObj, PGL_SHOWOFFSET, 0);
+		Ex_ObjSetLong(hObj, PGL_SHOWBEGIN, 1);
+		Ex_ObjSetLong(hObj, PGL_SHOWEND, showNum + offset);
+		Ex_ObjSetLong(hObj, PGL_SHOWNUM, showNum);
 		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == WM_PAINT)
@@ -729,7 +742,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				{
 					HEXOBJ edit = Ex_ObjGetLong(hObj, PGL_HOBJEDIT);
 					// 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读
-	
+
 					if (editStyle == 0)
 					{
 						Ex_ObjSetLong(edit, EOL_STYLE, EOS_VISIBLE);
@@ -1027,7 +1040,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		LPCWSTR text = 0;
 		LPCWSTR title = (LPCWSTR)lParam;
 		int count = Array_GetCount(itemArr);
-			
+
 		for (int index = 1; index <= count; index++)
 		{
 			void* itemValue = (void*)Array_GetMember(itemArr, index);
@@ -1035,7 +1048,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			{
 				continue;
 			}
-			
+
 			LPCWSTR itemTitle = (LPCWSTR)__get(itemValue, PGITEM_STRUCT_OFFSET_TITLE);
 			if (wcscmp(itemTitle, title) == 0)
 			{

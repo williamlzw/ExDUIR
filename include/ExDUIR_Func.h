@@ -1582,7 +1582,7 @@ HEXDUI Ex_DUIBindWindowEx(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle, LPARAM lPar
 HEXDUI Ex_DUIFromWindow(HWND hWnd);
 
 /// <summary>
-/// 获取客户区矩形
+/// 获取窗口大小,启用EXGF_DPI_ENABLE风格则获取缩放dpi后的窗口大小
 /// </summary>
 /// <param name="hExDui"></param>
 /// <param name="lpClientRect"></param>
@@ -1968,7 +1968,7 @@ BOOL Ex_ObjGetClassInfo(HEXOBJ hObj, EX_CLASSINFO* lpClassInfo);
 BOOL Ex_ObjGetClassInfoEx(LPCWSTR lptszClassName, EX_CLASSINFO* lpClassInfo);
 
 /// <summary>
-/// 组件获取客户区矩形
+/// 组件获取客户区矩形,同Ex_ObjGetRect 不包括dpi缩放
 /// </summary>
 /// <param name="hObj"></param>
 /// <param name="lpRect"></param>
@@ -2071,7 +2071,7 @@ EXHANDLE Ex_ObjGetParentEx(HEXOBJ hObj, HEXDUI* phExDUI);
 size_t Ex_ObjGetProp(HEXOBJ hObj, size_t dwKey);
 
 /// <summary>
-/// 组件取矩形
+/// 组件取矩形,同Ex_ObjGetClientRect 不包括dpi缩放
 /// </summary>
 /// <param name="hObj"></param>
 /// <param name="lpRect"></param>

@@ -27,7 +27,7 @@ DOUBLE GetSysDpi()
 {
 	HDC desktopDc = GetDC(NULL);
 	DOUBLE dpiA = (DOUBLE)GetDeviceCaps(desktopDc, DESKTOPHORZRES) / GetDeviceCaps(desktopDc, HORZRES);
-	DOUBLE dpiB = (DOUBLE)GetDeviceCaps(desktopDc, LOGPIXELSX) / 0.96 / 100;
+	DOUBLE dpiB = (DOUBLE)GetDeviceCaps(desktopDc, LOGPIXELSX) / 96;
 	ReleaseDC(NULL, desktopDc);
 	if (dpiA == 1)
 	{
