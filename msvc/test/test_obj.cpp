@@ -3945,7 +3945,7 @@ void test_tagging(HWND hWnd)
 	auto hObj5 = Ex_ObjCreateEx(-1, L"button", L"设置数据", -1, 1050, 190, 100, 30, hExDui_tagging, 1050, -1, 0, 0, 0);
 
 
-	auto hObj6 = Ex_ObjCreateEx(-1, L"static", L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标", -1, 1050, 230, 130, 550, hExDui_tagging, 1060, DT_WORDBREAK, 0, 0, 0);
+	auto hObj6 = Ex_ObjCreateEx(-1, L"static", L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标。\r\n5.按住CTRL键+鼠标滚轮,可以放大缩小", -1, 1050, 230, 130, 600, hExDui_tagging, 1060, DT_WORDBREAK, 0, 0, 0);
 	Ex_ObjSetFontFromFamily(hObj6, L"微软雅黑", 16, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(hObj6, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
