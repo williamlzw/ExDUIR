@@ -37,9 +37,14 @@
 #define TBL_IMG_LEFT_OFFSET 16
 // 属性_标注板_背景图片缩放后纵坐标偏移
 #define TBL_IMG_TOP_OFFSET 17
+// 属性_标注板_滚动条横坐标偏移
+#define TBL_SB_LEFT_OFFSET 18
+// 属性_标注板_滚动条纵坐标偏移
+#define TBL_SB_TOP_OFFSET 19
 
 void _taggingboard_register();
 LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _taggingboard_paint(HEXOBJ hObj);
 void _taggingboard_updatedraw(HEXOBJ hObj);
-BOOL _taggingboard_ptinregion(HEXOBJ hObj, INT x, INT y, INT* index);
+void _taggingboard_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+BOOL _taggingboard_ptinregion(HEXOBJ hObj, FLOAT x, FLOAT y, INT* index);

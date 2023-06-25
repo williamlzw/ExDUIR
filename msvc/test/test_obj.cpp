@@ -3871,8 +3871,8 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 	else if (nID == 1040)
 	{
 		auto arr = (EX_POLYGON_ARRAY*)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_DATA, 0, 0);
-		auto offsetLeft = Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_LEFT_OFFSET, 0, 0);
-		auto offsetTop = Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_TOP_OFFSET, 0, 0);
+		auto offsetLeft = (INT)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_LEFT_OFFSET, 0, 0);
+		auto offsetTop = (INT)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_TOP_OFFSET, 0, 0);
 		float scale;
 		auto scalePtr = (LPVOID)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_SCALE, 0, 0);
 		RtlMoveMemory(&scale, scalePtr, 4);
@@ -3886,7 +3886,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 			{
 				for (int j = 0; j < ptr->count; j++)
 				{
-					int x = 0, y = 0;
+					FLOAT x = 0, y = 0;
 					RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
 					RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
 					//缩放图坐标转原图坐标
@@ -3903,8 +3903,8 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 		float scale;
 		auto scalePtr = (LPVOID)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_SCALE, 0, 0);
 		RtlMoveMemory(&scale, scalePtr, 4);
-		auto offsetLeft = Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_LEFT_OFFSET, 0, 0);
-		auto offsetTop = Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_TOP_OFFSET, 0, 0);
+		auto offsetLeft = (INT)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_LEFT_OFFSET, 0, 0);
+		auto offsetTop = (INT)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_TOP_OFFSET, 0, 0);
 
 		auto ptr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
 		ptr->points = malloc(5 * sizeof(POINT));
@@ -3914,8 +3914,8 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 		for (int i = 0; i < 5; i++)
 		{
 			//原图坐标转缩放图坐标
-			int x = pointArrX[i] / scale + offsetLeft;
-			int y = pointArrY[i] / scale + offsetTop;
+			FLOAT x = pointArrX[i] / scale + offsetLeft;
+			FLOAT y = pointArrY[i] / scale + offsetTop;
 			RtlMoveMemory((LPVOID)((size_t)ptr->points + i * 8), &x, 4);
 			RtlMoveMemory((LPVOID)((size_t)ptr->points + i * 8 + 4), &y, 4);
 		}

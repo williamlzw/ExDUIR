@@ -1590,6 +1590,9 @@
 #define TBN_HIT_PATH 20000
 #pragma endregion taggingboard notify
 
+// 消息_滚动条_设置可视 lParam为1可视,0不可视
+#define SBM_SETVISIBLE 56212
+
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule, #NAME)		//获取函数指针
