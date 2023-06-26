@@ -37,18 +37,17 @@ LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
 			_brush_setcolor(brush, ExRGBA(120, 120, 120, 255));
 			INT atomBtn1 = ATOM_ARROW1_NORMAL;
 			INT atomBtn2 = ATOM_ARROW2_NORMAL;
-			
 
 			INT crBar = ExRGBA(124, 44, 6, 200);
 			if (httype == SBCT_CONTROL)
 			{
-				if(bDown)
+				if (bDown)
 				{
 					crBar = ExRGBA(138, 49, 6, 200);
 					atomBtn1 = ATOM_ARROW1_DOWN;
 					atomBtn2 = ATOM_ARROW2_DOWN;
 				}
-				else 
+				else
 				{
 					if (bHover)
 					{
@@ -80,7 +79,6 @@ LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
 
 void _taggingboard_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
 	BOOL bHScoll = uMsg == WM_HSCROLL;
 	INT nCode = LOWORD(wParam);
 	INT nPos = 0;
@@ -90,6 +88,8 @@ void _taggingboard_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	Ex_ObjGetClientRect(hObj, &rc);
 	INT widthRC = (INT)(rc.right - rc.left);
 	INT heightRC = (INT)(rc.bottom - rc.top);
+	widthRC = Ex_Scale(widthRC);
+	heightRC = Ex_Scale(heightRC);
 	INT oPos = 0;
 	INT nView = 0;
 	INT nPage = 200;
@@ -185,8 +185,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 
 		RECT rc;
 		Ex_ObjGetRect(hObj, &rc);
-		auto dpi = GetSysDpi();
-		auto canvas = _canvas_createfromobj(hObj, rc.right * dpi, rc.bottom * dpi, 0);
+
+		auto canvas = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
 		_canvas_begindraw(canvas);
 		_canvas_clear(canvas, ExRGBA(255, 255, 255, 255));
 		_canvas_enddraw(canvas);
@@ -215,6 +215,62 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjSetLong(hObj_scroll, EOL_OBJPROC, (size_t)_taggingboard_OnScrollBarMsg); //改变滚动条回调
 		hObj_scroll = Ex_ObjScrollGetControl(hObj, SB_HORZ);
 		Ex_ObjSetLong(hObj_scroll, EOL_OBJPROC, (size_t)_taggingboard_OnScrollBarMsg); //改变滚动条回调
+	}
+	else if (uMsg == WM_SIZE)
+	{
+		auto img = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+		if (img != 0)
+		{
+			INT width, height;
+			_img_getsize(img, &width, &height);
+			INT widthRC = (INT)LOWORD(lParam);
+			INT heightRC = (INT)HIWORD(lParam);
+			INT edge;
+			edge = heightRC;
+			INT edgeImg;
+			if (height > width)
+			{
+				edgeImg = height;
+			}
+			else {
+				edgeImg = width;
+			}
+			float scaleImg = (float)edgeImg / edge;
+			INT left = (widthRC - width / scaleImg) / 2;
+			INT top = (heightRC - height / scaleImg) / 2;
+			auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TBL_IMG_SCALE);
+			float oldscale;
+			RtlMoveMemory(&oldscale, scalePtr, 4);
+			RtlMoveMemory(scalePtr, &scaleImg, 4);
+			INT oldleft = Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
+			INT oldtop = Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
+			Ex_ObjSetLong(hObj, TBL_IMG_LEFT_OFFSET, left);
+			Ex_ObjSetLong(hObj, TBL_IMG_TOP_OFFSET, top);
+
+			auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
+			if (arr->count > 1)
+			{
+				for (int i = 0; i < arr->count - 1; i++)
+				{
+					size_t ptrValue = 0;
+					RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+					EX_POlYGON* ptr = (EX_POlYGON*)ptrValue;
+					if (ptr->count > 0)
+					{
+						for (int j = 0; j < ptr->count; j++)
+						{
+							float x = 0, y = 0;
+							RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
+							RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
+							x = (float)(x - oldleft) * oldscale / scaleImg + left;
+							y = (float)(y - oldtop) * oldscale / scaleImg + top;
+							RtlMoveMemory((LPVOID)((size_t)ptr->points + j * 8), &x, 4);
+							RtlMoveMemory((LPVOID)((size_t)ptr->points + j * 8 + 4), &y, 4);
+						}
+					}
+				}
+			}
+		}
 	}
 	else if (uMsg == WM_DESTROY)
 	{
@@ -316,6 +372,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				Ex_ObjSetLong(hObj, TBL_BEGINY, 0);
 				Ex_ObjSetLong(hObj, TBL_ENDX, 0);
 				Ex_ObjSetLong(hObj, TBL_ENDY, 0);
+				Ex_ObjSetLong(hObj, TBL_IMG_LEFT_OFFSET, 0);
+				Ex_ObjSetLong(hObj, TBL_IMG_TOP_OFFSET, 0);
 				Ex_ObjSetLong(hObj, TBL_SB_LEFT_OFFSET, 0);
 				Ex_ObjSetLong(hObj, TBL_SB_TOP_OFFSET, 0);
 				Ex_ObjScrollSetRange(hObj, SB_VERT, 0, 1, TRUE);
@@ -341,11 +399,10 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			_img_getsize(lParam, &width, &height);
 			RECT rc;
 			Ex_ObjGetClientRect(hObj, &rc);
-			auto dpi = GetSysDpi();
 			auto widthRC = rc.right - rc.left;
 			auto heightRC = rc.bottom - rc.top;
-			widthRC = (INT)((FLOAT)widthRC * dpi);
-			heightRC = (INT)((FLOAT)heightRC * dpi);
+			widthRC = (INT)(Ex_Scale(widthRC));
+			heightRC = (INT)(Ex_Scale(heightRC));
 
 			INT edge;
 			edge = heightRC;
@@ -464,7 +521,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				Ex_ObjGetClientRect(hObj, &rc);
 				INT widthRC = (INT)(rc.right - rc.left);
 				INT heightRC = (INT)(rc.bottom - rc.top);
-
+				widthRC = Ex_Scale(widthRC);
+				heightRC = Ex_Scale(heightRC);
 				INT newLeft = (widthRC - (float)width / scale) / 2;
 				INT newTop = (heightRC - (float)height / scale) / 2;
 				auto oldLeft = (INT)Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
@@ -481,7 +539,6 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				}
 				else {
 					Ex_ObjScrollSetRange(hObj, SB_VERT, 0, 1, TRUE);
-					
 				}
 				if (vWidth > 0)
 				{
@@ -520,18 +577,33 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
-		if (old != 0)
+		auto bkg = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+		if (bkg != 0)
 		{
-			RECT rc;
-			Ex_ObjGetClientRect(hObj, &rc);
-			auto dpi = GetSysDpi();
 			auto x = ((FLOAT)GET_X_LPARAM(lParam));
 			auto y = ((FLOAT)GET_Y_LPARAM(lParam));
+			x = Ex_Scale(x);
+			y = Ex_Scale(y);
 			auto sbOffsetLeft = Ex_ObjGetLong(hObj, TBL_SB_LEFT_OFFSET);
 			auto sbOffsetTop = Ex_ObjGetLong(hObj, TBL_SB_TOP_OFFSET);
 			x = x + sbOffsetLeft;
 			y = y + sbOffsetTop;
+			int left = Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
+			int top = Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
+			auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TBL_IMG_SCALE);
+			float scale;
+			RtlMoveMemory(&scale, scalePtr, 4);
+			INT width, height;
+			_img_getsize(bkg, &width, &height);
+			int newWidth = (int)((float)width / scale);
+			int newHeight = (int)((float)height / scale);
+			if (x > left && x < left + newWidth && y > top && y < top + newHeight)
+			{
+				INT retX = (x - left) * scale;
+				INT retY = (y - top) * scale;
+				Ex_ObjDispatchNotify(hObj, TBN_MOUSE_MOVE, retX, retY);
+			}
+
 			INT hitTest = 0;
 			auto ret = _taggingboard_ptinregion(hObj, x, y, &hitTest);
 			Ex_ObjSetLong(hObj, TBL_HIT_PATH, hitTest);
@@ -540,6 +612,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			{
 				Ex_ObjSetLong(hObj, TBL_ENDX, x);
 				Ex_ObjSetLong(hObj, TBL_ENDY, y);
+
 				auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
 
 				if (ptr->count > 2)
@@ -567,12 +640,15 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		auto old = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
 		if (old != 0)
 		{
-			auto x = ((FLOAT)GET_X_LPARAM(lParam));
+			auto x = ((FLOAT)GET_X_LPARAM(lParam));//无关dpi缩放
 			auto y = ((FLOAT)GET_Y_LPARAM(lParam));
+			x = Ex_Scale(x);
+			y = Ex_Scale(y);
 			auto sbOffsetLeft = Ex_ObjGetLong(hObj, TBL_SB_LEFT_OFFSET);
 			auto sbOffsetTop = Ex_ObjGetLong(hObj, TBL_SB_TOP_OFFSET);
 			x = x + sbOffsetLeft;
 			y = y + sbOffsetTop;
+
 			auto tagging = Ex_ObjGetLong(hObj, TBL_TAGGING);
 			if (tagging == 1)
 			{
@@ -657,6 +733,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	{
 		auto x = (INT)((FLOAT)GET_X_LPARAM(lParam));
 		auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam));
+		x = Ex_Scale(x);
+		y = Ex_Scale(y);
 		auto sbOffsetLeft = Ex_ObjGetLong(hObj, TBL_SB_LEFT_OFFSET);
 		auto sbOffsetTop = Ex_ObjGetLong(hObj, TBL_SB_TOP_OFFSET);
 		x = x + sbOffsetLeft;
@@ -752,6 +830,8 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
 	auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
 	_canvas_clear(canvas, ExRGBA(255, 255, 255, 255));
 	auto sbOffsetLeft = Ex_ObjGetLong(hObj, TBL_SB_LEFT_OFFSET);
+	//auto imgOffsetLeft = Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
+	//auto imgOffsetTop = Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
 	auto sbOffsetTop = Ex_ObjGetLong(hObj, TBL_SB_TOP_OFFSET);
 	auto tagging = Ex_ObjGetLong(hObj, TBL_TAGGING);
 	if (ptr->count > 0 && tagging == 1)
@@ -761,6 +841,7 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
 		int endX = Ex_ObjGetLong(hObj, TBL_ENDX);
 		int endY = Ex_ObjGetLong(hObj, TBL_ENDY);
 		HEXBRUSH brush = (HEXBRUSH)Ex_ObjGetLong(hObj, TBL_PEN);
+
 		_canvas_drawline(canvas, brush, beginX - sbOffsetLeft, beginY - sbOffsetTop, endX - sbOffsetLeft, endY - sbOffsetTop, Ex_Scale(2), 0);
 	}
 	_canvas_enddraw(canvas);
@@ -805,7 +886,7 @@ void _taggingboard_paint(HEXOBJ hObj)
 			//点不为空画临时线
 			if (!pointNull)
 			{
-				_canvas_drawcanvas(ps.hCanvas, canvas, 0, 0, ps.uWidth, ps.uHeight, 0, 0, 100, CV_COMPOSITE_MODE_SRCOVER);
+				_canvas_drawcanvas(ps.hCanvas, canvas, 0, 0, ps.uWidth, ps.uHeight, 0, 0, 50, CV_COMPOSITE_MODE_SRCOVER);
 			}
 		}
 

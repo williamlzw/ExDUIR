@@ -3907,11 +3907,15 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 		auto offsetTop = (INT)Ex_ObjSendMessage(hObj_taggingBoard, TBM_GET_IMG_TOP_OFFSET, 0, 0);
 
 		auto ptr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
-		ptr->points = malloc(5 * sizeof(POINT));
-		ptr->count = 5;
-		int pointArrX[5] = { 356, 329, 331, 388, 388 };
-		int pointArrY[5] = { 377, 398, 419, 419, 392 };
-		for (int i = 0; i < 5; i++)
+		const int size = 5;
+		ptr->points = malloc(size * sizeof(POINT));
+		ptr->count = size;
+		int pointArrX[size] = { 356, 329, 331, 388, 388 };
+		int pointArrY[size] = { 377, 398, 419, 419, 392 };
+		//int pointArrX[size] = { 3206, 3199, 3213, 3218 };
+		//int pointArrY[size] = { 10742, 10767, 10772, 10746 };
+
+		for (int i = 0; i < size; i++)
 		{
 			//原图坐标转缩放图坐标
 			FLOAT x = pointArrX[i] / scale + offsetLeft;
@@ -3931,10 +3935,36 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 	return 0;
 }
 
+LRESULT CALLBACK OnTaggingWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_SIZE)
+	{
+		HDC dc = GetDC(NULL);
+		FLOAT dpiy = (FLOAT)GetDeviceCaps(dc, 90) / 96;
+		ReleaseDC(0, dc);
+		Ex_ObjMove(hObj_taggingBoard, 30, 30, (LOWORD(lParam) - 200) / dpiy, (HIWORD(lParam) - 50) / dpiy, TRUE);
+	}
+	return 0;
+}
+
+HEXOBJ hObj_taggingLabel1;
+HEXOBJ hObj_taggingLabel2;
+
+LRESULT CALLBACK OnTaggingBoradMouseMove(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	INT x = (INT)wParam;
+	INT y = (INT)lParam;
+	std::wstring xstr = L"x:" + std::to_wstring(x);
+	std::wstring ystr = L"y:" + std::to_wstring(y);
+	Ex_ObjSetText(hObj_taggingLabel1, xstr.c_str(), TRUE);
+	Ex_ObjSetText(hObj_taggingLabel2, ystr.c_str(), TRUE);
+	return 0;
+}
+
 void test_tagging(HWND hWnd)
 {
-	HWND hWnd_tagging = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试标注画板", 0, 0, 1200, 850, 0, 0);
-	auto hExDui_tagging = Ex_DUIBindWindowEx(hWnd_tagging, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE, 0, 0);
+	HWND hWnd_tagging = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试标注画板", 0, 0, 1200, 900, 0, 0);
+	auto hExDui_tagging = Ex_DUIBindWindowEx(hWnd_tagging, 0, EWS_MOVEABLE | EWS_SIZEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE, 0, OnTaggingWndMsgProc);
 	Ex_DUISetLong(hExDui_tagging, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 	hObj_taggingBoard = Ex_ObjCreateEx(-1, L"TaggingBoard", L"", -1, 30, 30, 1000, 800, hExDui_tagging, 0, DT_VCENTER | DT_CENTER, 0, 0, 0);
@@ -3944,8 +3974,9 @@ void test_tagging(HWND hWnd)
 	auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"取出数据", -1, 1050, 150, 100, 30, hExDui_tagging, 1040, -1, 0, 0, 0);
 	auto hObj5 = Ex_ObjCreateEx(-1, L"button", L"设置数据", -1, 1050, 190, 100, 30, hExDui_tagging, 1050, -1, 0, 0, 0);
 
-
-	auto hObj6 = Ex_ObjCreateEx(-1, L"static", L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标。\r\n5.按住CTRL键+鼠标滚轮,可以放大缩小", -1, 1050, 230, 130, 600, hExDui_tagging, 1060, DT_WORDBREAK, 0, 0, 0);
+	hObj_taggingLabel1 = Ex_ObjCreateEx(-1, L"static", L"x:", -1, 1050, 230, 60, 30, hExDui_tagging, 1060, -1, 0, 0, 0);
+	hObj_taggingLabel2 = Ex_ObjCreateEx(-1, L"static", L"y:", -1, 1120, 230, 60, 30, hExDui_tagging, 1060, -1, 0, 0, 0);
+	auto hObj6 = Ex_ObjCreateEx(-1, L"static", L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标。\r\n5.按住CTRL键+鼠标滚轮,可以放大缩小", -1, 1050, 270, 130, 600, hExDui_tagging, 1060, DT_WORDBREAK, 0, 0, 0);
 	Ex_ObjSetFontFromFamily(hObj6, L"微软雅黑", 16, EFS_BOLD, FALSE);
 	Ex_ObjSetColor(hObj6, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
@@ -3956,11 +3987,18 @@ void test_tagging(HWND hWnd)
 	Ex_ObjHandleEvent(hObj5, NM_CLICK, OnTaggingButtonEvent);
 
 	Ex_ObjHandleEvent(hObj_taggingBoard, TBN_HIT_PATH, OnTaggingBoardEvent);
-
+	RECT rc;
+	Ex_ObjGetClientRect(hObj_taggingBoard, &rc);
+	HDC dc = GetDC(NULL);
+	FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
+	ReleaseDC(0, dc);
+	output(Ex_Scale(rc.right - rc.left), (rc.right - rc.left) * dpix);
 	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_PEN_COLOR, 0, ExARGB(0, 255, 0, 255));
 	HEXIMAGE img;
 
 	_img_createfromfile(L"res//3.jpeg", &img);
 	Ex_ObjSendMessage(hObj_taggingBoard, TBM_SET_BKG, 0, img);
+	Ex_ObjHandleEvent(hObj_taggingBoard, TBN_MOUSE_MOVE, OnTaggingBoradMouseMove);
+
 	Ex_DUIShowWindow(hExDui_tagging, SW_SHOWNORMAL, 0, 0, 0);
 }

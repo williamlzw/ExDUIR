@@ -1588,6 +1588,8 @@
 #pragma region taggingboard notify
 // 事件_标注板_激活闭合路径,lParam返回路径索引,从1开始
 #define TBN_HIT_PATH 20000
+// 事件_标注板_鼠标移动, wParam返回鼠标所处图横坐标,lParam返回鼠标所处图纵坐标
+#define TBN_MOUSE_MOVE 20001
 #pragma endregion taggingboard notify
 
 // 消息_滚动条_设置可视 lParam为1可视,0不可视
