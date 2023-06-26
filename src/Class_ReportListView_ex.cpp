@@ -740,7 +740,7 @@ void _reportlistview_head_paint(HEXOBJ hObj)
 					INT nColWidth = ptr->nWidth;
 					if (nColWidth > 0)
 					{
-						if ((ptr->dwStyle & ERLV_CS_COLCOR) == ERLV_CS_COLCOR)
+						if ((ptr->dwStyle & ERLV_CS_COLOUR) == ERLV_CS_COLOUR)
 						{
 							_brush_setcolor(hBrush, ptr->crBkg);
 							_canvas_fillrect(ps.hCanvas, hBrush, nOffsetX + 1.5, 0.5, nOffsetX + nColWidth + 1.0, ps.uHeight);
@@ -748,7 +748,7 @@ void _reportlistview_head_paint(HEXOBJ hObj)
 						}
 						if (nIndexHit == i + 1 && (ptr->dwStyle & ERLV_CS_CLICKABLE) == ERLV_CS_CLICKABLE)
 						{
-							if ((ptr->dwStyle & ERLV_CS_COLCOR) == ERLV_CS_COLCOR)
+							if ((ptr->dwStyle & ERLV_CS_COLOUR) == ERLV_CS_COLOUR)
 							{
 								_brush_setcolor(hBrush, ptr->crBkg);
 							}
@@ -1040,7 +1040,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
 		{
 			HEXIMAGELIST hImgList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, ERLVL_HIMAGELIST);
 			INT itemHeight = pDrawInfo->rcPaint.bottom - pDrawInfo->rcPaint.top;
-			if ((pTR->dwStyle_ & ERLV_RS_ROWCOLCOR) == ERLV_RS_ROWCOLCOR)//新增
+			if ((pTR->dwStyle_ & ERLV_RS_ROWCOLOUR) == ERLV_RS_ROWCOLOUR)//新增
 			{
 				HEXBRUSH hBrush = _brush_create(pTR->rowbkcr_);
 				_canvas_fillrect(pDrawInfo->hCanvas, hBrush,
@@ -1111,7 +1111,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
 	{
 		if (Ex_ObjDispatchNotify(hObj, RLVN_DRAW_TD, nIndexTC, (size_t)cd) == 0)
 		{
-			if ((pTD->cellStyle_ & ERLV_RS_CELLCOLCOR) == ERLV_RS_CELLCOLCOR)//新增
+			if ((pTD->cellStyle_ & ERLV_RS_CELLCOLOUR) == ERLV_RS_CELLCOLOUR)//新增
 			{
 				HEXBRUSH hBrush = _brush_create(pTD->crbk_);
 				_canvas_fillrect(cd->hCanvas, hBrush,
@@ -1122,7 +1122,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
 			if (wzText != 0)
 			{
 				INT crText = 0;
-				if ((pTD->cellStyle_ & ERLV_RS_CELLTEXTCOLCOR) == ERLV_RS_CELLTEXTCOLCOR)//新增
+				if ((pTD->cellStyle_ & ERLV_RS_CELLTEXTCOLOUR) == ERLV_RS_CELLTEXTCOLOUR)//新增
 				{
 					crText = pTD->crText_;
 				}

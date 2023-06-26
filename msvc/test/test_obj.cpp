@@ -1590,7 +1590,7 @@ void test_reportlistview(HWND hWnd)
 	col.pwzText = L"居中可点击";
 	col.nWidth = 100;
 	col.crText = ExRGB2ARGB(65535, 255);
-	col.dwStyle = ERLV_CS_CLICKABLE | ERLV_CS_COLCOR;
+	col.dwStyle = ERLV_CS_CLICKABLE | ERLV_CS_COLOUR;
 	col.dwTextFormat = DT_CENTER | DT_VCENTER;
 	col.crBkg = ExRGBA(120, 230, 180, 255);
 	Ex_ObjSendMessage(m_hReportListView, LVM_INSERTCOLUMN, 0, (size_t)&col);
@@ -1611,7 +1611,7 @@ void test_reportlistview(HWND hWnd)
 		row.lParam = i + 1;
 		item.nImageIndex = i;
 		// 下面这句控制项目是否带选择框及整行背景色
-		item.dwStyle = (i % 3 == 0 ? ERLV_RS_CHECKBOX | ERLV_RS_CHECKBOX_CHECK | ERLV_RS_ROWCOLCOR : 0);
+		item.dwStyle = (i % 3 == 0 ? ERLV_RS_CHECKBOX | ERLV_RS_CHECKBOX_CHECK | ERLV_RS_ROWCOLOUR : 0);
 		item.rowBkgCr = ExRGBA(31, 100, 200, 255);
 		item.iRow = Ex_ObjSendMessage(m_hReportListView, LVM_INSERTITEM, 0, (size_t)&row);
 		//先插入表项
@@ -1626,14 +1626,14 @@ void test_reportlistview(HWND hWnd)
 		cell.iCol = 2;
 		cell.iRow = i;
 		cell.pwzText = L"第二列";
-		cell.cellStyle = ERLV_RS_CELLCOLCOR;
+		cell.cellStyle = ERLV_RS_CELLCOLOUR;
 		cell.cellBkgCr = ExRGBA(130, 130, 25, 255);
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 
 		cell.iCol = 3;
 		cell.iRow = i;
 		cell.pwzText = L"第三列";
-		cell.cellStyle = ERLV_RS_CELLTEXTCOLCOR;
+		cell.cellStyle = ERLV_RS_CELLTEXTCOLOUR;
 		cell.cellTextCr = ExRGBA(130, 25, 130, 255);
 		Ex_ObjSendMessage(m_hReportListView, LVM_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 

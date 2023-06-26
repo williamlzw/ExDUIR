@@ -36,7 +36,7 @@ struct reportlistview_tr_s
 	DWORD dwStyle_;
 	LPARAM lParam_;
 	DWORD nImageIndex_;
-	EXARGB rowbkcr_;        //具有ERLV_RS_ROWCOLCOR风格时,整行的背景色
+	EXARGB rowbkcr_;        //具有ERLV_RS_ROWCOLOUR风格时,整行的背景色
 	LPVOID pTDInfo_; //行文本数组信息
 };
 
@@ -44,9 +44,9 @@ struct reportlistview_tr_s
 struct reportlistview_td_s
 {
 	LPCWSTR wzText_;
-	DWORD cellStyle_;   //ERLV_RS_CELLCOLCOR风格
-	EXARGB crbk_;       //cellStyle 具有 ERLV_RS_CELLCOLCOR 风格时,单元格的背景色
-	EXARGB crText_;     //cellStyle 具有 ERLV_RS_CELLTEXTCOLCOR 风格时,单元格的文本色
+	DWORD cellStyle_;   //ERLV_RS_CELLCOLOUR风格
+	EXARGB crbk_;       //cellStyle 具有 ERLV_RS_CELLCOLOUR 风格时,单元格的背景色
+	EXARGB crText_;     //cellStyle 具有 ERLV_RS_CELLTEXTCOLOUR 风格时,单元格的文本色
 	HEXFONT font_;       //cellStyle 具有 ERLV_RS_CELLFONT 风格时,单元格的字体
 	LPARAM lParam_;     //单元格参数
 };
