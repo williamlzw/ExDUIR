@@ -1583,6 +1583,10 @@
 #define TBM_GET_IMG_LEFT_OFFSET 10008
 // 消息_标注板_取图像缩放后纵坐标偏移, ret返回
 #define TBM_GET_IMG_TOP_OFFSET 10009
+// 消息_标注板_删除路径, lParam路径索引,索引从1开始
+#define TBM_DELETE_PATH 10010
+// 消息_标注板_获取选中路径, 索引从1开始, 未选中返回0
+#define TBM_GET_HIT_PATH 10011
 #pragma endregion taggingboard message
 
 #pragma region taggingboard notify
@@ -1592,8 +1596,10 @@
 #define TBN_MOUSE_MOVE 20001
 #pragma endregion taggingboard notify
 
+#pragma region scrollbar message
 // 消息_滚动条_设置可视 lParam为1可视,0不可视
 #define SBM_SETVISIBLE 56212
+#pragma endregion scrollbar message
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	

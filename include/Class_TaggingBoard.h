@@ -25,7 +25,7 @@
 #define TBL_HIT_POINT 10
 // 属性_标注板_命中路径
 #define TBL_HIT_PATH 11
-// 属性_标注板_选中路径
+// 属性_标注板_选中路径,索引从1开始,未选中返回0
 #define TBL_CHECK_PATH 12
 // 属性_标注板_是否清空点
 #define TBL_POINT_NULL 13

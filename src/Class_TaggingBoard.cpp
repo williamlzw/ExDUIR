@@ -8,20 +8,7 @@ void _taggingboard_register()
 
 LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
-	if (uMsg == WM_MOUSEHOVER)
-	{
-		//Ex_ObjPostMessage(hObj, SBM_SETVISIBLE, 0, 1); //显示滚动条
-	}
-	else if (uMsg == WM_MOUSELEAVE)
-	{
-		//Ex_ObjPostMessage(hObj, SBM_SETVISIBLE, 0, 0); //隐藏滚动条
-	}
-	else if (uMsg == SBM_SETVISIBLE)
-	{
-		//Ex_ObjSetLong(hObj, EOL_ALPHA, lParam != 0 ? 255 : 0);
-		//Ex_ObjInvalidateRect(hObj, 0);
-	}
-	else if (uMsg == WM_PAINT)
+	if (uMsg == WM_PAINT)
 	{
 		EX_PAINTSTRUCT ps{ 0 };
 		if (Ex_ObjBeginPaint(hObj, &ps))
@@ -92,8 +79,8 @@ void _taggingboard_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	heightRC = Ex_Scale(heightRC);
 	INT oPos = 0;
 	INT nView = 0;
-	INT nPage = 200;
-	INT nLine = 50;
+	INT nPage = 2000;
+	INT nLine = 200;
 	if (bHScoll)
 	{
 		oPos = Ex_ObjGetLong(hObj, TBL_SB_LEFT_OFFSET);
@@ -142,6 +129,31 @@ void _taggingboard_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			return;
 		}
 
+	}
+	
+	if (bHScoll)
+	{
+		//控制滚动条滚动到最顶部和最底部逻辑，因为滚动条range是-imgLeft到imgLeft,所以限制范围从-imgLeft到imgLeft
+		auto imgLeft = Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
+		if (nPos < imgLeft && nPos > 0)
+		{
+			nPos = imgLeft;
+		}
+		if (nPos > -imgLeft && nPos > 0)
+		{
+			nPos = -imgLeft;
+		}
+	}
+	else {
+		auto imgTop = Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
+		if (nPos <  imgTop && nPos > 0)
+		{
+			nPos = imgTop;
+		}
+		if (nPos > -imgTop && nPos > 0)
+		{
+			nPos = -imgTop;
+		}
 	}
 
 
@@ -209,8 +221,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjSetLong(hObj, TBL_IMG_SCALE, (LONG_PTR)scalePtr);
 
 		Ex_ObjScrollShow(hObj, SB_BOTH, TRUE);
-		Ex_ObjScrollSetInfo(hObj, SB_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 200, 0, TRUE);
-		Ex_ObjScrollSetInfo(hObj, SB_HORZ, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 200, 0, TRUE);
+		Ex_ObjScrollSetInfo(hObj, SB_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
+		Ex_ObjScrollSetInfo(hObj, SB_HORZ, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
 		HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hObj, SB_VERT);
 		Ex_ObjSetLong(hObj_scroll, EOL_OBJPROC, (size_t)_taggingboard_OnScrollBarMsg); //改变滚动条回调
 		hObj_scroll = Ex_ObjScrollGetControl(hObj, SB_HORZ);
@@ -218,7 +230,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_SIZE)
 	{
-		auto img = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
+		/*auto img = (HEXIMAGE)Ex_ObjGetLong(hObj, TBL_IMG_BKG);
 		if (img != 0)
 		{
 			INT width, height;
@@ -270,7 +282,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					}
 				}
 			}
-		}
+		}*/
 	}
 	else if (uMsg == WM_DESTROY)
 	{
@@ -456,9 +468,9 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			free(arr);
 
 			//新建临时点
-			auto newPtr = malloc(sizeof(EX_POlYGON));
-			((EX_POlYGON*)newPtr)->points = malloc(sizeof(POINT));
-			((EX_POlYGON*)newPtr)->count = 0;
+			auto newPtr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
+			newPtr->points = malloc(sizeof(POINT));
+			newPtr->count = 0;
 			Ex_ObjSetLong(hObj, TBL_DATA, (LONG_PTR)newPtr);
 
 			//添加临时点
@@ -483,6 +495,90 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	else if (uMsg == TBM_GET_IMG_TOP_OFFSET)
 	{
 		return Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
+	}
+	else if (uMsg == TBM_DELETE_PATH)
+	{
+		auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TBL_ARRAY);
+		INT index = (INT)lParam - 1;
+		BOOL ret = FALSE;
+		if (arr->count > index && index >= 0)
+		{
+			INT hit = Ex_ObjGetLong(hObj, TBL_CHECK_PATH);
+			if (hit == (INT)lParam)
+			{
+				//移除选中路径
+				Ex_ObjSetLong(hObj, TBL_CHECK_PATH, 0);
+			}
+			auto newArr = (EX_POLYGON_ARRAY*)malloc(sizeof(EX_POLYGON_ARRAY));
+			newArr->count = arr->count - 1;
+			newArr->polygons = malloc(newArr->count * sizeof(size_t));
+
+			//拷贝index前面数据
+			for (int i = 0; i < index; i++)
+			{
+				size_t ptrValue = 0;
+				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+				auto ptr = (EX_POlYGON*)ptrValue;
+				auto newPtr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
+				newPtr->points = malloc(ptr->count * sizeof(POINT));
+				newPtr->count = ptr->count;
+				for (int j = 0; j < ptr->count; j++)
+				{
+					float x = 0, y = 0;
+					RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
+					RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
+					RtlMoveMemory((LPVOID)((size_t)newPtr->points + j * 8), &x, 4);
+					RtlMoveMemory((LPVOID)((size_t)newPtr->points + j * 8 + 4), &y, 4);
+				}
+				size_t newPtrValue = (size_t)newPtr;
+				RtlMoveMemory((LPVOID)((size_t)newArr->polygons + i * sizeof(size_t)), &newPtrValue, sizeof(size_t));
+				free(ptr->points);
+				free(ptr);
+			}
+			//拷贝index后面数据
+			for (int i = index + 1; i < arr->count; i++)
+			{
+				size_t ptrValue = 0;
+				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+				auto ptr = (EX_POlYGON*)ptrValue;
+				auto newPtr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
+				if (i == arr->count - 1)
+				{
+					//最后临时点
+					newPtr->points = malloc(1 * sizeof(POINT));
+					newPtr->count = 0;
+					Ex_ObjSetLong(hObj, TBL_DATA, (LONG_PTR)newPtr);
+				}
+				else {
+					newPtr->points = malloc(ptr->count * sizeof(POINT));
+					newPtr->count = ptr->count;
+				}
+
+				for (int j = 0; j < newPtr->count; j++)
+				{
+					float x = 0, y = 0;
+					RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
+					RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
+					RtlMoveMemory((LPVOID)((size_t)newPtr->points + j * 8), &x, 4);
+					RtlMoveMemory((LPVOID)((size_t)newPtr->points + j * 8 + 4), &y, 4);
+
+				}
+				size_t newPtrValue = (size_t)newPtr;
+				RtlMoveMemory((LPVOID)((size_t)newArr->polygons + (i - 1) * sizeof(size_t)), &newPtrValue, sizeof(size_t));
+				free(ptr->points);
+				free(ptr);
+			}
+			free(arr->polygons);
+			free(arr);
+			Ex_ObjSetLong(hObj, TBL_ARRAY, (size_t)newArr);
+			Ex_ObjInvalidateRect(hObj, 0);
+			ret = TRUE;
+		}
+		return ret;
+	}
+	else if (uMsg == TBM_GET_HIT_PATH)
+	{
+		return Ex_ObjGetLong(hObj, TBL_CHECK_PATH);
 	}
 	else if (uMsg == WM_PAINT)
 	{
@@ -571,6 +667,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 						}
 					}
 				}
+
 				Ex_ObjInvalidateRect(hObj, 0);
 			}
 		}
@@ -828,7 +925,7 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
 	_canvas_begindraw(canvas);
 
 	auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TBL_DATA);
-	_canvas_clear(canvas, ExRGBA(255, 255, 255, 255));
+	_canvas_clear(canvas, ExRGBA(255, 255, 255, 0));
 	auto sbOffsetLeft = Ex_ObjGetLong(hObj, TBL_SB_LEFT_OFFSET);
 	//auto imgOffsetLeft = Ex_ObjGetLong(hObj, TBL_IMG_LEFT_OFFSET);
 	//auto imgOffsetTop = Ex_ObjGetLong(hObj, TBL_IMG_TOP_OFFSET);
@@ -886,7 +983,7 @@ void _taggingboard_paint(HEXOBJ hObj)
 			//点不为空画临时线
 			if (!pointNull)
 			{
-				_canvas_drawcanvas(ps.hCanvas, canvas, 0, 0, ps.uWidth, ps.uHeight, 0, 0, 50, CV_COMPOSITE_MODE_SRCOVER);
+				_canvas_drawcanvas(ps.hCanvas, canvas, 0, 0, ps.uWidth, ps.uHeight, 0, 0, 255, CV_COMPOSITE_MODE_SRCOVER);
 			}
 		}
 
