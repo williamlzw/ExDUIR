@@ -2519,6 +2519,7 @@ void _wnd_wm_buttondown(HWND hWnd, wnd_s *pWnd, HEXOBJ hObj, obj_s *pObj, INT uM
         {
             pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEFTDTRACK;
             _obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE);
+			uMsg = WM_LBUTTONDOWN;
         }
         else if (uMsg == WM_RBUTTONDOWN)
         {
