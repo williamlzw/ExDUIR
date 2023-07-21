@@ -2057,7 +2057,13 @@ struct EX_POlYGON
 	INT count;
 	LPVOID points;//保存有count个POINT结构体数据:x,y
 };
-
+/*渐变画刷点信息,
+EXARGB直接对float储存结构直接赋值或静态强转会导致精度丢失问题,而内存拷贝会大大影响使用体验，结构体长度与之前相同，兼容原版*/
+struct EX_STOPPTS
+{
+	FLOAT m_position;
+	EXARGB m_color;
+};
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
 
 

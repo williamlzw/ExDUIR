@@ -1302,12 +1302,11 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 		_canvas_setantialias(wParam, TRUE);
 		RECT rc{ 0 };
 		Ex_DUIGetClientRect(hExDui, &rc);
-		FLOAT arrStopPts[2][2];
-		arrStopPts[0][0] = 0;
-		arrStopPts[0][1] = ExRGBA(10, 127, 213, 220);
-		arrStopPts[1][0] = 1.0;
-		arrStopPts[1][1] = ExRGBA(200, 10, 10, 220);
-		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, &arrStopPts[0][0], 2);
+		constexpr EX_STOPPTS arrStopPts[]{
+			{0.0,ExRGBA(10, 127, 213, 220)},
+			{1.0, ExRGBA(200, 10, 10, 220)}
+		};
+		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, arrStopPts, 2);
 		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 		_brush_destroy(hBrush);
 		*lpResult = 1;
