@@ -52,7 +52,7 @@ HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,
 /// <param name="arrStopPts">两个点位置和颜色数据,只能两个{位置(0-1.0),颜色(ARGB),位置(0-1.0),颜色(ARGB)}这样传参</param>
 /// <param name="cStopPts">点个数，只能两个传2</param>
 /// <returns></returns>
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrStopPts, INT cStopPts);
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,const EX_STOPPTS* arrStopPts, INT cStopPts);
 
 /// <summary>
 /// 画刷销毁

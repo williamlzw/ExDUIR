@@ -98,22 +98,22 @@ void _brush_settransform(HEXBRUSH hBrush, HEXMATRIX matrix)
     ((ID2D1BitmapBrush *)hBrush)->SetTransform(&mx);
 }
 
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT *arrStopPts, INT cStopPts)
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const EX_STOPPTS* arrStopPts, INT cStopPts)
 {
     if (cStopPts < 2)
     {
         return NULL;
     }
-    ID2D1GradientStopCollection *gradientStopCollection = nullptr;
-    ID2D1LinearGradientBrush *hBrush = nullptr;
-    D2D1_GRADIENT_STOP *gradientStops = (D2D1_GRADIENT_STOP *)malloc(cStopPts * sizeof(D2D1_GRADIENT_STOP));
+    ID2D1GradientStopCollection* gradientStopCollection = nullptr;
+    ID2D1LinearGradientBrush* hBrush = nullptr;
+    D2D1_GRADIENT_STOP* gradientStops = (D2D1_GRADIENT_STOP*)malloc(cStopPts * sizeof(D2D1_GRADIENT_STOP));
     D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES gradientProperties{};
     if (gradientStops)
     {
         for (INT i = 0; i < cStopPts; i++)
         {
-            ARGB2ColorF(arrStopPts[i * cStopPts + 1], &gradientStops[i].color);
-            gradientStops[i].position = (FLOAT)arrStopPts[i * cStopPts];
+            ARGB2ColorF(arrStopPts[i].m_color, &gradientStops[i].color);
+            gradientStops[i].position = arrStopPts[i].m_position;
         }
         g_Ri.pD2DDeviceContext->CreateGradientStopCollection(gradientStops, cStopPts, D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &gradientStopCollection);
 
@@ -134,6 +134,9 @@ HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yE
 
 HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, EXARGB crBegin, EXARGB crEnd)
 {
-    FLOAT arrStopPts[] = {0, crBegin, 1, crEnd};
+    EX_STOPPTS arrStopPts[] = {
+        { 0, crBegin },
+        {1, crEnd}
+    };
     return _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrStopPts, 2);
 }
