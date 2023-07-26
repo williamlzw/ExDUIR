@@ -766,7 +766,7 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 			{
 				D2D1_RECT_F rect = { dstLeft, dstTop, dstRight, dstBottom };
 				D2D1_RECT_F srect = { srcLeft, srcTop, srcRight, srcBottom };
-				pContext->DrawBitmap(pBitmap, &rect, alpha / 255.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &srect);
+				pContext->DrawBitmap(pBitmap, &rect, (float)alpha / 255.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &srect);
 				pBitmap->Release();
 			}
 		}
