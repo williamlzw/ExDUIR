@@ -51,6 +51,18 @@ win7需要安装KB2670838补丁
 * 支持模态窗口。
 * 支持限制区域消息通知。
 
+## 窗口绘画概念
+* window图形界面是基于窗口和消息机制的。包括桌面也是个窗口。控件是绘制在窗口上的局部图形，配上诸如鼠标消息,键盘消息即可实现各种控件的效果。如鼠标悬浮在按钮上面，鼠标按下触发按钮被点击事件，同时按钮渲染改变按下的状态，以此实现按钮的作用。而窗口包括控件的绘制分为GDI绘制和DirectX绘制。前者不调用显卡渲染,性能较差。后者调用显卡渲染以此加速。
+* 根据上面原理，ExDuiR选择基于DirectX绘制的函数(DirectX11和D2D)，用windows子类化的方式实现自定义绘制和接收Windows窗口消息。
+
+## 总体设计
+* 为了编译其他语言调用,ExDuiR以函数形式对外暴露接口，编译为dll供其他语言调用。	
+* ExDuiR设计了自己了一套基础类，包括Array数组类（供需要数组的控件使用）；HandleTable组件句柄表类(维护引擎的控件句柄)；HashTable哈希表类(用于保存控件事件、控件属性、资源包、主题包、字体、布局的键值信息)；Theme主题包类(用于读取主题包文件资源图片、主题绘制)；Resource资源包类(主题包文件解包)；Easing缓动算法类(用于缓动)；ImageList图片列表类(便于管理图片资源)；Layout布局类(定义控件间的位置关系)；MemPool内存池类(哈希表缓存信息，控件消息发送时缓存发送内容)；Thread线程类；DropTarget拖曳类。
+* ExDuiR用于绘制控件的基础类有Brush画刷类;Canvas画布类；Font字体类；Image图像类；Matrix矩阵类；Path路径类；Region区域类；StokeStyle线条风格类。
+
+## 调用说明
+* 开始必须先调用Ex_Init初始化引擎。然后Ex_WndCreate创建窗口，接着调用Ex_DUIBindWindowEx创建皮肤挂接到窗口，接着用Ex_DUISetLong设置窗口背景色。接着Ex_DUIShowWindow显示窗口。最后面一般是Ex_WndMsgLoop维持消息循环(收到窗口关闭消息会中止)和Ex_UnInit释放引擎。
+
 ## 扩展组件说明
 Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,其它消息控制组件状态。使用时创建类名为该类的组件即可。组件需要的属性个数在Ex_ObjRegister的cbObjextra设置,默认每个大小都是8字节。使用索引从0开始(负数为基础组件内置索引,勿用)。用Ex_ObjSetLong设置属性,用Ex_ObjGetLong取属性。
 
