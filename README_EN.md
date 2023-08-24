@@ -51,6 +51,15 @@ Currently,the following two compiling methods are supported:
 * Support for modal Windows.
 * Support for restricted area message notification.
 
+## Window Drawing Concepts
+* The graphical interface is based on windows and a messaging mechanism. Controls are drawn on the window and respond to messages like mouse and keyboard to implement functionality. For example, when the mouse hovers over a button, clicking it will trigger the button click event and change the button's rendered state to pressed. Window and control drawing uses either GDI or DirectX, the latter being much faster by using GPU hardware acceleration.
+* ExDuiR uses DirectX (DirectX 11 and Direct2D) for drawing to leverage GPU acceleration, and subclasses windows to enable custom drawing and message handling.
+
+## Overall Design
+* ExDuiR exposes APIs as functions to allow compiling into DLLs for use by other languages.
+* ExDuiR includes custom base classes like Array, HandleTable, HashTable, Theme, Resource, Easing, ImageList, Layout, MemPool, Thread, DropTarget.
+* Drawing related base classes include Brush, Canvas, Font, Image, Matrix, Path, Region, StrokeStyle.
+
 ## Extension component description
 Ex_ObjRegister registers the component class, draws the component in the WM_PAINT message in the callback, and other messages control the state of the component. Create a component with the class name. The number of properties required by a component is set in the cbObjextra of Ex_ObjRegister, and each has a default size of 8 bytes. Use an index that starts at 0 (negative numbers are built-in indexes for the underlying component, do not use). Use Ex_ObjSetLong to set the properties and Ex_ObjGetLong to get the properties.
 
