@@ -389,14 +389,16 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
     wnd_s *pWnd = pObj->pWnd_;
     if (!FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN))
     {
-        if (_obj_queryextra(pObj, ECBL_STATE, 2))
+        if (_obj_queryextra(pObj, ECBL_STATE, ECBF_NORMAL))
         {
-            _obj_delextra(pObj, ECBL_STATE, 2);
+			
+            _obj_delextra(pObj, ECBL_STATE, ECBF_NORMAL);
         }
         else
         {
             if (!_obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_DROPDOWN, 0, 0))
             {
+				
                 RECT padding = {0};
                 RECT unknown;
                 LPVOID pThemePadding = Ex_ThemeGetValuePtr(pObj->hTheme_, 0x98393A3C, 0xC7D972B4);
@@ -517,6 +519,7 @@ void _combobox_paint(HEXOBJ hObj, obj_s *pObj)
             {
                 atomSrcRect = ATOM_ARROW1_NORMAL;
             }
+			
             pRect = (RECT *)Ex_ThemeGetValuePtr(ps.hTheme, ATOM_COMBOBOX, atomSrcRect);
             tmp.left = _obj_getextralong(pObj, ECBL_LEFT);
             tmp.top = _obj_getextralong(pObj, ECBL_TOP);
@@ -573,10 +576,12 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             rc.bottom = _obj_getextralong(pObj, ECBL_BOTTOM);
             if (PtInRect(&rc, tmp))
             {
+				
                 _obj_addextra(pObj, ECBL_STATE, ECBF_HOVER);
             }
             else
             {
+				
                 _obj_delextra(pObj, ECBL_STATE, ECBF_HOVER);
             }
         }
@@ -622,11 +627,12 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
         else if (uMsg == WM_EX_EXITPOPUP)
         {
+			
             if (wParam)
             {
                 if (hObj == wParam)
                 {
-                    _obj_addextra(pObj, ECBL_STATE, 2);
+                    _obj_addextra(pObj, ECBL_STATE, ECBF_NORMAL);
                 }
             }
             else

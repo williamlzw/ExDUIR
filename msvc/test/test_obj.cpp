@@ -454,6 +454,7 @@ void test_edit(HWND hWnd)
 		{
 			title = buttonTitles[i];
 		}
+		
 		m_hEditButton[i] = Ex_ObjCreateEx(EOS_EX_AUTOSIZE, L"button", title.c_str(), -1, 10, 30, 10, 10, hObj_page, 201 + i, -1, 0, 0, 0);
 		_layout_setchildprop(hLayoutPage, m_hEditButton[i], ELCP_MARGIN_RIGHT, 5);
 		_layout_setchildprop(hLayoutPage, m_hEditButton[i], ELCP_MARGIN_BOTTOM, 5);
@@ -1143,6 +1144,8 @@ void test_combobox(HWND hWnd)
 	HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(hWnd_combobox, 0, EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_combobox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 30, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	Ex_ObjCreateEx(-1, L"combobox", L"测试组合框1", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
@@ -2224,8 +2227,8 @@ void test_custommenu(HWND hWnd)
 
 	//创建一个新菜单
 	HMENU hSubMenu = CreateMenu();
-	AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"SubItem 1"); //添加项目
-	AppendMenuW(m_hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"More");
+	AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"子项目 1"); //添加项目
+	AppendMenuW(m_hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"更多");
 	EnableMenuItem(m_hMenu, 302, MF_DISABLED);
 	Ex_DUIShowWindow(hExDui_custommenu, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -2934,7 +2937,7 @@ void test_chromium(HWND hParent)
 	HWND hWnd_chromium = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试Cef浏览框", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(hWnd_chromium, 0, EWS_NOINHERITBKG | EWS_CENTERWINDOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON | EWS_SIZEABLE, 0, OnChromiumWndMsgProc);
 	Ex_DUISetLong(hExDui_chromium, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_ObjCefBrowserInitialize(0, L"D:/ExDUIR/Release", L"FTBrowser.dll", NULL, 0, 0, OnBeforeCommandLine);
+	Ex_ObjCefBrowserInitialize(0, 0, L"FTBrowser.dll", NULL, 0, 0, OnBeforeCommandLine);
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
 	Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"https://www.bing.com");
 	//Ex_ObjSendMessage(m_hObjChromium, CEFM_LOADURL, 0, (LPARAM)L"d:/test.mp4");
@@ -3070,9 +3073,9 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 1);
 		hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 130, 6, 358, 28, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 2);
-		hObjTmp = Ex_ObjCreateEx(-1, L"Button", 0, -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
+		hObjTmp = Ex_ObjCreateEx(-1, L"Switch", L"开|关", -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
 		Ex_ObjSetLong(hObjTmp, EOL_NODEID, 3);
-		Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
+		//Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
 		*lpResult = 1;
 		return 1;
 	}

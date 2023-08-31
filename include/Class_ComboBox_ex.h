@@ -38,6 +38,8 @@
 
 // 组合框标识_悬浮
 #define ECBF_HOVER 1
+// 组合框标识_正常
+#define ECBF_NORMAL 2
 
 struct EX_COMBOX_ITEM
 {
