@@ -1328,12 +1328,32 @@ void test_customredraw(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_customredraw, SW_SHOWNORMAL, 0, 0, 0);
 }
 
+LRESULT CALLBACK OnMessageBoxProc(HWND hWnd, HEXOBJ hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_NOTIFY)
+	{
+		EX_NMHDR ni{ 0 };
+		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
+		if (ni.nCode == NM_INTDLG)
+		{
+			//改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
+			HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, EWL_OBJCAPTION);
+			//标题栏窗口风格就是标题栏子组件的ID
+			HEXOBJ hObjTitle = Ex_ObjGetFromID(hObjCaption, EWS_TITLE);
+			Ex_ObjSetColor(hObjTitle, COLOR_EX_TEXT_NORMAL, ExARGB(120, 230, 21, 255), TRUE);
+		}
+	}
+	return 0;
+}
+
 void test_messagebox(HWND hWnd)
 {
 	HWND hWnd_messagebox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试消息框", 0, 0, 200, 200, 0, 0);
 	HEXDUI hExDui_messagebox = Ex_DUIBindWindowEx(hWnd_messagebox, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE, 0, 0);
 	Ex_DUISetLong(hExDui_messagebox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_MessageBox(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, EMBF_CENTEWINDOW);
+	BOOL check = TRUE;
+	//Ex_MessageBox(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, EMBF_CENTEWINDOW);
+	Ex_MessageBoxEx(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, NULL, &check, 1000, EMBF_CENTEWINDOW, OnMessageBoxProc);//可以修改信息框标题颜色等等
 	Ex_DUIShowWindow(hExDui_messagebox, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -2034,6 +2054,7 @@ void test_editex(HWND hWnd)
 }
 
 HMENU m_hMenu;
+HMENU m_hMenuRight;
 
 LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
@@ -2209,27 +2230,108 @@ LRESULT CALLBACK OnMenuButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 	return 0;
 }
 
+LRESULT CALLBACK OnMenuItemRightMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_ERASEBKGND)
+	{
+		if (__get((LPVOID)lParam, 0) == wParam)
+		{
+			EX_PAINTSTRUCT ps{ 0 };
+			RtlMoveMemory(&ps, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT));
+			auto nodeID = Ex_ObjGetLong(hObj, EOL_NODEID);
+			if (ps.uHeight > 10)
+			{
+				if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
+				{
+					_canvas_clear(ps.hCanvas, ExRGBA(79, 125, 164, 255));
+				}
+				else
+				{
+					_canvas_clear(ps.hCanvas, ExRGBA(120, 120, 120, 255));
+				}
+				if (nodeID == 0)
+				{
+					HEXIMAGE hImg = 0;
+					HEXIMAGE hImgSmall = 0;
+					_img_createfromfile(L"res/rotateimgbox.jpg", &hImg);
+					_img_scale(hImg, 20, 20, &hImgSmall); //注意菜单条目高度跟图像高度有关，因此缩放到24
+				    
+					_canvas_drawimage(ps.hCanvas, hImgSmall, 2, 2, 255);
+					_img_destroy(hImg);
+					_img_destroy(hImgSmall);
+				}
+				*lpResult = 1;
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+LRESULT CALLBACK OnMenuWndRightMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_INITMENUPOPUP)
+	{
+		if (wParam == (size_t)m_hMenuRight)
+		{
+			auto obj = Ex_ObjFind(hExDUI, 0, L"Item", 0);
+			int i = 0;
+			while (obj != 0)
+			{
+				Ex_ObjSetColor(obj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
+				Ex_ObjSetLong(obj, EOL_OBJPROC, (LONG_PTR)OnMenuItemRightMsgProc);
+				Ex_ObjSetLong(obj, EOL_NODEID, i);
+				obj = Ex_ObjGetObj(obj, GW_HWNDNEXT);
+				i++;
+			}
+		}
+	}
+	return 0;
+}
+
+LRESULT CALLBACK OnMenuButtonRightEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+	if (nCode == NM_CLICK)
+	{
+		POINT pt;
+		GetCursorPos(&pt);
+		Ex_TrackPopupMenu(m_hMenuRight, 0, pt.x, pt.y, 0, hObj, 0, OnMenuWndRightMsgProc, EMNF_NOSHADOW);
+	}
+	return 0;
+}
+
 void test_custommenu(HWND hWnd)
 {
-	HWND hWnd_custommenu = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试扩展菜单", 0, 0, 300, 200, 0, 0);
-	HEXDUI hExDui_custommenu = Ex_DUIBindWindowEx(hWnd_custommenu, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
+	HWND hWnd_custommenu = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试弹出菜单", 0, 0, 300, 200, 0, 0);
+	HEXDUI hExDui_custommenu = Ex_DUIBindWindowEx(hWnd_custommenu, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | 
+		EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_custommenu, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
 	HEXOBJ hObj_button = Ex_ObjCreate(L"button", L"弹出菜单", -1, 50, 50, 100, 30, hExDui_custommenu);
 	Ex_ObjHandleEvent(hObj_button, NM_CLICK, OnMenuButtonEvent);
-	m_hMenu = CreatePopupMenu();
-	AppendMenuW(m_hMenu, MF_STRING | MF_ENABLED, 301, L"Item 1");
-	CheckMenuItem(m_hMenu, 301, MF_BYCOMMAND | MF_CHECKED);
-	AppendMenuW(m_hMenu, MF_STRING | MF_ENABLED, 302, L"Disabled Item");
-	AppendMenuW(m_hMenu, MF_SEPARATOR, 666, L"Disabled Item");
-	AppendMenuW(m_hMenu, MF_SEPARATOR, 0, L"Disabled Item");
-	DeleteMenu(m_hMenu, 666, MF_BYCOMMAND);
 
-	//创建一个新菜单
+	m_hMenu = CreatePopupMenu();
+	AppendMenuW(m_hMenu, MF_STRING | MF_ENABLED, 301, L"项目1");
+	CheckMenuItem(m_hMenu, 301, MF_BYCOMMAND | MF_CHECKED);//选中
+	AppendMenuW(m_hMenu, MF_STRING , 302, L"禁用项目");
+	EnableMenuItem(m_hMenu, 302, MF_DISABLED);//置灰色
+	AppendMenuW(m_hMenu, MF_SEPARATOR, 0, L"横线");
+	AppendMenuW(m_hMenu, MF_STRING, 666, L"待删除项目");
+	DeleteMenu(m_hMenu, 666, MF_BYCOMMAND);//删除666菜单
+
+	//创建一个子菜单
 	HMENU hSubMenu = CreateMenu();
-	AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"子项目 1"); //添加项目
+	AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"子项目1"); //添加项目
 	AppendMenuW(m_hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"更多");
-	EnableMenuItem(m_hMenu, 302, MF_DISABLED);
+	
+
+	// 以下是通过item组件改变菜单项目=====================
+	HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"BUTTON", L"弹出菜单2", -1, 170, 50, 100, 30, hExDui_custommenu, 0, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj_button2, NM_CLICK, OnMenuButtonRightEvent);
+	m_hMenuRight = CreatePopupMenu();
+	AppendMenuW(m_hMenuRight, MF_STRING , 401, L"项目一");
+	AppendMenuW(m_hMenuRight, MF_STRING, 402, L"项目二");
+
 	Ex_DUIShowWindow(hExDui_custommenu, SW_SHOWNORMAL, 0, 0, 0);
 }
 
