@@ -1341,7 +1341,7 @@
 #define ctl1                            0x04A0
 #define ctlLast                         0x04ff
 #define WINVER                          0x0500
-#define _WIN32_WINNT                    0x0500
+#define _WIN32_WINNT                    0x0602
 #define _WIN32_IE                       0x0501
 #define FILEOPENORD                     1536
 #define MULTIFILEOPENORD                1537

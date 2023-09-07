@@ -212,6 +212,7 @@ void _button_paint(HEXOBJ hObj, obj_s *pObj)
             {
                 OffsetRect((LPRECT)&ps.rcText.left, Ex_Scale(1), Ex_Scale(1));
             }
+			
             _canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, nIndex), lptext, -1, ps.dwTextFormat, ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
         }
         Ex_ObjEndPaint(hObj, &ps);

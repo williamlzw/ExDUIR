@@ -3,6 +3,7 @@
 
 class DropTarget : public IDropTarget
 {
+private:
 	wnd_s *m_pWnd;
 
 public:

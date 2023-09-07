@@ -60,7 +60,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_rollmenu ,            //152 测试卷帘菜单
         test_tray,                   //153 测试托盘
         test_mask,                   //154测试蒙板
-		test_tagging                 //155测试标注画板
+		test_tagging,                 //155测试标注画板
+		test_effect                  //156测试效果器
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -79,8 +80,7 @@ void test_exdui()
     m_hWnd = Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
     if (m_hWnd != 0)
     {
-        
-        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON , 0, 0);
+        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
         //改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
         HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, EWL_OBJCAPTION);
         //标题栏窗口风格就是标题栏子组件的ID
@@ -92,6 +92,7 @@ void test_exdui()
         Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, 0, 255, TRUE);
+
 
         std::vector<HEXOBJ> buttons;
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试按钮开关", -1, 10, 30, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL));
@@ -152,7 +153,7 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试托盘图标", -1, 340, 430, 100, 30, hExDui, 153, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试蒙板", -1, 340, 470, 100, 30, hExDui, 154, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标注画板", -1, 340, 510, 100, 30, hExDui, 155, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试效果器", -1, 340, 550, 100, 30, hExDui, 156, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);

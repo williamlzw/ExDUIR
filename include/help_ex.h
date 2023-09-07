@@ -302,7 +302,6 @@ struct obj_base
 //条目风格_分隔符
 #define EMIS_SEPARATOR 2
 
-#include "ExDUIR_Func.h"
 #include "CustomFont.h"
 #include "Array_ex.h"
 #include "Thread_ex.h"
@@ -331,7 +330,6 @@ struct obj_base
 #include "ImageList_ex.h"
 #include "nanosvg.h"
 #include "nanosvgrast.h"
-#include "CustomFont.h"
 
 #include "Class_Static_SysLink_ex.h"
 #include "Class_SysButton_Page_ex.h"
@@ -489,10 +487,12 @@ std::wstring a2w(const std::string& str);
 std::wstring a2w2(std::vector<UCHAR> str);
 std::string a2u(const std::string& str);
 std::string u2a(const std::string& str);
+std::string u2a2(std::vector<CHAR> str);
 std::string w2u(const std::wstring& wstr);
 std::vector<UCHAR> w2u2(const std::wstring& wstr);
 std::wstring u2w(const std::string& str);
 std::wstring u2w2(std::vector<UCHAR> str);
+std::wstring u2w2(std::vector<CHAR> str);
 std::wstring WStringFormat(const wchar_t* fmt, ...);
 
 const TCHAR Chjrmc[][4] = { L"", L"元旦", L"情人",L"妇女",L"植树",L"愚人",L"劳动",L"青年",L"护士",L"儿童",L"建党",L"建军",L"教师",L"国庆",L"平安",L"圣诞",
@@ -526,3 +526,5 @@ void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable);
 std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric = TRUE, BOOL utf8 = TRUE, INT mode = 1);
 std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric = TRUE, BOOL utf8 = TRUE, INT mode = 1);
 std::wstring UrlDecode(const std::wstring& url, BOOL utf8 = TRUE);
+
+HRESULT IsEffectRegistered(ID2D1Factory1* d2dFactory, const CLSID& effectID, bool& result);

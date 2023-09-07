@@ -403,7 +403,7 @@ void _listbuttonex_paint(HEXOBJ hObj)
 						}
 						_canvas_fillrect(ps.hCanvas, hBrush, pTR->nLeft, 0, pTR->nLeft + pTR->nWidth, ps.uHeight);
 					}
-
+					
 					_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pTR->wzText, -1, DT_CENTER | DT_VCENTER, pTR->nLeft, 0, pTR->nLeft + pTR->nWidth, ps.uHeight);
 				}
 				_brush_destroy(hBrush);

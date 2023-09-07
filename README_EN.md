@@ -170,3 +170,5 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ![image](demo_image/demo_mask.png)
 ### demo taggingboard:
 ![image](demo_image/demo_taggingboard.png)
+### demo effect:
+![image](demo_image/demo_effect.png)

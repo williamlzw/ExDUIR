@@ -216,6 +216,9 @@
     <ClCompile Include="..\..\src\Class_TaggingBoard.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Effect_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -429,6 +432,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_TaggingBoard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ExDUIR_Interface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Effect_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

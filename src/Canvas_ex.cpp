@@ -1862,3 +1862,12 @@ BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, F
 	}
 	return FALSE;
 }
+
+void _canvas_applyeffect(HEXCANVAS hCanvas, HEXEFFECT hEffect)
+{
+	auto pContext = (ID2D1DeviceContext*)_canvas_getcontext(hCanvas, CVC_DX_D2DCONTEXT);
+	ID2D1Image* lpBitmap = nullptr;
+	((ID2D1Effect *)hEffect)->GetOutput(&lpBitmap);
+	pContext->DrawImage(lpBitmap, D2D1_INTERPOLATION_MODE_LINEAR);
+	lpBitmap->Release();
+}

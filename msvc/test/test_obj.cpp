@@ -1,6 +1,8 @@
 #include "test_obj.h"
 #include "resource.h"
 
+
+
 HEXDUI m_hExDuiButton;
 
 LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
@@ -454,7 +456,7 @@ void test_edit(HWND hWnd)
 		{
 			title = buttonTitles[i];
 		}
-		
+
 		m_hEditButton[i] = Ex_ObjCreateEx(EOS_EX_AUTOSIZE, L"button", title.c_str(), -1, 10, 30, 10, 10, hObj_page, 201 + i, -1, 0, 0, 0);
 		_layout_setchildprop(hLayoutPage, m_hEditButton[i], ELCP_MARGIN_RIGHT, 5);
 		_layout_setchildprop(hLayoutPage, m_hEditButton[i], ELCP_MARGIN_BOTTOM, 5);
@@ -1145,7 +1147,7 @@ void test_combobox(HWND hWnd)
 	Ex_DUISetLong(hExDui_combobox, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 30, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
 	Ex_ObjCreateEx(-1, L"combobox", L"测试组合框1", EOS_VISIBLE | ECS_ALLOWEDIT, 10, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
-	
+
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
@@ -1830,7 +1832,7 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		_canvas_settransform(ps.hCanvas, mx);
 
 		HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
-		output(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
+
 		_canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)ps.uWidth / 2, (FLOAT)ps.uHeight / 2, 75.f, 50.f);
 		_brush_destroy(hBrush);
 
@@ -2255,7 +2257,7 @@ LRESULT CALLBACK OnMenuItemRightMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 					HEXIMAGE hImgSmall = 0;
 					_img_createfromfile(L"res/rotateimgbox.jpg", &hImg);
 					_img_scale(hImg, 20, 20, &hImgSmall); //注意菜单条目高度跟图像高度有关，因此缩放到24
-				    
+
 					_canvas_drawimage(ps.hCanvas, hImgSmall, 2, 2, 255);
 					_img_destroy(hImg);
 					_img_destroy(hImgSmall);
@@ -2303,7 +2305,7 @@ LRESULT CALLBACK OnMenuButtonRightEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM 
 void test_custommenu(HWND hWnd)
 {
 	HWND hWnd_custommenu = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试弹出菜单", 0, 0, 300, 200, 0, 0);
-	HEXDUI hExDui_custommenu = Ex_DUIBindWindowEx(hWnd_custommenu, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW | 
+	HEXDUI hExDui_custommenu = Ex_DUIBindWindowEx(hWnd_custommenu, 0, EWS_NOINHERITBKG | EWS_MOVEABLE | EWS_CENTERWINDOW |
 		EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE | EWS_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_custommenu, EWL_CRBKG, ExARGB(150, 150, 150, 255));
 
@@ -2313,7 +2315,7 @@ void test_custommenu(HWND hWnd)
 	m_hMenu = CreatePopupMenu();
 	AppendMenuW(m_hMenu, MF_STRING | MF_ENABLED, 301, L"项目1");
 	CheckMenuItem(m_hMenu, 301, MF_BYCOMMAND | MF_CHECKED);//选中
-	AppendMenuW(m_hMenu, MF_STRING , 302, L"禁用项目");
+	AppendMenuW(m_hMenu, MF_STRING, 302, L"禁用项目");
 	EnableMenuItem(m_hMenu, 302, MF_DISABLED);//置灰色
 	AppendMenuW(m_hMenu, MF_SEPARATOR, 0, L"横线");
 	AppendMenuW(m_hMenu, MF_STRING, 666, L"待删除项目");
@@ -2323,13 +2325,13 @@ void test_custommenu(HWND hWnd)
 	HMENU hSubMenu = CreateMenu();
 	AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"子项目1"); //添加项目
 	AppendMenuW(m_hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"更多");
-	
+
 
 	// 以下是通过item组件改变菜单项目=====================
 	HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"BUTTON", L"弹出菜单2", -1, 170, 50, 100, 30, hExDui_custommenu, 0, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(hObj_button2, NM_CLICK, OnMenuButtonRightEvent);
 	m_hMenuRight = CreatePopupMenu();
-	AppendMenuW(m_hMenuRight, MF_STRING , 401, L"项目一");
+	AppendMenuW(m_hMenuRight, MF_STRING, 401, L"项目一");
 	AppendMenuW(m_hMenuRight, MF_STRING, 402, L"项目二");
 
 	Ex_DUIShowWindow(hExDui_custommenu, SW_SHOWNORMAL, 0, 0, 0);
@@ -4108,4 +4110,85 @@ void test_tagging(HWND hWnd)
 	Ex_ObjHandleEvent(hObj_taggingBoard, TBN_MOUSE_MOVE, OnTaggingBoradMouseMove);
 
 	Ex_DUIShowWindow(hExDui_tagging, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_CREATE)
+	{
+		Ex_ObjInitPropList(hObj, 3);
+		//注册效果器
+		std::wstring pProperityXml;
+		std::vector<CHAR> data1;
+		Ex_ReadFile(L"res/effect.xml", &data1);
+		pProperityXml = u2w2(data1);
+
+		EX_EFFECT_PROPERITY_INFO bindings[] =
+		{
+			D2D1_VALUE_TYPE_BINDING(L"Color", &MyEffect::SetColor, &MyEffect::GetColor),
+			D2D1_VALUE_TYPE_BINDING(L"Time", &MyEffect::SetTime, &MyEffect::GetTime),
+			D2D1_VALUE_TYPE_BINDING(L"Resolution", &MyEffect::SetResolution, &MyEffect::GetResolution)
+		};
+
+		_effect_register(CLSID_MYEFFECT, pProperityXml.c_str(), bindings, ARRAYSIZE(bindings), MyEffect::CreateEffect);
+		HEXEFFECT pEffect = nullptr;
+		auto ret = _effect_create(CLSID_MYEFFECT, &pEffect);
+
+		LARGE_INTEGER freq;
+		QueryPerformanceFrequency(&freq);
+		LARGE_INTEGER start;
+		QueryPerformanceCounter(&start);
+		auto nTimeDeta = start.QuadPart / freq.QuadPart;
+		RECT rc;
+		Ex_ObjGetRect(hObj, &rc);
+		int width = rc.right - rc.left;
+		int height = rc.bottom - rc.top;
+		//创建临时图像保存绘制内容
+		_effect_create_buffer(pEffect, width, height);
+		_effect_set_vector2(pEffect, L"Resolution", width, height);
+
+		Ex_ObjSetProp(hObj, 0, (size_t)pEffect);
+		Ex_ObjSetProp(hObj, 1, (size_t)nTimeDeta);
+	}
+	else if (uMsg == WM_PAINT)
+	{
+		ID2D1Effect* pEffect = (ID2D1Effect*)Ex_ObjGetProp(hObj, 0);
+		ULONGLONG nTimeDeta = Ex_ObjGetProp(hObj, 1);
+
+		LARGE_INTEGER freq;
+		QueryPerformanceFrequency(&freq);
+		LARGE_INTEGER start;
+		QueryPerformanceCounter(&start);
+		auto time2 = (FLOAT)start.QuadPart / freq.QuadPart;
+		float timeoffset = time2 - nTimeDeta;
+		pEffect->SetValueByName(L"Time", D2D1_PROPERTY_TYPE_FLOAT, (BYTE*)&timeoffset, 4);
+
+		//呈现到组件
+		EX_PAINTSTRUCT ps{ 0 };
+		Ex_ObjBeginPaint(hObj, &ps);
+		_canvas_applyeffect(ps.hCanvas, pEffect);
+
+		Ex_ObjEndPaint(hObj, &ps);
+	}
+	else if (uMsg == WM_TIMER)
+	{
+		Ex_ObjUpdate(hObj);
+	}
+	else if (uMsg == WM_DESTROY)
+	{
+		ID2D1Effect* pEffect = (ID2D1Effect*)Ex_ObjGetProp(hObj, 0);
+		pEffect->Release();
+
+	}
+	return 0;
+}
+
+void test_effect(HWND hWnd)
+{
+	HWND hWnd_effect = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试效果器", 0, 0, 500, 360, 0, 0);
+	auto hExDui_effect = Ex_DUIBindWindowEx(hWnd_effect, 0, EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_NOSHADOW | EWS_BUTTON_CLOSE | EWS_TITLE, 0, 0);
+	Ex_DUISetLong(hExDui_effect, EWL_CRBKG, ExARGB(150, 150, 150, 255));
+	auto hObj = Ex_ObjCreateEx(-1, L"static", L"", EOS_VISIBLE, 50, 50, 400, 260, hExDui_effect, 0, -1, 0, 0, OnEffectObjMsgProc);
+	Ex_ObjSetTimer(hObj, 1);
+	Ex_DUIShowWindow(hExDui_effect, SW_SHOWNORMAL, 0, 0, 0);
 }

@@ -502,6 +502,11 @@ std::string u2a(const std::string& str)
 	return w2a(u2w(str));
 }
 
+std::string u2a2(std::vector<CHAR> str)
+{
+	return w2a(u2w2(str));
+}
+
 std::string w2u(const std::wstring& wstr) {
 	if (wstr.empty()) {
 		return "";
@@ -543,6 +548,19 @@ std::wstring u2w(const std::string& str) {
 }
 
 std::wstring u2w2(std::vector<UCHAR> str) {
+	if (str.empty()) {
+		return L"";
+	}
+	int wlen = ::MultiByteToWideChar(CP_UTF8, 0, (LPCCH)str.data(), (int)str.size(), NULL, 0);
+	if (wlen <= 0) {
+		return L"";
+	}
+	std::vector<wchar_t> result(wlen);
+	::MultiByteToWideChar(CP_UTF8, 0, (LPCCH)str.data(), (int)str.size(), result.data(), wlen);
+	return std::wstring(result.data(), result.size());
+}
+
+std::wstring u2w2(std::vector<CHAR> str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -1110,4 +1128,23 @@ std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, I
 std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, INT mode)
 {
 	return u2w(UrlEncode(url, notEncodeAlphanumeric, utf8, mode));
+}
+
+HRESULT IsEffectRegistered(ID2D1Factory1* d2dFactory, const CLSID& effectID, bool& result) {
+	UINT32 n;
+	HRESULT hr = d2dFactory->GetRegisteredEffects(nullptr, 0, nullptr, &n);
+	if (FAILED(hr)) {
+		return hr;
+	}
+
+	std::vector<CLSID> effects(n);
+	hr = d2dFactory->GetRegisteredEffects(effects.data(), n, &n, nullptr);
+	if (FAILED(hr)) {
+		return hr;
+	}
+
+	auto it = std::find(effects.begin(), effects.end(), effectID);
+	result = it != effects.end();
+
+	return S_OK;
 }

@@ -77,6 +77,13 @@ EXARGB _brush_setcolor(HEXBRUSH hBrush, EXARGB argb);
 void _brush_settransform(HEXBRUSH hBrush, HEXMATRIX matrix);
 
 /// <summary>
+/// 画布应用效果器
+/// </summary>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hEffect">效果器指针</param>
+void _canvas_applyeffect(HEXCANVAS hCanvas, HEXEFFECT hEffect);
+
+/// <summary>
 /// 画布开始绘制
 /// </summary>
 /// <param name="hCanvas"></param>
@@ -641,6 +648,77 @@ DWORD _easing_getstate(HEXEASING pEasing);
 /// <param name="nState"></param>
 /// <returns></returns>
 BOOL _easing_setstate(HEXEASING pEasing, DWORD nState);
+
+/// <summary>
+/// 效果器创建
+/// </summary>
+/// <param name="guid">效果器GUID</param>
+/// <param name="ret">返回效果器指针</param>
+/// <returns></returns>
+BOOL _effect_create(GUID guid, HEXEFFECT* ret);
+
+/// <summary>
+/// 效果器创建缓冲区
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="width">宽度</param>
+/// <param name="height">高度</param>
+void _effect_create_buffer(HEXEFFECT hEffect, int width, int height);
+
+/// <summary>
+/// 效果器注册
+/// </summary>
+/// <param name="guid">效果器GUID</param>
+/// <param name="pProperityXml">效果器描述xml内容</param>
+/// <param name="properitys">效果器属性绑定方法</param>
+/// <param name="properityCount">效果器属性个数</param>
+/// <param name="createEffect">效果器创建方法地址</param>
+/// <returns></returns>
+BOOL _effect_register(GUID guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys, int properityCount, LPVOID createEffect);
+
+/// <summary>
+/// 效果器置浮点值
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="lpszProperityName">属性名</param>
+/// <param name="value">值</param>
+void _effect_set_float(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value);
+
+/// <summary>
+/// 效果器置整数值
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="lpszProperityName">属性名</param>
+/// <param name="value">值</param>
+void _effect_set_int32(HEXEFFECT hEffect, PCWSTR lpszProperityName, INT value);
+
+/// <summary>
+/// 效果器置无符号整数值
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="lpszProperityName">属性名</param>
+/// <param name="value">值</param>
+void _effect_set_uint32(HEXEFFECT hEffect, PCWSTR lpszProperityName, UINT value);
+
+/// <summary>
+/// 效果器置vector2值
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="lpszProperityName">属性名</param>
+/// <param name="value1">值1</param>
+/// <param name="value2">值2</param>
+void _effect_set_vector2(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2);
+
+/// <summary>
+/// 效果器置vector3值
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="lpszProperityName">属性名</param>
+/// <param name="value1">值1</param>
+/// <param name="value2">值2</param>
+/// <param name="value3">值3</param>
+void _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3);
+
 
 /// <summary>
 /// 创建默认字体

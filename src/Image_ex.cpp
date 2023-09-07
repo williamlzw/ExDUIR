@@ -1010,7 +1010,7 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 		}
 
 		ID2D1Bitmap1* pBitmap1 = NULL;
-		IWICBitmap* m_pWICBitmap = NULL;
+		IWICBitmap* pWICBitmap = NULL;
 		//创建临时位图
 		if (SUCCEEDED(g_Ri.pD2DDeviceContext->CreateBitmap(D2D1::SizeU(nWidth, nHeight), NULL, 0, bp1, &pBitmap1)))
 		{
@@ -1023,12 +1023,12 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 				if (SUCCEEDED(pBitmap1->Map(D2D1_MAP_OPTIONS_READ, &mrc)))
 				{
 					//创建一个空目标位图
-					if (SUCCEEDED(g_Ri.pWICFactory->CreateBitmap(nWidth, nHeight, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &m_pWICBitmap)))
+					if (SUCCEEDED(g_Ri.pWICFactory->CreateBitmap(nWidth, nHeight, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand, &pWICBitmap)))
 					{
 						//锁定位图
 						WICRect rect = { 0, 0, (INT)nWidth, (INT)nHeight };
 						IWICBitmapLock* pLocker = NULL;
-						if (SUCCEEDED(m_pWICBitmap->Lock(&rect, WICBitmapLockWrite, &pLocker)))
+						if (SUCCEEDED(pWICBitmap->Lock(&rect, WICBitmapLockWrite, &pLocker)))
 						{
 							LPBYTE aBits = NULL;
 							UINT cbFrame = 0;
@@ -1058,7 +1058,7 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
 
 			if (nError == 0)
 			{
-				hImg = _img_init(m_pWICBitmap, 0, 1, NULL, &nError);
+				hImg = _img_init(pWICBitmap, 0, 1, NULL, &nError);
 			}
 
 			if (dstImg)

@@ -1634,7 +1634,7 @@ typedef LPVOID HEXTHEME;     // 主题句柄
 typedef LPVOID HEXMATRIX;    // 矩阵句柄
 typedef LPVOID HEXEASING;    // 缓动句柄/指针
 typedef LPVOID HEXRES;       // 资源包句柄
-
+typedef LPVOID HEXEFFECT;    // 效果器句柄
 
 
 typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
@@ -2064,6 +2064,39 @@ struct EX_STOPPTS
 	FLOAT m_position;
 	EXARGB m_color;
 };
+
+
+typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(
+	_In_ IUnknown* effect,
+	_In_reads_(dataSize) const BYTE* data,
+	UINT32 dataSize
+	);
+typedef HRESULT(CALLBACK* PPROPERTY_GET_FUNCTION)(
+	_In_ const IUnknown* effect,
+	_Out_writes_opt_(dataSize) BYTE* data,
+	UINT32 dataSize,
+	_Out_opt_ UINT32* actualSize
+	);
+
+/// <summary>
+/// 着色器属性信息结构
+/// </summary>
+struct EX_EFFECT_PROPERITY_INFO
+{
+	/// <summary>
+	/// 属性名
+	/// </summary>
+	LPCWSTR propertyName;
+	/// <summary>
+	/// 设置属性回调 HRESULT (HEXEFFECT hEffect, byte* data, UINT dataSize)
+	/// </summary>
+	PPROPERTY_SET_FUNCTION setFun;
+	/// <summary>
+	/// 取属性回调 HRESULT (HEXEFFECT hEffect, byte* data, UINT dataSize, UINT32 *actualSize)
+	/// </summary>
+	PPROPERTY_GET_FUNCTION getFun;
+};
+
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
 
 

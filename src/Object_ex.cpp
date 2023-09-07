@@ -3796,6 +3796,7 @@ BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
 
 void _obj_setuistate(obj_s *pObj, DWORD dwState, BOOL fRemove, RECT *lprcRedraw, BOOL fRedraw, INT *nError)
 {
+	
     if (fRemove)
     {
         pObj->dwState_ = pObj->dwState_ - (pObj->dwState_ & dwState);

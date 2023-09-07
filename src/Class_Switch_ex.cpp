@@ -35,6 +35,7 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
     }
     else if (uMsg == BM_SETCHECK) /* 设置选中状态(wParam为是否选中,lParam为是否立即绘制而不使用动画) */
     {
+		
         BOOL fChecked = ((Ex_ObjGetUIState(hObj) & STATE_SELECT) != 0);
         /* 如果选中状态与当前状态不一致 */
         if (wParam != fChecked)
