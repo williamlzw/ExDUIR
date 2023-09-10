@@ -3,11 +3,11 @@
 BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen, std::vector<INT> *atomFiles, std::vector<LPVOID> *lpFiles, std::vector<UCHAR> *dwFileProps)
 {
     LPVOID retPtr = nullptr;
-    LPVOID retPtrDestory = nullptr;
+    LPVOID retPtrDestroy = nullptr;
     size_t retLen = 0;
     BOOL ret = FALSE;
     _bin_uncompress(lpData, dwDataLen, 0, 0, &retPtr, &retLen);
-    retPtrDestory = retPtr;
+	retPtrDestroy = retPtr;
 
     if (retLen > 0)
     {
@@ -42,9 +42,9 @@ BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLe
             }
         }
     }
-    if (retPtrDestory != nullptr)
+    if (retPtrDestroy != nullptr)
     {
-        Ex_MemFree(retPtrDestory);
+        Ex_MemFree(retPtrDestroy);
     }
     return ret;
 }

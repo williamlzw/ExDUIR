@@ -242,27 +242,10 @@ struct EffectExtraData {
 //https://learn.microsoft.com/zh-cn/windows/win32/direct2d/custom-effects?redirectedfrom=MSDN
 
 class MyTransform : public SimpleDrawTransform<1> {
-private:
-	MyTransform() : SimpleDrawTransform<1>(GUID_MYSHADER) {}
+public:
+	MyTransform(const GUID& guid) : SimpleDrawTransform<1>(guid) {}
 
 public:
-	static HRESULT Create(_In_ ID2D1EffectContext* d2dEC, _Outptr_ MyTransform** ppOutput) {
-		*ppOutput = nullptr;
-
-		HRESULT hr = LoadShader(
-			d2dEC,
-			L"res/effect.hlsl",
-			GUID_MYSHADER
-		);
-		if (FAILED(hr)) {
-			return hr;
-		}
-
-		*ppOutput = new MyTransform();
-
-		return S_OK;
-	}
-
 	HRESULT  SetTime(float value) {
 		_time = value;
 		return S_OK;
@@ -291,6 +274,10 @@ public:
 	}
 
 protected:
+	/// <summary>
+	/// 重写设置数据
+	/// </summary>
+	/// <param name="srcSize"></param>
 	void _SetShaderConstantBuffer(const SIZE& srcSize) override {
 		EffectExtraData shaderConstants{
 			_color,
@@ -314,13 +301,17 @@ public:
 		_In_ ID2D1EffectContext* pEffectContext,
 		_In_ ID2D1TransformGraph* pTransformGraph
 	) {
-
-		HRESULT hr = MyTransform::Create(pEffectContext, &_transform);
-		if (FAILED(hr)) {
-			return hr;
+		std::vector<CHAR> data1;
+		Ex_ReadFile(L"res/effect.hlsl", &data1);
+		std::string buf = u2a2(data1);
+		if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
+		{
+			return E_INVALIDARG;
 		}
+		
+		_transform = new MyTransform(GUID_MYSHADER);
 
-		hr = pTransformGraph->SetSingleTransformNode(_transform);
+		auto hr = pTransformGraph->SetSingleTransformNode(_transform);
 		if (FAILED(hr)) {
 			return hr;
 		}
@@ -329,7 +320,6 @@ public:
 	}
 
 	HRESULT SetColor(D2D_VECTOR_3F value) {
-
 		_transform->SetColor(value);
 		return S_OK;
 	}
@@ -356,32 +346,6 @@ public:
 		return _transform->GetResolution();
 	}
 
-	static HRESULT Register(HEXCANVAS hCanvas, const GUID guid) {
-		auto pContext = (ID2D1DeviceContext*)_canvas_getcontext(hCanvas, CVC_DX_D2DCONTEXT);
-		ID2D1Factory* pfactory = nullptr;
-		ID2D1Factory1* pFactory1 = nullptr;
-		pContext->GetFactory(&pfactory);
-		pfactory->QueryInterface(&pFactory1);
-		bool isRegistered;
-		IsEffectRegistered(pFactory1, guid, isRegistered);
-		HRESULT hr = S_OK;
-		if (!isRegistered)
-		{
-			const D2D1_PROPERTY_BINDING bindings[] =
-			{
-				D2D1_VALUE_TYPE_BINDING(L"Color", &SetColor, &GetColor),
-				D2D1_VALUE_TYPE_BINDING(L"Time", &SetTime, &GetTime),
-				D2D1_VALUE_TYPE_BINDING(L"Resolution", &SetResolution, &GetResolution)
-			};
-			std::wstring pProperityXml;
-			std::vector<CHAR> data1;
-			Ex_ReadFile(L"res/effect.xml", &data1);
-			pProperityXml = u2w2(data1);
-			hr = pFactory1->RegisterEffectFromString(guid, pProperityXml.c_str(), bindings, ARRAYSIZE(bindings), CreateEffect);
-		}
-		return hr;
-	}
-
 	static HRESULT CALLBACK CreateEffect(_Outptr_ IUnknown** ppEffectImpl) {
 		*ppEffectImpl = static_cast<ID2D1EffectImpl*>(new MyEffect());
 
@@ -394,6 +358,10 @@ public:
 
 private:
 	MyEffect() {}
+	~MyEffect() {
+		_transform->Release();
+		_transform = nullptr;
+	}
 	MyTransform* _transform = nullptr;
 };
 

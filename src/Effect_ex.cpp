@@ -1,6 +1,6 @@
 #include "Effect_ex.h"
 
-BOOL _effect_register(GUID guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys, int properityCount, LPVOID createEffect)
+BOOL _effect_register(const GUID& guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys, int properityCount, LPVOID createEffect)
 {
 	bool isRegistered;
 	IsEffectRegistered(g_Ri.pD2Dfactory, guid, isRegistered);
@@ -55,29 +55,72 @@ void _effect_create_buffer(HEXEFFECT hEffect, int width, int height)
 	((ID2D1Effect*)hEffect)->SetInput(0, lpID2D1BitmapBuffer, TRUE);
 }
 
-void _effect_set_vector2(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2)
+BOOL _effect_set_float(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value)
+{
+	return ((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_FLOAT, (BYTE*)&value, 4) == S_OK;
+}
+
+BOOL _effect_set_vector2(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2)
 {
 	D2D_VECTOR_2F vec{ value1, value2 };
-	((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_VECTOR2, (BYTE*)&vec, 8);
+	return ((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_VECTOR2, (BYTE*)&vec, 8) == S_OK;
 }
 
-void _effect_set_float(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value)
-{
-	((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_FLOAT, (BYTE*)&value, 4);
-}
-
-void _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3)
+BOOL _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3)
 {
 	D2D_VECTOR_3F vec{ value1, value2, value3 };
-	((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_VECTOR3, (BYTE*)&vec, 12);
+	return ((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_VECTOR3, (BYTE*)&vec, 12) == S_OK;
 }
 
-void _effect_set_uint32(HEXEFFECT hEffect, PCWSTR lpszProperityName, UINT value)
+BOOL _effect_set_vector4(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3, float value4)
 {
-	((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_UINT32, (BYTE*)&value, 4);
+	D2D_VECTOR_4F vec{ value1, value2, value3, value4 };
+	return ((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_VECTOR4, (BYTE*)&vec, 16) == S_OK;
 }
 
-void _effect_set_int32(HEXEFFECT hEffect, PCWSTR lpszProperityName, INT value)
+BOOL _effect_set_uint32(HEXEFFECT hEffect, PCWSTR lpszProperityName, UINT value)
 {
-	((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_INT32, (BYTE*)&value, 4);
+	return ((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_UINT32, (BYTE*)&value, 4) == S_OK;
+}
+
+BOOL _effect_set_int32(HEXEFFECT hEffect, PCWSTR lpszProperityName, INT value)
+{
+	return ((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_INT32, (BYTE*)&value, 4) == S_OK;
+}
+
+BOOL _effect_set_bool(HEXEFFECT hEffect, PCWSTR lpszProperityName, BOOL value)
+{
+	return ((ID2D1Effect*)hEffect)->SetValueByName(lpszProperityName, D2D1_PROPERTY_TYPE_BOOL, (BYTE*)&value, 4) == S_OK;
+}
+
+void _effect_destroy(HEXEFFECT hEffect)
+{
+	((ID2D1Effect*)hEffect)->Release();
+}
+
+BOOL _shader_load(LPVOID pEffectContext, LPCSTR pHlsl, int pHlslLen, const GUID& shaderID)
+{
+	if (((ID2D1EffectContext*)pEffectContext)->IsShaderLoaded(shaderID))
+	{
+		return TRUE;
+	}
+	ID3DBlob* pCode;
+	ID3DBlob* pErrorMsg;
+	//编译着色器代码
+	auto hr = D3DCompile(pHlsl, pHlslLen, NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_4_0", NULL, NULL, &pCode, &pErrorMsg);
+	if (FAILED(hr))
+	{
+		pErrorMsg->Release();
+		return FALSE;
+	}
+	auto lpShaderBytecode = pCode->GetBufferPointer();
+	auto nShaderBytecodeLength = pCode->GetBufferSize();
+	hr = ((ID2D1EffectContext *)pEffectContext)->LoadPixelShader(shaderID, (BYTE*)lpShaderBytecode, nShaderBytecodeLength);
+	if (FAILED(hr)) 
+	{
+		pErrorMsg->Release();
+		return FALSE;
+	}
+	pCode->Release();
+	return TRUE;
 }

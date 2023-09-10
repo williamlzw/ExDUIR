@@ -4152,7 +4152,7 @@ LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_PAINT)
 	{
-		ID2D1Effect* pEffect = (ID2D1Effect*)Ex_ObjGetProp(hObj, 0);
+		HEXEFFECT pEffect = (HEXEFFECT)Ex_ObjGetProp(hObj, 0);
 		ULONGLONG nTimeDeta = Ex_ObjGetProp(hObj, 1);
 
 		LARGE_INTEGER freq;
@@ -4161,8 +4161,8 @@ LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		QueryPerformanceCounter(&start);
 		auto time2 = (FLOAT)start.QuadPart / freq.QuadPart;
 		float timeoffset = time2 - nTimeDeta;
-		pEffect->SetValueByName(L"Time", D2D1_PROPERTY_TYPE_FLOAT, (BYTE*)&timeoffset, 4);
 
+		_effect_set_float(pEffect, L"Time", timeoffset);
 		//呈现到组件
 		EX_PAINTSTRUCT ps{ 0 };
 		Ex_ObjBeginPaint(hObj, &ps);
@@ -4176,9 +4176,8 @@ LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_DESTROY)
 	{
-		ID2D1Effect* pEffect = (ID2D1Effect*)Ex_ObjGetProp(hObj, 0);
-		pEffect->Release();
-
+		HEXEFFECT pEffect = (HEXEFFECT)Ex_ObjGetProp(hObj, 0);
+		_effect_destroy(pEffect);
 	}
 	return 0;
 }

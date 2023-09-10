@@ -3,9 +3,6 @@
 #include <d2d1effecthelpers.h>
 #include <Initguid.h>
 
-#include <d3dcompiler.h>
-#pragma comment(lib, "d3dcompiler.lib")
-
 
 // 自定义 Effect 的基类
 class EffectBase : public ID2D1EffectImpl {
@@ -86,56 +83,8 @@ protected:
 
 	SimpleDrawTransform(SimpleDrawTransform&&) = default;
 
-	// 将 hlsl 读取进 Effect Context
-	static HRESULT LoadShader(_In_ ID2D1EffectContext* d2dEC, _In_ const wchar_t* path, const GUID& shaderID) {
-		if (!d2dEC->IsShaderLoaded(shaderID)) {
-			std::vector<CHAR> data1;
-			Ex_ReadFile(path, &data1);
-			std::string buf = u2a2(data1);
-			ID3DBlob* pCode;
-			ID3DBlob* pErrorMsg;
-			//编译着色器代码
-			auto hr = D3DCompile(buf.c_str(), buf.length(), NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_4_0", NULL, NULL, &pCode, &pErrorMsg);
-			if (FAILED(hr))
-			{
-				OutputDebugStringW(L"D3DCompile失败");
-				pErrorMsg->Release();
-				return hr;
-			}
-			auto lpShaderBytecode = pCode->GetBufferPointer();
-			auto nShaderBytecodeLength = pCode->GetBufferSize();
-			hr = d2dEC->LoadPixelShader(shaderID, (BYTE*)lpShaderBytecode, nShaderBytecodeLength);
-
-
-			if (FAILED(hr)) {
-				OutputDebugStringW(L"加载着色器失败");
-				return hr;
-			}
-		}
-
-		return S_OK;
-	}
 public:
 	virtual ~SimpleDrawTransform() = default;
-
-	static HRESULT Create(
-		_In_ ID2D1EffectContext* d2dEC,
-		_Outptr_ SimpleDrawTransform** ppOutput,
-		_In_ const wchar_t* shaderPath,
-		const GUID& shaderID
-	) {
-		if (!ppOutput) {
-			return E_INVALIDARG;
-		}
-
-		HRESULT hr = LoadShader(d2dEC, shaderPath, shaderID);
-		if (FAILED(hr)) {
-			return hr;
-		}
-
-		*ppOutput = new SimpleDrawTransform(shaderID);
-		return S_OK;
-	}
 
 	IFACEMETHODIMP_(UINT32) GetInputCount() const override {
 		return NINPUTS;
@@ -197,13 +146,11 @@ public:
 		D2D1_RECT_L invalidInputRect,
 		_Out_ D2D1_RECT_L* pInvalidOutputRect
 	) const override {
-		// This transform is designed to only accept one input.
+
 		if (inputIndex >= NINPUTS) {
 			return E_INVALIDARG;
 		}
 
-		// If part of the transform's input is invalid, mark the corresponding
-		// output region as invalid. 
 		*pInvalidOutputRect = D2D1::RectL(LONG_MIN, LONG_MIN, LONG_MAX, LONG_MAX);
 
 		return S_OK;

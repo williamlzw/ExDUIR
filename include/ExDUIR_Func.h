@@ -666,6 +666,12 @@ BOOL _effect_create(GUID guid, HEXEFFECT* ret);
 void _effect_create_buffer(HEXEFFECT hEffect, int width, int height);
 
 /// <summary>
+/// 效果器销毁
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+void _effect_destroy(HEXEFFECT hEffect);
+
+/// <summary>
 /// 效果器注册
 /// </summary>
 /// <param name="guid">效果器GUID</param>
@@ -674,7 +680,15 @@ void _effect_create_buffer(HEXEFFECT hEffect, int width, int height);
 /// <param name="properityCount">效果器属性个数</param>
 /// <param name="createEffect">效果器创建方法地址</param>
 /// <returns></returns>
-BOOL _effect_register(GUID guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys, int properityCount, LPVOID createEffect);
+BOOL _effect_register(const GUID& guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys, int properityCount, LPVOID createEffect);
+
+/// <summary>
+/// 效果器置布尔值
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="lpszProperityName">属性名</param>
+/// <param name="value">值</param>
+BOOL _effect_set_bool(HEXEFFECT hEffect, PCWSTR lpszProperityName, BOOL value);
 
 /// <summary>
 /// 效果器置浮点值
@@ -682,7 +696,7 @@ BOOL _effect_register(GUID guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO
 /// <param name="hEffect">效果器指针</param>
 /// <param name="lpszProperityName">属性名</param>
 /// <param name="value">值</param>
-void _effect_set_float(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value);
+BOOL _effect_set_float(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value);
 
 /// <summary>
 /// 效果器置整数值
@@ -690,7 +704,7 @@ void _effect_set_float(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value)
 /// <param name="hEffect">效果器指针</param>
 /// <param name="lpszProperityName">属性名</param>
 /// <param name="value">值</param>
-void _effect_set_int32(HEXEFFECT hEffect, PCWSTR lpszProperityName, INT value);
+BOOL _effect_set_int32(HEXEFFECT hEffect, PCWSTR lpszProperityName, INT value);
 
 /// <summary>
 /// 效果器置无符号整数值
@@ -698,7 +712,7 @@ void _effect_set_int32(HEXEFFECT hEffect, PCWSTR lpszProperityName, INT value);
 /// <param name="hEffect">效果器指针</param>
 /// <param name="lpszProperityName">属性名</param>
 /// <param name="value">值</param>
-void _effect_set_uint32(HEXEFFECT hEffect, PCWSTR lpszProperityName, UINT value);
+BOOL _effect_set_uint32(HEXEFFECT hEffect, PCWSTR lpszProperityName, UINT value);
 
 /// <summary>
 /// 效果器置vector2值
@@ -707,7 +721,7 @@ void _effect_set_uint32(HEXEFFECT hEffect, PCWSTR lpszProperityName, UINT value)
 /// <param name="lpszProperityName">属性名</param>
 /// <param name="value1">值1</param>
 /// <param name="value2">值2</param>
-void _effect_set_vector2(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2);
+BOOL _effect_set_vector2(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2);
 
 /// <summary>
 /// 效果器置vector3值
@@ -717,8 +731,18 @@ void _effect_set_vector2(HEXEFFECT hEffect, PCWSTR lpszProperityName, float valu
 /// <param name="value1">值1</param>
 /// <param name="value2">值2</param>
 /// <param name="value3">值3</param>
-void _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3);
+BOOL _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3);
 
+/// <summary>
+/// 效果器置vector4值
+/// </summary>
+/// <param name="hEffect">效果器指针</param>
+/// <param name="lpszProperityName">属性名</param>
+/// <param name="value1">值1</param>
+/// <param name="value2">值2</param>
+/// <param name="value3">值3</param>
+/// <param name="value4">值4</param>
+BOOL _effect_set_vector4(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3, float value4);
 
 /// <summary>
 /// 创建默认字体
@@ -1604,6 +1628,16 @@ BOOL _rgn_destroy(HEXRGN hRgn);
 /// <param name="y"></param>
 /// <returns></returns>
 BOOL _rgn_hittest(HEXRGN hRgn, FLOAT x, FLOAT y);
+
+/// <summary>
+/// 着色器加载
+/// </summary>
+/// <param name="pEffectContext">效果器上下文ID2D1EffectContext*</param>
+/// <param name="pHlsl">着色器代码指针</param>
+/// <param name="pHlslLen">着色器代码指针长度</param>
+/// <param name="shaderID">着色器GUID</param>
+/// <returns></returns>
+BOOL _shader_load(LPVOID pEffectContext, LPCSTR pHlsl, int pHlslLen, const GUID& shaderID);
 
 /// <summary>
 /// 申请内存
