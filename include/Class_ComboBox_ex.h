@@ -36,10 +36,10 @@
 // 组合框消息_取可视数量
 #define CB_GETMINVISIBLE 5890
 
-// 组合框标识_悬浮
-#define ECBF_HOVER 1
-// 组合框标识_正常
-#define ECBF_NORMAL 2
+// 组合框状态_悬浮
+#define ECBS_HOVER 1
+// 组合框状态_正常
+#define ECBS_NORMAL 2
 
 struct EX_COMBOX_ITEM
 {

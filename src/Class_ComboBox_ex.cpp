@@ -389,10 +389,10 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
     wnd_s *pWnd = pObj->pWnd_;
     if (!FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN))
     {
-        if (_obj_queryextra(pObj, ECBL_STATE, ECBF_NORMAL))
+        if (_obj_queryextra(pObj, ECBL_STATE, ECBS_NORMAL))
         {
 			
-            _obj_delextra(pObj, ECBL_STATE, ECBF_NORMAL);
+            _obj_delextra(pObj, ECBL_STATE, ECBS_NORMAL);
         }
         else
         {
@@ -511,7 +511,8 @@ void _combobox_paint(HEXOBJ hObj, obj_s *pObj)
             RECT tmp2 = {0};
 
             Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_COMBOBOX, atomSrcRect, 255);
-            if (FLAGS_CHECK(pObj->pWnd_->dwFlags_, EWF_BPOPUPWINDOIWSHOWN))
+			//焦点状态才改变箭头图标,防止多个组合框同时改变箭头
+            if (FLAGS_CHECK(pObj->pWnd_->dwFlags_, EWF_BPOPUPWINDOIWSHOWN) && FLAGS_CHECK(ps.dwState, STATE_FOCUS))
             {
                 atomSrcRect = ATOM_ARROW2_NORMAL;
             }
@@ -576,13 +577,12 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             rc.bottom = _obj_getextralong(pObj, ECBL_BOTTOM);
             if (PtInRect(&rc, tmp))
             {
-				
-                _obj_addextra(pObj, ECBL_STATE, ECBF_HOVER);
+                _obj_addextra(pObj, ECBL_STATE, ECBS_HOVER);
             }
             else
             {
 				
-                _obj_delextra(pObj, ECBL_STATE, ECBF_HOVER);
+                _obj_delextra(pObj, ECBL_STATE, ECBS_HOVER);
             }
         }
         else if (uMsg == WM_SIZE)
@@ -615,7 +615,8 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
         else if (uMsg == WM_LBUTTONDOWN)
         {
-            if (_obj_queryextra(pObj, ECBL_STATE, ECBF_HOVER) || !FLAGS_CHECK(pObj->dwStyle_, ECS_ALLOWEDIT))
+			
+            if (_obj_queryextra(pObj, ECBL_STATE, ECBS_HOVER) || !FLAGS_CHECK(pObj->dwStyle_, ECS_ALLOWEDIT))
             {
                 _combobox_btndown(hWnd, hObj, pObj);
             }
@@ -632,7 +633,8 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             {
                 if (hObj == wParam)
                 {
-                    _obj_addextra(pObj, ECBL_STATE, ECBF_NORMAL);
+					
+                    _obj_addextra(pObj, ECBL_STATE, ECBS_NORMAL);
                 }
             }
             else
