@@ -3,9 +3,9 @@
 void _listbuttonex_register()
 {
 	DWORD cbObjExtra = 5 * sizeof(size_t);
-	Ex_ObjRegister(L"Menubar", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_LEFT, cbObjExtra, NULL, 1, _listbuttonex_proc);
-	Ex_ObjRegister(L"Toolbar", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_LEFT, 7 * sizeof(size_t), NULL, 2, _listbuttonex_proc);
-	Ex_ObjRegister(L"Statusbar", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_LEFT, 7 * sizeof(size_t), NULL, 3, _listbuttonex_proc);
+	Ex_ObjRegister(L"Menubar", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT, cbObjExtra, NULL, 1, _listbuttonex_proc);
+	Ex_ObjRegister(L"Toolbar", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT, 7 * sizeof(size_t), NULL, 2, _listbuttonex_proc);
+	Ex_ObjRegister(L"Statusbar", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT, 7 * sizeof(size_t), NULL, 3, _listbuttonex_proc);
 }
 
 LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -19,23 +19,23 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			nType = pObj->pCls_->dwFlags;
 		}
-		Ex_ObjSetLong(hObj, ELBL_TYPE, nType);
-		Ex_ObjSetLong(hObj, ELBL_CTCS, 0);
-		Ex_ObjSetLong(hObj, ELBL_INDEX, 0);
-		Ex_ObjSetLong(hObj, ELBL_HIMAGELIST, 0);
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_TYPE, nType);
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_CTCS, 0);
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_INDEX, 0);
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_HIMAGELIST, 0);
 		array_s* hArr = Array_Create(0);
 		if (hArr)
 		{
 			Array_SetExtra(hArr, hObj);
 			Array_SetType(hArr, nType);
-			Array_BindEvent(hArr, eae_delmember, _listbuttonex_arr_del);
-			Ex_ObjSetLong(hObj, ELBL_ITEMINFO, (size_t)hArr);
+			Array_BindEvent(hArr, ARRAY_EVENT_DELMEMBER, _listbuttonex_arr_del);
+			Ex_ObjSetLong(hObj, LISTBUTTON_LONG_ITEMINFO, (size_t)hArr);
 		}
 	}
 	else if (uMsg == WM_DESTROY)
 	{
-		Array_Destroy((array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO));
-		HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, ELBL_HIMAGELIST);
+		Array_Destroy((array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO));
+		HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_HIMAGELIST);
 		if (hImageList)
 		{
 			Array_Destroy((array_s*)hImageList);
@@ -51,7 +51,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		INT nType = Ex_ObjGetLong(hObj, ELBL_TYPE);
+		INT nType = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_TYPE);
 		if (nType == 1 || nType == 2)
 		{
 			_listbuttonex_mousemove(hObj, nType, lParam);
@@ -59,7 +59,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_LBUTTONDOWN)
 	{
-		INT nType = Ex_ObjGetLong(hObj, ELBL_TYPE);
+		INT nType = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_TYPE);
 		if (nType == 1 || nType == 2)
 		{
 			_listbuttonex_mousedown(hObj, nType, lParam);
@@ -67,7 +67,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_LBUTTONUP)
 	{
-		INT nType = Ex_ObjGetLong(hObj, ELBL_TYPE);
+		INT nType = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_TYPE);
 		if (nType == 2)
 		{
 			_listbuttonex_mouseup(hObj, nType, lParam);
@@ -75,19 +75,19 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_MOUSELEAVE)
 	{
-		INT nType = Ex_ObjGetLong(hObj, ELBL_TYPE);
+		INT nType = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_TYPE);
 		if (nType == 1 || nType == 2)
 		{
 			_listbuttonex_mouseleave(hObj, nType);
 		}
 	}
-	else if (uMsg == LVM_INSERTITEM)
+	else if (uMsg == LISTVIEW_MESSAGE_INSERTITEM)
 	{
-		INT nType = Ex_ObjGetLong(hObj, ELBL_TYPE);
+		INT nType = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_TYPE);
 		EX_LISTBUTTON_ITEMINFO* pItemInfo = (EX_LISTBUTTON_ITEMINFO*)lParam;
 
-		INT nCount = Ex_ObjGetLong(hObj, ELBL_CTCS);
-		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
+		INT nCount = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_CTCS);
+		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
 		EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Ex_MemAlloc(sizeof(EX_LISTBUTTON_ITEMINFO));
 		if (pItemInfo->wzText)
 		{
@@ -129,7 +129,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			pTR->nWidth = pItemInfo->nWidth;
 		}
 		nCount = Array_AddMember(hArr, (size_t)pTR, (size_t)pItemInfo->nIndex);
-		Ex_ObjSetLong(hObj, ELBL_CTCS, Array_GetCount(hArr));
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_CTCS, Array_GetCount(hArr));
 
 		if (wParam != 0)
 		{
@@ -137,9 +137,9 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		}
 		return nCount;
 	}
-	else if (uMsg == LVM_GETITEM)
+	else if (uMsg == LISTVIEW_MESSAGE_GETITEM)
 	{
-		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
+		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
 		INT nCount = Array_GetCount(hArr);
 		if ((INT)wParam < 0 || (INT)wParam > nCount)
 			return 0;
@@ -159,10 +159,10 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			return 1;
 		}
 	}
-	else if (uMsg == LVM_SETITEM)
+	else if (uMsg == LISTVIEW_MESSAGE_SETITEM)
 	{
-		INT nType = Ex_ObjGetLong(hObj, ELBL_TYPE);
-		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
+		INT nType = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_TYPE);
+		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
 		INT nCount = Array_GetCount(hArr);
 		INT nIndex = ((EX_LISTBUTTON_ITEMINFO*)lParam)->nIndex;
 		if (nIndex < 0 || nIndex > nCount)
@@ -244,9 +244,9 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			}
 		}
 	}
-	else if (uMsg == LVM_DELETEITEM)
+	else if (uMsg == LISTVIEW_MESSAGE_DELETEITEM)
 	{
-		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
+		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
 		INT nCount = Array_GetCount(hArr);
 		INT nIndex = lParam;
 		if (nIndex < 0 || nIndex > nCount)
@@ -254,7 +254,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 
 		if (Array_DelMember(hArr, nIndex) == TRUE)
 		{
-			Ex_ObjSetLong(hObj, ELBL_CTCS, nCount - 1);
+			Ex_ObjSetLong(hObj, LISTBUTTON_LONG_CTCS, nCount - 1);
 			if (wParam != 0)
 			{
 				_listbuttonex_update(hObj);
@@ -262,20 +262,20 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			return 1;
 		}
 	}
-	else if (uMsg == TVM_UPDATE)
+	else if (uMsg == TREEVIEW_MESSAGE_UPDATE)
 	{
 		_listbuttonex_update(hObj);
 	}
-	else if (uMsg == LVM_SETIMAGELIST)
+	else if (uMsg == LISTVIEW_MESSAGE_SETIMAGELIST)
 	{
 		INT imgWidth = 0;
 		INT imgHeight = 0;
 		_imglist_size((HEXIMAGELIST)lParam, &imgWidth, &imgHeight);
-		Ex_ObjSetLong(hObj, ELBL_HIMAGELIST, lParam);
-		Ex_ObjSetLong(hObj, ELBL_HIMAGWIDTH, imgWidth);
-		Ex_ObjSetLong(hObj, ELBL_HIMAGHEIGHT, imgHeight);
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_HIMAGELIST, lParam);
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_HIMAGWIDTH, imgWidth);
+		Ex_ObjSetLong(hObj, LISTBUTTON_LONG_HIMAGHEIGHT, imgHeight);
 	}
-	else if (uMsg == LBM_DOWNITEM)
+	else if (uMsg == LISTBUTTON_MESSAGE_DOWNITEM)
 	{
 		if (IsMenu((HMENU)lParam))
 		{
@@ -289,7 +289,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			}
 		}
 	}
-	else if (uMsg == LBM_SELECTITEM)
+	else if (uMsg == LISTBUTTON_MESSAGE_SELECTITEM)
 	{
 		POINT point = { 0 };
 		POINT point2 = { 0 };
@@ -297,8 +297,8 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjClientToScreen(hObj, (int*)&point2.x, (int*)&point2.y);
 		point.x = point.x - point2.x;
 		point.y = point.y - point2.y;
-		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
-		INT Index = Ex_ObjGetLong(hObj, ELBL_INDEX);
+		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
+		INT Index = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_INDEX);
 		INT Heatindex = _listbuttonex_hittest(hObj, hArr, point);
 
 		if (Heatindex > 0)
@@ -308,10 +308,10 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				_listbuttonex_recovery(hObj, 1, hArr, Index, FALSE);
 				EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember(hArr, Heatindex);
 				pTR->dwState = STATE_DOWN;
-				Ex_ObjSetLong(hObj, ELBL_INDEX, Heatindex);
+				Ex_ObjSetLong(hObj, LISTBUTTON_LONG_INDEX, Heatindex);
 				Ex_ObjInvalidateRect(hObj, 0);
 				EndMenu();
-				Ex_ObjPostMessage(hObj, LBM_DOWNITEM, pTR->nLeft, (LPARAM)pTR->nMenu);
+				Ex_ObjPostMessage(hObj, LISTBUTTON_MESSAGE_DOWNITEM, pTR->nLeft, (LPARAM)pTR->nMenu);
 			}
 		}
 	}
@@ -362,7 +362,7 @@ INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText)
 	{
 		if (nImage > 0)
 		{
-			nWidth = Ex_ObjGetLong(hObj, ELBL_HIMAGWIDTH) + 10;
+			nWidth = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_HIMAGWIDTH) + 10;
 		}
 		if (wzText != NULL)
 		{
@@ -378,8 +378,8 @@ INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText)
 
 void _listbuttonex_paint(HEXOBJ hObj)
 {
-	INT nType = Ex_ObjGetLong(hObj, ELBL_TYPE);
-	INT nCount = Ex_ObjGetLong(hObj, ELBL_CTCS);
+	INT nType = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_TYPE);
+	INT nCount = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_CTCS);
 	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
@@ -390,7 +390,7 @@ void _listbuttonex_paint(HEXOBJ hObj)
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
 				for (INT i = 1; i <= nCount; i++)
 				{
-					EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO), i);
+					EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO), i);
 					if (pTR->dwState > 0)
 					{
 						if (pTR->dwState == STATE_FOCUS)
@@ -410,14 +410,14 @@ void _listbuttonex_paint(HEXOBJ hObj)
 			}
 			else if (nType == 2)
 			{
-				HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, ELBL_HIMAGELIST);
-				INT hImageWidth = Ex_ObjGetLong(hObj, ELBL_HIMAGWIDTH);
-				INT hImageHeight = Ex_ObjGetLong(hObj, ELBL_HIMAGHEIGHT);
+				HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_HIMAGELIST);
+				INT hImageWidth = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_HIMAGWIDTH);
+				INT hImageHeight = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_HIMAGHEIGHT);
 				INT hImageTop = (ps.uHeight - hImageHeight) / 2;
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
 				for (INT i = 1; i <= nCount; i++)
 				{
-					EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO), i);
+					EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO), i);
 					if (pTR->nType == 0)
 					{
 						_brush_setcolor(hBrush, ExRGB2ARGB(8421504, 255));
@@ -469,7 +469,7 @@ void _listbuttonex_paint(HEXOBJ hObj)
 				HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BORDER));
 				for (INT i = 1; i <= nCount; i++)
 				{
-					EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO), i);
+					EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember((array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO), i);
 					_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pTR->wzText, -1, DT_VCENTER | DT_SINGLELINE | pTR->TextFormat, pTR->nLeft + 5, 0, pTR->nLeft + pTR->nWidth - 10, ps.uHeight);
 					if (i < nCount)
 					{
@@ -486,7 +486,7 @@ void _listbuttonex_paint(HEXOBJ hObj)
 INT _listbuttonex_hittest(HEXOBJ hObj, array_s* hArr, POINT pt)
 {
 	INT Index = 0;
-	INT nCount = Ex_ObjGetLong(hObj, ELBL_CTCS);
+	INT nCount = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_CTCS);
 	for (INT i = 1; i <= nCount; i++)
 	{
 		EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember(hArr, i);
@@ -523,7 +523,7 @@ void _listbuttonex_recovery(HEXOBJ hObj, INT nType, array_s* hArr, INT Index, BO
 		}
 		if (Update)
 		{
-			Ex_ObjSetLong(hObj, ELBL_INDEX, 0);
+			Ex_ObjSetLong(hObj, LISTBUTTON_LONG_INDEX, 0);
 			Ex_ObjInvalidateRect(hObj, 0);
 		}
 	}
@@ -532,8 +532,8 @@ void _listbuttonex_recovery(HEXOBJ hObj, INT nType, array_s* hArr, INT Index, BO
 void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam)
 {
 	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
-	INT Index = Ex_ObjGetLong(hObj, ELBL_INDEX);
+	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
+	INT Index = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_INDEX);
 	INT Heatindex = _listbuttonex_hittest(hObj, hArr, pt);
 
 	if (nType == 1)//菜单条
@@ -550,7 +550,7 @@ void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam)
 
 				EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember(hArr, Heatindex);
 				pTR->dwState = STATE_FOCUS;
-				Ex_ObjSetLong(hObj, ELBL_INDEX, Heatindex);
+				Ex_ObjSetLong(hObj, LISTBUTTON_LONG_INDEX, Heatindex);
 				Ex_ObjInvalidateRect(hObj, 0);
 			}
 		}
@@ -579,7 +579,7 @@ void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam)
 				{
 					Ex_ObjTooltipsPop(hObj, 0);
 				}
-				Ex_ObjSetLong(hObj, ELBL_INDEX, Heatindex);
+				Ex_ObjSetLong(hObj, LISTBUTTON_LONG_INDEX, Heatindex);
 				if (pTR->nType > 0 && pTR->dwState == STATE_NORMAL)
 				{
 					pTR->dwState = STATE_FOCUS;
@@ -602,7 +602,7 @@ void _listbuttonex_mousemove(HEXOBJ hObj, INT nType, LPARAM lParam)
 void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 {
 	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
+	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
 	INT Heatindex = _listbuttonex_hittest(hObj, hArr, pt);
 
 	if (Heatindex > 0)
@@ -620,7 +620,7 @@ void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 			pTR->dwState = STATE_DOWN;
 			Ex_ObjInvalidateRect(hObj, 0);
 
-			Ex_ObjPostMessage(hObj, LBM_DOWNITEM, pTR->nLeft, (LPARAM)pTR->nMenu);
+			Ex_ObjPostMessage(hObj, LISTBUTTON_MESSAGE_DOWNITEM, pTR->nLeft, (LPARAM)pTR->nMenu);
 		}
 		else if (nType == 2)//工具条
 		{
@@ -631,7 +631,7 @@ void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 				{
 					pTR->dwState = STATE_DOWN;
 					Ex_ObjInvalidateRect(hObj, 0);
-					Ex_ObjDispatchNotify(hObj, LBN_CLICK, (WPARAM)Heatindex, 0);
+					Ex_ObjDispatchNotify(hObj, LISTBUTTON_EVENT_CLICK, (WPARAM)Heatindex, 0);
 				}
 				else if (pTR->nType == 2)//选择
 				{
@@ -644,7 +644,7 @@ void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 						pTR->dwState = STATE_FOCUS;
 					}
 					Ex_ObjInvalidateRect(hObj, 0);
-					Ex_ObjDispatchNotify(hObj, LBN_CHECK, (WPARAM)Heatindex, pTR->dwState);
+					Ex_ObjDispatchNotify(hObj, LISTBUTTON_EVENT_CHECK, (WPARAM)Heatindex, pTR->dwState);
 				}
 			}
 		}
@@ -654,7 +654,7 @@ void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
 void _listbuttonex_mouseup(HEXOBJ hObj, INT nType, LPARAM lParam)
 {
 	POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
+	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
 	INT Heatindex = _listbuttonex_hittest(hObj, hArr, pt);
 
 	if (Heatindex > 0)
@@ -678,8 +678,8 @@ void _listbuttonex_mouseup(HEXOBJ hObj, INT nType, LPARAM lParam)
 
 void _listbuttonex_mouseleave(HEXOBJ hObj, INT nType)
 {
-	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
-	INT Index = Ex_ObjGetLong(hObj, ELBL_INDEX);
+	array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
+	INT Index = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_INDEX);
 	if (Index > 0)
 	{
 		_listbuttonex_recovery(hObj, nType, hArr, Index, TRUE);
@@ -689,10 +689,10 @@ void _listbuttonex_mouseleave(HEXOBJ hObj, INT nType)
 void _listbuttonex_update(HEXOBJ hObj)
 {
 	INT nLeft = 0;
-	INT nCount = Ex_ObjGetLong(hObj, ELBL_CTCS);
+	INT nCount = Ex_ObjGetLong(hObj, LISTBUTTON_LONG_CTCS);
 	if (nCount > 0)
 	{
-		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, ELBL_ITEMINFO);
+		array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO);
 		for (INT i = 1; i <= nCount; i++)
 		{
 			EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember(hArr, i);
@@ -714,7 +714,7 @@ LRESULT CALLBACK _listbuttonex_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPA
 {
 	INT nError = 0;
 
-	if (uMsg == MN_SELECTITEM && LODWORD(wParam) == -1)
+	if (uMsg == MENU_EVENT_SELECTITEM && LODWORD(wParam) == -1)
 	{
 		wnd_s* pWnd;
 		if (_handle_validate(hExDUI, HT_DUI, (LPVOID*)&pWnd, &nError))
@@ -737,7 +737,7 @@ LRESULT CALLBACK _listbuttonex_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPA
 			{
 				return 0;
 			}
-			Ex_ObjPostMessage(hObj, LBM_SELECTITEM, 0, 0);
+			Ex_ObjPostMessage(hObj, LISTBUTTON_MESSAGE_SELECTITEM, 0, 0);
 		}
 	}
 	return 0;

@@ -6,23 +6,22 @@ typedef LONG_PTR (CALLBACK *ArrayPROC)(LPVOID, LONG_PTR, size_t, size_t);
 typedef BOOL (CALLBACK *ArrayEnumPROC)(LPVOID, INT, LPVOID, size_t, size_t);
 
 //数组默认增长系数
-#define eaf_growthfactor 1.1
+#define ARRAY_GROWTHFACTOR 1.1
 //数组事件_添加成员
-#define eae_addmember 1
+#define ARRAY_EVENT_ADDMEMBER 1
 //数组事件_获取成员
-#define eae_getmember 2
+#define ARRAY_EVENT_GETMEMBER 2
 //数组事件_设置成员
-#define eae_setmember 3
+#define ARRAY_EVENT_SETMEMBER 3
 //数组事件_删除成员
-#define eae_delmember 4
+#define ARRAY_EVENT_DELMEMBER 4
 //数组事件_比对成员
-#define eae_comparemember 5
+#define ARRAY_EVENT_COMPAREMEMBER 5
 //数组比对原由_寻找位置
-#define eacy_searchposition 1
+#define ARRAY_COMPARECAUSE_SEARCHPOSITION 1
 //数组比对原由_排序比对
-#define eacy_sort 2
+#define ARRAY_COMPARECAUSE_SORT 2
 
-#define sizeofarrayitem sizeof(size_t)
 
 struct array_s
 {

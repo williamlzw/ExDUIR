@@ -3,7 +3,7 @@
 void _mosaic_loading_register()
 {
     WCHAR wzCls[] = L"MosaicLoading";
-    Ex_ObjRegister(wzCls, EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, 0, 2 * sizeof(size_t), 0, 0, _mosaic_loading_proc);
+    Ex_ObjRegister(wzCls, OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, 0, 2 * sizeof(size_t), 0, 0, _mosaic_loading_proc);
 }
 
 LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)

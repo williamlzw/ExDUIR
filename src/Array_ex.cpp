@@ -43,8 +43,8 @@ BOOL Array_Resize(array_s *pArray, INT nCount, BOOL fGrowCount)
     if (nSize <= 0)
         nSize = 1;
     FLOAT flGrow = pArray->flGrow_;
-    if (flGrow <= eaf_growthfactor)
-        flGrow = (FLOAT)eaf_growthfactor;
+    if (flGrow <= ARRAY_GROWTHFACTOR)
+        flGrow = (FLOAT)ARRAY_GROWTHFACTOR;
     while (nSize >= (INT)(flGrow * nSize))
     {
         flGrow = flGrow + (FLOAT)0.1;
@@ -105,12 +105,12 @@ LONG_PTR Array_SetEvent(array_s *pArray, INT nEvent, LONG_PTR index1, size_t pvV
 
     if (lpfnCbk == 0)
         return 0;
-    if (pArray->fDisableEvent_ != 0 && nEvent != eae_comparemember)
+    if (pArray->fDisableEvent_ != 0 && nEvent != ARRAY_EVENT_COMPAREMEMBER)
         return 0;
     INT nCount = pArray->nCount_;
     if (index1 <= 0 || index1 > nCount)
     {
-        if (nEvent == eae_addmember && index1 != (nCount + 1) || nEvent == eae_comparemember && index1 != 0)
+        if (nEvent == ARRAY_EVENT_ADDMEMBER && index1 != (nCount + 1) || nEvent == ARRAY_EVENT_COMPAREMEMBER && index1 != 0)
             return 0;
     }
     LPVOID pData = pArray->lpData_;
@@ -119,7 +119,7 @@ LONG_PTR Array_SetEvent(array_s *pArray, INT nEvent, LONG_PTR index1, size_t pvV
     {
         pvValue = __get(pData, (index1 - 1) * sizeof(LPVOID));
     }
-    if (nEvent == eae_comparemember)
+    if (nEvent == ARRAY_EVENT_COMPAREMEMBER)
     {
         if (index2 <= 0 || index2 > nCount)
             return 0;
@@ -134,7 +134,7 @@ LONG_PTR Array_SetEvent(array_s *pArray, INT nEvent, LONG_PTR index1, size_t pvV
 array_s *Array_Create(INT count)
 {
     array_s *pArray = (array_s *)Ex_MemAlloc(sizeof(array_s));
-    pArray->flGrow_ = (FLOAT)eaf_growthfactor;
+    pArray->flGrow_ = (FLOAT)ARRAY_GROWTHFACTOR;
     pArray->event_onCompare_ = &Array_Compare;
     LPVOID pData = Ex_MemAlloc(3 * sizeof(size_t));
     pArray->lpData_ = (LPVOID)((size_t)pData + 2 * sizeof(size_t));
@@ -149,7 +149,7 @@ BOOL Array_Destroy(array_s *pArray)
         return FALSE;
     for (INT index = 1; index <= pArray->nCount_; index++)
     {
-        Array_SetEvent(pArray, eae_delmember, index);
+        Array_SetEvent(pArray, ARRAY_EVENT_DELMEMBER, index);
     }
     LPVOID pData = pArray->lpData_;
     if (pData != 0)
@@ -171,7 +171,7 @@ size_t Array_AddMember(array_s *pArray, size_t value, size_t index)
     LPVOID pData = pArray->lpData_;
     if (nCount > 0)
         RtlMoveMemory((LPVOID)((size_t)pData + index * sizeof(LPVOID)), (LPVOID)((size_t)pData + (index - 1) * sizeof(LPVOID)), (nCount - index + 1) * sizeof(LPVOID));
-    LONG_PTR pRet = Array_SetEvent(pArray, eae_addmember, index, value);
+    LONG_PTR pRet = Array_SetEvent(pArray, ARRAY_EVENT_ADDMEMBER, index, value);
     if (pRet == 0)
         pRet = value;
     __set(pData, (index - 1) * sizeof(LPVOID), pRet);
@@ -182,7 +182,7 @@ BOOL Array_DelMember(array_s *pArray, size_t index)
 {
     if (Array_IsLegal(pArray) == FALSE)
         return FALSE;
-    Array_SetEvent(pArray, eae_delmember, index);
+    Array_SetEvent(pArray, ARRAY_EVENT_DELMEMBER, index);
     LPVOID pData = pArray->lpData_;
     INT nCount = pArray->nCount_;
     RtlMoveMemory((LPVOID)((size_t)pData + (index - 1) * sizeof(LPVOID)), (LPVOID)((size_t)pData + index * sizeof(LPVOID)), (nCount - index) * sizeof(LPVOID));
@@ -200,7 +200,7 @@ BOOL Array_Redefine(array_s *pArray, INT size, BOOL beKeep)
     {
         for (INT index = nStart; index <= nCount; index++)
         {
-            Array_SetEvent(pArray, eae_delmember, index);
+            Array_SetEvent(pArray, ARRAY_EVENT_DELMEMBER, index);
         }
     }
     Array_Resize(pArray, size, FALSE);
@@ -225,7 +225,7 @@ BOOL Array_SetMember(array_s *pArray, size_t index, size_t value)
 {
     if (Array_IsLegal(pArray) == FALSE)
         return FALSE;
-    LONG_PTR pvItem = Array_SetEvent(pArray, eae_setmember, index, value);
+    LONG_PTR pvItem = Array_SetEvent(pArray, ARRAY_EVENT_SETMEMBER, index, value);
     if (pvItem == 0)
         pvItem = value;
     __set(pArray->lpData_, (index - 1) * sizeof(LPVOID), pvItem);
@@ -236,7 +236,7 @@ size_t Array_GetMember(array_s *pArray, size_t index)
 {
     if (Array_IsLegal(pArray, index) == FALSE)
         return 0;
-    LONG_PTR pvItem = Array_SetEvent(pArray, eae_getmember, index);
+    LONG_PTR pvItem = Array_SetEvent(pArray, ARRAY_EVENT_GETMEMBER, index);
 
     if (pvItem == 0)
         pvItem = __get(pArray->lpData_, (index - 1) * sizeof(LPVOID));
@@ -250,7 +250,7 @@ LPVOID Array_BindEvent(array_s *pArray, INT event, LPVOID fun)
     if (event <= 0 || event > 5)
         return 0;
     size_t lpfnOld = __get(pArray, offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(LPVOID));
-    if (fun == nullptr && event == eae_comparemember)
+    if (fun == nullptr && event == ARRAY_EVENT_COMPAREMEMBER)
     {
         fun = &Array_Compare;
     }
@@ -294,7 +294,7 @@ BOOL Array_Sort(array_s *pArray, BOOL fDesc)
 
 BOOL Array_CompareResult(array_s *pArray, LONG_PTR nIndex, size_t mid, BOOL fDesc)
 {
-    LONG_PTR reta = Array_SetEvent(pArray, eae_comparemember, 0, mid, nIndex + 1, eacy_sort);
+    LONG_PTR reta = Array_SetEvent(pArray, ARRAY_EVENT_COMPAREMEMBER, 0, mid, nIndex + 1, ARRAY_COMPARECAUSE_SORT);
     BOOL ret = (reta < 0);
     return ret == fDesc;
 }

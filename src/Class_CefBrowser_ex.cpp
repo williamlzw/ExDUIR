@@ -235,21 +235,21 @@ void _cefbrowser_setcursor(HEXOBJ hObj, DWORD dwCursorType) {
 		}
 	}
 	HCURSOR hCursor = LoadCursorW(0, CursorName);
-	Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)hCursor);
+	Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)hCursor);
 }
 
 BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam) 
 {
 	if (uMsg == type_BCreated) 
 	{
-		Ex_ObjSetLong(hObj, CEFL_INIT, 1);
-		Ex_ObjDispatchNotify(hObj, CEFN_CREATE, 0, (LPARAM)handler);
+		Ex_ObjSetLong(hObj, CEFBROWSER_LONG_INIT, 1);
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_CREATE, 0, (LPARAM)handler);
 
-		LPCWSTR nUrl = (LPCWSTR)Ex_ObjGetLong(hObj, CEFL_URL);
+		LPCWSTR nUrl = (LPCWSTR)Ex_ObjGetLong(hObj, CEFBROWSER_LONG_URL);
 		if (nUrl != 0) {
 			Ck_Browser_LoadUrl((HWEBVIEW)handler, nUrl);
 			Ex_MemFree((LPVOID)nUrl);
-			Ex_ObjSetLong(hObj, CEFL_URL, 0);
+			Ex_ObjSetLong(hObj, CEFBROWSER_LONG_URL, 0);
 		}
 	}
 	else if (uMsg == type_browserdraw) 
@@ -287,59 +287,59 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
 	else if (uMsg == type_TitleChange)
 	{
 		auto title = std::wstring((TCHAR*)attach1);
-		Ex_ObjDispatchNotify(hObj, CEFN_TITLECHANGE, 0, (LPARAM)title.c_str());
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_TITLECHANGE, 0, (LPARAM)title.c_str());
 	}
 	else if (uMsg == type_AddressChange)
 	{
 		auto address = std::wstring((TCHAR*)attach1);
-		Ex_ObjDispatchNotify(hObj, CEFN_ADDRESSCHANGE, 0, (LPARAM)address.c_str());
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_ADDRESSCHANGE, 0, (LPARAM)address.c_str());
 	}
 	else if (uMsg == type_LoadEnd)
 	{
-		Ex_ObjDispatchNotify(hObj, CEFN_LOADEND, 0, (LPARAM)handler);
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_LOADEND, 0, (LPARAM)handler);
 	}
 	else if (uMsg == type_LoadStart)
 	{
-		Ex_ObjDispatchNotify(hObj, CEFN_LOADSTART, 0, (LPARAM)handler);
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_LOADSTART, 0, (LPARAM)handler);
 	}
 	else if (uMsg == type_LoadingStateChange)
 	{
 		bool bLoad = attach1;
 		bool bForward = attach3;
-		Ex_ObjDispatchNotify(hObj, CEFN_LOADINGSTATECHANGE, bLoad, bForward);
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_LOADINGSTATECHANGE, bLoad, bForward);
 	}
 	else if (uMsg == type_LoadError)
 	{
 		auto status = std::wstring((TCHAR*)attach2);
 		auto url = std::wstring((TCHAR*)attach3);
-		Ex_ObjDispatchNotify(hObj, CEFN_LOADERROR, (WPARAM)status.c_str(), (LPARAM)url.c_str());
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_LOADERROR, (WPARAM)status.c_str(), (LPARAM)url.c_str());
 	}
 	else if (uMsg == type_FaviconURLChange)
 	{
 		/*auto icon1 = std::wstring((TCHAR*)attach1);
 		auto icon2 = std::wstring((TCHAR*)attach2);
-		Ex_ObjDispatchNotify(hObj, CEFN_FAVICONURLCHANGE, (WPARAM)icon1.c_str(), (LPARAM)icon2.c_str());*/
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_FAVICONURLCHANGE, (WPARAM)icon1.c_str(), (LPARAM)icon2.c_str());*/
 	}
 	else if (uMsg == type_BeforePopup)
 	{
 		HFRAME frame = (HFRAME)attach1;
 		auto url = std::wstring((TCHAR*)attach2);
-		Ex_ObjDispatchNotify(hObj, CEFN_BEFOREPOPUP, (WPARAM)frame, (LPARAM)url.c_str());
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_BEFOREPOPUP, (WPARAM)frame, (LPARAM)url.c_str());
 	}
 	else if (uMsg == type_DoClose)
 	{
-		Ex_ObjDispatchNotify(hObj, CEFN_DOCLOSE, 0, (LPARAM)handler);
+		Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_DOCLOSE, 0, (LPARAM)handler);
 	}
 	return 0;
 }
 
 void _cefbrowser_register() {
-	Ex_ObjRegister(L"CefBrowser", EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, -1, 4 * sizeof(size_t), 0, 0, _cefbrowser_proc);
+	Ex_ObjRegister(L"CefBrowser", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE, -1, 4 * sizeof(size_t), 0, 0, _cefbrowser_proc);
 }
 
 LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
-	HANDLE hWebView = (HANDLE)Ex_ObjGetLong(hObj, CEFL_VIEW);
-	INT hInit = Ex_ObjGetLong(hObj, CEFL_INIT);
+	HANDLE hWebView = (HANDLE)Ex_ObjGetLong(hObj, CEFBROWSER_LONG_VIEW);
+	INT hInit = Ex_ObjGetLong(hObj, CEFBROWSER_LONG_INIT);
 	if (uMsg == WM_CREATE) 
 	{
 		Ex_ObjDisableTranslateSpaceAndEnterToClick(hObj, TRUE);
@@ -347,17 +347,17 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		Ex_ObjGetRect(hObj, &Rect);
 		hWebView = Ck_Browser_Create(hWnd, hObj, &Rect, Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND), L"", _cefbrowser_callback, NULL);
 		if (hWebView) {
-			Ex_ObjSetLong(hObj, CEFL_VIEW, (LONG_PTR)hWebView);
+			Ex_ObjSetLong(hObj, CEFBROWSER_LONG_VIEW, (LONG_PTR)hWebView);
 		}
 	}
 	else if (uMsg == WM_DESTROY) 
 	{
-		Ex_ObjSetLong(hObj, CEFL_INIT, 0);
-		Ex_ObjSetLong(hObj, CEFL_VIEW, 0);
-		LPCWSTR nUrl = (LPCWSTR)Ex_ObjGetLong(hObj, CEFL_URL);
+		Ex_ObjSetLong(hObj, CEFBROWSER_LONG_INIT, 0);
+		Ex_ObjSetLong(hObj, CEFBROWSER_LONG_VIEW, 0);
+		LPCWSTR nUrl = (LPCWSTR)Ex_ObjGetLong(hObj, CEFBROWSER_LONG_URL);
 		if (nUrl != 0) {
 			Ex_MemFree((LPVOID)nUrl);
-			Ex_ObjSetLong(hObj, CEFL_URL, 0);
+			Ex_ObjSetLong(hObj, CEFBROWSER_LONG_URL, 0);
 		}
 		if (hWebView != 0) {
 			Ck_Browser_Close(hWebView);
@@ -387,20 +387,20 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	{
 		if (hWebView != 0)
 		{
-			Ck_Browser_Move(hWebView, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), EOP_DEFAULT, EOP_DEFAULT);
+			Ck_Browser_Move(hWebView, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT);
 		}
 	}
 	else if (uMsg == WM_SIZE) 
 	{
 		if (hWebView != 0)
 		{
-			Ck_Browser_Move(hWebView, EOP_DEFAULT, EOP_DEFAULT, LOWORD(lParam), HIWORD(lParam));
+			Ck_Browser_Move(hWebView, OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT, LOWORD(lParam), HIWORD(lParam));
 		}
 	}
 	else if (uMsg >= WM_MOUSEMOVE && uMsg <= WM_MBUTTONDBLCLK) 
 	{
 		if (uMsg == WM_MOUSEMOVE) {
-			Ex_ObjSetLong(hObj, CEFL_lParam, lParam);
+			Ex_ObjSetLong(hObj, CEFBROWSER_LONG_LPARAM, lParam);
 		}
 		if (hInit == 1) Ck_Browser_SendMouse(hWebView, uMsg, wParam, lParam);
 	}
@@ -428,7 +428,7 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	{
 		if (hInit == 1) Ck_Browser_Focus(hWebView, FALSE);
 	}
-	else if (uMsg == CEFM_GETWEBVIEW) 
+	else if (uMsg == CEFBROWSER_MESSAGE_GETWEBVIEW) 
 	{
 		return (LRESULT)hWebView;
 	}
@@ -436,14 +436,14 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	{
 		Ex_ObjSetIMEState(hObj, wParam == 0);
 	}
-	else if (uMsg == CEFM_LOADURL) 
+	else if (uMsg == CEFBROWSER_MESSAGE_LOADURL) 
 	{
 		if (hInit != 1) {
-			LPVOID nUrl = (LPVOID)Ex_ObjGetLong(hObj, CEFL_URL);
+			LPVOID nUrl = (LPVOID)Ex_ObjGetLong(hObj, CEFBROWSER_LONG_URL);
 			if (nUrl != 0) {
 				Ex_MemFree(nUrl);
 			}
-			Ex_ObjSetLong(hObj, CEFL_URL, (LONG_PTR)StrDupW((LPCWSTR)lParam));
+			Ex_ObjSetLong(hObj, CEFBROWSER_LONG_URL, (LONG_PTR)StrDupW((LPCWSTR)lParam));
 		}
 		else {
 			Ck_Browser_LoadUrl(hWebView, (LPCWSTR)lParam);

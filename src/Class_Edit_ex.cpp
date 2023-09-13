@@ -64,7 +64,7 @@ public:
 	{
 		PRECT prcText = (PRECT)m_pOwner->prctext_;
 		LONG nMaxFixed = 0;
-		if (fnBar == SB_VERT)
+		if (fnBar == SCROLLBAR_TYPE_VERT)
 		{
 			nMaxFixed = nMaxPos - (prcText->bottom - prcText->top);
 		}
@@ -97,7 +97,7 @@ public:
 	//@cmember Create the caret
 	BOOL TxCreateCaret(HBITMAP hbmp, INT xWidth, INT yHeight)
 	{
-		if (!FLAGS_CHECK(m_pOwner->pObj_->dwStyle_, EES_HIDDENCARET))
+		if (!FLAGS_CHECK(m_pOwner->pObj_->dwStyle_, EDIT_STYLE_HIDDENCARET))
 		{
 			xWidth = 2;
 			m_pOwner->rcCaret_left_ = 0;
@@ -114,12 +114,12 @@ public:
 	{
 		if (fShow)
 		{
-			FLAGS_ADD(m_pOwner->flags_, EEF_BSHOWCARET);
+			FLAGS_ADD(m_pOwner->flags_, EDIT_FLAG_BSHOWCARET);
 			ShowCaret(_obj_gethwnd(m_pOwner->pObj_));
 		}
 		else
 		{
-			FLAGS_DEL(m_pOwner->flags_, EEF_BSHOWCARET);
+			FLAGS_DEL(m_pOwner->flags_, EDIT_FLAG_BSHOWCARET);
 			HideCaret(_obj_gethwnd(m_pOwner->pObj_));
 		}
 		return TRUE;
@@ -133,8 +133,8 @@ public:
 		OffsetRect((LPRECT)&m_pOwner->rcCaret_left_, x, y);
 		if (FLAGS_CHECK(pObj->dwState_, STATE_FOCUS))
 		{
-			FLAGS_ADD(m_pOwner->flags_, EEF_BCARETCONTEXT | EEF_BSHOWCARET);
-			FLAGS_DEL(m_pOwner->flags_, EEF_BCARETSHHOWED);
+			FLAGS_ADD(m_pOwner->flags_, EDIT_FLAG_BCARETCONTEXT | EDIT_FLAG_BSHOWCARET);
+			FLAGS_DEL(m_pOwner->flags_, EDIT_FLAG_BCARETSHHOWED);
 			_obj_invalidaterect(pObj, (LPRECT)&m_pOwner->rcCaret_left_, &nError);
 		}
 		x += pObj->w_left_;
@@ -260,15 +260,15 @@ public:
 	{
 		obj_s* pObj = m_pOwner->pObj_;
 		*pdwScrollBar = ES_AUTOHSCROLL | ES_AUTOVSCROLL;
-		if (FLAGS_CHECK(pObj->dwStyle_, EOS_HSCROLL))
+		if (FLAGS_CHECK(pObj->dwStyle_, OBJECT_STYLE_HSCROLL))
 		{
 			*pdwScrollBar |= WS_HSCROLL;
 		}
-		if (FLAGS_CHECK(pObj->dwStyle_, EOS_VSCROLL))
+		if (FLAGS_CHECK(pObj->dwStyle_, OBJECT_STYLE_VSCROLL))
 		{
 			*pdwScrollBar |= WS_VSCROLL;
 		}
-		if (FLAGS_CHECK(pObj->dwStyle_, EOS_DISABLENOSCROLL))
+		if (FLAGS_CHECK(pObj->dwStyle_, OBJECT_STYLE_DISABLENOSCROLL))
 		{
 			*pdwScrollBar |= ES_DISABLENOSCROLL;
 		}
@@ -322,18 +322,18 @@ public:
 		if (iNotify != EN_UPDATE)
 		{
 			_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, iNotify, 0, (size_t)pv);
-			if (iNotify == EN_SELCHANGE)
+			if (iNotify == EDIT_EVENT_SELCHANGE)
 			{
 				INT nError = 0;
 				_obj_setuistate(pObj, STATE_FOCUS, TRUE, 0, TRUE, &nError);
 				SELCHANGE* pSelChange = (SELCHANGE*)pv;
 				if (pSelChange->chrg.cpMin == pSelChange->chrg.cpMax)
 				{
-					FLAGS_DEL(m_pOwner->flags_, EEF_BSELECTED);
+					FLAGS_DEL(m_pOwner->flags_, EDIT_FLAG_BSELECTED);
 				}
 				else
 				{
-					FLAGS_ADD(m_pOwner->flags_, EEF_BSELECTED);
+					FLAGS_ADD(m_pOwner->flags_, EDIT_FLAG_BSELECTED);
 				}
 			}
 		}
@@ -358,7 +358,7 @@ public:
 
 void _edit_register()
 {
-	Ex_ObjRegister(L"Edit", EOS_VISIBLE, EOS_EX_COMPOSITED | EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE, 0, LoadCursorW(0, MAKEINTRESOURCEW(32513)), ECVF_GDI_COMPATIBLE, _edit_proc);
+	Ex_ObjRegister(L"Edit", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE, 0, LoadCursorW(0, MAKEINTRESOURCEW(32513)), CANVAS_FLAG_GDI_COMPATIBLE, _edit_proc);
 }
 
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
@@ -400,7 +400,7 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 				LRESULT ret;
 				pITS->TxSendMessage(EM_SETLANGOPTIONS, 0, 0, &ret);
 				pITS->TxSendMessage(EM_SETEVENTMASK, 0, ENM_CHANGE | ENM_SELCHANGE | ENM_LINK | ENM_DRAGDROPDONE, &ret);
-				pITS->TxSendMessage(EM_AUTOURLDETECT, FLAGS_CHECK(pObj->dwStyle_, EES_PARSEURL), 0, &ret);
+				pITS->TxSendMessage(EM_AUTOURLDETECT, FLAGS_CHECK(pObj->dwStyle_, EDIT_STYLE_PARSEURL), 0, &ret);
 			}
 		}
 		if (g_Li.hMenuEdit == 0)
@@ -438,7 +438,7 @@ void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height)
 		_font_getlogfont(pObj->hFont_, &logfont);
 
 		pcf->cbSize = sizeof(CHARFORMAT2W);
-		DWORD dwMask = CFM_BOLD | CFE_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_SIZE | CFM_COLOR | CFM_FACE | CFM_CHARSET | CFM_OFFSET;
+		DWORD dwMask = EDIT_SELECT_CHARFORMAT_BOLD | CFE_ITALIC | EDIT_SELECT_CHARFORMAT_UNDERLINE | EDIT_SELECT_CHARFORMAT_STRIKEOUT | EDIT_SELECT_CHARFORMAT_SIZE | EDIT_SELECT_CHARFORMAT_COLOR | EDIT_SELECT_CHARFORMAT_FACE | CFM_CHARSET | EDIT_SELECT_CHARFORMAT_OFFSET;
 		DWORD dwEffects = 0;
 		if (logfont.lfWeight != 400)
 		{
@@ -476,21 +476,21 @@ void _edit_setppf(obj_s* pObj, edit_s* pOwner)
 	if (ppf != 0)
 	{
 		ppf->cbSize = sizeof(PARAFORMAT);
-		DWORD dwMask = PFM_ALIGNMENT;
+		DWORD dwMask = EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT;
 		WORD tmp;
 		if ((pObj->dwTextFormat_ & DT_CENTER) == DT_CENTER)
 		{
-			tmp = PFA_CENTER;
+			tmp = EDIT_PARAGRAPHFALIGN_CENTER;
 		}
 		else
 		{
 			if ((pObj->dwTextFormat_ & DT_RIGHT) == DT_RIGHT)
 			{
-				tmp = PFA_RIGHT;
+				tmp = EDIT_PARAGRAPHFALIGN_RIGHT;
 			}
 			else
 			{
-				tmp = PFA_LEFT;
+				tmp = EDIT_PARAGRAPHFALIGN_LEFT;
 			}
 		}
 		ppf->wAlignment = tmp;
@@ -507,39 +507,39 @@ void _edit_setpropbits(obj_s* pObj, edit_s* pOwner)
 	if (!((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE))
 	{
 		dwProperty = dwProperty | TXTBIT_MULTILINE;
-		if ((dwStyle & EOS_VSCROLL) != 0)
+		if ((dwStyle & OBJECT_STYLE_VSCROLL) != 0)
 		{
-			if ((dwStyle & EOS_HSCROLL) == 0)
+			if ((dwStyle & OBJECT_STYLE_HSCROLL) == 0)
 			{
 				dwProperty = dwProperty | TXTBIT_WORDWRAP;
 			}
 		}
 	}
-	if ((dwStyle & EES_DISABLEDRAG) == 0)
+	if ((dwStyle & EDIT_STYLE_DISABLEDRAG) == 0)
 	{
 		dwProperty = dwProperty | TXTBIT_DISABLEDRAG;
 	}
-	if ((dwStyle & EES_READONLY) != 0)
+	if ((dwStyle & EDIT_STYLE_READONLY) != 0)
 	{
 		dwProperty = dwProperty | TXTBIT_READONLY;
 	}
-	if ((dwStyle & EES_USEPASSWORD) != 0)
+	if ((dwStyle & EDIT_STYLE_USEPASSWORD) != 0)
 	{
 		dwProperty = dwProperty | TXTBIT_USEPASSWORD;
 	}
-	if ((dwStyle & EES_HIDESELECTION) == 0)
+	if ((dwStyle & EDIT_STYLE_HIDESELECTION) == 0)
 	{
 		dwProperty = dwProperty | TXTBIT_HIDESELECTION;
 	}
-	if ((dwStyle & EES_ALLOWBEEP) != 0)
+	if ((dwStyle & EDIT_STYLE_ALLOWBEEP) != 0)
 	{
 		dwProperty = dwProperty | TXTBIT_ALLOWBEEP;
 	}
-	if ((dwStyle & EES_RICHTEXT) != 0)
+	if ((dwStyle & EDIT_STYLE_RICHTEXT) != 0)
 	{
 		dwProperty = dwProperty | TXTBIT_RICHTEXT;
 	}
-	if ((dwStyle & EES_AUTOWORDSEL) != 0)
+	if ((dwStyle & EDIT_STYLE_AUTOWORDSEL) != 0)
 	{
 		dwProperty = dwProperty | TXTBIT_AUTOWORDSEL;
 	}
@@ -572,7 +572,7 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	pOwner->width_ = DtoHimetric(width, 96);
 	DWORD tmp = TXTBIT_CLIENTRECTCHANGE | TXTBIT_EXTENTCHANGE;
 	
-	if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE || (pObj->dwTextFormat_ & DT_VCENTER) == DT_VCENTER && (pObj->dwStyle_ & EOS_VSCROLL) != EOS_VSCROLL)
+	if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE || (pObj->dwTextFormat_ & DT_VCENTER) == DT_VCENTER && (pObj->dwStyle_ & OBJECT_STYLE_VSCROLL) != OBJECT_STYLE_VSCROLL)
 	{
 		TEXTMETRICW tmrc = {};
 		if (pOwner->mDc_)
@@ -592,8 +592,8 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 	}
 	else
 	{
-		Ex_ObjScrollSetInfo(hObj, SB_VERT, SIF_PAGE, 0, 0, height, 0, FALSE);
-		Ex_ObjScrollSetInfo(hObj, SB_HORZ, SIF_PAGE, 0, 0, width, 0, FALSE);
+		Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE, 0, 0, height, 0, FALSE);
+		Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_HORZ, SIF_PAGE, 0, 0, width, 0, FALSE);
 	}
 	if (pOwner->its_)
 	{
@@ -606,15 +606,15 @@ void CALLBACK _edit_timer_caret(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dw
 	INT nError = 0;
 	obj_s* pObj = (obj_s*)(idEvent - TIMER_EDIT_CARET);
 	edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
-	if ((pOwner->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT)
+	if ((pOwner->flags_ & EDIT_FLAG_BCARETCONTEXT) == EDIT_FLAG_BCARETCONTEXT)
 	{
-		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EEF_BCARETCONTEXT);
-		pOwner->flags_ = pOwner->flags_ | EEF_BCARETSHHOWED;
+		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EDIT_FLAG_BCARETCONTEXT);
+		pOwner->flags_ = pOwner->flags_ | EDIT_FLAG_BCARETSHHOWED;
 	}
 	else
 	{
-		pOwner->flags_ = pOwner->flags_ | (EEF_BSHOWCARET | EEF_BCARETCONTEXT);
-		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EEF_BCARETSHHOWED);
+		pOwner->flags_ = pOwner->flags_ | (EDIT_FLAG_BSHOWCARET | EDIT_FLAG_BCARETCONTEXT);
+		pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EDIT_FLAG_BCARETSHHOWED);
 	}
 
 	_obj_invalidaterect(pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), &nError);
@@ -658,11 +658,11 @@ LPVOID _edit_its(obj_s* pObj)
 
 void _edit_contextmenu(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, INT x, INT y)
 {
-	if ((pObj->dwStyle_ & EES_DISABLEMENU) == EES_DISABLEMENU)
+	if ((pObj->dwStyle_ & EDIT_STYLE_DISABLEMENU) == EDIT_STYLE_DISABLEMENU)
 	{
 		return;
 	}
-	if ((pObj->dwStyle_ & EES_USEPASSWORD) == EES_USEPASSWORD)
+	if ((pObj->dwStyle_ & EDIT_STYLE_USEPASSWORD) == EDIT_STYLE_USEPASSWORD)
 	{
 		return;
 	}
@@ -710,7 +710,7 @@ void _edit_command(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam == EM_SETSEL)
 		{
-			uMsg = EM_EXSETSEL;
+			uMsg = EDIT_MESSAGE_EXSETSEL;
 			wParam = 0;
 			CHARRANGE* lp = (CHARRANGE*)MemPool_Alloc(g_Li.hMemPoolMsg, TRUE);
 			lp->cpMin = 0;
@@ -741,7 +741,7 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 		{
 			atom = ATOM_NORMAL;
 		}
-		if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0)
+		if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0)
 		{
 			Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_EDIT, atom, 255);
 		}
@@ -764,7 +764,7 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 			if (bDrawBanner)
 			{
 				bDrawBanner = FALSE;
-				if (!((ps.dwState & STATE_FOCUS) != 0 && (ps.dwStyle & EES_SHOWTIPSALWAYS) == 0))
+				if (!((ps.dwState & STATE_FOCUS) != 0 && (ps.dwStyle & EDIT_STYLE_SHOWTIPSALWAYS) == 0))
 				{
 					RECT* rcText = ((edit_s*)ps.dwOwnerData)->prctext_;
 					INT dt = 0;
@@ -791,13 +791,13 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 			_edit_txpaint(pITS, DVASPECT_CONTENT, 0, NULL, NULL, hDc, NULL, NULL, NULL, &rcTmp, NULL, ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);
 			BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left, rcTmp.bottom - rcTmp.top, mDc, 0, 0, SRCPAINT);
 			_canvas_releasedc(ps.hCanvas);
-			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
+			if (!((pObj->dwStyle_ & EDIT_STYLE_HIDDENCARET) == EDIT_STYLE_HIDDENCARET))
 			{
-				if (!((((edit_s*)ps.dwOwnerData)->flags_ & EEF_BSELECTED) == EEF_BSELECTED))
+				if (!((((edit_s*)ps.dwOwnerData)->flags_ & EDIT_FLAG_BSELECTED) == EDIT_FLAG_BSELECTED))
 				{
-					if ((((edit_s*)ps.dwOwnerData)->flags_ & EEF_BCARETCONTEXT) == EEF_BCARETCONTEXT)
+					if ((((edit_s*)ps.dwOwnerData)->flags_ & EDIT_FLAG_BCARETCONTEXT) == EDIT_FLAG_BCARETCONTEXT)
 					{
-						if (!((((edit_s*)ps.dwOwnerData)->flags_ & EEF_BCARETSHHOWED) == EEF_BCARETSHHOWED))
+						if (!((((edit_s*)ps.dwOwnerData)->flags_ & EDIT_FLAG_BCARETSHHOWED) == EDIT_FLAG_BCARETSHHOWED))
 						{
 							rcTmp.left = ((edit_s*)ps.dwOwnerData)->rcCaret_left_;
 							rcTmp.top = ((edit_s*)ps.dwOwnerData)->rcCaret_top_;
@@ -866,11 +866,11 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		else if (uMsg == WM_MOUSEWHEEL)
 		{
 			uMsg = 0;
-			if ((pObj->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL)
+			if ((pObj->dwStyle_ & OBJECT_STYLE_VSCROLL) == OBJECT_STYLE_VSCROLL)
 			{
 				uMsg = WM_VSCROLL;
 			}
-			else if ((pObj->dwStyle_ & EOS_HSCROLL) == EOS_HSCROLL)
+			else if ((pObj->dwStyle_ & OBJECT_STYLE_HSCROLL) == OBJECT_STYLE_HSCROLL)
 			{
 				uMsg = WM_HSCROLL;
 			}
@@ -891,25 +891,25 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		}
 		else if (uMsg == WM_SETFOCUS)
 		{
-			IME_Control(hWnd, pObj->pWnd_, !((pObj->dwStyle_ & EES_USEPASSWORD) == EES_USEPASSWORD));
+			IME_Control(hWnd, pObj->pWnd_, !((pObj->dwStyle_ & EDIT_STYLE_USEPASSWORD) == EDIT_STYLE_USEPASSWORD));
 			((ITextServices*)_edit_its(pObj))->OnTxUIActivate();
 			BOOL ret = FALSE;
 			_edit_sendmessage(pObj, uMsg, 0, 0, &ret);
 			_obj_setuistate(pObj, STATE_FOCUS, FALSE, 0, TRUE, &nError);
-			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
+			if (!((pObj->dwStyle_ & EDIT_STYLE_HIDDENCARET) == EDIT_STYLE_HIDDENCARET))
 			{
 				SetTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET, 500, _edit_timer_caret);
 			}
 		}
 		else if (uMsg == WM_KILLFOCUS)
 		{
-			if (!((pObj->dwStyle_ & EES_HIDDENCARET) == EES_HIDDENCARET))
+			if (!((pObj->dwStyle_ & EDIT_STYLE_HIDDENCARET) == EDIT_STYLE_HIDDENCARET))
 			{
 				KillTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET);
 				edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
-				if ((pOwner->flags_ & (EEF_BSHOWCARET | EEF_BCARETCONTEXT)) == (EEF_BSHOWCARET | EEF_BCARETCONTEXT))
+				if ((pOwner->flags_ & (EDIT_FLAG_BSHOWCARET | EDIT_FLAG_BCARETCONTEXT)) == (EDIT_FLAG_BSHOWCARET | EDIT_FLAG_BCARETCONTEXT))
 				{
-					pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & (EEF_BSHOWCARET | EEF_BCARETCONTEXT));
+					pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & (EDIT_FLAG_BSHOWCARET | EDIT_FLAG_BCARETCONTEXT));
 					_obj_invalidaterect(pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), &nError);
 				}
 			}
@@ -923,21 +923,21 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		}
 		else if (uMsg == WM_CHAR)
 		{
-			if ((pObj->dwStyle_ & EES_NUMERICINPUT) == EES_NUMERICINPUT)
+			if ((pObj->dwStyle_ & EDIT_STYLE_NUMERICINPUT) == EDIT_STYLE_NUMERICINPUT)
 			{
 				if (!(wParam > 44 && wParam < 58 && wParam != 47))
 				{
 					return 1;
 				}
 			}
-			if ((pObj->dwStyle_ & EES_LETTER) == EES_LETTER)
+			if ((pObj->dwStyle_ & EDIT_STYLE_LETTER) == EDIT_STYLE_LETTER)
 			{
 				if (!(wParam > 64 && wParam < 91 || wParam > 96 && wParam < 123))
 				{
 					return 1;
 				}
 			}
-			if ((pObj->dwStyle_ & EES_NUMERIC_LETTER) == EES_NUMERIC_LETTER)
+			if ((pObj->dwStyle_ & EDIT_STYLE_NUMERIC_LETTER) == EDIT_STYLE_NUMERIC_LETTER)
 			{
 				if (!(wParam > 47 && wParam < 58 || wParam > 64 && wParam < 91 || wParam > 96 && wParam < 123))
 				{
@@ -946,7 +946,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			}
 			if (wParam == VK_TAB)
 			{
-				if (!((pObj->dwStyle_ & EES_ALLOWTAB) == EES_ALLOWTAB))
+				if (!((pObj->dwStyle_ & EDIT_STYLE_ALLOWTAB) == EDIT_STYLE_ALLOWTAB))
 				{
 					return 1;
 				}
@@ -972,7 +972,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		{
 			if (lParam)
 			{
-				if ((pObj->dwStyle_ & EES_NEWLINE) != EES_NEWLINE)//禁止回车时,删除\r\n
+				if ((pObj->dwStyle_ & EDIT_STYLE_NEWLINE) != EDIT_STYLE_NEWLINE)//禁止回车时,删除\r\n
 				{
 					std::wstring strValue = (LPCWSTR)lParam;
 					std::wstring::size_type iFind = 0;
@@ -988,7 +988,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			}
 			return ((ITextServices*)_edit_its(pObj))->TxSetText((LPCWSTR)lParam);
 		}
-		else if (uMsg == EM_SETCUEBANNER)
+		else if (uMsg == EDIT_MESSAGE_SETCUEBANNER)
 		{
 			edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
 			pOwner->crBanner_ = wParam;
@@ -1002,7 +1002,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			if (wParam == COLOR_EX_TEXT_NORMAL)
 			{
 				CHARFORMAT2W* pcf = (CHARFORMAT2W*)pOwner->pcf_;
-				pcf->dwMask = CFM_COLOR;
+				pcf->dwMask = EDIT_SELECT_CHARFORMAT_COLOR;
 				pcf->crTextColor = ExARGB2RGB(lParam);
 				((ITextServices*)_edit_its(pObj))->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE, TXTBIT_CHARFORMATCHANGE);
 			}
@@ -1016,9 +1016,9 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			}
 			return 0;
 		}
-		else if (uMsg == EM_LOAD_RTF)
+		else if (uMsg == EDIT_MESSAGE_LOAD_RTF)
 		{
-			if (FLAGS_CHECK(pObj->dwStyle_, EES_RICHTEXT))
+			if (FLAGS_CHECK(pObj->dwStyle_, EDIT_STYLE_RICHTEXT))
 			{
 				return _edit_load_rtf(pObj, (LPCWSTR)lParam, wParam);
 			}
@@ -1038,30 +1038,30 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			pObj->hFont_ = (HEXFONT)wParam;
 			_font_getlogfont(pObj->hFont_, &logfont);
 			CHARFORMAT2W* pcf = (CHARFORMAT2W*)pOwner->pcf_;
-			DWORD dwMask = CFM_SIZE | CFM_COLOR | CFM_FACE;
+			DWORD dwMask = EDIT_SELECT_CHARFORMAT_SIZE | EDIT_SELECT_CHARFORMAT_COLOR | EDIT_SELECT_CHARFORMAT_FACE;
 			DWORD dwEffects = 0;
 			if (logfont.lfWeight != 400)
 			{
 				dwEffects = dwEffects | CFE_BOLD;
-				dwMask = dwMask | CFM_BOLD;
+				dwMask = dwMask | EDIT_SELECT_CHARFORMAT_BOLD;
 			}
 
 			if (logfont.lfItalic != 0)
 			{
 				dwEffects = dwEffects | CFE_ITALIC;
-				dwMask = dwMask | CFM_ITALIC;
+				dwMask = dwMask | EDIT_SELECT_CHARFORMAT_ITALIC;
 			}
 
 			if (logfont.lfUnderline != 0)
 			{
 				dwEffects = dwEffects | CFE_UNDERLINE;
-				dwMask = dwMask | CFM_UNDERLINE;
+				dwMask = dwMask | EDIT_SELECT_CHARFORMAT_UNDERLINE;
 			}
 
 			if (logfont.lfStrikeOut != 0)
 			{
 				dwEffects = dwEffects | CFE_STRIKEOUT;
-				dwMask = dwMask | CFM_STRIKEOUT;
+				dwMask = dwMask | EDIT_SELECT_CHARFORMAT_STRIKEOUT;
 			}
 			pcf->dwMask = dwMask;
 			pcf->dwEffects = dwEffects;
@@ -1079,7 +1079,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			{
 				if (wParam == VK_RETURN)
 				{
-					if ((pObj->dwStyle_ & EES_NEWLINE) != EES_NEWLINE)//拦截回车
+					if ((pObj->dwStyle_ & EDIT_STYLE_NEWLINE) != EDIT_STYLE_NEWLINE)//拦截回车
 					{
 						return 1;
 					}

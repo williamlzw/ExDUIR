@@ -2,22 +2,22 @@
 
 void _combobox_regsiter()
 {
-    Ex_ObjRegister(L"ComboBox", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 14 * sizeof(size_t), 0, 0, _combobox_proc);
+    Ex_ObjRegister(L"ComboBox", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 14 * sizeof(size_t), 0, 0, _combobox_proc);
 }
 
 size_t _combobox_size(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT width, INT height)
 {
-    _obj_setextralong(pObj, ECBL_LEFT, width - Ex_Scale(24));
-    _obj_setextralong(pObj, ECBL_TOP, 0);
-    _obj_setextralong(pObj, ECBL_RIGHT, width);
-    _obj_setextralong(pObj, ECBL_BOTTOM, height);
+    _obj_setextralong(pObj, COMBOBOX_LONG_LEFT, width - Ex_Scale(24));
+    _obj_setextralong(pObj, COMBOBOX_LONG_TOP, 0);
+    _obj_setextralong(pObj, COMBOBOX_LONG_RIGHT, width);
+    _obj_setextralong(pObj, COMBOBOX_LONG_BOTTOM, height);
     _obj_baseproc(hWnd, hObj, pObj, CB_SETDROPPEDWIDTH, width, 0);
     return _obj_baseproc(hWnd, hObj, pObj, CB_SETITEMHEIGHT, -1, height);
 }
 
 EX_COMBOX_ITEMLIST *_combobox_realloc(obj_s *pObj, INT need, INT nIndex, BOOL add)
 {
-    EX_COMBOX_ITEMLIST *items = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST);
+    EX_COMBOX_ITEMLIST *items = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST);
     INT size = items->size;
     if (!add && size > need)
     {
@@ -54,7 +54,7 @@ EX_COMBOX_ITEMLIST *_combobox_realloc(obj_s *pObj, INT need, INT nIndex, BOOL ad
         }
         newItems->size = need;
         Ex_MemFree(items);
-        _obj_setextralong(pObj, ECBL_ITEMLIST, (size_t)newItems);
+        _obj_setextralong(pObj, COMBOBOX_LONG_ITEMLIST, (size_t)newItems);
         items = newItems;
     }
     else if ((add || size < need) && size != need)
@@ -91,7 +91,7 @@ EX_COMBOX_ITEMLIST *_combobox_realloc(obj_s *pObj, INT need, INT nIndex, BOOL ad
         }
         newItems->size = need;
         Ex_MemFree(items);
-        _obj_setextralong(pObj, ECBL_ITEMLIST, (size_t)newItems);
+        _obj_setextralong(pObj, COMBOBOX_LONG_ITEMLIST, (size_t)newItems);
         items = newItems;
     }
     return items;
@@ -99,56 +99,56 @@ EX_COMBOX_ITEMLIST *_combobox_realloc(obj_s *pObj, INT need, INT nIndex, BOOL ad
 
 INT _combobox_insertstring(obj_s *pObj, size_t nIndex, LPCWSTR lpTitle)
 {
-    INT size = _obj_getextralong(pObj, ECBL_ITEMCOUNT) + 1;
+    INT size = _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT) + 1;
     if (nIndex <= 0 || nIndex > size)
     {
         return -1;
     }
     EX_COMBOX_ITEMLIST *items = _combobox_realloc(pObj, size, nIndex, TRUE);
-    _obj_setextralong(pObj, ECBL_ITEMCOUNT, size);
+    _obj_setextralong(pObj, COMBOBOX_LONG_ITEMCOUNT, size);
     items->items[nIndex - 1].lpwzTitle = StrDupW(lpTitle);
     return nIndex;
 }
 
 INT _combobox_addstring(obj_s *pObj, LPCWSTR lpTitle)
 {
-    INT size = _obj_getextralong(pObj, ECBL_ITEMCOUNT);
+    INT size = _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT);
     return _combobox_insertstring(pObj, size + 1, lpTitle);
 }
 
 LONG_PTR _combobox_getitemdata(obj_s *pObj, size_t nIndex)
 {
-    if (nIndex <= 0 || nIndex > _obj_getextralong(pObj, ECBL_ITEMCOUNT))
+    if (nIndex <= 0 || nIndex > _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT))
     {
         return -1;
     }
-    return ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST))->items[nIndex - 1].data;
+    return ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST))->items[nIndex - 1].data;
 }
 
 INT _combobox_setitemdata(obj_s *pObj, size_t nIndex, LONG_PTR data)
 {
-    if (nIndex <= 0 || nIndex > _obj_getextralong(pObj, ECBL_ITEMCOUNT))
+    if (nIndex <= 0 || nIndex > _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT))
     {
         return -1;
     }
-    ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST))->items[nIndex - 1].data = data;
+    ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST))->items[nIndex - 1].data = data;
     return 0;
 }
 
 INT _combobox_initstorage(obj_s *pObj, size_t size)
 {
-    INT init = _obj_getextralong(pObj, ECBL_ITEMCOUNT) + size;
+    INT init = _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT) + size;
     _combobox_realloc(pObj, init, 0, TRUE);
     return init;
 }
 
 LPCWSTR _combobox_getitemtitle(obj_s *pObj, size_t nIndex)
 {
-    if (nIndex <= 0 || nIndex > _obj_getextralong(pObj, ECBL_ITEMCOUNT))
+    if (nIndex <= 0 || nIndex > _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT))
     {
         return 0;
     }
-    return ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST))->items[nIndex - 1].lpwzTitle;
+    return ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST))->items[nIndex - 1].lpwzTitle;
 }
 
 INT _combobox_getleftbuttontextlen(obj_s *pObj, size_t nIndex)
@@ -165,7 +165,7 @@ void _combobox_notify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, EX_NMHDR *lParam)
 {
     if (lParam)
     {
-        HEXOBJ hObjEdit = _obj_getextralong(pObj, ECBL_HOBJEDIT);
+        HEXOBJ hObjEdit = _obj_getextralong(pObj, COMBOBOX_LONG_HOBJEDIT);
         if (hObjEdit == lParam->hObjFrom)
         {
             if (lParam->nCode == NM_HOVER)
@@ -197,13 +197,13 @@ void _combobox_notify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, EX_NMHDR *lParam)
 
 INT _combobox_resetcontent(obj_s *pObj)
 {
-    INT len = _obj_getextralong(pObj, ECBL_ITEMCOUNT);
-    EX_COMBOX_ITEMLIST *itemList = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST);
+    INT len = _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT);
+    EX_COMBOX_ITEMLIST *itemList = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST);
     for (INT i = 0; i < len; i++)
     {
         Ex_MemFree((LPVOID)itemList->items[i].lpwzTitle);
     }
-    _obj_setextralong(pObj, ECBL_ITEMCOUNT, 0);
+    _obj_setextralong(pObj, COMBOBOX_LONG_ITEMCOUNT, 0);
     _combobox_realloc(pObj, 0, 0, TRUE);
     return 0;
 }
@@ -211,38 +211,38 @@ INT _combobox_resetcontent(obj_s *pObj)
 BOOL _combobox_uninit(obj_s *pObj)
 {
     _combobox_resetcontent(pObj);
-    return Ex_MemFree((LPVOID)_obj_getextralong(pObj, ECBL_ITEMLIST));
+    return Ex_MemFree((LPVOID)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST));
 }
 
 INT _combobox_setcursel(obj_s *pObj, size_t nIndex)
 {
-    INT size = _obj_getextralong(pObj, ECBL_ITEMCOUNT);
+    INT size = _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT);
     if (nIndex <= 0 || nIndex > size)
     {
         return -1;
     }
-    INT cur = _obj_setextralong(pObj, ECBL_CURRENTSELECTED, nIndex);
+    INT cur = _obj_setextralong(pObj, COMBOBOX_LONG_CURRENTSELECTED, nIndex);
     LPCWSTR title = _combobox_getitemtitle(pObj, nIndex);
     _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_SETTEXT, 1, (size_t)title);
-    _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, CBN_SELCHANGE, nIndex, pObj->hObj_);
+    _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, COMBOBOX_EVENT_SELCHANGE, nIndex, pObj->hObj_);
     return cur;
 }
 
 void _combobox_init(obj_s *pObj, HEXOBJ hObj)
 {
-    if (FLAGS_CHECK(pObj->dwStyle_, ECS_ALLOWEDIT))
+    if (FLAGS_CHECK(pObj->dwStyle_, COMBOBOX_STYLE_ALLOWEDIT))
     {
-        HEXLAYOUT hLayout = _layout_create(ELT_ABSOLUTE, hObj);
-        HEXOBJ hObjEdit = Ex_ObjCreateEx(EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW, (LPCWSTR)ATOM_EDIT, 0, -1, 0, 0, 80, 30, hObj, 0, -1, 0, 0, 0);
-        _obj_setextralong(pObj, ECBL_HOBJEDIT, hObjEdit);
-        _layout_absolute_setedge(hLayout, hObjEdit, ELCP_ABSOLUTE_LEFT, ELCP_ABSOLUTE_TYPE_PX, 2);
-        _layout_absolute_setedge(hLayout, hObjEdit, ELCP_ABSOLUTE_TOP, ELCP_ABSOLUTE_TYPE_PX, 2);
-        _layout_absolute_setedge(hLayout, hObjEdit, ELCP_ABSOLUTE_RIGHT, ELCP_ABSOLUTE_TYPE_PX, (size_t)Ex_Scale(24.0));
-        _layout_absolute_setedge(hLayout, hObjEdit, ELCP_ABSOLUTE_BOTTOM, ELCP_ABSOLUTE_TYPE_PX, 2);
+        HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_ABSOLUTE, hObj);
+        HEXOBJ hObjEdit = Ex_ObjCreateEx(OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW, (LPCWSTR)ATOM_EDIT, 0, -1, 0, 0, 80, 30, hObj, 0, -1, 0, 0, 0);
+        _obj_setextralong(pObj, COMBOBOX_LONG_HOBJEDIT, hObjEdit);
+        _layout_absolute_setedge(hLayout, hObjEdit, LAYOUT_SUBPROP_ABSOLUTE_LEFT, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 2);
+        _layout_absolute_setedge(hLayout, hObjEdit, LAYOUT_SUBPROP_ABSOLUTE_TOP, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 2);
+        _layout_absolute_setedge(hLayout, hObjEdit, LAYOUT_SUBPROP_ABSOLUTE_RIGHT, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, (size_t)Ex_Scale(24.0));
+        _layout_absolute_setedge(hLayout, hObjEdit, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 2);
         _layout_update(hLayout);
     }
-    _obj_setextralong(pObj, ECBL_MINVISIBLE, 10);
-    _obj_setextralong(pObj, ECBL_ITEMLIST, (size_t)Ex_MemAlloc(sizeof(EX_COMBOX_ITEMLIST)));
+    _obj_setextralong(pObj, COMBOBOX_LONG_MINVISIBLE, 10);
+    _obj_setextralong(pObj, COMBOBOX_LONG_ITEMLIST, (size_t)Ex_MemAlloc(sizeof(EX_COMBOX_ITEMLIST)));
 }
 
 void _combobox_wnd_customdraw(obj_s *pObj, WPARAM wParam, EX_CUSTOMDRAW *lParam)
@@ -283,7 +283,7 @@ void _combobox_wnd_customdraw(obj_s *pObj, WPARAM wParam, EX_CUSTOMDRAW *lParam)
 
         _canvas_drawtext(
             lParam->hCanvas, pObj->hFont_, fontColor,
-            ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST))->items[wParam - 1].lpwzTitle, -1, 0x24u,
+            ((EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST))->items[wParam - 1].lpwzTitle, -1, 0x24u,
             lParam->rcPaint.left + padding.left,
             lParam->rcPaint.top + padding.top,
             lParam->rcPaint.right - padding.right,
@@ -294,8 +294,8 @@ void _combobox_wnd_customdraw(obj_s *pObj, WPARAM wParam, EX_CUSTOMDRAW *lParam)
 INT _combobox_findstring(obj_s *pObj, size_t startIndex, LPCWSTR lpTitle)
 {
     INT ret = 0;
-    EX_COMBOX_ITEMLIST *itemList = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST);
-    for (size_t i = startIndex + 1; i <= _obj_getextralong(pObj, ECBL_ITEMCOUNT); ++i)
+    EX_COMBOX_ITEMLIST *itemList = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST);
+    for (size_t i = startIndex + 1; i <= _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT); ++i)
     {
         if (!lstrcmpW(itemList->items[i - 1].lpwzTitle, lpTitle))
         {
@@ -340,15 +340,15 @@ size_t _combobox_getleftbuttontext(obj_s *pObj, size_t nIndex, LPVOID buffer)
 
 INT _combobox_delstring(obj_s *pObj, size_t nIndex)
 {
-    INT len = _obj_getextralong(pObj, ECBL_ITEMCOUNT);
-    EX_COMBOX_ITEMLIST *itemList = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, ECBL_ITEMLIST);
+    INT len = _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT);
+    EX_COMBOX_ITEMLIST *itemList = (EX_COMBOX_ITEMLIST *)_obj_getextralong(pObj, COMBOBOX_LONG_ITEMLIST);
     if (nIndex <= 0 || nIndex > len)
     {
         return -1;
     }
     Ex_MemFree((LPVOID)itemList->items[nIndex - 1].lpwzTitle);
     _combobox_realloc(pObj, len - 1, nIndex, FALSE);
-    _obj_setextralong(pObj, ECBL_ITEMCOUNT, len - 1);
+    _obj_setextralong(pObj, COMBOBOX_LONG_ITEMCOUNT, len - 1);
     return len;
 }
 
@@ -359,7 +359,7 @@ LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wPa
         EX_NMHDR *msg = (EX_NMHDR *)lParam;
         if (msg->nCode == NM_CALCSIZE && hDUI == msg->hObjFrom)
         {
-            __set_int((LPVOID)msg->lParam, 4, _obj_getextralong((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), ECBL_ITEMHEIGHT) / g_Li.DpiY);
+            __set_int((LPVOID)msg->lParam, 4, _obj_getextralong((obj_s *)Ex_ObjGetLong(hDUI, OBJECT_LONG_LPARAM), COMBOBOX_LONG_ITEMHEIGHT) / g_Li.DpiY);
             __set_int((LPVOID)msg->lParam, 8, 0);
             __set_int((LPVOID)msg->lParam, 12, 0);
             *lpResult = 1;
@@ -367,17 +367,17 @@ LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wPa
         }
         else if (msg->nCode == NM_CUSTOMDRAW)
         {
-            _combobox_wnd_customdraw((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), msg->wParam, (EX_CUSTOMDRAW *)msg->lParam);
+            _combobox_wnd_customdraw((obj_s *)Ex_ObjGetLong(hDUI, OBJECT_LONG_LPARAM), msg->wParam, (EX_CUSTOMDRAW *)msg->lParam);
             *lpResult = 1;
             return 1;
         }
         else if (msg->nCode == NM_CLICK && hDUI == msg->hObjFrom)
         {
-            INT sel = Ex_ObjSendMessage(hDUI, LVM_GETSELECTIONMARK, 0, 0);
+            INT sel = Ex_ObjSendMessage(hDUI, LISTVIEW_MESSAGE_GETSELECTIONMARK, 0, 0);
             if (sel)
             {
                 PostMessageW(hWnd, WM_CLOSE, 0, 0);
-                _combobox_setcursel((obj_s *)Ex_ObjGetLong(hDUI, EOL_LPARAM), sel);
+                _combobox_setcursel((obj_s *)Ex_ObjGetLong(hDUI, OBJECT_LONG_LPARAM), sel);
             }
         }
     }
@@ -389,14 +389,14 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
     wnd_s *pWnd = pObj->pWnd_;
     if (!FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN))
     {
-        if (_obj_queryextra(pObj, ECBL_STATE, ECBS_NORMAL))
+        if (_obj_queryextra(pObj, COMBOBOX_LONG_STATE, COMBOBOX_STATE_NORMAL))
         {
 			
-            _obj_delextra(pObj, ECBL_STATE, ECBS_NORMAL);
+            _obj_delextra(pObj, COMBOBOX_LONG_STATE, COMBOBOX_STATE_NORMAL);
         }
         else
         {
-            if (!_obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_DROPDOWN, 0, 0))
+            if (!_obj_dispatchnotify(hWnd, pObj, hObj, 0, COMBOBOX_EVENT_DROPDOWN, 0, 0))
             {
 				
                 RECT padding = {0};
@@ -408,8 +408,8 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 }
                 RtlMoveMemory(&unknown, &pObj->c_left_, sizeof(RECT));
                 Ex_ObjClientToScreen(hObj, (INT *)&unknown.left, (INT *)&unknown.top);
-                size_t count = _obj_getextralong(pObj, ECBL_ITEMCOUNT);
-                size_t size = _obj_getextralong(pObj, ECBL_MINVISIBLE);
+                size_t count = _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT);
+                size_t size = _obj_getextralong(pObj, COMBOBOX_LONG_MINVISIBLE);
 
                 if (count == 0)
                 {
@@ -422,8 +422,8 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 RECT tmp;
                 tmp.left = unknown.left;
                 tmp.top = unknown.top + unknown.bottom;
-                tmp.right = _obj_getextralong(pObj, ECBL_DROPPEDWIDTH);
-                tmp.bottom = count * _obj_getextralong(pObj, ECBL_ITEMHEIGHT) + padding.top + padding.bottom;
+                tmp.right = _obj_getextralong(pObj, COMBOBOX_LONG_DROPPEDWIDTH);
+                tmp.bottom = count * _obj_getextralong(pObj, COMBOBOX_LONG_ITEMHEIGHT) + padding.top + padding.bottom;
 
                 RECT screen;
                 _wnd_getscreenrect(hWnd, &screen);
@@ -450,34 +450,34 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, tmp.left, tmp.top, tmp.right, tmp.bottom, WS_POPUP, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
                 if (hWnd)
                 {
-                    HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOSHADOW | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW | EWS_COMBOWINDOW, hObj, NULL);
+                    HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_NOCAPTIONTOPMOST | WINDOW_STYLE_POPUPWINDOW | WINDOW_STYLE_COMBOWINDOW, hObj, NULL);
                     pWnd->lpPopupParams_ = hObj;
                     wnd_s *pWndBox;
                     INT nError = 0;
                     if (_handle_validate(hExBox, HT_DUI, (LPVOID *)&pWndBox, &nError))
                     {
-                        _obj_setextralong(pObj, ECBL_BOXHWND, (size_t)hWndBox);
-                        HEXOBJ hObjListView = Ex_ObjCreateEx(-1, (LPCWSTR)ATOM_LISTVIEW, 0, EOS_VISIBLE | EOS_VSCROLL | ELVS_ITEMTRACKING,
+                        _obj_setextralong(pObj, COMBOBOX_LONG_BOXHWND, (size_t)hWndBox);
+                        HEXOBJ hObjListView = Ex_ObjCreateEx(-1, (LPCWSTR)ATOM_LISTVIEW, 0, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | LISTVIEW_STYLE_ITEMTRACKING,
                                                              padding.left,
                                                              padding.top,
                                                              (FLOAT)tmp.right / g_Li.DpiX - padding.left - padding.right,
                                                              (FLOAT)tmp.bottom / g_Li.DpiY - padding.top - padding.bottom,
                                                              hExBox, 0, -1, (size_t)pObj, 0, _combobox_wnd_proc);
                       
-                        Ex_ObjSendMessage(hObjListView, LVM_SETITEMCOUNT, _obj_getextralong(pObj, ECBL_ITEMCOUNT), 0);
-                        _obj_setextralong(pObj, ECBL_HOBJLISTVIEW, hObjListView);
-                        size_t current = _obj_getextralong(pObj, ECBL_CURRENTSELECTED);
+                        Ex_ObjSendMessage(hObjListView, LISTVIEW_MESSAGE_SETITEMCOUNT, _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT), 0);
+                        _obj_setextralong(pObj, COMBOBOX_LONG_HOBJLISTVIEW, hObjListView);
+                        size_t current = _obj_getextralong(pObj, COMBOBOX_LONG_CURRENTSELECTED);
                         if (current > 0)
                         {
-                            Ex_ObjSendMessage(hObjListView, LVM_SETSELECTIONMARK, 0, current);
-                            Ex_ObjSendMessage(hObjListView, LVM_ENSUREVISIBLE, 0, current);
+                            Ex_ObjSendMessage(hObjListView, LISTVIEW_MESSAGE_SETSELECTIONMARK, 0, current);
+                            Ex_ObjSendMessage(hObjListView, LISTVIEW_MESSAGE_ENSUREVISIBLE, 0, current);
                         }
                         Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_NORMAL, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), FALSE);
                         Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_HOVER, _obj_getcolor(pObj, COLOR_EX_TEXT_HOVER), FALSE);
                         Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_DOWN, _obj_getcolor(pObj, COLOR_EX_TEXT_DOWN), FALSE);
                         Ex_ObjSetColor(hObjListView, COLOR_EX_TEXT_SELECT, _obj_getcolor(pObj, COLOR_EX_TEXT_SELECT), TRUE);
                         
-                        _obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_POPUPLISTWINDOW, (size_t)hWndBox, hExBox);
+                        _obj_dispatchnotify(hWnd, pObj, hObj, 0, COMBOBOX_EVENT_POPUPLISTWINDOW, (size_t)hWndBox, hExBox);
                         Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
                     }
                 }
@@ -504,7 +504,7 @@ void _combobox_paint(HEXOBJ hObj, obj_s *pObj)
         {
             atomSrcRect = ATOM_NORMAL;
         }
-        if (!FLAGS_CHECK(ps.dwStyleEx, EOS_EX_CUSTOMDRAW))
+        if (!FLAGS_CHECK(ps.dwStyleEx, OBJECT_STYLE_EX_CUSTOMDRAW))
         {
             RECT tmp = {0};
             RECT *pRect;
@@ -522,10 +522,10 @@ void _combobox_paint(HEXOBJ hObj, obj_s *pObj)
             }
 			
             pRect = (RECT *)Ex_ThemeGetValuePtr(ps.hTheme, ATOM_COMBOBOX, atomSrcRect);
-            tmp.left = _obj_getextralong(pObj, ECBL_LEFT);
-            tmp.top = _obj_getextralong(pObj, ECBL_TOP);
-            tmp.right = _obj_getextralong(pObj, ECBL_RIGHT);
-            tmp.bottom = _obj_getextralong(pObj, ECBL_BOTTOM);
+            tmp.left = _obj_getextralong(pObj, COMBOBOX_LONG_LEFT);
+            tmp.top = _obj_getextralong(pObj, COMBOBOX_LONG_TOP);
+            tmp.right = _obj_getextralong(pObj, COMBOBOX_LONG_RIGHT);
+            tmp.bottom = _obj_getextralong(pObj, COMBOBOX_LONG_BOTTOM);
             if (pRect)
             {
                 RtlMoveMemory(&tmp2, pRect, sizeof(RECT));
@@ -535,7 +535,7 @@ void _combobox_paint(HEXOBJ hObj, obj_s *pObj)
             tmp.top = tmp.top + (tmp.bottom - tmp.top - tmp2.bottom) / 2;
             Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, tmp.left, tmp.top, tmp.left + tmp2.right, tmp.top + tmp2.bottom, -1916733255, atomSrcRect, 0, 0, 0, 0, 255);
         }
-        if (!FLAGS_CHECK(ps.dwStyle, ECS_ALLOWEDIT))
+        if (!FLAGS_CHECK(ps.dwStyle, COMBOBOX_STYLE_ALLOWEDIT))
         {
             _canvas_drawtextex(
                 ps.hCanvas,
@@ -571,18 +571,18 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             tmp.x = GET_X_LPARAM(lParam);
             tmp.y = GET_Y_LPARAM(lParam);
             RECT rc;
-            rc.left = _obj_getextralong(pObj, ECBL_LEFT);
-            rc.top = _obj_getextralong(pObj, ECBL_TOP);
-            rc.right = _obj_getextralong(pObj, ECBL_RIGHT);
-            rc.bottom = _obj_getextralong(pObj, ECBL_BOTTOM);
+            rc.left = _obj_getextralong(pObj, COMBOBOX_LONG_LEFT);
+            rc.top = _obj_getextralong(pObj, COMBOBOX_LONG_TOP);
+            rc.right = _obj_getextralong(pObj, COMBOBOX_LONG_RIGHT);
+            rc.bottom = _obj_getextralong(pObj, COMBOBOX_LONG_BOTTOM);
             if (PtInRect(&rc, tmp))
             {
-                _obj_addextra(pObj, ECBL_STATE, ECBS_HOVER);
+                _obj_addextra(pObj, COMBOBOX_LONG_STATE, COMBOBOX_STATE_HOVER);
             }
             else
             {
 				
-                _obj_delextra(pObj, ECBL_STATE, ECBS_HOVER);
+                _obj_delextra(pObj, COMBOBOX_LONG_STATE, COMBOBOX_STATE_HOVER);
             }
         }
         else if (uMsg == WM_SIZE)
@@ -616,7 +616,7 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         else if (uMsg == WM_LBUTTONDOWN)
         {
 			
-            if (_obj_queryextra(pObj, ECBL_STATE, ECBS_HOVER) || !FLAGS_CHECK(pObj->dwStyle_, ECS_ALLOWEDIT))
+            if (_obj_queryextra(pObj, COMBOBOX_LONG_STATE, COMBOBOX_STATE_HOVER) || !FLAGS_CHECK(pObj->dwStyle_, COMBOBOX_STYLE_ALLOWEDIT))
             {
                 _combobox_btndown(hWnd, hObj, pObj);
             }
@@ -634,21 +634,21 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                 if (hObj == wParam)
                 {
 					
-                    _obj_addextra(pObj, ECBL_STATE, ECBS_NORMAL);
+                    _obj_addextra(pObj, COMBOBOX_LONG_STATE, COMBOBOX_STATE_NORMAL);
                 }
             }
             else
             {
                 INT nError = 0;
-                _obj_dispatchnotify(hWnd, pObj, hObj, 0, CBN_CLOSEUP, 0, 0);
+                _obj_dispatchnotify(hWnd, pObj, hObj, 0, COMBOBOX_EVENT_CLOSEUP, 0, 0);
                 _obj_invalidaterect(pObj, 0, &nError);
             }
         }
         else if (uMsg == WM_SETTEXT || uMsg == WM_GETTEXT || uMsg == WM_GETTEXTLENGTH)
         {
-            if (FLAGS_CHECK(pObj->dwStyle_, ECS_ALLOWEDIT))
+            if (FLAGS_CHECK(pObj->dwStyle_, COMBOBOX_STYLE_ALLOWEDIT))
             {
-                return Ex_ObjDispatchMessage((HEXOBJ)_obj_getextralong(pObj, ECBL_HOBJEDIT), uMsg, wParam, lParam);
+                return Ex_ObjDispatchMessage((HEXOBJ)_obj_getextralong(pObj, COMBOBOX_LONG_HOBJEDIT), uMsg, wParam, lParam);
             }
         }
         else if (uMsg == CB_ADDSTRING)
@@ -665,11 +665,11 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
         else if (uMsg == CB_GETCOUNT)
         {
-            return _obj_getextralong(pObj, ECBL_ITEMCOUNT);
+            return _obj_getextralong(pObj, COMBOBOX_LONG_ITEMCOUNT);
         }
         else if (uMsg == CB_GETCURSEL)
         {
-            return _obj_getextralong(pObj, ECBL_CURRENTSELECTED);
+            return _obj_getextralong(pObj, COMBOBOX_LONG_CURRENTSELECTED);
         }
         else if (uMsg == CB_GETDROPPEDSTATE)
         {
@@ -677,15 +677,15 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
         else if (uMsg == CB_GETDROPPEDWIDTH)
         {
-            return _obj_getextralong(pObj, ECBL_DROPPEDWIDTH);
+            return _obj_getextralong(pObj, COMBOBOX_LONG_DROPPEDWIDTH);
         }
         else if (uMsg == CB_SETDROPPEDWIDTH)
         {
-            return _obj_setextralong(pObj, ECBL_DROPPEDWIDTH, wParam);
+            return _obj_setextralong(pObj, COMBOBOX_LONG_DROPPEDWIDTH, wParam);
         }
         else if (uMsg == CB_GETEDITSEL)
         {
-            Ex_ObjDispatchMessage((HEXOBJ)_obj_getextralong(pObj, ECBL_HOBJEDIT), 176, (size_t)&wParam, (size_t)&lParam);
+            Ex_ObjDispatchMessage((HEXOBJ)_obj_getextralong(pObj, COMBOBOX_LONG_HOBJEDIT), 176, (size_t)&wParam, (size_t)&lParam);
             return MAKELONG(wParam, lParam);
         }
         else if (uMsg == CB_GETITEMDATA)
@@ -698,14 +698,14 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
         else if (uMsg == CB_GETITEMHEIGHT)
         {
-            return _obj_getextralong(pObj, ECBL_ITEMHEIGHT);
+            return _obj_getextralong(pObj, COMBOBOX_LONG_ITEMHEIGHT);
         }
         else if (uMsg == CB_SETITEMHEIGHT)
         {
             LONG_PTR ret = -1;
             if (wParam == -1)
             {
-                ret = _obj_setextralong(pObj, ECBL_ITEMHEIGHT, lParam);
+                ret = _obj_setextralong(pObj, COMBOBOX_LONG_ITEMHEIGHT, lParam);
             }
             else
             {
@@ -713,13 +713,13 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             }
             return ret;
         }
-        else if (uMsg == CB_GETMINVISIBLE)
+        else if (uMsg == COMBOBOX_MESSAGE_GETMINVISIBLE)
         {
-            return _obj_getextralong(pObj, ECBL_MINVISIBLE);
+            return _obj_getextralong(pObj, COMBOBOX_LONG_MINVISIBLE);
         }
-        else if (uMsg == CB_SETMINVISIBLE)
+        else if (uMsg == COMBOBOX_MESSAGE_SETMINVISIBLE)
         {
-            return _obj_setextralong(pObj, ECBL_MINVISIBLE, wParam);
+            return _obj_setextralong(pObj, COMBOBOX_LONG_MINVISIBLE, wParam);
         }
         else if (uMsg == CB_INITSTORAGE)
         {
@@ -738,7 +738,7 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             auto ret = _combobox_findstring(pObj, wParam, (LPCWSTR)lParam);
             if (ret)
             {
-                Ex_ObjSendMessage((HEXOBJ)_obj_getextralong(pObj, ECBL_HOBJLISTVIEW), LVM_SETSELECTIONMARK, 0, lParam);
+                Ex_ObjSendMessage((HEXOBJ)_obj_getextralong(pObj, COMBOBOX_LONG_HOBJLISTVIEW), LISTVIEW_MESSAGE_SETSELECTIONMARK, 0, lParam);
                 _obj_setuistate(pObj, STATE_FOCUS, TRUE, NULL, TRUE, NULL);
                
             }
@@ -756,11 +756,11 @@ LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             }
             else
             {
-                HWND hWndBox = (HWND)_obj_getextralong(pObj, ECBL_BOXHWND);
+                HWND hWndBox = (HWND)_obj_getextralong(pObj, COMBOBOX_LONG_BOXHWND);
                 if (hWndBox != 0)
                 {
                     DestroyWindow(hWndBox);
-                    _obj_setextralong(pObj, ECBL_BOXHWND, 0);
+                    _obj_setextralong(pObj, COMBOBOX_LONG_BOXHWND, 0);
                 }
             }
             INT nError = 0;

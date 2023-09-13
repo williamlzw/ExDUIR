@@ -18,7 +18,7 @@ void _editex_register()
 
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"EditEx";
-    Ex_ObjRegister(newwzCls, pClsInfoEdit.dwStyle, EOS_EX_COMPOSITED | EOS_EX_TABSTOP | EOS_EX_CUSTOMDRAW | EOS_EX_FOCUSABLE /*pClsInfoEdit.dwStyleEx*/, pClsInfoEdit.dwTextFormat, NULL, pClsInfoEdit.hCursor, pClsInfoEdit.dwFlags, _editex_proc);
+    Ex_ObjRegister(newwzCls, pClsInfoEdit.dwStyle, OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW | OBJECT_STYLE_EX_FOCUSABLE /*pClsInfoEdit.dwStyleEx*/, pClsInfoEdit.dwTextFormat, NULL, pClsInfoEdit.hCursor, pClsInfoEdit.dwFlags, _editex_proc);
 }
 
 LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -28,17 +28,17 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
         Ex_ObjSetPadding(hObj, 0, 5, 5, 5, 5, FALSE);
         Ex_ObjInitPropList(hObj, 10);
         EXARGB ThemeColor = ExARGB(76, 175, 80, 255);
-        Ex_ObjSetProp(hObj, EEEP_CRBORDERNORMAL, ExARGB(0, 0, 0, 100));
-        Ex_ObjSetProp(hObj, EEEP_CRBORDERHOVER, ExARGB(0, 0, 0, 150));
-        Ex_ObjSetProp(hObj, EEEP_CRBORDERDOWNORCHECKED, ThemeColor);
-        Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
-        Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
-        Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, 2);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRBORDERNORMAL, ExARGB(0, 0, 0, 100));
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRBORDERHOVER, ExARGB(0, 0, 0, 150));
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRBORDERDOWNORCHECKED, ThemeColor);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
+        Ex_ObjSetProp(hObj, EDITEX_PROP_STORKEWIDTH, 2);
     }
     else if (uMsg == WM_SETICON)
     {
         /* 设置图标 */
-        HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, EOL_USERDATA, lParam);
+        HEXIMAGE hImage = (HEXIMAGE)Ex_ObjSetLong(hObj, OBJECT_LONG_USERDATA, lParam);
 
         /* 若有原位图则销毁 */
         if (hImage != 0)
@@ -54,44 +54,44 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
     }
     else if (uMsg == WM_DESTROY)
     {
-        _img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, EOL_USERDATA));
+        _img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA));
     }
     else if (uMsg == WM_EX_PROPS)
     {
         EX_OBJ_PROPS *EditExprops = (EX_OBJ_PROPS *)lParam;
-        Ex_ObjSetProp(hObj, EEEP_CRBKGNORMAL, EditExprops->crBkgNormal);
-        Ex_ObjSetProp(hObj, EEEP_CRBORDERNORMAL, EditExprops->crBorderNormal);
-        Ex_ObjSetProp(hObj, EEEP_CRBORDERHOVER, EditExprops->crBorderHover);
-        Ex_ObjSetProp(hObj, EEEP_CRBORDERDOWNORCHECKED, EditExprops->crBorderDownOrChecked);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRBKGNORMAL, EditExprops->crBkgNormal);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRBORDERNORMAL, EditExprops->crBorderNormal);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRBORDERHOVER, EditExprops->crBorderHover);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_CRBORDERDOWNORCHECKED, EditExprops->crBorderDownOrChecked);
         if (EditExprops->crIconNormal == 0)
         {
-            Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
+            Ex_ObjSetProp(hObj, EDITEX_PROP_CRICONNORMAL, ExARGB(184, 186, 188, 255));
         }
         else
         {
-            Ex_ObjSetProp(hObj, EEEP_CRICONNORMAL, EditExprops->crIconNormal);
+            Ex_ObjSetProp(hObj, EDITEX_PROP_CRICONNORMAL, EditExprops->crIconNormal);
         }
         if (EditExprops->crIconDownOrFocus == 0)
         {
-            Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
+            Ex_ObjSetProp(hObj, EDITEX_PROP_CRICONDOWNORFOCUS, ExARGB(18, 183, 245, 255));
         }
         else
         {
-            Ex_ObjSetProp(hObj, EEEP_CRICONDOWNORFOCUS, EditExprops->crIconDownOrFocus);
+            Ex_ObjSetProp(hObj, EDITEX_PROP_CRICONDOWNORFOCUS, EditExprops->crIconDownOrFocus);
         }
-        Ex_ObjSetProp(hObj, EEEP_RADIUS, EditExprops->radius);
-        Ex_ObjSetProp(hObj, EEEP_STORKEWIDTH, EditExprops->strokeWidth);
-        Ex_ObjSetProp(hObj, EEEP_ICONPOSITION, EditExprops->nIconPosition);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_RADIUS, EditExprops->radius);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_STORKEWIDTH, EditExprops->strokeWidth);
+        Ex_ObjSetProp(hObj, EDITEX_PROP_ICONPOSITION, EditExprops->nIconPosition);
     }
     else if (uMsg == WM_ERASEBKGND)
     {
         RECT rc = {0};
         HEXCANVAS hCanvas = (HEXCANVAS)wParam;
-        HEXBRUSH hbrush = _brush_create(Ex_ObjGetProp(hObj, EEEP_CRBKGNORMAL));
+        HEXBRUSH hbrush = _brush_create(Ex_ObjGetProp(hObj, EDITEX_PROP_CRBKGNORMAL));
         BOOL m_IsDraw = FALSE; /*假为默认边框风格*/
-        FLOAT Radius = (FLOAT)Ex_ObjGetProp(hObj, EEEP_RADIUS);
-        FLOAT StrokeWidth = (FLOAT)Ex_ObjGetProp(hObj, EEEP_STORKEWIDTH);
-        FLOAT nIconPosition = (FLOAT)Ex_ObjGetProp(hObj, EEEP_ICONPOSITION);
+        FLOAT Radius = (FLOAT)Ex_ObjGetProp(hObj, EDITEX_PROP_RADIUS);
+        FLOAT StrokeWidth = (FLOAT)Ex_ObjGetProp(hObj, EDITEX_PROP_STORKEWIDTH);
+        FLOAT nIconPosition = (FLOAT)Ex_ObjGetProp(hObj, EDITEX_PROP_ICONPOSITION);
         /*获取编辑客户区矩形*/
         Ex_ObjGetClientRect(hObj, &rc);
         /*填充背景*/
@@ -108,12 +108,12 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
         FLOAT Height = Ex_Scale((FLOAT)(rc.bottom - rc.top));
 
         /*获取图标*/
-        HEXIMAGE hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, EOL_USERDATA);
+        HEXIMAGE hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
 
         /*定义线框正常态颜色*/
-        _brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERNORMAL));
+        _brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EDITEX_PROP_CRBORDERNORMAL));
 
-        if ((Ex_ObjGetLong(hObj, EOL_STYLE) & EES_UNDERLINE) == EES_UNDERLINE)
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & EDIT_STYLE_UNDERLINE) == EDIT_STYLE_UNDERLINE)
         {
             m_IsDraw = TRUE; /*下划线风格*/
         }
@@ -121,12 +121,12 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
         if ((Ex_ObjGetUIState(hObj) & STATE_HOVER) != 0)
         {
             /*定义悬浮状态下的线框颜色*/
-            _brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERHOVER));
+            _brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EDITEX_PROP_CRBORDERHOVER));
         }
 
         if ((Ex_ObjGetUIState(hObj) & STATE_FOCUS) != 0)
         {
-            _brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EEEP_CRBORDERDOWNORCHECKED));
+            _brush_setcolor(hbrush, Ex_ObjGetProp(hObj, EDITEX_PROP_CRBORDERDOWNORCHECKED));
         }
 
         /*绘制线框*/
@@ -146,7 +146,7 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
             }
         }
 
-        edit_s *pOwenr = (edit_s *)Ex_ObjGetLong(hObj, EOL_OWNER);
+        edit_s *pOwenr = (edit_s *)Ex_ObjGetLong(hObj, OBJECT_LONG_OWNER);
         RECT *P = (RECT *)pOwenr->prctext_;
 
         /*绘制图标*/

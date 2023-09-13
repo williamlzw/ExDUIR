@@ -3,18 +3,18 @@
 void _palette_register()
 {
 	DWORD cbObjExtra = 5 * sizeof(size_t);
-	Ex_ObjRegister(L"Palette", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_LEFT, cbObjExtra, LoadCursor(0, IDC_HAND), ECVF_CANVASANTIALIAS, _palette_proc);
+	Ex_ObjRegister(L"Palette", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT, cbObjExtra, LoadCursor(0, IDC_HAND), CANVAS_FLAG_CANVASANTIALIAS, _palette_proc);
 }
 
 LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (uMsg == WM_CREATE)
 	{
-		Ex_ObjSetLong(hObj, PTL_DOWN, 0);
-		Ex_ObjSetLong(hObj, PTL_BEGINX, Ex_Scale(5));
-		Ex_ObjSetLong(hObj, PTL_BEGINY, Ex_Scale(5));
+		Ex_ObjSetLong(hObj, PALETTE_LONG_DOWN, 0);
+		Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINX, Ex_Scale(5));
+		Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINY, Ex_Scale(5));
 		HEXBRUSH brush = _brush_create(ExRGB2ARGB(0, 255));
-		Ex_ObjSetLong(hObj, PTL_PEN, (LONG_PTR)brush);
+		Ex_ObjSetLong(hObj, PALETTE_LONG_PEN, (LONG_PTR)brush);
 		_palette_genimage(hObj);
 		Ex_ObjInvalidateRect(hObj, 0);
 	}
@@ -24,12 +24,12 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	}
 	else if (uMsg == WM_DESTROY)
 	{
-		HEXIMAGE image = (HEXIMAGE)Ex_ObjGetLong(hObj, PTL_IMAGE);
+		HEXIMAGE image = (HEXIMAGE)Ex_ObjGetLong(hObj, PALETTE_LONG_IMAGE);
 		if (image)
 		{
 			_img_destroy(image);
 		}
-		HEXBRUSH brush = (HEXBRUSH)Ex_ObjGetLong(hObj, PTL_PEN);
+		HEXBRUSH brush = (HEXBRUSH)Ex_ObjGetLong(hObj, PALETTE_LONG_PEN);
 		if (brush)
 		{
 			_brush_destroy(brush);
@@ -37,16 +37,16 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	}
 	else if (uMsg == WM_LBUTTONDOWN)
 	{
-		Ex_ObjSetLong(hObj, PTL_DOWN, 1);
+		Ex_ObjSetLong(hObj, PALETTE_LONG_DOWN, 1);
 		Ex_ObjSendMessage(hObj, WM_MOUSEMOVE, 0, lParam);
 	}
 	else if (uMsg == WM_LBUTTONUP)
 	{
-		Ex_ObjSetLong(hObj, PTL_DOWN, 0);
+		Ex_ObjSetLong(hObj, PALETTE_LONG_DOWN, 0);
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		auto down = Ex_ObjGetLong(hObj, PTL_DOWN);
+		auto down = Ex_ObjGetLong(hObj, PALETTE_LONG_DOWN);
 		if (down)
 		{
 			RECT rc;
@@ -58,13 +58,13 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			{
 				if (y >= rc.top && y <= rc.bottom)
 				{
-					Ex_ObjSetLong(hObj, PTL_BEGINX, GET_X_LPARAM(lParam));
-					Ex_ObjSetLong(hObj, PTL_BEGINY, GET_Y_LPARAM(lParam));
+					Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINX, GET_X_LPARAM(lParam));
+					Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINY, GET_Y_LPARAM(lParam));
 					Ex_ObjInvalidateRect(hObj, 0);
-					HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PTL_IMAGE);
+					HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PALETTE_LONG_IMAGE);
 					EXARGB pixel;
 					_img_getpixel(img, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &pixel);
-					Ex_ObjDispatchNotify(hObj, PTN_MOUSEMOVE, pixel, 0);
+					Ex_ObjDispatchNotify(hObj, PALETTE_EVENT_MOUSEMOVE, pixel, 0);
 				}
 			}
 		}
@@ -95,7 +95,7 @@ void _palette_genimage(HEXOBJ hObj)
 	_canvas_enddraw(canvas);
 	HEXIMAGE hImg;
 	_img_createfromcanvas(canvas, &hImg);
-	Ex_ObjSetLong(hObj, PTL_IMAGE, hImg);
+	Ex_ObjSetLong(hObj, PALETTE_LONG_IMAGE, hImg);
 	_canvas_destroy(canvas);
 }
 
@@ -135,12 +135,12 @@ void _palette_paint(HEXOBJ hObj)
 	EX_PAINTSTRUCT ps{ 0 };
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
-		HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PTL_IMAGE);
+		HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PALETTE_LONG_IMAGE);
 		_canvas_clear(ps.hCanvas, ExRGB2ARGB(0, 255));
 		_canvas_drawimagerectrect(ps.hCanvas, img, 0, 0, ps.uWidth, ps.uHeight, 0, 0, ps.uWidth, ps.uHeight, 255);
-		HEXBRUSH brush = (HEXBRUSH)Ex_ObjGetLong(hObj, PTL_PEN);
-		INT beginX = Ex_ObjGetLong(hObj, PTL_BEGINX);
-		INT beginY = Ex_ObjGetLong(hObj, PTL_BEGINY);
+		HEXBRUSH brush = (HEXBRUSH)Ex_ObjGetLong(hObj, PALETTE_LONG_PEN);
+		INT beginX = Ex_ObjGetLong(hObj, PALETTE_LONG_BEGINX);
+		INT beginY = Ex_ObjGetLong(hObj, PALETTE_LONG_BEGINY);
 		_canvas_drawellipse(ps.hCanvas, brush, beginX - Ex_Scale(5 / 2), beginY - Ex_Scale(5 / 2), Ex_Scale(5), Ex_Scale(5), Ex_Scale(2), 0);
 		Ex_ObjEndPaint(hObj, &ps);
 	}

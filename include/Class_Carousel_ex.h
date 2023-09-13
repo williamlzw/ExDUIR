@@ -1,10 +1,10 @@
 #pragma once
 #include "help_ex.h"
 
-#define ECL_HIMAGELIST 0
-#define ECL_WIDTH 1
-#define ECL_HEIGHT 2
-#define ECL_INDEX 3
+#define CAROUSEL_LONG_HIMAGELIST 0
+#define CAROUSEL_LONG_WIDTH 1
+#define CAROUSEL_LONG_HEIGHT 2
+#define CAROUSEL_LONG_INDEX 3
 
 void _carousel_register();
 LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

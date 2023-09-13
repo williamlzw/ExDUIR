@@ -96,7 +96,7 @@ void _easing_progress(HEXEASING pEasing)
     DOUBLE nCurrent = 0;
     LPVOID pProgress;
     LPVOID pCurrent;
-    if ((nMode & ES_DISPATCHNOTIFY) == ES_DISPATCHNOTIFY)
+    if ((nMode & EASING_MODE_DISPATCHNOTIFY) == EASING_MODE_DISPATCHNOTIFY)
     {
         EasingInfo.param1 = param1;
         EasingInfo.param2 = param2;
@@ -112,13 +112,13 @@ void _easing_progress(HEXEASING pEasing)
     }
     BOOL fDesc = TRUE;
     INT nProcessTime = 0;
-    while (nTimes > 0 || (nMode & ES_CYCLE) == ES_CYCLE)
+    while (nTimes > 0 || (nMode & EASING_MODE_CYCLE) == EASING_MODE_CYCLE)
     {
-        if ((nMode & ES_BACKANDFORTH) == ES_BACKANDFORTH)
+        if ((nMode & EASING_MODE_BACKANDFORTH) == EASING_MODE_BACKANDFORTH)
         {
             fDesc = (fDesc == TRUE ? FALSE : TRUE);
         }
-        else if ((nMode & ES_REVERSE) == ES_REVERSE)
+        else if ((nMode & EASING_MODE_REVERSE) == EASING_MODE_REVERSE)
         {
             fDesc = TRUE;
         }
@@ -132,7 +132,7 @@ void _easing_progress(HEXEASING pEasing)
         while (i <= nFrameCount)
         {
             Ex_Sleep((nInterval - (timeGetTime() - nProcessTime)) * 1000);
-            if (((EX_EASING *)pEasing)->nState == EES_PAUSE)
+            if (((EX_EASING *)pEasing)->nState == EASING_STATE_PAUSE)
             {
                 WaitForSingleObject(((EX_EASING *)pEasing)->hEventPause, INFINITE); //停住最大程度节省CPU
                 nProcessTime = timeGetTime();                                    //如果没停住,则延时一段时间节省CPU
@@ -144,7 +144,7 @@ void _easing_progress(HEXEASING pEasing)
                 nProcess = 1;
                 ((EX_EASING *)pEasing)->nState = 1;
             }
-            if ((nMode & ES_DISPATCHNOTIFY) == ES_DISPATCHNOTIFY)
+            if ((nMode & EASING_MODE_DISPATCHNOTIFY) == EASING_MODE_DISPATCHNOTIFY)
             {
                 EasingInfo.nCurrent = nCurrent;
                 EasingInfo.nProgress = nProcess;
@@ -164,10 +164,10 @@ void _easing_progress(HEXEASING pEasing)
             {
                 fStop = ((EasingPROC2)pContext)(pEasing, nProcess, nCurrent, pEasingContext, nTimes - 1, param1, param2, param3, param4) != 0;
             }
-            if (fStop || ((EX_EASING *)pEasing)->nState == EES_STOP)
+            if (fStop || ((EX_EASING *)pEasing)->nState == EASING_STATE_STOP)
             {
                 nTimes = 0;
-                nMode = (nMode & ~ES_CYCLE);
+                nMode = (nMode & ~EASING_MODE_CYCLE);
                 break;
             }
             i = i + 1;
@@ -175,7 +175,7 @@ void _easing_progress(HEXEASING pEasing)
         }
         nTimes = nTimes - 1;
     }
-    if ((nMode & ES_RELEASECURVE) == ES_RELEASECURVE && uType == ET_CURVE)
+    if ((nMode & EASING_MODE_RELEASECURVE) == EASING_MODE_RELEASECURVE && uType == EASING_TYPE_CURVE)
     {
         _easing_curve_free(pEasingContext);
     }
@@ -818,7 +818,7 @@ HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG
         pEasing = (HEXEASING)Ex_MemAlloc(sizeof(EX_EASING));
         INT nError = 0;
         LPVOID ptr;
-        if ((dwMode & ES_DISPATCHNOTIFY) == ES_DISPATCHNOTIFY)
+        if ((dwMode & EASING_MODE_DISPATCHNOTIFY) == EASING_MODE_DISPATCHNOTIFY)
         {
             if (_handle_validate((EXHANDLE)pContext, HT_DUI, (LPVOID *)&ptr, &nError))
             {
@@ -840,11 +840,11 @@ HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG
         {
             lpProc = lpCalcProcs[dwType - 1];
         }
-        else if (dwType == ET_CUSTOM)
+        else if (dwType == EASING_TYPE_CUSTOM)
         {
             lpProc = pEasingContext;
         }
-        else if (dwType == ET_CURVE)
+        else if (dwType == EASING_TYPE_CURVE)
         {
             lpProc = &_easing_calc_curve;
             if (pEasingContext == 0)
@@ -881,7 +881,7 @@ HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG
         ((EX_EASING *)pEasing)->param3 = param3;
         ((EX_EASING *)pEasing)->param4 = param4;
         ((EX_EASING *)pEasing)->hEventPause = CreateEventW(0, FALSE, TRUE, 0);
-        if ((dwMode & ES_THREAD) != 0)
+        if ((dwMode & EASING_MODE_THREAD) != 0)
         {
             Thread_Create((LPTHREAD_START_ROUTINE)&_easing_progress, pEasing);
         }

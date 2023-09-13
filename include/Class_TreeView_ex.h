@@ -2,23 +2,23 @@
 #include "help_ex.h"
 
 // 树形列表属性_节点信息
-#define ETVL_NODEITEM 0
+#define TREEVIEW_LONG_NODEITEM 0
 // 树形列表属性_项目数据
-#define ETVL_ITEMARRAY 1
+#define TREEVIEW_LONG_ITEMARRAY 1
 // 树形列表属性_可视项目起始索引
-#define ETVL_INDEXSTART 2
+#define TREEVIEW_LONG_INDEXSTART 2
 // 树形列表属性_可视项目结束索引
-#define ETVL_INDEXEND 3
+#define TREEVIEW_LONG_INDEXEND 3
 // 树形列表属性_留白宽度
-#define ETVL_INDENT 4
+#define TREEVIEW_LONG_INDENT 4
 // 树形列表属性_图片组句柄
-#define ETVL_HIMAGELIST 5
+#define TREEVIEW_LONG_HIMAGELIST 5
 // 树形列表属性_项目高度
-#define ETVL_ITEMHEIGHT 6
+#define TREEVIEW_LONG_ITEMHEIGHT 6
 // 树形列表属性_左边
-#define ETVL_LEFT 7
+#define TREEVIEW_LONG_LEFT 7
 // 树形列表属性_是否点击收缩
-#define ETVL_EXPAND 8
+#define TREEVIEW_LONG_EXPAND 8
 
 void _treeview_register();
 EX_TREEVIEW_NODEITEM *_treeview_getlastitem(EX_TREEVIEW_NODEITEM *item);

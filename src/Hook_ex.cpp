@@ -28,11 +28,11 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
             if (pMsg != 0)
             {
                 SetClassLongPtrW(hWnd, GCLP_HCURSOR, (LONG_PTR)g_Li.hCursor);
-                INT style = EWS_TITLE | EWS_BUTTON_CLOSE | EWS_ESCEXIT | EWS_MOVEABLE | EWS_MESSAGEBOX;
+                INT style = WINDOW_STYLE_TITLE | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_MESSAGEBOX;
 
-                if (((pMsg->dwFlags_ & EMBF_WINDOWICON) == EMBF_WINDOWICON))
+                if (((pMsg->dwFlags_ & MESSAGEBOX_FLAG_WINDOWICON) == MESSAGEBOX_FLAG_WINDOWICON))
                 {
-                    style = style | EWS_HASICON;
+                    style = style | WINDOW_STYLE_HASICON;
                 }
                 Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, style, (size_t)pMsg, pMsg->lpfnNotifyCallback_);
             }
@@ -77,13 +77,13 @@ void _menu_init(HWND hWnd)
             menu_s *lpMenuParams = pWnd->lpMenuParams_;
             SetWindowLongPtrW(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
             SetClassLongPtrW(hWnd, GCL_STYLE, CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS);
-            INT dwStyle = EWS_MENU | EWS_NOINHERITBKG | EWS_ESCEXIT | EWS_FULLSCREEN;
+            INT dwStyle = WINDOW_STYLE_MENU | WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_FULLSCREEN;
             MsgPROC pfnCallback = nullptr;
             if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s)))
             {
-                if (((lpMenuParams->dwFlags_ & EMNF_NOSHADOW) == EMNF_NOSHADOW))
+                if (((lpMenuParams->dwFlags_ & MENU_FLAG_NOSHADOW) == MENU_FLAG_NOSHADOW))
                 {
-                    dwStyle = dwStyle | EWS_NOSHADOW;
+                    dwStyle = dwStyle | WINDOW_STYLE_NOSHADOW;
                 }
                 pfnCallback = lpMenuParams->pfnCallback_;
             }
@@ -213,7 +213,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s *pWnd, WPARAM wParam, LPARAM lParam)
         if (w > width)
             width = w;
     }
-    if (!Flag_Query(EXGF_DPI_ENABLE))
+    if (!Flag_Query(ENGINE_FLAG_DPI_ENABLE))
     {
         width = (FLOAT)width / g_Li.DpiX_Real;
     }
@@ -289,10 +289,10 @@ void _msgbox_initdialog(HWND hWnd, wnd_s *pWnd, WPARAM wParam, LPARAM lParam)
 
     if (wType == MB_ABORTRETRYIGNORE || wType == MB_YESNO)
     {
-        Ex_ObjEnable(Ex_ObjGetFromID(pWnd->objCaption_, EWS_BUTTON_CLOSE), FALSE);
+        Ex_ObjEnable(Ex_ObjGetFromID(pWnd->objCaption_, WINDOW_STYLE_BUTTON_CLOSE), FALSE);
     }
 
-    if (((pMsg->dwFlags_ & EMBF_CENTEWINDOW) == EMBF_CENTEWINDOW))
+    if (((pMsg->dwFlags_ & MESSAGEBOX_FLAG_CENTEWINDOW) == MESSAGEBOX_FLAG_CENTEWINDOW))
     {
         Ex_WndCenterFrom(hWnd, (HWND)GetWindowLongPtrW(hWnd, GWLP_HWNDPARENT), FALSE);
     }

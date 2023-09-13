@@ -16,19 +16,19 @@ public:
 	{
 		std::vector<CHAR> theme;
 		Ex_ReadFile(L"res/Default.ext", &theme);
-		DWORD dwGlobalFlags = EXGF_RENDER_METHOD_D2D | EXGF_DPI_ENABLE | EXGF_MENU_ALL;
+		DWORD dwGlobalFlags = ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL;
 		m_theApp = ExApp(theme, dwGlobalFlags);
 
-		DWORD dwStyleDUI = EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX |
-			EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW;
+		DWORD dwStyleDUI = WINDOW_STYLE_MAINWINDOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_BUTTON_MAX |
+			WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW;
 		std::wstring windowName = L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR";
 		m_skin = ExSkin((HWND)NULL, 0, 0, 600, 600, windowName.c_str(), dwStyleDUI);
 
-		m_skin.SetLong(EWL_CRBKG, ExARGB(120, 120, 120, 255));
+		m_skin.SetLong(ENGINE_LONG_CRBKG, ExARGB(120, 120, 120, 255));
 
 		std::vector<CHAR> imgdata;
 		Ex_ReadFile(L"res/bkg.png", &imgdata);
-		m_skin.SetBackgroundImage(imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, BIF_PLAYIMAGE, 255, TRUE);
+		m_skin.SetBackgroundImage(imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_PLAYIMAGE, 255, TRUE);
 		m_buttons.push_back(ExButton(m_skin, 10, 30, 100, 30, L"测试按钮开关", -1, -1, DT_VCENTER | DT_CENTER, 101));
 		m_buttons.push_back(ExButton(m_skin, 10, 70, 100, 30, L"测试标签", -1, -1, DT_VCENTER | DT_CENTER, 102));
 		m_buttons.push_back(ExButton(m_skin, 10, 110, 100, 30, L"测试单选复选框", -1, -1, DT_VCENTER | DT_CENTER, 103));

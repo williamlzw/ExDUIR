@@ -3,43 +3,43 @@
 
 
 // 组合框属性_按下状态
-#define ECBL_STATE 0
+#define COMBOBOX_LONG_STATE 0
 // 组合框属性_编辑框句柄
-#define ECBL_HOBJEDIT 1
+#define COMBOBOX_LONG_HOBJEDIT 1
 // 组合框属性_矩形左边
-#define ECBL_LEFT 2
+#define COMBOBOX_LONG_LEFT 2
 // 组合框属性_矩形顶边
-#define ECBL_TOP 3
+#define COMBOBOX_LONG_TOP 3
 // 组合框属性_矩形右边
-#define ECBL_RIGHT 4
+#define COMBOBOX_LONG_RIGHT 4
 // 组合框属性_矩形底边
-#define ECBL_BOTTOM 5
+#define COMBOBOX_LONG_BOTTOM 5
 // 组合框属性_弹出面板窗口句柄
-#define ECBL_BOXHWND 6
+#define COMBOBOX_LONG_BOXHWND 6
 // 组合框属性_列表框句柄
-#define ECBL_HOBJLISTVIEW 7
+#define COMBOBOX_LONG_HOBJLISTVIEW 7
 // 组合框属性_当前选中项
-#define ECBL_CURRENTSELECTED 8
+#define COMBOBOX_LONG_CURRENTSELECTED 8
 // 组合框属性_项目数量
-#define ECBL_ITEMCOUNT 9
+#define COMBOBOX_LONG_ITEMCOUNT 9
 // 组合框属性_项目数据
-#define ECBL_ITEMLIST 10
+#define COMBOBOX_LONG_ITEMLIST 10
 // 组合框属性_下拉列表宽度
-#define ECBL_DROPPEDWIDTH 11
+#define COMBOBOX_LONG_DROPPEDWIDTH 11
 // 组合框属性_表项高度
-#define ECBL_ITEMHEIGHT 12
+#define COMBOBOX_LONG_ITEMHEIGHT 12
 // 组合框属性_可视项目数量
-#define ECBL_MINVISIBLE 13
+#define COMBOBOX_LONG_MINVISIBLE 13
 
 // 组合框消息_置可视数量
-#define CB_SETMINVISIBLE 5889
+#define COMBOBOX_MESSAGE_SETMINVISIBLE 5889
 // 组合框消息_取可视数量
-#define CB_GETMINVISIBLE 5890
+#define COMBOBOX_MESSAGE_GETMINVISIBLE 5890
 
 // 组合框状态_悬浮
-#define ECBS_HOVER 1
+#define COMBOBOX_STATE_HOVER 1
 // 组合框状态_正常
-#define ECBS_NORMAL 2
+#define COMBOBOX_STATE_NORMAL 2
 
 struct EX_COMBOX_ITEM
 {

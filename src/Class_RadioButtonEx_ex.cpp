@@ -27,10 +27,10 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
     if (uMsg == WM_CREATE)
     {
         Ex_ObjInitPropList(hObj, 5);
-        Ex_ObjSetProp(hObj, ERBEP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
-        Ex_ObjSetProp(hObj, ERBEP_CRBORDERNORMAL, ExARGB(0, 0, 0, 255));
-        Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, ExARGB(0, 0, 0, 255));
-        Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERNORMAL, ExARGB(0, 0, 0, 255));
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER, ExARGB(0, 0, 0, 255));
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
     }
     else if (uMsg == WM_DESTROY)
     {
@@ -59,10 +59,10 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
     {
         EX_OBJ_PROPS *RadioButtonExprops = (EX_OBJ_PROPS *)lParam;
 
-        Ex_ObjSetProp(hObj, ERBEP_CRBKGDOWNORCHECKED, RadioButtonExprops->crBkgDownOrChecked);
-        Ex_ObjSetProp(hObj, ERBEP_CRBORDERNORMAL, RadioButtonExprops->crBorderNormal);
-        Ex_ObjSetProp(hObj, ERBEP_CRBORDERHOVER, RadioButtonExprops->crBorderHover);
-        Ex_ObjSetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED, RadioButtonExprops->crBorderDownOrChecked);
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED, RadioButtonExprops->crBkgDownOrChecked);
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERNORMAL, RadioButtonExprops->crBorderNormal);
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER, RadioButtonExprops->crBorderHover);
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED, RadioButtonExprops->crBorderDownOrChecked);
     }
     return Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam);
 }
@@ -73,22 +73,22 @@ void _radiobuttonex_paint(HEXOBJ hObj)
     RECT rcBlock = {0};
     if (Ex_ObjBeginPaint(hObj, &ps))
     {
-        HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ERBEP_CRBORDERHOVER));
+        HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER));
         EXARGB crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
         if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
         {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
-            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ERBEP_CRBORDERHOVER));
+            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER));
         }
 
-        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0)
         {
-            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ERBEP_CRBORDERDOWNORCHECKED));
+            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED));
         }
         /* 计算文本尺寸 */
         FLOAT nTextWidth = NULL;
         FLOAT nTextHeight = NULL;
-        _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
+        _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
         /* 定义单选框圆角矩形 */
         rcBlock.left = ps.rcPaint.left + (long)Ex_Scale(2);
@@ -99,9 +99,9 @@ void _radiobuttonex_paint(HEXOBJ hObj)
         _canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, nTextHeight / 2 - 1, nTextHeight / 2 - 1, 1, D2D1_DASH_STYLE_SOLID);
 
         /* 定义选中色 */
-        _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ERBEP_CRBKGDOWNORCHECKED));
+        _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED));
 
-        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) != 0)
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0)
         {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED);
             /* 把矩形往里缩3像素 */
@@ -117,7 +117,7 @@ void _radiobuttonex_paint(HEXOBJ hObj)
         _canvas_drawtext(ps.hCanvas,
                          Ex_ObjGetFont(hObj),
                          crText,
-                         (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
+                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
                          -1,
                          DT_LEFT | DT_VCENTER,
                          (FLOAT)ps.rcText.left + nTextHeight + Ex_Scale(7),

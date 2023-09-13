@@ -2,31 +2,31 @@
 #include "help_ex.h"
 
 // 报表列表属性_项目宽度
-#define ERLVL_ITEMWIDTH 0
+#define REPORTLISTVIEW_LONG_ITEMWIDTH 0
 // 报表列表属性_项目高度
-#define ERLVL_ITEMHEIGHT 1
+#define REPORTLISTVIEW_LONG_ITEMHEIGHT 1
 // 报表列表属性_列数
-#define ERLVL_CTCS 2
+#define REPORTLISTVIEW_LONG_CTCS 2
 // 报表列表属性_列信息
-#define ERLVL_TCINFO 3
+#define REPORTLISTVIEW_LONG_TCINFO 3
 // 报表列表属性_表项信息
-#define ERLVL_TRINFO 4
+#define REPORTLISTVIEW_LONG_TRINFO 4
 // 报表列表属性_排序列索引
-#define ERLVL_TCIDXSORTED 5
+#define REPORTLISTVIEW_LONG_TCIDXSORTED 5
 // 报表列表属性_表头句柄
-#define ERLVL_HOBJHEAD 6
+#define REPORTLISTVIEW_LONG_HOBJHEAD 6
 // 报表列表属性_表头高度
-#define ERLVL_HEADHEIGHT 7
+#define REPORTLISTVIEW_LONG_HEADHEIGHT 7
 // 报表列表属性_是否升序排序
-#define ERLVL_FTCSORTEDDESC 8
+#define REPORTLISTVIEW_LONG_FTCSORTEDDESC 8
 // 报表列表属性_图片组句柄
-#define ERLVL_HIMAGELIST 9
+#define REPORTLISTVIEW_LONG_HIMAGELIST 9
 // 报表列表属性_编辑框句柄
-#define ERLVL_HEDIT 10
+#define REPORTLISTVIEW_LONG_HEDIT 10
 
 // 报表列表表头属性_列表句柄
-#define ERLVHL_HLISTVIEW 0
-#define ERLVHL_INDEXHIT 1
+#define REPORTLISTVIEW_HEADER_LONG_HLISTVIEW 0
+#define REPORTLISTVIEW_HEADER_LONG_INDEXHIT 1
 
 #define LVSICF_NOSCROLL 2
 
@@ -36,7 +36,7 @@ struct reportlistview_tr_s
 	DWORD dwStyle_;
 	LPARAM lParam_;
 	DWORD nImageIndex_;
-	EXARGB rowbkcr_;        //具有ERLV_RS_ROWCOLOUR风格时,整行的背景色
+	EXARGB rowbkcr_;        //具有REPORTLISTVIEW_LINESTYLE_ROWCOLOUR风格时,整行的背景色
 	LPVOID pTDInfo_; //行文本数组信息
 };
 
@@ -44,10 +44,10 @@ struct reportlistview_tr_s
 struct reportlistview_td_s
 {
 	LPCWSTR wzText_;
-	DWORD cellStyle_;   //ERLV_RS_CELLCOLOUR风格
-	EXARGB crbk_;       //cellStyle 具有 ERLV_RS_CELLCOLOUR 风格时,单元格的背景色
-	EXARGB crText_;     //cellStyle 具有 ERLV_RS_CELLTEXTCOLOUR 风格时,单元格的文本色
-	HEXFONT font_;       //cellStyle 具有 ERLV_RS_CELLFONT 风格时,单元格的字体
+	DWORD cellStyle_;   //REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR风格
+	EXARGB crbk_;       //cellStyle 具有 REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR 风格时,单元格的背景色
+	EXARGB crText_;     //cellStyle 具有 REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR 风格时,单元格的文本色
+	HEXFONT font_;       //cellStyle 具有 REPORTLISTVIEW_CELLSTYLE_CELLFONT 风格时,单元格的字体
 	LPARAM lParam_;     //单元格参数
 };
 

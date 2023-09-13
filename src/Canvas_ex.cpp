@@ -423,7 +423,7 @@ void _canvas_init(INT* nError)
 	if (!bDX)
 	{
 		_dx_uninit();
-		Flag_Del(EXGF_RENDER_METHOD_D2D);
+		Flag_Del(ENGINE_FLAG_RENDER_METHOD_D2D);
 	}
 	g_Li.pfnUpdateLayeredWindowIndirect = (UpdateLayeredWindowIndirectPROC)GetProcAddr(L"user32.dll", "UpdateLayeredWindowIndirect");
 	nError = 0;
@@ -461,15 +461,15 @@ LPVOID _canvas_getcontext(HEXCANVAS hCanvas, INT nType)
 	LPVOID ret = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if (nType == CVC_DX_D2DCONTEXT)
+		if (nType == CANVAS_DX_D2DCONTEXT)
 		{
 			ret = _cv_context(pCanvas);
 		}
-		else if (nType == CVC_DX_D2DBITMAP)
+		else if (nType == CANVAS_DX_D2DBITMAP)
 		{
 			ret = _cv_dx_bmp(pCanvas);
 		}
-		else if (nType == CVC_DX_GDIRENDERTARGET)
+		else if (nType == CANVAS_DX_GDIRENDERTARGET)
 		{
 			ret = _cv_dx_gdiinterop(pCanvas);
 		}
@@ -806,7 +806,7 @@ BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 	pt = gridPaddingTop;
 	pr = gridPaddingRight;
 	pb = gridPaddingBottom;
-	if ((dwFlags & BIF_DISABLESCALE) == 0)
+	if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0)
 	{
 		pl = Ex_Scale(pl);
 		pt = Ex_Scale(pt);
@@ -824,7 +824,7 @@ BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 	ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft, dstBottom - pb, dstLeft + pl, dstBottom, srcLeft, srcBottom - gridPaddingBottom, srcLeft + gridPaddingLeft, srcBottom, dwAlpha);
 	//左-中间
 	ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft, dstTop + pt, dstLeft + pl, dstBottom - pb, srcLeft, srcTop + gridPaddingTop, srcLeft + gridPaddingLeft, srcBottom - gridPaddingBottom, dwAlpha);
-	if ((dwFlags & BIF_GRID_EXCLUSION_CENTER) == 0) //中间
+	if ((dwFlags & BACKGROUND_FLAG_GRID_EXCLUSION_CENTER) == 0) //中间
 	{
 		ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft + pl, dstTop + pt, dstRight - pr, dstBottom - pb, srcLeft + gridPaddingLeft, srcTop + gridPaddingTop, srcRight - gridPaddingRight, srcBottom - gridPaddingBottom, dwAlpha);
 	}
@@ -867,9 +867,9 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 
 				RtlMoveMemory(&rcSrc, lpRcSrc, sizeof(RECT));
 			}
-			if (dwRepeat != BIR_NO_REPEAT)
+			if (dwRepeat != BACKGROUND_REPEAT_NO_REPEAT)
 			{
-				if ((dwFlags & BIF_DISABLESCALE) == 0)
+				if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0)
 				{
 					x = Ex_Scale(x);
 					y = Ex_Scale(y);
@@ -886,23 +886,23 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 			}
 			else
 			{
-				if (dwRepeat == BIR_DEFAULT)
+				if (dwRepeat == BACKGROUND_REPEAT_ZOOM)
 				{
 					_canvas_drawimagerectrect(hCanvas, hImage, rcfDst.left, rcfDst.top, rcfDst.right, rcfDst.bottom,
 						rcSrc.left, rcSrc.top, rcSrc.right, rcSrc.bottom, dwAlpha);
 				}
-				else if (dwRepeat == BIR_NO_REPEAT)
+				else if (dwRepeat == BACKGROUND_REPEAT_NO_REPEAT)
 				{
 					w = rcSrc.right - rcSrc.left;
 					h = rcSrc.bottom - rcSrc.top;
-					if ((dwFlags & BIF_DISABLESCALE) == 0)
+					if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0)
 					{
 						w = Ex_Scale(w);
 						h = Ex_Scale(h);
 					}
-					if ((dwFlags & BIF_POSITION_X_PERCENT) == 0)
+					if ((dwFlags & BACKGROUND_FLAG_POSITION_X_PERCENT) == 0)
 					{
-						if ((dwFlags & BIF_DISABLESCALE) == 0)
+						if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0)
 						{
 							x = Ex_Scale(x);
 						}
@@ -912,9 +912,9 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 					{
 						rcfDst.left = rcfDst.left + (rcfDst.right - rcfDst.left - w) / 2;
 					}
-					if ((dwFlags & BIF_POSITION_Y_PERCENT) == 0)
+					if ((dwFlags & BACKGROUND_FLAG_POSITION_Y_PERCENT) == 0)
 					{
-						if ((dwFlags & BIF_DISABLESCALE) == 0)
+						if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0)
 						{
 							y = Ex_Scale(y);
 						}
@@ -932,7 +932,7 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 					h = rcSrc.bottom - rcSrc.top;
 					HEXIMAGE tmpImg = 0;
 					_img_copyrect(hImage, rcSrc.left, rcSrc.top, w, h, &tmpImg);
-					if ((dwFlags & BIF_DISABLESCALE) == 0)
+					if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0)
 					{
 						w = Ex_Scale(w);
 						h = Ex_Scale(h);
@@ -943,11 +943,11 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 					if (hScale != 0)
 					{
 						HEXBRUSH hBrush = _brush_createfromimg(hScale);
-						if (dwRepeat == BIR_REPEAT_X)
+						if (dwRepeat == BACKGROUND_REPEAT_REPEAT_X)
 						{
 							rcfDst.bottom = rcfDst.top + h;
 						}
-						else if (dwRepeat == BIR_REPEAT_Y)
+						else if (dwRepeat == BACKGROUND_REPEAT_REPEAT_Y)
 						{
 							rcfDst.right = rcfDst.left + w;
 						}
@@ -984,13 +984,13 @@ BOOL _canvas_cliprect(HEXCANVAS hCanvas, INT left, INT top, INT right, INT botto
 	INT nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if ((pCanvas->dwFlags_ & ECVF_CLIPED) == ECVF_CLIPED)
+		if ((pCanvas->dwFlags_ & CANVAS_FLAG_CLIPED) == CANVAS_FLAG_CLIPED)
 		{
 			_dx_resetclip(_cv_context(pCanvas));
 		}
 		else
 		{
-			pCanvas->dwFlags_ = pCanvas->dwFlags_ | ECVF_CLIPED;
+			pCanvas->dwFlags_ = pCanvas->dwFlags_ | CANVAS_FLAG_CLIPED;
 		}
 		pCanvas->c_left_ = left;
 		pCanvas->c_top_ = top;
@@ -1008,10 +1008,10 @@ BOOL _canvas_resetclip(HEXCANVAS hCanvas)
 	INT nError = 0;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		if ((pCanvas->dwFlags_ & ECVF_CLIPED) == ECVF_CLIPED)
+		if ((pCanvas->dwFlags_ & CANVAS_FLAG_CLIPED) == CANVAS_FLAG_CLIPED)
 		{
 			_dx_resetclip(_cv_context(pCanvas));
-			pCanvas->dwFlags_ = pCanvas->dwFlags_ - (pCanvas->dwFlags_ & ECVF_CLIPED);
+			pCanvas->dwFlags_ = pCanvas->dwFlags_ - (pCanvas->dwFlags_ & CANVAS_FLAG_CLIPED);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -1032,7 +1032,7 @@ BOOL _canvas_flush(HEXCANVAS hCanvas)
 
 BOOL _canvas_drawcanvas(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight, INT dstBottom, INT srcLeft, INT srcTop, DWORD dwAlpha, DWORD dwCompositeMode)
 {
-	if (dwCompositeMode == CV_COMPOSITE_MODE_SRCCOPY)
+	if (dwCompositeMode == CANVAS_COMPOSITE_MODE_SRCCOPY)
 	{
 		return _canvas_bitblt(hCanvas, sCanvas, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop);
 	}
@@ -1438,17 +1438,17 @@ BOOL _canvas_setantialias(HEXCANVAS hCanvas, BOOL antialias)
 		BOOL doChange = FALSE;
 		if (antialias)
 		{
-			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
 		else
 		{
-			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
+			if (FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
@@ -1479,27 +1479,27 @@ BOOL _canvas_setimageantialias(HEXCANVAS hCanvas, BOOL antialias)
 		BOOL doChange = FALSE;
 		if (antialias)
 		{
-			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
-			else if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
+			else if (!FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
 		else
 		{
-			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
+			if (FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
-			else if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS))
+			else if (FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVF_CANVASANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, CANVAS_FLAG_CANVASANTIALIAS);
 				doChange = TRUE;
 			}
 		}
@@ -1537,17 +1537,17 @@ BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, BOOL antialias)
 		BOOL doChange = FALSE;
 		if (antialias)
 		{
-			if (!FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
+			if (!FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS))
 			{
-				FLAGS_ADD(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
+				FLAGS_ADD(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
 		}
 		else
 		{
-			if (FLAGS_CHECK(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS))
+			if (FLAGS_CHECK(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS))
 			{
-				FLAGS_DEL(pCanvas->dwFlags_, ECVF_TEXTANTIALIAS);
+				FLAGS_DEL(pCanvas->dwFlags_, CANVAS_FLAG_TEXTANTIALIAS);
 				doChange = TRUE;
 			}
 		}
@@ -1865,7 +1865,7 @@ BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, F
 
 void _canvas_applyeffect(HEXCANVAS hCanvas, HEXEFFECT hEffect)
 {
-	auto pContext = (ID2D1DeviceContext*)_canvas_getcontext(hCanvas, CVC_DX_D2DCONTEXT);
+	auto pContext = (ID2D1DeviceContext*)_canvas_getcontext(hCanvas, CANVAS_DX_D2DCONTEXT);
 	ID2D1Image* lpBitmap = nullptr;
 	((ID2D1Effect *)hEffect)->GetOutput(&lpBitmap);
 	pContext->DrawImage(lpBitmap, D2D1_INTERPOLATION_MODE_LINEAR);

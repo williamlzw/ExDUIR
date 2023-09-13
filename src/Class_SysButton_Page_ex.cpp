@@ -2,12 +2,12 @@
 
 void _sysbutton_register()
 {
-    Ex_ObjRegister(L"SysButton", EOS_VISIBLE, EOS_EX_TOPMOST, 0, 0, 0, 0, _sysbutton_proc);
+    Ex_ObjRegister(L"SysButton", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TOPMOST, 0, 0, 0, 0, _sysbutton_proc);
 }
 
 void _page_register()
 {
-    Ex_ObjRegister(L"Page", EOS_VISIBLE, EOS_EX_TRANSPARENT, 0, 0, 0, 0, _page_proc);
+    Ex_ObjRegister(L"Page", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TRANSPARENT, 0, 0, 0, 0, _page_proc);
 }
 
 size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
@@ -17,11 +17,11 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
     EXATOM atomState = 0;
     if (Ex_ObjBeginPaint(hObj, &ps))
     {
-        if ((ps.dwStyle & EWS_BUTTON_CLOSE) == EWS_BUTTON_CLOSE)
+        if ((ps.dwStyle & WINDOW_STYLE_BUTTON_CLOSE) == WINDOW_STYLE_BUTTON_CLOSE)
         {
             atomClass = ATOM_SYSBUTTON_CLOSE;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_MAX) == EWS_BUTTON_MAX)
+        else if ((ps.dwStyle & WINDOW_STYLE_BUTTON_MAX) == WINDOW_STYLE_BUTTON_MAX)
         {
             if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
             {
@@ -32,7 +32,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 atomClass = ATOM_SYSBUTTON_MAX;
             }
         }
-        else if ((ps.dwStyle & EWS_BUTTON_MIN) == EWS_BUTTON_MIN)
+        else if ((ps.dwStyle & WINDOW_STYLE_BUTTON_MIN) == WINDOW_STYLE_BUTTON_MIN)
         {
             if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
             {
@@ -43,19 +43,19 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 atomClass = ATOM_SYSBUTTON_MIN;
             }
         }
-        else if ((ps.dwStyle & EWS_BUTTON_MENU) == EWS_BUTTON_MENU)
+        else if ((ps.dwStyle & WINDOW_STYLE_BUTTON_MENU) == WINDOW_STYLE_BUTTON_MENU)
         {
             atomClass = ATOM_SYSBUTTON_MENU;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_SETTING) == EWS_BUTTON_SETTING)
+        else if ((ps.dwStyle & WINDOW_STYLE_BUTTON_SETTING) == WINDOW_STYLE_BUTTON_SETTING)
         {
             atomClass = ATOM_SYSBUTTON_SETTING;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_SKIN) == EWS_BUTTON_SKIN)
+        else if ((ps.dwStyle & WINDOW_STYLE_BUTTON_SKIN) == WINDOW_STYLE_BUTTON_SKIN)
         {
             atomClass = ATOM_SYSBUTTON_SKN;
         }
-        else if ((ps.dwStyle & EWS_BUTTON_HELP) == EWS_BUTTON_HELP)
+        else if ((ps.dwStyle & WINDOW_STYLE_BUTTON_HELP) == WINDOW_STYLE_BUTTON_HELP)
         {
             atomClass = ATOM_SYSBUTTON_HELP;
         }
@@ -75,10 +75,10 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
 
         INT left;
         Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomState, 255);
-        if ((ps.dwStyle & EWS_TITLE) != 0)
+        if ((ps.dwStyle & WINDOW_STYLE_TITLE) != 0)
         {
             left = ps.rcText.left;
-            if (((pObj->pWnd_->dwStyle_ & EWS_HASICON) == EWS_HASICON))
+            if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_HASICON) == WINDOW_STYLE_HASICON))
             {
                 HICON hicon = (HICON)_wnd_geticonhandle(hWnd, FALSE);
                 if (hicon != 0)
@@ -94,7 +94,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
                 }
             }
 
-            if (((pObj->pWnd_->dwStyle_ & EWS_TITLE) == EWS_TITLE))
+            if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE))
             {
                 _canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1,
                                    DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_WORD_ELLIPSIS, left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_, 0, 0);
@@ -119,7 +119,7 @@ void _sysbutton_remove_proc(obj_s *pObj, INT width, INT height)
             bReCalced = TRUE;
             nOffset = width - psobj->right_;
         }
-        Ex_ObjSetPos(sObj, 0, psobj->left_ + nOffset, EOP_DEFAULT, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+        Ex_ObjSetPos(sObj, 0, psobj->left_ + nOffset, OBJECT_POSITION_DEFAULT, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
         sObj = psobj->objNext_;
     }
 }
@@ -133,15 +133,15 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         if (uMsg == WM_NCCREATE)
         {
             LPCWSTR ret = nullptr;
-            if (((pObj->dwStyle_ & EWS_BUTTON_MIN) == EWS_BUTTON_MIN))
+            if (((pObj->dwStyle_ & WINDOW_STYLE_BUTTON_MIN) == WINDOW_STYLE_BUTTON_MIN))
             {
                 ret = StrDupW(g_Li.lpStrMin);
             }
-            else if (((pObj->dwStyle_ & EWS_BUTTON_CLOSE) == EWS_BUTTON_CLOSE))
+            else if (((pObj->dwStyle_ & WINDOW_STYLE_BUTTON_CLOSE) == WINDOW_STYLE_BUTTON_CLOSE))
             {
                 ret = StrDupW(g_Li.lpStrClose);
             }
-            else if (((pObj->dwStyle_ & EWS_BUTTON_HELP) == EWS_BUTTON_HELP))
+            else if (((pObj->dwStyle_ & WINDOW_STYLE_BUTTON_HELP) == WINDOW_STYLE_BUTTON_HELP))
             {
                 ret = StrDupW(g_Li.lpStrHelp);
             }
@@ -153,9 +153,9 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         else if (uMsg == WM_NCHITTEST)
         {
             INT ret = pObj->dwStyle_;
-            if ((ret & EWS_TITLE) != 0)
+            if ((ret & WINDOW_STYLE_TITLE) != 0)
             {
-                if ((ret & EWS_HASICON) != 0)
+                if ((ret & WINDOW_STYLE_HASICON) != 0)
                 {
                     ret = HTCAPTION;
                 }
@@ -173,10 +173,10 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         else if (uMsg == WM_MOUSEHOVER)
         {
             LPCWSTR ret = nullptr;
-            if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
+            if (!((pObj->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE))
             {
                 _obj_setuistate(pObj, STATE_HOVER, FALSE, 0, TRUE, &nError);
-                if (((pObj->dwStyle_ & EWS_BUTTON_MAX) == EWS_BUTTON_MAX))
+                if (((pObj->dwStyle_ & WINDOW_STYLE_BUTTON_MAX) == WINDOW_STYLE_BUTTON_MAX))
                 {
                     Ex_MemFree((LPVOID)pObj->pstrTips_);
                     if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
@@ -189,7 +189,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
                     }
                     pObj->pstrTips_ = ret;
                 }
-                else if (((pObj->dwStyle_ & EWS_BUTTON_MIN) == EWS_BUTTON_MIN))
+                else if (((pObj->dwStyle_ & WINDOW_STYLE_BUTTON_MIN) == WINDOW_STYLE_BUTTON_MIN))
                 {
                     Ex_MemFree((LPVOID)pObj->pstrTips_);
                     if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
@@ -206,21 +206,21 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         }
         else if (uMsg == WM_MOUSELEAVE)
         {
-            if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
+            if (!((pObj->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE))
             {
                 _obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
             }
         }
         else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN)
         {
-            if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
+            if (!((pObj->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE))
             {
                 _obj_setuistate(pObj, STATE_DOWN, FALSE, 0, TRUE, &nError);
             }
         }
         else if (uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONUP)
         {
-            if (!((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
+            if (!((pObj->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE))
             {
                 _obj_setuistate(pObj, STATE_DOWN, TRUE, 0, TRUE, &nError);
             }
@@ -228,9 +228,9 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         else if (uMsg == WM_EX_LCLICK)
         {
             INT ret = pObj->dwStyle_;
-            if ((ret & EWS_BUTTON_CLOSE) != 0)
+            if ((ret & WINDOW_STYLE_BUTTON_CLOSE) != 0)
             {
-                if (((pObj->pWnd_->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
+                if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) == WINDOW_STYLE_MESSAGEBOX))
                 {
                     EndDialog(hWnd, IDCANCEL);
                 }
@@ -240,7 +240,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
                     _obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
                 }
             }
-            else if ((ret & EWS_BUTTON_MAX) != 0)
+            else if ((ret & WINDOW_STYLE_BUTTON_MAX) != 0)
             {
                 if (_wnd_querystyle(hWnd, WS_MAXIMIZE, FALSE))
                 {
@@ -252,7 +252,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
                 }
                 _obj_setuistate(pObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE, &nError);
             }
-            else if ((ret & EWS_BUTTON_MIN) != 0)
+            else if ((ret & WINDOW_STYLE_BUTTON_MIN) != 0)
             {
                 if (_wnd_querystyle(hWnd, WS_MINIMIZE, FALSE))
                 {
@@ -271,7 +271,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         }
         else if (uMsg == WM_SIZE)
         {
-            if (((pObj->dwStyle_ & EWS_TITLE) == EWS_TITLE))
+            if (((pObj->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE))
             {
                 _sysbutton_remove_proc(pObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             }
@@ -293,7 +293,7 @@ size_t _page_paint(HEXOBJ hObj)
 void _page_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     INT nCode = LOWORD(wParam);
-    INT oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
+    INT oPos = Ex_ObjScrollGetPos(hObj, SCROLLBAR_TYPE_VERT);
     INT height = pObj->c_bottom_ - pObj->c_top_;
     INT nPos = 0;
     if (nCode == SB_THUMBPOSITION)
@@ -330,8 +330,8 @@ void _page_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wP
     {
         return;
     }
-    nPos = Ex_ObjScrollSetPos(hObj, SB_VERT, nPos, TRUE);
-    Ex_ObjSetPos(pObj->objChildFirst_, 0, EOP_DEFAULT, (-nPos), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+    nPos = Ex_ObjScrollSetPos(hObj, SCROLLBAR_TYPE_VERT, nPos, TRUE);
+    Ex_ObjSetPos(pObj->objChildFirst_, 0, OBJECT_POSITION_DEFAULT, (-nPos), 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
 }
 
 LRESULT CALLBACK _page_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)

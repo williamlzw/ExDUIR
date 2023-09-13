@@ -198,7 +198,7 @@ void _obj_z_clear(HEXOBJ hObj, obj_s *pObj, EXHANDLE *hParent, obj_base **pParen
 void _obj_z_set_before_topmost(EXHANDLE objChildFirst, LPVOID pObjChildFirst, EXHANDLE objChildLast, obj_s *pObjChildLast, EXHANDLE hObj, obj_s *pObj, obj_base *pParent)
 {
     INT nError = 0;
-    if ((pObjChildLast->dwStyleEx_ & EOS_EX_TOPMOST) == EOS_EX_TOPMOST) //检查有没置顶组件
+    if ((pObjChildLast->dwStyleEx_ & OBJECT_STYLE_EX_TOPMOST) == OBJECT_STYLE_EX_TOPMOST) //检查有没置顶组件
     {
         EXHANDLE objPrev = pObjChildLast->objPrev_;
         if (objPrev == 0) //没有置顶组件
@@ -214,7 +214,7 @@ void _obj_z_set_before_topmost(EXHANDLE objChildFirst, LPVOID pObjChildFirst, EX
             obj_s *pTmp = nullptr;
             while (_handle_validate(objPrev, HT_OBJECT, (LPVOID *)&pObjPrev, &nError))
             {
-                if ((pObjPrev->dwStyleEx_ & EOS_EX_TOPMOST) == EOS_EX_TOPMOST)
+                if ((pObjPrev->dwStyleEx_ & OBJECT_STYLE_EX_TOPMOST) == OBJECT_STYLE_EX_TOPMOST)
                 {
                     tmp = pObjPrev->objPrev_;
                     if (tmp != 0)
@@ -281,15 +281,15 @@ void _obj_z_set(HEXOBJ hObj, obj_s *pObj, EXHANDLE hObjInsertAfter, UINT flags, 
         {
             if (_handle_validate(objChildFirst, HT_OBJECT, (LPVOID *)&pObjChildFirst, nError))
             {
-                BOOL bTopmost = (pObj->dwStyleEx_ & EOS_EX_TOPMOST) == EOS_EX_TOPMOST;
+                BOOL bTopmost = (pObj->dwStyleEx_ & OBJECT_STYLE_EX_TOPMOST) == OBJECT_STYLE_EX_TOPMOST;
                 if (hObjInsertAfter == (size_t)HWND_NOTOPMOST) //取消置顶
                 {
-                    pObj->dwStyleEx_ = pObj->dwStyleEx_ - (pObj->dwStyleEx_ & EOS_EX_TOPMOST);
+                    pObj->dwStyleEx_ = pObj->dwStyleEx_ - (pObj->dwStyleEx_ & OBJECT_STYLE_EX_TOPMOST);
                     _obj_z_set_before_topmost(objChildFirst, pObjChildFirst, objChildLast, pObjChildLast, hObj, pObj, pParent);
                 }
                 else if (hObjInsertAfter == (size_t)HWND_TOPMOST) //置顶
                 {
-                    pObj->dwStyleEx_ = pObj->dwStyleEx_ | EOS_EX_TOPMOST;
+                    pObj->dwStyleEx_ = pObj->dwStyleEx_ | OBJECT_STYLE_EX_TOPMOST;
                     pObjChildLast->objNext_ = hObj;
                     pObj->objPrev_ = objChildLast;
                     pParent->objChildLast_ = hObj;
@@ -330,7 +330,7 @@ BOOL _obj_autosize(obj_s *pObj, HEXOBJ hObj, INT *width, INT *height)
 {
     INT nError = 0;
     BOOL ret = FALSE;
-    if ((pObj->dwStyleEx_ & EOS_EX_AUTOSIZE) == EOS_EX_AUTOSIZE && (pObj->dwFlags_ & EOF_BAUTOSIZED) != EOF_BAUTOSIZED)
+    if ((pObj->dwStyleEx_ & OBJECT_STYLE_EX_AUTOSIZE) == OBJECT_STYLE_EX_AUTOSIZE && (pObj->dwFlags_ & EOF_BAUTOSIZED) != EOF_BAUTOSIZED)
     {
         pObj->dwFlags_ = pObj->dwFlags_ | EOF_BAUTOSIZED;
         EXHANDLE parentObj = pObj->objParent_;
@@ -412,7 +412,7 @@ BOOL _obj_postmessage(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wPar
 INT _obj_wm_nchittest(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     INT ret = HTTRANSPARENT;
-    if (!((pObj->dwStyleEx_ & EOS_EX_TRANSPARENT) == EOS_EX_TRANSPARENT))
+    if (!((pObj->dwStyleEx_ & OBJECT_STYLE_EX_TRANSPARENT) == OBJECT_STYLE_EX_TRANSPARENT))
     {
         BOOL fHit = FALSE;
 
@@ -721,10 +721,10 @@ BOOL _obj_z_compositedcheck(LPVOID prc, EXHANDLE objLast, EXHANDLE objStop, LPVO
             }
         }
 
-        if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+        if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
         {
 
-            if (((pObj->dwStyleEx_ & EOS_EX_COMPOSITED) == EOS_EX_COMPOSITED))
+            if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
             {
                 if (IntersectRect((LPRECT)lpsrcInsert, (RECT *)prc, (RECT *)((size_t)pObj + offsetof(obj_s, w_left_))))
                 {
@@ -751,9 +751,9 @@ void _obj_compostied_all(HEXOBJ objEntry)
     HEXOBJ sObj = 0;
     while (_handle_validate(objNext, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (((pObj->dwStyleEx_ & EOS_EX_COMPOSITED) == EOS_EX_COMPOSITED))
+        if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
         {
-            if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+            if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
             {
                 pObj->dwFlags_ = pObj->dwFlags_ | EOF_BNEEDREDRAW;
                 pObj->d_left_ = pObj->left_;
@@ -790,7 +790,7 @@ BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT *lpRect)
         else
         {
             RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, left_)), 16);
-            if (Flag_Query(EXGF_DPI_ENABLE))
+            if (Flag_Query(ENGINE_FLAG_DPI_ENABLE))
             {
                 lpRect->left = (FLOAT)lpRect->left / g_Li.DpiX;
                 lpRect->top = (FLOAT)lpRect->top / g_Li.DpiY;
@@ -816,7 +816,7 @@ BOOL Ex_ObjGetClientRect(HEXOBJ hObj, RECT *lpRect)
         else
         {
             RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
-            if (Flag_Query(EXGF_DPI_ENABLE))
+            if (Flag_Query(ENGINE_FLAG_DPI_ENABLE))
             {
                 lpRect->left = (FLOAT)lpRect->left / g_Li.DpiX;
                 lpRect->top = (FLOAT)lpRect->top / g_Li.DpiY;
@@ -890,7 +890,7 @@ void _obj_invalidaterect(obj_s *pObj, RECT *lpRect, INT *nError)
     {
         //混合型组件需要全部刷新,防止背景状态不同步。
 
-        if (lpRect == 0 || ((pObj->dwStyleEx_ & EOS_EX_COMPOSITED) == EOS_EX_COMPOSITED))
+        if (lpRect == 0 || ((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
         {
             pObj->d_left_ = pObj->left_;
             pObj->d_top_ = pObj->top_;
@@ -961,7 +961,7 @@ BOOL Ex_ObjSetPadding(HEXOBJ hObj, INT nPaddingType, INT left, INT top, INT righ
             pObj->t_right_ = pObj->t_right_ * g_Li.DpiX;
             pObj->t_bottom_ = pObj->t_bottom_ * g_Li.DpiX;
         }
-        if (FLAGS_CHECK(pObj->dwStyleEx_, EOS_EX_AUTOSIZE))
+        if (FLAGS_CHECK(pObj->dwStyleEx_, OBJECT_STYLE_EX_AUTOSIZE))
         {
             FLAGS_DEL(pObj->dwFlags_, EOF_BAUTOSIZED);
             INT nError = 0;
@@ -1045,7 +1045,7 @@ BOOL Ex_ObjEnable(HEXOBJ hObj, BOOL fEnable)
     BOOL ret = FALSE;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (fEnable != (!((pObj->dwStyle_ & EOS_DISABLED) == EOS_DISABLED)))
+        if (fEnable != (!((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) == OBJECT_STYLE_DISABLED)))
         {
             ret = Ex_ObjSendMessage(hObj, WM_ENABLE, fEnable ? 1 : 0, 0);
         }
@@ -1062,7 +1062,7 @@ BOOL Ex_ObjIsEnable(HEXOBJ hObj)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
 
-        ret = !((pObj->dwStyle_ & EOS_DISABLED) == EOS_DISABLED);
+        ret = !((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) == OBJECT_STYLE_DISABLED);
     }
     Ex_SetLastError(nError);
     return ret;
@@ -1075,7 +1075,7 @@ BOOL Ex_ObjIsVisible(HEXOBJ hObj)
     BOOL ret = FALSE;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        ret = (pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE;
+        ret = (pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE;
     }
     Ex_SetLastError(nError);
     return ret;
@@ -1089,7 +1089,7 @@ BOOL Ex_ObjShow(HEXOBJ hObj, BOOL fShow)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
 
-        if (fShow != ((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+        if (fShow != ((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
         {
             ret = Ex_ObjSendMessage(hObj, WM_SHOWWINDOW, fShow ? 1 : 0, 0);
         }
@@ -1142,71 +1142,71 @@ LONG_PTR Ex_ObjGetLong(HEXOBJ hObj, INT nIndex)
     obj_s *pObj = nullptr;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (nIndex == EOL_ALPHA)
+        if (nIndex == OBJECT_LONG_ALPHA)
         {
             return pObj->dwAlpha_;
         }
-        else if (nIndex == EOL_BLUR)
+        else if (nIndex == OBJECT_LONG_BLUR)
         {
             return (LONG_PTR)pObj->fBlur_;
         }
-        else if (nIndex == EOL_CURSOR)
+        else if (nIndex == OBJECT_LONG_CURSOR)
         {
             return (LONG_PTR)pObj->hCursor_;
         }
-        else if (nIndex == EOL_EXSTYLE)
+        else if (nIndex == OBJECT_LONG_EXSTYLE)
         {
             return (LONG_PTR)pObj->dwStyleEx_;
         }
-        else if (nIndex == EOL_HCANVAS)
+        else if (nIndex == OBJECT_LONG_HCANVAS)
         {
             return (LONG_PTR)pObj->canvas_obj_;
         }
-        else if (nIndex == EOL_HFONT)
+        else if (nIndex == OBJECT_LONG_HFONT)
         {
             return (LONG_PTR)pObj->hFont_;
         }
-        else if (nIndex == EOL_ID)
+        else if (nIndex == OBJECT_LONG_ID)
         {
             return (LONG_PTR)pObj->id_;
         }
-        else if (nIndex == EOL_LPARAM)
+        else if (nIndex == OBJECT_LONG_LPARAM)
         {
             return pObj->lParam_;
         }
-        else if (nIndex == EOL_LPWZTITLE)
+        else if (nIndex == OBJECT_LONG_LPWZTITLE)
         {
             return (LONG_PTR)pObj->pstrTitle_;
         }
-        else if (nIndex == EOL_NODEID)
+        else if (nIndex == OBJECT_LONG_NODEID)
         {
             return (LONG_PTR)pObj->nodeid_;
         }
-        else if (nIndex == EOL_OBJPARENT)
+        else if (nIndex == OBJECT_LONG_OBJPARENT)
         {
             return (LONG_PTR)pObj->objParent_;
         }
-        else if (nIndex == EOL_OBJPROC)
+        else if (nIndex == OBJECT_LONG_OBJPROC)
         {
             return (LONG_PTR)pObj->pfnSubClass_;
         }
-        else if (nIndex == EOL_OWNER)
+        else if (nIndex == OBJECT_LONG_OWNER)
         {
             return (LONG_PTR)pObj->dwOwnerData_;
         }
-        else if (nIndex == EOL_STATE)
+        else if (nIndex == OBJECT_LONG_STATE)
         {
             return (LONG_PTR)pObj->dwState_;
         }
-        else if (nIndex == EOL_STYLE)
+        else if (nIndex == OBJECT_LONG_STYLE)
         {
             return (LONG_PTR)pObj->dwStyle_;
         }
-        else if (nIndex == EOL_TEXTFORMAT)
+        else if (nIndex == OBJECT_LONG_TEXTFORMAT)
         {
             return (LONG_PTR)pObj->dwTextFormat_;
         }
-        else if (nIndex == EOL_USERDATA)
+        else if (nIndex == OBJECT_LONG_USERDATA)
         {
             return (LONG_PTR)pObj->dwUserData_;
         }
@@ -1230,40 +1230,40 @@ LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong)
     LONG_PTR ret = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (nIndex == EOL_ALPHA)
+        if (nIndex == OBJECT_LONG_ALPHA)
         {
             ret = (LONG_PTR)pObj->dwAlpha_;
             pObj->dwAlpha_ = (INT)dwNewLong;
         }
-        else if (nIndex == EOL_BLUR)
+        else if (nIndex == OBJECT_LONG_BLUR)
         {
             ret = (LONG_PTR)pObj->fBlur_;
             pObj->fBlur_ = dwNewLong;
         }
-        else if (nIndex == EOL_CURSOR)
+        else if (nIndex == OBJECT_LONG_CURSOR)
         {
             ret = (LONG_PTR)pObj->hCursor_;
             pObj->hCursor_ = (HCURSOR)dwNewLong;
         }
-        else if (nIndex == EOL_EXSTYLE)
+        else if (nIndex == OBJECT_LONG_EXSTYLE)
         {
-            if (Ex_ObjSendMessage(hObj, WM_STYLECHANGING, EOL_EXSTYLE, dwNewLong) == 0)
+            if (Ex_ObjSendMessage(hObj, WM_STYLECHANGING, OBJECT_LONG_EXSTYLE, dwNewLong) == 0)
             {
                 ret = pObj->dwStyleEx_;
-                Ex_ObjSendMessage(hObj, WM_STYLECHANGED, EOL_EXSTYLE, dwNewLong);
+                Ex_ObjSendMessage(hObj, WM_STYLECHANGED, OBJECT_LONG_EXSTYLE, dwNewLong);
             }
         }
-        else if (nIndex == EOL_HCANVAS)
+        else if (nIndex == OBJECT_LONG_HCANVAS)
         {
             ret = (LONG_PTR)pObj->canvas_obj_;
             pObj->canvas_obj_ = (HEXCANVAS)dwNewLong;
         }
-        else if (nIndex == EOL_HFONT)
+        else if (nIndex == OBJECT_LONG_HFONT)
         {
             ret = (LONG_PTR)pObj->hFont_;
             pObj->hFont_ = dwNewLong;
         }
-        else if (nIndex == EOL_ID)
+        else if (nIndex == OBJECT_LONG_ID)
         {
             ret = (LONG_PTR)pObj->id_;
             pObj->id_ = (INT)dwNewLong;
@@ -1275,56 +1275,56 @@ LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong)
             EX_HASHTABLE *hTableObjects = pWnd->hTableObjects_;
             HashTable_Set(hTableObjects, dwNewLong, hObj);
         }
-        else if (nIndex == EOL_LPARAM)
+        else if (nIndex == OBJECT_LONG_LPARAM)
         {
             ret = pObj->lParam_;
             pObj->lParam_ = dwNewLong;
         }
-        else if (nIndex == EOL_LPWZTITLE)
+        else if (nIndex == OBJECT_LONG_LPWZTITLE)
         {
             ret = (LONG_PTR)pObj->pstrTitle_;
             pObj->pstrTitle_ = (LPCWSTR)dwNewLong;
         }
-        else if (nIndex == EOL_NODEID)
+        else if (nIndex == OBJECT_LONG_NODEID)
         {
             ret = (LONG_PTR)pObj->nodeid_;
             pObj->nodeid_ = (INT)dwNewLong;
         }
-        else if (nIndex == EOL_OBJPARENT)
+        else if (nIndex == OBJECT_LONG_OBJPARENT)
         {
             ret = (LONG_PTR)pObj->objParent_;
             pObj->objParent_ = (EXHANDLE)dwNewLong;
         }
-        else if (nIndex == EOL_OBJPROC)
+        else if (nIndex == OBJECT_LONG_OBJPROC)
         {
             ret = (size_t)pObj->pfnSubClass_;
             pObj->pfnSubClass_ = (MsgPROC)dwNewLong;
         }
-        else if (nIndex == EOL_OWNER)
+        else if (nIndex == OBJECT_LONG_OWNER)
         {
             ret = (LONG_PTR)pObj->dwOwnerData_;
             pObj->dwOwnerData_ = (LPVOID)dwNewLong;
         }
-        else if (nIndex == EOL_STATE)
+        else if (nIndex == OBJECT_LONG_STATE)
         {
             ret = pObj->dwState_;
             pObj->dwState_ = dwNewLong;
         }
-        else if (nIndex == EOL_STYLE)
+        else if (nIndex == OBJECT_LONG_STYLE)
         {
-            if (Ex_ObjSendMessage(hObj, WM_STYLECHANGING, EOL_STYLE, dwNewLong) == 0)
+            if (Ex_ObjSendMessage(hObj, WM_STYLECHANGING, OBJECT_LONG_STYLE, dwNewLong) == 0)
             {
                 ret = pObj->dwStyle_;
                 pObj->dwStyle_ = dwNewLong;
-                Ex_ObjSendMessage(hObj, WM_STYLECHANGED, EOL_STYLE, dwNewLong);
+                Ex_ObjSendMessage(hObj, WM_STYLECHANGED, OBJECT_LONG_STYLE, dwNewLong);
             }
         }
-        else if (nIndex == EOL_TEXTFORMAT)
+        else if (nIndex == OBJECT_LONG_TEXTFORMAT)
         {
             ret = (LONG_PTR)pObj->dwTextFormat_;
             pObj->dwTextFormat_ = (INT)dwNewLong;
         }
-        else if (nIndex == EOL_USERDATA)
+        else if (nIndex == OBJECT_LONG_USERDATA)
         {
             ret = (LONG_PTR)pObj->dwUserData_;
             pObj->dwUserData_ = (LPVOID)dwNewLong;
@@ -1345,7 +1345,7 @@ LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong)
 void _obj_reset_path(obj_s *pObj, INT left, INT top, INT right, INT bottom, INT nOffset)
 {
     HEXPATH path = 0;
-    if (_path_create(EPF_DISABLESCALE, &path))
+    if (_path_create(PATH_FLAG_DISABLESCALE, &path))
     {
         if (_path_open(path))
         {
@@ -1374,7 +1374,7 @@ void _obj_scroll_updatepostion(HEXOBJ hSB, obj_s *pSB, BOOL bVScroll, INT cLeft,
     auto xyz2 = LOBYTE(xyz1);
     INT l, t, r, b;
 
-    if (((pSB->dwStyle_ & ESS_RIGHTBOTTOMALIGN) == ESS_RIGHTBOTTOMALIGN))
+    if (((pSB->dwStyle_ & SCROLLBAR_STYLE_RIGHTBOTTOMALIGN) == SCROLLBAR_STYLE_RIGHTBOTTOMALIGN))
     {
         if (bVScroll)
         {
@@ -1436,11 +1436,11 @@ void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
     //' SWP_NOOWNERZORDER：不改变z序中的所有者窗口的位置。
     //' 注意事项：使用SetWindowPos()如果设置了SWP_SHOWWINDOWS或者SWP_HIDEWINDOW，那么窗口将不能被移动和改变大小，我使用时就是设置了SWP_SHOWWINDOW,从而导致不能重绘背景。
 
-    if (width < 0 && width != EOP_DEFAULT)
+    if (width < 0 && width != OBJECT_POSITION_DEFAULT)
     {
         width = 0;
     }
-    if (height < 0 && height != EOP_DEFAULT)
+    if (height < 0 && height != OBJECT_POSITION_DEFAULT)
     {
         height = 0;
     }
@@ -1466,7 +1466,7 @@ void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
         BOOL fScale = (flags & SWP_EX_NODPISCALE) == 0;
         if ((flags & SWP_NOMOVE) == 0) //移动
         {
-            if (x == EOP_DEFAULT)
+            if (x == OBJECT_POSITION_DEFAULT)
             {
                 x = pObj->left_;
             }
@@ -1477,7 +1477,7 @@ void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
                     x = Ex_Scale(x);
                 }
             }
-            if (y == EOP_DEFAULT)
+            if (y == OBJECT_POSITION_DEFAULT)
             {
                 y = pObj->top_;
             }
@@ -1492,7 +1492,7 @@ void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 
         if ((flags & SWP_NOSIZE) == 0) //修改尺寸
         {
-            if (width == EOP_DEFAULT)
+            if (width == OBJECT_POSITION_DEFAULT)
             {
                 width = pObj->right_ - pObj->left_;
             }
@@ -1503,7 +1503,7 @@ void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
                     width = Ex_Scale(width);
                 }
             }
-            if (height == EOP_DEFAULT)
+            if (height == OBJECT_POSITION_DEFAULT)
             {
                 height = pObj->bottom_ - pObj->top_;
             }
@@ -1713,7 +1713,7 @@ void _obj_setpos_org(obj_s *pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
         np.rgrc[2].bottom = pObj->bottom_;
     }
 
-    if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+    if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
     {
         BOOL fScale = ((pObj->pWnd_->dwFlags_ & EWF_SIZED) == EWF_SIZED);
         if ((flags & SWP_NOREDRAW) == 0) //重画
@@ -1764,7 +1764,7 @@ void _obj_scroll_repostion(HWND hWnd, HEXOBJ hObj, BOOL fDispatch)
         rcClient.right = pObj->c_right_;
         rcClient.bottom = pObj->c_bottom_;
 
-        if (((pObj->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL))
+        if (((pObj->dwStyle_ & OBJECT_STYLE_VSCROLL) == OBJECT_STYLE_VSCROLL))
         {
             hVSB = pObj->objVScroll_;
             if (_handle_validate(hVSB, HT_OBJECT, (LPVOID *)&pVSB, &nError))
@@ -1775,10 +1775,10 @@ void _obj_scroll_repostion(HWND hWnd, HEXOBJ hObj, BOOL fDispatch)
                     xyz = HIWORD(psi->xyz_);
                 }
 
-                if (((pVSB->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+                if (((pVSB->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
                 {
 
-                    if (((pVSB->dwStyle_ & ESS_RIGHTBOTTOMALIGN) == ESS_RIGHTBOTTOMALIGN))
+                    if (((pVSB->dwStyle_ & SCROLLBAR_STYLE_RIGHTBOTTOMALIGN) == SCROLLBAR_STYLE_RIGHTBOTTOMALIGN))
                     {
                         rcClient.right = rcClient.right - LOBYTE(xyz);
                     }
@@ -1790,7 +1790,7 @@ void _obj_scroll_repostion(HWND hWnd, HEXOBJ hObj, BOOL fDispatch)
             }
         }
 
-        if (((pObj->dwStyle_ & EOS_HSCROLL) == EOS_HSCROLL))
+        if (((pObj->dwStyle_ & OBJECT_STYLE_HSCROLL) == OBJECT_STYLE_HSCROLL))
         {
             hHSB = pObj->objHScroll_;
             if (_handle_validate(hHSB, HT_OBJECT, (LPVOID *)&pHSB, &nError))
@@ -1801,10 +1801,10 @@ void _obj_scroll_repostion(HWND hWnd, HEXOBJ hObj, BOOL fDispatch)
                     xyz = HIWORD(psi->xyz_);
                 }
 
-                if (((pHSB->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+                if (((pHSB->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
                 {
 
-                    if (((pHSB->dwStyle_ & ESS_RIGHTBOTTOMALIGN) == ESS_RIGHTBOTTOMALIGN))
+                    if (((pHSB->dwStyle_ & SCROLLBAR_STYLE_RIGHTBOTTOMALIGN) == SCROLLBAR_STYLE_RIGHTBOTTOMALIGN))
                     {
                         rcClient.bottom = rcClient.bottom - LOBYTE(xyz);
                     }
@@ -1836,7 +1836,7 @@ size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s *pObj, INT uMsg, WPARAM wParam
         {
             INT tmp = SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE;
 
-            if (!((pObj->dwStyleEx_ & EOS_EX_COMPOSITED) == EOS_EX_COMPOSITED))
+            if (!((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
             {
                 tmp = tmp | SWP_NOREDRAW;
             }
@@ -2227,7 +2227,7 @@ void _obj_create_proc(INT *nError, BOOL fScale, HEXTHEME hTheme, obj_s *pObj, IN
 
     //初始化画布
     INT flags = 0;
-    flags = ECVF_GDI_COMPATIBLE;
+    flags = CANVAS_FLAG_GDI_COMPATIBLE;
 
     if (((EX_CLASSINFO *)pCls)->atomName == ATOM_PAGE)
     {
@@ -2253,7 +2253,7 @@ void _obj_create_proc(INT *nError, BOOL fScale, HEXTHEME hTheme, obj_s *pObj, IN
     pObj->lParam_ = lParam;
     pObj->hTheme_ = hTheme;
     pObj->pstrTitle_ = StrDupW(lpszName);
-    if ((dwStyleEx & EOS_EX_BLUR) != 0)
+    if ((dwStyleEx & OBJECT_STYLE_EX_BLUR) != 0)
     {
         pObj->fBlur_ = 15.f;
     }
@@ -2281,7 +2281,7 @@ void _obj_create_proc(INT *nError, BOOL fScale, HEXTHEME hTheme, obj_s *pObj, IN
 
     _obj_baseproc(hWnd, hObj, pObj, WM_CREATE, 0, (size_t)&dwStyleEx);
 
-    if ((dwStyleEx & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP)
+    if ((dwStyleEx & OBJECT_STYLE_EX_DRAGDROP) == OBJECT_STYLE_EX_DRAGDROP)
     {
         if (!pWnd->lpIDropTarget_)
         {
@@ -2302,34 +2302,34 @@ void _obj_create_done(HWND hWnd, wnd_s *pWnd, HEXOBJ hObj, obj_s *pObj)
     pObj->dwFlags_ = pObj->dwFlags_ | EOF_BCANREDRAW;
     pObj->dwFlags_ = pObj->dwFlags_ | EOF_OBJECT;
 
-    if (!((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+    if (!((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
     {
         pObj->dwState_ = pObj->dwState_ | STATE_HIDDEN;
     }
 
-    if (((pObj->dwStyle_ & EOS_DISABLED) == EOS_DISABLED))
+    if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) == OBJECT_STYLE_DISABLED))
     {
         pObj->dwState_ = pObj->dwState_ | STATE_DISABLE;
     }
 
-    if (((pObj->dwStyle_ & EOS_SIZEBOX) == EOS_SIZEBOX))
+    if (((pObj->dwStyle_ & OBJECT_STYLE_SIZEBOX) == OBJECT_STYLE_SIZEBOX))
     {
         pObj->dwState_ = pObj->dwState_ | STATE_ALLOWSIZE;
     }
 
-    if (((pObj->dwStyleEx_ & EOS_EX_FOCUSABLE) == EOS_EX_FOCUSABLE))
+    if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_FOCUSABLE) == OBJECT_STYLE_EX_FOCUSABLE))
     {
         pObj->dwState_ = pObj->dwState_ | STATE_ALLOWFOCUS;
     }
 
     INT flags = SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS | SWP_DRAWFRAME;
 
-    if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE))
+    if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE))
     {
         flags = flags | SWP_SHOWWINDOW;
     }
 
-    if (((pObj->dwStyle_ & EOS_BORDER) == EOS_BORDER))
+    if (((pObj->dwStyle_ & OBJECT_STYLE_BORDER) == OBJECT_STYLE_BORDER))
     {
         flags = flags | SWP_DRAWFRAME;
     }
@@ -2348,37 +2348,37 @@ void _obj_create_scrollbar(HWND hWnd, wnd_s *pWnd, obj_s *pObj, HEXOBJ hObj, HEX
     INT style = 0;
     INT nError = 0;
 
-    if (((pObj->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL))
+    if (((pObj->dwStyle_ & OBJECT_STYLE_VSCROLL) == OBJECT_STYLE_VSCROLL))
     {
         HEXOBJ hSb = _obj_create_init(hWnd, pWnd, ATOM_SCROLLBAR, 0, &pSB, &nError);
         if (hSb != 0)
         {
             pObj->objVScroll_ = hSb;
-            style = ESS_RIGHTBOTTOMALIGN | ESS_CONTROLBUTTON | ESS_VERTICALSCROLL;
+            style = SCROLLBAR_STYLE_RIGHTBOTTOMALIGN | SCROLLBAR_STYLE_CONTROLBUTTON | SCROLLBAR_STYLE_VERTICALSCROLL;
 
-            if (((pObj->dwStyle_ & EOS_DISABLENOSCROLL) == EOS_DISABLENOSCROLL))
+            if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLENOSCROLL) == OBJECT_STYLE_DISABLENOSCROLL))
             {
-                style = style | EOS_VISIBLE | EOS_DISABLENOSCROLL;
+                style = style | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_DISABLENOSCROLL;
             }
-            _obj_create_proc(&nError, TRUE, hTheme, pSB, EOS_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
+            _obj_create_proc(&nError, TRUE, hTheme, pSB, OBJECT_STYLE_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
             _obj_create_done(hWnd, pWnd, hSb, pSB);
         }
     }
 
-    if (((pObj->dwStyle_ & EOS_HSCROLL) == EOS_HSCROLL))
+    if (((pObj->dwStyle_ & OBJECT_STYLE_HSCROLL) == OBJECT_STYLE_HSCROLL))
     {
         nError = 0;
         HEXOBJ hSb = _obj_create_init(hWnd, pWnd, ATOM_SCROLLBAR, 0, &pSB, &nError);
         if (hSb != 0)
         {
             pObj->objHScroll_ = hSb;
-            style = ESS_RIGHTBOTTOMALIGN | ESS_CONTROLBUTTON | ESS_HORIZONTALSCROLL;
+            style = SCROLLBAR_STYLE_RIGHTBOTTOMALIGN | SCROLLBAR_STYLE_CONTROLBUTTON | SCROLLBAR_STYLE_HORIZONTALSCROLL;
 
-            if (((pObj->dwStyle_ & EOS_DISABLENOSCROLL) == EOS_DISABLENOSCROLL))
+            if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLENOSCROLL) == OBJECT_STYLE_DISABLENOSCROLL))
             {
-                style = style | EOS_VISIBLE | EOS_DISABLENOSCROLL;
+                style = style | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_DISABLENOSCROLL;
             }
-            _obj_create_proc(&nError, TRUE, hTheme, pSB, EOS_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
+            _obj_create_proc(&nError, TRUE, hTheme, pSB, OBJECT_STYLE_EX_TOPMOST, ATOM_SCROLLBAR, 0, style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
             _obj_create_done(hWnd, pWnd, hSb, pSB);
         }
     }
@@ -2522,42 +2522,42 @@ HEXOBJ Ex_ObjCreate(LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, 
 void _obj_visable(HWND hWnd, HEXOBJ hObj, obj_s *pObj, BOOL fVisable)
 {
 
-    if (((pObj->dwStyle_ & EOS_VISIBLE) == EOS_VISIBLE) != fVisable)
+    if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE) != fVisable)
     {
         _obj_killfocus(hObj, pObj, TRUE);
         pObj->dwState_ = pObj->dwState_ - (pObj->dwState_ & (STATE_HOVER | STATE_DOWN));
         if (fVisable)
         {
             pObj->dwState_ = pObj->dwState_ - (pObj->dwState_ & STATE_HIDDEN);
-            pObj->dwStyle_ = pObj->dwStyle_ | EOS_VISIBLE;
+            pObj->dwStyle_ = pObj->dwStyle_ | OBJECT_STYLE_VISIBLE;
         }
         else
         {
             pObj->dwState_ = pObj->dwState_ | STATE_HIDDEN;
-            pObj->dwStyle_ = pObj->dwStyle_ - (pObj->dwStyle_ & EOS_VISIBLE);
+            pObj->dwStyle_ = pObj->dwStyle_ - (pObj->dwStyle_ & OBJECT_STYLE_VISIBLE);
         }
-        _obj_baseproc(hWnd, hObj, pObj, WM_STYLECHANGED, EOL_STYLE, pObj->dwStyle_);
+        _obj_baseproc(hWnd, hObj, pObj, WM_STYLECHANGED, OBJECT_LONG_STYLE, pObj->dwStyle_);
     }
 }
 
 void _obj_disable(HWND hWnd, HEXOBJ hObj, obj_s *pObj, BOOL fDisable)
 {
 
-    if (((pObj->dwStyle_ & EOS_DISABLED) == EOS_DISABLED) != fDisable)
+    if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) == OBJECT_STYLE_DISABLED) != fDisable)
     {
         _obj_killfocus(hObj, pObj, TRUE);
         pObj->dwState_ = pObj->dwState_ - (pObj->dwState_ & (STATE_HOVER | STATE_DOWN));
         if (fDisable)
         {
             pObj->dwState_ = pObj->dwState_ - (pObj->dwState_ & STATE_DISABLE);
-            pObj->dwStyle_ = pObj->dwStyle_ | EOS_DISABLED;
+            pObj->dwStyle_ = pObj->dwStyle_ | OBJECT_STYLE_DISABLED;
         }
         else
         {
             pObj->dwState_ = pObj->dwState_ | STATE_DISABLE;
-            pObj->dwStyle_ = pObj->dwStyle_ - (pObj->dwStyle_ & EOS_DISABLED);
+            pObj->dwStyle_ = pObj->dwStyle_ - (pObj->dwStyle_ & OBJECT_STYLE_DISABLED);
         }
-        _obj_baseproc(hWnd, hObj, pObj, WM_STYLECHANGED, EOL_STYLE, pObj->dwStyle_);
+        _obj_baseproc(hWnd, hObj, pObj, WM_STYLECHANGED, OBJECT_LONG_STYLE, pObj->dwStyle_);
     }
 }
 
@@ -2631,7 +2631,7 @@ BOOL _obj_setfont(obj_s *pObj, HEXFONT hFont, BOOL fredraw)
         if (tmp != hFont)
         {
             _font_destroy(tmp);
-            if (FLAGS_CHECK(pObj->dwStyleEx_, EOS_EX_AUTOSIZE))
+            if (FLAGS_CHECK(pObj->dwStyleEx_, OBJECT_STYLE_EX_AUTOSIZE))
             {
                 FLAGS_DEL(pObj->dwFlags_, EOF_BAUTOSIZED);
                 INT nError = 0;
@@ -2683,13 +2683,13 @@ void _obj_drawbackground(obj_s *pObj, HEXCANVAS hCanvas, RECT rcPaint)
     FLOAT fBlur;
     LPVOID hBrush;
 
-    if (((pObj->dwStyleEx_ & EOS_EX_COMPOSITED) == EOS_EX_COMPOSITED))
+    if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
     {
         wnd_s *pWnd = pObj->pWnd_;
         HEXCANVAS lpdd = pWnd->canvas_display_;
         _canvas_bitblt(hCanvas, lpdd, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom, pObj->w_left_ + rcPaint.left, pObj->w_top_ + rcPaint.top);
 
-        if (((pObj->dwStyleEx_ & EOS_EX_BLUR) == EOS_EX_BLUR))
+        if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_BLUR) == OBJECT_STYLE_EX_BLUR))
         {
             fBlur = pObj->fBlur_;
             _canvas_blur(hCanvas, fBlur, &rcPaint);
@@ -2804,12 +2804,12 @@ BOOL Ex_ObjBeginPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS)
                 _canvas_cliprect(hCanvas, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom); //必须CLIP
                 if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG))
                 {
-                    _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, EPP_BEGIN, (size_t)lpPS);
+                    _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_BEGIN, (size_t)lpPS);
                 }
                 _obj_drawbackground(pObj, hCanvas, rcPaint);
                 if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG))
                 {
-                    _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, EPP_BKG, (size_t)lpPS);
+                    _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_BKG, (size_t)lpPS);
                 }
                 ret = TRUE;
             }
@@ -2831,21 +2831,21 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS)
     {
         hCanvas = lpPS->hCanvas;
 
-        if (((pObj->dwStyleEx_ & EOS_EX_CUSTOMDRAW) == EOS_EX_CUSTOMDRAW))
+        if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_CUSTOMDRAW) == OBJECT_STYLE_EX_CUSTOMDRAW))
         {
             _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, hObj, 0, NM_CUSTOMDRAW, 0, (size_t)lpPS);
             if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG))
             {
-                _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, EPP_CUSTOMDRAW, (size_t)lpPS);
+                _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_CUSTOMDRAW, (size_t)lpPS);
             }
         }
-        if ((pObj->dwStyle_ & EOS_BORDER) == EOS_BORDER)
+        if ((pObj->dwStyle_ & OBJECT_STYLE_BORDER) == OBJECT_STYLE_BORDER)
         {
             hBrush = _brush_create(_obj_getcolor(pObj, COLOR_EX_BORDER));
             if (hBrush)
             {
                 HEXPATH hPath = NULL;
-                _path_create(EPF_DISABLESCALE, &hPath);
+                _path_create(PATH_FLAG_DISABLESCALE, &hPath);
                 _path_open(hPath);
                 _path_beginfigure2(hPath, pObj->c_left_, pObj->c_top_ + pObj->radius_topleft_);
                 _path_addroundedrect(
@@ -2866,10 +2866,10 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS)
             }
             if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG))
             {
-                _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, EPP_BORDER, (size_t)lpPS);
+                _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_BORDER, (size_t)lpPS);
             }
         }
-        if (Flag_Query(EXGF_OBJECT_SHOWPOSTION))
+        if (Flag_Query(ENGINE_FLAG_OBJECT_SHOWPOSTION))
         {
             WCHAR wzPostion[60] = L"";
             WCHAR wstrLeft[12];
@@ -2902,7 +2902,7 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT *lpPS)
         }
         if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG))
         {
-            _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, EPP_END, (size_t)lpPS);
+            _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_END, (size_t)lpPS);
         }
         _canvas_resetclip(hCanvas);
         FLOAT fHue = pObj->fHUE_;
@@ -3242,7 +3242,7 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s *pObj, LPVOID lpImage, INT dwImag
                     {
                         ((EX_BACKGROUNDIMAGEINFO *)lpBI)->lpDelay = lpDelay2;
                         ((EX_BACKGROUNDIMAGEINFO *)lpBI)->maxFrame = nFrames;
-                        if ((dwFlags & BIF_PLAYIMAGE) == BIF_PLAYIMAGE)
+                        if ((dwFlags & BACKGROUND_FLAG_PLAYIMAGE) == BACKGROUND_FLAG_PLAYIMAGE)
                         {
                             SetTimer(hWnd, ((size_t)pObj + TIMER_BKG), lpDelay2[0] * 10, _obj_backgroundimage_timer);
                         }
@@ -3291,7 +3291,7 @@ BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen
             }
             else
             {
-                ((wnd_s *)pObj)->dwStyle_ = ((wnd_s *)pObj)->dwStyle_ | EWS_NOINHERITBKG;
+                ((wnd_s *)pObj)->dwStyle_ = ((wnd_s *)pObj)->dwStyle_ | WINDOW_STYLE_NOINHERITBKG;
                 _wnd_redraw_bkg(hWnd, (wnd_s *)pObj, 0, TRUE, FALSE);
             }
             if (fUpdate)
@@ -3312,11 +3312,11 @@ void _obj_backgroundimage_frames(HWND hWnd, obj_s *pObj, BOOL bResetFrame, BOOL 
         HEXIMAGE hImg = lpBI->hImage;
         if (bPlayFrames)
         {
-            lpBI->dwFlags = lpBI->dwFlags | BIF_PLAYIMAGE;
+            lpBI->dwFlags = lpBI->dwFlags | BACKGROUND_FLAG_PLAYIMAGE;
         }
         else
         {
-            lpBI->dwFlags = lpBI->dwFlags - (lpBI->dwFlags & BIF_PLAYIMAGE);
+            lpBI->dwFlags = lpBI->dwFlags - (lpBI->dwFlags & BACKGROUND_FLAG_PLAYIMAGE);
         }
         INT framecount = 0;
         _img_getframecount(hImg, &framecount);
@@ -3423,7 +3423,7 @@ void _obj_setradius(HEXOBJ hObj, obj_s *pObj, FLOAT topleft, FLOAT topright, FLO
         {
             flags |= SWP_EX_UPDATEOBJECT;
         }
-        _obj_setpos_org(pObj, hObj, 0, EOP_DEFAULT, EOP_DEFAULT, EOP_DEFAULT, EOP_DEFAULT, flags, nError);
+        _obj_setpos_org(pObj, hObj, 0, OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT, flags, nError);
     }
 }
 
@@ -3444,7 +3444,7 @@ BOOL Ex_ObjSetBlur(HEXOBJ hObj, FLOAT fDeviation, BOOL bRedraw)
     INT nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        pObj->dwStyleEx_ = pObj->dwStyleEx_ | (EOS_EX_COMPOSITED | EOS_EX_BLUR);
+        pObj->dwStyleEx_ = pObj->dwStyleEx_ | (OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_BLUR);
         pObj->fBlur_ = fDeviation;
         wnd_s *pWnd = pObj->pWnd_;
         pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BCOMPOSITEDCHECK;
@@ -3778,11 +3778,11 @@ INT Ex_ObjEnumProps(HEXOBJ hObj, EnumPropsPROC lpfnCbk, size_t param)
 BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
 {
     INT flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_ASYNCWINDOWPOS;
-    if (x == EOP_DEFAULT && y == EOP_DEFAULT)
+    if (x == OBJECT_POSITION_DEFAULT && y == OBJECT_POSITION_DEFAULT)
     {
         flags = flags | SWP_NOMOVE;
     }
-    if (width == EOP_DEFAULT && height == EOP_DEFAULT)
+    if (width == OBJECT_POSITION_DEFAULT && height == OBJECT_POSITION_DEFAULT)
     {
         flags = flags | SWP_NOSIZE;
     }
@@ -3890,7 +3890,7 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
                     pObj->pstrTitle_ = StrDupW((LPCWSTR)lParam);
                 }
 
-                if (((pObj->dwStyleEx_ & EOS_EX_AUTOSIZE) == EOS_EX_AUTOSIZE))
+                if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_AUTOSIZE) == OBJECT_STYLE_EX_AUTOSIZE))
                 {
                     pObj->dwFlags_ = pObj->dwFlags_ - (pObj->dwFlags_ & EOF_BAUTOSIZED);
                     _obj_setpos_org(pObj, hObj, 0, 0, 0, 1, 1, SWP_NOMOVE | SWP_NOZORDER, &nError);
@@ -4019,12 +4019,12 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
                 _scrollbar_parentnotify(hWnd, pObj, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, hObj, 0, TRUE);
                 return 1;
             }
-            else if (((pObj->dwStyle_ & EOS_VSCROLL) == EOS_VSCROLL))
+            else if (((pObj->dwStyle_ & OBJECT_STYLE_VSCROLL) == OBJECT_STYLE_VSCROLL))
             {
                 _obj_baseproc(hWnd, hObj, pObj, WM_VSCROLL, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, 0);
                 return 1;
             }
-            else if (((pObj->dwStyle_ & EOS_HSCROLL) == EOS_HSCROLL))
+            else if (((pObj->dwStyle_ & OBJECT_STYLE_HSCROLL) == OBJECT_STYLE_HSCROLL))
             {
                 _obj_baseproc(hWnd, hObj, pObj, WM_HSCROLL, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, 0);
                 return 1;
@@ -4182,10 +4182,10 @@ BOOL Ex_ObjScrollShow(HEXOBJ hObj, INT wBar, BOOL fShow)
     INT nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (wBar == SB_BOTH)
+        if (wBar == SCROLLBAR_TYPE_BOTH)
         {
-            _sb_show(_scrollbar_getscroll(pObj, SB_VERT), fShow);
-            _sb_show(_scrollbar_getscroll(pObj, SB_HORZ), fShow);
+            _sb_show(_scrollbar_getscroll(pObj, SCROLLBAR_TYPE_VERT), fShow);
+            _sb_show(_scrollbar_getscroll(pObj, SCROLLBAR_TYPE_HORZ), fShow);
         }
         else
         {
@@ -4201,10 +4201,10 @@ BOOL Ex_ObjScrollEnable(HEXOBJ hObj, INT wSB, INT wArrows)
     INT nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (wSB == SB_BOTH)
+        if (wSB == SCROLLBAR_TYPE_BOTH)
         {
-            _scrollbar_set_wArrows(_scrollbar_getscroll(pObj, SB_VERT), wArrows, TRUE);
-            _scrollbar_set_wArrows(_scrollbar_getscroll(pObj, SB_HORZ), wArrows, TRUE);
+            _scrollbar_set_wArrows(_scrollbar_getscroll(pObj, SCROLLBAR_TYPE_VERT), wArrows, TRUE);
+            _scrollbar_set_wArrows(_scrollbar_getscroll(pObj, SCROLLBAR_TYPE_HORZ), wArrows, TRUE);
         }
         else
         {
@@ -4248,7 +4248,7 @@ BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT *lpRect, INT nType)
         {
             nError = ERROR_EX_HANDLE_BADINDEX;
         }
-        if (nError == ERROR_EX_NOERROR && Flag_Query(EXGF_DPI_ENABLE))
+        if (nError == ERROR_EX_NOERROR && Flag_Query(ENGINE_FLAG_DPI_ENABLE))
         {
             lpRect->left = (FLOAT)lpRect->left / g_Li.DpiX;
             lpRect->top = (FLOAT)lpRect->top / g_Li.DpiY;
@@ -4615,7 +4615,7 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                     {
                         pObj->objParent_ = 0;
                     }
-                    _obj_setpos_org(pObj, pObj->hObj_, 0, pObj->left_, pObj->top_, pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_, SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS | SWP_FRAMECHANGED | EOP_DEFAULT, &nError);
+                    _obj_setpos_org(pObj, pObj->hObj_, 0, pObj->left_, pObj->top_, pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_, SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS | SWP_FRAMECHANGED | OBJECT_POSITION_DEFAULT, &nError);
                     Ex_ObjUpdate(pObj->objParent_);
                 }
             }
@@ -4670,7 +4670,7 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                 // 需要修改本组件的*->初始化画布
                 EX_CLASSINFO* pCls = pObj->pCls_;
                 INT flags = 0;
-                flags = ECVF_GDI_COMPATIBLE;
+                flags = CANVAS_FLAG_GDI_COMPATIBLE;
                 _canvas_destroy(pObj->canvas_obj_); // 先释放本组件原来的画布
                 if (((EX_CLASSINFO*)pCls)->atomName == ATOM_PAGE)
                 {
@@ -4697,7 +4697,7 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                     pObj->atomName_ = 0;
                 }
 
-                if ((pObj->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP)
+                if ((pObj->dwStyleEx_ & OBJECT_STYLE_EX_DRAGDROP) == OBJECT_STYLE_EX_DRAGDROP)
                 {
                     if (!pWnd2->lpIDropTarget_)
                     {
@@ -4857,15 +4857,15 @@ size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText, LPCWST
     Format.cbSize = sizeof(CHARFORMAT2W);
     Format.dwMask = dwMask;
     DWORD dwEffects = 0;
-    if ((dwMask & CFM_COLOR) == CFM_COLOR)
+    if ((dwMask & EDIT_SELECT_CHARFORMAT_COLOR) == EDIT_SELECT_CHARFORMAT_COLOR)
     {
         Format.crTextColor = ExARGB2RGB(crText);
     }
-    if ((dwMask & CFM_OFFSET) == CFM_OFFSET)
+    if ((dwMask & EDIT_SELECT_CHARFORMAT_OFFSET) == EDIT_SELECT_CHARFORMAT_OFFSET)
     {
         Format.yOffset = yOffset;
     }
-    if ((dwMask & (CFM_BOLD | CFM_ITALIC | CFM_UNDERLINE | CFM_STRIKEOUT | CFM_LINK)) != 0)
+    if ((dwMask & (EDIT_SELECT_CHARFORMAT_BOLD | EDIT_SELECT_CHARFORMAT_ITALIC | EDIT_SELECT_CHARFORMAT_UNDERLINE | EDIT_SELECT_CHARFORMAT_STRIKEOUT | EDIT_SELECT_CHARFORMAT_LINK)) != 0)
     {
         if (bBold)
         {
@@ -4889,11 +4889,11 @@ size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText, LPCWST
         }
         Format.dwEffects = dwEffects;
     }
-    if ((dwMask & CFM_FACE) == CFM_FACE)
+    if ((dwMask & EDIT_SELECT_CHARFORMAT_FACE) == EDIT_SELECT_CHARFORMAT_FACE)
     {
         RtlMoveMemory(Format.szFaceName, wzFontFace, LF_FACESIZE);
     }
-    if ((dwMask & CFM_SIZE) == CFM_SIZE)
+    if ((dwMask & EDIT_SELECT_CHARFORMAT_SIZE) == EDIT_SELECT_CHARFORMAT_SIZE)
     {
         Format.yHeight = fontSize * 1440 / 96;
     }
@@ -4905,23 +4905,23 @@ size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering, INT
     PARAFORMAT Format;
     Format.cbSize = sizeof(PARAFORMAT);
     Format.dwMask = dwMask;
-    if ((dwMask & PFM_NUMBERING) == PFM_NUMBERING)
+    if ((dwMask & EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING) == EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING)
     {
         Format.wNumbering = wNumbering;
     }
-    if ((dwMask & PFM_STARTINDENT) == PFM_STARTINDENT)
+    if ((dwMask & EDIT_SELECT_PARAGRAPHFORMAT_STARTINDENT) == EDIT_SELECT_PARAGRAPHFORMAT_STARTINDENT)
     {
         Format.dxStartIndent = dxStartIndent * 20;
     }
-    if ((dwMask & PFM_RIGHTINDENT) == PFM_RIGHTINDENT)
+    if ((dwMask & EDIT_SELECT_PARAGRAPHFORMAT_RIGHTINDENT) == EDIT_SELECT_PARAGRAPHFORMAT_RIGHTINDENT)
     {
         Format.dxRightIndent = dxRightIndent * 20;
     }
-    if ((dwMask & PFM_OFFSET) == PFM_OFFSET)
+    if ((dwMask & EDIT_SELECT_PARAGRAPHFORMAT_OFFSET) == EDIT_SELECT_PARAGRAPHFORMAT_OFFSET)
     {
         Format.dxOffset = dxOffset;
     }
-    if ((dwMask & PFM_ALIGNMENT) == PFM_ALIGNMENT)
+    if ((dwMask & EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT) == EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT)
     {
         Format.wAlignment = wAlignment;
     }

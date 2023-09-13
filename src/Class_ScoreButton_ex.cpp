@@ -133,5 +133,5 @@ LRESULT CALLBACK _scorebtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 void _scorebtn_register()
 {
-	Ex_ObjRegister(L"ScoreButton", EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 2 * sizeof(size_t), 0, 0, _scorebtn_proc);
+	Ex_ObjRegister(L"ScoreButton", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 2 * sizeof(size_t), 0, 0, _scorebtn_proc);
 }

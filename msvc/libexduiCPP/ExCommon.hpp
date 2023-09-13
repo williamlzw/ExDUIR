@@ -384,7 +384,7 @@ namespace ExDUIR
 
 				void SetBanner(LPCWSTR text, int color)
 				{
-					Ex_ObjSendMessage(m_handle, EM_SETCUEBANNER, color, (LPARAM)text);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_SETCUEBANNER, color, (LPARAM)text);
 				}
 
 				void SelectAll()
@@ -392,7 +392,7 @@ namespace ExDUIR
 					EX_CHARRANGE charRange;
 					charRange.cpMin = 0;
 					charRange.cpMax = -1;
-					Ex_ObjSendMessage(m_handle, EM_EXSETSEL, 0, (LPARAM)&charRange);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_EXSETSEL, 0, (LPARAM)&charRange);
 				}
 
 				void CancelSelect()
@@ -407,12 +407,12 @@ namespace ExDUIR
 
 				void Undo()
 				{
-					Ex_ObjSendMessage(m_handle, EM_UNDO, 0, 0);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_UNDO, 0, 0);
 				}
 
 				void Redo()
 				{
-					Ex_ObjSendMessage(m_handle, EM_REDO, 0, 0);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_REDO, 0, 0);
 				}
 
 				void Copy()
@@ -445,82 +445,82 @@ namespace ExDUIR
 					EX_SETTEXTEX textformat;
 					textformat.flags = 2;       
 					textformat.codePage = 1200; 
-					Ex_ObjSendMessage(m_handle, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)text);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat, (LPARAM)text);
 				}
 
 				void AlignLeft()
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_LEFT);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, 0, 0, 0, 0, EDIT_PARAGRAPHFALIGN_LEFT);
 				}
 
 				void AlignRight()
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_RIGHT);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, 0, 0, 0, 0, EDIT_PARAGRAPHFALIGN_RIGHT);
 				}
 
 				void AlignCenter()
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_CENTER);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, 0, 0, 0, 0, EDIT_PARAGRAPHFALIGN_CENTER);
 				}
 
 				void SetSelParStartIndentation(int size)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_STARTINDENT, 0, size, 0, 0, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_STARTINDENT, 0, size, 0, 0, 0);
 				}
 
 				void SetSelParRightIndentation(int size)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_RIGHTINDENT, 0, 0, size, 0, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_RIGHTINDENT, 0, 0, size, 0, 0);
 				}
 
 				void SetSelParOffset(int size)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_OFFSET, 0, 0, 0, size, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_OFFSET, 0, 0, 0, size, 0);
 				}
 
 				void SetSelParNumbering(USHORT type)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_NUMBERING, type, 0, 0, 0, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING, type, 0, 0, 0, 0);
 				}
 
 				void SetSelCharColor(int crText)
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_COLOR, crText, 0, 0, 0, 0, 0, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_COLOR, crText, 0, 0, 0, 0, 0, 0, 0, 0);
 				}
 
 				void SetSelCharBold()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_BOLD, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_BOLD, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 				}
 
 				void SetSelCharItalic()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_ITALIC, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_ITALIC, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 				}
 
 				void SetSelCharUnderLine()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_UNDERLINE, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_UNDERLINE, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 				}
 
 				void SetSelCharStrikeOut()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_STRIKEOUT, 0, 0, 0, 0, 0, 0, 0, 1, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_STRIKEOUT, 0, 0, 0, 0, 0, 0, 0, 1, 0);
 				}
 
 				void SetSelCharLink()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_LINK, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_LINK, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 				}
 
 				void SetSelCharFont(LPCWSTR fontName, int size)
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_FACE | CFM_SIZE, 0, fontName, size, 0, 0, 0, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_FACE | EDIT_SELECT_CHARFORMAT_SIZE, 0, fontName, size, 0, 0, 0, 0, 0, 0);
 				}
 
 				void LoadRtf(std::vector<CHAR> rtf)
 				{
-					Ex_ObjSendMessage(m_handle, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_LOAD_RTF, rtf.size(), (size_t)rtf.data());
 				}
 
 				std::wstring GetText()
@@ -560,7 +560,7 @@ namespace ExDUIR
 
 				void SetBanner(LPCWSTR text, int color)
 				{
-					Ex_ObjSendMessage(m_handle, EM_SETCUEBANNER, color, (LPARAM)text);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_SETCUEBANNER, color, (LPARAM)text);
 				}
 
 				void SelectAll()
@@ -568,7 +568,7 @@ namespace ExDUIR
 					EX_CHARRANGE charRange;
 					charRange.cpMin = 0;
 					charRange.cpMax = -1;
-					Ex_ObjSendMessage(m_handle, EM_EXSETSEL, 0, (LPARAM)&charRange);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_EXSETSEL, 0, (LPARAM)&charRange);
 				}
 
 				void CancelSelect()
@@ -583,12 +583,12 @@ namespace ExDUIR
 
 				void Undo()
 				{
-					Ex_ObjSendMessage(m_handle, EM_UNDO, 0, 0);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_UNDO, 0, 0);
 				}
 
 				void Redo()
 				{
-					Ex_ObjSendMessage(m_handle, EM_REDO, 0, 0);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_REDO, 0, 0);
 				}
 
 				void Copy()
@@ -621,82 +621,82 @@ namespace ExDUIR
 					EX_SETTEXTEX textformat;
 					textformat.flags = 2;
 					textformat.codePage = 1200;
-					Ex_ObjSendMessage(m_handle, EM_SETTEXTEX, (WPARAM)&textformat, (LPARAM)text);
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat, (LPARAM)text);
 				}
 
 				void AlignLeft()
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_LEFT);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, 0, 0, 0, 0, EDIT_PARAGRAPHFALIGN_LEFT);
 				}
 
 				void AlignRight()
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_RIGHT);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, 0, 0, 0, 0, EDIT_PARAGRAPHFALIGN_RIGHT);
 				}
 
 				void AlignCenter()
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_ALIGNMENT, 0, 0, 0, 0, PFA_CENTER);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, 0, 0, 0, 0, EDIT_PARAGRAPHFALIGN_CENTER);
 				}
 
 				void SetSelParStartIndentation(int size)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_STARTINDENT, 0, size, 0, 0, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_STARTINDENT, 0, size, 0, 0, 0);
 				}
 
 				void SetSelParRightIndentation(int size)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_RIGHTINDENT, 0, 0, size, 0, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_RIGHTINDENT, 0, 0, size, 0, 0);
 				}
 
 				void SetSelParOffset(int size)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_OFFSET, 0, 0, 0, size, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_OFFSET, 0, 0, 0, size, 0);
 				}
 
 				void SetSelParNumbering(USHORT type)
 				{
-					Ex_ObjEditSetSelParFormat(m_handle, PFM_NUMBERING, type, 0, 0, 0, 0);
+					Ex_ObjEditSetSelParFormat(m_handle, EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING, type, 0, 0, 0, 0);
 				}
 
 				void SetSelCharColor(int crText)
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_COLOR, crText, 0, 0, 0, 0, 0, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_COLOR, crText, 0, 0, 0, 0, 0, 0, 0, 0);
 				}
 
 				void SetSelCharBold()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_BOLD, 0, 0, 0, 0, 1, 0, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_BOLD, 0, 0, 0, 0, 1, 0, 0, 0, 0);
 				}
 
 				void SetSelCharItalic()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_ITALIC, 0, 0, 0, 0, 0, 1, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_ITALIC, 0, 0, 0, 0, 0, 1, 0, 0, 0);
 				}
 
 				void SetSelCharUnderLine()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_UNDERLINE, 0, 0, 0, 0, 0, 0, 1, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_UNDERLINE, 0, 0, 0, 0, 0, 0, 1, 0, 0);
 				}
 
 				void SetSelCharStrikeOut()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_STRIKEOUT, 0, 0, 0, 0, 0, 0, 0, 1, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_STRIKEOUT, 0, 0, 0, 0, 0, 0, 0, 1, 0);
 				}
 
 				void SetSelCharLink()
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_LINK, 0, 0, 0, 0, 0, 0, 0, 0, 1);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_LINK, 0, 0, 0, 0, 0, 0, 0, 0, 1);
 				}
 
 				void SetSelCharFont(LPCWSTR fontName, int size)
 				{
-					Ex_ObjEditSetSelCharFormat(m_handle, CFM_FACE | CFM_SIZE, 0, fontName, size, 0, 0, 0, 0, 0, 0);
+					Ex_ObjEditSetSelCharFormat(m_handle, EDIT_SELECT_CHARFORMAT_FACE | EDIT_SELECT_CHARFORMAT_SIZE, 0, fontName, size, 0, 0, 0, 0, 0, 0);
 				}
 
 				void LoadRtf(std::vector<CHAR> rtf)
 				{
-					Ex_ObjSendMessage(m_handle, EM_LOAD_RTF, rtf.size(), (size_t)rtf.data());
+					Ex_ObjSendMessage(m_handle, EDIT_MESSAGE_LOAD_RTF, rtf.size(), (size_t)rtf.data());
 				}
 
 				std::wstring GetText()
@@ -795,17 +795,17 @@ namespace ExDUIR
 
 				void SetImageSize(int width, int height)
 				{
-					Ex_ObjSendMessage(m_handle, ILVM_SETITEMSIZE, 0, MAKELONG(width, height));
+					Ex_ObjSendMessage(m_handle, ICONLISTVIEW_MESSAGE_SETITEMSIZE, 0, MAKELONG(width, height));
 				}
 
 				void SetItem(EX_ICONLISTVIEW_ITEMINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 
 				void Update()
 				{
-					Ex_ObjSendMessage(m_handle, LVM_UPDATE, 0, 0);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_UPDATE, 0, 0);
 				}
 			};
 
@@ -829,7 +829,7 @@ namespace ExDUIR
 
 				void InsertItem(EX_LISTBUTTON_ITEMINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 			};
 
@@ -853,7 +853,7 @@ namespace ExDUIR
 
 				void InsertItem(EX_LISTBUTTON_ITEMINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 			};
 
@@ -877,7 +877,7 @@ namespace ExDUIR
 
 				void InsertItem(EX_LISTBUTTON_ITEMINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 			};
 
@@ -901,37 +901,37 @@ namespace ExDUIR
 
 				void AddGroup(EX_ROLLMENU_DATA info)
 				{
-					Ex_ObjSendMessage(m_handle, RM_ADDGROUP, 0, (LPARAM)&info);
+					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_ADDGROUP, 0, (LPARAM)&info);
 				}
 
 				void AddItem(int indexGroup, EX_ROLLMENU_ITEM info)
 				{
-					Ex_ObjSendMessage(m_handle, RM_ADDITEM, indexGroup, (LPARAM)&info);
+					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_ADDITEM, indexGroup, (LPARAM)&info);
 				}
 
 				void GetSelect(int& group, int& item)
 				{
-					Ex_ObjSendMessage(m_handle, RM_GETSEL, (WPARAM)&group, (LPARAM)&item);
+					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_GETSEL, (WPARAM)&group, (LPARAM)&item);
 				}
 
 				void SetSelect(int indexGroup, int indexItem)
 				{
-					Ex_ObjSendMessage(m_handle, RM_SETSEL, indexGroup, indexItem);
+					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_SETSEL, indexGroup, indexItem);
 				}
 
 				void DelGroup(int index)
 				{
-					Ex_ObjSendMessage(m_handle, RM_DELGROUP, index, 0);
+					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_DELGROUP, index, 0);
 				}
 
 				void DelItem(int indexGroup, int indexItem)
 				{
-					Ex_ObjSendMessage(m_handle, RM_DELITEM, indexGroup, indexItem);
+					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_DELITEM, indexGroup, indexItem);
 				}
 
 				void SetExpand(int indexGroup, bool expand)
 				{
-					Ex_ObjSendMessage(m_handle, RM_SETEXPAND, indexGroup, expand ? 1 : 0);
+					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_SETEXPAND, indexGroup, expand ? 1 : 0);
 				}
 			};
 
@@ -955,7 +955,7 @@ namespace ExDUIR
 
 				void SetItemCount(int count)
 				{
-				    Ex_ObjSendMessage(m_handle, LVM_SETITEMCOUNT, 0, count);
+				    Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETITEMCOUNT, 0, count);
 				}
 			};
 
@@ -979,12 +979,12 @@ namespace ExDUIR
 
 				void InsertItem(EX_TREEVIEW_INSERTINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, TVM_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, TREEVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 
 				void Update()
 				{
-					Ex_ObjSendMessage(m_handle, TVM_UPDATE, 0, 0);
+					Ex_ObjSendMessage(m_handle, TREEVIEW_MESSAGE_UPDATE, 0, 0);
 				}
 			};
 
@@ -1056,27 +1056,27 @@ namespace ExDUIR
 
 				void SetColumn(EX_REPORTLIST_COLUMNINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_INSERTCOLUMN, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTCOLUMN, 0, (size_t)&info);
 				}
 
 				void SetRow(EX_REPORTLIST_ROWINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 
 				void SetItem(EX_REPORTLIST_ITEMINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_SETITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETITEM, 0, (size_t)&info);
 				}
 
 				void SetCell(EX_REPORTLIST_CELLINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, LVM_SETCELL, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETCELL, 0, (size_t)&info);
 				}
 
 				void Update()
 				{
-					Ex_ObjSendMessage(m_handle, LVM_UPDATE, 0, 0);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_UPDATE, 0, 0);
 				}
 			};
 
@@ -1143,12 +1143,12 @@ namespace ExDUIR
 
 				void SetBlockDirection(int direction)
 				{
-					Ex_ObjSetLong(m_handle, SBL_BLOCK_POINT, direction);
+					Ex_ObjSetLong(m_handle, SLIDERBAR_LONG_BLOCK_POINT, direction);
 				}
 
 				int GetBlockDirection()
 				{
-					return Ex_ObjGetLong(m_handle, SBL_BLOCK_POINT);
+					return Ex_ObjGetLong(m_handle, SLIDERBAR_LONG_BLOCK_POINT);
 				}
 			};
 
@@ -1282,37 +1282,37 @@ namespace ExDUIR
 
 				void SetRadius(int radius)
 				{
-					Ex_ObjSendMessage(m_handle, PBM_SETRADIUS, radius, 0);
+					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETRADIUS, radius, 0);
 				}
 
 				void SetColorBackground(int color)
 				{
-					Ex_ObjSendMessage(m_handle, PBM_SETBKCOLOR, color, 0);
+					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETBKCOLOR, color, 0);
 				}
 
 				void SetColorFont(int color)
 				{
-					Ex_ObjSendMessage(m_handle, PBM_SETBARCOLOR, color, 0);
+					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETBARCOLOR, color, 0);
 				}
 
 				void SetPos(int pos)
 				{
-					Ex_ObjSendMessage(m_handle, PBM_SETPOS, pos, 0);
+					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETPOS, pos, 0);
 				}
 
 				int GetPos()
 				{
-					return Ex_ObjSendMessage(m_handle, PBM_GETPOS, 0, 0);
+					return Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_GETPOS, 0, 0);
 				}
 
 				void SetRange(int range)
 				{
-					Ex_ObjSendMessage(m_handle, PBM_SETRANGE, range, 0);
+					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETRANGE, range, 0);
 				}
 
 				int GetRange()
 				{
-					return Ex_ObjSendMessage(m_handle, PBM_GETRANGE, 0, 0);
+					return Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_GETRANGE, 0, 0);
 				}
 			};
 
@@ -1336,18 +1336,18 @@ namespace ExDUIR
 
 				std::wstring GetItemValue(LPCWSTR itemName)
 				{
-					LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_handle, PGM_GETITEMVALUE, 0, (LPARAM)itemName);
+					LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_GETITEMVALUE, 0, (LPARAM)itemName);
 					return std::wstring(ret);
 				}
 
 				void SetItemValue(LPCWSTR itemName, LPCWSTR itemValue)
 				{
-					Ex_ObjSendMessage(m_handle, PGM_SETITEMVALUE, (WPARAM)itemValue, (LPARAM)itemName);
+					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_SETITEMVALUE, (WPARAM)itemValue, (LPARAM)itemName);
 				}
 
 				void AddItem(EX_PROGRID_ITEMINFO info)
 				{
-					Ex_ObjSendMessage(m_handle, PGM_ADDITEM, PGT_OBJ_GROUP, (LPARAM)&info);
+					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_GROUP, (LPARAM)&info);
 				}
 			};
 
@@ -1409,12 +1409,12 @@ namespace ExDUIR
 
 				void SetSize(int width, int height)
 				{
-					Ex_ObjSendMessage(m_handle, CM_SIZE, width, height);
+					Ex_ObjSendMessage(m_handle, CAROUSEL_MESSAGE_SIZE, width, height);
 				}
 
 				void AddImage(ExImage img)
 				{
-					Ex_ObjSendMessage(m_handle, CM_ADDIMG, 0, img.m_image);
+					Ex_ObjSendMessage(m_handle, CAROUSEL_MESSAGE_ADDIMG, 0, img.m_image);
 				}
 			};
 
@@ -1462,12 +1462,12 @@ namespace ExDUIR
 
 				void LoadUrl(LPCWSTR url)
 				{
-					Ex_ObjSendMessage(m_handle, MBBM_LOAD, 0, (LPARAM)url);
+					Ex_ObjSendMessage(m_handle, MINIBLINKBROWSER_MESSAGE_LOAD, 0, (LPARAM)url);
 				}
 
 				void RunJS(LPCWSTR js)
 				{
-					Ex_ObjSendMessage(m_handle, MBBM_JS, 0, (LPARAM)js);
+					Ex_ObjSendMessage(m_handle, MINIBLINKBROWSER_MESSAGE_JS, 0, (LPARAM)js);
 				}
 			};
 
@@ -1529,22 +1529,22 @@ namespace ExDUIR
 
 				void Clear()
 				{
-					Ex_ObjSendMessage(m_handle, DBM_CLEAR, 0, 0);
+					Ex_ObjSendMessage(m_handle, DRAWINGBOARD_MESSAGE_CLEAR, 0, 0);
 				}
 
 				void SetPenWidth(int penWidth)
 				{
-					Ex_ObjSendMessage(m_handle, DBM_SETPENWIDTH, 0, penWidth);
+					Ex_ObjSendMessage(m_handle, DRAWINGBOARD_MESSAGE_SETPENWIDTH, 0, penWidth);
 				}
 
 				void SetPenColor(int penColor)
 				{
-					Ex_ObjSendMessage(m_handle, DBM_SETPENCOLOR, 0, penColor);
+					Ex_ObjSendMessage(m_handle, DRAWINGBOARD_MESSAGE_SETPENCOLOR, 0, penColor);
 				}
 
 				void SetPenType(int penType)
 				{
-					Ex_ObjSendMessage(m_handle, DBM_SETPENTYPE, 0, penType);
+					Ex_ObjSendMessage(m_handle, DRAWINGBOARD_MESSAGE_SETPENTYPE, 0, penType);
 				}
 			};
 

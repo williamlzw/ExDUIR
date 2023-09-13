@@ -119,7 +119,7 @@ HEXRES Ex_ResLoadFromMemory(LPVOID lpData, size_t dwDataLen)
         }
         else
         {
-            ret = _res_unpack(lpData, dwDataLen, EPDF_FILES);
+            ret = _res_unpack(lpData, dwDataLen, PACKAGEHEADER_FILES);
         }
     }
     else

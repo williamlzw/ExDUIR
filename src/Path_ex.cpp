@@ -196,7 +196,7 @@ BOOL _path_addline(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2)
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
+        if (!((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) == PATH_FLAG_DISABLESCALE))
         {
             if (g_Li.DpiX > 1)
             {
@@ -219,7 +219,7 @@ BOOL _path_addarc(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT r
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
+        if (!((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) == PATH_FLAG_DISABLESCALE))
         {
             if (g_Li.DpiX > 1)
             {
@@ -248,7 +248,7 @@ BOOL _path_addarc3(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        if (!((pPath->dwFlags_ & EPF_DISABLESCALE) == EPF_DISABLESCALE))
+        if (!((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) == PATH_FLAG_DISABLESCALE))
         {
             if (g_Li.DpiX > 1)
             {
@@ -320,7 +320,7 @@ BOOL _path_addrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bott
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        if ((pPath->dwFlags_ & EPF_DISABLESCALE) != EPF_DISABLESCALE)
+        if ((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) != PATH_FLAG_DISABLESCALE)
         {
             if (g_Li.DpiX > 1)
             {
@@ -399,7 +399,7 @@ BOOL _path_addbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOA
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        if ((pPath->dwFlags_ & EPF_DISABLESCALE) != EPF_DISABLESCALE)
+        if ((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) != PATH_FLAG_DISABLESCALE)
         {
             if (g_Li.DpiX > 1)
             {
@@ -430,7 +430,7 @@ BOOL _path_addquadraticbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        if ((pPath->dwFlags_ & EPF_DISABLESCALE) != EPF_DISABLESCALE)
+        if ((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) != PATH_FLAG_DISABLESCALE)
         {
             if (g_Li.DpiX > 1)
             {

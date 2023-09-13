@@ -2,15 +2,15 @@
 #include "help_ex.h"
 
 //滚动条点击类型_调节按钮1
-#define SBCT_ADJUSTBUTTON1 1
+#define SCROLLBAR_HITTYPE_ADJUSTBUTTON1 1
 //滚动条点击类型_页面区域1
-#define SBCT_PAGEAREA1 2
+#define SCROLLBAR_HITTYPE_PAGEAREA1 2
 //滚动条点击类型_滚动条
-#define SBCT_CONTROL 3
+#define SCROLLBAR_HITTYPE_CONTROL 3
 //滚动条点击类型_页面区域2
-#define SBCT_PAGEAREA2 4
+#define SCROLLBAR_HITTYPE_PAGEAREA2 4
 //滚动条点击类型_调节按钮2
-#define SBCT_ADJUSTBUTTON2 5
+#define SCROLLBAR_HITTYPE_ADJUSTBUTTON2 5
 
 void _scrollbar_register();
 LRESULT CALLBACK _scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

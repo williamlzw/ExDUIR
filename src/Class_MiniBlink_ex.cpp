@@ -36,7 +36,7 @@ BOOL Ex_ObjMiniblinkBrowserInitialize(LPCWSTR libPath, LPCWSTR dllName)
 
 void _miniblink_register()
 {
-	Ex_ObjRegister(L"mbBrowser", EOS_VISIBLE, EOS_EX_TABSTOP | EOS_EX_FOCUSABLE, -1, 2 * sizeof(SIZE_T), 0, 0, _miniblink_proc);
+	Ex_ObjRegister(L"mbBrowser", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE, -1, 2 * sizeof(SIZE_T), 0, 0, _miniblink_proc);
 }
 
 void CALLBACK _miniblink_onpaint(mbWebView hWebView, LPVOID hObj,const HDC hDC, INT x, INT y, INT cx, INT cy)
@@ -140,7 +140,7 @@ HCURSOR _miniblink_setcursor(HEXOBJ hObj, DWORD dwCursorType)
 
 LRESULT CALLBACK _miniblink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	mbWebView hWebView = (mbWebView)Ex_ObjGetLong(hObj, MBBL_VIEW);
+	mbWebView hWebView = (mbWebView)Ex_ObjGetLong(hObj, MINIBLINKBROWSER_LONG_VIEW);
 	BOOL fResult = FALSE;
 	LRESULT nResult = 0;
 	if (uMsg == WM_CREATE)
@@ -151,8 +151,8 @@ LRESULT CALLBACK _miniblink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		{
 			mbSetHandle(hWebView, hWnd);
 			mbSetAutoDrawToHwnd(hWebView, FALSE);
-			Ex_ObjSetLong(hObj, MBBL_VIEW, (LONG_PTR)hWebView);
-			Ex_ObjSetLong(hObj, MBBL_ONPAINT, (LONG_PTR)_miniblink_onpaintbit);
+			Ex_ObjSetLong(hObj, MINIBLINKBROWSER_LONG_VIEW, (LONG_PTR)hWebView);
+			Ex_ObjSetLong(hObj, MINIBLINKBROWSER_LONG_ONPAINT, (LONG_PTR)_miniblink_onpaintbit);
 			mbOnPaintBitUpdated(hWebView, _miniblink_onpaintbit, (LPVOID)hObj);
 		}
 	}
@@ -212,19 +212,19 @@ LRESULT CALLBACK _miniblink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		nResult =(LRESULT) _miniblink_setcursor(hObj, nType);
 		fResult = TRUE;
 	}
-	else if (uMsg == MBBM_GETWEBVIEW)
+	else if (uMsg == MINIBLINKBROWSER_MESSAGE_GETWEBVIEW)
 	{
 		fResult = TRUE;
 		nResult = (LRESULT)hWebView;
 	}
-	else if (uMsg == MBBM_LOAD)
+	else if (uMsg == MINIBLINKBROWSER_MESSAGE_LOAD)
 	{
 		std::wstring path = (LPCWSTR)lParam;
 		auto encoded = UrlEncode(path, 1, 1, 1);
 		mbLoadURL(hWebView, encoded.c_str());
 		fResult = TRUE;
 	}
-	else if (uMsg == MBBM_JS)
+	else if (uMsg == MINIBLINKBROWSER_MESSAGE_JS)
 	{
 		if (lParam)
 		{

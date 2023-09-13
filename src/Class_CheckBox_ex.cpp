@@ -27,11 +27,11 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     if (uMsg == WM_CREATE)
     {
         Ex_ObjInitPropList(hObj, 6);
-        Ex_ObjSetProp(hObj, ECBP_CRNORMAL, ExARGB(190, 190, 190, 255));
-        Ex_ObjSetProp(hObj, ECBP_CRHOVER, ExARGB(200, 200, 200, 255));
-        Ex_ObjSetProp(hObj, ECBP_CRCHECKED, ExARGB(0, 200, 200, 255));
-        Ex_ObjSetProp(hObj, ECBP_TEXT, ExARGB(255, 255, 255, 255));
-        Ex_ObjSetProp(hObj, ECBP_CRHOVERCHECK, ExARGB(194, 194, 194, 255));
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRNORMAL, ExARGB(190, 190, 190, 255));
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRHOVER, ExARGB(200, 200, 200, 255));
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRCHECKED, ExARGB(0, 200, 200, 255));
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_TEXT, ExARGB(255, 255, 255, 255));
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRHOVERCHECK, ExARGB(194, 194, 194, 255));
     }
     else if (uMsg == WM_DESTROY)
     {
@@ -64,9 +64,9 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     else if (uMsg == WM_EX_PROPS)
     {
         EX_OBJ_PROPS *checkboxprops = (EX_OBJ_PROPS *)lParam;
-        Ex_ObjSetProp(hObj, ECBP_CRNORMAL, checkboxprops->crBkgNormal);
-        Ex_ObjSetProp(hObj, ECBP_CRHOVER, checkboxprops->crBkgHover);
-        Ex_ObjSetProp(hObj, ECBP_CRCHECKED, checkboxprops->crBkgDownOrChecked);
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRNORMAL, checkboxprops->crBkgNormal);
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRHOVER, checkboxprops->crBkgHover);
+        Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRCHECKED, checkboxprops->crBkgDownOrChecked);
     }
     return Ex_ObjCallProc(m_pfnCheckBoxProc, hWnd, hObj, uMsg, wParam, lParam);
 }
@@ -78,12 +78,12 @@ void _checkbox_paint(HEXOBJ hObj)
     if (Ex_ObjBeginPaint(hObj, &ps))
     {
 
-        HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ECBP_CRNORMAL));
+        HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, CHECKBOX_PROP_CRNORMAL));
         EXARGB crText = NULL;
         /* 计算文本尺寸 */
         FLOAT nTextWidth = NULL;
         FLOAT nTextHeight = NULL;
-        _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
+        _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
         /* 定义选择框矩形 */
         rcBlock.left = ps.uWidth - ps.uHeight;
@@ -91,16 +91,16 @@ void _checkbox_paint(HEXOBJ hObj)
         rcBlock.right = ps.rcPaint.right;
         rcBlock.bottom = ps.rcPaint.bottom;
 
-        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_HOVER) == STATE_HOVER)
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_HOVER) == STATE_HOVER)
         {
-            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ECBP_CRHOVER));
-            crText = Ex_ObjGetProp(hObj, ECBP_CRHOVERCHECK);
+            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, CHECKBOX_PROP_CRHOVER));
+            crText = Ex_ObjGetProp(hObj, CHECKBOX_PROP_CRHOVERCHECK);
         }
 
-        if ((Ex_ObjGetLong(hObj, EOL_STATE) & STATE_CHECKED) == STATE_CHECKED)
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) == STATE_CHECKED)
         {
             /* 定义选中色 */
-            crText = Ex_ObjGetProp(hObj, ECBP_CRCHECKED);
+            crText = Ex_ObjGetProp(hObj, CHECKBOX_PROP_CRCHECKED);
             _brush_setcolor(hBrush, crText);
         }
         /* 填充矩形和绘制边框 */
@@ -118,8 +118,8 @@ void _checkbox_paint(HEXOBJ hObj)
         /* 绘制组件文本 */
         _canvas_drawtext(ps.hCanvas,
                          Ex_ObjGetFont(hObj),
-                         Ex_ObjGetProp(hObj, ECBP_TEXT),
-                         (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
+                         Ex_ObjGetProp(hObj, CHECKBOX_PROP_TEXT),
+                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
                          -1,
                          DT_CENTER | DT_VCENTER | DT_SINGLELINE,
                          (FLOAT)ps.rcText.left,

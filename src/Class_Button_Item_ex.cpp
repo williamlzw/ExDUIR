@@ -2,14 +2,14 @@
 
 void _button_regsiter()
 {
-    Ex_ObjRegister(L"Button", EOS_VISIBLE | EBS_TEXTOFFSET, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_CENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
-    Ex_ObjRegister(L"CheckButton", EOS_VISIBLE | EBS_CHECKBUTTON, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
-    Ex_ObjRegister(L"RadioButton", EOS_VISIBLE | EBS_RADIOBUTTON, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
+    Ex_ObjRegister(L"Button", OBJECT_STYLE_VISIBLE | BUTTON_STYLE_TEXTOFFSET, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_CENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
+    Ex_ObjRegister(L"CheckButton", OBJECT_STYLE_VISIBLE | BUTTON_STYLE_CHECKBUTTON, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
+    Ex_ObjRegister(L"RadioButton", OBJECT_STYLE_VISIBLE | BUTTON_STYLE_RADIOBUTTON, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
 }
 
 void _item_regsiter()
 {
-    Ex_ObjRegister(L"Item", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _item_proc);
+    Ex_ObjRegister(L"Item", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, 0, 0, 0, _item_proc);
 }
 
 LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -34,9 +34,9 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
                 {
                     _obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_CLICK, wParam, lParam);
                 }
-                if ((pObj->dwStyle_ & (EBS_CHECKBUTTON | EBS_RADIOBUTTON)) != 0)
+                if ((pObj->dwStyle_ & (BUTTON_STYLE_CHECKBUTTON | BUTTON_STYLE_RADIOBUTTON)) != 0)
                 {
-                    if ((pObj->dwStyle_ & EBS_CHECKBUTTON) == EBS_CHECKBUTTON)
+                    if ((pObj->dwStyle_ & BUTTON_STYLE_CHECKBUTTON) == BUTTON_STYLE_CHECKBUTTON)
                     {
                         _obj_baseproc(hWnd, hObj, pObj, BM_SETCHECK, !((pObj->dwState_ & STATE_CHECKED) == STATE_CHECKED), 0);
                     }
@@ -82,9 +82,9 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
         }
         else if (uMsg == BM_SETCHECK)
         {
-            if ((pObj->dwStyle_ & (EBS_RADIOBUTTON | EBS_CHECKBUTTON)) != 0)
+            if ((pObj->dwStyle_ & (BUTTON_STYLE_RADIOBUTTON | BUTTON_STYLE_CHECKBUTTON)) != 0)
             {
-                if ((pObj->dwStyle_ & EBS_RADIOBUTTON) == EBS_RADIOBUTTON)
+                if ((pObj->dwStyle_ & BUTTON_STYLE_RADIOBUTTON) == BUTTON_STYLE_RADIOBUTTON)
                 {
                     if (wParam == 0)
                     {
@@ -100,7 +100,7 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
                 }
                 else
                 {
-                    if ((pObj->dwStyle_ & EBS_CHECKBUTTON) == EBS_CHECKBUTTON)
+                    if ((pObj->dwStyle_ & BUTTON_STYLE_CHECKBUTTON) == BUTTON_STYLE_CHECKBUTTON)
                     {
                         _obj_setuistate(pObj, STATE_HALFSELECT | STATE_SELECT, TRUE, 0, FALSE, 0);
                         if (wParam == 2)
@@ -138,7 +138,7 @@ void _button_paint(HEXOBJ hObj, obj_s *pObj)
     EX_PAINTSTRUCT ps = {0};
     if (Ex_ObjBeginPaint(hObj, &ps))
     {
-        BOOL fButton = (ps.dwStyle & (EBS_RADIOBUTTON | EBS_CHECKBUTTON)) == 0;
+        BOOL fButton = (ps.dwStyle & (BUTTON_STYLE_RADIOBUTTON | BUTTON_STYLE_CHECKBUTTON)) == 0;
         EXATOM atomClass;
         EXATOM atomProp;
         INT nIndex;
@@ -161,7 +161,7 @@ void _button_paint(HEXOBJ hObj, obj_s *pObj)
                 nIndex = COLOR_EX_TEXT_NORMAL;
             }
 
-            if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0)
+            if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0)
             {
                 Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomProp, 255);
                 if ((ps.dwState & STATE_FOCUS) != 0)
@@ -172,7 +172,7 @@ void _button_paint(HEXOBJ hObj, obj_s *pObj)
         }
         else
         {
-            fButton = (ps.dwStyle & EBS_RADIOBUTTON) != 0;
+            fButton = (ps.dwStyle & BUTTON_STYLE_RADIOBUTTON) != 0;
             atomClass = fButton ? ATOM_RADIOBUTTON : ATOM_CHECKBUTTON;
             if ((ps.dwState & STATE_DOWN) != 0)
             {
@@ -200,7 +200,7 @@ void _button_paint(HEXOBJ hObj, obj_s *pObj)
                 nIndex = COLOR_EX_TEXT_CHECKED;
             }
 
-            if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0)
+            if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0)
             {
                 Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomProp, 255);
             }
@@ -208,7 +208,7 @@ void _button_paint(HEXOBJ hObj, obj_s *pObj)
         LPCWSTR lptext = pObj->pstrTitle_;
         if (lptext != 0)
         {
-            if ((ps.dwState & STATE_DOWN) != 0 && (ps.dwStyle & EBS_TEXTOFFSET) != 0)
+            if ((ps.dwState & STATE_DOWN) != 0 && (ps.dwStyle & BUTTON_STYLE_TEXTOFFSET) != 0)
             {
                 OffsetRect((LPRECT)&ps.rcText.left, Ex_Scale(1), Ex_Scale(1));
             }
@@ -444,7 +444,7 @@ void _item_paint(HEXOBJ hObj, obj_s *pObj)
         {
             if (atomProp != 0)
             {
-                if ((ps.dwStyleEx & EOS_EX_CUSTOMDRAW) == 0)
+                if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0)
                 {
                     Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_ITEM, atomProp, 255);
                 }

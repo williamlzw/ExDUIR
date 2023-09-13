@@ -23,7 +23,7 @@ BOOL _layout_unregister(INT nType)
 void _layout_free_info(array_s *hArr, INT nIndex, LPVOID pvItem, INT nType)
 {
     layout_s *pLayout = (layout_s *)Array_GetExtra(hArr);
-    ((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_UNINITCHILDPROPS, __get(pvItem, 0), (size_t)pvItem);
+    ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_UNINITCHILDPROPS, __get(pvItem, 0), (size_t)pvItem);
     Ex_MemFree((LPVOID)((size_t)pvItem - 4 * sizeof(size_t)));
 }
 
@@ -59,14 +59,14 @@ HEXLAYOUT _layout_create(INT nType, EXHANDLE hObjBind)
                     pLayout->fUpdateable_ = TRUE;
                     pLayout->lpfnProc_ = (LPVOID)lpfnProc;
                     pLayout->hBind_ = hObjBind;
-                    INT nCount = ((LayoutPROC)lpfnProc)(pLayout, ELN_GETPROPSCOUNT, NULL, NULL);
+                    INT nCount = ((LayoutPROC)lpfnProc)(pLayout, LAYOUT_EVENT_GETPROPSCOUNT, NULL, NULL);
                     LPVOID pInfo = (LPVOID)((size_t)Ex_MemAlloc((nCount + (size_t)4) * sizeof(size_t)) + (size_t)4 * sizeof(size_t)); //padding
                     pLayout->lpLayoutInfo_ = pInfo;
-                    ((LayoutPROC)lpfnProc)(pLayout, ELN_INITPROPS, NULL, (size_t)pInfo);
-                    nCount = ((LayoutPROC)lpfnProc)(pLayout, ELN_GETCHILDPROPCOUNT, NULL, NULL);
+                    ((LayoutPROC)lpfnProc)(pLayout, LAYOUT_EVENT_INITPROPS, NULL, (size_t)pInfo);
+                    nCount = ((LayoutPROC)lpfnProc)(pLayout, LAYOUT_EVENT_GETCHILDPROPCOUNT, NULL, NULL);
                     pLayout->cbInfoLen_ = (nCount + 5) * sizeof(size_t); // Margin4/hObjChild1
                     array_s *hArr = Array_Create(0);
-                    Array_BindEvent(hArr, eae_delmember, &_layout_free_info);
+                    Array_BindEvent(hArr, ARRAY_EVENT_DELMEMBER, &_layout_free_info);
                     Array_SetExtra(hArr, (size_t)pLayout);
                     pLayout->hArrChildrenInfo_ = hArr;
                     hLayout = _handle_create(HT_LAYOUT, pLayout, &nError);
@@ -121,7 +121,7 @@ BOOL _layout_destroy(HEXLAYOUT hLayout)
     if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID *)&pLayout, &nError))
     {
         LPVOID lpfnProc = pLayout->lpfnProc_;
-        ((LayoutPROC)lpfnProc)(pLayout, ELN_UNINITPROPS, 0, (size_t)pLayout->lpLayoutInfo_);
+        ((LayoutPROC)lpfnProc)(pLayout, LAYOUT_EVENT_UNINITPROPS, 0, (size_t)pLayout->lpLayoutInfo_);
         Array_Destroy(pLayout->hArrChildrenInfo_);
         Ex_MemFree((LPVOID)((size_t)pLayout->lpLayoutInfo_ - 4 * sizeof(size_t)));
         Ex_MemFree(pLayout);
@@ -163,7 +163,7 @@ BOOL _layout_update(HEXLAYOUT hLayout)
         if (pLayout->fUpdateable_)
         {
             LPVOID lpfnProc = pLayout->lpfnProc_;
-            ((LayoutPROC)lpfnProc)(pLayout, ELN_UPDATE, pLayout->hBind_, 0);
+            ((LayoutPROC)lpfnProc)(pLayout, LAYOUT_EVENT_UPDATE, pLayout->hBind_, 0);
         }
     }
     Ex_SetLastError(nError);
@@ -220,16 +220,16 @@ BOOL _layout_table_setinfo(HEXLAYOUT hLayout, INT *aRowHeight, INT cRows, INT *a
     INT ret = 1;
     if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID *)&pLayout, &nError))
     {
-        if (pLayout->nType_ == ELT_TABLE)
+        if (pLayout->nType_ == LAYOUT_TYPE_TABLE)
         {
             LPVOID pInfo = pLayout->lpLayoutInfo_;
-            array_s *hArr = (array_s *)__get(pInfo, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(LPVOID));
+            array_s *hArr = (array_s *)__get(pInfo, (LAYOUT_PROP_TABLE_ARRAY_ROW - 1) * sizeof(LPVOID));
             Array_Redefine(hArr, cRows, FALSE);
             for (INT i = 1; i <= cRows; i++)
             {
                 Array_SetMember(hArr, i, aRowHeight[i - 1]);
             }
-            hArr = (array_s *)__get(pInfo, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(LPVOID));
+            hArr = (array_s *)__get(pInfo, (LAYOUT_PROP_TABLE_ARRAY_CELL - 1) * sizeof(LPVOID));
             Array_Redefine(hArr, cCells, FALSE);
             for (INT i = 1; i <= cCells; i++)
             {
@@ -263,7 +263,7 @@ BOOL _layout_setchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t p
                 {
                     pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
                     __set(pInfo, 0, hObj);
-                    ((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
+                    ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_INITCHILDPROPS, hObj, (size_t)pInfo);
                     nIndex = Array_AddMember(hArr, (size_t)pInfo);
                 }
             }
@@ -274,7 +274,7 @@ BOOL _layout_setchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t p
             if (pInfo != 0)
             {
 
-                if (((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_CHECKCHILDPROPVALUE, MAKELONG(nIndex, dwPropID), pvValue) == 0)
+                if (((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_CHECKCHILDPROPVALUE, MAKELONG(nIndex, dwPropID), pvValue) == 0)
                 {
 
                     __set(pInfo, dwPropID * sizeof(size_t), pvValue);
@@ -336,7 +336,7 @@ BOOL _layout_setprop(HEXLAYOUT hLayout, INT dwPropID, size_t pvValue)
     {
         LPVOID pInfo = pLayout->lpLayoutInfo_;
         LPVOID lpfnProc = pLayout->lpfnProc_;
-        if (((LayoutPROC)lpfnProc)(pLayout, ELN_CHECKCHILDPROPVALUE, dwPropID, pvValue) == 0)
+        if (((LayoutPROC)lpfnProc)(pLayout, LAYOUT_EVENT_CHECKCHILDPROPVALUE, dwPropID, pvValue) == 0)
         {
             if (dwPropID > 0)
             {
@@ -373,7 +373,7 @@ BOOL _layout_absolute_setedge(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT dwEdge, I
     INT nError = 0;
     if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID *)&pLayout, &nError))
     {
-        if (pLayout->nType_ == ELT_ABSOLUTE)
+        if (pLayout->nType_ == LAYOUT_TYPE_ABSOLUTE)
         {
             dwEdge = (dwEdge + 1) / 2;
             if (dwEdge >= 1 && dwEdge <= 8)
@@ -446,19 +446,19 @@ void _layout_move_margin(HEXOBJ hObj, RECT *lpObjRc, LPVOID lpMargin, INT dwLock
     rcObj.bottom = rcObj.bottom - rcObj.top;
     if ((dwOrgFlags & 1) != 0)
     {
-        rcObj.left = EOP_DEFAULT;
+        rcObj.left = OBJECT_POSITION_DEFAULT;
     }
     if ((dwOrgFlags & 2) != 0)
     {
-        rcObj.top = EOP_DEFAULT;
+        rcObj.top = OBJECT_POSITION_DEFAULT;
     }
     if ((dwOrgFlags & 4) != 0)
     {
-        rcObj.right = EOP_DEFAULT;
+        rcObj.right = OBJECT_POSITION_DEFAULT;
     }
     if ((dwOrgFlags & 8) != 0)
     {
-        rcObj.bottom = EOP_DEFAULT;
+        rcObj.bottom = OBJECT_POSITION_DEFAULT;
     }
 
     Ex_ObjMove(hObj, rcObj.left, rcObj.top, rcObj.right, rcObj.bottom, FALSE);
@@ -466,27 +466,27 @@ void _layout_move_margin(HEXOBJ hObj, RECT *lpObjRc, LPVOID lpMargin, INT dwLock
 
 LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-    if (nEvent == ELN_GETPROPSCOUNT)
+    if (nEvent == LAYOUT_EVENT_GETPROPSCOUNT)
     {
         return 2;
     }
-    else if (nEvent == ELN_GETCHILDPROPCOUNT)
+    else if (nEvent == LAYOUT_EVENT_GETCHILDPROPCOUNT)
     {
         return 2;
     }
-    else if (nEvent == ELN_INITCHILDPROPS)
+    else if (nEvent == LAYOUT_EVENT_INITCHILDPROPS)
     {
-        __set((LPVOID)lParam, ELCP_LINEAR_SIZE * sizeof(size_t), -1);
+        __set((LPVOID)lParam, LAYOUT_SUBPROP_LINEAR_SIZE * sizeof(size_t), -1);
     }
-    else if (nEvent == ELN_CHECKCHILDPROPVALUE)
+    else if (nEvent == LAYOUT_EVENT_CHECKCHILDPROPVALUE)
     {
         INT nSize = HIWORD(wParam);
-        if (nSize == ELN_CHECKCHILDPROPVALUE)
+        if (nSize == LAYOUT_EVENT_CHECKCHILDPROPVALUE)
         {
-            return (lParam < ELCP_LINEAR_ALGIN_FILL || lParam > ELCP_LINEAR_ALIGN_RIGHT_BOTTOM);
+            return (lParam < LAYOUT_SUBPROP_LINEAR_ALIGN_FILL || lParam > LAYOUT_SUBPROP_LINEAR_ALIGN_RIGHT_BOTTOM);
         }
     }
-    else if (nEvent == ELN_UPDATE)
+    else if (nEvent == LAYOUT_EVENT_UPDATE)
     {
         RECT rcClient{0};
         if (((layout_s *)pLayout)->nBindType_ == HT_OBJECT)
@@ -499,12 +499,12 @@ LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wPar
         }
         LPVOID pInfo = ((layout_s *)pLayout)->lpLayoutInfo_;
         array_s *hArr = ((layout_s *)pLayout)->hArrChildrenInfo_;
-        INT nDAlign = __get(pInfo, (ELP_LINEAR_DALIGN - 1) * sizeof(size_t));
-        BOOL fVertical = __get(pInfo, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
-        rcClient.left = rcClient.left + __get(pInfo, ELP_PADDING_LEFT * sizeof(size_t));
-        rcClient.top = rcClient.top + __get(pInfo, ELP_PADDING_TOP * sizeof(size_t));
-        rcClient.right = rcClient.right - __get(pInfo, ELP_PADDING_RIGHT * sizeof(size_t));
-        rcClient.bottom = rcClient.bottom - __get(pInfo, ELP_PADDING_BOTTOM * sizeof(size_t));
+        INT nDAlign = __get(pInfo, (LAYOUT_PROP_LINEAR_ALIGN - 1) * sizeof(size_t));
+        BOOL fVertical = __get(pInfo, (LAYOUT_PROP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == LAYOUT_PROP_DIRECTION_V;
+        rcClient.left = rcClient.left + __get(pInfo, LAYOUT_PROP_PADDING_LEFT * sizeof(size_t));
+        rcClient.top = rcClient.top + __get(pInfo, LAYOUT_PROP_PADDING_TOP * sizeof(size_t));
+        rcClient.right = rcClient.right - __get(pInfo, LAYOUT_PROP_PADDING_RIGHT * sizeof(size_t));
+        rcClient.bottom = rcClient.bottom - __get(pInfo, LAYOUT_PROP_PADDING_BOTTOM * sizeof(size_t));
         SIZE szClient;
         szClient.cx = rcClient.right - rcClient.left;
         szClient.cy = rcClient.bottom - rcClient.top;
@@ -525,7 +525,7 @@ LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wPar
             HEXOBJ hObj = __get(pInfo, 0);
             if (hObj == 0)
                 continue;
-            INT nSize = __get(pInfo, ELCP_LINEAR_SIZE * sizeof(size_t));
+            INT nSize = __get(pInfo, LAYOUT_SUBPROP_LINEAR_SIZE * sizeof(size_t));
             RECT rcTmp{0};
             Ex_ObjGetRect(hObj, &rcTmp);
             INT w = rcTmp.right - rcTmp.left;
@@ -541,22 +541,22 @@ LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wPar
                     nSize = w;
                 }
             }
-            INT nFill = __get(pInfo, ELCP_LINEAR_ALIGN * sizeof(size_t));
+            INT nFill = __get(pInfo, LAYOUT_SUBPROP_LINEAR_ALIGN * sizeof(size_t));
             orgFlags = 0;
             if (fVertical)
             {
-                if (nFill == ELCP_LINEAR_ALIGN_LEFT_TOP)
+                if (nFill == LAYOUT_SUBPROP_LINEAR_ALIGN_LEFT_TOP)
                 {
                     rcObj.left = rcClient.left;
                     rcObj.right = rcObj.left + w;
                 }
-                else if (nFill == ELCP_LINEAR_ALIGN_CENTER)
+                else if (nFill == LAYOUT_SUBPROP_LINEAR_ALIGN_CENTER)
                 {
                     rcObj.left = rcClient.left + (szClient.cx - w) / 2;
                     rcObj.right = rcObj.left + w;
                     orgFlags = 4;
                 }
-                else if (nFill == ELCP_LINEAR_ALIGN_RIGHT_BOTTOM)
+                else if (nFill == LAYOUT_SUBPROP_LINEAR_ALIGN_RIGHT_BOTTOM)
                 {
                     rcObj.right = rcClient.right;
                     rcObj.left = rcClient.right - w;
@@ -570,18 +570,18 @@ LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wPar
             }
             else
             {
-                if (nFill == ELCP_LINEAR_ALIGN_LEFT_TOP)
+                if (nFill == LAYOUT_SUBPROP_LINEAR_ALIGN_LEFT_TOP)
                 {
                     rcObj.top = rcClient.top;
                     rcObj.bottom = rcObj.top + rcObj.bottom - rcTmp.top;
                 }
-                else if (nFill == ELCP_LINEAR_ALIGN_CENTER)
+                else if (nFill == LAYOUT_SUBPROP_LINEAR_ALIGN_CENTER)
                 {
                     rcObj.top = rcClient.top + (szClient.cy - h) / 2;
                     rcObj.bottom = rcObj.top + h;
                     orgFlags = 8;
                 }
-                else if (nFill == ELCP_LINEAR_ALIGN_RIGHT_BOTTOM)
+                else if (nFill == LAYOUT_SUBPROP_LINEAR_ALIGN_RIGHT_BOTTOM)
                 {
                     rcObj.bottom = rcClient.bottom;
                     rcObj.top = rcClient.bottom - (rcTmp.bottom - rcTmp.top);
@@ -599,10 +599,10 @@ LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wPar
             }
             else
             {
-                rcObj.left = rcObj.left + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
-                rcObj.top = rcObj.top + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t));
-                rcObj.right = rcObj.right + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t));
-                rcObj.bottom = rcObj.bottom + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t));
+                rcObj.left = rcObj.left + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
+                rcObj.top = rcObj.top + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t));
+                rcObj.right = rcObj.right + __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t));
+                rcObj.bottom = rcObj.bottom + __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t));
                 arrRect[i - 1] = rcObj;
                 arrOrg[i - 1] = orgFlags;
             }
@@ -618,7 +618,7 @@ LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wPar
         if (Array_GetCount(hArr) > 0 && arrRect.size() > 0)
         {
             LPVOID pInfo = ((layout_s *)pLayout)->lpLayoutInfo_;
-            INT nDAlign = __get(pInfo, (ELP_LINEAR_DALIGN - 1) * sizeof(size_t));
+            INT nDAlign = __get(pInfo, (LAYOUT_PROP_LINEAR_ALIGN - 1) * sizeof(size_t));
             INT w = 0;
             INT h = 0;
             if (fVertical)
@@ -676,19 +676,19 @@ LRESULT CALLBACK __layout_linear_proc(layout_s *pLayout, INT nEvent, WPARAM wPar
 
 LRESULT CALLBACK __layout_flow_proc(layout_s *pLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-    if (nEvent == ELN_GETPROPSCOUNT)
+    if (nEvent == LAYOUT_EVENT_GETPROPSCOUNT)
     {
         return 1;
     }
-    else if (nEvent == ELN_GETCHILDPROPCOUNT)
+    else if (nEvent == LAYOUT_EVENT_GETCHILDPROPCOUNT)
     {
         return 2;
     }
-    else if (nEvent == ELN_INITCHILDPROPS)
+    else if (nEvent == LAYOUT_EVENT_INITCHILDPROPS)
     {
-        __set((LPVOID)lParam, ELCP_FLOW_SIZE * sizeof(size_t), -1);
+        __set((LPVOID)lParam, LAYOUT_SUBPROP_FLOW_SIZE * sizeof(size_t), -1);
     }
-    else if (nEvent == ELN_UPDATE)
+    else if (nEvent == LAYOUT_EVENT_UPDATE)
     {
         RECT rcClient{0};
         if (((layout_s *)pLayout)->nBindType_ == HT_OBJECT)
@@ -701,11 +701,11 @@ LRESULT CALLBACK __layout_flow_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
         }
         LPVOID pInfoa = ((layout_s *)pLayout)->lpLayoutInfo_;
         array_s *hArr = ((layout_s *)pLayout)->hArrChildrenInfo_;
-        BOOL fVertical = __get(pInfoa, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
-        rcClient.left = rcClient.left + __get(pInfoa, ELP_PADDING_LEFT * sizeof(size_t));
-        rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
-        rcClient.right = rcClient.right - __get(pInfoa, ELP_PADDING_RIGHT * sizeof(size_t));
-        rcClient.bottom = rcClient.bottom - __get(pInfoa, ELP_PADDING_BOTTOM * sizeof(size_t));
+        BOOL fVertical = __get(pInfoa, (LAYOUT_PROP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == LAYOUT_PROP_DIRECTION_V;
+        rcClient.left = rcClient.left + __get(pInfoa, LAYOUT_PROP_PADDING_LEFT * sizeof(size_t));
+        rcClient.top = rcClient.top + __get(pInfoa, LAYOUT_PROP_PADDING_TOP * sizeof(size_t));
+        rcClient.right = rcClient.right - __get(pInfoa, LAYOUT_PROP_PADDING_RIGHT * sizeof(size_t));
+        rcClient.bottom = rcClient.bottom - __get(pInfoa, LAYOUT_PROP_PADDING_BOTTOM * sizeof(size_t));
         RECT rcObj{0};
         rcObj.left = rcClient.left;
         rcObj.top = rcClient.top;
@@ -717,7 +717,7 @@ LRESULT CALLBACK __layout_flow_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
             HEXOBJ hObj = (HEXOBJ)__get(pInfo, 0);
             if (hObj == 0 || !Ex_ObjIsVisible(hObj))
                 continue;
-            INT nSize = __get(pInfo, ELCP_LINEAR_SIZE * sizeof(size_t));
+            INT nSize = __get(pInfo, LAYOUT_SUBPROP_LINEAR_SIZE * sizeof(size_t));
             RECT rcTmp{0};
             Ex_ObjGetRect(hObj, &rcTmp);
             if (nSize < 0)
@@ -735,7 +735,7 @@ LRESULT CALLBACK __layout_flow_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
             {
                 rcObj.right = rcObj.left + rcTmp.right - rcTmp.left;
                 rcObj.bottom = rcObj.top + nSize;
-                if (rcObj.bottom > rcClient.bottom || __get(pInfo, ELCP_FLOW_NEW_LINE * sizeof(size_t)) != 0)
+                if (rcObj.bottom > rcClient.bottom || __get(pInfo, LAYOUT_SUBPROP_FLOW_NEW_LINE * sizeof(size_t)) != 0)
                 {
                     rcObj.top = rcClient.top;
                     rcObj.bottom = rcObj.top + nSize;
@@ -748,7 +748,7 @@ LRESULT CALLBACK __layout_flow_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
             {
                 rcObj.bottom = rcObj.top + rcTmp.bottom - rcTmp.top;
                 rcObj.right = rcObj.left + nSize;
-                if (rcObj.right > rcClient.right || __get(pInfo, ELCP_FLOW_NEW_LINE * sizeof(size_t)) != 0)
+                if (rcObj.right > rcClient.right || __get(pInfo, LAYOUT_SUBPROP_FLOW_NEW_LINE * sizeof(size_t)) != 0)
                 {
                     rcObj.left = rcClient.left;
                     rcObj.right = rcObj.left + nSize;
@@ -781,15 +781,15 @@ LRESULT CALLBACK __layout_flow_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
 
 LRESULT CALLBACK __layout_page_proc(layout_s *pLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-    if (nEvent == ELN_GETPROPSCOUNT)
+    if (nEvent == LAYOUT_EVENT_GETPROPSCOUNT)
     {
         return 1;
     }
-    else if (nEvent == ELN_GETCHILDPROPCOUNT)
+    else if (nEvent == LAYOUT_EVENT_GETCHILDPROPCOUNT)
     {
         return 1;
     }
-    else if (nEvent == ELN_UPDATE)
+    else if (nEvent == LAYOUT_EVENT_UPDATE)
     {
         RECT rcClient{0};
         if (((layout_s *)pLayout)->nBindType_ == HT_OBJECT)
@@ -802,12 +802,12 @@ LRESULT CALLBACK __layout_page_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
         }
         LPVOID pInfoa = ((layout_s *)pLayout)->lpLayoutInfo_;
         array_s *hArr = ((layout_s *)pLayout)->hArrChildrenInfo_;
-        BOOL fVertical = __get(pInfoa, (ELP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == ELP_DIRECTION_V;
-        rcClient.left = rcClient.left + __get(pInfoa, ELP_PADDING_LEFT * sizeof(size_t));
-        rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
-        rcClient.right = rcClient.right - __get(pInfoa, ELP_PADDING_RIGHT * sizeof(size_t));
-        rcClient.bottom = rcClient.bottom - __get(pInfoa, ELP_PADDING_BOTTOM * sizeof(size_t));
-        INT nCurrentPage = __get(pInfoa, (ELP_PAGE_CURRENT - 1) * sizeof(size_t));
+        BOOL fVertical = __get(pInfoa, (LAYOUT_PROP_LINEAR_DIRECTION - 1) * sizeof(size_t)) == LAYOUT_PROP_DIRECTION_V;
+        rcClient.left = rcClient.left + __get(pInfoa, LAYOUT_PROP_PADDING_LEFT * sizeof(size_t));
+        rcClient.top = rcClient.top + __get(pInfoa, LAYOUT_PROP_PADDING_TOP * sizeof(size_t));
+        rcClient.right = rcClient.right - __get(pInfoa, LAYOUT_PROP_PADDING_RIGHT * sizeof(size_t));
+        rcClient.bottom = rcClient.bottom - __get(pInfoa, LAYOUT_PROP_PADDING_BOTTOM * sizeof(size_t));
+        INT nCurrentPage = __get(pInfoa, (LAYOUT_PROP_PAGE_CURRENT - 1) * sizeof(size_t));
         for (INT i = 1; i <= Array_GetCount(hArr); i++)
         {
             LPVOID pInfo = (LPVOID)Array_GetMember(hArr, i);
@@ -816,7 +816,7 @@ LRESULT CALLBACK __layout_page_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
                 continue;
             if (i == nCurrentPage)
             {
-                if (__get(pInfo, ELCP_PAGE_FILL * sizeof(size_t)) != 0)
+                if (__get(pInfo, LAYOUT_SUBPROP_PAGE_FILL * sizeof(size_t)) != 0)
                 {
                     _layout_move_margin(hObj, &rcClient, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
                 }
@@ -829,7 +829,7 @@ LRESULT CALLBACK __layout_page_proc(layout_s *pLayout, INT nEvent, WPARAM wParam
 
 LRESULT CALLBACK __layout_table_proc(layout_s *pLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-    if (nEvent == ELN_GETPROPSCOUNT)
+    if (nEvent == LAYOUT_EVENT_GETPROPSCOUNT)
     {
         //' layout_rows = 行数 = 类似 "100,200,50"
         //' layout_cells = 列数 = 类似 "100,200,50"
@@ -837,7 +837,7 @@ LRESULT CALLBACK __layout_table_proc(layout_s *pLayout, INT nEvent, WPARAM wPara
         //' LAYOUT_CELL_ARRAY
         return 2;
     }
-    else if (nEvent == ELN_GETCHILDPROPCOUNT)
+    else if (nEvent == LAYOUT_EVENT_GETCHILDPROPCOUNT)
     {
         /*' layout_row = 行号
 		' layout_cell = 列号
@@ -846,22 +846,22 @@ LRESULT CALLBACK __layout_table_proc(layout_s *pLayout, INT nEvent, WPARAM wPara
 		' layout_fill = 是否填充,否则放左上角*/
         return 5;
     }
-    else if (nEvent == ELN_INITPROPS)
+    else if (nEvent == LAYOUT_EVENT_INITPROPS)
     {
-        __set((LPVOID)lParam, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t), (size_t)Array_Create(0));
-        __set((LPVOID)lParam, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t), (size_t)Array_Create(0));
+        __set((LPVOID)lParam, (LAYOUT_PROP_TABLE_ARRAY_ROW - 1) * sizeof(size_t), (size_t)Array_Create(0));
+        __set((LPVOID)lParam, (LAYOUT_PROP_TABLE_ARRAY_CELL - 1) * sizeof(size_t), (size_t)Array_Create(0));
     }
-    else if (nEvent == ELN_INITCHILDPROPS)
+    else if (nEvent == LAYOUT_EVENT_INITCHILDPROPS)
     {
-        __set((LPVOID)lParam, ELCP_TABLE_ROW_SPAN * sizeof(size_t), 1);
-        __set((LPVOID)lParam, ELCP_TABLE_CELL_SPAN * sizeof(size_t), 1);
+        __set((LPVOID)lParam, LAYOUT_SUBPROP_TABLE_ROW_SPAN * sizeof(size_t), 1);
+        __set((LPVOID)lParam, LAYOUT_SUBPROP_TABLE_CELL_SPAN * sizeof(size_t), 1);
     }
-    else if (nEvent == ELN_UNINITPROPS)
+    else if (nEvent == LAYOUT_EVENT_UNINITPROPS)
     {
-        Array_Destroy((array_s *)__get((LPVOID)lParam, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t)));
-        Array_Destroy((array_s *)__get((LPVOID)lParam, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t)));
+        Array_Destroy((array_s *)__get((LPVOID)lParam, (LAYOUT_PROP_TABLE_ARRAY_ROW - 1) * sizeof(size_t)));
+        Array_Destroy((array_s *)__get((LPVOID)lParam, (LAYOUT_PROP_TABLE_ARRAY_CELL - 1) * sizeof(size_t)));
     }
-    else if (nEvent == ELN_UPDATE)
+    else if (nEvent == LAYOUT_EVENT_UPDATE)
     {
         RECT rcClient{0};
         if (((layout_s *)pLayout)->nBindType_ == HT_OBJECT)
@@ -874,13 +874,13 @@ LRESULT CALLBACK __layout_table_proc(layout_s *pLayout, INT nEvent, WPARAM wPara
         }
         LPVOID pInfoa = ((layout_s *)pLayout)->lpLayoutInfo_;
         array_s *hArr = ((layout_s *)pLayout)->hArrChildrenInfo_;
-        array_s *hArrRows = (array_s *)__get(pInfoa, (ELP_TABLE_ARRAY_ROW - 1) * sizeof(size_t));
-        array_s *hArrCells = (array_s *)__get(pInfoa, (ELP_TABLE_ARRAY_CELL - 1) * sizeof(size_t));
+        array_s *hArrRows = (array_s *)__get(pInfoa, (LAYOUT_PROP_TABLE_ARRAY_ROW - 1) * sizeof(size_t));
+        array_s *hArrCells = (array_s *)__get(pInfoa, (LAYOUT_PROP_TABLE_ARRAY_CELL - 1) * sizeof(size_t));
 
-        rcClient.left = rcClient.left + __get(pInfoa, ELP_PADDING_LEFT * sizeof(size_t));
-        rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
-        rcClient.right = rcClient.right - __get(pInfoa, ELP_PADDING_RIGHT * sizeof(size_t));
-        rcClient.bottom = rcClient.bottom - __get(pInfoa, ELP_PADDING_BOTTOM * sizeof(size_t));
+        rcClient.left = rcClient.left + __get(pInfoa, LAYOUT_PROP_PADDING_LEFT * sizeof(size_t));
+        rcClient.top = rcClient.top + __get(pInfoa, LAYOUT_PROP_PADDING_TOP * sizeof(size_t));
+        rcClient.right = rcClient.right - __get(pInfoa, LAYOUT_PROP_PADDING_RIGHT * sizeof(size_t));
+        rcClient.bottom = rcClient.bottom - __get(pInfoa, LAYOUT_PROP_PADDING_BOTTOM * sizeof(size_t));
         std::vector<std::vector<RECT>> aRects;
         RECT rcTmp{0};
         if (Array_GetCount(hArrRows) > 0 && Array_GetCount(hArrCells) > 0)
@@ -926,9 +926,9 @@ LRESULT CALLBACK __layout_table_proc(layout_s *pLayout, INT nEvent, WPARAM wPara
             HEXOBJ hObj = __get(pInfo, 0);
             if (hObj == 0)
                 continue;
-            rcTmp.left = __get(pInfo, ELCP_TABLE_CELL * sizeof(size_t));
-            rcTmp.top = __get(pInfo, ELCP_TABLE_ROW * sizeof(size_t));
-            rcTmp.right = __get(pInfo, ELCP_TABLE_CELL_SPAN * sizeof(size_t)) - 1;
+            rcTmp.left = __get(pInfo, LAYOUT_SUBPROP_TABLE_CELL * sizeof(size_t));
+            rcTmp.top = __get(pInfo, LAYOUT_SUBPROP_TABLE_ROW * sizeof(size_t));
+            rcTmp.right = __get(pInfo, LAYOUT_SUBPROP_TABLE_CELL_SPAN * sizeof(size_t)) - 1;
             if (rcTmp.right <= 0)
             {
                 rcTmp.right = rcTmp.left;
@@ -937,7 +937,7 @@ LRESULT CALLBACK __layout_table_proc(layout_s *pLayout, INT nEvent, WPARAM wPara
             {
                 rcTmp.right = rcTmp.left + rcTmp.right;
             }
-            rcTmp.bottom = __get(pInfo, ELCP_TABLE_ROW_SPAN * sizeof(size_t)) - 1;
+            rcTmp.bottom = __get(pInfo, LAYOUT_SUBPROP_TABLE_ROW_SPAN * sizeof(size_t)) - 1;
             if (rcTmp.bottom <= 0)
             {
                 rcTmp.bottom = rcTmp.top;
@@ -990,15 +990,15 @@ LRESULT CALLBACK __layout_table_proc(layout_s *pLayout, INT nEvent, WPARAM wPara
 
 LRESULT CALLBACK __layout_relative_proc(layout_s *pLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-    if (nEvent == ELN_GETPROPSCOUNT)
+    if (nEvent == LAYOUT_EVENT_GETPROPSCOUNT)
     {
         return 0;
     }
-    else if (nEvent == ELN_GETCHILDPROPCOUNT)
+    else if (nEvent == LAYOUT_EVENT_GETCHILDPROPCOUNT)
     {
         return 10;
     }
-    else if (nEvent == ELN_CHECKCHILDPROPVALUE)
+    else if (nEvent == LAYOUT_EVENT_CHECKCHILDPROPVALUE)
     {
         if (Ex_ObjIsValidate(lParam) && LOWORD(wParam) > 0)
         {
@@ -1011,21 +1011,21 @@ LRESULT CALLBACK __layout_relative_proc(layout_s *pLayout, INT nEvent, WPARAM wP
 
             if (hObj != 0 && dwPropID > 0 && pInfoOther != 0)
             {
-                if (dwPropID == ELCP_RELATIVE_LEFT_OF)
+                if (dwPropID == LAYOUT_SUBPROP_RELATIVE_LEFT_OF)
                 {
-                    nRet = __get(pInfoOther, ELCP_RELATIVE_RIGHT_OF * sizeof(size_t)) != hObj;
+                    nRet = __get(pInfoOther, LAYOUT_SUBPROP_RELATIVE_RIGHT_OF * sizeof(size_t)) != hObj;
                 }
-                else if (dwPropID == ELCP_RELATIVE_RIGHT_OF)
+                else if (dwPropID == LAYOUT_SUBPROP_RELATIVE_RIGHT_OF)
                 {
-                    nRet = __get(pInfoOther, ELCP_RELATIVE_LEFT_OF * sizeof(size_t)) != hObj;
+                    nRet = __get(pInfoOther, LAYOUT_SUBPROP_RELATIVE_LEFT_OF * sizeof(size_t)) != hObj;
                 }
-                else if (dwPropID == ELCP_RELATIVE_TOP_OF)
+                else if (dwPropID == LAYOUT_SUBPROP_RELATIVE_TOP_OF)
                 {
-                    nRet = __get(pInfoOther, ELCP_RELATIVE_BOTTOM_OF * sizeof(size_t)) != hObj;
+                    nRet = __get(pInfoOther, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF * sizeof(size_t)) != hObj;
                 }
-                else if (dwPropID == ELCP_RELATIVE_BOTTOM_OF)
+                else if (dwPropID == LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF)
                 {
-                    nRet = __get(pInfoOther, ELCP_RELATIVE_TOP_OF * sizeof(size_t)) != hObj;
+                    nRet = __get(pInfoOther, LAYOUT_SUBPROP_RELATIVE_TOP_OF * sizeof(size_t)) != hObj;
                 }
                 else
                 {
@@ -1036,7 +1036,7 @@ LRESULT CALLBACK __layout_relative_proc(layout_s *pLayout, INT nEvent, WPARAM wP
             return nRet == TRUE ? FALSE : TRUE;
         }
     }
-    else if (nEvent == ELN_UPDATE)
+    else if (nEvent == LAYOUT_EVENT_UPDATE)
     {
         _layout_relative_update((layout_s *)pLayout, ((layout_s *)pLayout)->lpLayoutInfo_, ((layout_s *)pLayout)->hArrChildrenInfo_, lParam);
     }
@@ -1057,10 +1057,10 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
     {
         Ex_DUIGetClientRect(hObjParent, &rcClient);
     }
-    rcClient.left = rcClient.left + __get(pLayoutInfo, ELP_PADDING_LEFT * sizeof(size_t));
-    rcClient.top = rcClient.top + __get(pLayoutInfo, ELP_PADDING_TOP * sizeof(size_t));
-    rcClient.right = rcClient.right - __get(pLayoutInfo, ELP_PADDING_RIGHT * sizeof(size_t));
-    rcClient.bottom = rcClient.bottom - __get(pLayoutInfo, ELP_PADDING_BOTTOM * sizeof(size_t));
+    rcClient.left = rcClient.left + __get(pLayoutInfo, LAYOUT_PROP_PADDING_LEFT * sizeof(size_t));
+    rcClient.top = rcClient.top + __get(pLayoutInfo, LAYOUT_PROP_PADDING_TOP * sizeof(size_t));
+    rcClient.right = rcClient.right - __get(pLayoutInfo, LAYOUT_PROP_PADDING_RIGHT * sizeof(size_t));
+    rcClient.bottom = rcClient.bottom - __get(pLayoutInfo, LAYOUT_PROP_PADDING_BOTTOM * sizeof(size_t));
     std::vector<INT> Infos(3);
     for (INT i = 1; i <= Array_GetCount(hArrObjs); i++)
     {
@@ -1097,21 +1097,21 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
         {
             __set(pPosInfo, 0, 1);
             __set(pPosInfo, sizeof(size_t), 0);
-            __set(pPosInfo, 2 * sizeof(size_t), rcObj.left + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t)));
+            __set(pPosInfo, 2 * sizeof(size_t), rcObj.left + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t)));
             __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), 0, 1);
             __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), sizeof(size_t), 0);
-            __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.right + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t)));
+            __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.right + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t)));
         }
         if (fNoPosInfoV)
         {
 
             __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 0, 1);
             __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t), 0);
-            __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.top + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)));
+            __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.top + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t)));
 
             __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), 0, 1);
             __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), sizeof(size_t), 0);
-            __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.bottom + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t)));
+            __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), 2 * sizeof(size_t), rcObj.bottom + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t)));
         }
         //rcObj暂时按左顶宽高处理
         rcObj.right = rcObj.right - rcObj.left;
@@ -1123,14 +1123,14 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
         if (fNoPosInfoH == FALSE)
         { //左边界处理
             Infos[0] = 1;
-            if (__get(pInfo, ELCP_RELATIVE_LEFT_ALIGN_OF * sizeof(size_t)) != 0)
+            if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF * sizeof(size_t)) != 0)
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_LEFT_ALIGN_OF * sizeof(size_t));
-                Infos[1] = ELCP_RELATIVE_LEFT_ALIGN_OF;
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF;
                 HEXDUI hExDUI = 0;
                 if (dwValue == -1) //相对父
                 {
-                    Infos[2] = rcClient.left + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
+                    Infos[2] = rcClient.left + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
                 }
                 else if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI) //同层组件
                 {
@@ -1144,20 +1144,20 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[2] = rcObj.right;
                 }
             }
-            else if (__get(pInfo, ELCP_RELATIVE_CENTER_PARENT_H * sizeof(size_t)) != 0)
+            else if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H * sizeof(size_t)) != 0)
             {
-                Infos[1] = ELCP_RELATIVE_CENTER_PARENT_H;
-                Infos[2] = rcClient.left + abs(rcClient.right - rcClient.left - rcObj.right) / 2 + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H;
+                Infos[2] = rcClient.left + abs(rcClient.right - rcClient.left - rcObj.right) / 2 + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
                 orgFlags = orgFlags | 4;
             }
             else
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_RIGHT_OF * sizeof(size_t));
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_RIGHT_OF * sizeof(size_t));
                 HEXDUI hExDUI = 0;
                 if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI) //同层组件
                 {
                     Infos[0] = 0;
-                    Infos[1] = ELCP_RELATIVE_RIGHT_OF;
+                    Infos[1] = LAYOUT_SUBPROP_RELATIVE_RIGHT_OF;
                     Infos[2] = dwValue;
                 }
                 else
@@ -1173,14 +1173,14 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
             //右边界处理
             Infos[0] = 1;
 
-            if (__get(pInfo, ELCP_RELATIVE_RIGHT_ALIGN_OF * sizeof(size_t)) != 0)
+            if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF * sizeof(size_t)) != 0)
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_RIGHT_ALIGN_OF * sizeof(size_t));
-                Infos[1] = ELCP_RELATIVE_RIGHT_ALIGN_OF;
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF;
                 HEXDUI hExDUI = 0;
                 if (dwValue == -1) //相对父
                 {
-                    Infos[2] = rcClient.right + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
+                    Infos[2] = rcClient.right + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
                 }
                 else if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI) //同层组件
                 {
@@ -1194,20 +1194,20 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[2] = rcObj.right;
                 }
             }
-            else if (__get(pInfo, ELCP_RELATIVE_CENTER_PARENT_H * sizeof(size_t)) != 0)
+            else if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H * sizeof(size_t)) != 0)
             {
-                Infos[1] = ELCP_RELATIVE_CENTER_PARENT_H;
-                Infos[2] = rcClient.left + abs(rcClient.right - rcClient.left + rcObj.right) / 2 + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H;
+                Infos[2] = rcClient.left + abs(rcClient.right - rcClient.left + rcObj.right) / 2 + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t));
                 orgFlags = orgFlags | 4;
             }
             else
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_LEFT_OF * sizeof(size_t));
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_LEFT_OF * sizeof(size_t));
                 HEXDUI hExDUI = 0;
                 if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI) //同层组件
                 {
                     Infos[0] = 0;
-                    Infos[1] = ELCP_RELATIVE_LEFT_OF;
+                    Infos[1] = LAYOUT_SUBPROP_RELATIVE_LEFT_OF;
                     Infos[2] = dwValue;
                 }
                 else
@@ -1225,10 +1225,10 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
         {
             //上边界处理
             Infos[0] = 1;
-            if (__get(pInfo, ELCP_RELATIVE_TOP_ALIGN_OF * sizeof(size_t)) != 0)
+            if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF * sizeof(size_t)) != 0)
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_TOP_ALIGN_OF * sizeof(size_t));
-                Infos[1] = ELCP_RELATIVE_TOP_ALIGN_OF;
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF;
                 HEXDUI hExDUI = 0;
                 if (dwValue == -1) //相对父
                 {
@@ -1246,21 +1246,21 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[2] = rcObj.bottom;
                 }
             }
-            else if (__get(pInfo, ELCP_RELATIVE_CENTER_PARENT_V * sizeof(size_t)) != 0)
+            else if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_V * sizeof(size_t)) != 0)
             {
-                Infos[1] = ELCP_RELATIVE_CENTER_PARENT_V;
-                Infos[2] = rcClient.top + abs(rcClient.bottom - rcClient.top - rcObj.bottom) / 2 + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_V;
+                Infos[2] = rcClient.top + abs(rcClient.bottom - rcClient.top - rcObj.bottom) / 2 + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t));
                 orgFlags = orgFlags | 8;
             }
             else
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_BOTTOM_OF * sizeof(size_t));
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF * sizeof(size_t));
                 HEXDUI hExDUI = 0;
                 if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI) //同层组件
                 {
 
                     Infos[0] = 0;
-                    Infos[1] = ELCP_RELATIVE_BOTTOM_OF;
+                    Infos[1] = LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF;
                     Infos[2] = dwValue;
                 }
                 else
@@ -1276,14 +1276,14 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
 
             //下边界处理
             Infos[0] = 1;
-            if (__get(pInfo, ELCP_RELATIVE_BOTTOM_ALIGN_OF * sizeof(size_t)) != 0)
+            if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF * sizeof(size_t)) != 0)
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_BOTTOM_ALIGN_OF * sizeof(size_t));
-                Infos[1] = ELCP_RELATIVE_BOTTOM_ALIGN_OF;
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF;
                 HEXDUI hExDUI = 0;
                 if (dwValue == -1) //相对父
                 {
-                    Infos[2] = rcClient.bottom + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)) - __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t));
+                    Infos[2] = rcClient.bottom + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t)) - __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t));
                 }
                 else if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI) //同层组件
                 {
@@ -1297,20 +1297,20 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[2] = rcObj.bottom;
                 }
             }
-            else if (__get(pInfo, ELCP_RELATIVE_CENTER_PARENT_V * sizeof(size_t)) != 0)
+            else if (__get(pInfo, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_V * sizeof(size_t)) != 0)
             {
-                Infos[1] = ELCP_RELATIVE_CENTER_PARENT_V;
-                Infos[2] = rcClient.top + abs(rcClient.bottom - rcClient.top + rcObj.bottom) / 2 + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t));
+                Infos[1] = LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_V;
+                Infos[2] = rcClient.top + abs(rcClient.bottom - rcClient.top + rcObj.bottom) / 2 + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t));
                 orgFlags = orgFlags | 8;
             }
             else
             {
-                INT dwValue = __get(pInfo, ELCP_RELATIVE_TOP_OF * sizeof(size_t));
+                INT dwValue = __get(pInfo, LAYOUT_SUBPROP_RELATIVE_TOP_OF * sizeof(size_t));
                 HEXDUI hExDUI = 0;
                 if (dwValue != 0 && (hObjParent == Ex_ObjGetParentEx(dwValue, &hExDUI)) || hObjParent == hExDUI) //同层组件
                 {
                     Infos[0] = 0;
-                    Infos[1] = ELCP_RELATIVE_TOP_OF;
+                    Infos[1] = LAYOUT_SUBPROP_RELATIVE_TOP_OF;
                     Infos[2] = dwValue;
                 }
                 else
@@ -1347,26 +1347,26 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[1] = __get(pPosInfo, sizeof(size_t));
                     Infos[2] = __get(pPosInfo, 2 * sizeof(size_t));
 
-                    if (Infos[1] == ELCP_RELATIVE_RIGHT_OF)
+                    if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_RIGHT_OF)
                     {
                         LPVOID pInfoOther = nullptr;
                         if (HashTable_Get(hHashPosInfos, Infos[2], (size_t *)&pInfoOther))
                         {
                             if (__get(pInfoOther, 2 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 2 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 2 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
                     }
-                    else if (Infos[1] == ELCP_RELATIVE_LEFT_ALIGN_OF)
+                    else if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF)
                     {
                         LPVOID pInfoOther = nullptr;
                         if (HashTable_Get(hHashPosInfos, Infos[2], (size_t *)&pInfoOther))
                         {
                             if (__get(pInfoOther, 0 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 0 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 0 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
@@ -1375,7 +1375,7 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     {
                         if (__get(pPosInfo, 2 * 3 * sizeof(size_t)) != 0) //已经锁定了
                         {
-                            Infos[2] = __get(pPosInfo, 2 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) - Infos[2] - __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t)) - __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t));
+                            Infos[2] = __get(pPosInfo, 2 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) - Infos[2] - __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t)) - __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
                             Infos[0] = 1;
                         }
                     }
@@ -1389,26 +1389,26 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[1] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t));
                     Infos[2] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t));
 
-                    if (Infos[1] == ELCP_RELATIVE_BOTTOM_OF)
+                    if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF)
                     {
                         LPVOID pInfoOther = nullptr;
                         if (HashTable_Get(hHashPosInfos, Infos[2], (size_t *)&pInfoOther))
                         {
                             if (__get(pInfoOther, 3 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 3 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 3 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
                     }
-                    else if (Infos[1] == ELCP_RELATIVE_TOP_ALIGN_OF)
+                    else if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF)
                     {
                         LPVOID pInfoOther = nullptr;
                         if (HashTable_Get(hHashPosInfos, Infos[2], (size_t *)&pInfoOther))
                         {
                             if (__get(pInfoOther, 1 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 1 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 1 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
@@ -1417,7 +1417,7 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     {
                         if (__get(pPosInfo, 3 * 3 * sizeof(size_t)) != 0) //已经锁定了
                         {
-                            Infos[2] = __get(pPosInfo, 3 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) - Infos[2] - __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t)) - __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t));
+                            Infos[2] = __get(pPosInfo, 3 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) - Infos[2] - __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t)) - __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t));
                             Infos[0] = 1;
                         }
                     }
@@ -1431,19 +1431,19 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[1] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), sizeof(size_t));
                     Infos[2] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 2 * sizeof(size_t));
 
-                    if (Infos[1] == ELCP_RELATIVE_LEFT_OF)
+                    if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_LEFT_OF)
                     {
                         LPVOID pInfoOther = nullptr;
                         if (HashTable_Get(hHashPosInfos, Infos[2], (size_t *)&pInfoOther))
                         {
                             if (__get(pInfoOther, 0 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 0 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 0 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
                     }
-                    else if (Infos[1] == ELCP_RELATIVE_RIGHT_ALIGN_OF)
+                    else if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF)
                     {
 
                         LPVOID pInfoOther = nullptr;
@@ -1451,7 +1451,7 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                         {
                             if (__get(pInfoOther, 2 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 2 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 2 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
@@ -1460,7 +1460,7 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     {
                         if (__get(pPosInfo, 0 * 3 * sizeof(size_t)) != 0) //已经锁定了
                         {
-                            Infos[2] = __get(pPosInfo, 0 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + Infos[2] + __get(pInfo, ELCP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_RIGHT * sizeof(size_t));
+                            Infos[2] = __get(pPosInfo, 0 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + Infos[2] + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t));
                             Infos[0] = 1;
                         }
                     }
@@ -1474,26 +1474,26 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     Infos[1] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), sizeof(size_t));
                     Infos[2] = __get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 2 * sizeof(size_t));
 
-                    if (Infos[1] == ELCP_RELATIVE_TOP_OF)
+                    if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_TOP_OF)
                     {
                         LPVOID pInfoOther = nullptr;
                         if (HashTable_Get(hHashPosInfos, Infos[2], (size_t *)&pInfoOther))
                         {
                             if (__get(pInfoOther, 1 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 1 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 1 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
                     }
-                    else if (Infos[1] == ELCP_RELATIVE_BOTTOM_ALIGN_OF)
+                    else if (Infos[1] == LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF)
                     {
                         LPVOID pInfoOther = nullptr;
                         if (HashTable_Get(hHashPosInfos, Infos[2], (size_t *)&pInfoOther))
                         {
                             if (__get(pInfoOther, 3 * 3 * sizeof(size_t)) != 0) //已经锁定了
                             {
-                                Infos[2] = __get(pInfoOther, 3 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t));
+                                Infos[2] = __get(pInfoOther, 3 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t));
                                 Infos[0] = 1;
                             }
                         }
@@ -1502,7 +1502,7 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
                     {
                         if (__get(pPosInfo, 1 * 3 * sizeof(size_t)) != 0) //已经锁定了
                         {
-                            Infos[2] = __get(pPosInfo, 1 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + Infos[2] + __get(pInfo, ELCP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, ELCP_MARGIN_BOTTOM * sizeof(size_t));
+                            Infos[2] = __get(pPosInfo, 1 * 3 * sizeof(size_t) + 2 * sizeof(size_t)) + Infos[2] + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t)) + __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t));
                             Infos[0] = 1;
                         }
                     }
@@ -1579,11 +1579,11 @@ void _layout_relative_update(layout_s *pLayout, LPVOID pLayoutInfo, array_s *hAr
 
 LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wParam, LPARAM lParam)
 {
-    if (nEvent == ELN_GETPROPSCOUNT)
+    if (nEvent == LAYOUT_EVENT_GETPROPSCOUNT)
     {
         return 0;
     }
-    else if (nEvent == ELN_GETCHILDPROPCOUNT)
+    else if (nEvent == LAYOUT_EVENT_GETCHILDPROPCOUNT)
     {
         /*layout_left="10/10%"
 			layout_top="10/10%"
@@ -1595,7 +1595,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
 			layout_offsetV="10/10%/10*"*/
         return 16;
     }
-    else if (nEvent == ELN_UPDATE)
+    else if (nEvent == LAYOUT_EVENT_UPDATE)
     {
         RECT rcClient{0};
         if (((layout_s *)pLayout)->nBindType_ == HT_OBJECT)
@@ -1608,10 +1608,10 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
         }
         LPVOID pInfoa = ((layout_s *)pLayout)->lpLayoutInfo_;
         array_s *hArr = ((layout_s *)pLayout)->hArrChildrenInfo_;
-        rcClient.left = rcClient.left + __get(pInfoa, ELP_PADDING_LEFT * sizeof(size_t));
-        rcClient.top = rcClient.top + __get(pInfoa, ELP_PADDING_TOP * sizeof(size_t));
-        rcClient.right = rcClient.right - __get(pInfoa, ELP_PADDING_RIGHT * sizeof(size_t));
-        rcClient.bottom = rcClient.bottom - __get(pInfoa, ELP_PADDING_BOTTOM * sizeof(size_t));
+        rcClient.left = rcClient.left + __get(pInfoa, LAYOUT_PROP_PADDING_LEFT * sizeof(size_t));
+        rcClient.top = rcClient.top + __get(pInfoa, LAYOUT_PROP_PADDING_TOP * sizeof(size_t));
+        rcClient.right = rcClient.right - __get(pInfoa, LAYOUT_PROP_PADDING_RIGHT * sizeof(size_t));
+        rcClient.bottom = rcClient.bottom - __get(pInfoa, LAYOUT_PROP_PADDING_BOTTOM * sizeof(size_t));
         SIZE szClient{0};
         szClient.cx = rcClient.right - rcClient.left;
         szClient.cy = rcClient.bottom - rcClient.top;
@@ -1627,14 +1627,14 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
             INT ary2 = 0;
             INT ary3 = 0;
             INT ary4 = 0;
-            INT nType = __get(pInfo, ELCP_ABSOLUTE_WIDTH_TYPE * sizeof(size_t));
-            INT tmp = __get(pInfo, ELCP_ABSOLUTE_WIDTH * sizeof(size_t));
+            INT nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE * sizeof(size_t));
+            INT tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_WIDTH * sizeof(size_t));
             SIZE szObj{0};
-            if (nType == ELCP_ABSOLUTE_TYPE_PS)
+            if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
             {
                 szObj.cx = (FLOAT)tmp / 100 * szClient.cx;
             }
-            else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+            else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
             {
                 szObj.cx = tmp;
             }
@@ -1642,13 +1642,13 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
             {
                 szObj.cx = rcTmp.right - rcTmp.left;
             }
-            nType = __get(pInfo, ELCP_ABSOLUTE_HEIGHT_TYPE * sizeof(size_t));
-            tmp = __get(pInfo, ELCP_ABSOLUTE_HEIGHT * sizeof(size_t));
-            if (nType == ELCP_ABSOLUTE_TYPE_PS)
+            nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE * sizeof(size_t));
+            tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT * sizeof(size_t));
+            if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
             {
                 szObj.cy = (FLOAT)tmp / 100 * szClient.cy;
             }
-            else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+            else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
             {
                 szObj.cy = tmp;
             }
@@ -1663,13 +1663,13 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
                 if (ary1 == 0)
                 {
                     ary1 = 1;
-                    nType = __get(pInfo, ELCP_ABSOLUTE_LEFT_TYPE * sizeof(size_t));
-                    tmp = __get(pInfo, ELCP_ABSOLUTE_LEFT * sizeof(size_t));
-                    if (nType == ELCP_ABSOLUTE_TYPE_PS)
+                    nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE * sizeof(size_t));
+                    tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_LEFT * sizeof(size_t));
+                    if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
                     {
                         rcObj.left = rcClient.left + (FLOAT)tmp / 100 * szClient.cx;
                     }
-                    else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+                    else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
                     {
                         rcObj.left = rcClient.left + tmp;
                     }
@@ -1685,13 +1685,13 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
                 if (ary2 == 0)
                 {
                     ary2 = 1;
-                    nType = __get(pInfo, ELCP_ABSOLUTE_TOP_TYPE * sizeof(size_t));
-                    tmp = __get(pInfo, ELCP_ABSOLUTE_TOP * sizeof(size_t));
-                    if (nType == ELCP_ABSOLUTE_TYPE_PS)
+                    nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE * sizeof(size_t));
+                    tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_TOP * sizeof(size_t));
+                    if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
                     {
                         rcObj.top = rcClient.top + (FLOAT)tmp / 100 * szClient.cy;
                     }
-                    else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+                    else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
                     {
                         rcObj.top = rcClient.top + tmp;
                     }
@@ -1707,13 +1707,13 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
                 if (ary3 == 0)
                 {
                     ary3 = 1;
-                    nType = __get(pInfo, ELCP_ABSOLUTE_RIGHT_TYPE * sizeof(size_t));
-                    tmp = __get(pInfo, ELCP_ABSOLUTE_RIGHT * sizeof(size_t));
-                    if (nType == ELCP_ABSOLUTE_TYPE_PS)
+                    nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE * sizeof(size_t));
+                    tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_RIGHT * sizeof(size_t));
+                    if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
                     {
                         rcObj.right = rcClient.right - (FLOAT)tmp / 100 * szClient.cx;
                     }
-                    else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+                    else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
                     {
                         rcObj.right = rcClient.right - tmp;
                     }
@@ -1729,13 +1729,13 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
                 if (ary4 == 0)
                 {
                     ary4 = 1;
-                    nType = __get(pInfo, ELCP_ABSOLUTE_BOTTOM_TYPE * sizeof(size_t));
-                    tmp = __get(pInfo, ELCP_ABSOLUTE_BOTTOM * sizeof(size_t));
-                    if (nType == ELCP_ABSOLUTE_TYPE_PS)
+                    nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE * sizeof(size_t));
+                    tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM * sizeof(size_t));
+                    if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
                     {
                         rcObj.bottom = rcClient.bottom - (FLOAT)tmp / 100 * szClient.cy;
                     }
-                    else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+                    else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
                     {
                         rcObj.bottom = rcClient.bottom - tmp;
                     }
@@ -1769,37 +1769,37 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
             {
                 rcObj.bottom = rcTmp.bottom;
             }
-            nType = __get(pInfo, ELCP_ABSOLUTE_OFFSET_H_TYPE * sizeof(size_t));
-            tmp = __get(pInfo, ELCP_ABSOLUTE_OFFSET_H * sizeof(size_t));
-            if (nType == ELCP_ABSOLUTE_TYPE_PS)
+            nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H_TYPE * sizeof(size_t));
+            tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H * sizeof(size_t));
+            if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
             {
                 rcObj.left = rcObj.left + (FLOAT)tmp / 100 * szClient.cx;
                 rcObj.right = rcObj.right + (FLOAT)tmp / 100 * szClient.cx;
             }
-            else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+            else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
             {
                 rcObj.left = rcObj.left + tmp;
                 rcObj.right = rcObj.right + tmp;
             }
-            else if (nType == ELCP_ABSOLUTE_TYPE_OBJPS)
+            else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS)
             {
                 rcObj.left = rcObj.left + (FLOAT)tmp / 100 * szObj.cx;
                 rcObj.right = rcObj.right + (FLOAT)tmp / 100 * szObj.cx;
             }
 
-            nType = __get(pInfo, ELCP_ABSOLUTE_OFFSET_V_TYPE * sizeof(size_t));
-            tmp = __get(pInfo, ELCP_ABSOLUTE_OFFSET_V * sizeof(size_t));
-            if (nType == ELCP_ABSOLUTE_TYPE_PS)
+            nType = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V_TYPE * sizeof(size_t));
+            tmp = __get(pInfo, LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V * sizeof(size_t));
+            if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS)
             {
                 rcObj.top = rcObj.top + (FLOAT)tmp / 100 * szClient.cy;
                 rcObj.bottom = rcObj.bottom + (FLOAT)tmp / 100 * szClient.cy;
             }
-            else if (nType == ELCP_ABSOLUTE_TYPE_PX)
+            else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX)
             {
                 rcObj.top = rcObj.top + tmp;
                 rcObj.bottom = rcObj.bottom + tmp;
             }
-            else if (nType == ELCP_ABSOLUTE_TYPE_OBJPS)
+            else if (nType == LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS)
             {
                 rcObj.top = rcObj.top + (FLOAT)tmp / 100 * szObj.cy;
                 rcObj.bottom = rcObj.bottom + (FLOAT)tmp / 100 * szObj.cy;
@@ -1808,16 +1808,16 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s *pLayout, INT nEvent, WPARAM wP
             _layout_move_margin(hObj, &rcObj, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
         }
     }
-    else if (nEvent == ELN_CHECKCHILDPROPVALUE)
+    else if (nEvent == LAYOUT_EVENT_CHECKCHILDPROPVALUE)
     {
         array_s *pChildrenInfo = ((layout_s *)pLayout)->hArrChildrenInfo_;
         LPVOID pInfo = (LPVOID)Array_GetMember(pChildrenInfo, LOWORD(wParam));
         INT nType = HIWORD(wParam);
-        if (nType % 2 == 1 && nType >= ELCP_ABSOLUTE_LEFT && nType <= ELCP_ABSOLUTE_OFFSET_V)
+        if (nType % 2 == 1 && nType >= LAYOUT_SUBPROP_ABSOLUTE_LEFT && nType <= LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V)
         {
-            if (__get(pInfo, (nType + 1) * sizeof(size_t)) == ELCP_ABSOLUTE_TYPE_UNKNOWN)
+            if (__get(pInfo, (nType + 1) * sizeof(size_t)) == LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN)
             {
-                __set(pInfo, (nType + 1) * sizeof(size_t), ELCP_ABSOLUTE_TYPE_PX);
+                __set(pInfo, (nType + 1) * sizeof(size_t), LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
         }
     }
@@ -1868,7 +1868,7 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
                         {
                             pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
                             __set(pInfo, 0, hObj);
-                            ((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
+                            ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_INITCHILDPROPS, hObj, (size_t)pInfo);
                             nIndex = Array_AddMember(hArr, (size_t)pInfo);
                         }
                         else
@@ -1925,7 +1925,7 @@ BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, I
                         {
                             pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
                             __set(pInfo, 0, hObj);
-                            ((LayoutPROC)pLayout->lpfnProc_)(pLayout, ELN_INITCHILDPROPS, hObj, (size_t)pInfo);
+                            ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_INITCHILDPROPS, hObj, (size_t)pInfo);
                             Array_AddMember(hArr, (size_t)pInfo);
                             *nCount = *nCount + 1;
                         }
@@ -2043,7 +2043,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
     if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID *)&pLayout, &nError))
     {
         RECT rcClient{0};
-        if (pLayout->nType_ == ELT_ABSOLUTE)
+        if (pLayout->nType_ == LAYOUT_TYPE_ABSOLUTE)
         {
             if (pLayout->nBindType_ == HT_OBJECT)
             {
@@ -2054,10 +2054,10 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
                 Ex_DUIGetClientRect(pLayout->hBind_, &rcClient);
             }
             LPVOID pInfo = pLayout->lpLayoutInfo_;
-            rcClient.left = rcClient.left + __get(pInfo, ELP_PADDING_LEFT * sizeof(size_t));
-            rcClient.top = rcClient.top + __get(pInfo, ELP_PADDING_TOP * sizeof(size_t));
-            rcClient.right = rcClient.right - __get(pInfo, ELP_PADDING_RIGHT * sizeof(size_t));
-            rcClient.bottom = rcClient.bottom - __get(pInfo, ELP_PADDING_BOTTOM * sizeof(size_t));
+            rcClient.left = rcClient.left + __get(pInfo, LAYOUT_PROP_PADDING_LEFT * sizeof(size_t));
+            rcClient.top = rcClient.top + __get(pInfo, LAYOUT_PROP_PADDING_TOP * sizeof(size_t));
+            rcClient.right = rcClient.right - __get(pInfo, LAYOUT_PROP_PADDING_RIGHT * sizeof(size_t));
+            rcClient.bottom = rcClient.bottom - __get(pInfo, LAYOUT_PROP_PADDING_BOTTOM * sizeof(size_t));
             SIZE szClient{0};
             szClient.cx = rcClient.right - rcClient.left;
             szClient.cy = rcClient.bottom - rcClient.top;
@@ -2066,98 +2066,98 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 
             if (tLeft == 1) //数值锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT, rcObj.left - rcClient.left);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT_TYPE, ELCP_ABSOLUTE_TYPE_PX);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT, rcObj.left - rcClient.left);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tLeft == 2) //比例锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT, (FLOAT)rcObj.left / szClient.cx * 100);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT_TYPE, ELCP_ABSOLUTE_TYPE_PS);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT, (FLOAT)rcObj.left / szClient.cx * 100);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT, 0);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_LEFT_TYPE, ELCP_ABSOLUTE_TYPE_UNKNOWN);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT, 0);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tTop == 1) //数值锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP, rcObj.top - rcClient.top);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP_TYPE, ELCP_ABSOLUTE_TYPE_PX);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP, rcObj.top - rcClient.top);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tTop == 2) //比例锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP, (FLOAT)rcObj.top / szClient.cy * 100);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP_TYPE, ELCP_ABSOLUTE_TYPE_PS);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP, (FLOAT)rcObj.top / szClient.cy * 100);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP, 0);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_TOP_TYPE, ELCP_ABSOLUTE_TYPE_UNKNOWN);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP, 0);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tRight == 1) //数值锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT, rcClient.right - rcObj.right);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT_TYPE, ELCP_ABSOLUTE_TYPE_PX);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT, rcClient.right - rcObj.right);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tRight == 2) //比例锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT, (FLOAT)(rcClient.right - rcObj.right) / szClient.cx * 100);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT_TYPE, ELCP_ABSOLUTE_TYPE_PS);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT, (FLOAT)(rcClient.right - rcObj.right) / szClient.cx * 100);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT, 0);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_RIGHT_TYPE, ELCP_ABSOLUTE_TYPE_UNKNOWN);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT, 0);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tBottom == 1) //数值锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM, rcClient.bottom - rcObj.bottom);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM_TYPE, ELCP_ABSOLUTE_TYPE_PX);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM, rcClient.bottom - rcObj.bottom);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tBottom == 2) //比例锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM, (FLOAT)(rcClient.bottom - rcObj.bottom) / szClient.cy * 100);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM_TYPE, ELCP_ABSOLUTE_TYPE_PS);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM, (FLOAT)(rcClient.bottom - rcObj.bottom) / szClient.cy * 100);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM, 0);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_BOTTOM_TYPE, ELCP_ABSOLUTE_TYPE_UNKNOWN);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM, 0);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tWidth == 1) //数值锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH, rcObj.right - rcObj.left);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH_TYPE, ELCP_ABSOLUTE_TYPE_PX);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH, rcObj.right - rcObj.left);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tWidth == 2) //比例锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH, (FLOAT)(rcObj.right - rcObj.left) / szClient.cx * 100);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH_TYPE, ELCP_ABSOLUTE_TYPE_PS);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH, (FLOAT)(rcObj.right - rcObj.left) / szClient.cx * 100);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH, 0);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_WIDTH_TYPE, ELCP_ABSOLUTE_TYPE_UNKNOWN);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH, 0);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tHeight == 1) //数值锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT, rcObj.bottom - rcObj.top);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT_TYPE, ELCP_ABSOLUTE_TYPE_PX);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, rcObj.bottom - rcObj.top);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tHeight == 2) //比例锁
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT, (FLOAT)(rcObj.bottom - rcObj.top) / szClient.cy * 100);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT_TYPE, ELCP_ABSOLUTE_TYPE_PS);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, (FLOAT)(rcObj.bottom - rcObj.top) / szClient.cy * 100);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else
             {
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT, 0);
-                _layout_setchildprop(hLayout, hObjChild, ELCP_ABSOLUTE_HEIGHT_TYPE, ELCP_ABSOLUTE_TYPE_UNKNOWN);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, 0);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
         }
         else
@@ -2171,10 +2171,10 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 
 void _layout_init()
 {
-    _layout_register(ELT_LINEAR, __layout_linear_proc);
-    _layout_register(ELT_FLOW, __layout_flow_proc);
-    _layout_register(ELT_PAGE, __layout_page_proc);
-    _layout_register(ELT_TABLE, __layout_table_proc);
-    _layout_register(ELT_RELATIVE, __layout_relative_proc);
-    _layout_register(ELT_ABSOLUTE, __layout_absolute_proc);
+    _layout_register(LAYOUT_TYPE_LINEAR, __layout_linear_proc);
+    _layout_register(LAYOUT_TYPE_FLOW, __layout_flow_proc);
+    _layout_register(LAYOUT_TYPE_PAGE, __layout_page_proc);
+    _layout_register(LAYOUT_TYPE_TABLE, __layout_table_proc);
+    _layout_register(LAYOUT_TYPE_RELATIVE, __layout_relative_proc);
+    _layout_register(LAYOUT_TYPE_ABSOLUTE, __layout_absolute_proc);
 }

@@ -3,8 +3,8 @@
 #include "help_ex.h"
 
 // 日期框属性_状态
-#define DBL_STATE 0
-#define DBL_DATA 1
+#define DATEBOX_LONG_STATE 0
+#define DATEBOX_LONG_DATA 1
 
 struct datebox_s
 {

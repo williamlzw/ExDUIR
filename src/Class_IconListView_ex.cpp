@@ -19,12 +19,12 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             return 1;
         }
     }
-    else if (uMsg == LVM_INSERTITEM) //插入表项 lParam 为表项信息,wParam为是否立即重画,返回索引
+    else if (uMsg == LISTVIEW_MESSAGE_INSERTITEM) //插入表项 lParam 为表项信息,wParam为是否立即重画,返回索引
     {
         size_t ret = 0;
         if (lParam != 0)
         {
-            ret = Array_AddMember((array_s *)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY), lParam, ((EX_ICONLISTVIEW_ITEMINFO *)lParam)->nIndex);
+            ret = Array_AddMember((array_s *)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY), lParam, ((EX_ICONLISTVIEW_ITEMINFO *)lParam)->nIndex);
         }
         if (ret != 0 && wParam != 0) //当插入成功且wParam不为0时重画控件
         {
@@ -32,9 +32,9 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         }
         return ret;
     }
-    else if (uMsg == LVM_DELETEITEM) //删除表项 wParam为是否立即重画，lParam为删除的索引
+    else if (uMsg == LISTVIEW_MESSAGE_DELETEITEM) //删除表项 wParam为是否立即重画，lParam为删除的索引
     {
-        array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
+        array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY);
         size_t ret = 0;
         if (Array_GetCount(pArray) >= lParam)
         {
@@ -46,9 +46,9 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         }
         return ret;
     }
-    else if (uMsg == LVM_DELETEALLITEMS) //删除全部表项
+    else if (uMsg == LISTVIEW_MESSAGE_DELETEALLITEMS) //删除全部表项
     {
-        array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
+        array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY);
         Array_Clear(pArray);
         if (wParam != 0)
         {
@@ -56,17 +56,17 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         }
         return 0;
     }
-    else if (uMsg == LVM_UPDATE) //更新列表
+    else if (uMsg == LISTVIEW_MESSAGE_UPDATE) //更新列表
     {
-        array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
-        if (Ex_ObjSendMessage(hObj, LVM_GETITEMCOUNT, 0, 0) != Array_GetCount(pArray)) //如果表项数不同则更新表项数
+        array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY);
+        if (Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_GETITEMCOUNT, 0, 0) != Array_GetCount(pArray)) //如果表项数不同则更新表项数
         {
-            Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, Array_GetCount(pArray), 1);
+            Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_SETITEMCOUNT, Array_GetCount(pArray), 1);
         }
     }
-    else if (uMsg == LVM_SETIMAGELIST) //设置列表图片组 wParam为是否立即重画，lParam为图片组句柄
+    else if (uMsg == LISTVIEW_MESSAGE_SETIMAGELIST) //设置列表图片组 wParam为是否立即重画，lParam为图片组句柄
     {
-        Ex_ObjSetLong(hObj, EILVL_HIMAGELIST, lParam);
+        Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HIMAGELIST, lParam);
 
         if (wParam != 0)
         {
@@ -74,28 +74,28 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         }
         return 1;
     }
-    else if (uMsg == LVM_GETIMAGELIST) //获取图片组
+    else if (uMsg == LISTVIEW_MESSAGE_GETIMAGELIST) //获取图片组
     {
-        return Ex_ObjGetLong(hObj, EILVL_HIMAGELIST);
+        return Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_HIMAGELIST);
     }
     else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONUP) //当鼠标左键按下放开时 更新控件按下状态并重画
     {
-        if ((Ex_ObjGetLong(hObj, EOL_STYLE) & EILVS_BUTTON) != 0) //当前得是按钮列表状态
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & ICONLISTVIEW_STYLE_BUTTON) != 0) //当前得是按钮列表状态
         {
             Ex_ObjSetUIState(hObj, STATE_DOWN, uMsg == WM_LBUTTONUP, 0, TRUE);
-            Ex_ObjPostMessage(hObj, LVM_SETSELECTIONMARK, 0, 0);
+            Ex_ObjPostMessage(hObj, LISTVIEW_MESSAGE_SETSELECTIONMARK, 0, 0);
         }
     }
-    else if (uMsg == ILVM_SETITEMSIZE) //设置表项尺寸
+    else if (uMsg == ICONLISTVIEW_MESSAGE_SETITEMSIZE) //设置表项尺寸
     {
         INT width = LOWORD(lParam);
         if (width < 10)
             width = 10;
-        Ex_ObjSetLong(hObj, EILVL_WIDTH, (width));//Ex_Scale
+        Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_WIDTH, (width));//Ex_Scale
         INT height = HIWORD(lParam);
         if (height < 10)
             height = 10;
-        Ex_ObjSetLong(hObj, EILVL_HEIGHT, (height));//Ex_Scale
+        Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HEIGHT, (height));//Ex_Scale
         RECT rc{0};
         Ex_ObjGetRect(hObj, &rc);
         Ex_ObjDispatchMessage(hObj, WM_SIZE, 0, MAKELONG(rc.right - rc.left, rc.bottom - rc.top));
@@ -109,7 +109,7 @@ void _iconlistview_register()
     EX_CLASSINFO clsInfo{0};
     Ex_ObjGetClassInfoEx(L"ListView", &clsInfo);
     m_pfnListView_icon = clsInfo.pfnClsProc;
-    Ex_ObjRegister(L"IconListView", EOS_VSCROLL | EOS_HSCROLL | EOS_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 4 * sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _iconlistview_proc);
+    Ex_ObjRegister(L"IconListView", OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VISIBLE, clsInfo.dwStyleEx, clsInfo.dwTextFormat, 4 * sizeof(size_t), clsInfo.hCursor, clsInfo.dwFlags, _iconlistview_proc);
 }
 
 EX_ICONLISTVIEW_ITEMINFO *_iconlistview_onarrappend(array_s *pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO *pvItem, INT nType)
@@ -129,18 +129,18 @@ void _iconlistview_onarrdelete(array_s *pArray, INT nIndex, EX_ICONLISTVIEW_ITEM
 
 void _iconlistview_init(HEXOBJ hObj)
 {
-    Ex_ObjSetLong(hObj, EILVL_WIDTH, Ex_Scale(90));
-    Ex_ObjSetLong(hObj, EILVL_HEIGHT, Ex_Scale(100));
+    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_WIDTH, Ex_Scale(90));
+    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HEIGHT, Ex_Scale(100));
     array_s *pArray = Array_Create(0);
-    Array_BindEvent(pArray, eae_addmember, _iconlistview_onarrappend);
-    Array_BindEvent(pArray, eae_delmember, _iconlistview_onarrdelete);
-    Ex_ObjSetLong(hObj, EILVL_ITEMARRAY, (size_t)pArray);
-    Ex_ObjSetLong(hObj, EILVL_HIMAGELIST, 0);
+    Array_BindEvent(pArray, ARRAY_EVENT_ADDMEMBER, _iconlistview_onarrappend);
+    Array_BindEvent(pArray, ARRAY_EVENT_DELMEMBER, _iconlistview_onarrdelete);
+    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY, (size_t)pArray);
+    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HIMAGELIST, 0);
 }
 
 void _iconlistview_uninit(HEXOBJ hObj)
 {
-    array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
+    array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY);
     Array_Destroy(pArray);
 }
 
@@ -152,8 +152,8 @@ BOOL _iconlistview_onnotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
     {
         if (ni.nCode == NM_CALCSIZE)
         {
-            __set_int((LPVOID)ni.lParam, 0, Ex_ObjGetLong(hObj, EILVL_WIDTH));
-            __set_int((LPVOID)ni.lParam, 4, Ex_ObjGetLong(hObj, EILVL_HEIGHT));
+            __set_int((LPVOID)ni.lParam, 0, Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_WIDTH));
+            __set_int((LPVOID)ni.lParam, 4, Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_HEIGHT));
             return TRUE;
         }
         else if (ni.nCode == NM_CUSTOMDRAW)
@@ -166,10 +166,10 @@ BOOL _iconlistview_onnotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)
 
 BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW *cdr)
 {
-    array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, EILVL_ITEMARRAY);
+    array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY);
     if (Array_GetCount(pArray) >= cdr->iItem && cdr->iItem > 0) //如果索引在范围内
     {
-        LPVOID hImageList = (LPVOID)Ex_ObjGetLong(hObj, EILVL_HIMAGELIST);
+        LPVOID hImageList = (LPVOID)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_HIMAGELIST);
         EX_ICONLISTVIEW_ITEMINFO *pItemInfo = (EX_ICONLISTVIEW_ITEMINFO *)Array_GetMember(pArray, cdr->iItem);
         INT nWidthIcon = 0;
         INT nHeightIcon = 0;
@@ -181,7 +181,7 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW *cdr)
         FLOAT nHeightText = 0;
         if (pItemInfo->pwzText != 0)
         {
-            _canvas_calctextsize(cdr->hCanvas, Ex_ObjGetFont(hObj), pItemInfo->pwzText, -1, Ex_ObjGetLong(hObj, EOL_TEXTFORMAT), 0, cdr->rcPaint.right - cdr->rcPaint.left, cdr->rcPaint.bottom - cdr->rcPaint.top, &nWidthText, &nHeightText);
+            _canvas_calctextsize(cdr->hCanvas, Ex_ObjGetFont(hObj), pItemInfo->pwzText, -1, Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), 0, cdr->rcPaint.right - cdr->rcPaint.left, cdr->rcPaint.bottom - cdr->rcPaint.top, &nWidthText, &nHeightText);
         }
         FLOAT nHeightTotal = nHeightIcon + Ex_Scale(3) + nHeightText;
 
@@ -195,7 +195,7 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW *cdr)
         //设置剪辑区(防止图标过大、文本过长超出表项)
         _canvas_cliprect(cdr->hCanvas, cdr->rcPaint.left, cdr->rcPaint.top, cdr->rcPaint.right, cdr->rcPaint.bottom);
         LPVOID hBrush = 0;
-        if ((cdr->dwStyle & EILVS_BUTTON) != 0) //如果是按钮状态,则处理背景
+        if ((cdr->dwStyle & ICONLISTVIEW_STYLE_BUTTON) != 0) //如果是按钮状态,则处理背景
         {
             if ((cdr->dwState & STATE_HOVER) != 0 && (Ex_ObjGetUIState(hObj) & STATE_DOWN) != 0) //当当前表项是悬浮且左键按下时
             {
@@ -220,9 +220,9 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW *cdr)
         if (pItemInfo->pwzText != 0) //当前表项有文本
         {
 
-            _canvas_drawtext(cdr->hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pItemInfo->pwzText, -1, Ex_ObjGetLong(hObj, EOL_TEXTFORMAT), rcIconAndText.left, rcIconAndText.bottom - nHeightText, rcIconAndText.right, rcIconAndText.bottom);
+            _canvas_drawtext(cdr->hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pItemInfo->pwzText, -1, Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), rcIconAndText.left, rcIconAndText.bottom - nHeightText, rcIconAndText.right, rcIconAndText.bottom);
         }
         _canvas_resetclip(cdr->hCanvas); //重置剪辑区
     }
-    return (cdr->dwStyle & EILVS_BUTTON) != 0; // 如果不是按钮列表状态，则表项选中、悬浮的状态交给列表框绘制
+    return (cdr->dwStyle & ICONLISTVIEW_STYLE_BUTTON) != 0; // 如果不是按钮列表状态，则表项选中、悬浮的状态交给列表框绘制
 }

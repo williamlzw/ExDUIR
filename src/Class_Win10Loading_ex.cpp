@@ -2,7 +2,7 @@
 
 void _win10_loading_register()
 {
-    Ex_ObjRegister(L"Win10Loading", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, 2 * sizeof(size_t), NULL, NULL, _win10_loading_proc);
+    Ex_ObjRegister(L"Win10Loading", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, NULL, 2 * sizeof(size_t), NULL, NULL, _win10_loading_proc);
 }
 
 LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -14,7 +14,7 @@ LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         float* floatPtr = (float*)malloc(sizeof(size_t));
         floatPtr[0] = 0;
         Ex_ObjSetLong(hObj, 1, (LONG_PTR)floatPtr);
-        if ((Ex_ObjGetLong(hObj, EOL_STYLE) & ELDS_LINE) != ELDS_LINE)
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & LOADING_STYLE_LINE) != LOADING_STYLE_LINE)
         {
             RECT rc = {0};
             INT r = NULL; /*半径*/
@@ -71,7 +71,7 @@ void _win10_loading_paint(HEXOBJ hObj)
             ThemeColor = RGB(0, 136, 255);
         }
         HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(ThemeColor, 255));
-        if ((ps.dwStyle & ELDS_LINE) == ELDS_LINE)
+        if ((ps.dwStyle & LOADING_STYLE_LINE) == LOADING_STYLE_LINE)
         {
             FLOAT a;
             float* i = (float*)Ex_ObjGetLong(hObj, 1);
@@ -133,9 +133,9 @@ void _win10_loading_paint(HEXOBJ hObj)
         }
 
         _canvas_drawtext(ps.hCanvas,
-                         (HEXFONT)Ex_ObjGetLong(hObj, EOL_HFONT),
+                         (HEXFONT)Ex_ObjGetLong(hObj, OBJECT_LONG_HFONT),
                          Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                         (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE),
+                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
                          -1,
                          DT_BOTTOM | DT_VCENTER | DT_CENTER | DT_SINGLELINE,
                          (FLOAT)ps.rcText.left,

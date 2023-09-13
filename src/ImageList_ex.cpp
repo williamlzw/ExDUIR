@@ -120,9 +120,9 @@ HEXIMAGELIST _imglist_create(INT width, INT height)
     hImageList = Array_Create(0);
     Array_SetType(hImageList, MAKELONG(width, height));
     Array_SetExtra(hImageList, MAKELONG(width, height));
-    Array_BindEvent(hImageList, eae_addmember, _imglist_array_addmember);
-    Array_BindEvent(hImageList, eae_setmember, _imglist_array_addmember);
-    Array_BindEvent(hImageList, eae_delmember, _imglist_array_delmember);
+    Array_BindEvent(hImageList, ARRAY_EVENT_ADDMEMBER, _imglist_array_addmember);
+    Array_BindEvent(hImageList, ARRAY_EVENT_SETMEMBER, _imglist_array_addmember);
+    Array_BindEvent(hImageList, ARRAY_EVENT_DELMEMBER, _imglist_array_delmember);
     return (HEXIMAGELIST)hImageList;
 }
 

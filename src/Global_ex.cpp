@@ -88,11 +88,11 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     ReleaseDC(NULL, dc);
     if (g_Li.DpiX_Real == 1 && g_Li.DpiY_Real == 1)
     {
-        Flag_Del(EXGF_DPI_ENABLE);
+        Flag_Del(ENGINE_FLAG_DPI_ENABLE);
     }
     else
     {
-        if ((dwGlobalFlags & EXGF_DPI_ENABLE) != 0)
+        if ((dwGlobalFlags & ENGINE_FLAG_DPI_ENABLE) != 0)
         {
             g_Li.DpiX = g_Li.DpiX_Real;
             g_Li.DpiY = g_Li.DpiY_Real;
@@ -100,7 +100,7 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     }
     g_Li.lpLogFontDefault = (LOGFONTW *)Ex_MemAlloc(sizeof(LOGFONTW));
     SystemParametersInfoW(31, sizeof(LOGFONTW), g_Li.lpLogFontDefault, 0);
-    if (!Flag_Query(EXGF_DPI_ENABLE))
+    if (!Flag_Query(ENGINE_FLAG_DPI_ENABLE))
     {
         g_Li.lpLogFontDefault->lfHeight = (FLOAT)g_Li.lpLogFontDefault->lfHeight / g_Li.DpiY_Real;
     }

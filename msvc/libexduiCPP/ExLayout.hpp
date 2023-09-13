@@ -104,7 +104,7 @@ namespace ExDUIR
 
 			class ExAbsoluteLayout : public ExBaseLayout
 			{
-				ExAbsoluteLayout(ExControl objBind) :ExBaseLayout(ELT_ABSOLUTE, objBind)
+				ExAbsoluteLayout(ExControl objBind) :ExBaseLayout(LAYOUT_TYPE_ABSOLUTE, objBind)
 				{
 				}
 
@@ -121,35 +121,35 @@ namespace ExDUIR
 
 			class ExFlowLayout : public ExBaseLayout
 			{
-				ExFlowLayout(ExControl objBind) :ExBaseLayout(ELT_FLOW, objBind)
+				ExFlowLayout(ExControl objBind) :ExBaseLayout(LAYOUT_TYPE_FLOW, objBind)
 				{
 				}
 			};
 
 			class ExLinearLayout : public ExBaseLayout
 			{
-				ExLinearLayout(ExControl objBind) :ExBaseLayout(ELT_LINEAR, objBind)
+				ExLinearLayout(ExControl objBind) :ExBaseLayout(LAYOUT_TYPE_LINEAR, objBind)
 				{
 				}
 			};
 
 			class ExPageLayout : public ExBaseLayout
 			{
-				ExPageLayout(ExControl objBind) :ExBaseLayout(ELT_PAGE, objBind)
+				ExPageLayout(ExControl objBind) :ExBaseLayout(LAYOUT_TYPE_PAGE, objBind)
 				{
 				}
 			};
 
 			class ExRelativateLayout : public ExBaseLayout
 			{
-				ExRelativateLayout(ExControl objBind) :ExBaseLayout(ELT_RELATIVE, objBind)
+				ExRelativateLayout(ExControl objBind) :ExBaseLayout(LAYOUT_TYPE_RELATIVE, objBind)
 				{
 				}
 			};
 
 			class ExTableLayout : public ExBaseLayout
 			{
-				ExTableLayout(ExControl objBind) :ExBaseLayout(ELT_TABLE, objBind)
+				ExTableLayout(ExControl objBind) :ExBaseLayout(LAYOUT_TYPE_TABLE, objBind)
 				{
 				}
 

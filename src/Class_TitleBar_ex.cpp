@@ -2,7 +2,7 @@
 
 void _titlebar_register()
 {
-	Ex_ObjRegister(L"Titlebar", EOS_VISIBLE, 0, DT_LEFT, 0, NULL, 0, _titlebar_proc);
+	Ex_ObjRegister(L"Titlebar", OBJECT_STYLE_VISIBLE, 0, DT_LEFT, 0, NULL, 0, _titlebar_proc);
 }
 
 LRESULT CALLBACK _titlebar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -12,7 +12,7 @@ LRESULT CALLBACK _titlebar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 			_canvas_clear(ps.hCanvas, 0);
 
-			LPCWSTR lpwzText = (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE);
+			LPCWSTR lpwzText = (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE);
 			FLOAT nWidthText = 0;
 			FLOAT nHeightText = 0;
 			FLOAT nTop = 0;

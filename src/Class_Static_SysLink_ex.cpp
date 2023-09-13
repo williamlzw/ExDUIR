@@ -2,7 +2,7 @@
 
 void _static_register()
 {
-    Ex_ObjRegister(L"Static", EOS_VISIBLE, EOS_EX_TRANSPARENT, DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE, 0, 0, 0, _static_proc);
+    Ex_ObjRegister(L"Static", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TRANSPARENT, DT_VCENTER | DT_NOPREFIX | DT_SINGLELINE, 0, 0, 0, _static_proc);
 }
 
 void _static_paint(HEXOBJ hObj, obj_s *pObj)

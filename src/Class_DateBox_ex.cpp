@@ -3,7 +3,7 @@
 void _datebox_register()
 {
 	DWORD cbObjExtra = 2 * sizeof(size_t);
-	Ex_ObjRegister(L"DateBox", EOS_VISIBLE | EOS_BORDER, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, cbObjExtra, LoadCursor(0, IDC_HAND), ECVF_TEXTANTIALIAS, _datebox_proc);
+	Ex_ObjRegister(L"DateBox", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, cbObjExtra, LoadCursor(0, IDC_HAND), CANVAS_FLAG_TEXTANTIALIAS, _datebox_proc);
 }
 
 time_t _datebox_gettimestamp() {
@@ -40,7 +40,7 @@ void _datebox_setstatic(HEXOBJ hObj, datebox_s* pOwner)
 
 void _datebox_init(HEXOBJ hObj, int nYear, int nMon) 
 {
-	datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+	datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 	pOwner->lpYear = nYear;
 	pOwner->lpMon = nMon;
 
@@ -116,7 +116,7 @@ void _datebox_init(HEXOBJ hObj, int nYear, int nMon)
 			}
 		}
 	}
-	Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, 42, 0);
+	Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_SETITEMCOUNT, 42, 0);
 	_datebox_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
 }
 
@@ -189,13 +189,13 @@ void _datebox_show(HEXOBJ hObj, datebox_s* pOwner, int type)
 		Ex_ObjShow(hObj_list, FALSE);
 		hObj_list = Ex_ObjGetFromID(hObj, 77705);
 		Ex_ObjShow(hObj_list, TRUE);
-		Ex_ObjSendMessage(hObj_list, LVM_SETITEMCOUNT, 12, 0);
+		Ex_ObjSendMessage(hObj_list, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
 		_datebox_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
 	}
 	else if (type == 3) 
 	{
 		hObj_list = Ex_ObjGetFromID(hObj, 77705);
-		Ex_ObjSendMessage(hObj_list, LVM_SETITEMCOUNT, 12, 0);
+		Ex_ObjSendMessage(hObj_list, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
 		_datebox_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
 	}
 	else 
@@ -211,7 +211,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 	{
 		if (uMsg == WM_CREATE) 
 		{
-			Ex_ObjSetLong(hObj, DBL_STATE, 0);
+			Ex_ObjSetLong(hObj, DATEBOX_LONG_STATE, 0);
 			datebox_s* ptr = (datebox_s*)malloc(sizeof(datebox_s));
 			ptr->hObj = hObj;
 			time_t time = _datebox_gettimestamp();
@@ -229,11 +229,11 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 
 			ptr->hFont = _font_createfromfamily(0, 14, 0);
 			Ex_ObjSetFont(hObj, ptr->hFont, FALSE);
-			Ex_ObjSetLong(hObj, DBL_DATA, (LONG_PTR)ptr);
+			Ex_ObjSetLong(hObj, DATEBOX_LONG_DATA, (LONG_PTR)ptr);
 		}
 		else if (uMsg == WM_DESTROY) 
 		{
-			datebox_s* ptr = (datebox_s*)Ex_ObjGetLong(hObj, DBL_DATA);
+			datebox_s* ptr = (datebox_s*)Ex_ObjGetLong(hObj, DATEBOX_LONG_DATA);
 			_font_destroy(ptr->hFont);
 			LPVOID pOld = ptr->Items;
 			if (pOld != 0)
@@ -256,13 +256,13 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			EX_PAINTSTRUCT ps{ 0 };
 			if (Ex_ObjBeginPaint(hObj, &ps)) 
 			{
-				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
+				_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
 				Ex_ObjEndPaint(hObj, &ps);
 			}
 		}
 		else if (uMsg == WM_LBUTTONUP)
 		{
-			datebox_s* ptr = (datebox_s*)Ex_ObjGetLong(hObj, DBL_DATA);
+			datebox_s* ptr = (datebox_s*)Ex_ObjGetLong(hObj, DATEBOX_LONG_DATA);
 			if (GetTickCount64() - ptr->nProcessTime < 200)
 			{
 				EndMenu();
@@ -270,7 +270,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			}
 			else
 			{
-				if (Ex_ObjGetLong(hObj, DBL_STATE) == 1)
+				if (Ex_ObjGetLong(hObj, DATEBOX_LONG_STATE) == 1)
 				{
 					return 0;
 				}
@@ -282,37 +282,37 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 				lpRect.top += Ex_Scale(objRect.bottom + 2);//修复弹出定位
 				
 				HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, 0, 0, 300, 200, WS_POPUP, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
-				HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, EWS_ESCEXIT | EWS_NOINHERITBKG | EWS_NOCAPTIONTOPMOST | EWS_POPUPWINDOW, (size_t)ptr, _datebox_onwndmsgproc);
+				HEXDUI hExBox = Ex_DUIBindWindowEx(hWndBox, 0, WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_NOCAPTIONTOPMOST | WINDOW_STYLE_POPUPWINDOW, (size_t)ptr, _datebox_onwndmsgproc);
 				if (hExBox)
 				{
 					//创建一个底部标签，防止点击空白标题处，窗口会关闭。
-					HEXOBJ hObj_Static = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 0, 0, 400, 400, hExBox, 0, -1, 0, 0, 0);
+					HEXOBJ hObj_Static = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"", -1, 0, 0, 400, 400, hExBox, 0, -1, 0, 0, 0);
 					ptr->nSohwType = 0;
 					SetWindowPos(hWndBox, 0, (lpRect.left), (lpRect.top), Ex_Scale(310), Ex_Scale(342), SWP_NOZORDER | SWP_NOACTIVATE);
 
-					HEXOBJ hObj1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22, hObj_Static, 77701, -1, (LPARAM)ptr, 0, _datebox_onbuttonproc);
+					HEXOBJ hObj1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22, hObj_Static, 77701, -1, (LPARAM)ptr, 0, _datebox_onbuttonproc);
 					Ex_ObjSetFontFromFamily(hObj1, 0, 14, -1, FALSE);
-					HEXOBJ hObj2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj_Static, 77702, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _datebox_onbuttonproc);
+					HEXOBJ hObj2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj_Static, 77702, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _datebox_onbuttonproc);
 					Ex_ObjSetFontFromFamily(hObj2, 0, 24, -1, FALSE);
-					HEXOBJ hObj3 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj_Static, 77703, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _datebox_onbuttonproc);
+					HEXOBJ hObj3 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj_Static, 77703, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _datebox_onbuttonproc);
 					Ex_ObjSetFontFromFamily(hObj3, 0, 24, -1, FALSE);
 
-					HEXOBJ hObj4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 10, 45, 300, 267, hObj_Static, 77704, -1, (LPARAM)ptr, 0, _datebox_onlistproc);
+					HEXOBJ hObj4 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL, OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST, 10, 45, 300, 267, hObj_Static, 77704, -1, (LPARAM)ptr, 0, _datebox_onlistproc);
 					_datebox_init(hObj4, ptr->Year, ptr->Mon);
 
-					HEXOBJ hObj5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, ELVS_VERTICALLIST, 10, 65, 300, 247, hObj_Static, 77705, -1, (LPARAM)ptr, 0, _datebox_onlistproc);
+					HEXOBJ hObj5 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL, LISTVIEW_STYLE_VERTICALLIST, 10, 65, 300, 247, hObj_Static, 77705, -1, (LPARAM)ptr, 0, _datebox_onlistproc);
 					Ex_ObjShow(hObj5, FALSE);
 					Ex_ObjSetFontFromFamily(hObj5, 0, 14, -1, FALSE);
-					Ex_ObjSendMessage(hObj5, LVM_SETITEMCOUNT, 12, 0);
+					Ex_ObjSendMessage(hObj5, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
 
-					Ex_ObjSetLong(hObj, DBL_STATE, 1);
+					Ex_ObjSetLong(hObj, DATEBOX_LONG_STATE, 1);
 				}
 				Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
 			}
 		}
-		else if (uMsg == DBM_DATETIME)
+		else if (uMsg == DATEBOX_MESSAGE_DATETIME)
 		{
-			datebox_s* ptr = (datebox_s*)Ex_ObjGetLong(hObj, DBL_DATA);
+			datebox_s* ptr = (datebox_s*)Ex_ObjGetLong(hObj, DATEBOX_LONG_DATA);
 			EX_DATETIME* dt = (EX_DATETIME*)lParam;
 
 			if (dt->Year < 0) 
@@ -344,22 +344,22 @@ LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 {
 	if (uMsg == WM_DESTROY) 
 	{
-		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, EWL_LPARAM);
+		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, ENGINE_LONG_LPARAM);
 		pOwner->nProcessTime = GetTickCount64();
-		Ex_ObjSetLong(pOwner->hObj, DBL_STATE, 0);
+		Ex_ObjSetLong(pOwner->hObj, DATEBOX_LONG_STATE, 0);
 	}
 	else if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
-		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, EWL_LPARAM);
+		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, ENGINE_LONG_LPARAM);
 		_canvas_clear(wParam, -1);
 		int offset = Ex_Scale(26);
-		_canvas_drawtext(wParam, pOwner->hFont, ExRGB2ARGB(16711680, 255), (LPCWSTR)Ex_ObjGetLong(pOwner->hObj, EOL_LPWZTITLE), -1, DT_LEFT | DT_VCENTER, Ex_Scale(18), HIWORD(lParam) - offset, Ex_Scale(220), HIWORD(lParam) - offset + Ex_Scale(22));
+		_canvas_drawtext(wParam, pOwner->hFont, ExRGB2ARGB(16711680, 255), (LPCWSTR)Ex_ObjGetLong(pOwner->hObj, OBJECT_LONG_LPWZTITLE), -1, DT_LEFT | DT_VCENTER, Ex_Scale(18), HIWORD(lParam) - offset, Ex_Scale(220), HIWORD(lParam) - offset + Ex_Scale(22));
 		*lpResult = 1;
 		return 1;
 	}
 	else if (uMsg == 11112) 
 	{
-		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, EWL_LPARAM);
+		datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, ENGINE_LONG_LPARAM);
 
 		LPVOID lpItems = pOwner->Items;
 		LONG_PTR offset = (wParam - 1) * (20 + sizeof(size_t));
@@ -374,8 +374,8 @@ LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 		dt.Mon = pOwner->Mon;
 		dt.Mday = pOwner->Mday;
 		dt.Wday = pOwner->Wday;
-		Ex_ObjDispatchNotify(pOwner->hObj, DBN_DATETIME, 0, (size_t)&dt);
-		Ex_ObjSetLong(pOwner->hObj, DBL_STATE, 0);
+		Ex_ObjDispatchNotify(pOwner->hObj, DATEBOX_EVENT_DATETIME, 0, (size_t)&dt);
+		Ex_ObjSetLong(pOwner->hObj, DATEBOX_LONG_STATE, 0);
 		PostMessageW(hWnd, WM_CLOSE, 0, 0);
 	}
 	return 0;
@@ -384,7 +384,7 @@ LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
 LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult) {
 	if (uMsg == WM_CREATE) 
 	{
-		Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
+		Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
 	}
 	else if (uMsg == WM_NOTIFY) 
 	{
@@ -394,7 +394,7 @@ LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 		{
 			if (ni.nCode == NM_CLICK) 
 			{
-				datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+				datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 				if (ni.idFrom == 77701) 
 				{
 					if (pOwner->nSohwType == 0) 
@@ -471,7 +471,7 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		obj_s* pObj = nullptr;
 		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) 
 		{
-			if (Ex_ObjGetLong(hObj, EOL_ID) == 77704)
+			if (Ex_ObjGetLong(hObj, OBJECT_LONG_ID) == 77704)
 			{
 				pObj->c_top_ = Ex_Scale(23);
 				*lpResult = 1;
@@ -483,7 +483,7 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	{
 		if (__get((LPVOID)lParam, 0) == wParam) 
 		{
-			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 			if (pOwner->nSohwType > 0) 
 			{
 				return 0;
@@ -537,7 +537,7 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 		if (hObj == ni.hObjFrom) 
 		{
-			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+			datebox_s* pOwner = (datebox_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 			if (ni.nCode == NM_CALCSIZE) 
 			{
 				if (ni.idFrom == 77704) 
@@ -669,7 +669,7 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 				*lpResult = 1;
 				return 1;
 			}
-			else if (ni.nCode == LVN_ITEMCHANGED) 
+			else if (ni.nCode == LISTVIEW_EVENT_ITEMCHANGED) 
 {
 				//wParam 新选中项,lParam 旧选中项
 				if (ni.idFrom == 77704) 
@@ -707,13 +707,13 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	else if (uMsg == WM_MOUSEMOVE) 
 {
-		INT index = Ex_ObjSendMessage(hObj, LVM_GETHOTITEM, 0, 0);
+		INT index = Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_GETHOTITEM, 0, 0);
 		if (index > 0) 
 		{
 			if (index != nIndex) 
 			{
 				nIndex = index;
-				Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
+				Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
 			}
 		}
 		else 
@@ -721,13 +721,13 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			if (nIndex > 0) 
 			{
 				nIndex = 0;
-				Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
+				Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
 			}
 		}
 	}
 	else if (uMsg == WM_MOUSELEAVE) 
 {
-		Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
+		Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
 	}
 	return 0;
 }

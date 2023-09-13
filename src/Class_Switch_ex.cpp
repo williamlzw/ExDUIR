@@ -2,7 +2,7 @@
 
 void _switch_register()
 {
-    Ex_ObjRegister(L"Switch", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, NULL, NULL, NULL, NULL, _switch_proc);
+    Ex_ObjRegister(L"Switch", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, NULL, NULL, NULL, NULL, _switch_proc);
 }
 
 LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -12,22 +12,22 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
         Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 255), FALSE);
         Ex_ObjSetColor(hObj, COLOR_EX_TEXT_CHECKED, ExARGB(255, 255, 255, 255), FALSE);
         Ex_ObjInitPropList(hObj, 9);
-        Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, ExARGB(255, 255, 255, 100));
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBKGNORMAL, ExARGB(255, 255, 255, 100));
         EXARGB ThemeColor = ExARGB(98, 184, 120, 255);
-        Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, ThemeColor);
-        Ex_ObjSetProp(hObj, ESP_CRBORDERNORMAL, ExARGB(0, 0, 0, 150));
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBKGDOWNORCHECKED, ThemeColor);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBORDERNORMAL, ExARGB(0, 0, 0, 150));
     }
     else if (uMsg == WM_EX_PROPS)
     {
         EX_OBJ_PROPS *Switchprops = (EX_OBJ_PROPS *)lParam;
-        Ex_ObjSetProp(hObj, ESP_CRBKGNORMAL, Switchprops->crBkgNormal);
-        Ex_ObjSetProp(hObj, ESP_CRBKGHOVER, Switchprops->crBkgHover);
-        Ex_ObjSetProp(hObj, ESP_CRBKGDOWNORCHECKED, Switchprops->crBkgDownOrChecked);
-        Ex_ObjSetProp(hObj, ESP_CRBORDERNORMAL, Switchprops->crBorderNormal);
-        Ex_ObjSetProp(hObj, ESP_CRBORDERHOVER, Switchprops->crBorderHover);
-        Ex_ObjSetProp(hObj, ESP_CRBORDERDOWNORCHECKED, Switchprops->crBorderDownOrChecked);
-        Ex_ObjSetProp(hObj, ESP_RADIUS, Switchprops->radius);
-        Ex_ObjSetProp(hObj, ESP_STROKEWIDTH, Switchprops->strokeWidth);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBKGNORMAL, Switchprops->crBkgNormal);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBKGHOVER, Switchprops->crBkgHover);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBKGDOWNORCHECKED, Switchprops->crBkgDownOrChecked);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBORDERNORMAL, Switchprops->crBorderNormal);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBORDERHOVER, Switchprops->crBorderHover);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_CRBORDERDOWNORCHECKED, Switchprops->crBorderDownOrChecked);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_RADIUS, Switchprops->radius);
+        Ex_ObjSetProp(hObj, SWITCH_PROP_STROKEWIDTH, Switchprops->strokeWidth);
     }
     else if (uMsg == WM_PAINT)
     {
@@ -45,14 +45,14 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
             /* 根据是否使用动画 */
             if (lParam == 0)
             {
-                INT tmp = wParam != 0 ? ES_ORDER : ES_REVERSE;
+                INT tmp = wParam != 0 ? EASING_MODE_ORDER : EASING_MODE_REVERSE;
                 /*  创建一个缓动 */
-                _easing_create(ET_InOutCubic, 0, ES_SINGLE | ES_DISPATCHNOTIFY | ES_THREAD | tmp, (INT)hObj, 220, 10, EES_PLAY, 0, 100, 0, 0, 0, 0);
+                _easing_create(EASING_TYPE_INOUTCUBIC, 0, EASING_MODE_SINGLE | EASING_MODE_DISPATCHNOTIFY | EASING_MODE_THREAD | tmp, (INT)hObj, 220, 10, EASING_STATE_PLAY, 0, 100, 0, 0, 0, 0);
             }
             else
             {
                 /* 直接设置进度 */
-                Ex_ObjSetLong(hObj, EOL_USERDATA, wParam != 0 ? 100 : 0);
+                Ex_ObjSetLong(hObj, OBJECT_LONG_USERDATA, wParam != 0 ? 100 : 0);
                 /* 重绘 */
                 Ex_ObjInvalidateRect(hObj, 0);
             }
@@ -72,11 +72,11 @@ LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
     {
         if (wParam != 0)
         {
-            /* 这里没有任何绘制代码,这里只是执行缓动,将缓动值赋值给 EOL_USERDATA 并重画 */
+            /* 这里没有任何绘制代码,这里只是执行缓动,将缓动值赋值给 OBJECT_LONG_USERDATA 并重画 */
             EX_EASINGINFO *easing = (EX_EASINGINFO *)lParam;
 
             /* 设置一下当前的进度 */
-            Ex_ObjSetLong(hObj, EOL_USERDATA, (INT)easing->nCurrent);
+            Ex_ObjSetLong(hObj, OBJECT_LONG_USERDATA, (INT)easing->nCurrent);
             /* 重绘控件 */
             Ex_ObjInvalidateRect(hObj, 0);
         }
@@ -92,16 +92,16 @@ void _switch_paint(HEXOBJ hObj)
 
     if (Ex_ObjBeginPaint(hObj, &ps))
     {
-        FLOAT _Radius = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, ESP_RADIUS)); /*自定义圆角度*/
-        FLOAT StrokeWidth = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, ESP_STROKEWIDTH));
-        INT nProgress = Ex_ObjGetLong(hObj, EOL_USERDATA);
+        FLOAT _Radius = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, SWITCH_PROP_RADIUS)); /*自定义圆角度*/
+        FLOAT StrokeWidth = Ex_Scale((FLOAT)Ex_ObjGetProp(hObj, SWITCH_PROP_STROKEWIDTH));
+        INT nProgress = Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
         RECT rcBlock;
         _canvas_setantialias(ps.hCanvas, TRUE);
         _canvas_settextantialiasmode(ps.hCanvas, TRUE);
 
         /* 绘制背景 */
         /* 填充一层不透明 */
-        HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, ESP_CRBKGNORMAL));
+        HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, SWITCH_PROP_CRBKGNORMAL));
         if (_Radius != 0)
         {
             _canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
@@ -112,7 +112,7 @@ void _switch_paint(HEXOBJ hObj)
         }
 
         /* 根据缓动进度填充一层半透明色 */
-        _brush_setcolor(hBrush, ExRGB2ARGB(ExARGB2RGB(Ex_ObjGetProp(hObj, ESP_CRBKGDOWNORCHECKED)), (INT)((FLOAT)nProgress / 100 * 255)));
+        _brush_setcolor(hBrush, ExRGB2ARGB(ExARGB2RGB(Ex_ObjGetProp(hObj, SWITCH_PROP_CRBKGDOWNORCHECKED)), (INT)((FLOAT)nProgress / 100 * 255)));
         if (_Radius != 0)
         {
             _canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth);
@@ -122,7 +122,7 @@ void _switch_paint(HEXOBJ hObj)
             _canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth);
         }
 
-        _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ESP_CRBORDERNORMAL)); /* 设置为边框色*/
+        _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, SWITCH_PROP_CRBORDERNORMAL)); /* 设置为边框色*/
         if (_Radius != 0)
         {
             _canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + StrokeWidth, (FLOAT)ps.rcPaint.top + StrokeWidth, (FLOAT)ps.rcPaint.right - StrokeWidth, (FLOAT)ps.rcPaint.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
@@ -153,7 +153,7 @@ void _switch_paint(HEXOBJ hObj)
             _canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left + StrokeWidth, (FLOAT)rcBlock.top + StrokeWidth, (FLOAT)rcBlock.right - StrokeWidth, (FLOAT)rcBlock.bottom - StrokeWidth);
         }
 
-        _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, ESP_CRBORDERNORMAL)); /* 设置为边框色 */
+        _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, SWITCH_PROP_CRBORDERNORMAL)); /* 设置为边框色 */
         if (_Radius != 0)
         {
             _canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left + StrokeWidth, (FLOAT)rcBlock.top + StrokeWidth, (FLOAT)rcBlock.right - StrokeWidth, (FLOAT)rcBlock.bottom - StrokeWidth, _Radius - StrokeWidth, _Radius - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
@@ -163,7 +163,7 @@ void _switch_paint(HEXOBJ hObj)
             _canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left + StrokeWidth, (FLOAT)rcBlock.top + StrokeWidth, (FLOAT)rcBlock.right - StrokeWidth, (FLOAT)rcBlock.bottom - StrokeWidth, StrokeWidth, D2D1_DASH_STYLE_SOLID);
         }
 
-        LPCWSTR titlea = (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE);
+        LPCWSTR titlea = (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE);
         std::wstring title = L"是|否";
         if (!titlea)
         {

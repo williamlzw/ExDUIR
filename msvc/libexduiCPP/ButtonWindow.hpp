@@ -17,9 +17,9 @@ private:
 public:
 	void CreateButtonWindow(HWND pOwner)
 	{
-		DWORD dwStyleDUI = EWS_NOINHERITBKG | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_TITLE | EWS_HASICON | EWS_NOSHADOW;
+		DWORD dwStyleDUI = WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW;
 		m_skin = ExSkin(pOwner, 0, 0, 300, 200, L"测试按钮开关", dwStyleDUI);
-		m_skin.SetLong(EWL_CRBKG, ExARGB(120, 120, 120, 255));
+		m_skin.SetLong(ENGINE_LONG_CRBKG, ExARGB(120, 120, 120, 255));
 		m_buttons.push_back(ExButton(m_skin, 10, 30, 120, 30, L"禁用自身", -1, -1, DT_VCENTER | DT_CENTER, 201));
 		m_buttons.push_back(ExButton(m_skin, 10, 70, 120, 30, L"解除按钮1禁用", -1, -1, DT_VCENTER | DT_CENTER, 202));
 		m_buttons.push_back(ExButton(m_skin, 10, 110, 120, 30, L"改动自身文本", -1, -1, DT_VCENTER | DT_CENTER, 203));
@@ -28,10 +28,10 @@ public:
 		{
 			button.HandleEvent(NM_CLICK, OnButtonEvent);
 		}
-		m_custom_button1 = ExButton(m_skin, 150, 30, 120, 30, L"重画按钮1", -1, EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED, DT_VCENTER | DT_CENTER, 205);
+		m_custom_button1 = ExButton(m_skin, 150, 30, 120, 30, L"重画按钮1", -1, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW | OBJECT_STYLE_EX_COMPOSITED, DT_VCENTER | DT_CENTER, 205);
 		m_custom_button1.HandleEvent(NM_CUSTOMDRAW, OnButtonEvent);
 
-		m_custom_button2 = ExButton(m_skin, 150, 70, 120, 30, L"重画按钮2", -1, EOS_EX_FOCUSABLE | EOS_EX_CUSTOMDRAW | EOS_EX_COMPOSITED, DT_VCENTER | DT_CENTER, 206, 0, nullptr, OnButtonMsgProc);
+		m_custom_button2 = ExButton(m_skin, 150, 70, 120, 30, L"重画按钮2", -1, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW | OBJECT_STYLE_EX_COMPOSITED, DT_VCENTER | DT_CENTER, 206, 0, nullptr, OnButtonMsgProc);
 		
 		m_switch1 = ExSwitch(m_skin, 150, 110, 80, 30, L"已开启|已关闭", -1, -1, -1, 206);
 		m_switch1.SendMsg(BM_SETCHECK, 1, 0);
@@ -140,10 +140,10 @@ public:
 			{
 				if (wParam != 0)
 				{
-					ExMessageBox::Show(ButtonWindow::GetInstance().m_skin, L"开启", L"取开关状态", MB_USERICON, EMBF_CENTEWINDOW);
+					ExMessageBox::Show(ButtonWindow::GetInstance().m_skin, L"开启", L"取开关状态", MB_USERICON, MESSAGEBOX_FLAG_CENTEWINDOW);
 				}
 				else {
-					ExMessageBox::Show(ButtonWindow::GetInstance().m_skin, L"关闭", L"取开关状态", MB_ICONWARNING, EMBF_CENTEWINDOW);
+					ExMessageBox::Show(ButtonWindow::GetInstance().m_skin, L"关闭", L"取开关状态", MB_ICONWARNING, MESSAGEBOX_FLAG_CENTEWINDOW);
 				}
 				break;
 			}

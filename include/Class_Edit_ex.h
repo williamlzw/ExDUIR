@@ -43,13 +43,13 @@ struct EX_EDIT_STREAM
 };
 
 //编辑框标识_显示光标
-#define EEF_BSHOWCARET 1
+#define EDIT_FLAG_BSHOWCARET 1
 //编辑框标识_已显示光标
-#define EEF_BCARETSHHOWED 2
+#define EDIT_FLAG_BCARETSHHOWED 2
 //编辑框标识_光标描述表
-#define EEF_BCARETCONTEXT 4
+#define EDIT_FLAG_BCARETCONTEXT 4
 //编辑框标识_选中
-#define EEF_BSELECTED 8
+#define EDIT_FLAG_BSELECTED 8
 
 void _edit_register();
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s *pObj);

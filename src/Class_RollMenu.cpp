@@ -3,8 +3,8 @@
 
 void _rollmenu_register()
 {
-	Ex_ObjRegister(L"RollMenu", EOS_VISIBLE | EOS_VSCROLL,
-		EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER,
+	Ex_ObjRegister(L"RollMenu", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
+		OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER,
 		15 * sizeof(size_t), NULL, 0, _rollmenu_proc);
 }
 
@@ -12,22 +12,22 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 {
 	if (uMsg == WM_CREATE)
 	{
-		Ex_ObjSetLong(hObj, RML_GTC, (LONG_PTR)ExRGB2ARGB(16777215, 255));//分组标题颜色
-		Ex_ObjSetLong(hObj, RML_MLBC, (LONG_PTR)ExRGB2ARGB(255, 100));//鼠标点燃色
-		Ex_ObjSetLong(hObj, RML_ISBC, (LONG_PTR)ExRGB2ARGB(255, 200));//子项选中背景色
-		Ex_ObjSetLong(hObj, RML_ISTC, (LONG_PTR)ExRGB2ARGB(16777215, 200));//子项选中标题色
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_GTC, (LONG_PTR)ExRGB2ARGB(16777215, 255));//分组标题颜色
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_MLBC, (LONG_PTR)ExRGB2ARGB(255, 100));//鼠标点燃色
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_ISBC, (LONG_PTR)ExRGB2ARGB(255, 200));//子项选中背景色
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_ISTC, (LONG_PTR)ExRGB2ARGB(16777215, 200));//子项选中标题色
 		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);//子项正常标题颜色
 		Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(29, 27, 43, 205), FALSE);//组件背景色
-		Ex_ObjSetLong(hObj, RML_GH, 40);
-		Ex_ObjSetLong(hObj, RML_IH, 32);
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_GH, 40);
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_IH, 32);
 		array_s* arr = Array_Create(0);
-		Array_BindEvent(arr, eae_delmember, _rollmenu_ondelmember);
+		Array_BindEvent(arr, ARRAY_EVENT_DELMEMBER, _rollmenu_ondelmember);
 		Array_SetExtra(arr, hObj);
-		Ex_ObjSetLong(hObj, RML_ARR, (LONG_PTR)arr);
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_ARR, (LONG_PTR)arr);
 	}
 	else if (uMsg == WM_DESTROY)
 	{
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		Array_Destroy(arr);
 	}
 	else if (uMsg == WM_PAINT)
@@ -40,12 +40,12 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		INT x = GET_X_LPARAM(lParam) / g_Li.DpiX;
 		INT y = GET_Y_LPARAM(lParam) / g_Li.DpiY;
 		//鼠标位置判断
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		int count = Array_GetCount(arr);
 		int endhight = 0;
-		int GH = Ex_ObjGetLong(hObj, RML_GH);//分组高度
-		int IH = Ex_ObjGetLong(hObj, RML_IH);//项目高度
-		int spos = Ex_ObjScrollGetPos(hObj, SB_VERT);
+		int GH = Ex_ObjGetLong(hObj, ROLLMENU_LONG_GH);//分组高度
+		int IH = Ex_ObjGetLong(hObj, ROLLMENU_LONG_IH);//项目高度
+		int spos = Ex_ObjScrollGetPos(hObj, SCROLLBAR_TYPE_VERT);
 		int line = 0;
 		for (int i = 1; i <= count; i++)
 		{
@@ -57,14 +57,14 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			}
 			if (y <= endhight)
 			{
-				Ex_ObjSetLong(hObj, RML_CLG, i);//当前点燃分组
-				Ex_ObjSetLong(hObj, RML_CFG, i);//当前悬浮分组
-				Ex_ObjSetLong(hObj, RML_CLI, 0);//当前点燃项目
+				Ex_ObjSetLong(hObj, ROLLMENU_LONG_CLG, i);//当前点燃分组
+				Ex_ObjSetLong(hObj, ROLLMENU_LONG_CFG, i);//当前悬浮分组
+				Ex_ObjSetLong(hObj, ROLLMENU_LONG_CLI, 0);//当前点燃项目
 				break;
 			}
 			else
 			{
-				Ex_ObjSetLong(hObj, RML_CFG, 0);//当前悬浮分组
+				Ex_ObjSetLong(hObj, ROLLMENU_LONG_CFG, 0);//当前悬浮分组
 			}
 			EX_ROLLMENU_DATA* data = (EX_ROLLMENU_DATA*)Array_GetMember(arr, i);
 			if (!data->expand)
@@ -81,18 +81,18 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 					}
 					if (y <= endhight)
 					{
-						Ex_ObjSetLong(hObj, RML_CLI, n);//当前点燃项目
+						Ex_ObjSetLong(hObj, ROLLMENU_LONG_CLI, n);//当前点燃项目
 						break;
 					}
 					else
 					{
-						Ex_ObjSetLong(hObj, RML_CLI, 0);//当前点燃项目
+						Ex_ObjSetLong(hObj, ROLLMENU_LONG_CLI, 0);//当前点燃项目
 					}
 				}
 			}
 			if (y <= endhight)
 			{
-				Ex_ObjSetLong(hObj, RML_CLG, i);//当前点燃分组
+				Ex_ObjSetLong(hObj, ROLLMENU_LONG_CLG, i);//当前点燃分组
 				break;
 			}
 		}
@@ -100,32 +100,32 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	}
 	else if (uMsg == WM_MOUSELEAVE)
 	{
-		Ex_ObjSetLong(hObj, RML_CLG, 0);//当前点燃分组
-		Ex_ObjSetLong(hObj, RML_CLI, 0);//当前点燃项目
-		Ex_ObjSetLong(hObj, RML_CFG, 0);//当前悬浮分组
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_CLG, 0);//当前点燃分组
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_CLI, 0);//当前点燃项目
+		Ex_ObjSetLong(hObj, ROLLMENU_LONG_CFG, 0);//当前悬浮分组
 		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == WM_EX_LCLICK)
 	{
-		int CLI = Ex_ObjGetLong(hObj, RML_CLI);//当前点燃项目
-		int CLG = Ex_ObjGetLong(hObj, RML_CLG);//当前点燃分组
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		int CLI = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CLI);//当前点燃项目
+		int CLG = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CLG);//当前点燃分组
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		int count = Array_GetCount(arr);
 		if (CLI)
 		{
-			Ex_ObjSetLong(hObj, RML_CSG, CLG);
-			Ex_ObjSetLong(hObj, RML_CSI, CLI);
-			Ex_ObjDispatchNotify(hObj, RMN_CLICK, CLI, CLG);
+			Ex_ObjSetLong(hObj, ROLLMENU_LONG_CSG, CLG);
+			Ex_ObjSetLong(hObj, ROLLMENU_LONG_CSI, CLI);
+			Ex_ObjDispatchNotify(hObj, ROLLMENU_EVENT_CLICK, CLI, CLG);
 		}
 		Ex_ObjInvalidateRect(hObj, 0);
 		return 0;//必须拦截默认处理
 	}
 	else if (uMsg == WM_EX_LDCLICK)//响应分组展开或收缩
 	{
-		int CFG = Ex_ObjGetLong(hObj, RML_CFG);//当前悬浮分组
+		int CFG = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CFG);//当前悬浮分组
 		if (CFG)
 		{
-			array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+			array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 			EX_ROLLMENU_DATA* data = (EX_ROLLMENU_DATA*)Array_GetMember(arr, CFG);
 			data->expand = !data->expand;
 			Ex_ObjInvalidateRect(hObj, 0);
@@ -138,7 +138,7 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		INT code = LOWORD(wParam);
 		INT min = 0, max = 0;
 		int nPos = 0, oPos = 0;
-		Ex_ObjScrollGetInfo(hObj, SB_VERT, &min, &max, &oPos, 0);
+		Ex_ObjScrollGetInfo(hObj, SCROLLBAR_TYPE_VERT, &min, &max, &oPos, 0);
 		if (code == SB_PAGEUP)
 		{
 			nPos = oPos - 10;
@@ -166,7 +166,7 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		else
 		{
 			oPos = min - 1;
-			nPos = Ex_ObjScrollGetTrackPos(hObj, SB_VERT);
+			nPos = Ex_ObjScrollGetTrackPos(hObj, SCROLLBAR_TYPE_VERT);
 		}
 		if (nPos < min)
 		{
@@ -178,26 +178,26 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		}
 		if (nPos != oPos)
 		{
-			Ex_ObjScrollSetPos(hObj, SB_VERT, nPos, TRUE);
+			Ex_ObjScrollSetPos(hObj, SCROLLBAR_TYPE_VERT, nPos, TRUE);
 		}
 		Ex_ObjInvalidateRect(hObj, 0);
 	}
-	else if (uMsg == RM_ADDGROUP)//添加分组  wParam :索引(从1开始)  lParam: ROLLMENU_DATA * 指针
+	else if (uMsg == ROLLMENU_MESSAGE_ADDGROUP)//添加分组  wParam :索引(从1开始)  lParam: ROLLMENU_DATA * 指针
 	{
 		EX_ROLLMENU_DATA* data = (EX_ROLLMENU_DATA*)Ex_MemAlloc(sizeof(EX_ROLLMENU_DATA) + sizeof(array_s*));
 		//追加1个array_s*指针存储ROLLMENU_ITEM的数组
 		memset(data, 0, sizeof(EX_ROLLMENU_DATA) + sizeof(array_s*));
 		memcpy(data, (EX_ROLLMENU_DATA*)lParam, sizeof(EX_ROLLMENU_DATA) + sizeof(array_s*));
 		data->title = StrDupW(data->title);//深拷贝
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		array_s* itemarr = Array_Create(0);
 		*(size_t*)((BYTE*)data + sizeof(EX_ROLLMENU_DATA)) = (size_t)itemarr;
-		Array_BindEvent(itemarr, eae_delmember, _rollmenu_ondelitemmember);
+		Array_BindEvent(itemarr, ARRAY_EVENT_DELMEMBER, _rollmenu_ondelitemmember);
 		return Array_AddMember(arr, (size_t)data, wParam);
 	}
-	else if (uMsg == RM_ADDITEM)//添加项目  wParam :分组索引(从1开始)  lParam: ROLLMENU_ITEM * 指针
+	else if (uMsg == ROLLMENU_MESSAGE_ADDITEM)//添加项目  wParam :分组索引(从1开始)  lParam: ROLLMENU_ITEM * 指针
 	{
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		if (wParam == 0)
 		{
 			wParam = 1;
@@ -215,9 +215,9 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		item->title = StrDupW(item->title);//深拷贝
 		return Array_AddMember(itemarr, (size_t)item);
 	}
-	else if (uMsg == RM_DELGROUP)//删除分组 wParam :分组索引(从1开始)  lParam:无
+	else if (uMsg == ROLLMENU_MESSAGE_DELGROUP)//删除分组 wParam :分组索引(从1开始)  lParam:无
 	{
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		if (wParam == 0)
 		{
 			return 0;
@@ -231,9 +231,9 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		Ex_ObjInvalidateRect(hObj, 0);
 		return RET;
 	}
-	else if (uMsg == RM_DELITEM)//删除子项  wParam :分组索引(从1开始)  lParam:子项索引(从1开始)
+	else if (uMsg == ROLLMENU_MESSAGE_DELITEM)//删除子项  wParam :分组索引(从1开始)  lParam:子项索引(从1开始)
 	{
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		if (wParam == 0)
 		{
 			return 0;
@@ -254,9 +254,9 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		Ex_ObjInvalidateRect(hObj, 0);
 		return RET;
 	}
-	else if (uMsg == RM_SETEXPAND)//设置分组状态(展开/收缩)  wParam :分组索引(从1开始)  lParam: 状态(BOOL)
+	else if (uMsg == ROLLMENU_MESSAGE_SETEXPAND)//设置分组状态(展开/收缩)  wParam :分组索引(从1开始)  lParam: 状态(BOOL)
 	{
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		if (wParam == 0)
 		{
 			return 0;
@@ -271,10 +271,10 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		Ex_ObjInvalidateRect(hObj, 0);
 		return 1;
 	}
-	else if (uMsg == RM_GETSEL) //wParam: int* 分组索引(从1开始)  lParam : int* 子项索引(从1开始)  return:子项标题
+	else if (uMsg == ROLLMENU_MESSAGE_GETSEL) //wParam: int* 分组索引(从1开始)  lParam : int* 子项索引(从1开始)  return:子项标题
 	{
-		int CSI = Ex_ObjGetLong(hObj, RML_CSI);//当前选中项目
-		int CSG = Ex_ObjGetLong(hObj, RML_CSG);//当前选中分组
+		int CSI = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CSI);//当前选中项目
+		int CSG = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CSG);//当前选中分组
 		if ((int*)wParam)
 		{
 			*(int*)wParam = CSG;
@@ -283,16 +283,16 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		{
 			*(int*)lParam = CSI;
 		}
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		int count = Array_GetCount(arr);
 		EX_ROLLMENU_DATA* data = (EX_ROLLMENU_DATA*)Array_GetMember(arr, CSG);
 		array_s* itemarr = (array_s*)*(size_t*)((BYTE*)data + sizeof(EX_ROLLMENU_DATA));
 		EX_ROLLMENU_ITEM* item = (EX_ROLLMENU_ITEM*)Array_GetMember(itemarr, CSI);
 		return (LRESULT)item->title;
 	}
-	else if (uMsg == RM_SETSEL)//wParam: 分组索引(从1开始)  lParam : 子项索引(从1开始)
+	else if (uMsg == ROLLMENU_MESSAGE_SETSEL)//wParam: 分组索引(从1开始)  lParam : 子项索引(从1开始)
 	{
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		int count = Array_GetCount(arr);
 		if (wParam > count)
 		{
@@ -309,8 +309,8 @@ LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 			}
 			else
 			{
-				Ex_ObjSetLong(hObj, RML_CSG, wParam);//当前选中分组
-				Ex_ObjSetLong(hObj, RML_CSI, lParam);//当前选中项目
+				Ex_ObjSetLong(hObj, ROLLMENU_LONG_CSG, wParam);//当前选中分组
+				Ex_ObjSetLong(hObj, ROLLMENU_LONG_CSI, lParam);//当前选中项目
 				Ex_ObjInvalidateRect(hObj, 0);
 				return 1;
 			}
@@ -328,23 +328,23 @@ void _rollmenu_paint(HEXOBJ hObj)
 		int endhight = 0;
 		int page = 0;/*滚动条页大小,即完整显示行数*/
 		int vmax = 0;//滚动条最大值
-		int spos = Ex_ObjScrollGetPos(hObj, SB_VERT);
-		HEXFONT font = Ex_ObjGetLong(hObj, EOL_HFONT);
+		int spos = Ex_ObjScrollGetPos(hObj, SCROLLBAR_TYPE_VERT);
+		HEXFONT font = Ex_ObjGetLong(hObj, OBJECT_LONG_HFONT);
 		HEXBRUSH brush = _brush_create(0);
-		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, RML_ARR);
+		array_s* arr = (array_s*)Ex_ObjGetLong(hObj, ROLLMENU_LONG_ARR);
 		EXARGB textcolor = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);//项目标题颜色
-		EXARGB GTCcolor = Ex_ObjGetLong(hObj, RML_GTC);//分组标题颜色
-		EXARGB MLBC = Ex_ObjGetLong(hObj, RML_MLBC);//鼠标点燃背景色 
-		EXARGB ISBC = Ex_ObjGetLong(hObj, RML_ISBC);//子项选中背景色 
-		EXARGB ISTC = Ex_ObjGetLong(hObj, RML_ISTC);//子项选中标题色 
+		EXARGB GTCcolor = Ex_ObjGetLong(hObj, ROLLMENU_LONG_GTC);//分组标题颜色
+		EXARGB MLBC = Ex_ObjGetLong(hObj, ROLLMENU_LONG_MLBC);//鼠标点燃背景色 
+		EXARGB ISBC = Ex_ObjGetLong(hObj, ROLLMENU_LONG_ISBC);//子项选中背景色 
+		EXARGB ISTC = Ex_ObjGetLong(hObj, ROLLMENU_LONG_ISTC);//子项选中标题色 
 		EXARGB tempcolor = 0;
-		int CLG = Ex_ObjGetLong(hObj, RML_CLG);//当前点燃分组
-		int CSG = Ex_ObjGetLong(hObj, RML_CSG);//当前选中分组
-		int CLI = Ex_ObjGetLong(hObj, RML_CLI);//当前点燃项目
-		int CSI = Ex_ObjGetLong(hObj, RML_CSI);//当前选中项目
-		int CFG = Ex_ObjGetLong(hObj, RML_CFG);//当前悬浮分组
-		int GH = Ex_ObjGetLong(hObj, RML_GH) * g_Li.DpiY;//分组高度
-		int IH = Ex_ObjGetLong(hObj, RML_IH) * g_Li.DpiY;//项目高度
+		int CLG = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CLG);//当前点燃分组
+		int CSG = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CSG);//当前选中分组
+		int CLI = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CLI);//当前点燃项目
+		int CSI = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CSI);//当前选中项目
+		int CFG = Ex_ObjGetLong(hObj, ROLLMENU_LONG_CFG);//当前悬浮分组
+		int GH = Ex_ObjGetLong(hObj, ROLLMENU_LONG_GH) * g_Li.DpiY;//分组高度
+		int IH = Ex_ObjGetLong(hObj, ROLLMENU_LONG_IH) * g_Li.DpiY;//项目高度
 		int count = Array_GetCount(arr);//分组数量
 		int offset = 0;
 		if (count > 0)
@@ -496,13 +496,13 @@ void _rollmenu_paint(HEXOBJ hObj)
 			}
 			if (endhight >= ps.uHeight)
 			{
-				Ex_ObjScrollShow(hObj, SB_VERT, TRUE);
+				Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
 			}
 			else
 			{
-				Ex_ObjScrollShow(hObj, SB_VERT, FALSE);
+				Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, FALSE);
 			}
-			Ex_ObjScrollSetInfo(hObj, SB_VERT, SIF_PAGE | SIF_RANGE, 0, vmax, page, 0, 1);
+			Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE, 0, vmax, page, 0, 1);
 		}
 		_brush_destroy(brush);
 		Ex_ObjEndPaint(hObj, &ps);

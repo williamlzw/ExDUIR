@@ -3,7 +3,7 @@
 
 void _calendar_register()
 {
-	Ex_ObjRegister(L"Calendar", EOS_VISIBLE | EOS_BORDER, EOS_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, sizeof(size_t), LoadCursor(0, IDC_HAND), ECVF_TEXTANTIALIAS, _calendar_proc);
+	Ex_ObjRegister(L"Calendar", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, sizeof(size_t), LoadCursor(0, IDC_HAND), CANVAS_FLAG_TEXTANTIALIAS, _calendar_proc);
 }
 
 time_t _calendar_gettimestamp() {
@@ -32,7 +32,7 @@ void _calendar_setstatic(HEXOBJ hObj, calendar_s* pOwner) {
 
 void _calendar_init(HEXOBJ hObj, int nYear, int nMon) 
 {
-	calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+	calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 	pOwner->lpYear = nYear;
 	pOwner->lpMon = nMon;
 
@@ -108,7 +108,7 @@ void _calendar_init(HEXOBJ hObj, int nYear, int nMon)
 			}
 		}
 	}
-	Ex_ObjSendMessage(hObj, LVM_SETITEMCOUNT, 42, 0);
+	Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_SETITEMCOUNT, 42, 0);
 	_calendar_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
 }
 
@@ -182,13 +182,13 @@ void _calendar_show(HEXOBJ hObj, calendar_s* pOwner, int type)
 
 		hObj_list = Ex_ObjGetFromID(hObj, 77705);
 		Ex_ObjShow(hObj_list, TRUE);
-		Ex_ObjSendMessage(hObj_list, LVM_SETITEMCOUNT, 12, 0);
+		Ex_ObjSendMessage(hObj_list, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
 		_calendar_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
 	}
 	else if (type == 3) 
 	{
 		hObj_list = Ex_ObjGetFromID(hObj, 77705);
-		Ex_ObjSendMessage(hObj_list, LVM_SETITEMCOUNT, 12, 0);
+		Ex_ObjSendMessage(hObj_list, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
 		_calendar_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
 	}
 	else 
@@ -215,20 +215,20 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		ptr->Items = Ex_MemAlloc(42 * (20 + sizeof(size_t)));
 		ptr->nSohwType = 0;
 
-		HEXOBJ hObj1 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22, hObj, 77701, -1, (LPARAM)ptr, 0, _calendar_onbuttonproc);
+		HEXOBJ hObj1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22, hObj, 77701, -1, (LPARAM)ptr, 0, _calendar_onbuttonproc);
 		Ex_ObjSetFontFromFamily(hObj1, 0, 14, -1, FALSE);
-		HEXOBJ hObj2 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj, 77702, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
+		HEXOBJ hObj2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj, 77702, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
 		Ex_ObjSetFontFromFamily(hObj2, 0, 24, -1, FALSE);
-		HEXOBJ hObj3 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj, 77703, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
+		HEXOBJ hObj3 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj, 77703, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
 		Ex_ObjSetFontFromFamily(hObj3, 0, 24, -1, FALSE);
 
-		HEXOBJ hObj4 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, EOS_VISIBLE | ELVS_VERTICALLIST, 10, 45, 300, 267, hObj, 77704, -1, (LPARAM)ptr, 0, _calendar_onlistproc);
+		HEXOBJ hObj4 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL, OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST, 10, 45, 300, 267, hObj, 77704, -1, (LPARAM)ptr, 0, _calendar_onlistproc);
 		_calendar_init(hObj4, ptr->Year, ptr->Mon);
 
-		HEXOBJ hObj5 = Ex_ObjCreateEx(EOS_EX_FOCUSABLE, L"listview", NULL, ELVS_VERTICALLIST, 10, 65, 300, 247, hObj, 77705, -1, (LPARAM)ptr, 0, _calendar_onlistproc);
+		HEXOBJ hObj5 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL, LISTVIEW_STYLE_VERTICALLIST, 10, 65, 300, 247, hObj, 77705, -1, (LPARAM)ptr, 0, _calendar_onlistproc);
 		Ex_ObjShow(hObj5, FALSE);
 		Ex_ObjSetFontFromFamily(hObj5, 0, 14, -1, FALSE);
-		Ex_ObjSendMessage(hObj5, LVM_SETITEMCOUNT, 12, 0);
+		Ex_ObjSendMessage(hObj5, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
 
 		ptr->hFont = _font_createfromfamily(0, 14, 0);
 		Ex_ObjSetFont(hObj, ptr->hFont, FALSE);
@@ -259,7 +259,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		EX_PAINTSTRUCT ps{ 0 };
 		if (Ex_ObjBeginPaint(hObj, &ps)) 
 		{
-			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, EOL_LPWZTITLE), -1, ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
+			_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
 			Ex_ObjEndPaint(hObj, &ps);
 		}
 	}
@@ -269,7 +269,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 LRESULT CALLBACK _calendar_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult) {
 	if (uMsg == WM_CREATE) 
 	{
-		Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
+		Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
 	}
 	else if (uMsg == WM_NOTIFY)
 	{
@@ -279,7 +279,7 @@ LRESULT CALLBACK _calendar_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 		{
 			if (ni.nCode == NM_CLICK)
 			{
-				calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+				calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 				
 				if (ni.idFrom == 77701)
 				{
@@ -359,7 +359,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		obj_s* pObj = nullptr;
 		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError))
 		{
-			if (Ex_ObjGetLong(hObj, EOL_ID) == 77704)
+			if (Ex_ObjGetLong(hObj, OBJECT_LONG_ID) == 77704)
 			{
 				pObj->c_top_ = Ex_Scale(23);
 				*lpResult = 1;
@@ -371,7 +371,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	{
 		if (__get((LPVOID)lParam, 0) == wParam)
 		{
-			calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+			calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 			if (pOwner->nSohwType > 0)
 			{
 				return 0;
@@ -424,7 +424,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 		if (hObj == ni.hObjFrom)
 		{
-			calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, EOL_LPARAM);
+			calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 			if (ni.nCode == NM_CALCSIZE)
 			{
 				if (ni.idFrom == 77704)
@@ -557,7 +557,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 				*lpResult = 1;
 				return 1;
 			}
-			else if (ni.nCode == LVN_ITEMCHANGED)
+			else if (ni.nCode == LISTVIEW_EVENT_ITEMCHANGED)
 			{
 				//wParam 新选中项,lParam 旧选中项
 				if (ni.idFrom == 77704)
@@ -569,7 +569,7 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 					dt.Mon = __get_int(lpItems, offset + 8);
 					dt.Mday = __get_int(lpItems, offset + 12);
 					dt.Wday = __get_int(lpItems, offset + 16);
-					Ex_ObjDispatchNotify(pOwner->hObj, MCN_DATETIME, 0, (size_t)&dt);
+					Ex_ObjDispatchNotify(pOwner->hObj, CALENDAR_EVENT_DATETIME, 0, (size_t)&dt);
 				}
 				else if (ni.idFrom == 77705)
 				{
@@ -602,13 +602,13 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		INT index = Ex_ObjSendMessage(hObj, LVM_GETHOTITEM, 0, 0);
+		INT index = Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_GETHOTITEM, 0, 0);
 		if (index > 0)
 		{
 			if (index != nIndex)
 			{
 				nIndex = index;
-				Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
+				Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
 			}
 		}
 		else
@@ -616,13 +616,13 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			if (nIndex > 0)
 			{
 				nIndex = 0;
-				Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
+				Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
 			}
 		}
 	}
 	else if (uMsg == WM_MOUSELEAVE)
 	{
-		Ex_ObjSetLong(hObj, EOL_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
+		Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
 	}
 	return 0;
 }

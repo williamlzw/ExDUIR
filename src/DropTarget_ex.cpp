@@ -41,7 +41,7 @@ HRESULT DropTarget::DragOver(
     INT nError = 0;
     if (_handle_validate(m_pWnd->objHittest_, HT_OBJECT, (LPVOID *)&phit, &nError))
     {
-        if (((phit->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
+        if (((phit->dwStyleEx_ & OBJECT_STYLE_EX_DRAGDROP) == OBJECT_STYLE_EX_DRAGDROP))
         {
 
             return S_OK;
@@ -69,7 +69,7 @@ HRESULT DropTarget::Drop(
     INT nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (((pObj->dwStyleEx_ & EOS_EX_DRAGDROP) == EOS_EX_DRAGDROP))
+        if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_DRAGDROP) == OBJECT_STYLE_EX_DRAGDROP))
         {
             EX_DROPINFO dropinfo;
             dropinfo.pDataObject = pDataObj;
@@ -78,7 +78,7 @@ HRESULT DropTarget::Drop(
             dropinfo.y = pt.y;
             DWORD retEffect = Ex_ObjSendMessage(hObj, WM_EX_DROP, 0, (LPARAM)&dropinfo);
             *pdwEffect = retEffect;
-            if ((pObj->dwStyleEx_ & EOS_EX_ACCEPTFILES) == EOS_EX_ACCEPTFILES)
+            if ((pObj->dwStyleEx_ & OBJECT_STYLE_EX_ACCEPTFILES) == OBJECT_STYLE_EX_ACCEPTFILES)
             {
                 FORMATETC cFmt;
                 cFmt.cfFormat = CF_HDROP;

@@ -2,7 +2,7 @@
 
 void _mediafoundation_register()
 {
-	Ex_ObjRegister(L"MediaFoundation", EOS_VISIBLE, EOS_EX_FOCUSABLE | EOS_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 2 * sizeof(size_t), NULL, 0, _mediafoundation_proc);
+	Ex_ObjRegister(L"MediaFoundation", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 2 * sizeof(size_t), NULL, 0, _mediafoundation_proc);
 }
 
 LRESULT CALLBACK _mediafoundation_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -68,38 +68,38 @@ LRESULT CALLBACK _mediafoundation_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
 			Ex_ObjEndPaint(hObj, &ps);
 		}
 	}
-	else if (uMsg == MFM_STATE_PLAY)//播放   lParam :文件名或url
+	else if (uMsg == MEDIAPLAYER_MESSAGE_STATE_PLAY)//播放   lParam :文件名或url
 	{
 		MFMediaPlayer* pPlayer = (MFMediaPlayer*)Ex_ObjGetLong(hObj, MFL_OBJ);
 		pPlayer->Startplay((PCWSTR)lParam);
 	}
-	else if (uMsg == MFM_STATE_PAUSE)//暂停
+	else if (uMsg == MEDIAPLAYER_MESSAGE_STATE_PAUSE)//暂停
 	{
 		MFMediaPlayer* pPlayer = (MFMediaPlayer*)Ex_ObjGetLong(hObj, MFL_OBJ);
 		pPlayer->Pause(TRUE);
 	}
-	else if (uMsg == MFM_STATE_CONTINUE)//继续
+	else if (uMsg == MEDIAPLAYER_MESSAGE_STATE_CONTINUE)//继续
 	{
 		MFMediaPlayer* pPlayer = (MFMediaPlayer*)Ex_ObjGetLong(hObj, MFL_OBJ);
 		pPlayer->Pause(FALSE);
 	}
-	else if (uMsg == MFM_STATE_STOP)//停止
+	else if (uMsg == MEDIAPLAYER_MESSAGE_STATE_STOP)//停止
 	{
 		MFMediaPlayer* pPlayer = (MFMediaPlayer*)Ex_ObjGetLong(hObj, MFL_OBJ);
 		pPlayer->Pause(TRUE);
 		pPlayer->Endplay();
 		Ex_ObjInvalidateRect(hObj, 0);
 	}
-	else if (uMsg == MFM_RATE)
+	else if (uMsg == MEDIAPLAYER_MESSAGE_RATE)
 	{
 
 	}
-	else if (uMsg == MFM_SET_POSITION)
+	else if (uMsg == MEDIAPLAYER_MESSAGE_SET_POSITION)
 	{
 		MFMediaPlayer* pPlayer = (MFMediaPlayer*)Ex_ObjGetLong(hObj, MFL_OBJ);
 		pPlayer->SetPosition(lParam);
 	}
-	else if (uMsg == MFM_GET_DURATION)
+	else if (uMsg == MEDIAPLAYER_MESSAGE_GET_DURATION)
 	{
 		MFMediaPlayer* pPlayer = (MFMediaPlayer*)Ex_ObjGetLong(hObj, MFL_OBJ);
 		return pPlayer->GetDuration();

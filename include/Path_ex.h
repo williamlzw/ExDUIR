@@ -3,7 +3,7 @@
 #include "ExDUIR_Func.h"
 
 #define epf_bOpened 2147483648
-#define EPF_DISABLESCALE 1
+#define PATH_FLAG_DISABLESCALE 1
 
 struct path_s
 {

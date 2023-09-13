@@ -2,7 +2,7 @@
 
 void _groupbox_regsiter()
 {
-    Ex_ObjRegister(L"GroupBox", EOS_VISIBLE, EOS_EX_FOCUSABLE, DT_LEFT | DT_TOP | DT_SINGLELINE, 3 * sizeof(size_t), 0, 0, _groupbox_proc);
+    Ex_ObjRegister(L"GroupBox", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT | DT_TOP | DT_SINGLELINE, 3 * sizeof(size_t), 0, 0, _groupbox_proc);
 }
 
 void _groupbox_paint(HEXOBJ hObj, obj_s *pObj)
@@ -34,7 +34,7 @@ void _groupbox_paint(HEXOBJ hObj, obj_s *pObj)
 
         _brush_setcolor(hBrush, _obj_getcolor(pObj, COLOR_EX_BORDER));
         HEXPATH hPath = NULL;
-        _path_create(EPF_DISABLESCALE, &hPath);
+        _path_create(PATH_FLAG_DISABLESCALE, &hPath);
         _path_open(hPath);
 
         ps.rcPaint.right -= strokewidth;

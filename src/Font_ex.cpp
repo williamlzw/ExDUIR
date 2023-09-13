@@ -62,10 +62,10 @@ HEXFONT _font_createfromfamily(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFon
         }
         if (dwFontStyle != -1)
         {
-            lpLogFont->lfWeight = ((dwFontStyle & EFS_BOLD) == 0 ? 400 : 700);
-            lpLogFont->lfItalic = ((dwFontStyle & EFS_ITALIC) == 0 ? 0 : 1);
-            lpLogFont->lfUnderline = ((dwFontStyle & EFS_UNDERLINE) == 0 ? 0 : 1);
-            lpLogFont->lfStrikeOut = ((dwFontStyle & EFS_STRICKOUT) == 0 ? 0 : 1);
+            lpLogFont->lfWeight = ((dwFontStyle & FONT_STYLE_BOLD) == 0 ? 400 : 700);
+            lpLogFont->lfItalic = ((dwFontStyle & FONT_STYLE_ITALIC) == 0 ? 0 : 1);
+            lpLogFont->lfUnderline = ((dwFontStyle & FONT_STYLE_UNDERLINE) == 0 ? 0 : 1);
+            lpLogFont->lfStrikeOut = ((dwFontStyle & FONT_STYLE_STRICKOUT) == 0 ? 0 : 1);
         }
         ret = _font_createfromlogfont_ex(lpLogFont, flag);
 

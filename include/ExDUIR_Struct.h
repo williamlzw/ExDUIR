@@ -7,135 +7,135 @@
 
 #pragma region engine flag constant
 // 引擎标识_启用DPI缩放
-#define EXGF_DPI_ENABLE 0x02
+#define ENGINE_FLAG_DPI_ENABLE 0x02
 // 引擎标识_渲染_画布不抗锯齿
-#define EXGF_RENDER_CANVAS_ALIAS 0x40
+#define ENGINE_FLAG_RENDER_CANVAS_ALIAS 0x40
 // 引擎标识_渲染_使用D2D
-#define EXGF_RENDER_METHOD_D2D 0x100
+#define ENGINE_FLAG_RENDER_METHOD_D2D 0x100
 // 引擎标识_渲染_使用支持GDI交互的D2D渲染
-#define EXGF_RENDER_METHOD_D2D_GDI_COMPATIBLE 0x300
+#define ENGINE_FLAG_RENDER_METHOD_D2D_GDI_COMPATIBLE 0x300
 // 引擎标识_文本渲染_使用ClearType抗锯齿
-#define EXGF_TEXT_CLEARTYPE 0x400
+#define ENGINE_FLAG_TEXT_CLEARTYPE 0x400
 // 引擎标识_文本渲染_抗锯齿
-#define EXGF_TEXT_ANTIALIAS 0x800
+#define ENGINE_FLAG_TEXT_ANTIALIAS 0x800
 // 引擎标识_图像渲染_抗锯齿
-#define EXGF_IMAGE_ANTIALIAS 0x1000
+#define ENGINE_FLAG_IMAGE_ANTIALIAS 0x1000
 // 引擎标识_组件_禁用动画效果
-#define EXGF_OBJECT_DISABLEANIMATION 0x10000
+#define ENGINE_FLAG_OBJECT_DISABLEANIMATION 0x10000
 // 引擎标识_组件_显示组件边界
-#define EXGF_OBJECT_SHOWRECTBORDER 0x20000
+#define ENGINE_FLAG_OBJECT_SHOWRECTBORDER 0x20000
 // 引擎标识_组件_显示组件位置
-#define EXGF_OBJECT_SHOWPOSTION 0x40000
+#define ENGINE_FLAG_OBJECT_SHOWPOSTION 0x40000
 // 引擎标识_JS_允许JS全局对象访问文件
-#define EXGF_JS_FILE 0x80000
+#define ENGINE_FLAG_JS_FILE 0x80000
 // 引擎标识_JS_允许JS全局对象访问内存
-#define EXGF_JS_MEMORY 0x100000
+#define ENGINE_FLAG_JS_MEMORY 0x100000
 // 引擎标识_JS_允许JS全局对象申请内存
-#define EXGF_JS_MEMORY_ALLOC 0x200000
+#define ENGINE_FLAG_JS_MEMORY_ALLOC 0x200000
 // 引擎标识_JS_允许JS全局对象创建进程或加载DLLE
-#define EXGF_JS_PROCESS 0x400000
+#define ENGINE_FLAG_JS_PROCESS 0x400000
 // 引擎标识_JS_允许JS全局对象访问所有资源
-#define EXGF_JS_ALL 0x780000
+#define ENGINE_FLAG_JS_ALL 0x780000
 // 引擎标识_菜单_渲染所有菜单
-#define EXGF_MENU_ALL 0x800000
+#define ENGINE_FLAG_MENU_ALL 0x800000
 #pragma endregion engine flag constant
 
 #pragma region resource type constant
 // 资源包类型_默认
-#define EXR_DEFAULT 0
+#define ENGINE_RESOURCE_DEFAULT 0
 // 资源包类型_文本
-#define EXR_STRING 1
+#define ENGINE_RESOURCE_STRING 1
 // 资源包类型_布局
-#define EXR_LAYOUT 2
+#define ENGINE_RESOURCE_LAYOUT 2
 #pragma endregion resource type constant
 
 #pragma region messagebox flag constant
 // 信息框标识_显示倒计时
-#define EMBF_SHOWTIMEOUT 0x20000000
+#define MESSAGEBOX_FLAG_SHOWTIMEOUT 0x20000000
 // 信息框标识_居父窗口中间
-#define EMBF_CENTEWINDOW 0x40000000
+#define MESSAGEBOX_FLAG_CENTEWINDOW 0x40000000
 // 信息框标识_显示窗口图标
-#define EMBF_WINDOWICON 0x80000000
+#define MESSAGEBOX_FLAG_WINDOWICON 0x80000000
 #pragma endregion messagebox flag constant
 
 #pragma region windows style constant
 // 窗体风格_关闭按钮
-#define EWS_BUTTON_CLOSE 0x01
+#define WINDOW_STYLE_BUTTON_CLOSE 0x01
 // 窗体风格_最大化按钮
-#define EWS_BUTTON_MAX 0x02
+#define WINDOW_STYLE_BUTTON_MAX 0x02
 // 窗体风格_最小化按钮
-#define EWS_BUTTON_MIN 0x04
+#define WINDOW_STYLE_BUTTON_MIN 0x04
 // 窗体风格_菜单按钮
-#define EWS_BUTTON_MENU 0x08
+#define WINDOW_STYLE_BUTTON_MENU 0x08
 // 窗体风格_皮肤按钮
-#define EWS_BUTTON_SKIN 0x10
+#define WINDOW_STYLE_BUTTON_SKIN 0x10
 // 窗体风格_设置按钮
-#define EWS_BUTTON_SETTING 0x20
+#define WINDOW_STYLE_BUTTON_SETTING 0x20
 // 窗体风格_帮助按钮
-#define EWS_BUTTON_HELP 0x40
+#define WINDOW_STYLE_BUTTON_HELP 0x40
 // 窗体风格_图标
-#define EWS_HASICON 0x80
+#define WINDOW_STYLE_HASICON 0x80
 // 窗体风格_标题
-#define EWS_TITLE 0x100
+#define WINDOW_STYLE_TITLE 0x100
 // 窗体风格_全屏模式.设置该标记窗口最大化时,任务栏将被遮挡.
-#define EWS_FULLSCREEN 0x200
+#define WINDOW_STYLE_FULLSCREEN 0x200
 // 窗体风格_允许调整尺寸
-#define EWS_SIZEABLE 0x400
+#define WINDOW_STYLE_SIZEABLE 0x400
 // 窗体风格_允许随意移动
-#define EWS_MOVEABLE 0x800
+#define WINDOW_STYLE_MOVEABLE 0x800
 // 窗体风格_不显示窗口阴影
-#define EWS_NOSHADOW 0x1000
+#define WINDOW_STYLE_NOSHADOW 0x1000
 // 窗体风格_不继承父窗口背景数据
-#define EWS_NOINHERITBKG 0x2000
+#define WINDOW_STYLE_NOINHERITBKG 0x2000
 // 窗体风格_不显示TAB焦点边框
-#define EWS_NOTABBORDER 0x4000
+#define WINDOW_STYLE_NOTABBORDER 0x4000
 // 窗体风格_ESC关闭窗口
-#define EWS_ESCEXIT 0x8000
+#define WINDOW_STYLE_ESCEXIT 0x8000
 // 窗体风格_主窗口(拥有该风格时,当窗口被关闭,会调用PostQuitMessage()退出消息循环)
-#define EWS_MAINWINDOW 0x10000
+#define WINDOW_STYLE_MAINWINDOW 0x10000
 // 窗体风格_窗口居中(如果有父窗口,则在父窗口中间,否则为屏幕中间)
-#define EWS_CENTERWINDOW 0x20000
+#define WINDOW_STYLE_CENTERWINDOW 0x20000
 // 窗体风格_标题栏取消置顶
-#define EWS_NOCAPTIONTOPMOST 0x40000
+#define WINDOW_STYLE_NOCAPTIONTOPMOST 0x40000
 // 窗体风格_弹出式窗口
-#define EWS_POPUPWINDOW 0x80000
+#define WINDOW_STYLE_POPUPWINDOW 0x80000
 // 窗体风格_组合框弹出窗口 内部使用
-#define EWS_COMBOWINDOW 0x100000
+#define WINDOW_STYLE_COMBOWINDOW 0x100000
 // 窗体风格_菜单 内部使用
-#define EWS_MENU 0x40000000
+#define WINDOW_STYLE_MENU 0x40000000
 // 窗体风格_信息框 内部使用
-#define EWS_MESSAGEBOX 0x80000000
+#define WINDOW_STYLE_MESSAGEBOX 0x80000000
 #pragma endregion windows style constant
 
 #pragma region engine long constant
 // 引擎数值_窗口透明度
-#define EWL_ALPHA -5
+#define ENGINE_LONG_ALPHA -5
 // 引擎数值_背景模糊
-#define EWL_BLUR -2
+#define ENGINE_LONG_BLUR -2
 // 引擎数值_背景颜色
-#define EWL_CRBKG -31
+#define ENGINE_LONG_CRBKG -31
 // 引擎数值_边框颜色
-#define EWL_CRBORDER -30
+#define ENGINE_LONG_CRBORDER -30
 // 引擎数值_阴影颜色
-#define EWL_CRSD -35
+#define ENGINE_LONG_CRSD -35
 // 引擎数值_主题包句柄
-#define EWL_HTHEME 2
+#define ENGINE_LONG_HTHEME 2
 // 引擎数值_窗口句柄
-#define EWL_HWND -6
+#define ENGINE_LONG_HWND -6
 // 引擎数值_自定义参数
-#define EWL_LPARAM -7
+#define ENGINE_LONG_LPARAM -7
 // 引擎数值_最小高度
-#define EWL_MINHEIGHT -33
+#define ENGINE_LONG_MINHEIGHT -33
 // 引擎数值_最小宽度
-#define EWL_MINWIDTH -34
+#define ENGINE_LONG_MINWIDTH -34
 // 引擎数值_窗口消息过程
-#define EWL_MSGPROC -4
+#define ENGINE_LONG_MSGPROC -4
 // 引擎数值_标题栏组件句柄
-#define EWL_OBJCAPTION -54
+#define ENGINE_LONG_OBJCAPTION -54
 // 引擎数值_焦点组件句柄
-#define EWL_OBJFOCUS -53
+#define ENGINE_LONG_OBJFOCUS -53
 // 引擎数值_阴影圆角大小
-#define EWL_RADIUS -11
+#define ENGINE_LONG_RADIUS -11
 #pragma endregion engine long constant
 
 #pragma region image type constant
@@ -147,15 +147,15 @@
 
 #pragma region font style constant
 // 字体风格_普通
-#define EFS_DEFAULT 0
+#define FONT_STYLE_DEFAULT 0
 // 字体风格_加粗
-#define EFS_BOLD 1
+#define FONT_STYLE_BOLD 1
 // 字体风格_倾斜
-#define EFS_ITALIC 2
+#define FONT_STYLE_ITALIC 2
 // 字体风格_下划线
-#define EFS_UNDERLINE 4
+#define FONT_STYLE_UNDERLINE 4
 // 字体风格_删除线
-#define EFS_STRICKOUT 8
+#define FONT_STYLE_STRICKOUT 8
 #pragma endregion font style constant
 
 #pragma region msg ex constant
@@ -187,53 +187,52 @@
 
 #pragma region paint progress constant
 // 绘制进度_当控件开始绘制后
-#define EPP_BEGIN 0
+#define PAINT_PROGRESS_BEGIN 0
 // 绘制进度_当控件绘制背景后
-#define EPP_BKG 1
+#define PAINT_PROGRESS_BKG 1
 // 绘制进度_当控件绘制边框后
-#define EPP_BORDER 2
+#define PAINT_PROGRESS_BORDER 2
 // 绘制进度_当控件自定义绘制后
-#define EPP_CUSTOMDRAW 3
+#define PAINT_PROGRESS_CUSTOMDRAW 3
 // 绘制进度_当控件绘制结束后
-#define EPP_END 4
+#define PAINT_PROGRESS_END 4
 #pragma endregion paint progress constant
 
 #pragma region object long constant
 // 组件数值_透明度
-#define EOL_ALPHA -5
+#define OBJECT_LONG_ALPHA -5
 // 组件数值_模糊系数
-#define EOL_BLUR -2
+#define OBJECT_LONG_BLUR -2
 // 组件数值_光标句柄
-#define EOL_CURSOR -17
+#define OBJECT_LONG_CURSOR -17
 // 组件数值_扩展风格
-#define EOL_EXSTYLE -20
+#define OBJECT_LONG_EXSTYLE -20
 // 组件数值_画布句柄
-#define EOL_HCANVAS -22
+#define OBJECT_LONG_HCANVAS -22
 // 组件数值_字体句柄
-#define EOL_HFONT -19
+#define OBJECT_LONG_HFONT -19
 // 组件数值_组件ID
-#define EOL_ID -12
+#define OBJECT_LONG_ID -12
 // 组件数值_自定义参数
-#define EOL_LPARAM -7
+#define OBJECT_LONG_LPARAM -7
 // 组件数值_标题内容指针
-#define EOL_LPWZTITLE -28
+#define OBJECT_LONG_LPWZTITLE -28
 // 组件数值_节点ID
-#define EOL_NODEID -1
+#define OBJECT_LONG_NODEID -1
 // 组件数值_父句柄
-#define EOL_OBJPARENT -8
+#define OBJECT_LONG_OBJPARENT -8
 // 组件数值_组件回调 LRESULT CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult)
-#define EOL_OBJPROC -4
+#define OBJECT_LONG_OBJPROC -4
 // 组件数值_控件数据
-#define EOL_OWNER -23
+#define OBJECT_LONG_OWNER -23
 // 组件数值_组件状态
-#define EOL_STATE -24
+#define OBJECT_LONG_STATE -24
 // 组件数值_基本风格
-#define EOL_STYLE -16
+#define OBJECT_LONG_STYLE -16
 // 组件数值_文本格式
-#define EOL_TEXTFORMAT -11
+#define OBJECT_LONG_TEXTFORMAT -11
 // 组件数值_用户数据
-#define EOL_USERDATA -21
-
+#define OBJECT_LONG_USERDATA -21
 #pragma endregion object long constant
 
 #pragma region object state constant
@@ -289,250 +288,250 @@
 
 #pragma region object style constant
 // 组件风格_滚动条不可用时显示禁止状态
-#define EOS_DISABLENOSCROLL 0x2000000
+#define OBJECT_STYLE_DISABLENOSCROLL 0x2000000
 // 组件风格_可调整尺寸
-#define EOS_SIZEBOX 0x4000000
+#define OBJECT_STYLE_SIZEBOX 0x4000000
 // 组件风格_禁止
-#define EOS_DISABLED 0x8000000
+#define OBJECT_STYLE_DISABLED 0x8000000
 // 组件风格_可视
-#define EOS_VISIBLE 0x10000000
+#define OBJECT_STYLE_VISIBLE 0x10000000
 // 组件风格_边框
-#define EOS_BORDER 0x20000000
+#define OBJECT_STYLE_BORDER 0x20000000
 // 组件风格_垂直滚动条
-#define EOS_VSCROLL 0x40000000
+#define OBJECT_STYLE_VSCROLL 0x40000000
 // 组件风格_水平滚动条
-#define EOS_HSCROLL 0x80000000
+#define OBJECT_STYLE_HSCROLL 0x80000000
 #pragma endregion object style constant
 
 #pragma region object ex style constant
 // 组件风格_扩展_自适应尺寸
-#define EOS_EX_AUTOSIZE 0x400000
+#define OBJECT_STYLE_EX_AUTOSIZE 0x400000
 // 组件风格_扩展_鼠标穿透
-#define EOS_EX_TRANSPARENT 0x800000
+#define OBJECT_STYLE_EX_TRANSPARENT 0x800000
 // 组件风格_扩展_背景模糊
-#define EOS_EX_BLUR 0x1000000
+#define OBJECT_STYLE_EX_BLUR 0x1000000
 // 组件风格_扩展_允许拖拽
-#define EOS_EX_DRAGDROP 0x2000000
+#define OBJECT_STYLE_EX_DRAGDROP 0x2000000
 // 组件风格_扩展_接收文件拖放
-#define EOS_EX_ACCEPTFILES 0x4000000
+#define OBJECT_STYLE_EX_ACCEPTFILES 0x4000000
 // 组件风格_扩展_允许焦点
-#define EOS_EX_FOCUSABLE 0x8000000
+#define OBJECT_STYLE_EX_FOCUSABLE 0x8000000
 // 组件风格_扩展_允许TAB焦点
-#define EOS_EX_TABSTOP 0x10000000
+#define OBJECT_STYLE_EX_TABSTOP 0x10000000
 // 组件风格_扩展_总在最前
-#define EOS_EX_TOPMOST 0x20000000
+#define OBJECT_STYLE_EX_TOPMOST 0x20000000
 // 组件风格_扩展_背景混合
-#define EOS_EX_COMPOSITED 0x40000000
+#define OBJECT_STYLE_EX_COMPOSITED 0x40000000
 // 组件风格_扩展_自定义绘制
-#define EOS_EX_CUSTOMDRAW 0x80000000
+#define OBJECT_STYLE_EX_CUSTOMDRAW 0x80000000
 #pragma endregion object ex style constant
 
 #pragma region button style constant
 // 按钮风格_复选按钮
-#define EBS_CHECKBUTTON 1
+#define BUTTON_STYLE_CHECKBUTTON 1
 // 按钮风格_单选按钮
-#define EBS_RADIOBUTTON 2
+#define BUTTON_STYLE_RADIOBUTTON 2
 // 按钮风格_文本偏移
-#define EBS_TEXTOFFSET 4
+#define BUTTON_STYLE_TEXTOFFSET 4
 // 按钮风格_图标在右
-#define EBS_ICONRIGHT 8
+#define BUTTON_STYLE_ICONRIGHT 8
 #pragma endregion button style constant
 
 #pragma region scroll style constant
 // 滚动条风格_水平滚动条
-#define ESS_HORIZONTALSCROLL 0
+#define SCROLLBAR_STYLE_HORIZONTALSCROLL 0
 // 滚动条风格_垂直滚动条
-#define ESS_VERTICALSCROLL 1
+#define SCROLLBAR_STYLE_VERTICALSCROLL 1
 // 滚动条风格_左顶对齐
-#define ESS_LEFTTOPALIGN 2
+#define SCROLLBAR_STYLE_LEFTTOPALIGN 2
 // 滚动条风格_右底对齐
-#define ESS_RIGHTBOTTOMALIGN 4
+#define SCROLLBAR_STYLE_RIGHTBOTTOMALIGN 4
 // 滚动条风格_控制按钮
-#define ESS_CONTROLBUTTON 8
+#define SCROLLBAR_STYLE_CONTROLBUTTON 8
 #pragma endregion scroll style constant
 
 #pragma region scroll type constant
 // 滚动条类型_水平滚动条
-#define SB_HORZ 0
+#define SCROLLBAR_TYPE_HORZ 0
 // 滚动条类型_垂直滚动条
-#define SB_VERT 1
+#define SCROLLBAR_TYPE_VERT 1
 // 滚动条类型_滚动条控制器
-#define SB_CTL 2
+#define SCROLLBAR_TYPE_CONTROL 2
 // 滚动条类型_水平和垂直滚动条
-#define SB_BOTH 3
+#define SCROLLBAR_TYPE_BOTH 3
 #pragma endregion scroll type constant
 
 #pragma region edit style constant
 // 编辑框风格_允许拖拽
-#define EES_DISABLEDRAG 0x01
+#define EDIT_STYLE_DISABLEDRAG 0x01
 // 编辑框风格_密码输入
-#define EES_USEPASSWORD 0x02
+#define EDIT_STYLE_USEPASSWORD 0x02
 // 编辑框风格_显示选择文本
-#define EES_HIDESELECTION 0x04
+#define EDIT_STYLE_HIDESELECTION 0x04
 // 编辑框风格_丰富文本
-#define EES_RICHTEXT 0x08
+#define EDIT_STYLE_RICHTEXT 0x08
 // 编辑框风格_允许鸣叫
-#define EES_ALLOWBEEP 0x10
+#define EDIT_STYLE_ALLOWBEEP 0x10
 // 编辑框风格_只读
-#define EES_READONLY 0x20
+#define EDIT_STYLE_READONLY 0x20
 // 编辑框风格_回车换行
-#define EES_NEWLINE 0x40
+#define EDIT_STYLE_NEWLINE 0x40
 // 编辑框风格_数值输入
-#define EES_NUMERICINPUT 0x80
+#define EDIT_STYLE_NUMERICINPUT 0x80
 // 编辑框风格_自动选择字符
-#define EES_AUTOWORDSEL 0x100
+#define EDIT_STYLE_AUTOWORDSEL 0x100
 // 编辑框风格_禁用右键默认菜单
-#define EES_DISABLEMENU 0x200
+#define EDIT_STYLE_DISABLEMENU 0x200
 // 编辑框风格_解析URL
-#define EES_PARSEURL 0x400
+#define EDIT_STYLE_PARSEURL 0x400
 // 编辑框风格_允许TAB字符
-#define EES_ALLOWTAB 0x800
+#define EDIT_STYLE_ALLOWTAB 0x800
 // 编辑框风格_总是显示提示文本
-#define EES_SHOWTIPSALWAYS 0x1000
+#define EDIT_STYLE_SHOWTIPSALWAYS 0x1000
 // 编辑框风格_隐藏插入符
-#define EES_HIDDENCARET 0x2000
+#define EDIT_STYLE_HIDDENCARET 0x2000
 // 编辑框风格_下划线
-#define EES_UNDERLINE 0x4000
+#define EDIT_STYLE_UNDERLINE 0x4000
 // 编辑框风格_字母输入
-#define EES_LETTER 0x8000
+#define EDIT_STYLE_LETTER 0x8000
 // 编辑框风格_数字字母输入
-#define EES_NUMERIC_LETTER 0x10000
+#define EDIT_STYLE_NUMERIC_LETTER 0x10000
 #pragma endregion edit style constant
 
 // 事件_编辑框_超链接事件
-#define EN_LINK 1803
+#define EDIT_EVENT_LINK 1803
 // 事件_编辑框_选中区域改变
-#define EN_SELCHANGE 1794
+#define EDIT_EVENT_SELCHANGE 1794
 
 #pragma region edit message constant
 // 消息_编辑框_设置选中区域
-#define EM_EXSETSEL 1079
+#define EDIT_MESSAGE_EXSETSEL 1079
 // 消息_编辑框_查找文本
-#define EM_FINDTEXTW 1147
+#define EDIT_MESSAGE_FINDTEXTW 1147
 // 消息_编辑框_取选中范围内容
-#define EM_GETTEXTRANGE 1099
+#define EDIT_MESSAGE_GETTEXTRANGE 1099
 // 消息_编辑框_撤销
-#define EM_UNDO 199
+#define EDIT_MESSAGE_UNDO 199
 // 消息_编辑框_重做
-#define EM_REDO 1108
+#define EDIT_MESSAGE_REDO 1108
 // 消息_编辑框_设置提示文本(wParam:提示文本颜色,lParam:文本指针)
-#define EM_SETCUEBANNER 5377
+#define EDIT_MESSAGE_SETCUEBANNER 5377
 // 消息_编辑框_设置富文本
-#define EM_SETTEXTEX 1121
+#define EDIT_MESSAGE_SETTEXTEX 1121
 // 消息_编辑框_加载RTF文件(wParam:数据长度,lParam:数据指针)
-#define EM_LOAD_RTF 6001
+#define EDIT_MESSAGE_LOAD_RTF 6001
 #pragma endregion edit message constant
 
 // 编辑框选中行字符格式_加粗
-#define CFM_BOLD 0x00000001
+#define EDIT_SELECT_CHARFORMAT_BOLD 0x00000001
 // 编辑框选中行字符格式_倾斜
-#define CFM_ITALIC 0x00000002
+#define EDIT_SELECT_CHARFORMAT_ITALIC 0x00000002
 // 编辑框选中行字符格式_下划线
-#define CFM_UNDERLINE 0x00000004
+#define EDIT_SELECT_CHARFORMAT_UNDERLINE 0x00000004
 // 编辑框选中行字符格式_删除线
-#define CFM_STRIKEOUT 0x00000008
+#define EDIT_SELECT_CHARFORMAT_STRIKEOUT 0x00000008
 // 编辑框选中行字符格式_超链接
-#define CFM_LINK 0x00000020
+#define EDIT_SELECT_CHARFORMAT_LINK 0x00000020
 // 编辑框选中行字符格式_尺寸
-#define CFM_SIZE 0x80000000
+#define EDIT_SELECT_CHARFORMAT_SIZE 0x80000000
 // 编辑框选中行字符格式_颜色
-#define CFM_COLOR 0x40000000
+#define EDIT_SELECT_CHARFORMAT_COLOR 0x40000000
 // 编辑框选中行字符格式_字体名称
-#define CFM_FACE 0x20000000
+#define EDIT_SELECT_CHARFORMAT_FACE 0x20000000
 // 编辑框选中行字符格式_垂直偏移
-#define CFM_OFFSET 0x10000000
+#define EDIT_SELECT_CHARFORMAT_OFFSET 0x10000000
 
 // 编辑框选中行段落格式_首行缩进
-#define PFM_STARTINDENT 0x00000001
+#define EDIT_SELECT_PARAGRAPHFORMAT_STARTINDENT 0x00000001
 // 编辑框选中行段落格式_右侧缩进
-#define PFM_RIGHTINDENT 0x00000002
+#define EDIT_SELECT_PARAGRAPHFORMAT_RIGHTINDENT 0x00000002
 // 编辑框选中行段落格式_非首行缩进
-#define PFM_OFFSET 0x00000004
+#define EDIT_SELECT_PARAGRAPHFORMAT_OFFSET 0x00000004
 // 编辑框选中行段落格式_段落对齐方式
-#define PFM_ALIGNMENT 0x00000008
+#define EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT 0x00000008
 // 编辑框选中行段落格式_编号类型
-#define PFM_NUMBERING 0x00000020
+#define EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING 0x00000020
 
 // 编辑框段落对齐方式_左对齐
-#define PFA_LEFT 1
+#define EDIT_PARAGRAPHFALIGN_LEFT 1
 // 编辑框段落对齐方式_右对齐
-#define PFA_RIGHT 2
+#define EDIT_PARAGRAPHFALIGN_RIGHT 2
 // 编辑框段落对齐方式_居中
-#define PFA_CENTER 3
+#define EDIT_PARAGRAPHFALIGN_CENTER 3
 
-// 编辑框段落项目符号类型_圆点
-#define PFN_BULLET 1
+// 编辑框段落项目符号类型_圆点 •
+#define EDIT_PARAGRAPHFSYMBOL_BULLET 1
 // 编辑框段落项目符号类型_阿拉伯数字 0, 1, 2,...
-#define PFN_ARABIC 2
+#define EDIT_PARAGRAPHFSYMBOL_ARABIC 2
 // 编辑框段落项目符号类型_小写字母 a, b, c,...
-#define PFN_LCLETTER 3
+#define EDIT_PARAGRAPHFSYMBOL_LCLETTER 3
 // 编辑框段落项目符号类型_大写字母 A, B, C,...
-#define PFN_UCLETTER 4
+#define EDIT_PARAGRAPHFSYMBOL_UCLETTER 4
 // 编辑框段落项目符号类型_小写罗马字母 i, ii, iii, ...
-#define PFN_LCROMAN 5
+#define EDIT_PARAGRAPHFSYMBOL_LCROMAN 5
 // 编辑框段落项目符号类型_大写罗马字母 I, II, III, ...
-#define PFN_UCROMAN 6
+#define EDIT_PARAGRAPHFSYMBOL_UCROMAN 6
 
 #pragma region listview style constant
 // 列表风格_纵向列表
-#define ELVS_VERTICALLIST 0x00
+#define LISTVIEW_STYLE_VERTICALLIST 0x00
 // 列表风格_横向列表
-#define ELVS_HORIZONTALLIST 0x01
+#define LISTVIEW_STYLE_HORIZONTALLIST 0x01
 // 列表风格_允许多选
-#define ELVS_ALLOWMULTIPLE 0x08
+#define LISTVIEW_STYLE_ALLOWMULTIPLE 0x08
 // 列表风格_表项跟踪
-#define ELVS_ITEMTRACKING 0x10
+#define LISTVIEW_STYLE_ITEMTRACKING 0x10
 // 列表风格_始终显示选择项
-#define ELVS_SHOWSELALWAYS 0x20
+#define LISTVIEW_STYLE_SHOWSELALWAYS 0x20
 #pragma endregion listview style constant
 
 #pragma region listview hit type constant
 // 列表命中_未命中
-#define LVHT_NOWHERE 1
+#define LISTVIEW_HITTYPE_NOWHERE 1
 // 列表命中_命中表项
-#define LVHT_ONITEM 14
+#define LISTVIEW_HITTYPE_ONITEM 14
 #pragma endregion listview hit type constant
 
 #pragma region listview notify constant
 // 事件_列表_现行选中项被改变
-#define LVN_ITEMCHANGED -101
+#define LISTVIEW_EVENT_ITEMCHANGED -101
 // 事件_列表_表项选中状态
-#define LVN_ITEMSELECTD -102
+#define LISTVIEW_EVENT_ITEMSELECTD -102
 // 事件_列表_表项选中状态取消
-#define LVN_ITEMSELECTC -103
+#define LISTVIEW_EVENT_ITEMSELECTC -103
 // 事件_列表_表项被右击
-#define LVN_ITEMRCLICK -104
+#define LISTVIEW_EVENT_ITEMRCLICK -104
 // 事件_列表_表项被双击
-#define LVN_ITEMDCLICK -105
+#define LISTVIEW_EVENT_ITEMDCLICK -105
 // 事件_列表_悬浮跟踪
-#define LVN_HOTTRACK -121
+#define LISTVIEW_EVENT_HOTTRACK -121
 #pragma endregion listview notify constant
 
 #pragma region canvas flag constant
 // 画布标识_画布抗锯齿
-#define ECVF_CANVASANTIALIAS 0x01
+#define CANVAS_FLAG_CANVASANTIALIAS 0x01
 // 画布标识_文本抗锯齿
-#define ECVF_TEXTANTIALIAS 0x02
+#define CANVAS_FLAG_TEXTANTIALIAS 0x02
 // 画布标识_GDI和D2D混合
-#define ECVF_GDI_COMPATIBLE 0x40000000
+#define CANVAS_FLAG_GDI_COMPATIBLE 0x40000000
 // 画布标识_重置剪辑区
-#define ECVF_CLIPED 0x80000000
+#define CANVAS_FLAG_CLIPED 0x80000000
 #pragma endregion canvas flag constant
 
 #pragma region canvas context constant
 // 画布信息类型_D2D描述表
-#define CVC_DX_D2DCONTEXT 1
+#define CANVAS_DX_D2DCONTEXT 1
 // 画布信息类型_D2D图形
-#define CVC_DX_D2DBITMAP 2
+#define CANVAS_DX_D2DBITMAP 2
 // 画布信息类型_GDI渲染目标
-#define CVC_DX_GDIRENDERTARGET 3
+#define CANVAS_DX_GDIRENDERTARGET 3
 #pragma endregion canvas context constant
 
 #pragma region canvas context constant
 // 混合模式_覆盖
-#define CV_COMPOSITE_MODE_SRCOVER 0
+#define CANVAS_COMPOSITE_MODE_SRCOVER 0
 // 混合模式_拷贝
-#define CV_COMPOSITE_MODE_SRCCOPY 1
+#define CANVAS_COMPOSITE_MODE_SRCCOPY 1
 #pragma endregion canvas context constant
 
 #pragma region color constant
@@ -568,53 +567,47 @@
 
 #pragma region background flag constant
 // 背景标识_默认
-#define BIF_DEFAULT 0
+#define BACKGROUND_FLAG_DEFAULT 0
 // 背景标识_播放动画
-#define BIF_PLAYIMAGE 1
+#define BACKGROUND_FLAG_PLAYIMAGE 1
 // 背景标识_禁用缩放
-#define BIF_DISABLESCALE 2
+#define BACKGROUND_FLAG_DISABLESCALE 2
 // 背景标识_九宫矩形_排除中间区域
-#define BIF_GRID_EXCLUSION_CENTER 4
+#define BACKGROUND_FLAG_GRID_EXCLUSION_CENTER 4
 // 背景标识_Y使用百分比单位
-#define BIF_POSITION_Y_PERCENT 8
+#define BACKGROUND_FLAG_POSITION_Y_PERCENT 8
 // 背景标识_X使用百分比单位
-#define BIF_POSITION_X_PERCENT 16
+#define BACKGROUND_FLAG_POSITION_X_PERCENT 16
 #pragma endregion background flag constant
 
 #pragma region background Repetitive constant
 // 背景重复模式_默认(缩放)
-#define BIR_DEFAULT 0
+#define BACKGROUND_REPEAT_ZOOM 0
 // 背景重复模式_平铺不重复
-#define BIR_NO_REPEAT 1
+#define BACKGROUND_REPEAT_NO_REPEAT 1
 // 背景重复模式_水平垂直重复平铺
-#define BIR_REPEAT 2
+#define BACKGROUND_REPEAT_REPEAT 2
 // 背景重复模式_水平重复平铺
-#define BIR_REPEAT_X 3
+#define BACKGROUND_REPEAT_REPEAT_X 3
 // 背景重复模式_垂直重复平铺
-#define BIR_REPEAT_Y 4
+#define BACKGROUND_REPEAT_REPEAT_Y 4
 #pragma endregion background Repetitive constant
 
 #pragma region path flag constant
 // 路径标识_禁止缩放
-#define EPF_DISABLESCALE 1
+#define PATH_F_DISABLESCALE 1
 #pragma endregion path flag constant
 
-#pragma region begin path flag constant
-// 路径开始图形标识_填充
-#define PBF_FILLED 0
-// 路径开始图形标识_描边
-#define PBF_HOLLOW 1
-#pragma endregion begin path flag constant
 
 #pragma region rgn constant
 // 区域模式_并集	采用两个区域的并集来合并这两个区域
-#define RGN_COMBINE_UNION 0
+#define REGION_COMBINE_UNION 0
 // 区域模式_交集	采用两个区域的交集来合并这两个区域
-#define RGN_COMBINE_INTERSECT 1
+#define REGION_COMBINE_INTERSECT 1
 // 区域模式_异或	采用两个区域的并集，且去除重叠区域
-#define RGN_COMBINE_XOR 2
+#define REGION_COMBINE_XOR 2
 // 区域模式_排除	从第一个区域中排除第二个区域
-#define RGN_COMBINE_EXCLUDE 3
+#define REGION_COMBINE_EXCLUDE 3
 #pragma endregion rgn constant
 
 #pragma region pixel unit constant
@@ -693,565 +686,565 @@
 
 #pragma region layout notify constant
 // 事件_布局_获取布局父属性个数
-#define ELN_GETPROPSCOUNT 1
+#define LAYOUT_EVENT_GETPROPSCOUNT 1
 // 事件_布局_获取布局子属性个数
-#define ELN_GETCHILDPROPCOUNT 2
+#define LAYOUT_EVENT_GETCHILDPROPCOUNT 2
 // 事件_布局_初始化父属性列表
-#define ELN_INITPROPS 3
+#define LAYOUT_EVENT_INITPROPS 3
 // 事件_布局_释放父属性列表
-#define ELN_UNINITPROPS 4
+#define LAYOUT_EVENT_UNINITPROPS 4
 // 事件_布局_初始化子属性列表
-#define ELN_INITCHILDPROPS 5
+#define LAYOUT_EVENT_INITCHILDPROPS 5
 // 事件_布局_释放子属性列表
-#define ELN_UNINITCHILDPROPS 6
+#define LAYOUT_EVENT_UNINITCHILDPROPS 6
 // 事件_布局_检查属性值是否正确,wParam为propID，lParam为值
-#define ELN_CHECKPROPVALUE 7
+#define LAYOUT_EVENT_CHECKPROPVALUE 7
 // 事件_布局_检查子属性值是否正确,wParam低位为nIndex，高位为propID，lParam为值
-#define ELN_CHECKCHILDPROPVALUE 8
+#define LAYOUT_EVENT_CHECKCHILDPROPVALUE 8
 // 事件_布局_从XML属性表填充到布局信息中
-#define ELN_FILL_XML_PROPS 9
+#define LAYOUT_EVENT_FILL_XML_PROPS 9
 // 事件_布局_从XML属性表填充到父布局信息中
-#define ELN_FILL_XML_CHILD_PROPS 10
+#define LAYOUT_EVENT_FILL_XML_CHILD_PROPS 10
 // 事件_布局_更新布局
-#define ELN_UPDATE 15
+#define LAYOUT_EVENT_UPDATE 15
 #pragma endregion layout notify constant
 
 // 布局类型_无
-#define ELT_NULL 0
+#define LAYOUT_TYPE_NULL 0
 // 布局类型_线性
-#define ELT_LINEAR 1
+#define LAYOUT_TYPE_LINEAR 1
 // 布局类型_流式
-#define ELT_FLOW 2
+#define LAYOUT_TYPE_FLOW 2
 // 布局类型_页面
-#define ELT_PAGE 3
+#define LAYOUT_TYPE_PAGE 3
 // 布局类型_表格
-#define ELT_TABLE 4
+#define LAYOUT_TYPE_TABLE 4
 // 布局类型_相对
-#define ELT_RELATIVE 5
+#define LAYOUT_TYPE_RELATIVE 5
 // 布局类型_绝对
-#define ELT_ABSOLUTE 6
+#define LAYOUT_TYPE_ABSOLUTE 6
 
 // 布局属性_通用_内间距_左
-#define ELP_PADDING_LEFT -1
+#define LAYOUT_PROP_PADDING_LEFT -1
 // 布局属性_通用_内间距_顶
-#define ELP_PADDING_TOP -2
+#define LAYOUT_PROP_PADDING_TOP -2
 // 布局属性_通用_内间距_右
-#define ELP_PADDING_RIGHT -3
+#define LAYOUT_PROP_PADDING_RIGHT -3
 // 布局属性_通用_内间距_底
-#define ELP_PADDING_BOTTOM -4
+#define LAYOUT_PROP_PADDING_BOTTOM -4
 // 布局子属性_通用_外间距_左
-#define ELCP_MARGIN_LEFT -1
+#define LAYOUT_SUBPROP_MARGIN_LEFT -1
 // 布局子属性_通用_外间距_顶
-#define ELCP_MARGIN_TOP -2
+#define LAYOUT_SUBPROP_MARGIN_TOP -2
 // 布局子属性_通用_外间距_右
-#define ELCP_MARGIN_RIGHT -3
+#define LAYOUT_SUBPROP_MARGIN_RIGHT -3
 // 布局子属性_通用_外间距_底
-#define ELCP_MARGIN_BOTTOM -4
+#define LAYOUT_SUBPROP_MARGIN_BOTTOM -4
 
 // 线性布局属性_排布方向
-#define ELP_LINEAR_DIRECTION 1
+#define LAYOUT_PROP_LINEAR_DIRECTION 1
 // 线性布局子属性_尺寸 [-1或未填写为组件当前尺寸]
-#define ELCP_LINEAR_SIZE 1
+#define LAYOUT_SUBPROP_LINEAR_SIZE 1
 // 线性布局子属性_另外一个方向对齐方式
-#define ELCP_LINEAR_ALIGN 2
+#define LAYOUT_SUBPROP_LINEAR_ALIGN 2
 // 线性布局属性_布局方向对齐方式
-#define ELP_LINEAR_DALIGN 2
+#define LAYOUT_PROP_LINEAR_ALIGN 2
 // 线性布局属性_对齐方式_左上
-#define ELP_LINEAR_DALIGN_LEFT_TOP 0
+#define LAYOUT_PROP_LINEAR_ALIGN_LEFT_TOP 0
 // 线性布局属性_对齐方式_居中
-#define ELP_LINEAR_DALIGN_CENTER 1
+#define LAYOUT_PROP_LINEAR_ALIGN_CENTER 1
 // 线性布局属性_对齐方式_右下
-#define ELP_LINEAR_DALIGN_RIGHT_BOTTOM 2
+#define LAYOUT_PROP_LINEAR_ALIGN_RIGHT_BOTTOM 2
 
 // 线性布局子属性_另一个方向对齐方式_填满
-#define ELCP_LINEAR_ALGIN_FILL 0
+#define LAYOUT_SUBPROP_LINEAR_ALIGN_FILL 0
 // 线性布局子属性_另一个方向对齐方式_左上
-#define ELCP_LINEAR_ALIGN_LEFT_TOP 1
+#define LAYOUT_SUBPROP_LINEAR_ALIGN_LEFT_TOP 1
 // 线性布局子属性_另一个方向对齐方式_居中
-#define ELCP_LINEAR_ALIGN_CENTER 2
+#define LAYOUT_SUBPROP_LINEAR_ALIGN_CENTER 2
 // 线性布局子属性_另一个方向对齐方式_右下
-#define ELCP_LINEAR_ALIGN_RIGHT_BOTTOM 3
+#define LAYOUT_SUBPROP_LINEAR_ALIGN_RIGHT_BOTTOM 3
 
 // 布局属性_排布方向_水平
-#define ELP_DIRECTION_H 0
+#define LAYOUT_PROP_DIRECTION_H 0
 // 布局属性_排布方向_垂直
-#define ELP_DIRECTION_V 1
+#define LAYOUT_PROP_DIRECTION_V 1
 
 // 流式布局属性_排布方向
-#define ELP_FLOW_DIRECTION 1
+#define LAYOUT_PROP_FLOW_DIRECTION 1
 // 流式布局子属性_尺寸 [-1或未填写为组件当前尺寸]
-#define ELCP_FLOW_SIZE 1
+#define LAYOUT_SUBPROP_FLOW_SIZE 1
 // 流式布局子属性_组件强制换行
-#define ELCP_FLOW_NEW_LINE 2
+#define LAYOUT_SUBPROP_FLOW_NEW_LINE 2
 
 // 页面布局属性_当前显示页面索引,从1开始
-#define ELP_PAGE_CURRENT 1
+#define LAYOUT_PROP_PAGE_CURRENT 1
 // 页面布局子属性_是否填充整个布局
-#define ELCP_PAGE_FILL 1
+#define LAYOUT_SUBPROP_PAGE_FILL 1
 
 // 表格布局属性:行高数组
-#define ELP_TABLE_ARRAY_ROW 1
+#define LAYOUT_PROP_TABLE_ARRAY_ROW 1
 // 表格布局属性:列宽数组
-#define ELP_TABLE_ARRAY_CELL 2
+#define LAYOUT_PROP_TABLE_ARRAY_CELL 2
 // 表格布局子属性_所在行
-#define ELCP_TABLE_ROW 1
+#define LAYOUT_SUBPROP_TABLE_ROW 1
 // 表格布局子属性_所在列
-#define ELCP_TABLE_CELL 2
+#define LAYOUT_SUBPROP_TABLE_CELL 2
 // 表格布局子属性_跨行数
-#define ELCP_TABLE_ROW_SPAN 3
+#define LAYOUT_SUBPROP_TABLE_ROW_SPAN 3
 // 表格布局子属性_跨列数
-#define ELCP_TABLE_CELL_SPAN 4
+#define LAYOUT_SUBPROP_TABLE_CELL_SPAN 4
 // 表格布局子属性_是否填满
-#define ELCP_TABLE_FILL 5
+#define LAYOUT_SUBPROP_TABLE_FILL 5
 
 // 相对布局子属性_左侧于组件
-#define ELCP_RELATIVE_LEFT_OF 1
+#define LAYOUT_SUBPROP_RELATIVE_LEFT_OF 1
 // 相对布局子属性_之上于组件
-#define ELCP_RELATIVE_TOP_OF 2
+#define LAYOUT_SUBPROP_RELATIVE_TOP_OF 2
 // 相对布局子属性_右侧于组件
-#define ELCP_RELATIVE_RIGHT_OF 3
+#define LAYOUT_SUBPROP_RELATIVE_RIGHT_OF 3
 // 相对布局子属性_之下于组件
-#define ELCP_RELATIVE_BOTTOM_OF 4
+#define LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF 4
 // 相对布局子属性_左对齐于组件
-#define ELCP_RELATIVE_LEFT_ALIGN_OF 5
+#define LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF 5
 // 相对布局子属性_顶对齐于组件
-#define ELCP_RELATIVE_TOP_ALIGN_OF 6
+#define LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF 6
 // 相对布局子属性_右对齐于组件
-#define ELCP_RELATIVE_RIGHT_ALIGN_OF 7
+#define LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF 7
 // 相对布局子属性_底对齐于组件
-#define ELCP_RELATIVE_BOTTOM_ALIGN_OF 8
+#define LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF 8
 // 相对布局子属性_水平居中于父
-#define ELCP_RELATIVE_CENTER_PARENT_H 9
+#define LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H 9
 // 相对布局子属性_垂直居中于父
-#define ELCP_RELATIVE_CENTER_PARENT_V 10
+#define LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_V 10
 
 // 绝对布局子属性_左侧
-#define ELCP_ABSOLUTE_LEFT 1
+#define LAYOUT_SUBPROP_ABSOLUTE_LEFT 1
 // 绝对布局子属性_位置类型_左侧
-#define ELCP_ABSOLUTE_LEFT_TYPE 2
+#define LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE 2
 // 绝对布局子属性_顶部
-#define ELCP_ABSOLUTE_TOP 3
+#define LAYOUT_SUBPROP_ABSOLUTE_TOP 3
 // 绝对布局子属性_位置类型_顶部
-#define ELCP_ABSOLUTE_TOP_TYPE 4
+#define LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE 4
 // 绝对布局子属性_右侧
-#define ELCP_ABSOLUTE_RIGHT 5
+#define LAYOUT_SUBPROP_ABSOLUTE_RIGHT 5
 // 绝对布局子属性_位置类型_右侧
-#define ELCP_ABSOLUTE_RIGHT_TYPE 6
+#define LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE 6
 // 绝对布局子属性_底部
-#define ELCP_ABSOLUTE_BOTTOM 7
+#define LAYOUT_SUBPROP_ABSOLUTE_BOTTOM 7
 // 绝对布局子属性_位置类型_底部
-#define ELCP_ABSOLUTE_BOTTOM_TYPE 8
+#define LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE 8
 // 绝对布局子属性_宽度（优先级低于右侧）
-#define ELCP_ABSOLUTE_WIDTH 9
+#define LAYOUT_SUBPROP_ABSOLUTE_WIDTH 9
 // 绝对布局子属性_位置类型_宽度
-#define ELCP_ABSOLUTE_WIDTH_TYPE 10
+#define LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE 10
 // 绝对布局子属性_高度（优先级低于底部）
-#define ELCP_ABSOLUTE_HEIGHT 11
+#define LAYOUT_SUBPROP_ABSOLUTE_HEIGHT 11
 // 绝对布局子属性_位置类型_高度
-#define ELCP_ABSOLUTE_HEIGHT_TYPE 12
+#define LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE 12
 // 绝对布局子属性_水平偏移量
-#define ELCP_ABSOLUTE_OFFSET_H 13
+#define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H 13
 // 绝对布局子属性_位置类型_水平偏移量
-#define ELCP_ABSOLUTE_OFFSET_H_TYPE 14
+#define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H_TYPE 14
 // 绝对布局子属性_垂直偏移量
-#define ELCP_ABSOLUTE_OFFSET_V 15
+#define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V 15
 // 绝对布局子属性_位置类型_垂直偏移量
-#define ELCP_ABSOLUTE_OFFSET_V_TYPE 16
+#define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V_TYPE 16
 
 // 绝对布局子属性_位置类型_未知 (未设置或保持不变)
-#define ELCP_ABSOLUTE_TYPE_UNKNOWN 0
+#define LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN 0
 // 绝对布局子属性_位置类型_像素
-#define ELCP_ABSOLUTE_TYPE_PX 1
+#define LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX 1
 // 绝对布局子属性_位置类型_百分比
-#define ELCP_ABSOLUTE_TYPE_PS 2
+#define LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS 2
 // 绝对布局子属性_位置类型_组件尺寸百分比，仅OFFSET可用
-#define ELCP_ABSOLUTE_TYPE_OBJPS 3
+#define LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS 3
 
 // 位置信息标识_组件位置默认值
-#define EOP_DEFAULT 0x80000000
+#define OBJECT_POSITION_DEFAULT 0x80000000
 
 // 组合框风格_允许编辑
-#define ECS_ALLOWEDIT 1
+#define COMBOBOX_STYLE_ALLOWEDIT 1
 
 // 事件_组合框_列表项被改变
-#define CBN_SELCHANGE 1
+#define COMBOBOX_EVENT_SELCHANGE 1
 // 事件_组合框_编辑内容被改变
-#define CBN_EDITCHANGE 5
+#define COMBOBOX_EVENT_EDITCHANGE 5
 // 事件_组合框_即将弹出列表
-#define CBN_DROPDOWN 7
+#define COMBOBOX_EVENT_DROPDOWN 7
 // 事件_组合框_即将关闭列表
-#define CBN_CLOSEUP 8
+#define COMBOBOX_EVENT_CLOSEUP 8
 // 事件_组合框_弹出下拉列表
-#define CBN_POPUPLISTWINDOW 2001
+#define COMBOBOX_EVENT_POPUPLISTWINDOW 2001
 
 // 事件_列表按钮_单击 wParam 索引
-#define LBN_CLICK 1
+#define LISTBUTTON_EVENT_CLICK 1
 // 事件_列表按钮_选中 wParam 索引,lParam 状态
-#define LBN_CHECK 2
+#define LISTBUTTON_EVENT_CHECK 2
 
 // 缓动类型_线性
-#define ET_Linear 1
+#define EASING_TYPE_LINEAR 1
 // 缓动类型_圆线性插值
-#define ET_Clerp 2
+#define EASING_TYPE_CLERP 2
 // 缓动类型_弹性
-#define ET_Spring 3
+#define EASING_TYPE_SPRING 3
 // 缓动类型_冲击
-#define ET_Punch 4
+#define EASING_TYPE_PUNCH 4
 // 缓动类型_二次方_In
-#define ET_InQuad 5
+#define EASING_TYPE_INQUAD 5
 // 缓动类型_二次方_Out
-#define ET_OutQuad 6
+#define EASING_TYPE_OUTQUAD 6
 // 缓动类型_二次方_InOut
-#define ET_InOutQuad 7
+#define EASING_TYPE_INOUTQUAD 7
 // 缓动类型_三次方_In
-#define ET_InCubic 8
+#define EASING_TYPE_INCUBIC 8
 // 缓动类型_三次方_Out
-#define ET_OutCubic 9
+#define EASING_TYPE_OUTCUBIC 9
 // 缓动类型_三次方_InOut
-#define ET_InOutCubic 10
+#define EASING_TYPE_INOUTCUBIC 10
 // 缓动类型_四次方_In
-#define ET_InQuart 11
+#define EASING_TYPE_INQUART 11
 // 缓动类型_四次方_Out
-#define ET_OutQuart 12
+#define EASING_TYPE_OUTQUART 12
 // 缓动类型_四次方_InOut
-#define ET_InOutQuart 13
+#define EASING_TYPE_INOUTQUART 13
 // 缓动类型_五次方_In
-#define ET_InQuint 14
+#define EASING_TYPE_INQUINT 14
 // 缓动类型_五次方_Out
-#define ET_OutQuint 15
+#define EASING_TYPE_OUTQUINT 15
 // 缓动类型_五次方_InOut
-#define ET_InOutQuint 16
+#define EASING_TYPE_INOUTQUINT 16
 // 缓动类型_正弦曲线_In
-#define ET_InSine 17
+#define EASING_TYPE_INSINE 17
 // 缓动类型_正弦曲线_Out
-#define ET_OutSine 18
+#define EASING_TYPE_OUTSINE 18
 // 缓动类型_正弦曲线_InOut
-#define ET_InOutSine 19
+#define EASING_TYPE_INOUTSINE 19
 // 缓动类型_指数曲线_In
-#define ET_InExpo 20
+#define EASING_TYPE_INEXPO 20
 // 缓动类型_指数曲线_Out
-#define ET_OutExpo 21
+#define EASING_TYPE_OUTEXPO 21
 // 缓动类型_指数曲线_InOut
-#define ET_InOutExpo 22
+#define EASING_TYPE_INOUTEXPO 22
 // 缓动类型_圆曲线_In
-#define ET_InCirc 23
+#define EASING_TYPE_INCIRC 23
 // 缓动类型_圆曲线_Out
-#define ET_OutCirc 24
+#define EASING_TYPE_OUTCIRC 24
 // 缓动类型_圆曲线_InOut
-#define ET_InOutCirc 25
+#define EASING_TYPE_INOUTCIRC 25
 // 缓动类型_反弹_In
-#define ET_InBounce 26
+#define EASING_TYPE_INBOUNCE 26
 // 缓动类型_反弹_Out
-#define ET_OutBounce 27
+#define EASING_TYPE_OUTBOUNCE 27
 // 缓动类型_反弹_InOuts
-#define ET_InOutBounce 28
+#define EASING_TYPE_INOUTBOUNCE 28
 // 缓动类型_三次方溢出_In
-#define ET_InBack 29
+#define EASING_TYPE_INBACK 29
 // 缓动类型_三次方溢出_Out
-#define ET_OutBack 30
+#define EASING_TYPE_OUTBACK 30
 // 缓动类型_三次方溢出_InOut
-#define ET_InOutBack 31
+#define EASING_TYPE_INOUTBACK 31
 // 缓动类型_正弦曲线指数衰减_In
-#define ET_InElastic 32
+#define EASING_TYPE_INELASTIC 32
 // 缓动类型_正弦曲线指数衰减_Out
-#define ET_OutElastic 33
+#define EASING_TYPE_OUTELASTIC 33
 // 缓动类型_正弦曲线指数衰减_InOut
-#define ET_InOutElastic 34
+#define EASING_TYPE_INOUTELASTIC 34
 // 缓动类型_自定义 pEasingContext为自定义回调函数(nProcess,nStart,nStop,nCurrent*,pEasingContext)
-#define ET_CUSTOM 50
+#define EASING_TYPE_CUSTOM 50
 // 缓动类型_曲线 pEasingContext为pCurveInfo(_easing_load_curve)
-#define ET_CURVE 51
+#define EASING_TYPE_CURVE 51
 
 // 缓动模式_单次
-#define ES_SINGLE 0x01
+#define EASING_MODE_SINGLE 0x01
 // 缓动模式_循环,注意自行停止
-#define ES_CYCLE 0x02
+#define EASING_MODE_CYCLE 0x02
 // 缓动模式_多次,高位则为次数
-#define ES_MANYTIMES 0x04
+#define EASING_MODE_MANYTIMES 0x04
 // 缓动模式_顺序
-#define ES_ORDER 0x08
+#define EASING_MODE_ORDER 0x08
 // 缓动模式_逆序
-#define ES_REVERSE 0x10
+#define EASING_MODE_REVERSE 0x10
 // 缓动模式_来回
-#define ES_BACKANDFORTH 0x20
+#define EASING_MODE_BACKANDFORTH 0x20
 // 缓动模式_调用函数 pContext为回调函数,BOOL isStop Cbk(LPVOID pEasingProgress,DOUBLE nProgress,DOUBLE nCurrent,size_t pEasingContext,INT nTimesSurplus,size_t Param1,size_t Param2,size_t Param3,size_t Param4)
-#define ES_CALLFUNCTION 0x40
+#define EASING_MODE_CALLFUNCTION 0x40
 // 缓动模式_分发消息 pContext为hObj或hExDUI, wParam:pEasing,lParam:lpEasingInfo,result:isStop
-#define ES_DISPATCHNOTIFY 0x80
+#define EASING_MODE_DISPATCHNOTIFY 0x80
 // 缓动模式_使用线程 使用线程处理,否则在UI线程处理(过程中会阻塞输入)
-#define ES_THREAD 0x100
+#define EASING_MODE_THREAD 0x100
 // 缓动模式_释放曲线 当使用曲线类型时生效,在结束时会自动释放曲线指针
-#define ES_RELEASECURVE 0x200
+#define EASING_MODE_RELEASECURVE 0x200
 
 // 缓动状态_播放
-#define EES_PLAY 0
+#define EASING_STATE_PLAY 0
 // 缓动状态_暂停
-#define EES_PAUSE 1
+#define EASING_STATE_PAUSE 1
 // 缓动状态_停止
-#define EES_STOP 2
+#define EASING_STATE_STOP 2
 
 // 树形框节点类型_首节点
-#define TVI_FIRST -65535
+#define TREEVIEW_NODE_FIRST -65535
 // 树形框节点类型_尾节点
-#define TVI_LAST -65534
+#define TREEVIEW_NODE_LAST -65534
 // 树形框节点类型_根节点
-#define TVI_ROOT -65536
+#define TREEVIEW_NODE_ROOT -65536
 // 树形框节点类型_排序
-#define TVI_SORT -65533
+#define TREEVIEW_NODE_SORT -65533
 
 // 树形框风格_显示加减号
-#define ETS_SHOWADDANDSUB 0x40
+#define TREEVIEW_STYLE_SHOWADDANDSUB 0x40
 // 树形框风格_显示连接线
-#define ETS_SHOWCABLE 0x80
+#define TREEVIEW_STYLE_SHOWCABLE 0x80
 
-// 消息_树形框_删除节点及所有子孙 (lParam为节点句柄,0或TVI_ROOT为删除所有)
-#define TVM_DELETEITEM 4353
+// 消息_树形框_删除节点及所有子孙 (lParam为节点句柄,0或TREEVIEW_NODE_ROOT为删除所有)
+#define TREEVIEW_MESSAGE_DELETEITEM 4353
 // 消息_树形框_展开收缩 (wParam为是否展开,lParam为设置的节点句柄)
-#define TVM_EXPAND 4354
+#define TREEVIEW_MESSAGE_EXPAND 4354
 // 消息_树形框_取节点矩形 (wParam为节点句柄,lParam为 EX_RECT 指针,注意该节点必须处于可见范围,否则消息无法获取并返回0)
-#define TVM_GETITEMRECT 4356
+#define TREEVIEW_MESSAGE_GETITEMRECT 4356
 // 消息_树形框_取节点数
-#define TVM_GETCOUNT 4357
+#define TREEVIEW_MESSAGE_GETCOUNT 4357
 // 消息_树形框_取留白宽度
-#define TVM_GETINDENT 4358
+#define TREEVIEW_MESSAGE_GETINDENT 4358
 // 消息_树形框_设置留白宽度 取相关节点(wParam为 TVGN_ 开头的常量,lParam为节点句柄)
-#define TVM_SETINDENT 4359
+#define TREEVIEW_MESSAGE_SETINDENT 4359
 // 消息_树形框_获取图片组
-#define TVM_GETIMAGELIST 4360
+#define TREEVIEW_MESSAGE_GETIMAGELIST 4360
 // 消息_树形框_设置图片组(wParam为是否更新表项宽高,lParam为图片组句柄)
-#define TVM_SETIMAGELIST 4361
+#define TREEVIEW_MESSAGE_SETIMAGELIST 4361
 // 消息_树形框_取相关节点(wParam为 TVGN_ 开头的常量,lParam为节点句柄)
-#define TVM_GETNEXTITEM 4362
+#define TREEVIEW_MESSAGE_GETNEXTITEM 4362
 // 消息_树形框_置选中项 (lParam为选中的节点句柄)
-#define TVM_SELECTITEM 4363
+#define TREEVIEW_MESSAGE_SELECTITEM 4363
 // 消息_树形框_取展开可视节点个数
-#define TVM_GETVISIBLECOUNT 4368
+#define TREEVIEW_MESSAGE_GETVISIBLECOUNT 4368
 // 消息_树形框_命中测试 (wParam低位为x高位为y[相对控件],lParam为 返回#TVHT_开头常量 的指针,消息返回值为命中的节点句柄)
-#define TVM_HITTEST 4369
+#define TREEVIEW_MESSAGE_HITTEST 4369
 // 消息_树形框_保证显示 (lParam为显示的节点句柄)
-#define TVM_ENSUREVISIBLE 4372
+#define TREEVIEW_MESSAGE_ENSUREVISIBLE 4372
 // 消息_树形框_插入节点 (lParam为 EX_TREEVIEW_ITEMINFO 指针，tzText为Unicode)
-#define TVM_INSERTITEM 4352
+#define TREEVIEW_MESSAGE_INSERTITEM 4352
 // 消息_树形框_取节点信息 (wParam为节点句柄,lParam为 EX_TREEVIEW_ITEMINFO 指针，tzText为Unicode)
-#define TVM_GETITEM 4364
+#define TREEVIEW_MESSAGE_GETITEM 4364
 // 消息_树形框_设置节点信息 (wParam为节点句柄,lParam为 EX_TREEVIEW_ITEMINFO 指针)
-#define TVM_SETITEM 4365
+#define TREEVIEW_MESSAGE_SETITEM 4365
 // 消息_树形框_更新树形框
-#define TVM_UPDATE 4499
+#define TREEVIEW_MESSAGE_UPDATE 4499
 // 消息_树形框_设置行高 (lParam为新行高)
-#define TVM_SETITEMHEIGHT 5091
+#define TREEVIEW_MESSAGE_SETITEMHEIGHT 5091
 // 消息_树形框_获取行高
-#define TVM_GETITEMHEIGHT 5092
+#define TREEVIEW_MESSAGE_GETITEMHEIGHT 5092
 // 消息_树形框_从索引获取节点句柄 (wParam为索引,节点必须可见否则返回0)
-#define TVM_GETNODEFROMINDEX 5093
+#define TREEVIEW_MESSAGE_GETNODEFROMINDEX 5093
 // 消息_树形框_设置节点标题 (wParam为节点句柄,lParam为 文本指针,Unicode)
-#define TVM_SETITEMTEXTW 14414
+#define TREEVIEW_MESSAGE_SETITEMTEXTW 14414
 // 消息_树形框_获取节点标题 (wParam为节点句柄,返回值为标题Unicode字符串,不要自行释放)
-#define TVM_GETITEMTEXTW 14415
+#define TREEVIEW_MESSAGE_GETITEMTEXTW 14415
 
 // 树形框相关节点_获取根节点
-#define TVGN_ROOT 0
+#define TREEVIEW_NODE_CORRELATION_ROOT 0
 // 树形框相关节点_获取下一个节点
-#define TVGN_NEXT 1
+#define TREEVIEW_NODE_CORRELATION_NEXT 1
 // 树形框相关节点_获取上一个节点
-#define TVGN_PREVIOUS 2
+#define TREEVIEW_NODE_CORRELATION_PREVIOUS 2
 // 树形框相关节点_获取父节点
-#define TVGN_PARENT 3
+#define TREEVIEW_NODE_CORRELATION_PARENT 3
 // 树形框相关节点_获取子节点
-#define TVGN_CHILD 4
+#define TREEVIEW_NODE_CORRELATION_CHILD 4
 // 树形框相关节点_获取下一个可见节点
-#define TVGN_NEXTVISIBLE 6
+#define TREEVIEW_NODE_CORRELATION_NEXTVISIBLE 6
 
 // 树形框命中测试_没有命中
-#define TVHT_NOWHERE 1
+#define TREEVIEW_HITTYPE_NOWHERE 1
 // 树形框命中测试_命中图标
-#define TVHT_ONITEMICON 2
+#define TREEVIEW_HITTYPE_ONITEMICON 2
 // 树形框命中测试_命中标题
-#define TVHT_ONITEMLABEL 4
+#define TREEVIEW_HITTYPE_ONITEMLABEL 4
 // 树形框命中测试_命中留白
-#define TVHT_ONITEMINDENT 8
+#define TREEVIEW_HITTYPE_ONITEMINDENT 8
 // 树形框命中测试_命中加减框
-#define TVHT_ONITEMSTATEICON 64
+#define TREEVIEW_HITTYPE_ONITEMSTATEICON 64
 
 // 事件_树形框_删除节点
-#define TVN_DELETEITEM 391
+#define TREEVIEW_EVENT_DELETEITEM 391
 // 事件_树形框_节点展开
-#define TVN_ITEMEXPANDED 394
+#define TREEVIEW_EVENT_ITEMEXPANDED 394
 // 事件_树形框_节点展开中
-#define TVN_ITEMEXPANDING 395
+#define TREEVIEW_EVENT_ITEMEXPANDING 395
 // 事件_树形框_绘制节点
-#define TVN_DRAWITEM 3099
+#define TREEVIEW_EVENT_DRAWITEM 3099
 
 // 报表风格_绘制横线
-#define ERLS_DRAWHORIZONTALLINE 0x100
+#define REPORTLISTVIEW_STYLE_DRAWHORIZONTALLINE 0x100
 // 报表风格_绘制竖线
-#define ERLS_DRAWVERTICALLINE 0x200
+#define REPORTLISTVIEW_STYLE_DRAWVERTICALLINE 0x200
 // 报表风格_无表头
-#define ERLS_NOHEAD 0x400
+#define REPORTLISTVIEW_STYLE_NOHEAD 0x400
 // 报表风格_可编辑
-#define ERLS_EDIT 0x800
+#define REPORTLISTVIEW_STYLE_EDIT 0x800
 
 // 报表表头风格_可点击
-#define ERLV_CS_CLICKABLE 0x01
+#define REPORTLISTVIEW_HEADER_STYLE_CLICKABLE 0x01
 // 报表表头风格_锁定宽度
-#define ERLV_CS_LOCKWIDTH 0x02
+#define REPORTLISTVIEW_HEADER_STYLE_LOCKWIDTH 0x02
 // 报表表头风格_可排序 (前提是得可点击)
-#define ERLV_CS_SORTABLE 0x04
+#define REPORTLISTVIEW_HEADER_STYLE_SORTABLE 0x04
 // 报表表头风格_自定义列表头背景色
-#define ERLV_CS_COLOUR 0x08
+#define REPORTLISTVIEW_HEADER_STYLE_COLOUR 0x08
 
 #pragma region template listview message constant
 // 消息_模板列表_创建 返回值将作为列表项控件
-#define TLVM_ITEM_CREATE 10010
+#define TEMPLATELISTVIEW_MESSAGE_ITEM_CREATE 10010
 // 消息_模板列表_创建完毕
-#define TLVM_ITEM_CREATED 10011
+#define TEMPLATELISTVIEW_MESSAGE_ITEM_CREATED 10011
 // 消息_模板列表_销毁
-#define TLVM_ITEM_DESTROY 10012
+#define TEMPLATELISTVIEW_MESSAGE_ITEM_DESTROY 10012
 // 消息_模板列表_填充数据 wParam:nIndex,lParam:hObjItem
-#define TLVM_ITEM_FILL 10013
+#define TEMPLATELISTVIEW_MESSAGE_ITEM_FILL 10013
 // 消息_模板列表_置模板数据 wParam:cbSize,lParam:pTemplate
-#define TLVM_SETTEMPLATE 10020
+#define TEMPLATELISTVIEW_MESSAGE_SETTEMPLATE 10020
 // 消息_模板列表_取项目句柄 wParam:表项索引,返回表项容器句柄(不在可视区返回0)
-#define TLVM_GETITEMOBJ 10021
+#define TEMPLATELISTVIEW_MESSAGE_GETITEMOBJ 10021
 // 消息_模板列表_取鼠标位置表项索引 wParam:X  lParam:Y
-#define TLVM_GETCUIINDEX 10022
+#define TEMPLATELISTVIEW_MESSAGE_GETCUIINDEX 10022
 // 消息_模板列表_设置表项悬浮背景色 lParam:ARGB颜色
-#define TLVM_SET_ITEM_HOVERCOLOR 100022
+#define TEMPLATELISTVIEW_MESSAGE_SET_ITEM_HOVERCOLOR 100022
 // 消息_模板列表_设置表项选中背景色 lParam:ARGB颜色
-#define TLVM_SET_ITEM_SELECTCOLOR 100023
+#define TEMPLATELISTVIEW_MESSAGE_SET_ITEM_SELECTCOLOR 100023
 #pragma endregion template listview message constant
 
 
 #pragma region listview message constant
 // 消息_列表_取表项总数
-#define LVM_GETITEMCOUNT 4100
+#define LISTVIEW_MESSAGE_GETITEMCOUNT 4100
 // 消息_列表_获取表项 (LISTBUTTON wParam为项目索引, lParam为EX_REPORTLIST_ITEMINFO指针或EX_LISTBUTTON_ITEMINFO指针)
-#define LVM_GETITEM 4101
+#define LISTVIEW_MESSAGE_GETITEM 4101
 // 消息_列表_设置表项 (wParam为是否重画,lParam为EX_REPORTLIST_ITEMINFO或EX_LISTBUTTON_ITEMINFO指针)
-#define LVM_SETITEM 4102
+#define LISTVIEW_MESSAGE_SETITEM 4102
 // 消息_列表_插入表项 lParam 为EX_REPORTLIST_ROWINFO指针,wParam为是否立即重画,返回索引
-#define LVM_INSERTITEM 4103
+#define LISTVIEW_MESSAGE_INSERTITEM 4103
 // 消息_列表_删除表项,wParam为是否立即重画，lParam为删除的索引
-#define LVM_DELETEITEM 4104
+#define LISTVIEW_MESSAGE_DELETEITEM 4104
 // 消息_列表_清空表项
-#define LVM_DELETEALLITEMS 4105
+#define LISTVIEW_MESSAGE_DELETEALLITEMS 4105
 // 消息_报表_获取单元格信息   lParam: EX_REPORTLIST_CELLINFO*
-#define LVM_GETCELL 4106
+#define LISTVIEW_MESSAGE_GETCELL 4106
 // 消息_报表_设置单元格信息   wParam:是否排除文本  lParam: EX_REPORTLIST_CELLINFO*
-#define LVM_SETCELL 4107
+#define LISTVIEW_MESSAGE_SETCELL 4107
 // 消息_报表_获取单元格lParam   wParam :iRow lParam:iCol  return: LPARAM
-#define LVM_GETCELLLPARAM 4108
+#define LISTVIEW_MESSAGE_GETCELLLPARAM 4108
 // 消息_报表_设置单元格lParam    wParam :新值  lParam: 低位 行 高位 列
-#define LVM_SETCELLLPARAM 4109 
+#define LISTVIEW_MESSAGE_SETCELLLPARAM 4109 
 // 消息_列表_取表项矩形
-#define LVM_GETITEMRECT 4110
+#define LISTVIEW_MESSAGE_GETITEMRECT 4110
 // 消息_列表_命中测试 lParam为 返回列表命中测试_
-#define LVM_HITTEST 4114
+#define LISTVIEW_MESSAGE_HITTEST 4114
 // 消息_列表_保证显示表项
-#define LVM_ENSUREVISIBLE 4115
+#define LISTVIEW_MESSAGE_ENSUREVISIBLE 4115
 // 消息_列表_重画表项 wParam为起始项目,lParam 为结束项目
-#define LVM_REDRAWITEMS 4117
+#define LISTVIEW_MESSAGE_REDRAWITEMS 4117
 // 消息_报表_获取列信息 (wParam为列索引,lParam为 EX_REPORTLIST_COLUMNINFO 指针)
-#define LVM_GETCOLUMN 4121
+#define LISTVIEW_MESSAGE_GETCOLUMN 4121
 // 消息_报表_设置列信息 (wParam低位为列索引,高位为是否立即刷新,lParam为 EX_REPORTLIST_COLUMNINFO 指针)
-#define LVM_SETCOLUMN 4122
+#define LISTVIEW_MESSAGE_SETCOLUMN 4122
 // 消息_报表_插入列 (wParm为是否立即更新,lParam为EX_REPORTLIST_COLUMNINFO指针)
-#define LVM_INSERTCOLUMN 4123
+#define LISTVIEW_MESSAGE_INSERTCOLUMN 4123
 // 消息_报表_删除列 (wParm为是否立即更新,lParam为列索引)
-#define LVM_DELETECOLUMN 4124
+#define LISTVIEW_MESSAGE_DELETECOLUMN 4124
 // 消息_报表_获取列宽
-#define LVM_GETCOLUMNWIDTH 4125
+#define LISTVIEW_MESSAGE_GETCOLUMNWIDTH 4125
 // 消息_报表_设置列宽 (wParam为列索引,lParam为 列宽)
-#define LVM_SETCOLUMNWIDTH 4126
+#define LISTVIEW_MESSAGE_SETCOLUMNWIDTH 4126
 // 消息_列表_取可视区起始索引
-#define LVM_GETTOPINDEX 4135
+#define LISTVIEW_MESSAGE_GETTOPINDEX 4135
 // 消息_列表_取可视区表项数
-#define LVM_GETCOUNTPERPAGE 4136
+#define LISTVIEW_MESSAGE_GETCOUNTPERPAGE 4136
 // 消息_列表_更新列表框
-#define LVM_UPDATE 4138
+#define LISTVIEW_MESSAGE_UPDATE 4138
 // 消息_列表_置表项状态
-#define LVM_SETITEMSTATE 4139
+#define LISTVIEW_MESSAGE_SETITEMSTATE 4139
 // 消息_列表_取表项状态
-#define LVM_GETITEMSTATE 4140
+#define LISTVIEW_MESSAGE_GETITEMSTATE 4140
 // 消息_报表_获取表项文本 (wParam若不为0则为表项索引,lParam为EX_REPORTLIST_ITEMINFO指针)
-#define LVM_GETITEMTEXT 4141
+#define LISTVIEW_MESSAGE_GETITEMTEXT 4141
 // 消息_报表_设置表项文本 (wParam若不为0则为表项索引,lParam为EX_REPORTLIST_ITEMINFO指针)
-#define LVM_SETITEMTEXT 4142
+#define LISTVIEW_MESSAGE_SETITEMTEXT 4142
 // 消息_列表_设置表项总数 wParam为表项条数,lParmam为MAKELONG(LVSICF_NOSCROLL, 表项条数)
-#define LVM_SETITEMCOUNT 4143
+#define LISTVIEW_MESSAGE_SETITEMCOUNT 4143
 // 消息_报表_排序 (lParam为EX_REPORTLIST_SORTINFO指针)
-#define LVM_SORTITEMS 4144
+#define LISTVIEW_MESSAGE_SORTITEMS 4144
 // 消息_列表_取被选择表项数
-#define LVM_GETSELECTEDCOUNT 4146
+#define LISTVIEW_MESSAGE_GETSELECTEDCOUNT 4146
 // 消息_列表_取表项选中状态
-#define LVM_GETITEMSELECT 4147
+#define LISTVIEW_MESSAGE_GETITEMSELECT 4147
 // 消息_列表_取鼠标所在表项
-#define LVM_GETHOTITEM 4157
+#define LISTVIEW_MESSAGE_GETHOTITEM 4157
 // 消息_列表_取现行选中项
-#define LVM_GETSELECTIONMARK 4162
+#define LISTVIEW_MESSAGE_GETSELECTIONMARK 4162
 // 消息_列表_置现行选中项
-#define LVM_SETSELECTIONMARK 4163
+#define LISTVIEW_MESSAGE_SETSELECTIONMARK 4163
 // 消息_报表_删除所有列
-#define LVM_DELETEALLCOLUMN 4900
+#define LISTVIEW_MESSAGE_DELETEALLCOLUMN 4900
 // 消息_报表_获取列数
-#define LVM_GETCOLUMNCOUNT 4901
+#define LISTVIEW_MESSAGE_GETCOLUMNCOUNT 4901
 // 消息_报表_设置列标题 (wParam低位为列索引,高位为是否立即刷新,lParam为 宽文本指针)
-#define LVM_SETCOLUMNTEXT 4904
+#define LISTVIEW_MESSAGE_SETCOLUMNTEXT 4904
 // 消息_报表_获取列标题 (wParam为列索引,lParam为 宽文本指针)
-#define LVM_GETCOLUMNTEXT 4905
+#define LISTVIEW_MESSAGE_GETCOLUMNTEXT 4905
 // 消息_列表_设置表项高度 (lParam为新行高)
-#define LVM_SETITEMHEIGHT 4908
+#define LISTVIEW_MESSAGE_SETITEMHEIGHT 4908
 // 消息_列表_获取表项高度
-#define LVM_GETITEMHEIGHT 4909
+#define LISTVIEW_MESSAGE_GETITEMHEIGHT 4909
 // 消息_列表_获取图片组
-#define LVM_GETIMAGELIST 4098
+#define LISTVIEW_MESSAGE_GETIMAGELIST 4098
 // 消息_列表_设置图片组 (wParam为是否立即重画,lParam为图片组句柄)
-#define LVM_SETIMAGELIST 4099
+#define LISTVIEW_MESSAGE_SETIMAGELIST 4099
 // 消息_列表_重新计算尺寸
-#define LVM_CALCITEMSIZE 5150
+#define LISTVIEW_MESSAGE_CALCITEMSIZE 5150
 // 消息_列表_取消主题 不绘制列表主题 1为取消
-#define LVM_CANCELTHEME 5151
+#define LISTVIEW_MESSAGE_CANCELTHEME 5151
 #pragma endregion listview message constant
 
 // 事件_报表_表头被单击
-#define RLVN_COLUMNCLICK 97000
+#define REPORTLISTVIEW_EVENT_COLUMNCLICK 97000
 // 事件_报表_绘制表行
-#define RLVN_DRAW_TR 97001
+#define REPORTLISTVIEW_EVENT_DRAW_TR 97001
 // 事件_报表_绘制表项
-#define RLVN_DRAW_TD 97002
+#define REPORTLISTVIEW_EVENT_DRAW_TD 97002
 // 事件_报表_检查框点击
-#define RLVN_CHECK 97003
+#define REPORTLISTVIEW_EVENT_CHECK 97003
 // 事件_报表_当删除表项
-#define RLVN_DELETE_ITEM 97004
+#define REPORTLISTVIEW_EVENT_DELETE_ITEM 97004
 
 // 消息_报表_检查框点击
-#define RLVM_CHECK 99001
+#define REPORTLISTVIEW_MESSAGE_CHECK 99001
 // 消息_报表_设置检查框状态 wParam 为项目索引 lParam为置选中状态1选中, 0不选中
-#define RLVM_SETCHECK 99002
+#define REPORTLISTVIEW_MESSAGE_SETCHECK 99002
 // 消息_报表_获取检查框状态 wParam 为项目索引 , 返回1选中, 0不选中
-#define RLVM_GETCHECK 99003
+#define REPORTLISTVIEW_MESSAGE_GETCHECK 99003
 // 消息_报表_获取命中列索引
-#define RLVM_GETHITCOL 99004
+#define REPORTLISTVIEW_MESSAGE_GETHITCOL 99004
 
 // 报表表行风格_表项带检查框
-#define ERLV_RS_CHECKBOX 0x01
+#define REPORTLISTVIEW_LINESTYLE_CHECKBOX 0x01
 // 报表表行风格_检查框为选中状态
-#define ERLV_RS_CHECKBOX_CHECK 0x02
+#define REPORTLISTVIEW_LINESTYLE_CHECKBOX_CHECK 0x02
 //报表表行风格_自定义整行格背景色
-#define ERLV_RS_ROWCOLOUR 0x04
+#define REPORTLISTVIEW_LINESTYLE_ROWCOLOUR 0x04
 
 //报表单元格风格_背景色
-#define ERLV_RS_CELLCOLOUR 0x01
+#define REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR 0x01
 //报表单元格风格_文本色
-#define ERLV_RS_CELLTEXTCOLOUR 0x02
+#define REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR 0x02
 //报表单元格风格_字体
-#define ERLV_RS_CELLFONT 0x04
+#define REPORTLISTVIEW_CELLSTYLE_CELLFONT 0x04
 
 // 图标列表风格_表项以按钮形式呈现
-#define EILVS_BUTTON 0x400
+#define ICONLISTVIEW_STYLE_BUTTON 0x400
 
 // 消息_图标列表_设置表项尺寸
-#define ILVM_SETITEMSIZE 11001
+#define ICONLISTVIEW_MESSAGE_SETITEMSIZE 11001
 
 #pragma region windows show flag constant
 // 窗口显示标识_隐藏
@@ -1288,89 +1281,89 @@
 
 #pragma region progressbar long constant
 // 进度条属性_位置
-#define PBL_POS 0
+#define PROGRESSBAR_LONG_POS 0
 // 进度条属性_范围
-#define PBL_RANGE 1
+#define PROGRESSBAR_LONG_RANGE 1
 // 进度条属性_圆角度
-#define PBL_RADIUS 2
+#define PROGRESSBAR_LONG_RADIUS 2
 // 进度条属性_背景颜色
-#define PBL_BKCOLOR 3
+#define PROGRESSBAR_LONG_BKCOLOR 3
 // 进度条属性_前景颜色
-#define PBL_BARCOLOR 4
+#define PROGRESSBAR_LONG_BARCOLOR 4
 #pragma endregion progressbar long constant
 
 #pragma region progressbar message constant
 // 消息_进度条_设置进度条范围  wParam范围
-#define PBM_SETRANGE 1025
+#define PROGRESSBAR_MESSAGE_SETRANGE 1025
 // 消息_进度条_设置进度条位置  wParam位置
-#define PBM_SETPOS 1026
+#define PROGRESSBAR_MESSAGE_SETPOS 1026
 // 消息_进度条_获取进度条范围
-#define PBM_GETRANGE 1031
+#define PROGRESSBAR_MESSAGE_GETRANGE 1031
 // 消息_进度条_获取进度条位置
-#define PBM_GETPOS 1032
+#define PROGRESSBAR_MESSAGE_GETPOS 1032
 // 消息_进度条_设置进度条颜色  wParam颜色
-#define PBM_SETBARCOLOR 1033
+#define PROGRESSBAR_MESSAGE_SETBARCOLOR 1033
 // 消息_进度条_设置进度条背景颜色 wParam颜色
-#define PBM_SETBKCOLOR 8193
+#define PROGRESSBAR_MESSAGE_SETBKCOLOR 8193
 // 消息_进度条_设置进度条圆角度 wParam圆角度
-#define PBM_SETRADIUS 1027
+#define PROGRESSBAR_MESSAGE_SETRADIUS 1027
 #pragma endregion progressbar message constant
 
 // 主题包头
-#define EPDF_THEME 254
+#define PACKAGEHEADER_THEME 254
 // 资源包头
-#define EPDF_FILES 255
+#define PACKAGEHEADER_FILES 255
 
 #pragma region menu flag constant
 // 菜单标识_不显示菜单阴影
-#define EMNF_NOSHADOW 0x80000000
+#define MENU_FLAG_NOSHADOW 0x80000000
 #pragma endregion menu flag constant
 
 // 消息_选择菜单项目
-#define MN_SELECTITEM 0x1E5
+#define MENU_EVENT_SELECTITEM 0x1E5
 
 #pragma region listbutton message constant
 // 消息_列表按钮_按下项目 wParam按下横坐标 lParam 菜单句柄
-#define LBM_DOWNITEM 1237701
+#define LISTBUTTON_MESSAGE_DOWNITEM 1237701
 // 消息_列表按钮_选择项目
-#define LBM_SELECTITEM 1237702
+#define LISTBUTTON_MESSAGE_SELECTITEM 1237702
 #pragma endregion listbutton message constant
 
 #pragma region win10loading style constant
 // WIN10动画加载风格_直线
-#define ELDS_LINE 0x01
+#define LOADING_STYLE_LINE 0x01
 #pragma endregion win10loading style constant
 
 #pragma region soliderbar style constant
 // 滑块条风格_横向
-#define ESBS_HORIZONTAL 0x00
+#define SLIDERBAR_STYLE_HORIZONTAL 0x00
 // 滑块条风格_纵向
-#define ESBS_VERTICAL 0x01
+#define SLIDERBAR_STYLE_VERTICAL 0x01
 #pragma endregion soliderbar style constant
 
 #pragma region soliderbar message constant
 // 消息_滑块条_取当前滑块坐标
-#define SBM_GETBLOCKRECT 10010
+#define SLIDERBAR_MESSAGE_GETBLOCKRECT 10010
 // 消息_滑块条_坐标转值
-#define SBM_PT2VALUE 10011
+#define SLIDERBAR_MESSAGE_PT2VALUE 10011
 #pragma endregion soliderbar message constant
 
 #pragma region soliderbar notify constant
 // 事件_滑块条_值改变 事件编号(lParam=值)
-#define SBN_VALUE 10010
+#define SLIDERBAR_EVENT_VALUE 10010
 #pragma endregion soliderbar notify constant
 
 #pragma region soliderbar long constant
 // 滑块条属性_最小值
-#define SBL_MIN 0
+#define SLIDERBAR_LONG_MIN 0
 // 滑块条属性_最大值
-#define SBL_MAX 1
+#define SLIDERBAR_LONG_MAX 1
 // 滑块条属性_当前值
-#define SBL_POS 2
+#define SLIDERBAR_LONG_POS 2
 // 滑块条属性_滑块圆滑动方向 设定值：1，横向风格（从右往左）|纵向风格（从下往上）
-#define SBL_BLOCK_POINT 3
+#define SLIDERBAR_LONG_BLOCK_POINT 3
 // 滑块条属性_滑块圆半径
-#define SBL_BLOCK_SIZE 4
+#define SLIDERBAR_LONG_BLOCK_SIZE 4
 #pragma endregion soliderbar long constant
 
 #pragma region groupbox long
@@ -1384,177 +1377,177 @@
 
 #pragma region colorpicker message
 // 消息_颜色选择器_改变颜色
-#define CPM_COLORCHANGE 100051
+#define COLORPICKER_MESSAGE_COLORCHANGE 100051
 #pragma endregion colorpicker message
 
 #pragma region colorpicker notify
 // 事件_颜色选择器_颜色已更改
-#define CPN_COLORCHANGE 100052
+#define COLORPICKER_EVENT_COLORCHANGE 100052
 #pragma endregion colorpicker notify
 
 #pragma region palette notify
 // 调色板通知_鼠标移动 wParam返回不带alpha的RGB颜色,用ExRGB2ARGB转换到ARGB
-#define PTN_MOUSEMOVE 100000
+#define PALETTE_EVENT_MOUSEMOVE 100000
 #pragma endregion palette notify
 
 #pragma region datebox message
 // 消息_日期框_设置日期
-#define DBM_DATETIME 100061
+#define DATEBOX_MESSAGE_DATETIME 100061
 #pragma endregion datebox message
 
 #pragma region datebox notify
 // 事件_日期框_日期选中
-#define DBN_DATETIME 100062
+#define DATEBOX_EVENT_DATETIME 100062
 #pragma endregion datebox notify
 
 #pragma region calendar message
 // 事件_月历_日期选中
-#define MCN_DATETIME 100062
+#define CALENDAR_EVENT_DATETIME 100062
 #pragma endregion calendar message
 
 #pragma region cef browser message
 // 消息_Cef浏览框_加载URL
-#define CEFM_LOADURL 100001
+#define CEFBROWSER_MESSAGE_LOADURL 100001
 // 消息_Cef浏览框_获取浏览框句柄
-#define CEFM_GETWEBVIEW 100002
+#define CEFBROWSER_MESSAGE_GETWEBVIEW 100002
 #pragma endregion cef browser message
 
 #pragma region cef browser notify
 // 事件_Cef浏览框_已创建,lParam返回HWEBVIEW
-#define CEFN_CREATE 100100
+#define CEFBROWSER_EVENT_CREATE 100100
 // 事件_Cef浏览框_加载完毕,lParam返回HWEBVIEW
-#define CEFN_LOADEND 100101
+#define CEFBROWSER_EVENT_LOADEND 100101
 // 事件_Cef浏览框_加载开始,lParam返回HWEBVIEW
-#define CEFN_LOADSTART 100102
+#define CEFBROWSER_EVENT_LOADSTART 100102
 // 事件_Cef浏览框_加载状态被改变,wParam是否加载bool, lParam是否前进bool
-#define CEFN_LOADINGSTATECHANGE 100103
+#define CEFBROWSER_EVENT_LOADINGSTATECHANGE 100103
 // 事件_Cef浏览框_接收到状态信息,lParam返回状态信息LPCWSTR
-#define CEFN_LOADERROR 100104
+#define CEFBROWSER_EVENT_LOADERROR 100104
 // 事件_Cef浏览框_网页图标被改变,wParam返回图标地址LPCWSTR,lParam返回图标备用地址LPCWSTR
-#define CEFN_FAVICONURLCHANGE 100105
+#define CEFBROWSER_EVENT_FAVICONURLCHANGE 100105
 // 事件_Cef浏览框_即将打开新窗口,wParam返回HFRAME框架句柄,lParam返回链接地址
-#define CEFN_BEFOREPOPUP 100106
+#define CEFBROWSER_EVENT_BEFOREPOPUP 100106
 // 事件_Cef浏览框_关闭浏览器,lParam返回HWEBVIEW
-#define CEFN_DOCLOSE 100107
+#define CEFBROWSER_EVENT_DOCLOSE 100107
 // 事件_Cef浏览框_标题被改变,lParam返回标题LPCWSTR
-#define CEFN_TITLECHANGE 100108
+#define CEFBROWSER_EVENT_TITLECHANGE 100108
 // 事件_Cef浏览框_地址被改变,lParam返回地址LPCWSTR
-#define CEFN_ADDRESSCHANGE 100109
+#define CEFBROWSER_EVENT_ADDRESSCHANGE 100109
 #pragma endregion cef browser notify
 
 #pragma region carousel message
 // 消息_轮播_设置尺寸
-#define CM_SIZE 5000
+#define CAROUSEL_MESSAGE_SIZE 5000
 // 消息_轮播_播放下一张
-#define CM_NEXT 5001
+#define CAROUSEL_MESSAGE_NEXT 5001
 // 消息_轮播_播放上一张
-#define CM_PREV 5002
+#define CAROUSEL_MESSAGE_PREV 5002
 // 消息_轮播_添加图片
-#define CM_ADDIMG 5003
+#define CAROUSEL_MESSAGE_ADDIMG 5003
 // 消息_轮播_清空
-#define CM_CLEAR 5004
+#define CAROUSEL_MESSAGE_CLEAR 5004
 // 消息_轮播_设置时钟周期
-#define CM_SETTIMER 5005
+#define CAROUSEL_MESSAGE_SETTIMER 5005
 #pragma endregion carousel message
 
 #pragma region drawingboard message
 // 消息_鼠绘板_设置画笔类型 lParam 0画笔 1橡皮擦
-#define DBM_SETPENTYPE 20000
+#define DRAWINGBOARD_MESSAGE_SETPENTYPE 20000
 // 消息_鼠绘板_设置画笔宽度 lParam
-#define DBM_SETPENWIDTH 20001
+#define DRAWINGBOARD_MESSAGE_SETPENWIDTH 20001
 // 消息_鼠绘板_设置画笔颜色 lParam
-#define DBM_SETPENCOLOR 20002
+#define DRAWINGBOARD_MESSAGE_SETPENCOLOR 20002
 // 消息_鼠绘板_清空画板
-#define DBM_CLEAR 20003
+#define DRAWINGBOARD_MESSAGE_CLEAR 20003
 #pragma endregion drawingboard message
 
 #pragma region propertygrid message
 // 消息_属性框添加表项 添加行到尾部 wParam:组件_类型  lParam: PGITEM 指针 ----------
-#define PGM_ADDITEM  10010
+#define PROPERTYGRID_MESSAGE_ADDITEM  10010
 // 消息_属性框_取表项值 wParam: 未定义    lParam:表项名  return:表项值文本指针
-#define PGM_GETITEMVALUE  10011
+#define PROPERTYGRID_MESSAGE_GETITEMVALUE  10011
 // 消息_属性框_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
-#define PGM_SETITEMVALUE  10012
+#define PROPERTYGRID_MESSAGE_SETITEMVALUE  10012
 // 消息_属性框_清空项目
-#define PGM_CLEAR  10013
+#define PROPERTYGRID_MESSAGE_CLEAR  10013
 #pragma endregion propertygrid message
 
 #pragma region propertygrid notify
 // 事件_属性框_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)   lParam:数据指针(可以通过"__get(数据指针,PGL_内存偏移_***)"来获取数据)
-#define PGN_ITEMVALUECHANGE  10012
+#define PROPERTYGRID_EVENT_ITEMVALUECHANGE  10012
 #pragma endregion propertygrid notify
 
 #pragma region propertygrid obj type
 // 属性框_组件类型_分组
-#define PGT_OBJ_GROUP -1
+#define PROPERTYGRID_OBJTYPE_GROUP -1
 // 属性框_组件类型_编辑框
-#define PGT_OBJ_EDIT 0
+#define PROPERTYGRID_OBJTYPE_EDIT 0
 // 属性框_组件类型_组合框
-#define PGT_OBJ_COMBOBOX 1
+#define PROPERTYGRID_OBJTYPE_COMBOBOX 1
 // 属性框_组件类型_颜色框
-#define PGT_OBJ_COLORPICKER 2
+#define PROPERTYGRID_OBJTYPE_COLORPICKER 2
 // 属性框_组件类型_日期框
-#define PGT_OBJ_DATEBOX 3
+#define PROPERTYGRID_OBJTYPE_DATEBOX 3
 #pragma endregion propertygrid obj type
 
-// mibiblink浏览框加载类型_URL
-#define MBBL_TYPE_URL 0
+// miniblink浏览框加载类型_URL
+#define MINIBLINKBROWSER_TYPE_URL 0
 
-// 消息_mibiblink浏览框_获取浏览框句柄
-#define MBBM_GETWEBVIEW 100011
-// 消息_mibiblink浏览框_加载
-#define MBBM_LOAD 100012
-// 消息_mibiblink浏览框_执行js
-#define MBBM_JS 100013
+// 消息_miniblink浏览框_获取浏览框句柄
+#define MINIBLINKBROWSER_MESSAGE_GETWEBVIEW 100011
+// 消息_miniblink浏览框_加载
+#define MINIBLINKBROWSER_MESSAGE_LOAD 100012
+// 消息_miniblink浏览框_执行js
+#define MINIBLINKBROWSER_MESSAGE_JS 100013
 
 // 消息_媒体播放状态_播放
-#define MFM_STATE_PLAY 10010
+#define MEDIAPLAYER_MESSAGE_STATE_PLAY 10010
 // 消息_媒体播放状态_暂停
-#define MFM_STATE_PAUSE 10011
+#define MEDIAPLAYER_MESSAGE_STATE_PAUSE 10011
 // 消息_媒体播放状态_继续播放
-#define MFM_STATE_CONTINUE 10012
+#define MEDIAPLAYER_MESSAGE_STATE_CONTINUE 10012
 // 消息_媒体播放状态_停止
-#define MFM_STATE_STOP 10013
+#define MEDIAPLAYER_MESSAGE_STATE_STOP 10013
 // 消息_播放速率 lParam: (int)fRate
-#define MFM_RATE 10014
+#define MEDIAPLAYER_MESSAGE_RATE 10014
 // 消息_置播放位置 lParam: 单位 秒
-#define MFM_SET_POSITION 10015
+#define MEDIAPLAYER_MESSAGE_SET_POSITION 10015
 // 消息_取视频时长 单位 秒
-#define MFM_GET_DURATION 10016
+#define MEDIAPLAYER_MESSAGE_GET_DURATION 10016
 
 #pragma region rollmenu notify
 // 事件_卷帘菜单_单击子项   wParam: 子项索引 (索引从1开始,0为分组)  lParam: 分组索引 (索引从1开始)
-#define RMN_CLICK  -2
+#define ROLLMENU_EVENT_CLICK  -2
 #pragma endregion rollmenu notify 
 
 #pragma region rollmenu message
 // 消息_卷帘菜单_添加分组  wParam :索引(从1开始)  lParam: ROLLMENU_DATA * 指针
-#define RM_ADDGROUP 10010
+#define ROLLMENU_MESSAGE_ADDGROUP 10010
 // 消息_卷帘菜单_添加子项  wParam :分组索引(从1开始)  lParam: ROLLMENU_ITEM * 指针
-#define RM_ADDITEM 10011
+#define ROLLMENU_MESSAGE_ADDITEM 10011
 // 消息_卷帘菜单_删除分组  wParam :分组索引(从1开始)  lParam:未定义   return: BOOL 
-#define RM_DELGROUP 10012
+#define ROLLMENU_MESSAGE_DELGROUP 10012
 // 消息_卷帘菜单_删除子项  wParam :分组索引(从1开始)  lParam:子项索引(从1开始) return: BOOL 
-#define RM_DELITEM 10013
+#define ROLLMENU_MESSAGE_DELITEM 10013
 // 消息_卷帘菜单_设置分组状态(展开/收缩)  wParam :分组索引(从1开始)  lParam: 状态(BOOL)
-#define RM_SETEXPAND 10014
+#define ROLLMENU_MESSAGE_SETEXPAND 10014
 // 消息_卷帘菜单_取当前选中子项  wParam: [int*] 分组索引(从1开始)  lParam: [int*] 子项索引(从1开始)  return:子项标题
-#define RM_GETSEL 10015
+#define ROLLMENU_MESSAGE_GETSEL 10015
 // 消息_卷帘菜单_置当前选中子项  wParam: 分组索引(从1开始)  lParam : 子项索引(从1开始) return: BOOL 
-#define RM_SETSEL 10016
+#define ROLLMENU_MESSAGE_SETSEL 10016
 #pragma endregion rollmenu message
 
 #pragma region checkbox prop
 // 扩展选择盒属性_正常颜色
-#define ECBP_CRNORMAL 1
+#define CHECKBOX_PROP_CRNORMAL 1
 // 扩展选择盒属性_悬浮颜色
-#define ECBP_CRHOVER 2
+#define CHECKBOX_PROP_CRHOVER 2
 // 扩展选择盒属性_选中颜色
-#define ECBP_CRCHECKED 3
+#define CHECKBOX_PROP_CRCHECKED 3
 // 扩展选择盒属性_字体颜色
-#define ECBP_TEXT 4
+#define CHECKBOX_PROP_TEXT 4
 // 扩展选择盒属性_悬浮打钩颜色
-#define ECBP_CRHOVERCHECK 5
+#define CHECKBOX_PROP_CRHOVERCHECK 5
 #pragma endregion checkbox prop
 
 // 消息_父组件改变前   lParam :EXHANDLE hParent HWND或HEXDUI句柄
@@ -1564,41 +1557,41 @@
 
 #pragma region taggingboard message
 // 消息_标注板_开始绘制
-#define TBM_START 10000
+#define TAGGINGBOARD_MESSAGE_START 10000
 // 消息_标注板_结束绘制
-#define TBM_STOP 10001
+#define TAGGINGBOARD_MESSAGE_STOP 10001
 // 消息_标注板_清空
-#define TBM_CLEAR 10002
+#define TAGGINGBOARD_MESSAGE_CLEAR 10002
 // 消息_标注板_设置背景图片
-#define TBM_SET_BKG 10003
+#define TAGGINGBOARD_MESSAGE_SET_BKG 10003
 // 消息_标注板_设置画笔颜色, lParam颜色
-#define TBM_SET_PEN_COLOR 10004
+#define TAGGINGBOARD_MESSAGE_SET_PEN_COLOR 10004
 // 消息_标注板_取闭合路径点数组EX_POLYGON_ARRAY*指针, ret返回,不要释放
-#define TBM_GET_DATA 10005
+#define TAGGINGBOARD_MESSAGE_GET_DATA 10005
 // 消息_标注板_置闭合路径点数组EX_POLYGON_ARRAY*指针,lParam设置,内部原指针释放,无需设置临时点,只需设置闭合路径。
-#define TBM_SET_DATA 10006
+#define TAGGINGBOARD_MESSAGE_SET_DATA 10006
 // 消息_标注板_取图像缩放系数,ret返回小数指针,不要释放
-#define TBM_GET_IMG_SCALE 10007
+#define TAGGINGBOARD_MESSAGE_GET_IMG_SCALE 10007
 // 消息_标注板_取图像缩放后横坐标偏移, ret返回
-#define TBM_GET_IMG_LEFT_OFFSET 10008
+#define TAGGINGBOARD_MESSAGE_GET_IMG_LEFT_OFFSET 10008
 // 消息_标注板_取图像缩放后纵坐标偏移, ret返回
-#define TBM_GET_IMG_TOP_OFFSET 10009
+#define TAGGINGBOARD_MESSAGE_GET_IMG_TOP_OFFSET 10009
 // 消息_标注板_删除路径, lParam路径索引,索引从1开始
-#define TBM_DELETE_PATH 10010
+#define TAGGINGBOARD_MESSAGE_DELETE_PATH 10010
 // 消息_标注板_获取选中路径, 索引从1开始, 未选中返回0
-#define TBM_GET_HIT_PATH 10011
+#define TAGGINGBOARD_MESSAGE_GET_HIT_PATH 10011
 #pragma endregion taggingboard message
 
 #pragma region taggingboard notify
 // 事件_标注板_激活闭合路径,lParam返回路径索引,从1开始
-#define TBN_HIT_PATH 20000
+#define TAGGINGBOARD_EVENT_HITPATH 20000
 // 事件_标注板_鼠标移动, wParam返回鼠标所处图横坐标,lParam返回鼠标所处图纵坐标
-#define TBN_MOUSE_MOVE 20001
+#define TAGGINGBOARD_EVENT_MOUSEMOVE 20001
 #pragma endregion taggingboard notify
 
 #pragma region scrollbar message
 // 消息_滚动条_设置可视 lParam为1可视,0不可视
-#define SBM_SETVISIBLE 56212
+#define SCROLLBAR_MESSAGE_SETVISIBLE 56212
 #pragma endregion scrollbar message
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
@@ -1732,7 +1725,7 @@ struct EX_REPORTLIST_COLUMNINFO
 	DWORD dwTextFormat; //列文本格式
 	EXARGB crText;      //列文本颜色
 	UINT nInsertIndex;  //插入位置,0为在最后
-	EXARGB crBkg;		//列表头背景颜色, dwStyle具有ERLV_CS_COLOUR风格时生效
+	EXARGB crBkg;		//列表头背景颜色, dwStyle具有REPORTLISTVIEW_HEADER_STYLE_COLOUR风格时生效
 };
 
 // 报表项目信息结构
@@ -1743,7 +1736,7 @@ struct EX_REPORTLIST_ITEMINFO
 	DWORD nImageIndex; //项目图片组索引(同行共用)
 	LPARAM lParam;     //项目参数(同行共用)
 	DWORD dwState;     //项目状态(同行共用)
-	EXARGB rowBkgCr;   //dwStyle具有ERLV_RS_ROWCOLOUR风格时,整行的背景色
+	EXARGB rowBkgCr;   //dwStyle具有REPORTLISTVIEW_LINESTYLE_ROWCOLOUR风格时,整行的背景色
 };
 
 // 报表单元格信息 (用户取/置数据时使用)  对应内部 结构体 reportlistview_td_s
@@ -1753,9 +1746,9 @@ struct EX_REPORTLIST_CELLINFO
 	UINT iCol;         //所在列[IN / OUT]
 	LPCWSTR pwzText;   //项目文本
 	DWORD cellStyle;   //单元格风格
-	EXARGB cellBkgCr;   //cellStyle具有"ERLV_RS_CELLCOLOUR"风格时,单元格的背景色
-	EXARGB cellTextCr; //cellStyle具有"ERLV_RS_CELLTEXTCOLOUR"风格时,单元格的文本色
-	HEXFONT cellFont;   //cellStyle具有"ERLV_RS_CELLFONT"风格时,单元格的字体,该字体(修改时)无需手动释放
+	EXARGB cellBkgCr;   //cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR"风格时,单元格的背景色
+	EXARGB cellTextCr; //cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR"风格时,单元格的文本色
+	HEXFONT cellFont;   //cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLFONT"风格时,单元格的字体,该字体(修改时)无需手动释放
 	LPARAM lParam;     //单元格参数
 };
 
@@ -1766,7 +1759,7 @@ struct EX_REPORTLIST_ROWINFO
 	DWORD dwStyle;         //项目行风格 ERLV_RS_
 	LPARAM lParam;         //项目附加参数
 	DWORD nImageIndex;     //图片组索引
-	EXARGB rowBkgCr;	   //dwStyle具有"ERLV_RS_ROWCOLOUR"风格时,整行的背景色
+	EXARGB rowBkgCr;	   //dwStyle具有"REPORTLISTVIEW_LINESTYLE_ROWCOLOUR"风格时,整行的背景色
 };
 
 // 报表排序信息结构
@@ -1821,7 +1814,7 @@ struct EX_TREEVIEW_INSERTINFO
 	INT nImageIndexExpand;                 // 展开图片索引
 	BOOL fExpand;                          // 是否展开
 	DWORD dwStyle;                         // 风格
-	BOOL fUpdateLater;                     // 是否暂不更新(统一用TVM_UPDATE更新)
+	BOOL fUpdateLater;                     // 是否暂不更新(统一用TREEVIEW_MESSAGE_UPDATE更新)
 };
 
 // 背景信息结构
@@ -1898,21 +1891,21 @@ struct EX_DROPINFO
 	INT y;              //鼠标垂直位置
 };
 
-// 富文本框EM_EXSETSEL消息lParam参数结构
+// 富文本框EDIT_MESSAGE_EXSETSEL消息lParam参数结构
 struct EX_CHARRANGE
 {
 	LONG cpMin;
 	LONG cpMax;
 };
 
-// 富文本框EM_GETTEXTRANGE,EM_FINDTEXT消息接收lParam参数
+// 富文本框EDIT_MESSAGE_GETTEXTRANGE,EM_FINDTEXT消息接收lParam参数
 struct EX_TEXTRANGE
 {
 	EX_CHARRANGE chrg;
 	LPCWSTR pwzText;
 };
 
-// 富文本框EN_SELCHANGE消息lParam参数结构
+// 富文本框EDIT_EVENT_SELCHANGE消息lParam参数结构
 struct EX_SELCHANGE
 {
 	NMHDR nmhdr;
@@ -1920,7 +1913,7 @@ struct EX_SELCHANGE
 	WORD seltyp;
 };
 
-// 富文本框EN_LINK消息lParam参数结构
+// 富文本框EDIT_EVENT_LINK消息lParam参数结构
 #pragma pack(1)
 struct EX_ENLINK
 {
@@ -1980,7 +1973,7 @@ struct EX_PROGRID_ITEMINFO
 	size_t comboboxNum;							//组合框数组数量
 };
 
-// 属性框项目值改变信息结构 PGN_ITEMVALUECHANGE通知参数lParam
+// 属性框项目值改变信息结构 PROPERTYGRID_EVENT_ITEMVALUECHANGE通知参数lParam
 struct EX_PROGRID_CHANGEITEMINFO
 {
 	INT type;      // 改变类型 

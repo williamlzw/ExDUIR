@@ -11,7 +11,7 @@ BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLe
 
     if (retLen > 0)
     {
-        if (__get_unsignedchar(retPtr, 0) == EPDF_THEME)
+        if (__get_unsignedchar(retPtr, 0) == PACKAGEHEADER_THEME)
         {
             INT count = __get_int(retPtr, 1);
             if (count > 0)
@@ -363,11 +363,11 @@ BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FL
                             y = __get_int(pPosition, 4);
                             if (__query(pPosition, 8, 1))
                             {
-                                dwFlags = dwFlags | BIF_POSITION_X_PERCENT;
+                                dwFlags = dwFlags | BACKGROUND_FLAG_POSITION_X_PERCENT;
                             }
                             if (__query(pPosition, 8, 2))
                             {
-                                dwFlags = dwFlags | BIF_POSITION_Y_PERCENT;
+                                dwFlags = dwFlags | BACKGROUND_FLAG_POSITION_Y_PERCENT;
                             }
                         }
                         LPVOID pRepeat = nullptr;

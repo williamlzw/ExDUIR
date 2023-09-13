@@ -173,7 +173,7 @@ BOOL _canvas_destroy(HEXCANVAS hCanvas);
 /// <param name="srcLeft"></param>
 /// <param name="srcTop"></param>
 /// <param name="dwAlpha"></param>
-/// <param name="dwCompositeMode">#CV_COMPOSITE_MODE_</param>
+/// <param name="dwCompositeMode">#CANVAS_COMPOSITE_MODE_</param>
 /// <returns></returns>
 BOOL _canvas_drawcanvas(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight, INT dstBottom, INT srcLeft, INT srcTop, DWORD dwAlpha, DWORD dwCompositeMode);
 
@@ -219,7 +219,7 @@ BOOL _canvas_drawimage(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT Top
 /// <param name="gridPaddingTop"></param>
 /// <param name="gridPaddingRight"></param>
 /// <param name="gridPaddingBottom"></param>
-/// <param name="dwFlags">#BIF_</param>
+/// <param name="dwFlags">#BACKGROUND_FLAG_</param>
 /// <param name="dwAlpha"></param>
 /// <returns></returns>
 BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
@@ -1171,7 +1171,7 @@ BOOL _imglist_size(HEXIMAGELIST hImageList, INT* pWidth, INT* pHeight);
 /// </summary>
 /// <param name="hLayout"></param>
 /// <param name="hObjChild"></param>
-/// <param name="tLeft">#ELCP_ABSOLUTE_XXX_TYPE 下同</param>
+/// <param name="tLeft">#LAYOUT_SUBPROP_ABSOLUTE_XXX_TYPE 下同</param>
 /// <param name="tTop"></param>
 /// <param name="tRight"></param>
 /// <param name="tBottom"></param>
@@ -1185,7 +1185,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 /// </summary>
 /// <param name="hLayout"></param>
 /// <param name="hObjChild"></param>
-/// <param name="dwEdge">#ELCP_ABSOLUTE_XXX</param>
+/// <param name="dwEdge">#LAYOUT_SUBPROP_ABSOLUTE_XXX</param>
 /// <param name="dwType"></param>
 /// <param name="nValue"></param>
 /// <returns></returns>
@@ -1212,7 +1212,7 @@ BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, I
 /// <summary>
 /// 布局创建
 /// </summary>
-/// <param name="nType">#ELT_ 布局类型</param>
+/// <param name="nType">#LAYOUT_TYPE_ 布局类型</param>
 /// <param name="hObjBind">所绑定的HOBJ或HEXDUI</param>
 /// <returns></returns>
 HEXLAYOUT _layout_create(INT nType, EXHANDLE hObjBind);
@@ -1578,7 +1578,7 @@ BOOL _path_reset(HEXPATH hPath);
 /// </summary>
 /// <param name="hRgnSrc"></param>
 /// <param name="hRgnDst"></param>
-/// <param name="nCombineMode">#RGN_COMBINE_</param>
+/// <param name="nCombineMode">#REGION_COMBINE_</param>
 /// <param name="dstOffsetX"></param>
 /// <param name="dstOffsetY"></param>
 /// <returns></returns>
@@ -1671,7 +1671,7 @@ BOOL Ex_ObjCefBrowserInitialize(HMODULE hModule, LPCWSTR libPath, LPCWSTR dllNam
 /// </summary>
 /// <param name="hWnd"></param>
 /// <param name="hTheme"></param>
-/// <param name="dwStyle">#EWS_</param>
+/// <param name="dwStyle">#WINDOW_STYLE_</param>
 /// <returns></returns>
 HEXDUI Ex_DUIBindWindow(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle);
 
@@ -1680,7 +1680,7 @@ HEXDUI Ex_DUIBindWindow(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle);
 /// </summary>
 /// <param name="hWnd"></param>
 /// <param name="hTheme">主题句柄.(值可为0)</param>
-/// <param name="dwStyle">#EWS_</param>
+/// <param name="dwStyle">#WINDOW_STYLE_</param>
 /// <param name="lParam">附加参数.(值可为0)</param>
 /// <param name="lpfnMsgProc">(LRESULT)MsgProc(HWND hWnd,HEXDUI	hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult)</param>
 /// <returns></returns>
@@ -1705,7 +1705,7 @@ BOOL Ex_DUIGetClientRect(HEXDUI hExDui, RECT* lpClientRect);
 /// 获取引擎数值
 /// </summary>
 /// <param name="hExDui"></param>
-/// <param name="nIndex">EWL_</param>
+/// <param name="nIndex">#ENGINE_LONG_</param>
 /// <returns></returns>
 size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex);
 
@@ -1722,7 +1722,7 @@ HEXOBJ Ex_DUIGetObjFromPoint(EXHANDLE handle, INT x, INT y);
 /// 设置引擎数值
 /// </summary>
 /// <param name="hExDui"></param>
-/// <param name="nIndex">#EWL_</param>
+/// <param name="nIndex">#ENGINE_LONG_</param>
 /// <param name="dwNewLong"></param>
 /// <returns></returns>
 size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong);
@@ -1746,7 +1746,7 @@ BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, IN
 /// <param name="dwTimer">动画时间间隔</param>
 /// <param name="dwFrames">动画总帧数</param>
 /// <param name="dwFlags">动画标记.#EXA_</param>
-/// <param name="uEasing">缓动类型常量#ET_</param>
+/// <param name="uEasing">缓动类型常量#EASING_TYPE_</param>
 /// <param name="wParam">参数1</param>
 /// <param name="lParam">参数2</param>
 /// <returns></returns>
@@ -1788,7 +1788,7 @@ INT Ex_GetLastError();
 /// 初始化引擎
 /// </summary>
 /// <param name="hInstance">值可为0</param>
-/// <param name="dwGlobalFlags">相关常量:#EXGF_ .(值可为0)</param>
+/// <param name="dwGlobalFlags">相关常量:#ENGINE_FLAG_ .(值可为0)</param>
 /// <param name="hDefaultCursor">默认鼠标指针.(值可为0)</param>
 /// <param name="lpszDefaultClassName">默认窗口类名.(值可为0)</param>
 /// <param name="lpDefaultTheme">默认主题包指针</param>
@@ -1825,7 +1825,7 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
 /// <param name="lpText">消息框内容</param>
 /// <param name="lpCaption">消息框标题</param>
 /// <param name="uType">相关常量 #MB_</param>
-/// <param name="dwFlags">相关常量 #EMBF_</param>
+/// <param name="dwFlags">相关常量 #MESSAGEBOX_FLAG_</param>
 /// <returns></returns>
 INT Ex_MessageBox(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, INT dwFlags);
 
@@ -1839,7 +1839,7 @@ INT Ex_MessageBox(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, I
 /// <param name="lpCheckBox">检查框标题(消息框左下角显示一个检查框组件).(如果该窗口未使用引擎渲染,则该值无效)</param>
 /// <param name="lpCheckBoxChecked">返回检查框选中状态.(如果该窗口未使用引擎渲染,则该值无效)</param>
 /// <param name="dwMilliseconds">消息框延迟关闭时间，单位：毫秒。如果该值不为0,且超时后(即用户未操作)，消息框自动关闭，返回32000。</param>
-/// <param name="dwFlags">相关常量 #EMBF_</param>
+/// <param name="dwFlags">相关常量 #MESSAGEBOX_FLAG_</param>
 /// <param name="lpfnMsgProc">(BOOL)MsgProc(hWnd,hExDui,uMsg,wParam,lParam,lpResult)</param>
 /// <returns></returns>
 INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, LPCWSTR lpCheckBox, BOOL* lpCheckBoxChecked, INT dwMilliseconds, INT dwFlags, MsgPROC lpfnMsgProc);
@@ -1896,7 +1896,7 @@ BOOL Ex_ObjClientToWindow(HEXOBJ hObj, INT* x, INT* y);
 /// </summary>
 /// <param name="lptszClassName">组件类名</param>
 /// <param name="lptszObjTitle">组件标题</param>
-/// <param name="dwStyle">组件风格 相关常量 EOS_</param>
+/// <param name="dwStyle">组件风格 相关常量 OBJECT_STYLE_</param>
 /// <param name="x">左边</param>
 /// <param name="y">顶边</param>
 /// <param name="width">宽度</param>
@@ -1908,10 +1908,10 @@ HEXOBJ Ex_ObjCreate(LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, 
 /// <summary>
 /// 组件创建Ex
 /// </summary>
-/// <param name="dwStyleEx">组件扩展风格 相关常量 EOS_EX_</param>
+/// <param name="dwStyleEx">组件扩展风格 相关常量 OBJECT_STYLE_EX_</param>
 /// <param name="lptszClassName">组件类名</param>
 /// <param name="lptszObjTitle">组件标题</param>
-/// <param name="dwStyle">组件风格 相关常量 EOS_</param>
+/// <param name="dwStyle">组件风格 相关常量 OBJECT_STYLE_</param>
 /// <param name="x"></param>
 /// <param name="y"></param>
 /// <param name="width"></param>
@@ -2147,7 +2147,7 @@ HEXOBJ Ex_ObjGetFromNodeID(EXHANDLE hExDUIOrObj, INT nNodeID);
 /// 组件获取数值
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nIndex">相关常量 #EOL_</param>
+/// <param name="nIndex">相关常量 #OBJECT_LONG_</param>
 /// <returns></returns>
 LONG_PTR Ex_ObjGetLong(HEXOBJ hObj, INT nIndex);
 
@@ -2365,8 +2365,8 @@ BOOL Ex_ObjPostMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 /// 注册组件
 /// </summary>
 /// <param name="lptszClassName">组件类名.最大允许长度:MAX_CLASS_NAME_LEN</param>
-/// <param name="dwStyle">组件默认风格    EOS_</param>
-/// <param name="dwStyleEx">组件默认扩展风格 EOS_EX</param>
+/// <param name="dwStyle">组件默认风格    OBJECT_STYLE_</param>
+/// <param name="dwStyleEx">组件默认扩展风格 OBJECT_STYLE_EX</param>
 /// <param name="dwTextFormat">相关常量 DT_</param>
 /// <param name="cbObjExtra">组件额外分配字节数(值可为0),每个成员8字节</param>
 /// <param name="hCursor">组件默认鼠标指针句柄(值可为0)</param>
@@ -2387,7 +2387,7 @@ size_t Ex_ObjRemoveProp(HEXOBJ hObj, size_t dwKey);
 /// 组件禁用/启用滚动条
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">支持SB_BOTH</param>
+/// <param name="nBar">支持#SCROLLBAR_TYPE_</param>
 /// <param name="wArrows">相关常量 ESB_</param>
 /// <returns></returns>
 BOOL Ex_ObjScrollEnable(HEXOBJ hObj, INT nBar, INT wArrows);
@@ -2396,7 +2396,7 @@ BOOL Ex_ObjScrollEnable(HEXOBJ hObj, INT nBar, INT wArrows);
 /// 组件获取滚动条句柄
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">相关常量 #SB_</param>
+/// <param name="nBar">相关常量 #SCROLLBAR_TYPE_</param>
 /// <returns>返回滚动条句柄</returns>
 HEXOBJ Ex_ObjScrollGetControl(HEXOBJ hObj, INT nBar);
 
@@ -2416,7 +2416,7 @@ BOOL Ex_ObjScrollGetInfo(HEXOBJ hObj, INT nBar, INT* lpnMin, INT* lpnMax, INT* l
 /// 组件获取滚动条位置
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">相关常量 #SB_</param>
+/// <param name="nBar">相关常量 #SCROLLBAR_TYPE_</param>
 /// <returns>返回滚动条位置</returns>
 INT Ex_ObjScrollGetPos(HEXOBJ hObj, INT nBar);
 
@@ -2424,7 +2424,7 @@ INT Ex_ObjScrollGetPos(HEXOBJ hObj, INT nBar);
 /// 组件获取滚动条范围
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">相关常量 #SB_</param>
+/// <param name="nBar">相关常量 #SCROLLBAR_TYPE_</param>
 /// <param name="lpnMinPos"></param>
 /// <param name="lpnMaxPos"></param>
 /// <returns></returns>
@@ -2434,7 +2434,7 @@ BOOL Ex_ObjScrollGetRange(HEXOBJ hObj, INT nBar, INT* lpnMinPos, INT* lpnMaxPos)
 /// 组件获取滚动条拖动位置
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">相关常量 #SB_</param>
+/// <param name="nBar">相关常量 #SCROLLBAR_TYPE_</param>
 /// <returns></returns>
 INT Ex_ObjScrollGetTrackPos(HEXOBJ hObj, INT nBar);
 
@@ -2442,7 +2442,7 @@ INT Ex_ObjScrollGetTrackPos(HEXOBJ hObj, INT nBar);
 /// 组件设置滚动条信息
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">SB_</param>
+/// <param name="nBar">SCROLLBAR_TYPE_</param>
 /// <param name="Mask">SIF_</param>
 /// <param name="nMin"></param>
 /// <param name="nMax"></param>
@@ -2456,7 +2456,7 @@ INT Ex_ObjScrollSetInfo(HEXOBJ hObj, INT nBar, INT Mask, INT nMin, INT nMax, INT
 /// 组件设置滚动条位置
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">SB_</param>
+/// <param name="nBar">SCROLLBAR_TYPE_</param>
 /// <param name="nPos"></param>
 /// <param name="bRedraw"></param>
 /// <returns></returns>
@@ -2466,7 +2466,7 @@ INT Ex_ObjScrollSetPos(HEXOBJ hObj, INT nBar, INT nPos, BOOL bRedraw);
 /// 组件设置滚动条范围
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">SB_</param>
+/// <param name="nBar">SCROLLBAR_TYPE_</param>
 /// <param name="nMin"></param>
 /// <param name="nMax"></param>
 /// <param name="bRedraw"></param>
@@ -2477,7 +2477,7 @@ INT Ex_ObjScrollSetRange(HEXOBJ hObj, INT nBar, INT nMin, INT nMax, BOOL bRedraw
 /// 组件显示/隐藏滚动条
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nBar">SB_</param>
+/// <param name="nBar">SCROLLBAR_TYPE_</param>
 /// <param name="fShow"></param>
 /// <returns></returns>
 BOOL Ex_ObjScrollShow(HEXOBJ hObj, INT nBar, BOOL fShow);
@@ -2541,7 +2541,7 @@ EXARGB Ex_ObjSetColor(HEXOBJ hObj, INT nIndex, EXARGB dwColor, BOOL fRedraw);
 /// 编辑框设置选中行字符格式
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="dwMask">相关常量 CFM_</param>
+/// <param name="dwMask">相关常量 #EDIT_SELECT_CHARFORMAT_</param>
 /// <param name="crText">文本颜色,可空</param>
 /// <param name="wzFontFace">字体名称,可空</param>
 /// <param name="fontSize">字体尺寸,可空</param>
@@ -2558,12 +2558,12 @@ size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL,
 /// 编辑框设置选中行段落格式
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="dwMask">相关常量 PFM_</param>
-/// <param name="wNumbering">编号类型,可空 PFN_常量</param>
+/// <param name="dwMask">相关常量 #EDIT_SELECT_PARAGRAPHFORMAT_</param>
+/// <param name="wNumbering">编号类型,可空 #EDIT_PARAGRAPHFSYMBOL_常量</param>
 /// <param name="dxStartIndent">首行缩进,可空</param>
 /// <param name="dxRightIndent">右侧缩进,可空</param>
 /// <param name="dxOffset">非首行缩进,可空</param>
-/// <param name="wAlignment">段落对齐方式,可空 PFA_常量</param>
+/// <param name="wAlignment">段落对齐方式,可空 #EDIT_PARAGRAPHFALIGN_常量</param>
 /// <returns>返回结果</returns>
 size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering = NULL, INT dxStartIndent = NULL, INT dxRightIndent = NULL, INT dxOffset = NULL, WORD wAlignment = NULL);
 
@@ -2617,7 +2617,7 @@ BOOL Ex_ObjSetIMEState(EXHANDLE hObjOrExDui, BOOL fOpen);
 /// 组件设置数值
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nIndex">#EOL_</param>
+/// <param name="nIndex">#OBJECT_LONG_</param>
 /// <param name="dwNewLong"></param>
 /// <returns></returns>
 LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong);
@@ -2678,7 +2678,7 @@ size_t Ex_ObjSetProp(HEXOBJ hObj, size_t dwKey, size_t dwValue);
 BOOL Ex_ObjSetRadius(HEXOBJ hObj, FLOAT topleft, FLOAT topright, FLOAT bottomright, FLOAT bottomleft, BOOL fUpdate);
 
 /// <summary>
-/// 组件设置是否可以重画.如果组件扩展风格存在EOS_EX_COMPOSITED,则该函数无效.
+/// 组件设置是否可以重画.如果组件扩展风格存在OBJECT_STYLE_EX_COMPOSITED,则该函数无效.
 /// </summary>
 /// <param name="hObj"></param>
 /// <param name="fCanbeRedraw"></param>

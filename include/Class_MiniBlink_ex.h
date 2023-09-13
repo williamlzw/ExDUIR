@@ -2,10 +2,10 @@
 #include "help_ex.h"
 #include "mb.h"
 
-// mibiblink浏览框属性_浏览框句柄
-#define MBBL_VIEW 0
-// mibiblink浏览框属性_绘画函数地址
-#define MBBL_ONPAINT 1
+// miniblink浏览框属性_浏览框句柄
+#define MINIBLINKBROWSER_LONG_VIEW 0
+// miniblink浏览框属性_绘画函数地址
+#define MINIBLINKBROWSER_LONG_ONPAINT 1
 
 void _miniblink_register();
 LRESULT CALLBACK _miniblink_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

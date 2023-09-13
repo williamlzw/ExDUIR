@@ -251,7 +251,7 @@ void _dx_cliprect(ID2D1DeviceContext *pDeviceContext, FLOAT left, FLOAT top, FLO
     rect.top = top;
     rect.right = right;
     rect.bottom = bottom;
-    pDeviceContext->PushAxisAlignedClip(rect, (D2D1_ANTIALIAS_MODE)Flag_Query(EXGF_RENDER_CANVAS_ALIAS));
+    pDeviceContext->PushAxisAlignedClip(rect, (D2D1_ANTIALIAS_MODE)Flag_Query(ENGINE_FLAG_RENDER_CANVAS_ALIAS));
 }
 
 void _dx_resetclip(ID2D1DeviceContext *pDeviceContext)

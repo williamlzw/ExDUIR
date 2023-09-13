@@ -75,23 +75,25 @@ void test_exdui()
     HCURSOR hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
     Ex_ReadFile(L"res/Default.ext", &data);
     //开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
-    Ex_Init(GetModuleHandleW(NULL), EXGF_DPI_ENABLE | EXGF_MENU_ALL, hCursor, 0, data.data(), data.size(), 0, 0);
+    Ex_Init(GetModuleHandleW(NULL), ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_MENU_ALL, hCursor, 0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
     m_hWnd = Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
     if (m_hWnd != 0)
     {
-        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, EWS_MAINWINDOW | EWS_BUTTON_CLOSE | EWS_BUTTON_MIN | EWS_BUTTON_MAX | EWS_MOVEABLE | EWS_CENTERWINDOW | EWS_ESCEXIT | EWS_TITLE | EWS_SIZEABLE | EWS_HASICON | EWS_NOSHADOW, 0, 0);
+        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, WINDOW_STYLE_MAINWINDOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | 
+			WINDOW_STYLE_BUTTON_MAX | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE | 
+			WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW, 0, 0);
         //改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
-        HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, EWL_OBJCAPTION);
+        HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, ENGINE_LONG_OBJCAPTION);
         //标题栏窗口风格就是标题栏子组件的ID
-        HEXOBJ hObjTitle = Ex_ObjGetFromID(hObjCaption, EWS_TITLE);
+        HEXOBJ hObjTitle = Ex_ObjGetFromID(hObjCaption, WINDOW_STYLE_TITLE);
         Ex_ObjSetColor(hObjTitle, COLOR_EX_TEXT_NORMAL, ExARGB(120, 230, 21, 255), TRUE);
         //改变阴影颜色
-        Ex_DUISetLong(hExDui, EWL_CRSD, ExARGB(0, 0, 0, 240));
+        Ex_DUISetLong(hExDui, ENGINE_LONG_CRSD, ExARGB(0, 0, 0, 240));
         std::vector<CHAR> imgdata;
-        Ex_DUISetLong(hExDui, EWL_CRBKG, ExARGB(255, 255, 255, 240));
+        Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
-        Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BIR_DEFAULT, 0, 0, 255, TRUE);
+        Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
 
 
         std::vector<HEXOBJ> buttons;
