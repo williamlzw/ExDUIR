@@ -595,7 +595,7 @@
 
 #pragma region path flag constant
 // 路径标识_禁止缩放
-#define PATH_F_DISABLESCALE 1
+#define PATH_FLAG_DISABLESCALE 1
 #pragma endregion path flag constant
 
 
@@ -1320,7 +1320,7 @@
 #pragma endregion menu flag constant
 
 // 消息_选择菜单项目
-#define MENU_EVENT_SELECTITEM 0x1E5
+#define MENU_MESSAGE_SELECTITEM 0x1E5
 
 #pragma region listbutton message constant
 // 消息_列表按钮_按下项目 wParam按下横坐标 lParam 菜单句柄
@@ -1368,11 +1368,11 @@
 
 #pragma region groupbox long
 // 分组框属性_文本左边的偏移
-#define GROUPBOX_TEXT_OFFSET 0
+#define GROUPBOX_LONG_TEXT_OFFSET 0
 // 分组框属性_线框圆角度
-#define GROUPBOX_RADIUS 1
+#define GROUPBOX_LONG_RADIUS 1
 // 分组框属性_线宽
-#define GROUPBOX_STROKEWIDTH 2
+#define GROUPBOX_LONG_STROKEWIDTH	2
 #pragma endregion groupbox long
 
 #pragma region colorpicker message

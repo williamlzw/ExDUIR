@@ -897,7 +897,7 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM
             Ex_ObjSendMessage(_obj_getobjfromidorname(pWnd, WINDOW_STYLE_TITLE), uMsg, wParam, lParam);
         }
     }
-    else if (uMsg == MENU_EVENT_SELECTITEM) // MENU_EVENT_SELECTITEM
+    else if (uMsg == MENU_MESSAGE_SELECTITEM) // MENU_MESSAGE_SELECTITEM
     {
         if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT))
         {
@@ -3142,7 +3142,7 @@ BOOL _wnd_menu_callback_test(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, 
             Ex_ObjSetRadius(aryItems[j], 0, 0, 0, 15, TRUE);
         }
     }
-    else if (uMsg == MENU_EVENT_SELECTITEM) //MENU_EVENT_SELECTITEM 测试一下MenuBar切换菜单项的可行性
+    else if (uMsg == MENU_MESSAGE_SELECTITEM) //MENU_MESSAGE_SELECTITEM 测试一下MenuBar切换菜单项的可行性
     {
         POINT pt;
         GetCursorPos(&pt);

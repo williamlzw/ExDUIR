@@ -107,7 +107,7 @@ BOOL _shader_load(LPVOID pEffectContext, LPCSTR pHlsl, int pHlslLen, const GUID&
 	ID3DBlob* pCode;
 	ID3DBlob* pErrorMsg;
 	//编译着色器代码
-	auto hr = D3DCompile(pHlsl, pHlslLen, NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_4_0", NULL, NULL, &pCode, &pErrorMsg);
+	auto hr = D3DCompile(pHlsl, pHlslLen, NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", NULL, NULL, &pCode, &pErrorMsg);
 	if (FAILED(hr))
 	{
 		pErrorMsg->Release();

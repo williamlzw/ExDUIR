@@ -714,7 +714,7 @@ LRESULT CALLBACK _listbuttonex_menu_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPA
 {
 	INT nError = 0;
 
-	if (uMsg == MENU_EVENT_SELECTITEM && LODWORD(wParam) == -1)
+	if (uMsg == MENU_MESSAGE_SELECTITEM && LODWORD(wParam) == -1)
 	{
 		wnd_s* pWnd;
 		if (_handle_validate(hExDUI, HT_DUI, (LPVOID*)&pWnd, &nError))

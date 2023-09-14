@@ -13,12 +13,12 @@ void _groupbox_paint(HEXOBJ hObj, obj_s *pObj)
         _canvas_clear(ps.hCanvas, 0);
         LPCWSTR lpText = pObj->pstrTitle_;
         RECT rcText{};
-        FLOAT radius = Ex_ObjGetLong(hObj, GROUPBOX_RADIUS);
-        FLOAT textoffset = Ex_ObjGetLong(hObj, GROUPBOX_TEXT_OFFSET);
+        FLOAT radius = Ex_ObjGetLong(hObj, GROUPBOX_LONG_RADIUS);
+        FLOAT textoffset = Ex_ObjGetLong(hObj, GROUPBOX_LONG_TEXT_OFFSET);
         if (textoffset == 0)
             textoffset = 10;
 
-        FLOAT strokewidth = Ex_ObjGetLong(hObj, GROUPBOX_STROKEWIDTH);
+        FLOAT strokewidth = Ex_ObjGetLong(hObj, GROUPBOX_LONG_STROKEWIDTH);
         if (strokewidth == 0)
             strokewidth = 2;
 

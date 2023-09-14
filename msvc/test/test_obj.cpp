@@ -484,7 +484,7 @@ LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
 			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), TRUE);  //改变菜单项目背景颜色
 		}
 	}
-	else if (uMsg == MENU_EVENT_SELECTITEM && (DWORD)wParam == -1) //恢复正常状态
+	else if (uMsg == MENU_MESSAGE_SELECTITEM && (DWORD)wParam == -1) //恢复正常状态
 	{
 		POINT point = { 0 };
 		GetCursorPos(&point);
@@ -794,9 +794,9 @@ void test_groupbox(HWND hWnd)
 	HEXOBJ hObj_groupbox = Ex_ObjCreate(L"groupbox", L"分组框", -1, 30, 30, 230, 230, hExDui_groupbox);
 	Ex_ObjSetColor(hObj_groupbox, COLOR_EX_TEXT_NORMAL, ExARGB(255, 55, 55, 255), FALSE);
 	Ex_ObjSetColor(hObj_groupbox, COLOR_EX_BORDER, ExARGB(55, 0, 250, 255), FALSE);
-	Ex_ObjSetLong(hObj_groupbox, GROUPBOX_TEXT_OFFSET, 50);
-	Ex_ObjSetLong(hObj_groupbox, GROUPBOX_RADIUS, 30);
-	Ex_ObjSetLong(hObj_groupbox, GROUPBOX_STROKEWIDTH, 3);
+	Ex_ObjSetLong(hObj_groupbox, GROUPBOX_LONG_TEXT_OFFSET, 50);
+	Ex_ObjSetLong(hObj_groupbox, GROUPBOX_LONG_RADIUS, 30);
+	Ex_ObjSetLong(hObj_groupbox, GROUPBOX_LONG_STROKEWIDTH, 3);
 	Ex_DUIShowWindow(hExDui_groupbox, SW_SHOWNORMAL, 0, 0, 0);
 }
 
