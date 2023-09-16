@@ -98,29 +98,57 @@ void _effect_destroy(HEXEFFECT hEffect)
 	((ID2D1Effect*)hEffect)->Release();
 }
 
+BOOL _shader_loadfromfile(LPVOID pEffectContext, LPCWSTR csoFileNameInOut,  const GUID& shaderID)
+{
+	if (((ID2D1EffectContext*)pEffectContext)->IsShaderLoaded(shaderID))
+	{
+		return TRUE;
+	}
+	ID3DBlob* pBlob;
+	ID3DBlob* pErrorMsg;
+	auto hr = D3DReadFileToBlob(csoFileNameInOut, &pBlob);
+	if (FAILED(hr))
+	{
+		return FALSE;
+	}
+	auto lpShaderBytecode = pBlob->GetBufferPointer();
+	auto nShaderBytecodeLength = pBlob->GetBufferSize();
+	hr = ((ID2D1EffectContext*)pEffectContext)->LoadPixelShader(shaderID, (BYTE*)lpShaderBytecode, nShaderBytecodeLength);
+	if (FAILED(hr))
+	{
+		pErrorMsg->Release();
+		pBlob->Release();
+		return FALSE;
+	}
+	pBlob->Release();
+	return TRUE;
+}
+
 BOOL _shader_load(LPVOID pEffectContext, LPCSTR pHlsl, int pHlslLen, const GUID& shaderID)
 {
 	if (((ID2D1EffectContext*)pEffectContext)->IsShaderLoaded(shaderID))
 	{
 		return TRUE;
 	}
-	ID3DBlob* pCode;
+	ID3DBlob* pBlob;
 	ID3DBlob* pErrorMsg;
 	//编译着色器代码
-	auto hr = D3DCompile(pHlsl, pHlslLen, NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", NULL, NULL, &pCode, &pErrorMsg);
+	auto hr = D3DCompile(pHlsl, pHlslLen, NULL, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0", NULL, NULL, &pBlob, &pErrorMsg);
 	if (FAILED(hr))
 	{
 		pErrorMsg->Release();
 		return FALSE;
 	}
-	auto lpShaderBytecode = pCode->GetBufferPointer();
-	auto nShaderBytecodeLength = pCode->GetBufferSize();
+	D3DWriteBlobToFile(pBlob, L"result.cso", TRUE);
+	auto lpShaderBytecode = pBlob->GetBufferPointer();
+	auto nShaderBytecodeLength = pBlob->GetBufferSize();
 	hr = ((ID2D1EffectContext *)pEffectContext)->LoadPixelShader(shaderID, (BYTE*)lpShaderBytecode, nShaderBytecodeLength);
 	if (FAILED(hr)) 
 	{
 		pErrorMsg->Release();
+		pBlob->Release();
 		return FALSE;
 	}
-	pCode->Release();
+	pBlob->Release();
 	return TRUE;
 }

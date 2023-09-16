@@ -1630,7 +1630,7 @@ BOOL _rgn_destroy(HEXRGN hRgn);
 BOOL _rgn_hittest(HEXRGN hRgn, FLOAT x, FLOAT y);
 
 /// <summary>
-/// 着色器加载
+/// 着色器加载,注意加载成功会在程序运行目录生成编译后的result.cso文件方便下次调用,覆盖。
 /// </summary>
 /// <param name="pEffectContext">效果器上下文ID2D1EffectContext*</param>
 /// <param name="pHlsl">着色器代码指针</param>
@@ -1638,6 +1638,15 @@ BOOL _rgn_hittest(HEXRGN hRgn, FLOAT x, FLOAT y);
 /// <param name="shaderID">着色器GUID</param>
 /// <returns></returns>
 BOOL _shader_load(LPVOID pEffectContext, LPCSTR pHlsl, int pHlslLen, const GUID& shaderID);
+
+/// <summary>
+/// 着色器加载自文件
+/// </summary>
+/// <param name="pEffectContext">效果器上下文ID2D1EffectContext*</param>
+/// <param name="csoFileNameInOut">已编译的着色器cso文件</param>
+/// <param name="shaderID">着色器GUID</param>
+/// <returns></returns>
+BOOL _shader_loadfromfile(LPVOID pEffectContext, LPCWSTR csoFileNameInOut, const GUID& shaderID);
 
 /// <summary>
 /// 申请内存

@@ -304,10 +304,11 @@ public:
 		std::vector<CHAR> data1;
 		Ex_ReadFile(L"res/effect.hlsl", &data1);
 		std::string buf = u2a2(data1);
-		if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
+		_shader_loadfromfile(pEffectContext, L"res/effect.cso", GUID_MYSHADER);
+		/*if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
 		{
 			return E_INVALIDARG;
-		}
+		}*/
 		
 		_transform = new MyTransform(GUID_MYSHADER);
 
