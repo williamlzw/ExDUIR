@@ -1,6 +1,7 @@
 #pragma once
 #include "help_ex.h"
 #include "ExDUIR_Func.h"
+#include "nanosvgrast.h"
 
 #define PNG_HEADER 1196314761
 #define PNG_IHDR 1380206665
@@ -37,3 +38,4 @@ IWICBitmap *_wic_convert(IWICBitmapSource *pBitmapSource, BOOL bFreeOld, INT *nE
 IWICBitmap *_wic_selectactiveframe(IWICBitmapDecoder *pDecoder, INT nIndex, INT *nError, D2D1_RECT_F *dest);
 EXARGB _wic_getpixel(IWICBitmapSource *pBitmap, INT x, INT y, INT *nError);
 BOOL _wic_getframedelay(IWICBitmapDecoder *pDecoder, INT *lpDelay, INT nCount, INT *nError);
+BOOL _img_createfromsvg(EXARGB color, NSVGimage* image, HEXIMAGE* phImg);

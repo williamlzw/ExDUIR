@@ -3709,12 +3709,11 @@ LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 		_canvas_drawtext(wParam, hFont, ExRGBA(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
 		_font_destroy(hFont);
 
-		_canvas_drawsvgfromfile(wParam, L"./res/niu1.svg", 0, 50, 50, 200, 200);
+		_canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 50, 50, 200, 200);
 		std::vector<CHAR> data;
 		Ex_ReadFile(L"./res/niu1.svg", &data);
 		_canvas_drawsvg(wParam, data.data(), ExRGBA(55, 250, 20, 255), 250, 50, 400, 200);
-		_canvas_drawsvgfromfile(wParam, L"./res/niu1.svg", ExRGBA(55, 0, 250, 255), 50, 250, 200, 400);
-		_canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 250, 250, 400, 450);
+
 
 		*lpResult = 1;
 		return 1;
@@ -3727,6 +3726,10 @@ void test_svgAndfont(HWND hWnd)
 	HWND hWnd_svgAndfont = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"自定义字体和SVG测试", 0, 0, 500, 600, 0, 0);
 	HEXDUI hExDui_svgAndfont = Ex_DUIBindWindowEx(hWnd_svgAndfont, 0, WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE, 0, OnsvgAndfontProc);
 	Ex_DUISetLong(hExDui_svgAndfont, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
+	auto obj = Ex_ObjCreate(L"static", NULL, -1, 50, 250, 150, 150, hExDui_svgAndfont);
+	std::vector<CHAR> imgdata;
+	Ex_ReadFile(L"res\\niu1.svg", &imgdata);
+	Ex_ObjSetBackgroundImageFromSvgBuf(obj, imgdata.data(), ExRGBA(55, 0, 250, 255), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
 	Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL, 0, 0, 0);
 }
 

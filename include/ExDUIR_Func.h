@@ -917,6 +917,24 @@ BOOL _img_createfromres(HEXRES hRes, EXATOM atomPath, HEXIMAGE* phImg);
 BOOL _img_createfromstream(LPSTREAM lpStream, HEXIMAGE* phImg);
 
 /// <summary>
+/// 图像创建自SVG文件数据
+/// </summary>
+/// <param name="input">SVG文件数据</param>
+/// <param name="color">填充颜色,0不填充</param>
+/// <param name="phImg">返回图像</param>
+/// <returns></returns>
+BOOL _img_createfromsvgbuf(CHAR* input, EXARGB color, HEXIMAGE* phImg);
+
+/// <summary>
+/// 图像创建自SVG文件
+/// </summary>
+/// <param name="lpwzFilename">SVG文件路径</param>
+/// <param name="color">填充颜色,0不填充</param>
+/// <param name="phImg">返回图像</param>
+/// <returns></returns>
+BOOL _img_createfromsvgfile(LPCWSTR lpwzFilename, EXARGB color, HEXIMAGE* phImg);
+
+/// <summary>
 /// 图像销毁
 /// </summary>
 /// <param name="hImg"></param>
@@ -2516,6 +2534,22 @@ size_t Ex_ObjSendMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 /// <param name="fUpdate">是否立即刷新</param>
 /// <returns></returns>
 BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen, INT x, INT y, DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate);
+
+/// <summary>
+/// 组件设置背景信息从Svg文件数据
+/// </summary>
+/// <param name="handle"></param>
+/// <param name="svgBuf">Svg文件数据</param>
+/// <param name="color">填充颜色，0为不填充</param>
+/// <param name="x">偏移X</param>
+/// <param name="y">偏移Y</param>
+/// <param name="dwRepeat">相关常量 BIR_</param>
+/// <param name="lpGrid">九宫矩形指针 (值可为0)</param>
+/// <param name="dwFlags">相关常量 BIF_</param>
+/// <param name="dwAlpha">透明度(0-255)</param>
+/// <param name="fUpdate">是否立即刷新</param>
+/// <returns></returns>
+BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf, EXARGB color, INT x, INT y, DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate);
 
 /// <summary>
 /// 组件设置背景图片播放状态

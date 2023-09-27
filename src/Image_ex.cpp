@@ -1252,3 +1252,67 @@ BOOL _img_paste(HEXIMAGE dstImg, HEXIMAGE srcImg, INT destX, INT destY, HEXIMAGE
 	Ex_SetLastError(nError);
 	return TRUE;
 }
+
+BOOL _img_createfromsvg(EXARGB color, NSVGimage* image, HEXIMAGE* phImg)
+{
+	BOOL ret = FALSE;
+	int w = (int)image->width;
+	int h = (int)image->height;
+	if (color)
+	{
+		image->shapes->fill.color = nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
+		auto next = image->shapes->next;
+		while (next != NULL)
+		{
+			next->fill.color = nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
+			next = next->next;
+		}
+	}
+	NSVGrasterizer* rast = nsvgCreateRasterizer();
+	if (rast)
+	{
+		unsigned char* img = (unsigned char*)malloc(w * h * 4);
+		nsvgRasterize(rast, image, 0, 0, 1, img, w, h, w * 4);
+		if (phImg)
+		{
+			_img_createfrompngbits2(w, h, img, phImg);
+			ret = TRUE;
+		}
+		free(img);
+		nsvgDeleteRasterizer(rast);
+	}
+	
+	return ret;
+}
+
+BOOL _img_createfromsvgfile(LPCWSTR lpwzFilename, EXARGB color, HEXIMAGE* phImg)
+{
+	BOOL ret = FALSE;
+	std::string name = w2u(lpwzFilename);
+	NSVGimage* image = nsvgParseFromFile(name.data(), "px", 96);
+	if (image)
+	{
+		if (phImg)
+		{
+			ret = _img_createfromsvg(color, image, phImg);
+		}
+	}
+	nsvgDelete(image);
+	return ret;
+}
+
+
+BOOL _img_createfromsvgbuf(CHAR* input, EXARGB color, HEXIMAGE* phImg)
+{
+	BOOL ret = FALSE;
+	NSVGimage* image = nsvgParse(input, "px", 96);
+	if (image)
+	{
+		if (phImg)
+		{
+			ret = _img_createfromsvg(color, image, phImg);
+		}
+	}
+	nsvgDelete(image);
+	return ret;
+}
