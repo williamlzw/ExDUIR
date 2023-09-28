@@ -293,7 +293,7 @@ _img_rotateflip
 _img_createfrompngbits
 _img_createfrompngbits2
 _img_mask
-_img_createfromsvgdata
+_img_createfromsvgbuf
 _img_createfromsvgfile
 ;_img_getthumbnail
 

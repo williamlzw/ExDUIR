@@ -2093,10 +2093,12 @@ struct EX_EFFECT_PROPERITY_INFO
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
 
 
-template <class Ty> //这里实现了 INT long FLOAT DOUBLE  unsigned INT/... 等等
-static void pt(std::wstring& str, Ty v)
+template <class T> //这里实现了 INT long FLOAT DOUBLE  unsigned INT/... 等等
+static void pt(std::wstring& str, T v)
 {
-	str.append(std::to_wstring(v) + L" ");
+	std::wostringstream woss;
+	woss << v;
+	str.append(woss.str() + L" ");
 }
 
 static void pt(std::wstring& str, std::wstring s) //这个是 文本型
