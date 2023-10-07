@@ -1575,6 +1575,21 @@ LRESULT CALLBACK OnReportListViewButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WP
 	return 0;
 }
 
+std::wstring generate_random_string(int length) {
+	const std::wstring CHARACTERS = L"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+	std::random_device random_device;
+	std::mt19937 generator(random_device());
+	std::uniform_int_distribution<> distribution(0, CHARACTERS.size() - 1);
+
+	std::wstring random_string;
+
+	for (int i = 0; i < length; ++i) {
+		random_string += CHARACTERS[distribution(generator)];
+	}
+
+	return random_string;
+}
 
 void test_reportlistview(HWND hWnd)
 {
@@ -1605,14 +1620,14 @@ void test_reportlistview(HWND hWnd)
 	Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_INSERTCOLUMN, 0, (size_t)&col);
 
 	col.pwzText = L"固定列宽";
-	col.nWidth = 110;
+	col.nWidth = 60;
 	col.crText = ExRGB2ARGB(16711680, 255);
 	col.dwStyle = REPORTLISTVIEW_HEADER_STYLE_LOCKWIDTH;
 	col.dwTextFormat = DT_LEFT;
 	Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_INSERTCOLUMN, 0, (size_t)&col);
 
 	col.pwzText = L"居中可点击";
-	col.nWidth = 100;
+	col.nWidth = 80;
 	col.crText = ExRGB2ARGB(65535, 255);
 	col.dwStyle = REPORTLISTVIEW_HEADER_STYLE_CLICKABLE | REPORTLISTVIEW_HEADER_STYLE_COLOUR;
 	col.dwTextFormat = DT_CENTER | DT_VCENTER;
@@ -1620,7 +1635,7 @@ void test_reportlistview(HWND hWnd)
 	Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_INSERTCOLUMN, 0, (size_t)&col);
 
 	col.pwzText = L"可排序";
-	col.nWidth = 60;
+	col.nWidth = 130;
 	col.crText = ExRGB2ARGB(16777215, 255);
 	col.dwStyle = REPORTLISTVIEW_HEADER_STYLE_CLICKABLE | REPORTLISTVIEW_HEADER_STYLE_SORTABLE;
 	col.dwTextFormat = DT_RIGHT | DT_VCENTER;
@@ -1663,7 +1678,7 @@ void test_reportlistview(HWND hWnd)
 
 		cell.iCol = 4;
 		cell.iRow = i;
-		auto str = std::to_wstring(Random(0, 1000));
+		auto str = generate_random_string(8);
 		cell.pwzText = str.c_str();
 		cell.cellStyle = REPORTLISTVIEW_CELLSTYLE_CELLFONT;
 		cell.cellFont = _font_createfromfamily(L"微软雅黑", 20, 0);

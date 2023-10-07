@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <random>
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 

@@ -266,8 +266,10 @@ LRESULT CALLBACK _reportlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			array_s* hArr = (array_s*)Ex_ObjGetLong(hObj, REPORTLISTVIEW_LONG_TRINFO);
 			if (hArr != 0 && iCol >= 0 && iCol <= Ex_ObjGetLong(hObj, REPORTLISTVIEW_LONG_CTCS))
 			{
+				//自定义了排序比较函数,传入结构体
 				Array_SetType(hArr, lParam);
-				Array_Sort(hArr, ((EX_REPORTLIST_SORTINFO*)lParam)->fDesc != FALSE);
+				Array_Sort(hArr, ((EX_REPORTLIST_SORTINFO*)lParam)->fDesc);
+				//恢复
 				Array_SetType(hArr, 0);
 				Ex_ObjSetLong(hObj, REPORTLISTVIEW_LONG_TCIDXSORTED, ((EX_REPORTLIST_SORTINFO*)lParam)->iCol);
 				Ex_ObjSetLong(hObj, REPORTLISTVIEW_LONG_FTCSORTEDDESC, ((EX_REPORTLIST_SORTINFO*)lParam)->fDesc);
@@ -511,14 +513,15 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 				{
 					if ((pTC->dwStyle & REPORTLISTVIEW_HEADER_STYLE_SORTABLE) == REPORTLISTVIEW_HEADER_STYLE_SORTABLE) //如果是可排序的,则按文本自动排序
 					{
-						EX_REPORTLIST_SORTINFO* p = (EX_REPORTLIST_SORTINFO*)Ex_MemAlloc(sizeof(EX_REPORTLIST_SORTINFO));
-						p->iCol = nIndex;
+						EX_REPORTLIST_SORTINFO* pSortInfo = (EX_REPORTLIST_SORTINFO*)Ex_MemAlloc(sizeof(EX_REPORTLIST_SORTINFO));
+						pSortInfo->iCol = nIndex;
 						if (Ex_ObjGetLong(hObjList, REPORTLISTVIEW_LONG_TCIDXSORTED) == nIndex)
 						{
-							p->fDesc = Ex_ObjGetLong(hObjList, REPORTLISTVIEW_LONG_FTCSORTEDDESC) != 0 ? FALSE : TRUE;
+							pSortInfo->fDesc = Ex_ObjGetLong(hObjList, REPORTLISTVIEW_LONG_FTCSORTEDDESC) != 0 ? FALSE : TRUE;
 						}
-						Ex_ObjSendMessage(hObjList, LISTVIEW_MESSAGE_SORTITEMS, 0, (size_t)p);
-						Ex_MemFree(p);
+						pSortInfo->nType = 0;
+						Ex_ObjSendMessage(hObjList, LISTVIEW_MESSAGE_SORTITEMS, 0, (size_t)pSortInfo);
+						Ex_MemFree(pSortInfo);
 					}
 				}
 			}

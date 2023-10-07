@@ -3,33 +3,17 @@
 LPVOID Array_MoveMember(LPVOID pData, INT nCount, INT nSize, INT nNewCount)
 {
     LPVOID pNewData = Ex_MemAlloc(2 * sizeof(size_t) + nSize * sizeof(LPVOID));
-    INT nMoveBytes = 0;
-    if (pData != 0 && nCount != 0 && nSize != 0)
+	INT nMoveBytes = min(nCount, nSize) * sizeof(LPVOID);
+    if (pData != 0 && nMoveBytes > 0)
     {
-        if (nSize < nCount)
-        {
-            nMoveBytes = nSize * sizeof(LPVOID);
-        }
-        else
-        {
-            nMoveBytes = nCount * sizeof(LPVOID);
-        }
-        RtlMoveMemory((LPVOID)((size_t)pNewData + 2 * sizeof(size_t)), pData, nMoveBytes);
+		RtlMoveMemory((LPVOID)((size_t)pNewData + 2 * sizeof(size_t)), pData, nMoveBytes);
     }
     return (LPVOID)((size_t)pNewData + 2 * sizeof(size_t));
 }
 
 BOOL Array_IsLegal(array_s *pArray, size_t nIndex)
 {
-    if ((pArray == 0) || IsBadReadPtr(pArray, sizeof(array_s)))
-        return FALSE;
-    if (nIndex != 0)
-    {
-        size_t nCount = pArray->nCount_;
-        if (nIndex <= 0 || nIndex > nCount)
-            return FALSE;
-    }
-    return TRUE;
+	return !(pArray == nullptr || IsBadReadPtr(pArray, sizeof(array_s)) || (nIndex > 0 && (nIndex <= 0 || nIndex > pArray->nCount_)));
 }
 
 BOOL Array_Resize(array_s *pArray, INT nCount, BOOL fGrowCount)
@@ -39,12 +23,8 @@ BOOL Array_Resize(array_s *pArray, INT nCount, BOOL fGrowCount)
     LPVOID pData = pArray->lpData_;
     if (fGrowCount)
         nCount = nCount + pArray->nCount_;
-    INT nSize = pArray->nSize_;
-    if (nSize <= 0)
-        nSize = 1;
-    FLOAT flGrow = pArray->flGrow_;
-    if (flGrow <= ARRAY_GROWTHFACTOR)
-        flGrow = (FLOAT)ARRAY_GROWTHFACTOR;
+	INT nSize = max(pArray->nSize_, 1);
+    FLOAT flGrow = max(pArray->flGrow_, ARRAY_GROWTHFACTOR);
     while (nSize >= (INT)(flGrow * nSize))
     {
         flGrow = flGrow + (FLOAT)0.1;
