@@ -268,56 +268,121 @@ BOOL Array_Sort(array_s *pArray, BOOL fDesc)
         return FALSE;
     if (pArray->nCount_ <= 1)
         return TRUE;
-    Array_SortProcess(pArray, fDesc, 0, pArray->nCount_ - 1);
+	Array_SortProcess(pArray, fDesc);
     return TRUE;
 }
 
-BOOL Array_CompareResult(array_s *pArray, LONG_PTR nIndex, size_t mid, BOOL fDesc)
+void Array_Swap(array_s* pArray, LONG_PTR nIndex1, LONG_PTR nIndex2)
 {
-    LONG_PTR reta = Array_SetEvent(pArray, ARRAY_EVENT_COMPAREMEMBER, 0, mid, nIndex + 1, ARRAY_COMPARECAUSE_SORT);
-    BOOL ret = (reta < 0);
-    return ret == fDesc;
+	LPVOID pData = pArray->lpData_;
+	LONG_PTR mid = __get(pData, nIndex1 * sizeof(size_t));
+	__set(pData, nIndex1 * sizeof(size_t), __get(pData, nIndex2 * sizeof(size_t)));
+	__set(pData, nIndex2 * sizeof(size_t), mid);
 }
 
-void Array_SortProcess(array_s *pArray, BOOL fDesc, LONG_PTR nStart, LONG_PTR nEnd)
+void Array_SortProcess(array_s* pArray, BOOL fDesc)
 {
-    LONG_PTR nLeft = nStart;
-    LONG_PTR nRight = nEnd;
+	INT count = pArray->nCount_;
+	std::vector<INT> startStack;
+	startStack.resize(count);
+	std::vector<INT> stopStack;
+	stopStack.resize(count);
+	INT posStack = 0;
+	INT startPos = 0;
+	INT stopPos = count - 1;
+	startStack[0] = startPos;
+	stopStack[0] = stopPos;
+	INT i = startPos, j = stopPos;
+	
+	while (posStack > -1)
+	{
+		startPos = startStack[posStack];
+		stopPos = stopStack[posStack];
+		posStack = posStack - 1;
+		if (startPos == stopPos)
+		{
+			continue;
+		}
+		i = startPos;
+		j = stopPos;
 
-    if (nLeft >= nRight)
-    {
-        return;
-    }
-    LPVOID pData = pArray->lpData_;
-    LONG_PTR mid = __get(pData, nLeft * sizeof(size_t)); //mid为左侧第一个数(可以是中间任意一个)
-    while (nLeft < nRight)
-    {
-        while (Array_CompareResult(pArray, nRight, mid, fDesc) && nRight > nLeft) //从右找第一个和mid逆序的数
-        {
-            nRight = nRight - 1;
-        }
-        if (nRight > nLeft) //找到则换掉
-        {
-            __set(pData, nLeft * sizeof(size_t), __get(pData, nRight * sizeof(size_t)));
-            nLeft = nLeft + 1;
-        }
-
-        while (Array_CompareResult(pArray, nLeft, mid, fDesc) == FALSE && nRight > nLeft) //从左侧找第一个和mid逆序的数
-        {
-            nLeft = nLeft + 1;
-        }
-        if (nRight > nLeft) //找到则换掉
-        {
-            __set(pData, nRight * sizeof(size_t), __get(pData, nLeft * sizeof(size_t)));
-            nRight = nRight - 1;
-        }
-    }
-
-    __set(pData, nLeft * sizeof(size_t), mid); // 确定出mid的位置
-
-    Array_SortProcess(pArray, fDesc, nStart, nLeft - 1);
-    Array_SortProcess(pArray, fDesc, nLeft + 1, nEnd);
+		INT indexPos = rand() % (stopPos - startPos + 1) + startPos;
+		
+		Array_Swap(pArray, startPos, indexPos);
+		LONG_PTR mid = __get(pArray->lpData_, startPos * sizeof(size_t));
+		INT newPos;
+		while (TRUE)
+		{
+			while (j >= i)
+			{
+				if (fDesc)
+				{
+					if (Array_CompareResult(pArray, j, mid) > 0) //pArray->lpData_[j] > mid
+					{
+						break;
+					}
+				}
+				else 
+				{
+					if (Array_CompareResult(pArray, j, mid) < 0)//pArray->lpData_[j] < mid
+					{
+						break;
+					}
+				}
+				j--;
+			}
+			if (j <= i)
+			{
+				newPos = i;
+				break;
+			}
+			while (i <= j)
+			{
+				if (fDesc)
+				{
+					if (Array_CompareResult(pArray, i, mid) < 0)//pArray->lpData_[i] < mid
+					{
+						break;
+					}
+				}
+				else
+				{
+					if (Array_CompareResult(pArray, i, mid) > 0)//pArray->lpData_[i] > mid
+					{
+						break;
+					}
+				}
+				i++;
+			}
+			if (i >= j)
+			{
+				newPos = j;
+				break;
+			}
+			Array_Swap(pArray, j, i);
+		}
+		Array_Swap(pArray, startPos, newPos);
+		if (newPos > startPos)
+		{
+			posStack = posStack + 1;
+			startStack[posStack] = startPos;
+			stopStack[posStack] = newPos;
+		}
+		if (newPos < stopPos - 1)
+		{
+			posStack = posStack + 1;
+			startStack[posStack] = newPos + 1;
+			stopStack[posStack] = stopPos;
+		}
+	}
 }
+
+LONG_PTR Array_CompareResult(array_s* pArray, LONG_PTR nIndex, size_t mid)
+{
+	LONG_PTR reta = Array_SetEvent(pArray, ARRAY_EVENT_COMPAREMEMBER, 0, mid, nIndex + 1, ARRAY_COMPARECAUSE_SORT);
+	return reta;
+}
+
 
 size_t Array_GetType(array_s *pArray)
 {

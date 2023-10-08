@@ -1678,7 +1678,12 @@ void test_reportlistview(HWND hWnd)
 
 		cell.iCol = 4;
 		cell.iRow = i;
-		auto str = generate_random_string(8);
+		//auto str = generate_random_string(8);
+		std::random_device rd;  // 用于获取随机数的种子
+		std::mt19937 rng(rd());
+		std::uniform_int_distribution<int> uni(10, 1000000);
+		auto value = uni(rng);
+		auto str = std::to_wstring(value);
 		cell.pwzText = str.c_str();
 		cell.cellStyle = REPORTLISTVIEW_CELLSTYLE_CELLFONT;
 		cell.cellFont = _font_createfromfamily(L"微软雅黑", 20, 0);

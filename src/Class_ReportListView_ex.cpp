@@ -519,6 +519,7 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 						{
 							pSortInfo->fDesc = Ex_ObjGetLong(hObjList, REPORTLISTVIEW_LONG_FTCSORTEDDESC) != 0 ? FALSE : TRUE;
 						}
+						
 						pSortInfo->nType = 0;
 						Ex_ObjSendMessage(hObjList, LISTVIEW_MESSAGE_SORTITEMS, 0, (size_t)pSortInfo);
 						Ex_MemFree(pSortInfo);
