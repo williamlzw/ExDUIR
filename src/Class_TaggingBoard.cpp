@@ -182,9 +182,9 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		((EX_POLYGON_ARRAY*)arr)->count = 1;
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ARRAY, (LONG_PTR)arr);
 
-		auto ptr = malloc(sizeof(EX_POlYGON));
-		((EX_POlYGON*)ptr)->points = malloc(sizeof(POINT));
-		((EX_POlYGON*)ptr)->count = 0;
+		auto ptr = malloc(sizeof(EX_POLYGON));
+		((EX_POLYGON*)ptr)->points = malloc(sizeof(POINT));
+		((EX_POLYGON*)ptr)->count = 0;
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_DATA, (LONG_PTR)ptr);
 		size_t ptrValue = (size_t)ptr;
 		RtlMoveMemory(((EX_POLYGON_ARRAY*)arr)->polygons, &ptrValue, sizeof(size_t));
@@ -266,7 +266,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				{
 					size_t ptrValue = 0;
 					RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-					EX_POlYGON* ptr = (EX_POlYGON*)ptrValue;
+					EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
 					if (ptr->count > 0)
 					{
 						for (int j = 0; j < ptr->count; j++)
@@ -293,7 +293,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			{
 				size_t ptrValue = 0;
 				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-				auto ptr = (EX_POlYGON*)ptrValue;
+				auto ptr = (EX_POLYGON*)ptrValue;
 				free(ptr->points);
 				free(ptr);
 			}
@@ -324,7 +324,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	else if (uMsg == TAGGINGBOARD_MESSAGE_STOP)
 	{
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_TAGGING, 0);
-		auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
+		auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 		if (ptr->count > 0)
 		{
 			//清空临时点
@@ -352,7 +352,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_BEGINY, 0);
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDX, 0);
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDY, 0);
-		auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
+		auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 		if (ptr->count > 0)
 		{
 			//清空临时点
@@ -390,7 +390,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET, 0);
 				Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, 1, TRUE);
 				Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_HORZ, 0, 1, TRUE);
-				auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
+				auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 				if (ptr->count > 0)
 				{
 					//清空临时点
@@ -459,7 +459,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				{
 					size_t ptrValue = 0;
 					RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-					auto ptr = (EX_POlYGON*)ptrValue;
+					auto ptr = (EX_POLYGON*)ptrValue;
 					free(ptr->points);
 					free(ptr);
 				}
@@ -468,7 +468,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			free(arr);
 
 			//新建临时点
-			auto newPtr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
+			auto newPtr = (EX_POLYGON*)malloc(sizeof(EX_POLYGON));
 			newPtr->points = malloc(sizeof(POINT));
 			newPtr->count = 0;
 			Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_DATA, (LONG_PTR)newPtr);
@@ -518,8 +518,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			{
 				size_t ptrValue = 0;
 				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-				auto ptr = (EX_POlYGON*)ptrValue;
-				auto newPtr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
+				auto ptr = (EX_POLYGON*)ptrValue;
+				auto newPtr = (EX_POLYGON*)malloc(sizeof(EX_POLYGON));
 				newPtr->points = malloc(ptr->count * sizeof(POINT));
 				newPtr->count = ptr->count;
 				for (int j = 0; j < ptr->count; j++)
@@ -540,8 +540,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			{
 				size_t ptrValue = 0;
 				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-				auto ptr = (EX_POlYGON*)ptrValue;
-				auto newPtr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
+				auto ptr = (EX_POLYGON*)ptrValue;
+				auto newPtr = (EX_POLYGON*)malloc(sizeof(EX_POLYGON));
 				if (i == arr->count - 1)
 				{
 					//最后临时点
@@ -651,7 +651,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					{
 						size_t ptrValue = 0;
 						RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-						EX_POlYGON* ptr = (EX_POlYGON*)ptrValue;
+						EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
 						if (ptr->count > 0)
 						{
 							for (int j = 0; j < ptr->count; j++)
@@ -710,7 +710,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDX, x);
 				Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDY, y);
 
-				auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
+				auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 
 				if (ptr->count > 2)
 				{
@@ -768,7 +768,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					{
 
 						auto hit = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_HIT_POINT);
-						auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
+						auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 						if (hit == 0)
 						{
 							if (ptr->count == 0)
@@ -802,9 +802,9 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 							//add polygon
 							auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ARRAY);
 							//realloc point
-							auto newPtr = malloc(sizeof(EX_POlYGON));
-							((EX_POlYGON*)newPtr)->points = malloc(sizeof(POINT));
-							((EX_POlYGON*)newPtr)->count = 0;
+							auto newPtr = malloc(sizeof(EX_POLYGON));
+							((EX_POLYGON*)newPtr)->points = malloc(sizeof(POINT));
+							((EX_POLYGON*)newPtr)->count = 0;
 							Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_DATA, (LONG_PTR)newPtr);
 
 							//add polygon
@@ -839,7 +839,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		auto tagging = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_TAGGING);
 		if (tagging == 1)
 		{
-			auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
+			auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 			if (ptr->count > 0)
 			{
 				//del point
@@ -875,7 +875,7 @@ BOOL _taggingboard_ptinregion(HEXOBJ hObj, FLOAT ptx, FLOAT pty, INT* index)
 		{
 			size_t ptrValue = 0;
 			RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-			EX_POlYGON* ptr = (EX_POlYGON*)ptrValue;
+			EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
 			HEXPATH path;
 			_path_create(1, &path);
 			_path_open(path);
@@ -924,7 +924,7 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
 	HEXCANVAS canvas = (HEXCANVAS)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_CANVAS);
 	_canvas_begindraw(canvas);
 
-	auto ptr = (EX_POlYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
+	auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 	_canvas_clear(canvas, ExRGBA(255, 255, 255, 0));
 	auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
 	//auto imgOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET);
@@ -997,7 +997,7 @@ void _taggingboard_paint(HEXOBJ hObj)
 			{
 				size_t ptrValue = 0;
 				RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-				EX_POlYGON* ptr = (EX_POlYGON*)ptrValue;
+				EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
 				HEXPATH path;
 				_path_create(1, &path);
 				_path_open(path);

@@ -2041,11 +2041,11 @@ struct EX_LISTVIEW_INFO
 struct EX_POLYGON_ARRAY
 {
 	INT count;
-	LPVOID polygons; //保存有count个EX_POlYGON*指针,注意最后一个是不闭合路径
+	LPVOID polygons; //保存有count个EX_POLYGON*指针,注意最后一个是不闭合路径
 };
 
 // 标注板路径信息结构
-struct EX_POlYGON
+struct EX_POLYGON
 {
 	INT count;
 	LPVOID points;//保存有count个POINT结构体数据:x,y

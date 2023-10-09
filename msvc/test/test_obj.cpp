@@ -4012,7 +4012,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 		{
 			size_t ptrValue = 0;
 			RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
-			EX_POlYGON* ptr = (EX_POlYGON*)ptrValue;
+			EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
 			if (ptr->count > 0)
 			{
 				for (int j = 0; j < ptr->count; j++)
@@ -4037,7 +4037,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 		auto offsetLeft = (INT)Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_LEFT_OFFSET, 0, 0);
 		auto offsetTop = (INT)Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_TOP_OFFSET, 0, 0);
 
-		auto ptr = (EX_POlYGON*)malloc(sizeof(EX_POlYGON));
+		auto ptr = (EX_POLYGON*)malloc(sizeof(EX_POLYGON));
 		const int size = 5;
 		ptr->points = malloc(size * sizeof(POINT));
 		ptr->count = size;
