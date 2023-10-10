@@ -1648,6 +1648,15 @@ BOOL _rgn_destroy(HEXRGN hRgn);
 BOOL _rgn_hittest(HEXRGN hRgn, FLOAT x, FLOAT y);
 
 /// <summary>
+/// 区域命中测试2
+/// </summary>
+/// <param name="hRgn1">区域1</param>
+/// <param name="hRgn2">区域1</param>
+/// <param name="retRelation">返回关系 0无法确定 1不相交 2属于(被包含) 3包含 4相交</param>
+/// <returns></returns>
+BOOL _rgn_hittest2(HEXRGN hRgn1, HEXRGN hRgn2, INT* retRelation);
+
+/// <summary>
 /// 着色器加载,注意加载成功会在程序运行目录生成编译后的result.cso文件方便下次调用,覆盖。
 /// </summary>
 /// <param name="pEffectContext">效果器上下文ID2D1EffectContext*</param>

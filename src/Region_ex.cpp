@@ -52,7 +52,7 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
             pTranform._22 = 1;
             pTranform._31 = dstOffsetX;
             pTranform._32 = dstOffsetY;
-            ((ID2D1Geometry *)hRgnSrc)->CombineWithGeometry((ID2D1Geometry *)hRgnDst, (D2D1_COMBINE_MODE)nCombineMode, &pTranform, (ID2D1SimplifiedGeometrySink *)pSink);
+            ((ID2D1TransformedGeometry*)hRgnSrc)->CombineWithGeometry((ID2D1PathGeometry*)hRgnDst, (D2D1_COMBINE_MODE)nCombineMode, &pTranform, (ID2D1SimplifiedGeometrySink *)pSink);
             ((ID2D1GeometrySink *)pSink)->Close();
             ((ID2D1GeometrySink *)pSink)->Release();
         }
@@ -71,9 +71,24 @@ BOOL _rgn_hittest(HEXRGN hRgn, FLOAT x, FLOAT y)
     if (hRgn != 0)
     {
         D2D1_POINT_2F point = {x, y};
-        ((ID2D1PathGeometry *)hRgn)->FillContainsPoint(point, NULL, &ret);
+        ((ID2D1TransformedGeometry*)hRgn)->FillContainsPoint(point, NULL, 0, &ret);
     }
     return ret;
+}
+
+BOOL _rgn_hittest2(HEXRGN hRgn1, HEXRGN hRgn2, INT* retRelation)
+{
+    BOOL ret = -1;
+    if (hRgn1 != 0 && hRgn2 != 0)
+    {
+        D2D1_GEOMETRY_RELATION relation;
+        ret = ((ID2D1TransformedGeometry*)hRgn1)->CompareWithGeometry((ID2D1TransformedGeometry*)hRgn2, NULL, &relation);
+        if (retRelation)
+        {
+            *retRelation = relation;
+        }
+    }
+    return ret == S_OK;
 }
 
 HEXRGN _rgn_createfrompath(HEXPATH hPath)
@@ -83,7 +98,7 @@ HEXRGN _rgn_createfrompath(HEXPATH hPath)
     HEXRGN hgn = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        D2D1_MATRIX_3X2_F transform = {};
+        D2D1_MATRIX_3X2_F transform = D2D1::Matrix3x2F::Identity();
         g_Ri.pD2Dfactory->CreateTransformedGeometry(pPath->pGeometry_, transform, (ID2D1TransformedGeometry **)&hgn);
     }
     Ex_SetLastError(nError);

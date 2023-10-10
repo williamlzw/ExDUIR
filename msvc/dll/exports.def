@@ -364,6 +364,7 @@ _rgn_createfromrect
 _rgn_createfromroundrect
 _rgn_combine
 _rgn_hittest
+_rgn_hittest2
 _rgn_createfrompath
 
 

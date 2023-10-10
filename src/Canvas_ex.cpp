@@ -1584,9 +1584,7 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
 		}
 		else
 		{
-			D2D1_MATRIX_3X2_F matrix = { 0 };
-			matrix.m11 = 1.0f;
-			matrix.m22 = 1.0f;
+			D2D1_MATRIX_3X2_F matrix = D2D1::Matrix3x2F::Identity();
 			pContext->SetTransform(&matrix);
 		}
 	}

@@ -100,6 +100,7 @@ BOOL _path_open(HEXPATH hPath)
         }
         ID2D1GeometrySink *pSink = nullptr;
         nError = pPath->pGeometry_->Open(&pSink);
+
         if (nError == 0)
         {
             pPath->pObj_ = pSink;
@@ -183,8 +184,7 @@ BOOL _path_hittest(HEXPATH hPath, FLOAT x, FLOAT y)
     BOOL ret = FALSE;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        LPVOID pGeometry = pPath->pGeometry_;
-        ((ID2D1PathGeometry *)pGeometry)->FillContainsPoint({x, y}, NULL, 0, &ret);
+        pPath->pGeometry_->FillContainsPoint({x, y}, NULL, 0, &ret);
     }
     Ex_SetLastError(nError);
     return ret;
