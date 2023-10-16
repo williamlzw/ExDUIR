@@ -1537,7 +1537,7 @@ BOOL _path_beginfigure2(HEXPATH hPath, FLOAT x, FLOAT y);
 /// <param name="hPath"></param>
 /// <param name="x">起始坐标X</param>
 /// <param name="y">起始坐标Y</param>
-/// <param name="figureBegin">常量PBF_</param>
+/// <param name="figureBegin">常量PATH_BEGIN_FLAG_</param>
 /// <returns></returns>
 BOOL _path_beginfigure3(HEXPATH hPath, FLOAT x, FLOAT y, INT figureBegin);
 
@@ -1551,7 +1551,7 @@ BOOL _path_close(HEXPATH hPath);
 /// <summary>
 /// 路径创建
 /// </summary>
-/// <param name="dwFlags">EPF_</param>
+/// <param name="dwFlags">PATH_FLAG_</param>
 /// <param name="hPath"></param>
 /// <returns></returns>
 BOOL _path_create(DWORD dwFlags, HEXPATH* hPath);

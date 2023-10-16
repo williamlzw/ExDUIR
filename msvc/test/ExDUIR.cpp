@@ -61,7 +61,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_tray,                   //153 测试托盘
         test_mask,                   //154测试蒙板
 		test_tagging,                 //155测试标注画板
-		test_effect                  //156测试效果器
+		test_effect,                  //156测试效果器
+		test_pathandrgn				  //157 测试路径区域
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -156,6 +157,8 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试蒙板", -1, 340, 470, 100, 30, hExDui, 154, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标注画板", -1, 340, 510, 100, 30, hExDui, 155, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试效果器", -1, 340, 550, 100, 30, hExDui, 156, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+
+		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试路径与区域", -1, 450, 30, 100, 30, hExDui, 157, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);

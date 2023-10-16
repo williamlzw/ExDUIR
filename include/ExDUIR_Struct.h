@@ -594,9 +594,18 @@
 #pragma endregion background Repetitive constant
 
 #pragma region path flag constant
+// 路径标识_缩放
+#define PATH_FLAG_NORMAL 0
 // 路径标识_禁止缩放
 #define PATH_FLAG_DISABLESCALE 1
 #pragma endregion path flag constant
+
+#pragma region path begin flag constant
+// 路径开始标识_填充圆
+#define PATH_BEGIN_FLAG_FILLED  0
+// 路径开始标识_空心
+#define PATH_BEGIN_FLAG_HOLLOW  1
+#pragma endregion path begin flag constant
 
 
 #pragma region rgn constant
