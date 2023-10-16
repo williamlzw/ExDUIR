@@ -1869,3 +1869,24 @@ void _canvas_applyeffect(HEXCANVAS hCanvas, HEXEFFECT hEffect)
 	pContext->DrawImage(lpBitmap, D2D1_INTERPOLATION_MODE_LINEAR);
 	lpBitmap->Release();
 }
+
+BOOL _canvas_drawrgn(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush, FLOAT strokeWidth, DWORD strokeStyle)
+{
+	canvas_s* pCanvas = nullptr;
+	INT nError = 0;
+	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
+	{
+		ID2D1StrokeStyle* stroke = _strokestyle_create(
+			D2D1_CAP_STYLE_SQUARE,
+			D2D1_CAP_STYLE_SQUARE,
+			D2D1_CAP_STYLE_SQUARE,
+			D2D1_LINE_JOIN_BEVEL,
+			1.0,
+			(D2D1_DASH_STYLE)strokeStyle, 0);
+		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		pContext->DrawGeometry((ID2D1TransformedGeometry*)hRgn, (ID2D1Brush*)hBrush, strokeWidth, stroke);
+		_strokestyle_destroy(stroke);
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
