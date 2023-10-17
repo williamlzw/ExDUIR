@@ -1646,7 +1646,7 @@ typedef LRESULT(CALLBACK* ClsPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EventHandlerPROC)(HEXOBJ, INT, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EnumPropsPROC)(HEXOBJ, size_t, size_t, size_t);
 typedef LRESULT(CALLBACK* ReportListViewOrderPROC)(HEXOBJ, UINT, LPVOID, UINT, LPVOID, UINT, UINT, size_t);
-
+typedef void(CALLBACK* ExtractPathDataPROC)(POINTF*, INT);
 typedef void(CALLBACK* CefPROC)(void* command_line);
 
 

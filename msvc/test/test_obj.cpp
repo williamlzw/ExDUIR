@@ -4217,6 +4217,15 @@ void test_effect(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_effect, SW_SHOWNORMAL, 0, 0, 0);
 }
 
+void CALLBACK OnExtractPathData(POINTF* points, INT pointsCount)
+{
+	output(L"从派生的ID2D1SimplifiedGeometrySink对象检索几何数据:");
+	for (UINT i = 0; i < pointsCount; ++i)
+	{
+		output(points[i].x, points[i].y);
+	}
+}
+
 LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_CREATE)
@@ -4279,7 +4288,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		auto hBrushRgn = _brush_create(ExRGBA(255, 255, 0, 255));
 
 		_canvas_drawpath(ps.hCanvas, path, hBrush, 1, 1);
-
+		HEXRGN hRgn3;
 		INT relation = -1;
 		if (_rgn_hittest2(hRgn1, hRgn2, &relation))
 		{
@@ -4287,6 +4296,9 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			{
 				//太阳包含方框
 				_brush_setcolor(hBrushRgn, ExRGBA(0, 255, 0, 255));
+				_rgn_getlines(hRgn2, OnExtractPathData);
+				hRgn3 = _rgn_combine(hRgn1, hRgn2, REGION_COMBINE_XOR, 0, 0);
+				_canvas_drawrgn(ps.hCanvas, hRgn3, hBrushRgn, 1, 1);
 			}
 			else if (relation == 4)
 			{
@@ -4298,6 +4310,8 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			}
 		}
 		_canvas_drawrgn(ps.hCanvas, hRgn2, hBrushRgn, 1, 1);
+
+		
 
 		Ex_ObjEndPaint(hObj, &ps);
 		_brush_destroy(hBrush);

@@ -52,7 +52,7 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
             pTranform._22 = 1;
             pTranform._31 = dstOffsetX;
             pTranform._32 = dstOffsetY;
-            ((ID2D1TransformedGeometry*)hRgnSrc)->CombineWithGeometry((ID2D1PathGeometry*)hRgnDst, (D2D1_COMBINE_MODE)nCombineMode, &pTranform, (ID2D1SimplifiedGeometrySink *)pSink);
+            nError = ((ID2D1TransformedGeometry*)hRgnSrc)->CombineWithGeometry((ID2D1PathGeometry*)hRgnDst, (D2D1_COMBINE_MODE)nCombineMode, &pTranform, (ID2D1SimplifiedGeometrySink *)pSink);
             ((ID2D1GeometrySink *)pSink)->Close();
             ((ID2D1GeometrySink *)pSink)->Release();
         }
@@ -103,4 +103,18 @@ HEXRGN _rgn_createfrompath(HEXPATH hPath)
     }
     Ex_SetLastError(nError);
     return hgn;
+}
+
+void _rgn_getlines(HEXRGN hRgn, ExtractPathDataPROC proc)
+{
+    if (hRgn != 0)
+    {
+        auto pSpecializedSink = new SpecializedSink(proc);
+        auto hr = ((ID2D1TransformedGeometry*)hRgn)->Simplify(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES, NULL, pSpecializedSink);
+        if (SUCCEEDED(hr))
+        {
+            pSpecializedSink->Close();
+        }
+        pSpecializedSink->Release();
+    }
 }

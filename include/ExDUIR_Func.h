@@ -1650,6 +1650,13 @@ HEXRGN _rgn_createfromroundrect(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom
 BOOL _rgn_destroy(HEXRGN hRgn);
 
 /// <summary>
+/// 区域取路径点
+/// </summary>
+/// <param name="hRgn"></param>
+/// <param name="proc"></param>
+void _rgn_getlines(HEXRGN hRgn, ExtractPathDataPROC proc);
+
+/// <summary>
 /// 区域命中测试
 /// </summary>
 /// <param name="hRgn"></param>
