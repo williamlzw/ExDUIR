@@ -1639,12 +1639,20 @@ HEXRGN _rgn_createfromroundrect(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom
 BOOL _rgn_destroy(HEXRGN hRgn);
 
 /// <summary>
+/// 区域取外接矩形
+/// </summary>
+/// <param name="hRgn"></param>
+/// <param name="lpBounds"></param>
+/// <returns></returns>
+BOOL _rgn_getbounds(HEXRGN hRgn, RECTF* lpBounds);
+
+/// <summary>
 /// 区域取路径点
 /// </summary>
 /// <param name="hRgn"></param>
 /// <param name="proc1"></param>
 /// <param name="proc2"></param>
-void _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2);
+BOOL _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2);
 
 /// <summary>
 /// 区域命中测试

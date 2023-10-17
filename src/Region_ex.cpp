@@ -70,28 +70,29 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
 
 BOOL _rgn_hittest(HEXRGN hRgn, FLOAT x, FLOAT y)
 {
-    BOOL ret = FALSE;
+	BOOL Contains = FALSE;
     if (hRgn != 0)
     {
         D2D1_POINT_2F point = {x, y};
-        ((ID2D1TransformedGeometry*)hRgn)->FillContainsPoint(point, NULL, 0, &ret);
+		((ID2D1TransformedGeometry*)hRgn)->FillContainsPoint(point, NULL, 0, &Contains);
     }
-    return ret;
+    return Contains;
 }
 
 BOOL _rgn_hittest2(HEXRGN hRgn1, HEXRGN hRgn2, INT* retRelation)
 {
-    BOOL ret = -1;
+	INT nError = 0;
     if (hRgn1 != 0 && hRgn2 != 0)
     {
         D2D1_GEOMETRY_RELATION relation;
-        ret = ((ID2D1TransformedGeometry*)hRgn1)->CompareWithGeometry((ID2D1TransformedGeometry*)hRgn2, NULL, &relation);
+		nError = ((ID2D1TransformedGeometry*)hRgn1)->CompareWithGeometry((ID2D1TransformedGeometry*)hRgn2, NULL, &relation);
         if (retRelation)
         {
             *retRelation = relation;
         }
     }
-    return ret == S_OK;
+	Ex_SetLastError(nError);
+    return nError == 0;
 }
 
 HEXRGN _rgn_createfrompath(HEXPATH hPath)
@@ -108,16 +109,33 @@ HEXRGN _rgn_createfrompath(HEXPATH hPath)
     return hgn;
 }
 
-void _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2)
+BOOL _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2)
 {
+	INT nError = 0;
     if (hRgn != 0)
     {
         auto pSpecializedSink = new SpecializedSink(proc1, proc2);
-        auto hr = ((ID2D1TransformedGeometry*)hRgn)->Simplify(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES, NULL, pSpecializedSink);
-        if (SUCCEEDED(hr))
+		nError = ((ID2D1TransformedGeometry*)hRgn)->Simplify(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES, NULL, pSpecializedSink);
+        if (SUCCEEDED(nError))
         {
             pSpecializedSink->Close();
         }
         pSpecializedSink->Release();
     }
+	Ex_SetLastError(nError);
+	return nError == 0;
+}
+
+BOOL _rgn_getbounds(HEXRGN hRgn, RECTF* lpBounds)
+{
+	INT nError = 0;
+	if (!IsBadWritePtr(lpBounds, 16))
+	{
+		if (hRgn != 0)
+		{
+			nError = ((ID2D1TransformedGeometry*)hRgn)->GetBounds(NULL, (D2D1_RECT_F*)lpBounds);
+		}
+	}
+	Ex_SetLastError(nError);
+	return nError == 0;
 }

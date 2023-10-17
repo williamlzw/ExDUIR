@@ -3,6 +3,7 @@
 #include <vector>
 #include <sstream>
 #include <tchar.h>
+#include <ocidl.h>
 #include <Windows.h>
 
 

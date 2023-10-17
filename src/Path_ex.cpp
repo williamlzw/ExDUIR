@@ -181,13 +181,13 @@ BOOL _path_hittest(HEXPATH hPath, FLOAT x, FLOAT y)
 {
     INT nError = 0;
     path_s *pPath = nullptr;
-    BOOL ret = FALSE;
+    BOOL Contains = FALSE;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
-        pPath->pGeometry_->FillContainsPoint({x, y}, NULL, 0, &ret);
+        pPath->pGeometry_->FillContainsPoint({x, y}, NULL, 0, &Contains);
     }
     Ex_SetLastError(nError);
-    return ret;
+    return Contains;
 }
 
 BOOL _path_addline(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2)

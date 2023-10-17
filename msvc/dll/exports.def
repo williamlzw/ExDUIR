@@ -367,6 +367,7 @@ _rgn_hittest
 _rgn_hittest2
 _rgn_createfrompath
 _rgn_getlines
+_rgn_getbounds
 
 ;----------------------------------------
 ;easing
