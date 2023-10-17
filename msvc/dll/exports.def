@@ -260,7 +260,6 @@ _canvas_drawpolygon
 _canvas_fillpolygon
 _canvas_drawsvg
 _canvas_drawsvgfromfile
-_canvas_drawrgn
 
 ;----------------------------------------
 ;img

@@ -1639,15 +1639,13 @@ typedef LPVOID HEXEASING;    // 缓动句柄/指针
 typedef LPVOID HEXRES;       // 资源包句柄
 typedef LPVOID HEXEFFECT;    // 效果器句柄
 
-
 typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* ClsPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EventHandlerPROC)(HEXOBJ, INT, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EnumPropsPROC)(HEXOBJ, size_t, size_t, size_t);
 typedef LRESULT(CALLBACK* ReportListViewOrderPROC)(HEXOBJ, UINT, LPVOID, UINT, LPVOID, UINT, UINT, size_t);
-typedef void(CALLBACK* ExtractPathDataPROC)(POINTF*, INT);
-typedef void(CALLBACK* CefPROC)(void* command_line);
+
 
 
 // 接收WM_NOTIFY通知信息结构
@@ -2060,6 +2058,7 @@ struct EX_POLYGON
 	INT count;
 	LPVOID points;//保存有count个POINT结构体数据:x,y
 };
+
 /*渐变画刷点信息,
 EXARGB直接对float储存结构直接赋值或静态强转会导致精度丢失问题,而内存拷贝会大大影响使用体验，结构体长度与之前相同，兼容原版*/
 struct EX_STOPPTS
@@ -2068,6 +2067,12 @@ struct EX_STOPPTS
 	EXARGB m_color;
 };
 
+struct EX_BEZIER_SEGMENT
+{
+	POINTF point1;
+	POINTF point2;
+	POINTF point3;
+};
 
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(
 	_In_ IUnknown* effect,
@@ -2099,6 +2104,11 @@ struct EX_EFFECT_PROPERITY_INFO
 	/// </summary>
 	PPROPERTY_GET_FUNCTION getFun;
 };
+
+
+typedef void(CALLBACK* ExtractPathLinePROC)(POINTF*, INT);
+typedef void(CALLBACK* ExtractPathCubicPROC)(EX_BEZIER_SEGMENT*, INT);
+typedef void(CALLBACK* CefPROC)(void*);
 
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
 

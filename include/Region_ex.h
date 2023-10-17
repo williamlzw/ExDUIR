@@ -3,12 +3,11 @@
 #include "ExDUIR_Func.h"
 
 
-
 class SpecializedSink : public ID2D1SimplifiedGeometrySink
 {
 public:
-    SpecializedSink(ExtractPathDataPROC proc)
-        : m_cRef(1),m_proc(proc)
+    SpecializedSink(ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2)
+        : m_cRef(1), m_proc1(proc1), m_proc2(proc2)
     {
     }
 
@@ -53,18 +52,27 @@ public:
         return hr;
     }
 
-    STDMETHOD_(void, AddBeziers)(const D2D1_BEZIER_SEGMENT* /*beziers*/,
-        UINT /*beziersCount*/)
+    STDMETHOD_(void, AddBeziers)(const D2D1_BEZIER_SEGMENT* beziers,
+        UINT beziersCount)
     {
-        // Customize this method to meet your specific data needs.
+		if (m_proc2)
+		{
+			EX_BEZIER_SEGMENT* newSegments = new EX_BEZIER_SEGMENT[beziersCount];
+			memmove(newSegments, beziers, sizeof(D2D1_BEZIER_SEGMENT) * beziersCount);
+			m_proc2(newSegments, beziersCount);
+			free(newSegments);
+		}
     }
 
     STDMETHOD_(void, AddLines)(const D2D1_POINT_2F* points, UINT pointsCount)
     {
-        POINTF* newPoints = new POINTF[pointsCount];
-        memmove(newPoints, points, 8 * pointsCount);
-        m_proc(newPoints, pointsCount);
-        free(newPoints);
+		if (m_proc1)
+		{
+			POINTF* newPoints = new POINTF[pointsCount];
+			memmove(newPoints, points, sizeof(POINTF) * pointsCount);
+			m_proc1(newPoints, pointsCount);
+			free(newPoints);
+		}
     }
 
     STDMETHOD_(void, BeginFigure)(D2D1_POINT_2F startPoint,
@@ -90,6 +98,7 @@ public:
     }
 
 private:
-    ExtractPathDataPROC m_proc;
+	ExtractPathLinePROC m_proc1;
+	ExtractPathCubicPROC m_proc2;
     UINT m_cRef;
 };

@@ -42,7 +42,7 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
     HEXRGN hRgn = nullptr;
     if (hRgnSrc != 0 && hRgnDst != 0)
     {
-        nError = g_Ri.pD2Dfactory->CreatePathGeometry((ID2D1PathGeometry **)&hRgn);
+        nError = g_Ri.pD2Dfactory->CreatePathGeometry((ID2D1PathGeometry**)&hRgn);
         if (nError == 0)
         {
             LPVOID pSink = nullptr;
@@ -52,9 +52,12 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
             pTranform._22 = 1;
             pTranform._31 = dstOffsetX;
             pTranform._32 = dstOffsetY;
-            nError = ((ID2D1TransformedGeometry*)hRgnSrc)->CombineWithGeometry((ID2D1PathGeometry*)hRgnDst, (D2D1_COMBINE_MODE)nCombineMode, &pTranform, (ID2D1SimplifiedGeometrySink *)pSink);
-            ((ID2D1GeometrySink *)pSink)->Close();
-            ((ID2D1GeometrySink *)pSink)->Release();
+            nError = ((ID2D1TransformedGeometry*)hRgnSrc)->CombineWithGeometry((ID2D1TransformedGeometry*)hRgnDst, (D2D1_COMBINE_MODE)nCombineMode, &pTranform, (ID2D1GeometrySink*)pSink);
+			if(SUCCEEDED(nError))
+			{
+				((ID2D1GeometrySink*)pSink)->Close();
+			}
+            ((ID2D1GeometrySink*)pSink)->Release();
         }
     }
     else
@@ -105,11 +108,11 @@ HEXRGN _rgn_createfrompath(HEXPATH hPath)
     return hgn;
 }
 
-void _rgn_getlines(HEXRGN hRgn, ExtractPathDataPROC proc)
+void _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2)
 {
     if (hRgn != 0)
     {
-        auto pSpecializedSink = new SpecializedSink(proc);
+        auto pSpecializedSink = new SpecializedSink(proc1, proc2);
         auto hr = ((ID2D1TransformedGeometry*)hRgn)->Simplify(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES, NULL, pSpecializedSink);
         if (SUCCEEDED(hr))
         {

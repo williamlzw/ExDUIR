@@ -313,17 +313,6 @@ BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT t
 BOOL _canvas_drawrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT strokeWidth, DWORD strokeStyle);
 
 /// <summary>
-/// 画布画区域
-/// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hRgn"></param>
-/// <param name="hBrush"></param>
-/// <param name="strokeWidth"></param>
-/// <param name="strokeStyle"></param>
-/// <returns></returns>
-BOOL _canvas_drawrgn(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush, FLOAT strokeWidth, DWORD strokeStyle);
-
-/// <summary>
 /// 画布画圆角矩形
 /// </summary>
 /// <param name="hCanvas"></param>
@@ -1603,7 +1592,7 @@ BOOL _path_open(HEXPATH hPath);
 BOOL _path_reset(HEXPATH hPath);
 
 /// <summary>
-/// 区域合并
+/// 区域合并,注意路径必须创建自PATH_BEGIN_FLAG_FILLED才有效果
 /// </summary>
 /// <param name="hRgnSrc"></param>
 /// <param name="hRgnDst"></param>
@@ -1653,8 +1642,9 @@ BOOL _rgn_destroy(HEXRGN hRgn);
 /// 区域取路径点
 /// </summary>
 /// <param name="hRgn"></param>
-/// <param name="proc"></param>
-void _rgn_getlines(HEXRGN hRgn, ExtractPathDataPROC proc);
+/// <param name="proc1"></param>
+/// <param name="proc2"></param>
+void _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2);
 
 /// <summary>
 /// 区域命中测试
