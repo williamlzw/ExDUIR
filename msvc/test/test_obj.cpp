@@ -3701,8 +3701,8 @@ LRESULT CALLBACK OnMediaBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 void test_mediaPlay(HWND hWnd)
 {
 	HWND hWndmedia = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试媒体播放器", 0, 0, 800, 600, 0, 0);
-	HEXDUI hExDui_media = Ex_DUIBindWindowEx(hWndmedia, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | 
-		WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | 
+	HEXDUI hExDui_media = Ex_DUIBindWindowEx(hWndmedia, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE |
+		WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
 		WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE, 0, OnMiniblinkWndMsgProc);
 	Ex_DUISetLong(hExDui_media, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hObjMedia = Ex_ObjCreate(L"MediaFoundation", NULL, -1, 50, 50, 700, 500, hExDui_media);
@@ -4217,12 +4217,21 @@ void test_effect(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_effect, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-void CALLBACK OnExtractPathData(POINTF* points, INT pointsCount)
+void CALLBACK OnExtractPathLine(POINTF* points, INT pointsCount)
 {
-	output(L"从派生的ID2D1SimplifiedGeometrySink对象检索几何数据:");
+	output(L"检索线段数据:");
 	for (UINT i = 0; i < pointsCount; ++i)
 	{
 		output(points[i].x, points[i].y);
+	}
+}
+
+void CALLBACK OnExtractPathCubic(EX_BEZIER_SEGMENT* segments, INT pointsCount)
+{
+	output(L"检索贝塞尔曲线数据:");
+	for (UINT i = 0; i < pointsCount; ++i)
+	{
+		output(segments[i].point1.x, segments[i].point1.y, segments[i].point2.x, segments[i].point2.y, segments[i].point3.x, segments[i].point3.y);
 	}
 }
 
@@ -4233,7 +4242,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		Ex_ObjInitPropList(hObj, 2);
 	}
 	else if (uMsg == WM_PAINT)
-	{ 
+	{
 		EX_PAINTSTRUCT ps{ 0 };
 		Ex_ObjBeginPaint(hObj, &ps);
 		HEXPATH path;
@@ -4268,15 +4277,15 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		_path_addbezier(path, 208, 82, 216, 84, 222, 78);
 		_path_addbezier(path, 228, 71, 235, 73, 235, 73);
 		_path_endfigure(path, FALSE);
-		_path_close(path);
 
+		_path_close(path);
 		//绘制随鼠标移动方框
 		INT x = Ex_ObjGetProp(hObj, 0);
 		INT y = Ex_ObjGetProp(hObj, 1);
 		HEXPATH path2;
 		_path_create(PATH_FLAG_NORMAL, &path2);
 		_path_open(path2);
-		_path_beginfigure3(path2, x - 25, y - 25, PATH_BEGIN_FLAG_HOLLOW);
+		_path_beginfigure3(path2, x - 25, y - 25, PATH_BEGIN_FLAG_FILLED);
 		_path_addrect(path2, x - 25, y - 25, x - 25 + 50, y - 25 + 50);
 		_path_endfigure(path2, TRUE);
 		_path_close(path2);
@@ -4296,22 +4305,20 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			{
 				//太阳包含方框
 				_brush_setcolor(hBrushRgn, ExRGBA(0, 255, 0, 255));
-				_rgn_getlines(hRgn2, OnExtractPathData);
-				hRgn3 = _rgn_combine(hRgn1, hRgn2, REGION_COMBINE_XOR, 0, 0);
-				_canvas_drawrgn(ps.hCanvas, hRgn3, hBrushRgn, 1, 1);
 			}
 			else if (relation == 4)
 			{
 				//太阳相交方框
 				_brush_setcolor(hBrushRgn, ExRGBA(0, 0, 255, 255));
+				hRgn3 = _rgn_combine(hRgn1, hRgn2, REGION_COMBINE_EXCLUDE, 0, 0);
+				_canvas_fillregion(ps.hCanvas, hRgn3, hBrushRgn);
+				_rgn_getlines(hRgn3, OnExtractPathLine, OnExtractPathCubic);
 			}
 			else {
 				_brush_setcolor(hBrushRgn, ExRGBA(255, 255, 0, 255));
 			}
 		}
-		_canvas_drawrgn(ps.hCanvas, hRgn2, hBrushRgn, 1, 1);
-
-		
+		_canvas_drawpath(ps.hCanvas, path2, hBrushRgn, 1, 1);
 
 		Ex_ObjEndPaint(hObj, &ps);
 		_brush_destroy(hBrush);

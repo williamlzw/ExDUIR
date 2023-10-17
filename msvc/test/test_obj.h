@@ -370,5 +370,7 @@ private:
 LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_effect(HWND hWnd);
 
+void CALLBACK OnExtractPathLine(POINTF* points, INT pointsCount);
+void CALLBACK OnExtractPathCubic(EX_BEZIER_SEGMENT* segments, INT pointsCount);
 LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_pathandrgn(HWND hWnd);
