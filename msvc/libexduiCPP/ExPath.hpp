@@ -92,7 +92,7 @@ namespace ExDUIR
 					return _path_endfigure(m_path, fCloseFigure);
 				}
 
-				inline BOOL GetBounds(RECTF& rc)
+				inline BOOL GetBounds(EX_RECTF& rc)
 				{
 					return _path_getbounds(m_path, &rc);
 				}

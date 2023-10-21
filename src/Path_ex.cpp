@@ -69,7 +69,7 @@ BOOL _path_create(DWORD dwFlags, HEXPATH *hPath)
     return nError == 0;
 }
 
-BOOL _path_getbounds(HEXPATH hPath, RECTF *lpBounds)
+BOOL _path_getbounds(HEXPATH hPath, EX_RECTF *lpBounds)
 {
     INT nError = 0;
     if (IsBadWritePtr(lpBounds, 16))

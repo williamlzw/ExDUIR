@@ -379,7 +379,7 @@ BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FL
                         }
                         RECT *pGird = nullptr;
                         HashTable_Get(pProp, atomBackgroundGrid, (size_t *)&pGird);
-                        RECTF rect = {dstLeft, dstTop, dstRight, dstBottom};
+                        EX_RECTF rect = {dstLeft, dstTop, dstRight, dstBottom};
                         ret = _canvas_drawimagefrombkgimg_ex(hCanvas, hImg, x, y, dwRepeat, pGird, dwFlags, dwAlpha, pSrcRect, &rect);
                     }
                 }

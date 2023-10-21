@@ -24,7 +24,7 @@ BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrTex
 void _canvas_recreate(canvas_s *pCanvas, INT width, INT height, INT *nError);
 void _canvas_init(INT *nError);
 void _canvas_uninit();
-BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, INT y, INT dwRepeat, RECT *lpGrid, INT dwFlags, INT dwAlpha, RECT *lpRcSrc, RECTF *lpRCFDst);
+BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, INT y, INT dwRepeat, RECT *lpGrid, INT dwFlags, INT dwAlpha, RECT *lpRcSrc, EX_RECTF *lpRCFDst);
 BOOL _canvas_drawimagefrombkgimg(HEXCANVAS hCanvas, EX_BACKGROUNDIMAGEINFO *lpBkgImg);
 BOOL _canvas_bitblt(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight, INT dstBottom, INT srcLeft, INT srcTop);
 BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, INT alpha);

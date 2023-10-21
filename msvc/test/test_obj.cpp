@@ -4217,34 +4217,13 @@ void test_effect(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_effect, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-void CALLBACK OnExtractPathLine(POINTF* points, INT pointsCount)
-{
-	output(L"检索线段数据:");
-	for (UINT i = 0; i < pointsCount; ++i)
-	{
-		output(points[i].x, points[i].y);
-	}
-}
-
-void CALLBACK OnExtractPathCubic(EX_BEZIER_SEGMENT* segments, INT pointsCount)
-{
-	output(L"检索贝塞尔曲线数据:");
-	for (UINT i = 0; i < pointsCount; ++i)
-	{
-		output(segments[i].point1.x, segments[i].point1.y, segments[i].point2.x, segments[i].point2.y, segments[i].point3.x, segments[i].point3.y);
-	}
-}
 
 LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_CREATE)
 	{
-		Ex_ObjInitPropList(hObj, 2);
-	}
-	else if (uMsg == WM_PAINT)
-	{
-		EX_PAINTSTRUCT ps{ 0 };
-		Ex_ObjBeginPaint(hObj, &ps);
+		Ex_ObjInitPropList(hObj, 4);
+
 		HEXPATH path;
 		_path_create(PATH_FLAG_NORMAL, &path);
 		_path_open(path);
@@ -4279,9 +4258,22 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		_path_endfigure(path, FALSE);
 
 		_path_close(path);
+
+		auto hRgn = _rgn_createfrompath(path);
+		Ex_ObjSetProp(hObj, 2, path);
+		Ex_ObjSetProp(hObj, 3, (size_t)hRgn);
+		
+	}
+	else if (uMsg == WM_PAINT)
+	{
+		EX_PAINTSTRUCT ps{ 0 };
+		Ex_ObjBeginPaint(hObj, &ps);
+		
 		//绘制随鼠标移动方框
 		INT x = Ex_ObjGetProp(hObj, 0);
 		INT y = Ex_ObjGetProp(hObj, 1);
+		HEXPATH path = Ex_ObjGetProp(hObj, 2);
+
 		HEXPATH path2;
 		_path_create(PATH_FLAG_NORMAL, &path2);
 		_path_open(path2);
@@ -4290,12 +4282,14 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		_path_endfigure(path2, TRUE);
 		_path_close(path2);
 
-		auto hRgn1 = _rgn_createfrompath(path);
+		HEXRGN hRgn1 = (HEXRGN)Ex_ObjGetProp(hObj, 3);
 		auto hRgn2 = _rgn_createfrompath(path2);
+		
 
 		auto hBrush = _brush_create(ExRGBA(255, 0, 0, 255));
 		auto hBrushRgn = _brush_create(ExRGBA(255, 255, 0, 255));
 
+		
 		_canvas_drawpath(ps.hCanvas, path, hBrush, 1, 1);
 		HEXRGN hRgn3;
 		INT relation = -1;
@@ -4312,7 +4306,18 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 				_brush_setcolor(hBrushRgn, ExRGBA(0, 0, 255, 255));
 				hRgn3 = _rgn_combine(hRgn1, hRgn2, REGION_COMBINE_EXCLUDE, 0, 0);
 				_canvas_fillregion(ps.hCanvas, hRgn3, hBrushRgn);
-				_rgn_getlines(hRgn3, OnExtractPathLine, OnExtractPathCubic);
+				EX_POINTF* points = (EX_POINTF*)malloc(sizeof(EX_POINTF));
+				INT pointsCount = 0;
+				_rgn_getlines(hRgn2, &points, &pointsCount);
+
+				for (int i = 0; i < pointsCount; i++)
+				{
+					if (i != 0)
+					{
+						_canvas_drawline(ps.hCanvas, hBrushRgn, points[i].x, points[i].y, points[i - 1].x, points[i - 1].y, 1, 0);
+					}
+				}
+				free(points);
 			}
 			else {
 				_brush_setcolor(hBrushRgn, ExRGBA(255, 255, 0, 255));
@@ -4323,9 +4328,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		Ex_ObjEndPaint(hObj, &ps);
 		_brush_destroy(hBrush);
 		_brush_destroy(hBrushRgn);
-		_path_destroy(path);
 		_path_destroy(path2);
-		_rgn_destroy(hRgn1);
 		_rgn_destroy(hRgn2);
 	}
 	else if (uMsg == WM_MOUSEMOVE)
@@ -4334,6 +4337,13 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		Ex_ObjSetProp(hObj, 0, pt.x);
 		Ex_ObjSetProp(hObj, 1, pt.y);
 		Ex_ObjInvalidateRect(hObj, 0);
+	}
+	else if (uMsg == WM_DESTROY)
+	{
+		HEXPATH path = Ex_ObjGetProp(hObj, 2);
+		_path_destroy(path);
+		HEXRGN hRgn = (HEXRGN)Ex_ObjGetProp(hObj, 3);
+		_rgn_destroy(hRgn);
 	}
 	return 0;
 }

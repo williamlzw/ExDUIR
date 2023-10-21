@@ -4,6 +4,7 @@
 #include <sstream>
 #include <algorithm>
 #include <vector>
+#include <list>
 #include <string>
 #include <olectl.h>
 #include <Windowsx.h>

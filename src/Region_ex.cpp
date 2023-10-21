@@ -109,24 +109,49 @@ HEXRGN _rgn_createfrompath(HEXPATH hPath)
     return hgn;
 }
 
-BOOL _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2)
+BOOL _rgn_getlines(HEXRGN hRgn, EX_POINTF** points, INT* pointsCount)
 {
 	INT nError = 0;
     if (hRgn != 0)
     {
-        auto pSpecializedSink = new SpecializedSink(proc1, proc2);
-		nError = ((ID2D1TransformedGeometry*)hRgn)->Simplify(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_CUBICS_AND_LINES, NULL, pSpecializedSink);
+        auto pSpecializedSink = new SpecializedSink();
+		nError = ((ID2D1TransformedGeometry*)hRgn)->Simplify(D2D1_GEOMETRY_SIMPLIFICATION_OPTION_LINES, NULL, pSpecializedSink);
         if (SUCCEEDED(nError))
         {
             pSpecializedSink->Close();
         }
+		std::vector<EX_POINTF> result;
+		if (pSpecializedSink->Mulskin.size() > 0)
+		{
+			auto geo = pSpecializedSink->Mulskin[0];
+			EX_POINTF start = { geo->Start.x, geo->Start.y};
+			result.push_back(start);
+			for (auto line : geo->Lines)
+			{
+				EX_POINTF end = { line.end.x, line.end.y};
+				result.push_back(end);
+			}
+		}
+		if ((result.front().x != result.back().x || result.front().y != result.back().y))
+		{
+			result.push_back(result.front());
+		}
+		if (*points)
+		{
+			*points = (EX_POINTF*)realloc(*points, sizeof(EX_POINTF) * result.size());
+			memmove(*points, &result[0], sizeof(EX_POINTF) * result.size());
+			*pointsCount = result.size();
+		}
+		else {
+			nError = ERROR_EX_MEMORY_BADPTR;
+		}
         pSpecializedSink->Release();
     }
 	Ex_SetLastError(nError);
 	return nError == 0;
 }
 
-BOOL _rgn_getbounds(HEXRGN hRgn, RECTF* lpBounds)
+BOOL _rgn_getbounds(HEXRGN hRgn, EX_RECTF* lpBounds)
 {
 	INT nError = 0;
 	if (!IsBadWritePtr(lpBounds, 16))

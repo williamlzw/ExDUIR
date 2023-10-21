@@ -267,7 +267,13 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 /// <param name="X2"></param>
 /// <param name="Y2"></param>
 /// <param name="strokeWidth"></param>
-/// <param name="strokeStyle"></param>
+/// <param name="strokeStyle">
+///	0无分隔符的实线 
+/// 1短划线，后跟长度相等的间隙  
+/// 2一个点，后跟一个较长的间距  
+/// 3一个短划线，后跟一个间隙，后跟一个点，然后是另一个间隙 
+/// 4破折号，后跟一个间隙，后跟一个点，后跟另一个间隙，后跟另一个点，然后是另一个间距
+/// 5短划线模式由浮点值数组指定</param>
 /// <returns></returns>
 BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FLOAT X2, FLOAT Y2, FLOAT strokeWidth, DWORD strokeStyle);
 
@@ -1566,7 +1572,7 @@ BOOL _path_endfigure(HEXPATH hPath, BOOL fCloseFigure);
 /// <param name="hPath"></param>
 /// <param name="lpBounds"></param>
 /// <returns></returns>
-BOOL _path_getbounds(HEXPATH hPath, RECTF* lpBounds);
+BOOL _path_getbounds(HEXPATH hPath, EX_RECTF* lpBounds);
 
 /// <summary>
 /// 路径测试坐标是否在可见路径内
@@ -1644,15 +1650,16 @@ BOOL _rgn_destroy(HEXRGN hRgn);
 /// <param name="hRgn"></param>
 /// <param name="lpBounds"></param>
 /// <returns></returns>
-BOOL _rgn_getbounds(HEXRGN hRgn, RECTF* lpBounds);
+BOOL _rgn_getbounds(HEXRGN hRgn, EX_RECTF* lpBounds);
 
 /// <summary>
-/// 区域取路径点
+/// 区域转为线段并取出线段所有点
 /// </summary>
 /// <param name="hRgn"></param>
-/// <param name="proc1"></param>
-/// <param name="proc2"></param>
-BOOL _rgn_getlines(HEXRGN hRgn, ExtractPathLinePROC proc1, ExtractPathCubicPROC proc2);
+/// <param name="points">返回所有点数组</param>
+/// <param name="pointsCount">返回点个数</param>
+/// <returns></returns>
+BOOL _rgn_getlines(HEXRGN hRgn, EX_POINTF** points, INT* pointsCount);
 
 /// <summary>
 /// 区域命中测试

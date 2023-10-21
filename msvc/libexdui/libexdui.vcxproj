@@ -67,6 +67,7 @@
     <ClCompile Include="..\..\src\Effect_ex.cpp" />
     <ClCompile Include="..\..\src\Font_ex.cpp" />
     <ClCompile Include="..\..\src\Format_ex.cpp" />
+    <ClCompile Include="..\..\src\Geometry_ex.cpp" />
     <ClCompile Include="..\..\src\Global_ex.cpp" />
     <ClCompile Include="..\..\src\HandleTable_ex.cpp" />
     <ClCompile Include="..\..\src\HashTable_ex.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="..\..\include\ExDUIR_Interface.h" />
     <ClInclude Include="..\..\include\Font_ex.h" />
     <ClInclude Include="..\..\include\Format_ex.h" />
+    <ClInclude Include="..\..\include\Geometry_ex.h" />
     <ClInclude Include="..\..\include\Global_ex.h" />
     <ClInclude Include="..\..\include\HandelTable_ex.h" />
     <ClInclude Include="..\..\include\HashTable_ex.h" />

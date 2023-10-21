@@ -1659,7 +1659,13 @@ struct EX_NMHDR
 	LPARAM lParam;   // 	长整型 通常是一个指向内存中数据的指针
 };
 
-struct RECTF
+struct EX_POINTF
+{
+	FLOAT x;
+	FLOAT y;
+};
+
+struct EX_RECTF
 {
 	FLOAT left;
 	FLOAT top;
@@ -2068,13 +2074,6 @@ struct EX_STOPPTS
 	EXARGB m_color;
 };
 
-struct EX_BEZIER_SEGMENT
-{
-	POINTF point1;
-	POINTF point2;
-	POINTF point3;
-};
-
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(
 	_In_ IUnknown* effect,
 	_In_reads_(dataSize) const BYTE* data,
@@ -2106,9 +2105,6 @@ struct EX_EFFECT_PROPERITY_INFO
 	PPROPERTY_GET_FUNCTION getFun;
 };
 
-
-typedef void(CALLBACK* ExtractPathLinePROC)(POINTF*, INT);
-typedef void(CALLBACK* ExtractPathCubicPROC)(EX_BEZIER_SEGMENT*, INT);
 typedef void(CALLBACK* CefPROC)(void*);
 
 #define DECLARE_HANDLEX(name) struct name##__ { int unused; }; typedef struct name##__ *name
