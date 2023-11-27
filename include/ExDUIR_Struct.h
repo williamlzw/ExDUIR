@@ -1618,7 +1618,7 @@
 #define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
 #define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
 #define ExARGB2RGB(argb) ExRGB((BYTE)(argb >> 16), (BYTE)(argb >> 8), (BYTE)(argb))
-#define ExRGB2ARGB(rgb, a) ((EXARGB)(BYTE(ExGetR(rgb)) << 16 | BYTE(ExGetG(rgb)) << 8 | BYTE(ExGetB(rgb)) | (a << 24)))
+#define ExRGB2ARGB(rgb, a) ((EXARGB)(BYTE(ExGetB(rgb)) << 16 | BYTE(ExGetG(rgb)) << 8 | BYTE(ExGetR(rgb)) | (a << 24)))
 
 typedef UINT8 CHANNEL;       // 通道
 typedef COLORREF EXARGB;     // 颜色
