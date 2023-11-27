@@ -1209,7 +1209,10 @@ BOOL _reportlistview_tc_del(HEXOBJ hObj, INT nIndex)
 		{
 			if (pTD->font_)
 			{
-				_font_destroy(pTD->font_);
+				if ((pTD->cellStyle_ & REPORTLISTVIEW_CELLSTYLE_CELLFONT) == REPORTLISTVIEW_CELLSTYLE_CELLFONT)
+				{
+					_font_destroy(pTD->font_);
+				}
 			}
 			if (pTD->wzText_)
 			{
@@ -1251,7 +1254,10 @@ void _reportlistview_tc_clear(HEXOBJ hObj)
 			{
 				if (pTD->font_)
 				{
-					_font_destroy(pTD->font_);
+					if ((pTD->cellStyle_ & REPORTLISTVIEW_CELLSTYLE_CELLFONT) == REPORTLISTVIEW_CELLSTYLE_CELLFONT)
+					{
+						_font_destroy(pTD->font_);
+					}
 				}
 				if (pTD->wzText_)
 				{
