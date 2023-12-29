@@ -76,7 +76,7 @@ void test_exdui()
     HCURSOR hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
     Ex_ReadFile(L"res/Default.ext", &data);
     //开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
-    Ex_Init(GetModuleHandleW(NULL), ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_MENU_ALL, hCursor, 0, data.data(), data.size(), 0, 0);
+    Ex_Init(GetModuleHandleW(NULL), ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL, hCursor, 0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
     m_hWnd = Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0, 600, 600, 0, 0);
     if (m_hWnd != 0)

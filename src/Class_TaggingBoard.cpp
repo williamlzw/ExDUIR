@@ -679,8 +679,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			auto x = ((FLOAT)GET_X_LPARAM(lParam));
 			auto y = ((FLOAT)GET_Y_LPARAM(lParam));
-			x = Ex_Scale(x);
-			y = Ex_Scale(y);
+		
 			auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
 			auto sbOffsetTop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET);
 			x = x + sbOffsetLeft;
@@ -739,8 +738,6 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			auto x = ((FLOAT)GET_X_LPARAM(lParam));//无关dpi缩放
 			auto y = ((FLOAT)GET_Y_LPARAM(lParam));
-			x = Ex_Scale(x);
-			y = Ex_Scale(y);
 			auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
 			auto sbOffsetTop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET);
 			x = x + sbOffsetLeft;
@@ -830,8 +827,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	{
 		auto x = (INT)((FLOAT)GET_X_LPARAM(lParam));
 		auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam));
-		x = Ex_Scale(x);
-		y = Ex_Scale(y);
+	
 		auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
 		auto sbOffsetTop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET);
 		x = x + sbOffsetLeft;
