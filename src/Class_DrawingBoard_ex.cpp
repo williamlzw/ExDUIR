@@ -57,16 +57,15 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			auto penType = Ex_ObjGetLong(hObj, DRAWINGBOARD_LONG_PEN_TYPE);
 			RECT rc;
 			Ex_ObjGetClientRect(hObj, &rc);
-			auto dpi = GetSysDpi();
-			auto x = (INT)((FLOAT)GET_X_LPARAM(lParam) / dpi);
-			auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam) / dpi);
+			auto x = GET_X_LPARAM(lParam);
+			auto y = GET_Y_LPARAM(lParam);
 			if (penType == 0 || penType == 1)
 			{
-				if (x >= rc.left && x <= rc.right)
+				if (x >= Ex_Scale(rc.left) && x <= Ex_Scale(rc.right))
 				{
-					if (y >= rc.top && y <= rc.bottom)
+					if (y >= Ex_Scale(rc.top) && y <= Ex_Scale(rc.bottom))
 					{
-						_drawingboard_updatedraw(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+						_drawingboard_updatedraw(hObj, x, y);
 					}
 				}
 			}
