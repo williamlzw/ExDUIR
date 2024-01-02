@@ -147,6 +147,15 @@ BOOL _path_beginfigure3(HEXPATH hPath, FLOAT x, FLOAT y, INT figureBegin)
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
+        if (!((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) == PATH_FLAG_DISABLESCALE))
+        {
+            if (g_Li.DpiX > 1)
+            {
+                x = x * g_Li.DpiX;
+                y = y * g_Li.DpiY;
+            }
+        }
+       
         pPath->pObj_->BeginFigure({x, y}, (D2D1_FIGURE_BEGIN)figureBegin);
     }
     Ex_SetLastError(nError);
@@ -159,6 +168,15 @@ BOOL _path_beginfigure2(HEXPATH hPath, FLOAT x, FLOAT y)
     path_s *pPath = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID *)&pPath, &nError))
     {
+        if (!((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) == PATH_FLAG_DISABLESCALE))
+        {
+            if (g_Li.DpiX > 1)
+            {
+                x = x * g_Li.DpiX;
+                y = y * g_Li.DpiY;
+            }
+        }
+      
         pPath->pObj_->BeginFigure({x, y}, D2D1_FIGURE_BEGIN_FILLED);
     }
     Ex_SetLastError(nError);

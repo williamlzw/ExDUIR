@@ -4333,9 +4333,10 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
+		auto dpi = GetSysDpi();
 		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		Ex_ObjSetProp(hObj, 0, pt.x);
-		Ex_ObjSetProp(hObj, 1, pt.y);
+		Ex_ObjSetProp(hObj, 0, pt.x/ dpi);
+		Ex_ObjSetProp(hObj, 1, pt.y/ dpi);
 		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == WM_DESTROY)
