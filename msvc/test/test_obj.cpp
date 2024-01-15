@@ -439,6 +439,22 @@ void test_edit(HWND hWnd)
 	Ex_ObjHandleEvent(hObj_edit7, EDIT_EVENT_SELCHANGE, OnEditNotifyEvent);
 	Ex_ObjHandleEvent(hObj_edit7, EDIT_EVENT_LINK, OnEditNotifyEvent);
 
+	Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, -1, -1);
+	Ex_ObjSendMessage(hObj_edit7, EM_REPLACESEL, -1, (LPARAM)L"\r\n");
+	HBITMAP hbitmap = 0;
+	HEXIMAGE hImg = 0;
+	HEXIMAGE hImgSmall = 0;
+	_img_createfromfile(L"res/rotateimgbox.jpg", &hImg);
+	_img_scale(hImg, 200, 200, &hImgSmall);
+	imgdata.resize(200 * 200 * 4);
+	_img_savetomemory(hImgSmall, imgdata.data());
+	Ex_LoadBitMapFromMemory(imgdata.data(), imgdata.size(), &hbitmap);
+	Ex_ObjSendMessage(hObj_edit7, EDIT_MESSAGE_INSERT_BITMAP, 0, (size_t)hbitmap);
+	_img_destroy(hImg);
+	_img_destroy(hImgSmall);
+
+	
+
 	std::vector<std::wstring> buttonTitles = { L"全选", L"取消选择", L"置选择", L"左对齐 ", L"居中对齐", L"右对齐", L"首行缩进 ", L"右侧缩进", L"非首行缩进", L"项目符", L"文本蓝色 ", L"加粗", L"倾斜", L"下划线", L"删除线", L"超链接", L"幼圆30", L"撤销 ", L"重做", L"复制", L"剪切", L"粘贴", L"删除", L"取行数 ", L"寻找文本", L"替换文本" };
 	m_hEditButton.resize(buttonTitles.size());
 	HEXOBJ hObj_page = Ex_ObjCreate(L"Page", NULL, -1, 500, 30, 350, 300, m_hExDuiEdit);

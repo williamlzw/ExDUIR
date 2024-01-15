@@ -422,6 +422,8 @@
 #define EDIT_MESSAGE_SETTEXTEX 1121
 // 消息_编辑框_加载RTF文件(wParam:数据长度,lParam:数据指针)
 #define EDIT_MESSAGE_LOAD_RTF 6001
+// 消息_编辑框_插入bitmap(lParam:bitmap句柄)
+#define EDIT_MESSAGE_INSERT_BITMAP 100001
 #pragma endregion edit message constant
 
 // 编辑框选中行字符格式_加粗
