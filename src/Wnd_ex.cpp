@@ -1889,31 +1889,27 @@ INT _wnd_destroy(HWND hWnd, wnd_s *pWnd)
         pObj = NULL;
     }
 
+    //clear MESSAGEBOX
+    if (((pWnd->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
+    {
+        if (pWnd->lpMsgParams_ != 0)
+        {
+            if (pWnd->lpMsgParams_->lpCheckBox_ != 0)
+            {
+           	 if (pWnd->lpMsgParams_->lpCheckBoxChecked_)
+          	  {
+           	  	 __set_int(pWnd->lpMsgParams_->lpCheckBoxChecked_, 0, Ex_ObjDispatchMessage(pWnd->lpMsgParams_->CheckBoxhObj_, BM_GETCHECK, 0, 0));
+        	    }
+            }
+        }
+    }
+    
     DestroyWindow(pWnd->hWndTips_);
     DestroyWindow(pWnd->hWndShadow_);
 
     if (_handle_validate(pWnd->objChildFirst_, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
         _obj_notify_brothers(hWnd, pWnd->objChildFirst_, pObj, WM_DESTROY, 0, 0, FALSE, FALSE);
-    }
-
-    //clear MESSAGEBOX
-    if (((pWnd->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) == WINDOW_STYLE_MESSAGEBOX))
-    {
-        if (pWnd->lpMsgParams_ != 0)
-        {
-            if (pWnd->lpMsgParams_->lpCheckBox_ != 0)
-            {
-                size_t dwTmp = 0;
-                if (HashTable_Get(pWnd->hTableObjects_, (size_t)(pWnd->lpMsgParams_->lpCheckBoxChecked_), &dwTmp))
-                {
-                    if (dwTmp != 0)
-                    {
-                        __set_int(pWnd->lpMsgParams_->lpCheckBoxChecked_, 0, Ex_ObjDispatchMessage(dwTmp, BM_GETCHECK, 0, 0));
-                    }
-                }
-            }
-        }
     }
 
     //clear NotifyIcon
