@@ -278,6 +278,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s *pWnd, WPARAM wParam, LPARAM lParam)
         {
             _obj_create_proc(&nError, TRUE, hTheme, pObj, -1, ATOM_CHECKBUTTON, lpwzCheckbox, -1, 4, top, widthCheckbox, 24, 0, (size_t)lpCheckboxChecked, 0, (size_t)lpCheckboxChecked, -1);
             _obj_create_done(hWnd, pWnd, hObj, pObj);
+            pMsg->CheckBoxhObj_ = hObj;
             if (__get_int(lpCheckboxChecked, 0) != 0)
             {
                 _obj_baseproc(hWnd, hObj, pObj, BM_SETCHECK, 1, 0);
