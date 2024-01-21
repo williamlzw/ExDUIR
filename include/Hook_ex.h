@@ -12,6 +12,7 @@ struct mbp_s
 	INT dwMilliseconds_;
 	INT dwFlags_;
 	MsgPROC lpfnNotifyCallback_;
+	HEXOBJ CheckBoxhObj_;
 };
 
 struct menu_s
