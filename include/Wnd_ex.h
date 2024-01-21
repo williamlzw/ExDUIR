@@ -4,6 +4,11 @@
 
 #pragma comment(lib, "imm32.lib")
 
+extern "C"
+{
+	int WINAPI MessageBoxTimeoutW(IN HWND hWnd, IN LPCWSTR lpText, IN LPCWSTR lpCaption, IN UINT uType, IN WORD wLanguageId, IN DWORD dwMilliseconds);
+}
+
 #define EMV_HEXDUI 0
 #define EMV_PFN_PACK 1
 

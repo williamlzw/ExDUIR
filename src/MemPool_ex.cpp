@@ -24,7 +24,7 @@ mempool_s *MemPool_Create(size_t nMax, size_t dwSize, size_t dwFlags)
                     ((mempoolheader_s *)p)->pNextEntry = (mempoolheader_s *)(p + nBlock);
                     ((mempoolheader_s *)p)->dwSize = dwSize;
                 }
-                ((mempoolheader_s *)((size_t)pEntry + nBlock * nMax))->pNextEntry = 0;
+				((mempoolheader_s*)((size_t)pEntry + nBlock * (nMax - 1)))->pNextEntry = 0;
                 return hMemPool;
             }
             HeapDestroy(hHeap);

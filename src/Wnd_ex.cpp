@@ -1890,7 +1890,7 @@ INT _wnd_destroy(HWND hWnd, wnd_s *pWnd)
     }
 
     //clear MESSAGEBOX
-    if (((pWnd->dwStyle_ & EWS_MESSAGEBOX) == EWS_MESSAGEBOX))
+    if (((pWnd->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) == WINDOW_STYLE_MESSAGEBOX))
     {
         if (pWnd->lpMsgParams_ != 0)
         {
@@ -3277,11 +3277,11 @@ INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,
     auto ret = 0;
     if (dwMilliseconds)
     {
-    	ret = MessageBoxTimeout(model ? hWnd : 0, lpText, lpCaption, uType, 0, dwMilliseconds);
+    	ret = MessageBoxTimeoutW(hWnd, lpText, lpCaption, uType, 0, dwMilliseconds);
     }
     else
     {
-    	ret = MessageBoxW(model ? hWnd : 0, lpText, lpCaption, uType);
+    	ret = MessageBoxW(hWnd, lpText, lpCaption, uType);
     }
     return ret;
 }

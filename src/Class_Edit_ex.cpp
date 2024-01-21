@@ -2,6 +2,7 @@
 #include <textserv.h>
 #include <WinUser.h>
 
+
 class TextHost : public ITextHost
 {
 	edit_s* m_pOwner;
@@ -393,11 +394,13 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 				ITextServices* pITS = nullptr;
 				IID* pIID_ITextServices = (IID*)(VOID*)GetProcAddress(g_Ri.hRiched20, "IID_ITextServices");
 				pIUnk->QueryInterface(*pIID_ITextServices, (LPVOID*)&pITS);
-
+				COleCallBack* ole_callback = new COleCallBack;
+				pOwner->ole_ = ole_callback;
 				pOwner->ith_ = pITH;
 				pOwner->its_ = pITS;
 				pITS->OnTxInPlaceActivate(0);
 				LRESULT ret;
+				pITS->TxSendMessage(EM_SETOLECALLBACK, 0, (LPARAM)ole_callback, &ret);
 				pITS->TxSendMessage(EM_SETLANGOPTIONS, 0, 0, &ret);
 				pITS->TxSendMessage(EM_LIMITTEXT, 0x7FFFFFFE, 0, &ret);
 				pITS->TxSendMessage(EM_SETEVENTMASK, 0, ENM_CHANGE | ENM_SELCHANGE | ENM_LINK | ENM_DRAGDROPDONE, &ret);
@@ -419,6 +422,7 @@ void _edit_unint(obj_s* pObj)
 		((ITextServices*)pOwner->its_)->Release();
 		((ITextHost*)pOwner->ith_)->Release();
 		delete pOwner->ith_;
+		((COleCallBack*)pOwner->ole_)->Release();
 		_struct_destroyfromaddr(pOwner, offsetof(edit_s, pcf_));
 		_struct_destroyfromaddr(pOwner, offsetof(edit_s, ppf_));
 		_struct_destroyfromaddr(pOwner, offsetof(edit_s, prctext_));
@@ -426,6 +430,7 @@ void _edit_unint(obj_s* pObj)
 		_struct_destroyfromaddr(pOwner, offsetof(edit_s, pBanner_));
 		_md_destroy(pOwner, offsetof(edit_s, mDc_), offsetof(edit_s, hBmp_), offsetof(edit_s, pBits_));
 		_struct_destroyfromaddr(pObj, offsetof(obj_s, dwOwnerData_));
+		
 	}
 }
 
@@ -873,7 +878,6 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 					if (uMsg == WM_VSCROLL)
 					{
 					    scrollPos.y = Ex_ObjScrollGetTrackPos(hObj, SB_VERT);
-					    output(scrollPos.y);
 					}
 					else
 					{

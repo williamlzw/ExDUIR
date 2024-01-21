@@ -175,7 +175,7 @@ LRESULT CALLBACK OnCheckButtonCheckedEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 	if (wParam != 0)
 	{
 		BOOL fChecked = TRUE; //弹出的信息框里面复选框是选中状态
-		Ex_MessageBoxEx(hObj, L"选中啦", L"取CheckButton状态", MB_USERICON, L"不再提示", &fChecked, 10, MESSAGEBOX_FLAG_CENTEWINDOW, 0);
+		Ex_MessageBoxEx(hObj, L"选中啦", L"取CheckButton状态", MB_USERICON, L"不再提示", &fChecked, 2000, MESSAGEBOX_FLAG_CENTEWINDOW, 0);
 	}
 	else
 	{

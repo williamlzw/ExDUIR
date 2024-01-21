@@ -9,6 +9,66 @@ typedef HRESULT(_stdcall *CTSFunc)(IUnknown *punkOuter, ITextHost *pITextHost, I
 
 #include "help_ex.h"
 
+struct COleCallBack : public IRichEditOleCallback
+{
+public:
+	IStorage* pstorage;
+	DWORD m_ref;
+	int grfmode;
+	COleCallBack() : grfmode(STGM_TRANSACTED | STGM_READWRITE | STGM_SHARE_EXCLUSIVE | STGM_CREATE)// | STGM_DELETEONRELEASE
+	{
+		pstorage = nullptr;
+		m_ref = 0;
+		(void)StgCreateDocfile(NULL, grfmode, 0, &pstorage);
+	}
+
+	HRESULT STDMETHODCALLTYPE GetNewStorage(LPSTORAGE* lplpstg)
+	{
+		wchar_t name[256] = { 0 };
+		return pstorage->CreateStorage(name, grfmode, 0, 0, lplpstg);
+	}
+
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** lplpObj)
+	{
+		*lplpObj = NULL;
+		if (iid == IID_IUnknown || iid == IID_IRichEditOleCallback)
+		{
+			*lplpObj = this;
+			AddRef();
+			return NOERROR;
+		}
+		return E_NOINTERFACE;
+	}
+
+	ULONG STDMETHODCALLTYPE AddRef()
+	{
+		return ++m_ref;
+	}
+
+	ULONG STDMETHODCALLTYPE Release()
+	{
+		if (--m_ref == 0)
+		{
+			if (pstorage)
+				pstorage->Release();
+			delete this;
+			return 0;
+		}
+		return m_ref;
+	}
+
+	STDMETHOD(GetInPlaceContext) (LPOLEINPLACEFRAME FAR*, LPOLEINPLACEUIWINDOW FAR*, LPOLEINPLACEFRAMEINFO) { return S_OK; }
+	STDMETHOD(ShowContainerUI) (BOOL) { return S_OK; }
+	STDMETHOD(QueryInsertObject) (LPCLSID, LPSTORAGE, LONG) { return S_OK; }
+	STDMETHOD(DeleteObject) (LPOLEOBJECT) { return S_OK; }
+	STDMETHOD(QueryAcceptData) (LPDATAOBJECT, CLIPFORMAT FAR*, DWORD, BOOL, HGLOBAL) { return S_OK; }
+	STDMETHOD(ContextSensitiveHelp) (BOOL) { return S_OK; }
+	STDMETHOD(GetClipboardData) (CHARRANGE FAR*, DWORD, LPDATAOBJECT FAR*) { return E_NOTIMPL; /*E_NOTIMPL*/ }
+	STDMETHOD(GetDragDropEffect) (BOOL, DWORD, LPDWORD) { return S_OK; }
+	STDMETHOD(GetContextMenu) (WORD, LPOLEOBJECT, CHARRANGE FAR*, HMENU FAR*) { return S_OK; }
+};
+
+
 struct edit_s
 {
 	obj_s *pObj_;
@@ -33,6 +93,7 @@ struct edit_s
 	INT rcCaret_bottom_;
 	INT width_;
 	INT height_;
+	COleCallBack* ole_;
 };
 
 struct EX_EDIT_STREAM
