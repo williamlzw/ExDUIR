@@ -862,7 +862,31 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		}
 		else if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL)
 		{
-			return _edit_scrollmsg(hObj, pObj, uMsg, wParam, lParam);
+			LRESULT ret = 0;
+			LPVOID pits = _edit_its(pObj);
+			if (pits != nullptr)
+			{
+				if (LOWORD(wParam) == SB_THUMBTRACK || LOWORD(wParam) == SB_THUMBPOSITION)
+				{
+					POINT scrollPos;
+					((ITextServices*)pits)->TxSendMessage(EM_GETSCROLLPOS, 0, reinterpret_cast<LPARAM>(&scrollPos), NULL);
+					if (uMsg == WM_VSCROLL)
+					{
+					    scrollPos.y = Ex_ObjScrollGetTrackPos(hObj, SB_VERT);
+					    output(scrollPos.y);
+					}
+					else
+					{
+					    scrollPos.x = Ex_ObjScrollGetTrackPos(hObj, SB_HORZ);
+					}
+					((ITextServices*)pits)->TxSendMessage(EM_SETSCROLLPOS, 0, reinterpret_cast<LPARAM>(&scrollPos), &ret);
+				}
+				else
+				{
+					return _edit_scrollmsg(hObj, pObj, uMsg, wParam, lParam);
+				}
+			}
+			return ret;
 		}
 		else if (uMsg == WM_MOUSEWHEEL)
 		{
