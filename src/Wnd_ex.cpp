@@ -3274,7 +3274,15 @@ INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,
 
         pWnd->lpMsgParams_ = &mbp;
     }
-    auto ret = MessageBoxW(hWnd, lpText, lpCaption, uType);
+    auto ret = 0;
+    if (dwMilliseconds)
+    {
+    	ret = MessageBoxTimeout(model ? hWnd : 0, lpText, lpCaption, uType, 0, dwMilliseconds);
+    }
+    else
+    {
+    	ret = MessageBoxW(model ? hWnd : 0, lpText, lpCaption, uType);
+    }
     return ret;
 }
 
