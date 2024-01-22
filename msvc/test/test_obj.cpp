@@ -375,7 +375,6 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			textformat.codePage = 1200; //Unicode code page
 			Ex_ObjSendMessage(hEdit, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为我");
 		}
-
 	}
 	return 0;
 }
@@ -413,8 +412,9 @@ void test_edit(HWND hWnd)
 	Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
 	Ex_ObjSendMessage(hObj_edit1, EDIT_MESSAGE_SETCUEBANNER, ExARGB(150, 150, 150, 255), (LPARAM)L"背景图片编辑框");
 	Ex_ObjSetBackgroundImage(hObj_edit1, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_DEFAULT, 255, TRUE);
-	HEXOBJ hObj_edit2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+	HEXOBJ hObj_edit2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit", L"测试密码输入编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_USEPASSWORD, 10, 70, 150, 30, m_hExDuiEdit, 135, DT_SINGLELINE, 0, 0, NULL);
 	Ex_ObjSendMessage(hObj_edit2, EDIT_MESSAGE_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"测试密码输入编辑框");
+	
 	HEXOBJ hObj_edit3 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit", L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_NUMERICINPUT, 10, 110, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 	Ex_ObjSendMessage(hObj_edit3, EDIT_MESSAGE_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"测试数值输入编辑框");
 	HEXOBJ hObj_edit4 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit", L"测试只读编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY, 10, 150, 150, 30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
@@ -455,7 +455,7 @@ void test_edit(HWND hWnd)
 
 	
 
-	std::vector<std::wstring> buttonTitles = { L"全选", L"取消选择", L"置选择", L"左对齐 ", L"居中对齐", L"右对齐", L"首行缩进 ", L"右侧缩进", L"非首行缩进", L"项目符", L"文本蓝色 ", L"加粗", L"倾斜", L"下划线", L"删除线", L"超链接", L"幼圆30", L"撤销 ", L"重做", L"复制", L"剪切", L"粘贴", L"删除", L"取行数 ", L"寻找文本", L"替换文本" };
+	std::vector<std::wstring> buttonTitles = { L"全选", L"取消选择", L"置选择", L"左对齐 ", L"居中对齐", L"右对齐", L"首行缩进 ", L"右侧缩进", L"非首行缩进", L"项目符", L"文本蓝色 ", L"加粗", L"倾斜", L"下划线", L"删除线", L"超链接", L"幼圆30", L"撤销 ", L"重做", L"复制", L"剪切", L"粘贴", L"删除", L"取行数 ", L"寻找文本", L"替换文本"};
 	m_hEditButton.resize(buttonTitles.size());
 	HEXOBJ hObj_page = Ex_ObjCreate(L"Page", NULL, -1, 500, 30, 350, 300, m_hExDuiEdit);
 	HEXLAYOUT hLayoutPage = _layout_create(LAYOUT_TYPE_FLOW, hObj_page);

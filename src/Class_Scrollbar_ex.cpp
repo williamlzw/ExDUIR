@@ -263,7 +263,7 @@ INT _scrollbar_pointtopos(si_s *psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
         curPoint = x - rcRegion.left - psi->nTrackPosOffset_;
         sizeThumb = rcThumb.right - rcThumb.left;
     }
-    INT nPos = curPoint * maxpos / (sizeRegion - sizeThumb) + nMin;
+    INT nPos =(INT) ((FLOAT)curPoint * maxpos / (sizeRegion - sizeThumb) + nMin);
     if (bCheckPos)
     {
         if (nPos >= nMax)

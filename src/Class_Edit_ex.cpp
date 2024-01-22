@@ -1017,12 +1017,6 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 			}
 			return ((ITextServices*)_edit_its(pObj))->TxSetText((LPCWSTR)lParam);
 		}
-        else if (uMsg == WM_GETTEXTPSD)
-        {
-            BSTR txtpsd;
-            ((ITextServices*)_edit_its(pObj))->TxGetText(&txtpsd);
-            return (LRESULT)txtpsd;
-        }
 		else if (uMsg == EDIT_MESSAGE_SETCUEBANNER)
 		{
 			edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
