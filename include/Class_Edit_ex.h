@@ -113,6 +113,8 @@ struct EX_EDIT_STREAM
 #define EDIT_FLAG_BCARETCONTEXT 4
 //编辑框标识_选中
 #define EDIT_FLAG_BSELECTED 8
+//消息_编辑框_获取密码文本
+#define WM_GETTEXTPSD 20001
 
 void _edit_register();
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s *pObj);
