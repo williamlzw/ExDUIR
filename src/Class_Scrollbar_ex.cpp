@@ -29,44 +29,44 @@ size_t _scrollbar_parentnotify(HWND hWnd, obj_s *pObj, WPARAM wParam, LPARAM lPa
     return ret;
 }
 
-INT _scrollbar_postopoint(HWND hWnd, obj_s *pObj, si_s *psi, INT *nPos, BOOL bVert, INT *cxy)
+INT _scrollbar_postopoint(HWND hWnd, obj_s* pObj, si_s* psi, INT* nPos, BOOL bVert, INT* cxy)
 {
-    INT l = psi->rcRegion_left_;
-    INT t = psi->rcRegion_top_;
-    INT r = psi->rcRegion_right_;
-    INT b = psi->rcRegion_bottom_;
-    INT nPage = psi->nPage_;
-    INT nMin = psi->nMin_;
-    INT nMax = psi->nMax_;
-    SHORT nMinThumbsize = HIWORD(psi->xyz_);
-    auto nMinThumbsize2 = HIBYTE(nMinThumbsize);
-    INT maxPos = nMax - nMin;
-    INT sizeRegin = bVert ? b - t : r - l;
-    INT point = 0;
+    __int64 l = psi->rcRegion_left_;
+    __int64 t = psi->rcRegion_top_;
+    __int64 r = psi->rcRegion_right_;
+    __int64 b = psi->rcRegion_bottom_;
+    __int64 nPage = psi->nPage_;
+    __int64 nMin = psi->nMin_;
+    __int64 nMax = psi->nMax_;
+    __int64 nMinThumbsize = HIWORD(psi->xyz_);
+    __int64 nMinThumbsize2 = HIBYTE(nMinThumbsize);
+    __int64 maxPos = nMax - nMin;
+    __int64 sizeRegin = bVert ? b - t : r - l;
+    __int64 point = 0;
     if (maxPos > 0)
     {
-        if (*nPos < nMin)
+        if ((__int64)*nPos < nMin)
         {
-            *nPos = nMin;
+            *nPos = (int)nMin;
             psi->nPos_ = *nPos;
         }
         else
         {
             if (nMax < *nPos)
             {
-                *nPos = nMax;
+                *nPos = (int)nMax;
                 psi->nPos_ = *nPos;
             }
         }
-        *cxy = sizeRegin * nPage / (maxPos + nPage);
+        *cxy = (int)(sizeRegin * nPage / (maxPos + nPage));
         if (*cxy < nMinThumbsize2)
         {
-            *cxy = nMinThumbsize2;
+            *cxy = (int)nMinThumbsize2;
         }
         point = (*nPos - nMin) * (sizeRegin - *cxy) / maxPos;
     }
     point = point + (bVert ? t : l);
-    return point;
+    return (int)point;
 }
 
 HEXOBJ _scrollbar_getscroll(obj_s *pObj, INT nBar)
@@ -247,10 +247,10 @@ INT _scrollbar_pointtopos(si_s *psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
     rcThumb.top = psi->rcThumb_top_;
     rcThumb.right = psi->rcThumb_right_;
     rcThumb.bottom = psi->rcThumb_bottom_;
-    INT nMin = psi->nMin_;
-    INT nMax = psi->nMax_;
-    INT maxpos = nMax - nMin;
-    INT sizeRegion, curPoint, sizeThumb;
+	long long nMin = psi->nMin_;	
+	long long nMax = psi->nMax_;	
+	long long maxpos = nMax - nMin;	
+	long long sizeRegion, curPoint, sizeThumb;
     if (bVert)
     {
         sizeRegion = rcRegion.bottom - rcRegion.top;
@@ -263,8 +263,7 @@ INT _scrollbar_pointtopos(si_s *psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
         curPoint = x - rcRegion.left - psi->nTrackPosOffset_;
         sizeThumb = rcThumb.right - rcThumb.left;
     }
-    //LONGLONG防止溢出
-    INT nPos =(INT) ((LONGLONG)curPoint * maxpos / (sizeRegion - sizeThumb) + nMin);
+    long long nPos = ((curPoint * maxpos) / (sizeRegion - sizeThumb)) + nMin;
     if (bCheckPos)
     {
         if (nPos >= nMax)
