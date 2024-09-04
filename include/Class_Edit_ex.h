@@ -114,6 +114,7 @@ struct EX_EDIT_STREAM
 //编辑框标识_选中
 #define EDIT_FLAG_BSELECTED 8
 
+
 void _edit_register();
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s *pObj);
 void _edit_unint(obj_s *pObj);
