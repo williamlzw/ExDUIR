@@ -966,10 +966,10 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     }
     else if (uMsg == WM_LBUTTONDOWN)
     {
-        INT hitType = 0;
+        INT hitType = TREEVIEW_HITTYPE_NOWHERE;
         EX_TREEVIEW_NODEITEM *pItem = _treeview_hittest(pObj, {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}, &hitType);
 
-        if (pItem && hitType == 64)
+        if (pItem && hitType == TREEVIEW_HITTYPE_ONITEMSTATEICON)
         {
             _obj_baseproc(hWnd, hObj, pObj, TREEVIEW_MESSAGE_EXPAND, !pItem->fExpand, (size_t)pItem);
             _obj_setextralong(pObj, TREEVIEW_LONG_EXPAND, 1);

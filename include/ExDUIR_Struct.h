@@ -1033,7 +1033,7 @@
 #define TREEVIEW_MESSAGE_SELECTITEM 4363
 // 消息_树形框_取展开可视节点个数
 #define TREEVIEW_MESSAGE_GETVISIBLECOUNT 4368
-// 消息_树形框_命中测试 (wParam低位为x高位为y[相对控件],lParam为 返回#TVHT_开头常量 的指针,消息返回值为命中的节点句柄)
+// 消息_树形框_命中测试 (lParam低位为x高位为y[相对控件],wParam为 返回#TREEVIEW_HITTYPE_开头常量 的指针,消息返回值为命中的节点句柄)
 #define TREEVIEW_MESSAGE_HITTEST 4369
 // 消息_树形框_保证显示 (lParam为显示的节点句柄)
 #define TREEVIEW_MESSAGE_ENSUREVISIBLE 4372
