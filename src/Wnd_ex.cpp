@@ -1085,24 +1085,26 @@ INT _wnd_create(HEXDUI hExDui, wnd_s *pWnd, HWND hWnd, INT dwStyle, HEXTHEME hTh
     pWnd->height_ = size.cy;
     pWnd->ulwi_prcDirty_right_ = size.cx;
     pWnd->ulwi_prcDirty_bottom_ = size.cy;
-
-    //sysshadow
-    auto style = GetClassLongPtrW(hWnd, GCL_STYLE);
-    if ((style & CS_DROPSHADOW) != 0)
-    {
-        SetClassLongPtrW(hWnd, GCL_STYLE, (style & ~CS_DROPSHADOW));
-    }
-    INT exStyle = WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_TOPMOST;
-    HWND hwndShadow = CreateWindowExW(exStyle, (LPCWSTR)g_Li.atomSysShadow, 0, WS_POPUP, 0, 0, 0, 0, hWnd, 0, 0, 0);
-
-    pWnd->hWndShadow_ = hwndShadow;
-    INT nError = 0;
-    Thunkwindow(hwndShadow, _wnd_shadow_proc, (LPVOID)1, &nError);
+	INT nError = 0;
+    //sysshadow,有阴影才创建阴影窗口
+	if (!((pWnd->dwStyle_ & WINDOW_STYLE_NOSHADOW) == WINDOW_STYLE_NOSHADOW))
+	{
+		auto style = GetClassLongPtrW(hWnd, GCL_STYLE);
+		if ((style & CS_DROPSHADOW) != 0)
+		{
+			SetClassLongPtrW(hWnd, GCL_STYLE, (style & ~CS_DROPSHADOW));
+		}
+		INT exStyle = WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_TOPMOST;
+		HWND hwndShadow = CreateWindowExW(exStyle, (LPCWSTR)g_Li.atomSysShadow, 0, WS_POPUP, 0, 0, 0, 0, hWnd, 0, 0, 0);
+		pWnd->hWndShadow_ = hwndShadow;
+		Thunkwindow(hwndShadow, _wnd_shadow_proc, (LPVOID)1, &nError);
+	}
+    
     //tips
     HWND hWndTips = CreateWindowExW(WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST, L"tooltips_class32", 0, WS_POPUP, 0, 0, 0, 0, 0, 0, 0, 0);
     SendMessageW(hWndTips, 1048, 0, 2048); //TTM_SETMAXTIPWIDTH 支持多行
     pWnd->hWndTips_ = hWndTips;
-    nError = 0;
+	nError = 0;
     ti_s *toolauto = (ti_s *)_struct_createfromaddr(pWnd, offsetof(wnd_s, ti_auto_), sizeof(ti_s), &nError);
 
     toolauto->cbSize_ = sizeof(ti_s);

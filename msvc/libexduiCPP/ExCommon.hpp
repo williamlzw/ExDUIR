@@ -746,32 +746,32 @@ namespace ExDUIR
 
 				void SetTextOffset(int offset)
 				{
-					Ex_ObjSetLong(m_handle, GROUPBOX_TEXT_OFFSET, offset);
+					Ex_ObjSetLong(m_handle, GROUPBOX_LONG_TEXT_OFFSET, offset);
 				}
 
 				int GetTextOffset()
 				{
-					return Ex_ObjGetLong(m_handle, GROUPBOX_TEXT_OFFSET);
+					return Ex_ObjGetLong(m_handle, GROUPBOX_LONG_TEXT_OFFSET);
 				}
 
 				void SetRadius(int radius)
 				{
-					Ex_ObjSetLong(m_handle, GROUPBOX_RADIUS, radius);
+					Ex_ObjSetLong(m_handle, GROUPBOX_LONG_RADIUS, radius);
 				}
 
 				int GetRadius()
 				{
-					return Ex_ObjGetLong(m_handle, GROUPBOX_RADIUS);
+					return Ex_ObjGetLong(m_handle, GROUPBOX_LONG_RADIUS);
 				}
 
 				void SetStrokeWidth(int strokeWidth)
 				{
-					Ex_ObjSetLong(m_handle, GROUPBOX_STROKEWIDTH, strokeWidth);
+					Ex_ObjSetLong(m_handle, GROUPBOX_LONG_STROKEWIDTH, strokeWidth);
 				}
 
 				int GetStrokeWidth()
 				{
-					return Ex_ObjGetLong(m_handle, GROUPBOX_STROKEWIDTH);
+					return Ex_ObjGetLong(m_handle, GROUPBOX_LONG_STROKEWIDTH);
 				}
 			};
 
