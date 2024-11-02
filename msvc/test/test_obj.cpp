@@ -796,6 +796,7 @@ void test_listview(HWND hWnd)
 		m_listViewItemInfo[index].depth = index % 5;
 	}
 	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, itemCount, itemCount);
+	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETSELECTIONMARK, TRUE, 5);//置选中项目
 	HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hobj_listview, SCROLLBAR_TYPE_VERT);
 	Ex_ObjPostMessage(hObj_scroll, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);            //隐藏滚动条
 	Ex_ObjSetLong(hObj_scroll, OBJECT_LONG_OBJPROC, (size_t)OnScrollBarMsg); //改变滚动条回调
@@ -1115,43 +1116,64 @@ void test_table(HWND hWnd)
 std::vector<HEXOBJ> m_hComboBoxButton(7);
 HEXOBJ m_hComboBox;
 
+HEXOBJ m_hComboBox1;
+HEXOBJ m_hComboBox2;
+
 LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	if (hObj == m_hComboBoxButton[0])
+	if (nCode == NM_CLICK)
 	{
-		size_t count = Ex_ObjSendMessage(m_hComboBox, CB_GETCOUNT, 0, 0);
-		std::wstring text = L"测试添加" + std::to_wstring(count + 1);
-		Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (LPARAM)text.c_str());
+		if (hObj == m_hComboBoxButton[0])
+		{
+			size_t count = Ex_ObjSendMessage(m_hComboBox, CB_GETCOUNT, 0, 0);
+			std::wstring text = L"测试添加" + std::to_wstring(count + 1);
+			Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (LPARAM)text.c_str());
+		}
+		else if (hObj == m_hComboBoxButton[1])
+		{
+			std::wstring text = L"插入项目";
+			Ex_ObjSendMessage(m_hComboBox, CB_INSERTSTRING, 2, (LPARAM)text.c_str());
+		}
+		else if (hObj == m_hComboBoxButton[2])
+		{
+			size_t len = Ex_ObjGetTextLength(m_hComboBox) * 2 + 2;
+			std::wstring text;
+			text.resize(len);
+			Ex_ObjGetText(m_hComboBox, text.c_str(), len);
+			OUTPUTW(text);
+		}
+		else if (hObj == m_hComboBoxButton[3])
+		{
+			std::wstring text = L"置内容";
+			Ex_ObjSetText(m_hComboBox, text.c_str(), TRUE);
+		}
+		else if (hObj == m_hComboBoxButton[4])
+		{
+			Ex_ObjSendMessage(m_hComboBox, CB_RESETCONTENT, 0, 0);
+		}
+		else if (hObj == m_hComboBoxButton[5])
+		{
+			Ex_ObjSendMessage(m_hComboBox, CB_SHOWDROPDOWN, TRUE, 0);
+		}
+		else if (hObj == m_hComboBoxButton[6])
+		{
+			Ex_ObjSendMessage(m_hComboBox, CB_DELETESTRING, 2, 0);
+		}
 	}
-	else if (hObj == m_hComboBoxButton[1])
+	else if (nCode == COMBOBOX_EVENT_SELCHANGE)
 	{
-		std::wstring text = L"插入项目";
-		Ex_ObjSendMessage(m_hComboBox, CB_INSERTSTRING, 2, (LPARAM)text.c_str());
-	}
-	else if (hObj == m_hComboBoxButton[2])
-	{
-		size_t len = Ex_ObjGetTextLength(m_hComboBox) * 2 + 2;
-		std::wstring text;
-		text.resize(len);
-		Ex_ObjGetText(m_hComboBox, text.c_str(), len);
-		OUTPUTW(text);
-	}
-	else if (hObj == m_hComboBoxButton[3])
-	{
-		std::wstring text = L"置内容";
-		Ex_ObjSetText(m_hComboBox, text.c_str(), TRUE);
-	}
-	else if (hObj == m_hComboBoxButton[4])
-	{
-		Ex_ObjSendMessage(m_hComboBox, CB_RESETCONTENT, 0, 0);
-	}
-	else if (hObj == m_hComboBoxButton[5])
-	{
-		Ex_ObjSendMessage(m_hComboBox, CB_SHOWDROPDOWN, TRUE, 0);
-	}
-	else if (hObj == m_hComboBoxButton[6])
-	{
-		Ex_ObjSendMessage(m_hComboBox, CB_DELETESTRING, 2, 0);
+		if (hObj == m_hComboBox)
+		{
+			output(L"11111111111111");
+		}
+		else if (hObj == m_hComboBox1)
+		{
+			output(L"22222222222222");
+		}
+		else if (hObj == m_hComboBox2)
+		{
+			output(L"33333333333333333");
+		}
 	}
 	return 0;
 }
@@ -1162,12 +1184,26 @@ void test_combobox(HWND hWnd)
 	HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(hWnd_combobox, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_combobox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 30, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
-	Ex_ObjCreateEx(-1, L"combobox", L"测试组合框1", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
-
+	m_hComboBox1 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框1", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	m_hComboBox2 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框2", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 230, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"特殊字符[！（）");
+
+	Ex_ObjSendMessage(m_hComboBox1, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
+	Ex_ObjSendMessage(m_hComboBox1, CB_ADDSTRING, 0, (size_t)L"数字123");
+	Ex_ObjSendMessage(m_hComboBox1, CB_ADDSTRING, 0, (size_t)L"中文");
+	Ex_ObjSendMessage(m_hComboBox1, CB_ADDSTRING, 0, (size_t)L"特殊字符[！（）");
+
+	Ex_ObjSendMessage(m_hComboBox2, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
+	Ex_ObjSendMessage(m_hComboBox2, CB_ADDSTRING, 0, (size_t)L"数字123");
+	Ex_ObjSendMessage(m_hComboBox2, CB_ADDSTRING, 0, (size_t)L"中文");
+	Ex_ObjSendMessage(m_hComboBox2, CB_ADDSTRING, 0, (size_t)L"特殊字符[！（）");
+
+	Ex_ObjHandleEvent(m_hComboBox, COMBOBOX_EVENT_SELCHANGE, OnComboBoxButtonEvent);
+	Ex_ObjHandleEvent(m_hComboBox1, COMBOBOX_EVENT_SELCHANGE, OnComboBoxButtonEvent);
+	Ex_ObjHandleEvent(m_hComboBox2, COMBOBOX_EVENT_SELCHANGE, OnComboBoxButtonEvent);
 
 	m_hComboBoxButton[0] = Ex_ObjCreate(L"button", L"添加项目", -1, 230, 30, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[0], NM_CLICK, OnComboBoxButtonEvent);
@@ -1190,6 +1226,7 @@ void test_combobox(HWND hWnd)
 	m_hComboBoxButton[6] = Ex_ObjCreate(L"button", L"删除项目", -1, 230, 150, 100, 30, hExDui_combobox);
 	Ex_ObjHandleEvent(m_hComboBoxButton[6], NM_CLICK, OnComboBoxButtonEvent);
 
+	
 	Ex_DUIShowWindow(hExDui_combobox, SW_SHOWNORMAL, 0, 0, 0);
 }
 

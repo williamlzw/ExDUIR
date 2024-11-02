@@ -52,10 +52,10 @@ std::vector<std::wstring> WStringSplit(const std::wstring& str, const std::wstri
 	std::wstring stra = str;
 	std::vector<std::wstring> tokens;
 	// Skip delimiters at beginning.
-	std::string::size_type lastPos = stra.find_first_not_of(delim, 0);
+	std::wstring::size_type lastPos = stra.find_first_not_of(delim, 0);
 	// Find first "non-delimiter".
-	std::string::size_type pos = stra.find_first_of(delim, lastPos);
-	while (std::string::npos != pos || std::string::npos != lastPos)
+	std::wstring::size_type pos = stra.find_first_of(delim, lastPos);
+	while (std::wstring::npos != pos || std::wstring::npos != lastPos)
 	{
 		// Found a token, add it to the vector.
 		tokens.push_back(stra.substr(lastPos, pos - lastPos));
