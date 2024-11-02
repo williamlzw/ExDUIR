@@ -198,9 +198,6 @@
     <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_MediaFoundation.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\nanosvg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -220,6 +217,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Geometry_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Class_VLCPlayer_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -419,9 +419,6 @@
     <ClInclude Include="..\..\include\mb.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_MediaFoundation.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\nanosvg.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -444,6 +441,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Geometry_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_VLCPlayer_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

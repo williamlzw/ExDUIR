@@ -1,0 +1,2 @@
+https://github.com/williamlzw/Ex_libvlc/releases/tag/3.0.21
+https://gitee.com/william_lzw/ex_libvlc/releases/tag/3.0.21

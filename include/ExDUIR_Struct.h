@@ -1504,30 +1504,19 @@
 #define PROPERTYGRID_OBJTYPE_DATEBOX 3
 #pragma endregion propertygrid obj type
 
+#pragma region miniblinkbrowser type
 // miniblink浏览框加载类型_URL
 #define MINIBLINKBROWSER_TYPE_URL 0
+#pragma endregion miniblinkbrowser type
 
+#pragma region miniblinkbrowser message
 // 消息_miniblink浏览框_获取浏览框句柄
 #define MINIBLINKBROWSER_MESSAGE_GETWEBVIEW 100011
 // 消息_miniblink浏览框_加载
 #define MINIBLINKBROWSER_MESSAGE_LOAD 100012
 // 消息_miniblink浏览框_执行js
 #define MINIBLINKBROWSER_MESSAGE_JS 100013
-
-// 消息_媒体播放状态_播放
-#define MEDIAPLAYER_MESSAGE_STATE_PLAY 10010
-// 消息_媒体播放状态_暂停
-#define MEDIAPLAYER_MESSAGE_STATE_PAUSE 10011
-// 消息_媒体播放状态_继续播放
-#define MEDIAPLAYER_MESSAGE_STATE_CONTINUE 10012
-// 消息_媒体播放状态_停止
-#define MEDIAPLAYER_MESSAGE_STATE_STOP 10013
-// 消息_播放速率 lParam: (int)fRate
-#define MEDIAPLAYER_MESSAGE_RATE 10014
-// 消息_置播放位置 lParam: 单位 秒
-#define MEDIAPLAYER_MESSAGE_SET_POSITION 10015
-// 消息_取视频时长 单位 秒
-#define MEDIAPLAYER_MESSAGE_GET_DURATION 10016
+#pragma endregion miniblinkbrowser message
 
 #pragma region rollmenu notify
 // 事件_卷帘菜单_单击子项   wParam: 子项索引 (索引从1开始,0为分组)  lParam: 分组索引 (索引从1开始)
@@ -1607,6 +1596,44 @@
 // 消息_滚动条_设置可视 lParam为1可视,0不可视
 #define SCROLLBAR_MESSAGE_SETVISIBLE 56212
 #pragma endregion scrollbar message
+
+#pragma region vlcplayer notify
+// 事件_vlc播放器_状态改变 lParam 0打开中 1停止播放 2播放中 3暂停中 4播放结束
+#define VLCPLAYER_EVENT_STATECHANGED 10000
+// 事件_vlc播放器_主动停止播放
+#define VLCPLAYER_EVENT_STOPPED 10001
+// 事件_vlc播放器_播放中
+#define VLCPLAYER_EVENT_PLAYING 10002
+// 事件_vlc播放器_暂停中
+#define VLCPLAYER_EVENT_PAUSED 10003
+// 事件_vlc播放器_播放结束
+#define VLCPLAYER_EVENT_END 10004
+#pragma endregion vlcplayer notify
+
+#pragma region vlcplayer message
+// 消息_vlc播放器_播放 lParam :文件名
+#define VLCPLAYER_MESSAGE_STATE_PLAY 20000
+// 消息_vlc播放器_暂停
+#define VLCPLAYER_MESSAGE_STATE_PAUSE 20001
+// 消息_vlc播放器_继续播放
+#define VLCPLAYER_MESSAGE_STATE_RESUME 20002
+// 消息_vlc播放器_停止
+#define VLCPLAYER_MESSAGE_STATE_STOP 20003
+// 消息_vlc播放器_置播放速率 lParam: 速率 int类型 0到3之间
+#define VLCPLAYER_MESSAGE_SET_RATE 20004
+// 消息_vlc播放器_取播放速率 lParam: 速率 int类型
+#define VLCPLAYER_MESSAGE_GET_RATE 20005
+// 消息_vlc播放器_置播放音量 lParam: 音量 int类型 0到100之间
+#define VLCPLAYER_MESSAGE_SET_VOLUME 20006
+// 消息_vlc播放器_取播放音量 lParam: 音量 int类型 0到100之间
+#define VLCPLAYER_MESSAGE_GET_VOLUME 20007
+// 消息_vlc播放器_置播放媒体时间 lParam: 单位 INT64类型 毫秒
+#define VLCPLAYER_MESSAGE_SET_MEDIATIME 20008
+// 消息_vlc播放器_取播放媒体时间 单位 INT64类型 毫秒
+#define VLCPLAYER_MESSAGE_GET_MEDIATIME 20009
+// 消息_取视频总时长 单位 INT64类型 毫秒
+#define VLCPLAYER_MESSAGE_GET_DURATION 20010
+#pragma endregion vlcplayer message
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	

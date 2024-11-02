@@ -39,9 +39,9 @@ void _object_init()
     _palette_register();
     _propertygrid_register();
     _miniblink_register();
-    _mediafoundation_register();
     _rollmenu_register();
 	_taggingboard_register();
+	_vlcplayer_register();
 }
 
 
