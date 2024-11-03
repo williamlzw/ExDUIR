@@ -2393,14 +2393,6 @@ BOOL Ex_ObjLayoutUpdate(EXHANDLE handle);
 BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint);
 
 /// <summary>
-/// 初始化Miniblink浏览器
-/// </summary>
-/// <param name="libPath">依赖父路径</param>
-/// <param name="dllName">库文件名</param>
-/// <returns></returns>
-BOOL Ex_ObjMiniblinkBrowserInitialize(LPCWSTR libPath, LPCWSTR dllName);
-
-/// <summary>
 /// 坐标转换
 /// </summary>
 /// <param name="hObjSrc"></param>

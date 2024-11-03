@@ -1437,40 +1437,6 @@ namespace ExDUIR
 				}
 			};
 
-			class ExMiniblinkBrowser : public ExControl
-			{
-			public:
-				ExMiniblinkBrowser() = default;
-				~ExMiniblinkBrowser() = default;
-				ExMiniblinkBrowser(EXHANDLE hObj)
-				{
-					m_handle = hObj;
-				}
-				ExMiniblinkBrowser(ExControl obj)
-				{
-					m_handle = obj.m_handle;
-				}
-				ExMiniblinkBrowser(ExUIbase pOwner, INT x, INT y, INT width, INT height, LPCWSTR lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
-					:ExControl(pOwner, x, y, width, height, L"MbBrowser", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc)
-				{
-				}
-
-				void Initialize(LPCWSTR libPath, LPCWSTR dllName)
-				{
-					Ex_ObjMiniblinkBrowserInitialize(libPath, dllName);
-				}
-
-				void LoadUrl(LPCWSTR url)
-				{
-					Ex_ObjSendMessage(m_handle, MINIBLINKBROWSER_MESSAGE_LOAD, 0, (LPARAM)url);
-				}
-
-				void RunJS(LPCWSTR js)
-				{
-					Ex_ObjSendMessage(m_handle, MINIBLINKBROWSER_MESSAGE_JS, 0, (LPARAM)js);
-				}
-			};
-
 			class ExColorPicker : public ExControl
 			{
 			public:
