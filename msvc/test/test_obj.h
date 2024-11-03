@@ -208,10 +208,6 @@ void test_nativewindow(HWND hParent);
 LRESULT CALLBACK OnFullScreenWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_fullscreen(HWND hWnd);
 
-LRESULT CALLBACK OnMiniblinkWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
-LRESULT CALLBACK OnMiniblinkBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
-void test_miniblink(HWND hWnd);
-
 LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_svgAndfont(HWND hWnd);
 

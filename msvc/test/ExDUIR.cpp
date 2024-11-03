@@ -54,15 +54,14 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_propertygrid,       // 146测试属性框
         test_nativewindow,       // 147测试原生子窗口
         test_fullscreen,           // 148 测试全屏
-        test_miniblink,         //149 测试miniblink
+		test_pathandrgn,         //149 测试路径区域
 		test_vlcPlay ,         //150 测试VLC播放器
         test_svgAndfont ,          //151 自定义字体和SVG测试
         test_rollmenu ,            //152 测试卷帘菜单
         test_tray,                   //153 测试托盘
         test_mask,                   //154测试蒙板
 		test_tagging,                 //155测试标注画板
-		test_effect,                  //156测试效果器
-		test_pathandrgn			  //157 测试路径区域
+		test_effect                  //156测试效果器
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -149,7 +148,7 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试属性框", -1, 340, 150, 100, 30, hExDui, 146, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试原生子窗口", -1, 340, 190, 100, 30, hExDui, 147, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试全屏置顶", -1, 340, 230, 100, 30, hExDui, 148, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试miniblink", -1, 340, 270, 100, 30, hExDui, 149, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试路径与区域", -1, 340, 270, 100, 30, hExDui, 149, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试VLC播放器", -1, 340, 310, 100, 30, hExDui, 150, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"自定字体和SVG", -1, 340, 350, 100, 30, hExDui, 151, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试卷帘菜单", -1, 340, 390, 100, 30, hExDui, 152, DT_VCENTER | DT_CENTER, 0, 0, NULL));
@@ -158,7 +157,6 @@ void test_exdui()
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标注画板", -1, 340, 510, 100, 30, hExDui, 155, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试效果器", -1, 340, 550, 100, 30, hExDui, 156, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
-		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试路径与区域", -1, 450, 30, 100, 30, hExDui, 157, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 		for (auto button : buttons)
         {
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);

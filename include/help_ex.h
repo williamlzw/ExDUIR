@@ -366,7 +366,6 @@ struct obj_base
 #include "Class_DrawingBoard_ex.h"
 #include "Class_Palette_ex.h"
 #include "Class_PropertyGrid_ex.h"
-#include "Class_Miniblink_ex.h"
 #include "Class_RollMenu.h"
 #include "Class_TaggingBoard.h"
 #include "Class_VLCPlayer_ex.h"

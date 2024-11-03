@@ -74,25 +74,29 @@
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libexdui</TargetName>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libexdui</TargetName>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)include;$(SolutionDir)thirdparty\webview2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)thirdparty\webview2\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetName>libexdui</TargetName>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>libexdui</TargetName>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)thirdparty\webview2\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -124,6 +128,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -195,9 +195,6 @@
     <ClCompile Include="..\..\src\Class_Calendar_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\nanosvg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -411,9 +408,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Class_MiniBlink_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\mb.h">

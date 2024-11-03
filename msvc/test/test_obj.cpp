@@ -3702,39 +3702,6 @@ void test_fullscreen(HWND hWnd)
 	Ex_DUIShowWindow(hExDui_fullscreen, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-HEXOBJ m_hObjBrowser;
-
-LRESULT CALLBACK OnMiniblinkWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
-{
-	if (uMsg == WM_SIZE)
-	{
-		Ex_ObjMove(m_hObjBrowser, 50, 50, LOWORD(lParam) - 100, HIWORD(lParam) - 100, FALSE);
-	}
-	return 0;
-}
-
-LRESULT CALLBACK OnMiniblinkBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
-{
-	//auto js = L"https://media.w3.org/2010/05/sintel/trailer.mp4";
-	auto js = L"https://media.w3.org/2010/05/sintel/trailer.mp4";
-	Ex_ObjSendMessage(m_hObjBrowser, MINIBLINKBROWSER_MESSAGE_JS, 0, (LPARAM)js);
-	return 0;
-}
-
-void test_miniblink(HWND hWnd)
-{
-	HWND hWndminiblink = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试miniblink浏览框", 0, 0, 800, 600, 0, 0);
-	HEXDUI hExDui_miniblink = Ex_DUIBindWindowEx(hWndminiblink, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE, 0, OnMiniblinkWndMsgProc);
-	Ex_DUISetLong(hExDui_miniblink, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-	//Ex_ObjMiniblinkBrowserInitialize(0, L"miniblink_4975_x64.dll"); // 64位
-	Ex_ObjMiniblinkBrowserInitialize(0, L"miniblink_4975_x64.dll");
-	m_hObjBrowser = Ex_ObjCreate(L"MbBrowser", NULL, -1, 50, 50, 700, 500, hExDui_miniblink);
-	std::wstring path = L"file:///J:/ExduiR/msvc/test/res/MP4.html"; //注意,本地路径带#符号不支持
-	Ex_ObjSendMessage(m_hObjBrowser, MINIBLINKBROWSER_MESSAGE_LOAD, MINIBLINKBROWSER_TYPE_URL, (LPARAM)path.c_str());
-	auto btn = Ex_ObjCreate(L"button", NULL, -1, 50, 550, 100, 30, hExDui_miniblink);
-	Ex_ObjHandleEvent(btn, NM_CLICK, OnMiniblinkBtnEnevt);
-	Ex_DUIShowWindow(hExDui_miniblink, SW_SHOWNORMAL, 0, 0, 0);
-}
 
 LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {

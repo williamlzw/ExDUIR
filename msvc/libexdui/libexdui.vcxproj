@@ -38,7 +38,6 @@
     <ClCompile Include="..\..\src\Class_ListButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ComboBox_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_MiniBlink_ex.cpp" />
     <ClCompile Include="..\..\src\Class_MosaicLoading_ex.cpp" />
     <ClCompile Include="..\..\src\Class_NavButton_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Palette_ex.cpp" />
@@ -109,7 +108,6 @@
     <ClInclude Include="..\..\include\Class_ListButton_ex.h" />
     <ClInclude Include="..\..\include\Class_ListView_ex.h" />
     <ClInclude Include="..\..\include\Class_ComboBox_ex.h" />
-    <ClInclude Include="..\..\include\Class_MiniBlink_ex.h" />
     <ClInclude Include="..\..\include\Class_MosaicLoading_ex.h" />
     <ClInclude Include="..\..\include\Class_NavButton_ex.h" />
     <ClInclude Include="..\..\include\Class_Palette_ex.h" />
@@ -287,6 +285,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <DebugInformationFormat>None</DebugInformationFormat>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
