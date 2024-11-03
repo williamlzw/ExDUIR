@@ -42,10 +42,15 @@ LRESULT CALLBACK _vlcplayer_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 			Ex_ObjEndPaint(hObj, &ps);
 		}
 	}
-	else if (uMsg == VLCPLAYER_MESSAGE_STATE_PLAY)//播放   lParam :文件名或url
+	else if (uMsg == VLCPLAYER_MESSAGE_STATE_PLAY)//播放   lParam :文件名
 	{
 		VLCPlayer* pPlayer = (VLCPlayer*)Ex_ObjGetLong(hObj, VLCPLAYER_LONG_OBJ);
-		pPlayer->Play((PCWSTR)lParam);
+		pPlayer->Play((PCWSTR)lParam, 0);
+	}
+	else if (uMsg == VLCPLAYER_MESSAGE_STATE_PLAYFROMURL)//播放   lParam :url
+	{
+		VLCPlayer* pPlayer = (VLCPlayer*)Ex_ObjGetLong(hObj, VLCPLAYER_LONG_OBJ);
+		pPlayer->Play((PCWSTR)lParam, 1);
 	}
 	else if (uMsg == VLCPLAYER_MESSAGE_STATE_PAUSE)//暂停
 	{
@@ -55,7 +60,7 @@ LRESULT CALLBACK _vlcplayer_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 	else if (uMsg == VLCPLAYER_MESSAGE_STATE_RESUME)//继续
 	{
 		VLCPlayer* pPlayer = (VLCPlayer*)Ex_ObjGetLong(hObj, VLCPLAYER_LONG_OBJ);
-		pPlayer->Play();
+		pPlayer->Play(NULL, 0);
 	}
 	else if (uMsg == VLCPLAYER_MESSAGE_STATE_STOP)//停止
 	{
@@ -213,11 +218,11 @@ void VLCPlayer::SetState(State state)
 	}
 }
 
-void VLCPlayer::Play(const WCHAR* fileName)
+void VLCPlayer::Play(const WCHAR* fileName, int type)
 {
 	if (fileName != NULL)
 	{
-		SetFileName(fileName);
+		SetFileName(fileName, type);
 	}
 	SetState(Playing);
 }
@@ -315,7 +320,7 @@ BOOL VLCPlayer::SetMediaRate(FLOAT rate)
 	return FALSE;
 }
 
-void VLCPlayer::SetFileName(const WCHAR* pwszFileName)
+void VLCPlayer::SetFileName(const WCHAR* pwszFileName, int type)
 {
 	ClearUp();
 	if (m_state != State::Stopped)
@@ -324,7 +329,14 @@ void VLCPlayer::SetFileName(const WCHAR* pwszFileName)
 	}
 	m_fileName = pwszFileName;
 	libvlc_media_t* m;
-	m = libvlc_media_new_path(m_libVlc, w2u(pwszFileName).c_str());
+	if (type == 0)
+	{
+		m = libvlc_media_new_path(m_libVlc, w2u(pwszFileName).c_str());
+	}
+	else {
+		m = libvlc_media_new_location(m_libVlc, w2u(pwszFileName).c_str());
+	}
+	
 	m_mediaPlayer = libvlc_media_player_new_from_media(m);
 
 	libvlc_media_release(m);

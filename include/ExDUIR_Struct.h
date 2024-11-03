@@ -1611,28 +1611,30 @@
 #pragma endregion vlcplayer notify
 
 #pragma region vlcplayer message
-// 消息_vlc播放器_播放 lParam :文件名
+// 消息_vlc播放器_播放自文件 lParam :本地文件名
 #define VLCPLAYER_MESSAGE_STATE_PLAY 20000
+// 消息_vlc播放器_播放自url lParam :URL 如https://media.w3.org/2010/05/sintel/trailer.mp4
+#define VLCPLAYER_MESSAGE_STATE_PLAYFROMURL 20001
 // 消息_vlc播放器_暂停
-#define VLCPLAYER_MESSAGE_STATE_PAUSE 20001
+#define VLCPLAYER_MESSAGE_STATE_PAUSE 20002
 // 消息_vlc播放器_继续播放
-#define VLCPLAYER_MESSAGE_STATE_RESUME 20002
+#define VLCPLAYER_MESSAGE_STATE_RESUME 20003
 // 消息_vlc播放器_停止
-#define VLCPLAYER_MESSAGE_STATE_STOP 20003
+#define VLCPLAYER_MESSAGE_STATE_STOP 20004
 // 消息_vlc播放器_置播放速率 lParam: 速率 int类型 0到3之间
-#define VLCPLAYER_MESSAGE_SET_RATE 20004
+#define VLCPLAYER_MESSAGE_SET_RATE 20005
 // 消息_vlc播放器_取播放速率 lParam: 速率 int类型
-#define VLCPLAYER_MESSAGE_GET_RATE 20005
+#define VLCPLAYER_MESSAGE_GET_RATE 20006
 // 消息_vlc播放器_置播放音量 lParam: 音量 int类型 0到100之间
-#define VLCPLAYER_MESSAGE_SET_VOLUME 20006
+#define VLCPLAYER_MESSAGE_SET_VOLUME 20007
 // 消息_vlc播放器_取播放音量 lParam: 音量 int类型 0到100之间
-#define VLCPLAYER_MESSAGE_GET_VOLUME 20007
+#define VLCPLAYER_MESSAGE_GET_VOLUME 20008
 // 消息_vlc播放器_置播放媒体时间 lParam: 单位 INT64类型 毫秒
-#define VLCPLAYER_MESSAGE_SET_MEDIATIME 20008
+#define VLCPLAYER_MESSAGE_SET_MEDIATIME 20009
 // 消息_vlc播放器_取播放媒体时间 单位 INT64类型 毫秒
-#define VLCPLAYER_MESSAGE_GET_MEDIATIME 20009
+#define VLCPLAYER_MESSAGE_GET_MEDIATIME 20010
 // 消息_取视频总时长 单位 INT64类型 毫秒
-#define VLCPLAYER_MESSAGE_GET_DURATION 20010
+#define VLCPLAYER_MESSAGE_GET_DURATION 20011
 #pragma endregion vlcplayer message
 
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	

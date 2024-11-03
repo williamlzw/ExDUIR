@@ -1,2 +1,4 @@
 https://github.com/williamlzw/Ex_libvlc/releases/tag/3.0.21
 https://gitee.com/william_lzw/ex_libvlc/releases/tag/3.0.21
+
+lib目录和include目录是编译依赖文件。运行时将plugins目录拷贝到exe目录，将bin目录里面dll文件拷贝到exe目录。

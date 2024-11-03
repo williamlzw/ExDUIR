@@ -4389,6 +4389,7 @@ LRESULT CALLBACK OnMediaVLCBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPar
 	if (hObj == m_hObjMediaVLCButton1)
 	{
 		Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_PLAY, 0, (LPARAM)L"./res/test.mp4");
+		//Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_PLAYFROMURL, 0, (LPARAM)L"https://media.w3.org/2010/05/sintel/trailer.mp4");
 	}
 	else if (hObj == m_hObjMediaVLCButton2)
 	{
@@ -4424,13 +4425,14 @@ LRESULT CALLBACK OnMediaVLCBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPar
 
 void test_vlcPlay(HWND hWnd)
 {
+	//依赖文件 https://gitee.com/william_lzw/ex_libvlc/releases/tag/3.0.21
+	//32位必须用cdecl编译才能使用vlc
 	HWND hWndmediavlc = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试VLC播放器", 0, 0, 900, 600, 0, 0);
 	HEXDUI hExDui_mediavlc = Ex_DUIBindWindowEx(hWndmediavlc, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE |
 		WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
 		WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_mediavlc, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hObjMediaVLC = Ex_ObjCreate(L"VLCPlayer", NULL, -1, 50, 50, 800, 500, hExDui_mediavlc);
-
 	m_hObjMediaVLCButton1 = Ex_ObjCreate(L"button", L"播放", -1, 50, 560, 100, 30, hExDui_mediavlc);
 	m_hObjMediaVLCButton2 = Ex_ObjCreate(L"button", L"暂停", -1, 160, 560, 100, 30, hExDui_mediavlc);
 	m_hObjMediaVLCButton3 = Ex_ObjCreate(L"button", L"继续", -1, 270, 560, 100, 30, hExDui_mediavlc);

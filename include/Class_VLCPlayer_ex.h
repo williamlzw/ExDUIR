@@ -19,7 +19,7 @@ public:
 	STDMETHODIMP QueryInterface(REFIID iid, void** ppv);
 	STDMETHODIMP_(ULONG) AddRef();
 	STDMETHODIMP_(ULONG) Release();
-	void Play(const WCHAR* fileName = NULL);
+	void Play(const WCHAR* fileName = NULL, int type = 0);
 	void Pause();
 	void Stop();
 	void DoResume();
@@ -48,7 +48,7 @@ protected:
 	void ClearUp();
 	unsigned int setupFormat(char* chroma, unsigned int* width, unsigned int* height,
 							   unsigned int* pitches, unsigned int* lines);
-	void SetFileName(const WCHAR* pwszFileName);
+	void SetFileName(const WCHAR* pwszFileName, int type);
 	void SetState(State state);
 	
 	State m_state = Stopped;
