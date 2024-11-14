@@ -32,6 +32,7 @@ public:
 			m_navbuttons[i].SetColorTextNormal(ExRGB2ARGB(16777215, 255));
 			ExImage img1 = ExImage(L"../test/navbtn/顶部按钮背景C.png");
 			ExImage img2 = ExImage(L"../test/navbtn/顶部按钮背景D.png");
+			//img在navbutton内部会自动销毁，无需手动销毁
 			m_navbuttons[i].SetImage(1, img1);
 			m_navbuttons[i].SetImage(2, img2);
 			m_navbuttons[i].SetLongLParam(i + 1);

@@ -8,6 +8,11 @@
 #include "GroupBoxWindow.hpp"
 #include "CustomBackgroundWindow.hpp"
 #include "NavButtonWindow.hpp"
+#include "AbsoluteLayoutWindow.hpp"
+#include "RelativeLayoutWindow.hpp"
+#include "LinearLayoutWindow.hpp"
+#include "FlowLayoutWindow.hpp"
+#include "TableLayoutWindow.hpp"
 
 using namespace ExDUIR::FrameWorks;
 
@@ -138,12 +143,41 @@ public:
 			case 107:
 			{
 				CustomBackgroundWindow::GetInstance().CreateCustomBackgroundWindow(MainWindow::GetInstance().m_skin.m_hWnd);
-				//GroupBoxWindow::GetInstance().CreateGroupBoxWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			case 108:
 			{
 				NavButtonWindow::GetInstance().CreateNavButtonWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 109:
+			{
+				GroupBoxWindow::GetInstance().CreateGroupBoxWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 110:
+			{
+				AbsoluteLayoutWindow::GetInstance().CreateAbsoluteLayoutWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 111:
+			{
+				RelativeLayoutWindow::GetInstance().CreateRelativeLayoutWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 112:
+			{
+				LinearLayoutWindow::GetInstance().CreateLinearLayoutWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 113:
+			{
+				FlowLayoutWindow::GetInstance().CreateFlowLayoutWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 114:
+			{
+				TableLayoutWindow::GetInstance().CreateTableLayoutWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			default:

@@ -141,7 +141,7 @@ namespace ExDUIR
 					return _layout_notify(m_handleLayout, nEvent, wParam, lParam);
 				}
 
-				inline BOOL BindObj(ExUIbase obj, BOOL fUpdate = FALSE)
+				inline BOOL BindObj(ExUIbase obj, BOOL fUpdate = TRUE)
 				{
 					return Ex_ObjLayoutSet(obj.m_handle, m_handleLayout, fUpdate);
 				}
@@ -351,9 +351,19 @@ namespace ExDUIR
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_LEFT_OF, pvValue);
 				}
 
+				inline BOOL SetSubPropLeftOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_LEFT_OF, ofObj.m_handle);
+				}
+
 				inline BOOL SetSubPropTopOf(ExControl obj, size_t pvValue)
 				{
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_TOP_OF, pvValue);
+				}
+
+				inline BOOL SetSubPropTopOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_TOP_OF, ofObj.m_handle);
 				}
 
 				inline BOOL SetSubPropRightOf(ExControl obj, size_t pvValue)
@@ -361,9 +371,19 @@ namespace ExDUIR
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_RIGHT_OF, pvValue);
 				}
 
+				inline BOOL SetSubPropRightOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_RIGHT_OF, ofObj.m_handle);
+				}
+
 				inline BOOL SetSubPropBottomOf(ExControl obj, size_t pvValue)
 				{
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, pvValue);
+				}
+
+				inline BOOL SetSubPropBottomOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, ofObj.m_handle);
 				}
 
 				inline BOOL SetSubPropLeftAlignOf(ExControl obj, size_t pvValue)
@@ -371,9 +391,19 @@ namespace ExDUIR
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, pvValue);
 				}
 
+				inline BOOL SetSubPropLeftAlignOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, ofObj.m_handle);
+				}
+
 				inline BOOL SetSubPropTopAlignOf(ExControl obj, size_t pvValue)
 				{
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF, pvValue);
+				}
+
+				inline BOOL SetSubPropTopAlignOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF, ofObj.m_handle);
 				}
 
 				inline BOOL SetSubPropRightAlignOf(ExControl obj, size_t pvValue)
@@ -381,9 +411,19 @@ namespace ExDUIR
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, pvValue);
 				}
 
+				inline BOOL SetSubPropRightAlignOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, ofObj.m_handle);
+				}
+
 				inline BOOL SetSubPropBottomAlignOf(ExControl obj, size_t pvValue)
 				{
 					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, pvValue);
+				}
+
+				inline BOOL SetSubPropBottomAlignOfObj(ExControl obj, ExControl ofObj)
+				{
+					return SetChildProp(obj, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, ofObj.m_handle);
 				}
 
 				inline BOOL SetSubPropCenterParentHorizontal(ExControl obj, size_t pvValue)

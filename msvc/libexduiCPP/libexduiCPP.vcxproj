@@ -176,11 +176,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AbsoluteLayoutWindow.hpp" />
     <ClInclude Include="ButtonWindow.hpp" />
     <ClInclude Include="CheckButtonWindow.hpp" />
     <ClInclude Include="CustomBackgroundWindow.hpp" />
     <ClInclude Include="EditWindow.hpp" />
     <ClInclude Include="ExDUIRCPP.hpp" />
+    <ClInclude Include="FlowLayoutWindow.hpp" />
     <ClInclude Include="Global\ExApp.hpp" />
     <ClInclude Include="Global\ExBrush.hpp" />
     <ClInclude Include="Global\ExCanvas.hpp" />
@@ -200,10 +202,13 @@
     <ClInclude Include="Global\ExWindow.hpp" />
     <ClInclude Include="GroupBoxWindow.hpp" />
     <ClInclude Include="LabelWindow.hpp" />
+    <ClInclude Include="LinearLayoutWindow.hpp" />
     <ClInclude Include="ListButtonWindow.hpp" />
     <ClInclude Include="ListViewWindow.hpp" />
     <ClInclude Include="MainWindow.hpp" />
     <ClInclude Include="NavButtonWindow.hpp" />
+    <ClInclude Include="RelativeLayoutWindow.hpp" />
+    <ClInclude Include="TableLayoutWindow.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

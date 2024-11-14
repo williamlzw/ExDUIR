@@ -880,7 +880,7 @@ void test_navbutton(HWND hWnd)
 
 void test_absolute(HWND hWnd)
 {
-	HWND hWnd_absolute = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试绝对布局", 0, 0, 450, 300, 0, 0);
+	HWND hWnd_absolute = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试绝对布局", 0, 0, 800, 300, 0, 0);
 	HEXDUI hExDui_absolute = Ex_DUIBindWindowEx(hWnd_absolute, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MAX | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_absolute, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_ABSOLUTE, hExDui_absolute);
@@ -912,7 +912,7 @@ void test_absolute(HWND hWnd)
 	_layout_absolute_setedge(hLayout, hObj1, LAYOUT_SUBPROP_ABSOLUTE_RIGHT, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 50);  //设置距离右边为50像素
 	_layout_absolute_setedge(hLayout, hObj1, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 50); // 设置距离底边为50像素
 
-	HEXOBJ hObj2 = Ex_ObjCreate(L"Static", L"固定在左下角50,50的位置，宽度为40%,高度为50", -1, 0, 0, 200, 100, hExDui_absolute);
+	HEXOBJ hObj2 = Ex_ObjCreate(L"Static", L"固定在左下角50,50的位置，宽度为40%,高度为50", -1, 0, 0, 0, 0, hExDui_absolute);
 	Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 100), TRUE);
 	_layout_absolute_setedge(hLayout, hObj2, LAYOUT_SUBPROP_ABSOLUTE_LEFT, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 50);   //设置距离左边为50像素
 	_layout_absolute_setedge(hLayout, hObj2, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 50); // 设置距离底边为50像素
@@ -953,38 +953,38 @@ void test_relative(HWND hWnd)
 
 	HEXOBJ hObj1 = Ex_ObjCreateEx(-1, L"Static", L"控件A：父容器的左下角", -1, 0, 0, 200, 150, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj1, COLOR_EX_BACKGROUND, ExARGB(255, 0, 0, 100), TRUE);
-	_layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, -1);   //左侧与父容器对齐
-	_layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, -1); // 底边与父容器对齐
+	_layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, -1);   //左侧对齐于父容器
+	_layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, -1); //底部对齐于父容器
 
 	HEXOBJ hObj2 = Ex_ObjCreateEx(-1, L"Static", L"控件B：父容器居中顶部", -1, 0, 0, 200, 150, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 100), TRUE);
-	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF, -1);   //顶部与父容器对齐
-	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H, 1); // 水平居中于父容器
+	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF, -1);   //顶部对齐于父容器
+	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H, 1); //水平居中于父容器
 
 	HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"Static", L"控件C：右侧与A对齐,宽度150,在A和B之间", -1, 0, 0, 150, 150, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(65280, 100), TRUE);
 	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_TOP_OF, hObj1);         //在A控件顶部
-	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, hObj2);      // 在B控件底部
-	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj1); // 在B右侧对齐于A控件
+	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, hObj2);      //在B控件底部
+	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj1); //右侧对齐于A控件
 
 	HEXOBJ hObj4 = Ex_ObjCreateEx(-1, L"Static", L"控件D：高度100,在A和父控件右边界之间,在父容器底部", -1, 0, 0, 150, 100, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj4, COLOR_EX_BACKGROUND, ExRGB2ARGB(16754943, 100), TRUE);
-	_layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_RIGHT_OF, hObj1);     //在A控件右边
-	_layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, -1); // 底部对齐于父容器
-	_layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, -1);  // 右侧对齐于父容器
+	_layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_RIGHT_OF, hObj1);     //在A控件右侧
+	_layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, -1); //底部对齐于父容器
+	_layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, -1);  //右侧对齐于父容器
 
 	HEXOBJ hObj5 = Ex_ObjCreateEx(-1, L"Static", L"控件E：与D同宽,在D和B之间", -1, 0, 0, 150, 100, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj5, COLOR_EX_BACKGROUND, ExRGB2ARGB(8445952, 100), TRUE);
 	_layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_TOP_OF, hObj4);         //在D顶部
-	_layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, hObj2);      // 在B底部
-	_layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, hObj4);  // 左侧对齐于D
-	_layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj4); // 右侧对齐于D
+	_layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, hObj2);      //在B底部
+	_layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, hObj4);  //左侧对齐于D
+	_layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj4); //右侧对齐于D
 
 	HEXOBJ hObj6 = Ex_ObjCreateEx(-1, L"Static", L"控件F：150宽度,垂直方向对齐于DE,右对齐于DE", -1, 0, 0, 150, 100, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj6, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), TRUE);
 	_layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF, hObj5);    //顶部对齐于E
-	_layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, hObj4); // 底部对齐于D
-	_layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj4);  // 右对齐于D
+	_layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, hObj4); //底部对齐于D
+	_layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj4);  //右对齐于D
 
 	Ex_ObjLayoutSet(hExDui_relative, hLayout, TRUE);
 
@@ -993,7 +993,7 @@ void test_relative(HWND hWnd)
 
 void test_linear(HWND hWnd)
 {
-	HWND hWnd_linear = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试线性布局", 0, 0, 600, 400, 0, 0);
+	HWND hWnd_linear = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试线性布局", 0, 0, 800, 400, 0, 0);
 	HEXDUI hExDui_linear = Ex_DUIBindWindowEx(hWnd_linear, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MAX | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_linear, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_LINEAR, hExDui_linear);
@@ -1034,7 +1034,8 @@ void test_flow(HWND hWnd)
 	HEXOBJ hObj = 0;
 	for (INT i = 0; i < 20; i++)
 	{
-		hObj = Ex_ObjCreate(L"Static", L"test", -1, 0, 0, Random(50, 150), Random(50, 150), hExDui_flow);
+		auto str = L"test" + std::to_wstring(i + 1);
+		hObj = Ex_ObjCreate(L"Static", str.c_str(), -1, 0, 0, Random(50, 150), Random(50, 150), hExDui_flow);
 		Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
 		_layout_setchildprop(hLayout, hObj, LAYOUT_SUBPROP_MARGIN_RIGHT, 10);
 		_layout_setchildprop(hLayout, hObj, LAYOUT_SUBPROP_MARGIN_BOTTOM, 10);
@@ -1074,18 +1075,18 @@ void test_table(HWND hWnd)
 			_layout_setchildprop(hLayout, hObj, LAYOUT_SUBPROP_TABLE_CELL, j); //设置所属列
 		}
 	}
-	HEXOBJ hObj2 = Ex_ObjCreateEx(-1, L"static", L"(2,1)[占2行]", -1, 0, 0, 200, 150, hExDui_table, 0, DT_VCENTER, 0, 0, 0);
+	HEXOBJ hObj2 = Ex_ObjCreateEx(-1, L"static", L"(起始第1行2列)[占2行]", -1, 0, 0, 200, 150, hExDui_table, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(65535, 150), TRUE);
-	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_CELL, 2);
-	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_ROW, 1);
-	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_ROW_SPAN, 2); //设置跨行数
+	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_CELL, 2);//起始第2列
+	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_ROW, 1);//起始第1行
+	_layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_ROW_SPAN, 2); //设置跨2行
 
-	HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"static", L"(1,3)[占3列2行]", -1, 0, 0, 200, 150, hExDui_table, 0, DT_VCENTER, 0, 0, 0);
+	HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"static", L"(起始第3行1列)[占3列2行]", -1, 0, 0, 200, 150, hExDui_table, 0, DT_VCENTER, 0, 0, 0);
 	Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711935, 120), TRUE);
-	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_CELL, 1);
-	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_ROW, 3);
-	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_ROW_SPAN, 2);
-	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_CELL_SPAN, 3); //设置跨列数
+	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_CELL, 1);//起始第1列
+	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_ROW, 3);//起始第3行
+	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_ROW_SPAN, 2);//设置跨2行
+	_layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_CELL_SPAN, 3); //设置跨3列
 
 	Ex_ObjLayoutSet(hExDui_table, hLayout, TRUE);
 
