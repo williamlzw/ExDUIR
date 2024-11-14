@@ -9,78 +9,112 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="源文件\Graphics">
-      <UniqueIdentifier>{abc36d32-c547-430d-b169-9fbc399a3d40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="源文件\Layout">
-      <UniqueIdentifier>{ba4aff8e-346f-4e48-8f94-cc42fd159613}</UniqueIdentifier>
-    </Filter>
     <Filter Include="源文件\Global">
       <UniqueIdentifier>{640a3a2d-37d9-4624-9a6f-b97dd4441054}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ExLayout.hpp">
-      <Filter>源文件\Layout</Filter>
-    </ClInclude>
-    <ClInclude Include="ExBrush.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExCanvas.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExEasing.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExFont.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExImage.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExMatrix.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExPath.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExRegion.hpp">
-      <Filter>源文件\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="ExApp.hpp">
-      <Filter>源文件\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="ExCommon.hpp">
-      <Filter>源文件\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="ExControl.hpp">
-      <Filter>源文件\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="ExDUIRCPP.hpp">
-      <Filter>源文件\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="ExMessageBox.hpp">
-      <Filter>源文件\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="ExSkin.hpp">
-      <Filter>源文件\Global</Filter>
-    </ClInclude>
-    <ClInclude Include="ExUIbase.hpp">
-      <Filter>源文件\Global</Filter>
-    </ClInclude>
     <ClInclude Include="ButtonWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="MainWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
-    <ClInclude Include="ExWindow.hpp">
+    <ClInclude Include="Global\ExApp.hpp">
       <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExCommon.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExControl.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExMessageBox.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExSkin.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExUIbase.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExWindow.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExDUIRCPP.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LabelWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckButtonWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EditWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExLayout.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="ListButtonWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExBrush.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExCanvas.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExEasing.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExFont.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExImage.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExImageList.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExMatrix.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExPath.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExRegion.hpp">
+      <Filter>源文件\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="ListViewWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupBoxWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomBackgroundWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NavButtonWindow.hpp">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Res.exr" />
   </ItemGroup>
 </Project>

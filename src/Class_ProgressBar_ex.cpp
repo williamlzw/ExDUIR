@@ -13,8 +13,8 @@ LRESULT CALLBACK _progressbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
         Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_POS, 0);
         Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_RANGE, 255);
         Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_RADIUS, 10);
-        Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_BKCOLOR, ExRGBA(192, 211, 241, 255));
-        Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_BARCOLOR, ExRGBA(47, 110, 239, 255));
+        Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_BKCOLOR, ExARGB(192, 211, 241, 255));
+        Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_BARCOLOR, ExARGB(47, 110, 239, 255));
         Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), TRUE);
     }
     else if (uMsg == PROGRESSBAR_MESSAGE_GETPOS)

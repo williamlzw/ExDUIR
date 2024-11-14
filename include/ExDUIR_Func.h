@@ -1095,20 +1095,20 @@ INT _img_width(HEXIMAGE hImg);
 /// 图片组添加图片从数据指针
 /// </summary>
 /// <param name="hImageList"></param>
+/// <param name="nIndex">插入位置(0为最后)</param>
 /// <param name="pImg"></param>
 /// <param name="dwBytes"></param>
-/// <param name="nIndex">插入位置(0为最后)</param>
 /// <returns></returns>
-size_t _imglist_add(HEXIMAGELIST hImageList, LPVOID pImg, size_t dwBytes, size_t nIndex);
+size_t _imglist_add(HEXIMAGELIST hImageList, size_t nIndex, LPVOID pImg, size_t dwBytes);
 
 /// <summary>
 /// 图片组添加图片从图片句柄
 /// </summary>
 /// <param name="hImageList"></param>
-/// <param name="hImg"></param>
 /// <param name="nIndex">插入位置(0为最后)</param>
+/// <param name="hImg"></param>
 /// <returns></returns>
-size_t _imglist_addimage(HEXIMAGELIST hImageList, HEXIMAGE hImg, size_t nIndex);
+size_t _imglist_addimage(HEXIMAGELIST hImageList, size_t nIndex, HEXIMAGE hImg);
 
 /// <summary>
 /// 图片组获取图片数量
@@ -1210,7 +1210,7 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 /// <param name="hLayout"></param>
 /// <param name="hObjChild"></param>
 /// <param name="dwEdge">#LAYOUT_SUBPROP_ABSOLUTE_XXX</param>
-/// <param name="dwType"></param>
+/// <param name="dwType">#LAYOUT_SUBPROP_ABSOLUTE_TYPE_</param>
 /// <param name="nValue"></param>
 /// <returns></returns>
 BOOL _layout_absolute_setedge(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT dwEdge, INT dwType, size_t nValue);

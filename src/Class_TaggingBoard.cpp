@@ -19,18 +19,18 @@ LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
 			BOOL bDown = (ps.dwState & STATE_DOWN) != 0;
 			BOOL bVScroll = (ps.dwStyle & SCROLLBAR_STYLE_VERTICALSCROLL) != 0;
 			EXATOM atomClass = bVScroll ? ATOM_VSCROLL : ATOM_HSCROLL;
-			auto brush = _brush_create(ExRGBA(255, 255, 255, 100));
+			auto brush = _brush_create(ExARGB(255, 255, 255, 100));
 			_canvas_fillrect(ps.hCanvas, brush, ps.rcPaint.left, ps.rcPaint.top + 1, ps.rcPaint.right - 1, ps.rcPaint.bottom - 1);
-			_brush_setcolor(brush, ExRGBA(120, 120, 120, 255));
+			_brush_setcolor(brush, ExARGB(120, 120, 120, 255));
 			INT atomBtn1 = ATOM_ARROW1_NORMAL;
 			INT atomBtn2 = ATOM_ARROW2_NORMAL;
 
-			INT crBar = ExRGBA(124, 44, 6, 200);
+			INT crBar = ExARGB(124, 44, 6, 200);
 			if (httype == SCROLLBAR_HITTYPE_CONTROL)
 			{
 				if (bDown)
 				{
-					crBar = ExRGBA(138, 49, 6, 200);
+					crBar = ExARGB(138, 49, 6, 200);
 					atomBtn1 = ATOM_ARROW1_DOWN;
 					atomBtn2 = ATOM_ARROW2_DOWN;
 				}
@@ -38,7 +38,7 @@ LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
 				{
 					if (bHover)
 					{
-						crBar = ExRGBA(100, 36, 5, 200);
+						crBar = ExARGB(100, 36, 5, 200);
 						atomBtn1 = ATOM_ARROW1_HOVER;
 						atomBtn2 = ATOM_ARROW2_HOVER;
 					}
@@ -190,9 +190,9 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		RtlMoveMemory(((EX_POLYGON_ARRAY*)arr)->polygons, &ptrValue, sizeof(size_t));
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_TAGGING, 0);
 
-		HEXBRUSH brush = _brush_create(ExRGBA(255, 0, 0, 255));
+		HEXBRUSH brush = _brush_create(ExARGB(255, 0, 0, 255));
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_PEN, (LONG_PTR)brush);
-		HEXBRUSH brush2 = _brush_create(ExRGBA(255, 0, 0, 50));
+		HEXBRUSH brush2 = _brush_create(ExARGB(255, 0, 0, 50));
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_PEN_FILL, (LONG_PTR)brush2);
 
 		RECT rc;
@@ -200,7 +200,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 
 		auto canvas = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
 		_canvas_begindraw(canvas);
-		_canvas_clear(canvas, ExRGBA(255, 255, 255, 255));
+		_canvas_clear(canvas, ExARGB(255, 255, 255, 255));
 		_canvas_enddraw(canvas);
 
 		Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_CANVAS, canvas);
@@ -921,7 +921,7 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
 	_canvas_begindraw(canvas);
 
 	auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
-	_canvas_clear(canvas, ExRGBA(255, 255, 255, 0));
+	_canvas_clear(canvas, ExARGB(255, 255, 255, 0));
 	auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
 	//auto imgOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET);
 	//auto imgOffsetTop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET);
@@ -947,7 +947,7 @@ void _taggingboard_paint(HEXOBJ hObj)
 	if (Ex_ObjBeginPaint(hObj, &ps))
 	{
 		HEXCANVAS canvas = (HEXCANVAS)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_CANVAS);
-		_canvas_clear(ps.hCanvas, ExRGBA(255, 255, 255, 255));
+		_canvas_clear(ps.hCanvas, ExARGB(255, 255, 255, 255));
 
 		INT canvasWidth, canvasHeight;
 		_canvas_getsize(ps.hCanvas, &canvasWidth, &canvasHeight);

@@ -23,27 +23,27 @@ namespace ExDUIR
 					m_matrix = _matrix_create();
 				}
 
-				BOOL Destroy()
+				inline BOOL Destroy()
 				{
 					return _matrix_destroy(m_matrix);
 				}
 
-				BOOL Reset()
+				inline BOOL Reset()
 				{
 					return _matrix_reset(m_matrix);
 				}
 
-				BOOL Rotate(FLOAT fAngle)
+				inline BOOL Rotate(FLOAT fAngle)
 				{
 					return _matrix_rotate(m_matrix, fAngle);
 				}
 
-				BOOL Scale(FLOAT scaleX, FLOAT scaleY)
+				inline BOOL Scale(FLOAT scaleX, FLOAT scaleY)
 				{
 					return _matrix_scale(m_matrix, scaleX, scaleY);
 				}
 
-				BOOL Translate(FLOAT offsetX, FLOAT offsetY)
+				inline BOOL Translate(FLOAT offsetX, FLOAT offsetY)
 				{
 					return _matrix_translate(m_matrix, offsetX, offsetY);
 				}

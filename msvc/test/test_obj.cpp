@@ -1,8 +1,6 @@
 #include "test_obj.h"
 #include "resource.h"
 
-
-
 HEXDUI m_hExDuiButton;
 
 LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
@@ -11,7 +9,6 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 	{
 		Ex_ObjEnable(hObj, FALSE); //禁用自身
 		Ex_ObjSetPadding(hObj, 0, 20, 5, 5, 5, TRUE);
-
 	}
 	else if (nID == 202)
 	{
@@ -150,8 +147,6 @@ void test_label(HWND hWnd)
 
 	Ex_ObjSetRadius(hObj_label, 10, 10, 15, 10, TRUE);
 
-
-
 	EX_BACKGROUNDIMAGEINFO bkg{ 0 };
 	Ex_ObjGetBackgroundImage(hObj_label, &bkg);
 	OUTPUTW(L"背景信息:", bkg.x, bkg.y, bkg.dwAlpha, bkg.dwRepeat, bkg.hImage, bkg.curFrame, bkg.maxFrame);
@@ -163,9 +158,9 @@ void test_label(HWND hWnd)
 	Ex_ReadFile(L"res/409.dds", &imgdata);
 	Ex_ObjSetBackgroundImage(hObj_label2, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_PLAYIMAGE, 255, TRUE);
 
-	HEXOBJ hObj_label4 = Ex_ObjCreateEx(-1, L"static", L"基础组件可以填充动画,支持PNG,GIF,JPG,BMP,DDS,ICO,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
-	Ex_ObjSetFontFromFamily(hObj_label4, L"宋体", 14, FONT_STYLE_BOLD, FALSE);
-	Ex_ObjSetColor(hObj_label4, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
+	HEXOBJ hObj_label3 = Ex_ObjCreateEx(-1, L"static", L"基础组件可以填充动画,支持PNG,GIF,JPG,BMP,DDS,ICO,标签可以自动换行", -1, 200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
+	Ex_ObjSetFontFromFamily(hObj_label3, L"宋体", 14, FONT_STYLE_BOLD, FALSE);
+	Ex_ObjSetColor(hObj_label3, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
 	Ex_DUIShowWindow(hExDui_label, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -195,7 +190,7 @@ void test_checkbutton(HWND hWnd)
 	Ex_ObjCreateEx(-1, L"radiobutton", L"单选框2", -1, 100, 60, 80, 20, hExDui_checkbutton, 0, DT_VCENTER, 0, 0, NULL);
 
 	EX_OBJ_PROPS CheckButtonExProps = { 0 };
-	HEXOBJ hObj_checkbutton1 = Ex_ObjCreate(L"CheckButtonEx", L"扩展复选框", -1, 10, 90, 120, 30, hExDui_checkbutton);
+	HEXOBJ hObj_checkbutton1 = Ex_ObjCreate(L"CheckButtonEx", L"扩展复选框1", -1, 10, 90, 120, 30, hExDui_checkbutton);
 	Ex_ObjSetColor(hObj_checkbutton1, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), TRUE);
 	CheckButtonExProps.crBkgDownOrChecked = ExARGB(215, 117, 23, 250);
 	CheckButtonExProps.crBorderNormal = ExARGB(222, 222, 222, 150);
@@ -204,7 +199,7 @@ void test_checkbutton(HWND hWnd)
 	Ex_ObjSendMessage(hObj_checkbutton1, WM_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
 	Ex_ObjSendMessage(hObj_checkbutton1, BM_SETCHECK, 1, 0);
 
-	HEXOBJ hObj_checkbutton2 = Ex_ObjCreate(L"CheckButtonEx", L"扩展复选框", -1, 10, 120, 120, 30, hExDui_checkbutton);
+	HEXOBJ hObj_checkbutton2 = Ex_ObjCreate(L"CheckButtonEx", L"扩展复选框2", -1, 10, 120, 120, 30, hExDui_checkbutton);
 	CheckButtonExProps.crBkgDownOrChecked = ExARGB(251, 171, 213, 250);
 	CheckButtonExProps.crBorderNormal = ExARGB(22, 222, 222, 150);
 	CheckButtonExProps.crBorderHover = ExARGB(22, 222, 222, 200);
@@ -373,7 +368,7 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			EX_SETTEXTEX textformat;
 			textformat.flags = 2;       //ST_SELECTION替换选择并保持富文本格式
 			textformat.codePage = 1200; //Unicode code page
-			Ex_ObjSendMessage(hEdit, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为我");
+			Ex_ObjSendMessage(hEdit, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为这个");
 		}
 	}
 	return 0;
@@ -407,7 +402,6 @@ void test_edit(HWND hWnd)
 	Ex_DUISetLong(m_hExDuiEdit, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
 	HEXOBJ hObj_edit1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_CUSTOMDRAW, L"edit", L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION, 10, 30, 150, 30, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
-	Ex_ObjSendMessage(hObj_edit1, EDIT_MESSAGE_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"背景图片编辑框");
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
 	Ex_ObjSendMessage(hObj_edit1, EDIT_MESSAGE_SETCUEBANNER, ExARGB(150, 150, 150, 255), (LPARAM)L"背景图片编辑框");
@@ -453,11 +447,13 @@ void test_edit(HWND hWnd)
 	_img_destroy(hImg);
 	_img_destroy(hImgSmall);
 
-	
-
-	std::vector<std::wstring> buttonTitles = { L"全选", L"取消选择", L"置选择", L"左对齐 ", L"居中对齐", L"右对齐", L"首行缩进 ", L"右侧缩进", L"非首行缩进", L"项目符", L"文本蓝色 ", L"加粗", L"倾斜", L"下划线", L"删除线", L"超链接", L"幼圆30", L"撤销 ", L"重做", L"复制", L"剪切", L"粘贴", L"删除", L"取行数 ", L"寻找文本", L"替换文本"};
+	std::vector<std::wstring> buttonTitles = { L"全选", L"取消选择", L"置选择", L"左对齐 ", L"居中对齐", 
+		L"右对齐", L"首行缩进 ", L"右侧缩进", L"非首行缩进", L"项目符", L"文本红色 ", L"加粗", L"倾斜", 
+		L"下划线", L"删除线", L"超链接", L"幼圆30", L"撤销 ", L"重做", L"复制", L"剪切", L"粘贴", 
+		L"删除", L"取行数 ", L"寻找文本", L"替换文本"};
 	m_hEditButton.resize(buttonTitles.size());
 	HEXOBJ hObj_page = Ex_ObjCreate(L"Page", NULL, -1, 500, 30, 350, 300, m_hExDuiEdit);
+	Ex_ObjSetColor(hObj_page, COLOR_EX_BACKGROUND, ExARGB(133, 33, 53, 255), TRUE);
 	HEXLAYOUT hLayoutPage = _layout_create(LAYOUT_TYPE_FLOW, hObj_page);
 	BOOL bWrapLine;
 	for (int i = 0; i < buttonTitles.size(); i++)
@@ -495,9 +491,9 @@ LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
 		RtlMoveMemory(&notify, (LPVOID)lParam, sizeof(EX_NMHDR));
 		if (notify.nCode == NM_CREATE)
 		{
-			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExRGBA(210, 120, 55, 255), TRUE); //改变菜单项目字体正常颜色
+			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExARGB(210, 120, 55, 255), TRUE); //改变菜单项目字体正常颜色
 			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255), TRUE);  //改变菜单项目字体悬浮颜色
-			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), TRUE);  //改变菜单项目背景颜色
+			Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExARGB(110, 120, 55, 255), TRUE);  //改变菜单项目背景颜色
 		}
 	}
 	else if (uMsg == MENU_MESSAGE_SELECTITEM && (DWORD)wParam == -1) //恢复正常状态
@@ -548,7 +544,7 @@ void test_listbutton(HWND hWnd)
 	Ex_DUISetLong(hExDui_listbutton, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	HMENU hMenu = LoadMenuW(GetModuleHandleW(0), (LPWSTR)IDR_MENU1);
 
-	//创建正常菜单条
+	//创建正常菜单条，显示Resource.rc资源文件里的菜单,若出现中文乱码将Resource.rc文件编码格式转为UCS-2 LE BOM
 	HEXOBJ hObj = 0;
 	hObj = Ex_ObjCreate(L"Menubar", 0, -1, 0, 30, 220, 22, hExDui_listbutton);
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), FALSE);       //文本色
@@ -572,7 +568,7 @@ void test_listbutton(HWND hWnd)
 	//创建自定义回调菜单条
 
 	hObj = Ex_ObjCreateEx(-1, L"Menubar", 0, -1, 0, 60, 220, 22, hExDui_listbutton, 0, -1, 0, 0, OnListButtonMsgProc);
-	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGBA(110, 120, 55, 255), FALSE);   //改变菜单按钮背景色
+	Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(110, 120, 55, 255), FALSE);   //改变菜单按钮背景色
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE); //改变菜单按钮字体正常色
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);   //改变菜单按钮字体热点色
 	Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);   //改变菜单按钮字体按下色
@@ -597,7 +593,7 @@ void test_listbutton(HWND hWnd)
 	HEXIMAGELIST hImageList = _imglist_create(18, 18);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"buttonex\\4.png", &imgdata);
-	size_t nImageIndex = _imglist_add(hImageList, imgdata.data(), imgdata.size(), 0);
+	size_t nImageIndex = _imglist_add(hImageList, 0, imgdata.data(), imgdata.size());
 	Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_SETIMAGELIST, 0, (LPARAM)hImageList);
 	EX_LISTBUTTON_ITEMINFO item2 = { 0 };
 	item2.nType = 1;
@@ -696,7 +692,7 @@ void test_custombkg(HWND hWnd)
 	Ex_ReadFile(L"res/custombkg.png", &imgdata);
 	RECT grid = { 45, 40, 15, 15 };
 	Ex_ObjSetBackgroundImage(hExDui_custombkg, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, &grid, BACKGROUND_FLAG_DEFAULT, 220, TRUE);
-	Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"", OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE, 140, 8, 30, 30, hExDui_custombkg, 300, 0, 0, 0, NULL);
+	Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"", OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE, 140, 8, 30, 30, hExDui_custombkg, 0, 0, 0, 0, NULL);
 	Ex_DUIShowWindow(hExDui_custombkg, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -739,7 +735,7 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 					_canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
 					_brush_destroy(hBrush);
 				}
-				_canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), m_listViewItemInfo[cd.iItem - 1].color, m_listViewItemInfo[cd.iItem - 1].text, -1, DT_SINGLELINE | DT_VCENTER, cd.rcPaint.left + m_listViewItemInfo[cd.iItem - 1].depth * 5, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
+				_canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), m_listViewItemInfo[cd.iItem - 1].color, m_listViewItemInfo[cd.iItem - 1].text.c_str(), -1, DT_SINGLELINE | DT_VCENTER, cd.rcPaint.left + m_listViewItemInfo[cd.iItem - 1].depth * 5, cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
 
 				*lpResult = 1;
 				return 1;
@@ -749,13 +745,6 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 				//wParam 新选中项,lParam 旧选中项
 				OUTPUTW(L"改变选中ID:", ni.idFrom, L"新选中项:", ni.wParam, L"旧选中项:", ni.lParam);
 			}
-		}
-	}
-	else if (uMsg == WM_DESTROY)
-	{
-		for (auto index : m_listViewItemInfo)
-		{
-			Ex_FreeBuffer((LPVOID)index.text); //复制的文本要销毁
 		}
 	}
 	return 0;
@@ -791,11 +780,11 @@ void test_listview(HWND hWnd)
 	for (INT index = 0; index < m_listViewItemInfo.size(); index++)
 	{
 		m_listViewItemInfo[index].color = ExRGB2ARGB(Random(0, 16777215), 255);
-		auto str = L"列表项" + std::to_wstring(index);
-		m_listViewItemInfo[index].text = StrDupW(str.c_str());
-		m_listViewItemInfo[index].depth = index % 5;
+		auto str = L"列表项" + std::to_wstring(index + 1);
+		m_listViewItemInfo[index].text = str;
+		m_listViewItemInfo[index].depth = (index + 1) % 5;
 	}
-	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, itemCount, itemCount);
+	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, itemCount, MAKELONG(LVSICF_NOSCROLL, itemCount));
 	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETSELECTIONMARK, TRUE, 5);//置选中项目
 	HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hobj_listview, SCROLLBAR_TYPE_VERT);
 	Ex_ObjPostMessage(hObj_scroll, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);            //隐藏滚动条
@@ -827,26 +816,18 @@ LRESULT CALLBACK OnNavButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 	if (lParam != 0)
 	{
 		m_nCurIndex = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
-		_layout_setprop(m_hLayout, LAYOUT_PROP_PAGE_CURRENT, m_nCurIndex + 1);
+		_layout_setprop(m_hLayout, LAYOUT_PROP_PAGE_CURRENT, m_nCurIndex);
 		_layout_update(m_hLayout);
 	}
 	return 0;
 }
 
-LRESULT CALLBACK OnNavButtonMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
-{
-	if (uMsg == WM_DESTROY)
-	{
-
-	}
-
-	return 0;
-}
 
 void test_navbutton(HWND hWnd)
 {
 	HWND hWnd_navbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试选项卡", 0, 0, 800, 600, 0, 0);
 	HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(hWnd_navbutton, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW, 0, 0);
+	Ex_DUISetLong(hExDui_navbutton, ENGINE_LONG_CRBKG, ExRGB2ARGB(0, 255));
 
 	for (INT i = 0; i < 4; i++)
 	{
@@ -854,7 +835,7 @@ void test_navbutton(HWND hWnd)
 		HEXIMAGE hImg1 = 0;
 		HEXIMAGE hImg2 = 0;
 		auto str = L"Tab" + std::to_wstring(i);
-		m_hNavBtn[i] = Ex_ObjCreate(L"NavButtonEx", str.c_str(), -1, 20 + i * 85, 40, 80, 80, hExDui_navbutton);
+		m_hNavBtn[i] = Ex_ObjCreate(L"NavButton", str.c_str(), -1, 20 + i * 85, 40, 80, 80, hExDui_navbutton);
 
 		auto file = L"./navbtn/大图标" + std::to_wstring(i + 1) + L".png";
 		_img_createfromfile(file.c_str(), &hImage);
@@ -871,7 +852,7 @@ void test_navbutton(HWND hWnd)
 		Ex_ObjSendMessage(m_hNavBtn[i], BM_SETIMAGE, 2, hImg2);
 
 		Ex_ObjInvalidateRect(m_hNavBtn[i], 0);
-		Ex_ObjSetLong(m_hNavBtn[i], OBJECT_LONG_LPARAM, i);
+		Ex_ObjSetLong(m_hNavBtn[i], OBJECT_LONG_LPARAM, i + 1);
 		Ex_ObjHandleEvent(m_hNavBtn[i], NM_CHECK, OnNavButtonCheckEvent);
 	}
 	HEXOBJ hPageNavbtnContainer = Ex_ObjCreate(L"page", 0, -1, 20, 120, 760, 600 - 120 - 20, hExDui_navbutton);
@@ -882,7 +863,7 @@ void test_navbutton(HWND hWnd)
 		auto str = L"页面" + std::to_wstring(i);
 		m_hPageNavBtn[i] = Ex_ObjCreateEx(-1, L"static", str.c_str(), -1, 0, 0, 760, 600 - 120 - 20, hPageNavbtnContainer, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
 		Ex_ObjSetFontFromFamily(m_hPageNavBtn[i], 0, 40, 0, TRUE);
-		Ex_ObjSetColor(m_hPageNavBtn[i], COLOR_EX_BACKGROUND, ExRGB2ARGB(Random(0, 16777215), 255), TRUE);
+		Ex_ObjSetColor(m_hPageNavBtn[i], COLOR_EX_BACKGROUND, ExRGB2ARGB(Random(1000000, 16777215), 255), TRUE);
 		Ex_ObjSetColor(m_hPageNavBtn[i], COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), TRUE);
 		//布局添加子页面
 		_layout_addchild(m_hLayout, m_hPageNavBtn[i]);
@@ -892,10 +873,8 @@ void test_navbutton(HWND hWnd)
 	//设置布局显示页面索引,从1开始
 	m_nCurIndex = 1;
 	_layout_setprop(m_hLayout, LAYOUT_PROP_PAGE_CURRENT, m_nCurIndex);
-
-
 	Ex_ObjSendMessage(m_hNavBtn[0], BM_SETCHECK, 1, 1);
-	Ex_DUISetLong(hExDui_navbutton, ENGINE_LONG_CRBKG, ExRGB2ARGB(0, 255));
+	
 	Ex_DUIShowWindow(hExDui_navbutton, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -1361,8 +1340,8 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 		RECT rc{ 0 };
 		Ex_DUIGetClientRect(hExDui, &rc);
 		constexpr EX_STOPPTS arrStopPts[]{
-			{0.0,ExRGBA(10, 127, 213, 220)},
-			{1.0, ExRGBA(200, 10, 10, 220)}
+			{0.0,ExARGB(10, 127, 213, 220)},
+			{1.0, ExARGB(200, 10, 10, 220)}
 		};
 		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, arrStopPts, 2);
 		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
@@ -1651,17 +1630,17 @@ void test_reportlistview(HWND hWnd)
 	Ex_DUISetLong(hExDui_reportlistview, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	m_hReportListView = Ex_ObjCreateEx(-1, L"ReportListView", L"ReportListView", OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL | REPORTLISTVIEW_STYLE_EDIT | REPORTLISTVIEW_STYLE_DRAWVERTICALLINE, 25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
-	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExRGBA(120, 120, 120, 255), FALSE);
+	Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExARGB(120, 120, 120, 255), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_RLV_HEAD, ExRGB2ARGB(16777215, 250), FALSE);
 	Ex_ObjSetColor(m_hReportListView, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(12632256, 50), FALSE);
 
 	m_hReportListViewImgList = _imglist_create(30, 30);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"./icon/1.png", &imgdata);
-	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
-	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
-	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
-	_imglist_add(m_hReportListViewImgList, imgdata.data(), imgdata.size(), 0);
+	_imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
+	_imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
+	_imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
+	_imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
 	Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETIMAGELIST, 0, (LPARAM)m_hReportListViewImgList);
 
 	EX_REPORTLIST_COLUMNINFO col = { 0 };
@@ -1684,7 +1663,7 @@ void test_reportlistview(HWND hWnd)
 	col.crText = ExRGB2ARGB(65535, 255);
 	col.dwStyle = REPORTLISTVIEW_HEADER_STYLE_CLICKABLE | REPORTLISTVIEW_HEADER_STYLE_COLOUR;
 	col.dwTextFormat = DT_CENTER | DT_VCENTER;
-	col.crBkg = ExRGBA(120, 230, 180, 255);
+	col.crBkg = ExARGB(120, 230, 180, 255);
 	Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_INSERTCOLUMN, 0, (size_t)&col);
 
 	col.pwzText = L"可排序";
@@ -1704,7 +1683,7 @@ void test_reportlistview(HWND hWnd)
 		item.nImageIndex = i;
 		// 下面这句控制项目是否带选择框及整行背景色
 		item.dwStyle = (i % 3 == 0 ? REPORTLISTVIEW_LINESTYLE_CHECKBOX | REPORTLISTVIEW_LINESTYLE_CHECKBOX_CHECK | REPORTLISTVIEW_LINESTYLE_ROWCOLOUR : 0);
-		item.rowBkgCr = ExRGBA(31, 100, 200, 255);
+		item.rowBkgCr = ExARGB(31, 100, 200, 255);
 		item.iRow = Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&row);
 		//先插入表项
 		Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
@@ -1719,14 +1698,14 @@ void test_reportlistview(HWND hWnd)
 		cell.iRow = i;
 		cell.pwzText = L"第二列";
 		cell.cellStyle = REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR;
-		cell.cellBkgCr = ExRGBA(130, 130, 25, 255);
+		cell.cellBkgCr = ExARGB(130, 130, 25, 255);
 		Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 
 		cell.iCol = 3;
 		cell.iRow = i;
 		cell.pwzText = L"第三列";
 		cell.cellStyle = REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR;
-		cell.cellTextCr = ExRGBA(130, 25, 130, 255);
+		cell.cellTextCr = ExARGB(130, 25, 130, 255);
 		Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETCELL, 0, (size_t)&cell); //wParam为是否立即更新
 
 		cell.iCol = 4;
@@ -1790,7 +1769,7 @@ void test_iconlistview(HWND hWnd)
 	{
 		auto str = L"./icon/" + std::to_wstring(i) + L".png";
 		Ex_ReadFile(str.c_str(), &imgdata);
-		_imglist_add(m_hImageListIcon, imgdata.data(), imgdata.size(), 0);
+		_imglist_add(m_hImageListIcon, 0, imgdata.data(), imgdata.size());
 	}
 	//设置列表的图片组
 	Ex_ObjSendMessage(m_hListViewIcon, LISTVIEW_MESSAGE_SETIMAGELIST, 0, (size_t)m_hImageListIcon);
@@ -1825,7 +1804,7 @@ void test_treelistview(HWND hWnd)
 	{
 		auto str = L"./buttonex/" + std::to_wstring(i) + L".png";
 		Ex_ReadFile(str.c_str(), &imgdata);
-		_imglist_add(m_hImageListIcon, imgdata.data(), imgdata.size(), 0);
+		_imglist_add(m_hImageListIcon, 0, imgdata.data(), imgdata.size());
 	}
 	//设置列表的图片组,wParam可以重置表项高度为图标高度
 	Ex_ObjSendMessage(hObj_treeview, TREEVIEW_MESSAGE_SETIMAGELIST, 1, (size_t)m_hImageListIcon);
@@ -2335,11 +2314,11 @@ LRESULT CALLBACK OnMenuItemRightMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 			{
 				if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
 				{
-					_canvas_clear(ps.hCanvas, ExRGBA(79, 125, 164, 255));
+					_canvas_clear(ps.hCanvas, ExARGB(79, 125, 164, 255));
 				}
 				else
 				{
-					_canvas_clear(ps.hCanvas, ExRGBA(120, 120, 120, 255));
+					_canvas_clear(ps.hCanvas, ExARGB(120, 120, 120, 255));
 				}
 				if (nodeID == 0)
 				{
@@ -2535,11 +2514,11 @@ void test_event(HWND hWnd)
 		HEXOBJ hobj_button_inside = Ex_ObjCreateEx(-1, L"Static", L"按钮内间接父控件", -1, 10, 20, 330, 200, hobj_button_outside, 0, DT_SINGLELINE, 0, 0, OnSideButtonMsgProc);
 		if (hobj_button_inside != 0)
 		{
-			Ex_ObjSetColor(hobj_button_inside, COLOR_EX_BACKGROUND, ExRGBA(100, 100, 100, 100), TRUE);
+			Ex_ObjSetColor(hobj_button_inside, COLOR_EX_BACKGROUND, ExARGB(100, 100, 100, 100), TRUE);
 			HEXOBJ hobj_button_parent = Ex_ObjCreateEx(-1, L"Static", L"按钮直接父控件", -1, 10, 20, 310, 160, hobj_button_inside, 0, DT_SINGLELINE, 0, 0, OnParentButtonMsgProc);
 			if (hobj_button_parent != 0)
 			{
-				Ex_ObjSetColor(hobj_button_parent, COLOR_EX_BACKGROUND, ExRGBA(26, 100, 129, 100), TRUE);
+				Ex_ObjSetColor(hobj_button_parent, COLOR_EX_BACKGROUND, ExARGB(26, 100, 129, 100), TRUE);
 				HEXOBJ hobj_button = Ex_ObjCreateEx(-1, L"button", L"按钮", -1, 10, 20, 200, 100, hobj_button_parent, 1001, -1, 0, 0, OnEventButtonMsgProc);
 				if (hobj_button != 0)
 				{
@@ -3080,7 +3059,7 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
 
 		//绑定js对象变量示例
 		HV8VALUE objV8 = Ck_V8CreateObject(OnFunAccessor, NULL);
-		Ck_V8SetValueEx(objV8, L"myval", 0, 0);
+		Ck_V8SetValue(objV8, L"myval", 0, 0);
 		Ck_V8SetValue(window, L"MyValObj", objV8, 0);
 
 		//绑定js add_Function方法
@@ -3135,7 +3114,7 @@ void test_chromium(HWND hParent)
 	m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
 	Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"https://www.bing.com");
 	//Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"d:/test.mp4");
-	//Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"d:/ExDUIR/msvc/test/res/cefjs.html");
+	//Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"res/cefjs.html");
 	Ex_ObjHandleEvent(m_hObjChromium, CEFBROWSER_EVENT_LOADEND, OnChromiumEvent);
 	Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -3707,15 +3686,15 @@ LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 {
 	if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
-		_canvas_clear(wParam, ExRGBA(150, 150, 150, 255));
+		_canvas_clear(wParam, ExARGB(150, 150, 150, 255));
 		HEXFONT hFont = _font_createfromfile(L"res/文道灵飞小楷.ttf", 64);
-		_canvas_drawtext(wParam, hFont, ExRGBA(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
+		_canvas_drawtext(wParam, hFont, ExARGB(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
 		_font_destroy(hFont);
 
 		_canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 50, 50, 200, 200);
 		std::vector<CHAR> data;
 		Ex_ReadFile(L"./res/niu1.svg", &data);
-		_canvas_drawsvg(wParam, data.data(), ExRGBA(55, 250, 20, 255), 250, 50, 400, 200);
+		_canvas_drawsvg(wParam, data.data(), ExARGB(55, 250, 20, 255), 250, 50, 400, 200);
 
 
 		*lpResult = 1;
@@ -3732,7 +3711,7 @@ void test_svgAndfont(HWND hWnd)
 	auto obj = Ex_ObjCreate(L"static", NULL, -1, 50, 250, 150, 150, hExDui_svgAndfont);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res\\niu1.svg", &imgdata);
-	Ex_ObjSetBackgroundImageFromSvgBuf(obj, imgdata.data(), ExRGBA(55, 0, 250, 255), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
+	Ex_ObjSetBackgroundImageFromSvgBuf(obj, imgdata.data(), ExARGB(55, 0, 250, 255), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
 	Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -3812,25 +3791,25 @@ void test_rollmenu(HWND hWnd)
 	m_hImageListRollMenu = _imglist_create(32, 32);
 	std::vector<CHAR> imgdata;
 	Ex_ReadFile(L"res/account.png", &imgdata);
-	size_t nImageAccountIndex = _imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0);
+	size_t nImageAccountIndex = _imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size());
 	Ex_ReadFile(L"res/video.png", &imgdata);
-	size_t nImageVideoIndex = _imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0);
+	size_t nImageVideoIndex = _imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size());
 	Ex_ReadFile(L"res/info.png", &imgdata);
-	size_t nImageInfoIndex = _imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0);
+	size_t nImageInfoIndex = _imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size());
 	Ex_ReadFile(L"res/fans.png", &imgdata);
-	size_t nImageFansIndex = _imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0);
+	size_t nImageFansIndex = _imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size());
 	Ex_ReadFile(L"res/authorization.png", &imgdata);
-	size_t nImageAuthIndex = _imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0);
+	size_t nImageAuthIndex = _imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size());
 
 	std::vector<HEXIMAGE> emoji;
 	Ex_ReadFile(L"navbtn/大图标1.png", &imgdata);
-	emoji.push_back(_imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0));
+	emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
 	Ex_ReadFile(L"navbtn/大图标2.png", &imgdata);
-	emoji.push_back(_imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0));
+	emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
 	Ex_ReadFile(L"navbtn/大图标3.png", &imgdata);
-	emoji.push_back(_imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0));
+	emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
 	Ex_ReadFile(L"navbtn/大图标4.png", &imgdata);
-	emoji.push_back(_imglist_add(m_hImageListRollMenu, imgdata.data(), imgdata.size(), 0));
+	emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
 
 	EX_ROLLMENU_DATA rollmenu = { 0 };
 	rollmenu.title = L"账号信息";
@@ -4269,8 +4248,8 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		auto hRgn2 = _rgn_createfrompath(path2);
 		
 
-		auto hBrush = _brush_create(ExRGBA(255, 0, 0, 255));
-		auto hBrushRgn = _brush_create(ExRGBA(255, 255, 0, 255));
+		auto hBrush = _brush_create(ExARGB(255, 0, 0, 255));
+		auto hBrushRgn = _brush_create(ExARGB(255, 255, 0, 255));
 
 		
 		_canvas_drawpath(ps.hCanvas, path, hBrush, 1, 1);
@@ -4281,12 +4260,12 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			if (relation == 3)
 			{
 				//太阳包含方框
-				_brush_setcolor(hBrushRgn, ExRGBA(0, 255, 0, 255));
+				_brush_setcolor(hBrushRgn, ExARGB(0, 255, 0, 255));
 			}
 			else if (relation == 4)
 			{
 				//太阳相交方框
-				_brush_setcolor(hBrushRgn, ExRGBA(0, 0, 255, 255));
+				_brush_setcolor(hBrushRgn, ExARGB(0, 0, 255, 255));
 				hRgn3 = _rgn_combine(hRgn1, hRgn2, REGION_COMBINE_EXCLUDE, 0, 0);
 				_canvas_fillregion(ps.hCanvas, hRgn3, hBrushRgn);
 				EX_POINTF* points = (EX_POINTF*)malloc(sizeof(EX_POINTF));
@@ -4303,7 +4282,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 				free(points);
 			}
 			else {
-				_brush_setcolor(hBrushRgn, ExRGBA(255, 255, 0, 255));
+				_brush_setcolor(hBrushRgn, ExARGB(255, 255, 0, 255));
 			}
 		}
 		_canvas_drawpath(ps.hCanvas, path2, hBrushRgn, 1, 1);

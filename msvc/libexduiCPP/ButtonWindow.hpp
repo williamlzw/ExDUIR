@@ -19,7 +19,7 @@ public:
 	{
 		DWORD dwStyleDUI = WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW;
 		m_skin = ExSkin(pOwner, 0, 0, 300, 200, L"测试按钮开关", dwStyleDUI);
-		m_skin.SetLong(ENGINE_LONG_CRBKG, ExARGB(120, 120, 120, 255));
+		m_skin.SetBackgroundColor(ExARGB(120, 120, 120, 255));
 		m_buttons.push_back(ExButton(m_skin, 10, 30, 120, 30, L"禁用自身", -1, -1, DT_VCENTER | DT_CENTER, 201));
 		m_buttons.push_back(ExButton(m_skin, 10, 70, 120, 30, L"解除按钮1禁用", -1, -1, DT_VCENTER | DT_CENTER, 202));
 		m_buttons.push_back(ExButton(m_skin, 10, 110, 120, 30, L"改动自身文本", -1, -1, DT_VCENTER | DT_CENTER, 203));
@@ -28,13 +28,14 @@ public:
 		{
 			button.HandleEvent(NM_CLICK, OnButtonEvent);
 		}
+		//以下演示两种重画背景方法
 		m_custom_button1 = ExButton(m_skin, 150, 30, 120, 30, L"重画按钮1", -1, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW | OBJECT_STYLE_EX_COMPOSITED, DT_VCENTER | DT_CENTER, 205);
 		m_custom_button1.HandleEvent(NM_CUSTOMDRAW, OnButtonEvent);
 
 		m_custom_button2 = ExButton(m_skin, 150, 70, 120, 30, L"重画按钮2", -1, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW | OBJECT_STYLE_EX_COMPOSITED, DT_VCENTER | DT_CENTER, 206, 0, nullptr, OnButtonMsgProc);
 		
 		m_switch1 = ExSwitch(m_skin, 150, 110, 80, 30, L"已开启|已关闭", -1, -1, -1, 206);
-		m_switch1.SendMsg(BM_SETCHECK, 1, 0);
+		m_switch1.SetCheck(TRUE);
 		m_switch1.HandleEvent(NM_CHECK, OnButtonEvent);
 
 		m_switch2 = ExSwitch(m_skin, 150, 150, 80, 30, L"", -1, -1, -1, 207);
@@ -44,7 +45,7 @@ public:
 		switchprops.crBorderNormal = ExARGB(255, 255, 255, 255);
 		switchprops.radius = 15;
 		switchprops.strokeWidth = 1;
-		m_switch2.SendMsg(WM_EX_PROPS, 0, (LPARAM)&switchprops);
+		m_switch2.SetProps(switchprops);
 
 		m_skin.Show();
 
@@ -69,8 +70,8 @@ public:
 			{
 				crBkg = ExRGB2ARGB(16777215, 51);
 			}
-			ExBrush brush = ExBrush(crBkg);
-			ExCanvas canvas = ExCanvas(ps.hCanvas);
+			ExBrush brush = ExBrush(crBkg);//临时画刷需要销毁
+			ExCanvas canvas = ExCanvas(ps.hCanvas);//按钮本身画布,不能销毁
 			canvas.FillRect(brush, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom);
 			brush.Destroy();
 			*lpResult = 1;
@@ -85,6 +86,7 @@ public:
 		{
 			case 201:
 			{
+				//从父组件(skin)的子组件id获取组件对象
 				ExControl ret = ButtonWindow::GetInstance().m_skin.GetFromID(nID);
 				ret.Enable(FALSE);
 				ret.SetPadding(0, 20, 5, 5, 5, TRUE);
@@ -129,8 +131,8 @@ public:
 					{
 						crBkg = ExRGB2ARGB(16777215, 51);
 					}
-					ExBrush brush = ExBrush(crBkg);
-					ExCanvas canvas = ExCanvas(ps.hCanvas);
+					ExBrush brush = ExBrush(crBkg);//临时画刷需要销毁
+					ExCanvas canvas = ExCanvas(ps.hCanvas);//按钮本身画布,不能销毁
 					canvas.FillRect(brush, 0, 0, ps.rcPaint.right, ps.rcPaint.bottom);
 					brush.Destroy();
 				}

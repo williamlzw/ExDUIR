@@ -24,9 +24,9 @@ namespace ExDUIR
 					_img_create(width, height, &m_image);
 				}
 
-				ExImage(LPCWSTR lpwzFilename)
+				ExImage(std::wstring lpwzFilename)
 				{
-					_img_createfromfile(lpwzFilename, &m_image);
+					_img_createfromfile(lpwzFilename.c_str(), &m_image);
 				}
 
 				ExImage(HBITMAP hBitmap, HPALETTE hPalette, BOOL fPreAlpha)
@@ -117,9 +117,9 @@ namespace ExDUIR
 					return ExImage(retImage);
 				}
 
-				inline BOOL SaveToFile(LPCWSTR lpwzFileName)
+				inline BOOL SaveToFile(std::wstring lpwzFileName)
 				{
-					return _img_savetofile(m_image, lpwzFileName);
+					return _img_savetofile(m_image, lpwzFileName.c_str());
 				}
 
 				inline size_t SaveToMemory(LPVOID lpBuffer)
@@ -142,6 +142,17 @@ namespace ExDUIR
 					return _img_getpixel(m_image, x, y, retPixel);
 				}
 
+				inline HBITMAP GetBitmap()
+				{
+					INT width, height;
+					GetSize(&width, &height);
+					std::vector<CHAR> imgData;
+					imgData.resize(width * height * 4);
+					_img_savetomemory(m_image, imgData.data());
+					HBITMAP hbitmap = 0;
+					Ex_LoadBitMapFromMemory(imgData.data(), imgData.size(), &hbitmap);
+					return hbitmap;
+				}
 			};
 		}
 	}

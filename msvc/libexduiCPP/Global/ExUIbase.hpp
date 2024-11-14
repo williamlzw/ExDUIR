@@ -10,7 +10,7 @@ namespace ExDUIR
 		public:
 			EXHANDLE m_handle = 0;
 			ExUIbase() = default;
-			virtual ~ExUIbase() {};
+			~ExUIbase() = default;
 		};
 	}
 }

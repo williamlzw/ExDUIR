@@ -45,7 +45,7 @@ INT _imglist_count(HEXIMAGELIST hImageList)
     return Array_GetCount((array_s *)hImageList);
 }
 
-size_t _imglist_add(HEXIMAGELIST hImageList, LPVOID pImg, size_t dwBytes, size_t nIndex)
+size_t _imglist_add(HEXIMAGELIST hImageList, size_t nIndex, LPVOID pImg, size_t dwBytes)
 {
     size_t ret = 0;
     HEXIMAGE hImg = 0;
@@ -89,7 +89,7 @@ BOOL _imglist_size(HEXIMAGELIST hImageList, INT *pWidth, INT *pHeight)
     return ret;
 }
 
-size_t _imglist_addimage(HEXIMAGELIST hImageList, HEXIMAGE hImg, size_t nIndex)
+size_t _imglist_addimage(HEXIMAGELIST hImageList, size_t nIndex, HEXIMAGE hImg)
 {
     size_t ret = 0;
     if (hImg)
@@ -114,6 +114,7 @@ INT _imglist_array_delmember(array_s *hArr, size_t nIndex, LPVOID pvItem, INT nT
 {
     return _img_destroy((HEXIMAGE)pvItem);
 }
+
 HEXIMAGELIST _imglist_create(INT width, INT height)
 {
     array_s *hImageList;

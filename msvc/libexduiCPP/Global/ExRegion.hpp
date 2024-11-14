@@ -33,17 +33,17 @@ namespace ExDUIR
 					m_region = _rgn_createfromroundrect(left, top, right, bottom, radiusX, radiusY);
 				}
 
-				BOOL Destroy()
+				inline BOOL Destroy()
 				{
 					return _rgn_destroy(m_region);
 				}
 				
-				BOOL Hittest(FLOAT x, FLOAT y)
+				inline BOOL Hittest(FLOAT x, FLOAT y)
 				{
 					return _rgn_hittest(m_region, x, y);
 				}
 
-				ExRegion Combine(ExRegion RgnSrc, ExRegion RgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY)
+				inline ExRegion Combine(ExRegion RgnSrc, ExRegion RgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY)
 				{
 					return ExRegion(_rgn_combine(RgnSrc.m_region, RgnDst.m_region, nCombineMode, dstOffsetX, dstOffsetY));
 				}

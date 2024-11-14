@@ -33,7 +33,7 @@ DEFINE_GUID(CLSID_MYEFFECT, 0x85c487ca, 0x1abf, 0x4760, 0x9b, 0x17, 0x3f, 0x62, 
 
 struct LISTVIEW_ITEM
 {
-	LPCWSTR text;
+	std::wstring text;
 	EXARGB color;
 	INT depth;
 };
@@ -73,7 +73,6 @@ void test_groupbox(HWND hWnd);
 void test_messagebox(HWND hWnd);
 
 LRESULT CALLBACK OnNavButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK OnNavButtonMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult);
 void test_navbutton(HWND hWnd);
 
 void test_absolute(HWND hWnd);

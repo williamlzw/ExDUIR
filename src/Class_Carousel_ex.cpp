@@ -128,7 +128,7 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, CAROUSEL_LONG_HIMAGELIST);
         if (hImageList != 0)
         {
-            _imglist_addimage(hImageList, lParam, 0);
+            _imglist_addimage(hImageList, 0, lParam);
         }
     }
     else if (uMsg == CAROUSEL_MESSAGE_CLEAR)

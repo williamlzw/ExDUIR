@@ -834,35 +834,35 @@
 
 // 绝对布局子属性_左侧
 #define LAYOUT_SUBPROP_ABSOLUTE_LEFT 1
-// 绝对布局子属性_位置类型_左侧
+// 绝对布局子属性_位置类型_左侧,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE 2
 // 绝对布局子属性_顶部
 #define LAYOUT_SUBPROP_ABSOLUTE_TOP 3
-// 绝对布局子属性_位置类型_顶部
+// 绝对布局子属性_位置类型_顶部,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE 4
 // 绝对布局子属性_右侧
 #define LAYOUT_SUBPROP_ABSOLUTE_RIGHT 5
-// 绝对布局子属性_位置类型_右侧
+// 绝对布局子属性_位置类型_右侧,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE 6
 // 绝对布局子属性_底部
 #define LAYOUT_SUBPROP_ABSOLUTE_BOTTOM 7
-// 绝对布局子属性_位置类型_底部
+// 绝对布局子属性_位置类型_底部,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE 8
 // 绝对布局子属性_宽度（优先级低于右侧）
 #define LAYOUT_SUBPROP_ABSOLUTE_WIDTH 9
-// 绝对布局子属性_位置类型_宽度
+// 绝对布局子属性_位置类型_宽度,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE 10
 // 绝对布局子属性_高度（优先级低于底部）
 #define LAYOUT_SUBPROP_ABSOLUTE_HEIGHT 11
-// 绝对布局子属性_位置类型_高度
+// 绝对布局子属性_位置类型_高度,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE 12
 // 绝对布局子属性_水平偏移量
 #define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H 13
-// 绝对布局子属性_位置类型_水平偏移量
+// 绝对布局子属性_位置类型_水平偏移量,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H_TYPE 14
-// 绝对布局子属性_垂直偏移量
+// 绝对布局子属性_垂直偏移量,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS
 #define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V 15
-// 绝对布局子属性_位置类型_垂直偏移量
+// 绝对布局子属性_位置类型_垂直偏移量,值可为LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN
 #define LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V_TYPE 16
 
 // 绝对布局子属性_位置类型_未知 (未设置或保持不变)
@@ -871,7 +871,7 @@
 #define LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX 1
 // 绝对布局子属性_位置类型_百分比
 #define LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS 2
-// 绝对布局子属性_位置类型_组件尺寸百分比，仅OFFSET可用
+// 绝对布局子属性_位置类型_组件尺寸百分比，仅偏移量OFFSET可用
 #define LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS 3
 
 // 位置信息标识_组件位置默认值
@@ -1637,6 +1637,7 @@
 #define VLCPLAYER_MESSAGE_GET_DURATION 20011
 #pragma endregion vlcplayer message
 
+#define LVSICF_NOSCROLL 2
 #define EX_DEFINE_API(NAME,RET,ARGS)	typedef RET (WINAPI* ExPFN_##NAME)ARGS; extern ExPFN_##NAME	NAME	
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule, #NAME)		//获取函数指针
@@ -1647,10 +1648,11 @@
 #define ExGetB(argb) (LOBYTE((argb) >> 16))
 #define ExGetA(argb) (LOBYTE((argb) >> 24))
 #define ExRGB(r, g, b) ((EXARGB)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((INT)(BYTE)(b)) << 16)))
-#define ExRGBA(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
-#define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(b, g, r) | (a << 24)))
-#define ExARGB2RGB(argb) ExRGB((BYTE)(argb >> 16), (BYTE)(argb >> 8), (BYTE)(argb))
-#define ExRGB2ARGB(rgb, a) ((EXARGB)(BYTE(ExGetB(rgb)) << 16 | BYTE(ExGetG(rgb)) << 8 | BYTE(ExGetR(rgb)) | (a << 24)))
+#define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(r, g, b) | (a << 24)))
+#define ExARGB2RGB(argb) ExRGB(ExGetR(argb), ExGetG(argb), ExGetB(argb))
+#define ExRGB2ARGB(rgb, a) ((EXARGB)(ExGetR(rgb) | (ExGetG(rgb) << 8) | (ExGetB(rgb) << 16) | ((EXARGB)(a) << 24)))
+
+
 
 typedef UINT8 CHANNEL;       // 通道
 typedef COLORREF EXARGB;     // 颜色

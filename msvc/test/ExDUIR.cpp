@@ -12,7 +12,7 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_edit,           //104，测试编辑框
         test_listview,       //105，测试列表框
         test_listbutton,     //106，测试列表按钮
-        test_custombkg,      //107,测试自定义外形
+        test_custombkg,      //107,测试九宫格自定外形
         test_navbutton,      //108,测试选项卡
         test_groupbox,       //109,测试分组框
         test_absolute,       //110,测试绝对布局
@@ -103,7 +103,7 @@ void test_exdui()
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试编辑框", -1, 10, 150, 100, 30, hExDui, 104, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试列表框", -1, 10, 190, 100, 30, hExDui, 105, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试菜单", -1, 10, 230, 100, 30, hExDui, 106, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试自定外形", -1, 10, 270, 100, 30, hExDui, 107, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"九宫格自定外形", -1, 10, 270, 100, 30, hExDui, 107, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试布局选项卡", -1, 10, 310, 100, 30, hExDui, 108, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试分组框", -1, 10, 350, 100, 30, hExDui, 109, DT_VCENTER | DT_CENTER, 0, 0, NULL));
         buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试绝对布局", -1, 10, 390, 100, 30, hExDui, 110, DT_VCENTER | DT_CENTER, 0, 0, NULL));

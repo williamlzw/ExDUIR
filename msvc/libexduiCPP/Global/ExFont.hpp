@@ -1,5 +1,8 @@
 #pragma once
 #include "ExUIbase.hpp"
+#include "ExControl.hpp"
+
+using namespace ExDUIR::FrameWorks::Control;
 
 namespace ExDUIR
 {
@@ -22,14 +25,19 @@ namespace ExDUIR
 					m_font =_font_create();
 				}
 
-				ExFont(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFontStyle)
+				ExFont(std::wstring lpwzFontFace, INT dwFontSize, DWORD dwFontStyle)
 				{
-					m_font = _font_createfromfamily(lpwzFontFace, dwFontSize, dwFontStyle);
+					m_font = _font_createfromfamily(lpwzFontFace.c_str(), dwFontSize, dwFontStyle);
 				}
 
 				ExFont(LOGFONTW* lpLogfont)
 				{
 					m_font = _font_createfromlogfont(lpLogfont);
+				}
+
+				inline static ExFont GetFontFromObj(ExControl obj)
+				{
+					return ExFont(Ex_ObjGetFont(obj.m_handle));
 				}
 
 				inline BOOL Destroy()

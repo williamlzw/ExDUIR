@@ -21,19 +21,19 @@ namespace ExDUIR
 				m_handle = hObj;
 			}
 
-			ExSkin(ExSkin pOwner, int dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
+			ExSkin(ExSkin pOwner, INT dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
 			{
 				auto hWndParent = pOwner.m_hWnd == NULL ? 0 : pOwner.m_hWnd;
 				m_handle = Ex_DUIBindWindowEx(hWndParent, 0, dwStyleDui, 0, lpfnMsgProc);
 			}
 
-			ExSkin(HWND pOwner, INT x, INT y, INT width, INT height, LPCWSTR sWindowName, int dwStyleDui, DWORD dwStyleWindow = NULL, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
+			ExSkin(HWND pOwner, INT x, INT y, INT width, INT height, std::wstring sWindowName, INT dwStyleDui, DWORD dwStyleWindow = NULL, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
 			{
-				m_hWnd = Ex_WndCreate(pOwner, 0, sWindowName, x, y, width, height, dwStyleWindow, dwStyleExWindow);
+				m_hWnd = Ex_WndCreate(pOwner, 0, sWindowName.c_str(), x, y, width, height, dwStyleWindow, dwStyleExWindow);
 				m_handle = Ex_DUIBindWindowEx(m_hWnd, 0, dwStyleDui, 0, lpfnMsgProc);
 			}
 
-			ExSkin(ExWindow pWindow, int dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
+			ExSkin(ExWindow pWindow, INT dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
 			{
 				m_handle = Ex_DUIBindWindowEx(pWindow.m_hWnd, 0, dwStyleDui, 0, lpfnMsgProc);
 			}
@@ -44,20 +44,28 @@ namespace ExDUIR
 			inline BOOL Enable(BOOL bEnable) { return EnableWindow(m_hWnd, bEnable); }
 			inline BOOL IsVisible() { return IsWindowVisible(m_hWnd); }
 			inline BOOL IsVisible(BOOL bVisible) { return Ex_DUIShowWindow(m_handle, bVisible ? SW_SHOWNORMAL : SW_HIDE, 0, 0, 0); }
-			inline BOOL SetTitle(LPCWSTR title) { return SetWindowTextW(m_hWnd, title); }
-			inline BOOL Move(INT x, INT y, INT width, INT height, BOOL bRepaint) { return MoveWindow(m_hWnd, x, y, width, height, bRepaint); }
+			inline BOOL SetTitle(std::wstring title) { return SetWindowTextW(m_hWnd, title.c_str()); }
+			inline BOOL Move(INT x, INT y, INT width, INT height, BOOL bRepaint = FALSE) { return MoveWindow(m_hWnd, x, y, width, height, bRepaint); }
 			inline BOOL PostMsg(UINT uMsg, WPARAM wParam, LPARAM lParam) { PostMessageW(m_hWnd, uMsg, wParam, lParam); }
 			inline std::wstring GetTitle()
 			{
-				int len = GetWindowTextLengthW(m_hWnd);
+				INT len = GetWindowTextLengthW(m_hWnd);
 				std::wstring retTitle;
 				retTitle.resize(len + 1);
 				GetWindowTextW(m_hWnd, (LPWSTR)retTitle.c_str(), len + 1);
 				return retTitle;
 			}
-			inline BOOL SetBackgroundImage(LPVOID lpImage, size_t dwImageLen, INT x, INT y, DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate)
+
+			inline BOOL SetBackgroundImage(std::vector<CHAR> imageData, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
 			{
-				return Ex_ObjSetBackgroundImage(m_handle, lpImage, dwImageLen, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+				return Ex_ObjSetBackgroundImage(m_handle, imageData.data(), imageData.size(), x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+			}
+
+			inline BOOL SetBackgroundImage(std::wstring imageFilePath, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+			{
+				std::vector<CHAR> imgdata;
+				Ex_ReadFile(imageFilePath.c_str(), &imgdata);
+				return SetBackgroundImage(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 			}
 
 			inline ExControl GetFromID(INT nID)
@@ -66,7 +74,10 @@ namespace ExDUIR
 
 				return ExControl(hObj);
 			}
-
+			inline void SetBackgroundColor(EXARGB crColor)
+			{
+				SetLong(ENGINE_LONG_CRBKG, crColor);
+			}
 		};
 	}
 }

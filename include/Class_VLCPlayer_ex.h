@@ -1,8 +1,7 @@
 #pragma once
 #include "help_ex.h"
 #include "vlc/vlc.h"
-#pragma comment(lib, "libvlc.lib")
-#pragma comment(lib, "libvlccore.lib")
+
 
 void _vlcplayer_register();
 LRESULT CALLBACK _vlcplayer_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
