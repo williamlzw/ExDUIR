@@ -208,9 +208,9 @@ namespace ExDUIR
 					Ex_ObjSendMessage(m_handle, CB_SETITEMDATA, index, data);
 				}
 
-				inline void InsertItem(std::wstring str)
+				inline void InsertItem(size_t nIndex, std::wstring str)
 				{
-					Ex_ObjSendMessage(m_handle, CB_INSERTSTRING, 0, (size_t)str.c_str());
+					Ex_ObjSendMessage(m_handle, CB_INSERTSTRING, nIndex, (size_t)str.c_str());
 				}
 
 				inline std::wstring GetText()
@@ -237,9 +237,9 @@ namespace ExDUIR
 					Ex_ObjSendMessage(m_handle, CB_RESETCONTENT, 0, 0);
 				}
 
-				inline void DelItem()
+				inline void DelItem(size_t nIndex)
 				{
-					Ex_ObjSendMessage(m_handle, CB_DELETESTRING, 0, 0);
+					Ex_ObjSendMessage(m_handle, CB_DELETESTRING, nIndex, 0);
 				}
 
 				inline size_t GetCurSel()

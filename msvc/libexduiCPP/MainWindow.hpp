@@ -13,6 +13,7 @@
 #include "LinearLayoutWindow.hpp"
 #include "FlowLayoutWindow.hpp"
 #include "TableLayoutWindow.hpp"
+#include "ComboBoxWindow.hpp"
 
 using namespace ExDUIR::FrameWorks;
 
@@ -178,6 +179,11 @@ public:
 			case 114:
 			{
 				TableLayoutWindow::GetInstance().CreateTableLayoutWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 115:
+			{
+				GomboBoxBoxWindow::GetInstance().CreateGomboBoxBoxWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			default:

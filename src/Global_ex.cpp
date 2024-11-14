@@ -54,7 +54,7 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     g_Li.aryColorsAtom = {ATOM_BACKGROUND_COLOR, ATOM_COLOR_BACKGROUND, ATOM_BORDER_COLOR, ATOM_COLOR_BORDER, ATOM_COLOR, ATOM_COLOR_NORMAL, ATOM_COLOR_HOVER, ATOM_COLOR_DOWN, ATOM_COLOR_FOCUS, ATOM_COLOR_CHECKED, ATOM_COLOR_SELECTED, ATOM_COLOR_HOT, ATOM_COLOR_VISTED, ATOM_COLOR_SHADOW};
     g_Li.aryColorsOffset = {offsetof(obj_s, crBackground_), offsetof(obj_s, crBackground_), offsetof(obj_s, crBorder_), offsetof(obj_s, crBorder_), offsetof(obj_s, crNormal_), offsetof(obj_s, crNormal_), offsetof(obj_s, crHover_), offsetof(obj_s, crDown_), offsetof(obj_s, crFocus_), offsetof(obj_s, crChecked_), offsetof(obj_s, crSelected_), offsetof(obj_s, crHot_), offsetof(obj_s, crVisted_), offsetof(obj_s, crShadow_)};
     g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
-    //g_Ri.hRiched20 = LoadLibraryW(L"Msftedit.dll");//空格选中首行bug
+    //g_Ri.hRiched20 = LoadLibraryW(L"Msftedit.dll");//编辑框空格选中首行bug
     g_Ri.hRiched20 = LoadLibraryW(L"Riched20.dll");
     LPVOID i = Ex_MemAlloc(64);
     INT len;

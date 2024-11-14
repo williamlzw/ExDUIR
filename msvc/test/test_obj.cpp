@@ -1144,15 +1144,15 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 	{
 		if (hObj == m_hComboBox)
 		{
-			output(L"11111111111111");
+			output(L"组合框1表项被改变", wParam);
 		}
 		else if (hObj == m_hComboBox1)
 		{
-			output(L"22222222222222");
+			output(L"组合框2表项被改变", wParam);
 		}
 		else if (hObj == m_hComboBox2)
 		{
-			output(L"33333333333333333");
+			output(L"组合框3表项被改变", wParam);
 		}
 	}
 	return 0;
@@ -1163,13 +1163,15 @@ void test_combobox(HWND hWnd)
 	HWND hWnd_combobox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试组合框", 0, 0, 450, 300, 0, 0);
 	HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(hWnd_combobox, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW, 0, 0);
 	Ex_DUISetLong(hExDui_combobox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 30, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
-	m_hComboBox1 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框1", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
-	m_hComboBox2 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框2", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 230, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	m_hComboBox = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框1", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 30, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	m_hComboBox1 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框2", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+	m_hComboBox2 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框3", OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 230, 230, 200, 30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
 	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
-	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"特殊字符[！（）");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"特殊字符[！（）☏");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"にほんご");
+	Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"한국어");
 
 	Ex_ObjSendMessage(m_hComboBox1, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
 	Ex_ObjSendMessage(m_hComboBox1, CB_ADDSTRING, 0, (size_t)L"数字123");

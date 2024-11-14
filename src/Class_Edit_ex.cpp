@@ -645,7 +645,6 @@ LRESULT _edit_sendmessage(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, B
 	LPVOID pits = _edit_its(pObj);
 	if (pits != nullptr)
 	{
-
 		*sOK = ((ITextServices*)pits)->TxSendMessage(uMsg, wParam, lParam, &ret) == 0;
 	}
 	return ret;
@@ -979,7 +978,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 				{
 					return 1;
 				}
-			}
+			}			
 			BOOL ret = FALSE;
 			_edit_sendmessage(pObj, uMsg, wParam, lParam, &ret);
 		}
@@ -1001,7 +1000,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 		{
 			if (lParam)
 			{
-				if ((pObj->dwStyle_ & EDIT_STYLE_NEWLINE) != EDIT_STYLE_NEWLINE)//禁止回车时,删除\r\n
+				if (!((pObj->dwStyle_ & EDIT_STYLE_NEWLINE) == EDIT_STYLE_NEWLINE))//禁止回车时,删除\r\n
 				{
 					std::wstring strValue = (LPCWSTR)lParam;
 					std::wstring::size_type iFind = 0;
@@ -1012,7 +1011,8 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 							break;
 						strValue.replace(iFind, 2, L"");
 					}
-					return ((ITextServices*)_edit_its(pObj))->TxSetText(strValue.data());
+					auto ret = ((ITextServices*)_edit_its(pObj))->TxSetText(strValue.c_str());
+					return ret;
 				}
 			}
 			return ((ITextServices*)_edit_its(pObj))->TxSetText((LPCWSTR)lParam);

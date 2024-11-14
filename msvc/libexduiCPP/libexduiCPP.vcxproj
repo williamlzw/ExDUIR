@@ -179,6 +179,7 @@
     <ClInclude Include="AbsoluteLayoutWindow.hpp" />
     <ClInclude Include="ButtonWindow.hpp" />
     <ClInclude Include="CheckButtonWindow.hpp" />
+    <ClInclude Include="ComboBoxWindow.hpp" />
     <ClInclude Include="CustomBackgroundWindow.hpp" />
     <ClInclude Include="EditWindow.hpp" />
     <ClInclude Include="ExDUIRCPP.hpp" />

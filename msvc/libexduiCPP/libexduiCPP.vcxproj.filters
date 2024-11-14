@@ -113,6 +113,9 @@
     <ClInclude Include="TableLayoutWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="ComboBoxWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
