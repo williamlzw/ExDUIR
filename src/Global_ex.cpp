@@ -113,7 +113,6 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
 
     g_Li.hHookMsgBox = SetWindowsHookExW(WH_CBT, (HOOKPROC)_hook_proc, 0, GetCurrentThreadId());
-    
     g_Li.fContext = new MFFontContext(g_Ri.pDWriteFactory);
     Ex_SetLastError(nError);
     return nError == 0;
@@ -128,7 +127,7 @@ void Ex_UnInit()
     Ex_MemFree((LPVOID)g_Li.lpStrResMax);
     Ex_MemFree((LPVOID)g_Li.lpStrClose);
     Ex_MemFree((LPVOID)g_Li.lpStrHelp);
-    Ex_ThemeFree(g_Li.hThemeDefault);//新增
+    Ex_ThemeFree(g_Li.hThemeDefault);
     Ex_MemFree(g_Li.lpLogFontDefault);
     _canvas_uninit();
     _handle_uninit(g_Li.hHandles);
@@ -144,7 +143,7 @@ void Ex_UnInit()
 
 
 
-FLOAT Ex_Scale(FLOAT n) //OK
+FLOAT Ex_Scale(FLOAT n) 
 {
     if (g_Li.DpiX > 1)
     {
@@ -174,7 +173,7 @@ void Ex_Sleep(INT us)
     }
 }
 
-EXATOM Ex_Atom(LPCWSTR lptstring) //OK
+EXATOM Ex_Atom(LPCWSTR lptstring)
 {
     INT len = lstrlenW(lptstring);
     EXATOM ret = 1;
@@ -304,8 +303,6 @@ BOOL Ex_LoadBitMapFromMemory(LPVOID lpData, size_t dwLen, HBITMAP *retBitMap)
     }
     return ret;
 }
-
-
 
 LPVOID Ex_MemAlloc(size_t dwSize, INT dwFlags)
 {

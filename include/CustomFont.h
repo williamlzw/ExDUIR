@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 
+
 #define SafeRelease(lpx) if(lpx!=NULL){lpx->Release();lpx=NULL;}//释放COM
 
 class Resource_FontFileLoader : public IDWriteFontFileLoader

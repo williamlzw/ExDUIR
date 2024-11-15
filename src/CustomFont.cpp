@@ -451,7 +451,14 @@ MFFontContext::MFFontContext(IDWriteFactory* pFactory) : hr_(S_FALSE), hr2_(S_FA
 
 MFFontContext::~MFFontContext()
 {
-	hr_ = g_dwriteFactory->UnregisterFontCollectionLoader(MFFontCollectionLoader::GetLoader());
+	if (MFFontCollectionLoader::IsLoaderInitialized())
+	{
+		//hr_ = g_dwriteFactory->UnregisterFontCollectionLoader(MFFontCollectionLoader::GetLoader());
+	}
+	if (Resource_FontFileLoader::IsLoaderInitialized())
+	{
+		//hr_ = g_dwriteFactory->UnregisterFontFileLoader(Resource_FontFileLoader::GetLoader());
+	}
 }
 
 HRESULT MFFontContext::Initialize()

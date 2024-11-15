@@ -164,56 +164,56 @@ FLOAT __set_float(LPVOID lpAddr, LONG_PTR offset, FLOAT value)
 	return old;
 }
 
-BOOL __query(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) //OK
+BOOL __query(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) 
 {
 	return (*(LONG_PTR*)((size_t)lpAddr + offset) & value) == value;
 }
 
-BOOL __query_int(LPVOID lpAddr, LONG_PTR offset, INT value) //OK
+BOOL __query_int(LPVOID lpAddr, LONG_PTR offset, INT value) 
 {
 	return (*(INT*)((size_t)lpAddr + offset) & value) == value;
 }
 
-void __del(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) //OK
+void __del(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) 
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(LONG_PTR*)a = *(LONG_PTR*)a - (*(LONG_PTR*)a & value);
 }
 
-void __add(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) //OK
+void __add(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) 
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(LONG_PTR*)a = *(LONG_PTR*)a | value;
 }
 
-void __addn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) //OK
+void __addn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) 
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(LONG_PTR*)a = *(LONG_PTR*)a + value;
 }
 
-void __subn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) //OK
+void __subn(LPVOID lpAddr, LONG_PTR offset, LONG_PTR value) 
 {
 	size_t a = (size_t)lpAddr + offset;
 	*(LONG_PTR*)a = *(LONG_PTR*)a - value;
 }
 
-void _bit_add(size_t* dwValue, size_t index /*0-31 */) //OK
+void _bit_add(size_t* dwValue, size_t index /*0-31 */) 
 {
 	*dwValue |= (size_t)1 << index;
 }
 
-void _bit_del(size_t* dwValue, size_t index /*0-31 */) //OK
+void _bit_del(size_t* dwValue, size_t index /*0-31 */) 
 {
 	*dwValue &= ~((size_t)1 << index);
 }
 
-void _bit_not(size_t* dwValue, size_t index /*0-31 */) //OK
+void _bit_not(size_t* dwValue, size_t index /*0-31 */) 
 {
 	*dwValue ^= (size_t)1 << index;
 }
 
-BOOL _bit_test(size_t* dwValue, size_t index /*0-31 */) //OK
+BOOL _bit_test(size_t* dwValue, size_t index /*0-31 */) 
 {
 	return *dwValue >> index & (size_t)1;
 }
@@ -416,7 +416,7 @@ const UINT32 table[] = {
 	0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605, 0xcdd70693, 0x54de5729, 0x23d967bf,
 	0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d };
 
-UINT Crc32_Addr(LPVOID buf, UINT nLength) //OK
+UINT Crc32_Addr(LPVOID buf, UINT nLength) 
 {
 	if (nLength < 1)
 	{

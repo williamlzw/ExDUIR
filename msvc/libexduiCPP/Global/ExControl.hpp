@@ -211,7 +211,6 @@ namespace ExDUIR
 				inline ExControl GetFromID(INT nID)
 				{
 					auto hObj = Ex_ObjGetFromID(m_handle, nID);
-
 					return ExControl(hObj);
 				}
 
@@ -236,6 +235,11 @@ namespace ExDUIR
 					std::vector<CHAR> imgdata;
 					Ex_ReadFile(imageFilePath.c_str(), &imgdata);
 					return SetBackgroundImage(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+				}
+
+				inline EXARGB GetColorBackground()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_BACKGROUND);
 				}
 
 				inline BOOL SetColorBackground(EXARGB nColor, BOOL fRepaint = FALSE)
@@ -286,6 +290,11 @@ namespace ExDUIR
 				inline BOOL SetColorTextShadow(EXARGB nColor, BOOL fRepaint = FALSE)
 				{
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_SHADOW, nColor, fRepaint);
+				}
+
+				inline BOOL SetUIState(DWORD dwState, BOOL fRemove, RECT* lprcRedraw, BOOL fRedraw)
+				{
+					return Ex_ObjSetUIState(m_handle, dwState, fRemove, lprcRedraw, fRedraw);
 				}
 
 				inline void SetLongAlpha(DWORD alpha)
@@ -368,32 +377,32 @@ namespace ExDUIR
 					return Ex_ObjGetLong(m_handle, OBJECT_LONG_NODEID);
 				}
 
-				inline void SetLongLParam(size_t LParam)
+				inline void SetLongLParam(LONG_PTR LParam)
 				{
 					Ex_ObjSetLong(m_handle, OBJECT_LONG_LPARAM, LParam);
 				}
 
-				inline size_t GetLongLParam()
+				inline LONG_PTR GetLongLParam()
 				{
 					return Ex_ObjGetLong(m_handle, OBJECT_LONG_LPARAM);
 				}
 
-				inline void SetLongOwner(size_t owner)
+				inline void SetLongOwner(LONG_PTR owner)
 				{
 					Ex_ObjSetLong(m_handle, OBJECT_LONG_OWNER, owner);
 				}
 
-				inline size_t GetLongOwner()
+				inline LONG_PTR GetLongOwner()
 				{
 					return Ex_ObjGetLong(m_handle, OBJECT_LONG_OWNER);
 				}
 
-				inline void SetLongUserData(size_t userdata)
+				inline LONG_PTR SetLongUserData(LONG_PTR userdata)
 				{
-					Ex_ObjSetLong(m_handle, OBJECT_LONG_USERDATA, userdata);
+					return (LONG_PTR)Ex_ObjSetLong(m_handle, OBJECT_LONG_USERDATA, userdata);
 				}
 
-				inline size_t GetLongUserData()
+				inline LONG_PTR GetLongUserData()
 				{
 					return Ex_ObjGetLong(m_handle, OBJECT_LONG_USERDATA);
 				}

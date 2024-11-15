@@ -116,6 +116,27 @@
     <ClInclude Include="ComboBoxWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="EasingWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomRedrawWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageBoxWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ReportListViewWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IconListViewWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeViewWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MatrixWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

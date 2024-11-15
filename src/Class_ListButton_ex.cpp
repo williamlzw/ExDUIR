@@ -38,7 +38,7 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_HIMAGELIST);
 		if (hImageList)
 		{
-			Array_Destroy((array_s*)hImageList);
+			_imglist_destroy(hImageList);
 		}
 	}
 	else if (uMsg == WM_SIZE)

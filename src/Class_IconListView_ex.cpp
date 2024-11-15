@@ -142,6 +142,11 @@ void _iconlistview_uninit(HEXOBJ hObj)
 {
     array_s *pArray = (array_s *)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY);
     Array_Destroy(pArray);
+	HEXIMAGELIST hImageList = (HEXIMAGELIST)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_HIMAGELIST);
+	if (hImageList)
+	{
+		_imglist_destroy(hImageList);
+	}
 }
 
 BOOL _iconlistview_onnotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam)

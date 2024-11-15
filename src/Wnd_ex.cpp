@@ -218,7 +218,7 @@ BOOL _wnd_getscreenrect(HWND hWnd, RECT *rcMonitor, RECT *rcDesk)
     return ret;
 }
 
-std::wstring _wnd_gettitle(HWND hWnd) //OK
+std::wstring _wnd_gettitle(HWND hWnd) 
 {
     auto len = SendMessageW(hWnd, WM_GETTEXTLENGTH, 0, 0);
     len = (len + 1) * 2;
@@ -228,7 +228,7 @@ std::wstring _wnd_gettitle(HWND hWnd) //OK
     return ret;
 }
 
-INT _wnd_classtoatom(HWND hWnd) //OK
+INT _wnd_classtoatom(HWND hWnd) 
 {
     std::wstring ret;
     ret.resize(64);
@@ -236,7 +236,7 @@ INT _wnd_classtoatom(HWND hWnd) //OK
     return Ex_Atom(ret.data());
 }
 
-INT _wnd_getfunctionkeys() //OK
+INT _wnd_getfunctionkeys() 
 {
     INT ret = 0;
     if ((GetAsyncKeyState(VK_CONTROL) & 32768) != 0)

@@ -1389,7 +1389,7 @@ void test_messagebox(HWND hWnd)
 	HEXDUI hExDui_messagebox = Ex_DUIBindWindowEx(hWnd_messagebox, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE, 0, 0);
 	Ex_DUISetLong(hExDui_messagebox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	BOOL check = TRUE;
-	//Ex_MessageBox(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, EMBF_CENTEWINDOW);
+	//Ex_MessageBox(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, MESSAGEBOX_FLAG_CENTEWINDOW);
 	Ex_MessageBoxEx(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, NULL, &check, 1000, MESSAGEBOX_FLAG_CENTEWINDOW, OnMessageBoxProc);//可以修改信息框标题颜色等等
 	Ex_DUIShowWindow(hExDui_messagebox, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -1610,22 +1610,6 @@ LRESULT CALLBACK OnReportListViewButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WP
 	return 0;
 }
 
-std::wstring generate_random_string(int length) {
-	const std::wstring CHARACTERS = L"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-	std::random_device random_device;
-	std::mt19937 generator(random_device());
-	std::uniform_int_distribution<> distribution(0, CHARACTERS.size() - 1);
-
-	std::wstring random_string;
-
-	for (int i = 0; i < length; ++i) {
-		random_string += CHARACTERS[distribution(generator)];
-	}
-
-	return random_string;
-}
-
 void test_reportlistview(HWND hWnd)
 {
 	HWND hWnd_reportlistview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 400, 0, 0);
@@ -1688,7 +1672,7 @@ void test_reportlistview(HWND hWnd)
 		item.dwStyle = (i % 3 == 0 ? REPORTLISTVIEW_LINESTYLE_CHECKBOX | REPORTLISTVIEW_LINESTYLE_CHECKBOX_CHECK | REPORTLISTVIEW_LINESTYLE_ROWCOLOUR : 0);
 		item.rowBkgCr = ExARGB(31, 100, 200, 255);
 		item.iRow = Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&row);
-		//先插入表项
+		//设置表项
 		Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETITEM, 0, (size_t)&item); //wParam为是否立即更新
 		cell.iCol = 1;
 		cell.iRow = i;
@@ -1713,7 +1697,6 @@ void test_reportlistview(HWND hWnd)
 
 		cell.iCol = 4;
 		cell.iRow = i;
-		//auto str = generate_random_string(8);
 		std::random_device rd;  // 用于获取随机数的种子
 		std::mt19937 rng(rd());
 		std::uniform_int_distribution<int> uni(10, 1000000);
@@ -1747,12 +1730,6 @@ LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 		//因为LOWORD(lParam)是DPI缩放后的窗口坐标,而Ex_ObjMove接受缩放前坐标，因此这里需要除以dpix
 		Ex_ObjMove(m_hListViewIcon, 25, 50, (LOWORD(lParam) - 50) / dpix, (HIWORD(lParam) - 75) / dpix, TRUE);
 	}
-	else if (uMsg == WM_DESTROY)
-	{
-		_imglist_destroy(m_hImageListIcon);
-		m_hListViewIcon = 0; //重置0,不然再次创建会有问题。
-		m_hImageListIcon = 0;
-	}
 	return 0;
 }
 
@@ -1785,7 +1762,9 @@ void test_iconlistview(HWND hWnd)
 		ilvi.pwzText = str.c_str();
 		ilvi.nImageIndex = i % 3;
 		if (ilvi.nImageIndex == 0)
+		{
 			ilvi.nImageIndex = 3;
+		}
 		Ex_ObjSendMessage(m_hListViewIcon, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&ilvi);
 	}
 	Ex_ObjSendMessage(m_hListViewIcon, LISTVIEW_MESSAGE_UPDATE, 0, 0);

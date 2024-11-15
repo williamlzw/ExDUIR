@@ -23,6 +23,7 @@ public:
 
 		m_skin.Show();
 	}
+
 	static GroupBoxWindow& GetInstance()
 	{
 		static GroupBoxWindow ret;

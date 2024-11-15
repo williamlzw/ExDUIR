@@ -1037,7 +1037,7 @@
 #define TREEVIEW_MESSAGE_HITTEST 4369
 // 消息_树形框_保证显示 (lParam为显示的节点句柄)
 #define TREEVIEW_MESSAGE_ENSUREVISIBLE 4372
-// 消息_树形框_插入节点 (lParam为 EX_TREEVIEW_ITEMINFO 指针，tzText为Unicode)
+// 消息_树形框_插入节点 (lParam为 EX_TREEVIEW_ITEMINFO 指针，tzText为Unicode),返回节点指针EX_TREEVIEW_NODEITEM*
 #define TREEVIEW_MESSAGE_INSERTITEM 4352
 // 消息_树形框_取节点信息 (wParam为节点句柄,lParam为 EX_TREEVIEW_ITEMINFO 指针，tzText为Unicode)
 #define TREEVIEW_MESSAGE_GETITEM 4364

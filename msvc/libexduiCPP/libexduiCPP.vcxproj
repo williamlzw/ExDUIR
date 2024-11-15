@@ -181,6 +181,8 @@
     <ClInclude Include="CheckButtonWindow.hpp" />
     <ClInclude Include="ComboBoxWindow.hpp" />
     <ClInclude Include="CustomBackgroundWindow.hpp" />
+    <ClInclude Include="CustomRedrawWindow.hpp" />
+    <ClInclude Include="EasingWindow.hpp" />
     <ClInclude Include="EditWindow.hpp" />
     <ClInclude Include="ExDUIRCPP.hpp" />
     <ClInclude Include="FlowLayoutWindow.hpp" />
@@ -202,14 +204,19 @@
     <ClInclude Include="Global\ExUIbase.hpp" />
     <ClInclude Include="Global\ExWindow.hpp" />
     <ClInclude Include="GroupBoxWindow.hpp" />
+    <ClInclude Include="IconListViewWindow.hpp" />
     <ClInclude Include="LabelWindow.hpp" />
     <ClInclude Include="LinearLayoutWindow.hpp" />
     <ClInclude Include="ListButtonWindow.hpp" />
     <ClInclude Include="ListViewWindow.hpp" />
     <ClInclude Include="MainWindow.hpp" />
+    <ClInclude Include="MatrixWindow.hpp" />
+    <ClInclude Include="MessageBoxWindow.hpp" />
     <ClInclude Include="NavButtonWindow.hpp" />
     <ClInclude Include="RelativeLayoutWindow.hpp" />
+    <ClInclude Include="ReportListViewWindow.hpp" />
     <ClInclude Include="TableLayoutWindow.hpp" />
+    <ClInclude Include="TreeViewWindow.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

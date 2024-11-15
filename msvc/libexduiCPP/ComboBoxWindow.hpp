@@ -30,19 +30,19 @@ public:
 		m_combobox1.AddItem(L"英文字母abc");
 		m_combobox1.AddItem(L"数字123");
 		m_combobox1.AddItem(L"中文");
-		m_combobox1.AddItem(L"特殊字符[！（）☪☏");
+		m_combobox1.AddItem(L"特殊字符[！（）☏");
 		m_combobox1.AddItem(L"にほんご");
 		m_combobox1.AddItem(L"한국어");
 
 		m_combobox2.AddItem(L"英文字母abc");
 		m_combobox2.AddItem(L"数字123");
 		m_combobox2.AddItem(L"中文");
-		m_combobox2.AddItem(L"特殊字符[！（）☪☏");
+		m_combobox2.AddItem(L"特殊字符[！（）☏");
 
 		m_combobox3.AddItem(L"英文字母abc");
 		m_combobox3.AddItem(L"数字123");
 		m_combobox3.AddItem(L"中文");
-		m_combobox3.AddItem(L"特殊字符[！（）☪☏");
+		m_combobox3.AddItem(L"特殊字符[！（）☏");
 
 		m_combobox1.HandleEvent(COMBOBOX_EVENT_SELCHANGE, OnComboBoxButtonEvent);
 		m_combobox2.HandleEvent(COMBOBOX_EVENT_SELCHANGE, OnComboBoxButtonEvent);

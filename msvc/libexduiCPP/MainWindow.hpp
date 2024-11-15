@@ -14,6 +14,13 @@
 #include "FlowLayoutWindow.hpp"
 #include "TableLayoutWindow.hpp"
 #include "ComboBoxWindow.hpp"
+#include "EasingWindow.hpp"
+#include "CustomRedrawWindow.hpp"
+#include "MessageBoxWindow.hpp"
+#include "ReportListViewWindow.hpp"
+#include "IconListViewWindow.hpp"
+#include "TreeViewWindow.hpp"
+#include "MatrixWindow.hpp"
 
 using namespace ExDUIR::FrameWorks;
 
@@ -186,6 +193,46 @@ public:
 				GomboBoxBoxWindow::GetInstance().CreateGomboBoxBoxWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
+			case 116:
+			{
+				EasingWindow::GetInstance().CreateEasingWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 117:
+			{
+				CustomRedrawWindow::GetInstance().CreateCustomRedrawWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 118:
+			{
+				MessageBoxWindow::GetInstance().CreateMessageBoxWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 119:
+			{
+				
+				break;
+			}
+			case 120:
+			{
+				ReportListViewWindow::GetInstance().CreateReportListViewWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 121:
+			{
+				IconListViewWindow::GetInstance().CreateIconListViewWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 122:
+			{
+				TreeViewWindow::GetInstance().CreateTreeViewWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 123:
+			{
+				MatrixWindow::GetInstance().CreateMatrixWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
 			default:
 				break;
 		}
@@ -197,5 +244,4 @@ public:
 		static MainWindow ret;
 		return ret;
 	}
-
 };

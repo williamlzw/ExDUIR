@@ -633,6 +633,11 @@ namespace ExDUIR
 				ExIconListView(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"IconListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
 
+				inline void SetImageList(ExImageList imageList)
+				{
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETIMAGELIST, 0, (LPARAM)imageList.m_imagelist);
+				}
+
 				inline void SetImageSize(INT width, INT height)
 				{
 					Ex_ObjSendMessage(m_handle, ICONLISTVIEW_MESSAGE_SETITEMSIZE, 0, MAKELONG(width, height));
@@ -799,10 +804,15 @@ namespace ExDUIR
 				ExTreeView(HWND hWnd, POINT point) : ExControl(hWnd, point) {}
 				ExTreeView(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"TreeView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
-
-				inline void InsertItem(EX_TREEVIEW_INSERTINFO info)
+				
+				inline void SetImageList(ExImageList imageList, BOOL bRepaint = TRUE)
 				{
-					Ex_ObjSendMessage(m_handle, TREEVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETIMAGELIST, bRepaint, (LPARAM)imageList.m_imagelist);
+				}
+
+				inline size_t InsertItem(EX_TREEVIEW_INSERTINFO info)
+				{
+					return (size_t)Ex_ObjSendMessage(m_handle, TREEVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 
 				inline void Update()
@@ -846,6 +856,11 @@ namespace ExDUIR
 				ExReportListView(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"ReportListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
 
+				inline void SetImageList(ExImageList imageList)
+				{
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETIMAGELIST, 0, (LPARAM)imageList.m_imagelist);
+				}
+
 				inline void SetColorListViewHead(EXARGB color)
 				{
 					Ex_ObjSetColor(m_handle, COLOR_EX_RLV_HEAD, color, FALSE);
@@ -856,14 +871,19 @@ namespace ExDUIR
 					return Ex_ObjGetColor(m_handle, COLOR_EX_RLV_HEAD);
 				}
 
-				inline void SetColumn(EX_REPORTLIST_COLUMNINFO info)
+				inline void InsertColumn(EX_REPORTLIST_COLUMNINFO info)
 				{
 					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTCOLUMN, 0, (size_t)&info);
 				}
 
-				inline void SetRow(EX_REPORTLIST_ROWINFO info)
+				inline void DeleteColumn(size_t nIndex, BOOL bRepaint = TRUE)
 				{
-					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_DELETECOLUMN, bRepaint, nIndex);
+				}
+
+				inline size_t InsertItem(EX_REPORTLIST_ROWINFO info)
+				{
+					return Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&info);
 				}
 
 				inline void SetItem(EX_REPORTLIST_ITEMINFO info)

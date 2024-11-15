@@ -237,6 +237,11 @@ namespace ExDUIR
 				{
 					return _canvas_settransform(m_canvas, matrix.m_matrix);
 				}
+
+				inline BOOL SetTransformNULL()
+				{
+					return _canvas_settransform(m_canvas, 0);
+				}
 			};
 		}
 	}
