@@ -58,7 +58,8 @@ public:
 	{
 		if (nCode == NM_CLICK)
 		{
-			ExMessageBox::Show(ExControl(hObj), L"按钮收到了独立的单击事件", L"", 0, 0);
+			auto obj = ExControl(hObj);
+			ExMessageBox::Show(obj, L"按钮收到了独立的单击事件", L"", 0, 0);
 		}
 		return 0;
 	}
@@ -67,7 +68,8 @@ public:
 	{
 		if (uMsg == WM_EX_LCLICK) //左键单击消息,拦截这条则不会触发任何事件
 		{
-			ExMessageBox::Show(ExControl(hObj), L"按钮收到了单击消息", L"", 0, 0);
+			auto obj = ExControl(hObj);
+			ExMessageBox::Show(obj, L"按钮收到了单击消息", L"", 0, 0);
 		}
 		else if (uMsg == WM_NOTIFY)
 		{
@@ -77,7 +79,8 @@ public:
 			{
 				if (ni.nCode == NM_CLICK)
 				{
-					ExMessageBox::Show(ExControl(hObj), L"按钮收到了单击事件", L"", 0, 0);
+					auto obj = ExControl(hObj);
+					ExMessageBox::Show(obj, L"按钮收到了单击事件", L"", 0, 0);
 				}
 			}
 		}

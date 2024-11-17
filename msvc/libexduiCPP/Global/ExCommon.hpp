@@ -793,9 +793,9 @@ namespace ExDUIR
 				ExListView(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"ListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
 
-				inline void SetItemCount(INT count)
+				inline void SetItemCount(INT count, BOOL trackSelectItem = FALSE)
 				{
-					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETITEMCOUNT, count, MAKELONG(LVSICF_NOSCROLL, count));
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETITEMCOUNT, count, trackSelectItem == FALSE ? count : MAKELONG(LVSICF_NOSCROLL, count));
 				}
 
 				inline void SetItemCheck(INT nIndex, BOOL Check = TRUE)
@@ -841,6 +841,21 @@ namespace ExDUIR
 				ExTemplateListView(HWND hWnd, POINT point) : ExControl(hWnd, point) {}
 				ExTemplateListView(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"TListView", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
+			
+				inline void SetItemCount(INT count, BOOL trackSelectItem = FALSE)
+				{
+					Ex_ObjSendMessage(m_handle, LISTVIEW_MESSAGE_SETITEMCOUNT, count, trackSelectItem == FALSE ? count : MAKELONG(LVSICF_NOSCROLL, count));
+				}
+
+				inline void SetItemHoverColor(EXARGB color)
+				{
+					Ex_ObjSendMessage(m_handle, TEMPLATELISTVIEW_MESSAGE_SET_ITEM_HOVERCOLOR, 0, color);
+				}
+
+				inline void SetItemSelectColor(EXARGB color)
+				{
+					Ex_ObjSendMessage(m_handle, TEMPLATELISTVIEW_MESSAGE_SET_ITEM_SELECTCOLOR, 0, color);
+				}
 			};
 
 			class ExWin10Loading : public ExControl
@@ -1172,9 +1187,29 @@ namespace ExDUIR
 					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_SETITEMVALUE, (WPARAM)itemValue.c_str(), (LPARAM)itemName.c_str());
 				}
 
-				inline void AddItem(EX_PROGRID_ITEMINFO info)
+				inline void AddItemGroup(EX_PROGRID_ITEMINFO info)
 				{
 					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_GROUP, (LPARAM)&info);
+				}
+
+				inline void AddItemCombobox(EX_PROGRID_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_COMBOBOX, (LPARAM)&info);
+				}
+
+				inline void AddItemColorPicker(EX_PROGRID_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_COLORPICKER, (LPARAM)&info);
+				}
+
+				inline void AddItemDateBox(EX_PROGRID_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_DATEBOX, (LPARAM)&info);
+				}
+
+				inline void AddItemEdit(EX_PROGRID_ITEMINFO info)
+				{
+					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&info);
 				}
 			};
 
@@ -1279,7 +1314,7 @@ namespace ExDUIR
 					Ex_ObjSendMessage(m_handle, DRAWINGBOARD_MESSAGE_SETPENWIDTH, 0, penWidth);
 				}
 
-				inline void SetPenColor(INT penColor)
+				inline void SetPenColor(EXARGB penColor)
 				{
 					Ex_ObjSendMessage(m_handle, DRAWINGBOARD_MESSAGE_SETPENCOLOR, 0, penColor);
 				}

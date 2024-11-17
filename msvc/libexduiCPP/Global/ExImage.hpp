@@ -49,6 +49,13 @@ namespace ExDUIR
 					_img_createfromstream(lpStream, &m_image);
 				}
 
+				inline static ExImage CreateFromCanvas(HEXCANVAS hCanvas)
+				{
+					HEXIMAGE img = 0;
+					_img_createfromcanvas(hCanvas, &img);
+					return ExImage(img);
+				}
+
 				inline BOOL Destroy()
 				{
 					return _img_destroy(m_image);

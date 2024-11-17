@@ -483,9 +483,29 @@ void test_edit(HWND hWnd)
 	Ex_DUIShowWindow(m_hExDuiEdit, SW_SHOWNORMAL, 0, 0, 0);
 }
 
+LRESULT CALLBACK OnListButtonMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+	if (uMsg == WM_EX_LCLICK)
+	{
+		auto id = Ex_ObjGetLong(hObj, OBJECT_LONG_ID);
+		OUTPUTW(L"菜单项目点击,id:", id);
+	}
+	return 0;
+}
+
 LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
-	if (uMsg == WM_NOTIFY)
+	if (uMsg == WM_INITMENUPOPUP)
+	{
+		//响应菜单项目事件
+		HEXOBJ hObjfind = Ex_ObjFind(hExDui, 0, L"Item", 0);
+		while (hObjfind != 0)
+		{
+			Ex_ObjSetLong(hObjfind, OBJECT_LONG_OBJPROC, (size_t)OnListButtonMenuItemMsgProc);
+			hObjfind = Ex_ObjGetObj(hObjfind, GW_HWNDNEXT);
+		}
+	}
+	else if (uMsg == WM_NOTIFY)
 	{
 		EX_NMHDR notify{ 0 };
 		RtlMoveMemory(&notify, (LPVOID)lParam, sizeof(EX_NMHDR));
@@ -516,11 +536,11 @@ LRESULT CALLBACK OnListButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 		RECT rcObj{ 0 };
 		GetWindowRect(hWnd, &rcWindow);
 		Ex_ObjGetRectEx(hObj, &rcObj, 2);
-		Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + Ex_Scale(rcObj.bottom), 0, hObj, NULL, OnListButtonWndMsgProc, MENU_FLAG_NOSHADOW);
+		Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + Ex_Scale(rcObj.bottom), 
+			0, hObj, NULL, OnListButtonWndMsgProc, MENU_FLAG_NOSHADOW);
 		*lpResult = 1;
 		return 1;
 	}
-
 	return 0;
 }
 
@@ -784,8 +804,8 @@ void test_listview(HWND hWnd)
 		m_listViewItemInfo[index].text = str;
 		m_listViewItemInfo[index].depth = (index + 1) % 5;
 	}
-	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, itemCount, MAKELONG(LVSICF_NOSCROLL, itemCount));
-	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETSELECTIONMARK, TRUE, 5);//置选中项目
+	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, itemCount, MAKELONG(LVSICF_NOSCROLL, itemCount));//MAKELONG(LVSICF_NOSCROLL, itemCount)可以将滚动条顶部位置停留在选中项目位置
+	Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETSELECTIONMARK, TRUE, 40);//置选中项目，前面要先设置项目总数
 	HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hobj_listview, SCROLLBAR_TYPE_VERT);
 	Ex_ObjPostMessage(hObj_scroll, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);            //隐藏滚动条
 	Ex_ObjSetLong(hObj_scroll, OBJECT_LONG_OBJPROC, (size_t)OnScrollBarMsg); //改变滚动条回调
@@ -3186,7 +3206,6 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
 LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	HEXOBJ hObjTmp = 0;
-	static int selectedItem[2] = { 0 };
 	if (uMsg == WM_NOTIFY)
 	{
 		EX_NMHDR* ni = (EX_NMHDR*)lParam;
@@ -3322,7 +3341,7 @@ LRESULT CALLBACK OnDrawingBoardButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 			HEXCANVAS canvas = Ex_ObjGetLong(m_hObjDrawingBoard, OBJECT_LONG_HCANVAS);
 			HEXIMAGE img;
 			_img_createfromcanvas(canvas, &img);
-			_img_savetofile(img, L"d:/111.png");
+			_img_savetofile(img, L"d:/canvas_savetofile.png");
 			_img_destroy(img);
 		}
 	}
@@ -3379,13 +3398,13 @@ LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 	{
 		if (nID == 100)
 		{
-			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_GETITEMVALUE, 0, (LPARAM)L"名称2");
-			OUTPUTW(L"名称2 对应值:", ret);
+			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_GETITEMVALUE, 0, (LPARAM)L"普通编辑框");
+			OUTPUTW(L"普通编辑框 对应值:", ret);
 		}
 		else if (nID == 101)
 		{
-			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SETITEMVALUE, (WPARAM)L"新数值123", (LPARAM)L"名称2");
-			OUTPUTW(L"置\"名称2\"对应值");
+			LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SETITEMVALUE, (WPARAM)L"新数值123", (LPARAM)L"普通编辑框");
+			OUTPUTW(L"置\"普通编辑框\"对应值");
 		}
 		else if (nID == 102)
 		{
@@ -3409,7 +3428,7 @@ void test_propertygrid(HWND hParent)
 	HEXDUI hExDui_propertygrid = Ex_DUIBindWindowEx(hWnd_propertygrid, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_propertygrid, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
-	m_hObjPropertyGrid = Ex_ObjCreateEx(-1, L"PropertyGrid", L"PropertyGrid", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
+	m_hObjPropertyGrid = Ex_ObjCreateEx(-1, L"PropertyGrid", L"属性框", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
 		50, 50, 300, 300, hExDui_propertygrid, 0, 0, 0, 0, 0);
 	Ex_ObjHandleEvent(m_hObjPropertyGrid, PROPERTYGRID_EVENT_ITEMVALUECHANGE, OnPropertyGridEvent);
 

@@ -183,9 +183,29 @@ public:
 		return 0;
 	}
 
+	static LRESULT CALLBACK OnListButtonMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+	{
+		if (uMsg == WM_EX_LCLICK)
+		{
+			size_t id = ExControl(hObj).GetLongID();
+			OUTPUTW(L"菜单项目点击,id:", id);
+		}
+		return 0;
+	}
+
 	static LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 	{
-		if (uMsg == WM_NOTIFY)
+		if (uMsg == WM_INITMENUPOPUP)
+		{
+			ExSkin skin = ExSkin(hExDui);
+			ExControl obj = skin.FindObj(L"Item");
+			if (obj.m_handle != 0)
+			{
+				obj.SetLongProc(OnListButtonMenuItemMsgProc);
+				obj = obj.GetObj(GW_HWNDNEXT);
+			}
+		}
+		else if (uMsg == WM_NOTIFY)
 		{
 			EX_NMHDR notify{ 0 };
 			RtlMoveMemory(&notify, (LPVOID)lParam, sizeof(EX_NMHDR));

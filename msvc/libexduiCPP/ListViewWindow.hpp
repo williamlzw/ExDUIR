@@ -38,8 +38,8 @@ public:
 			m_listViewItemInfo[index].text = str;
 			m_listViewItemInfo[index].depth = (index + 1) % 5;
 		}
-		m_listview.SetItemCount(itemCount);
-		m_listview.SetItemCheck(5);
+		m_listview.SetItemCount(itemCount, TRUE);//滚动条位置跟踪选中表项
+		m_listview.SetItemCheck(40);
 		ExScrollBar scrollbar = ExScrollBar::GetScorlBallFromObj(m_listview, SCROLLBAR_TYPE_VERT);
 		scrollbar.Show(FALSE);
 		scrollbar.SetLongProc(OnScrollBarMsg);

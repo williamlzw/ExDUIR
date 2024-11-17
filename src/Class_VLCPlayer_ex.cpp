@@ -291,6 +291,7 @@ INT VLCPlayer::GetMediaVolume()
 	{
 		return libvlc_audio_get_volume(m_mediaPlayer);
 	}
+	return 0;
 }
 
 BOOL VLCPlayer::SetMediaVolume(INT volume)

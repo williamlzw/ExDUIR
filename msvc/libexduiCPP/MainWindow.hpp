@@ -39,6 +39,10 @@
 #include "CalendarWindow.hpp"
 #include "ScoreButtonWindow.hpp"
 #include "CarouselWindow.hpp"
+#include "TemplateListViewWindow.hpp"
+#include "DrawingBoardWindow.hpp"
+#include "PaletteWindow.hpp"
+#include "PropertyGridWindow.hpp"
 
 using namespace ExDUIR::FrameWorks;
 
@@ -362,6 +366,26 @@ public:
 			case 142:
 			{
 				CarouselWindow::GetInstance().CreateCarouselWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 143:
+			{
+				TemplateListViewWindow::GetInstance().CreateTemplateListViewWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 144:
+			{
+				DrawingBoardWindow::GetInstance().CreateDrawingBoardWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 145:
+			{
+				PaletteWindow::GetInstance().CreatePaletteWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 146:
+			{
+				PropertyGridWindow::GetInstance().CreatePropertyGridWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			default:

@@ -352,9 +352,9 @@ void _dx_rotate_hue(ID2D1DeviceContext *pDeviceContext, ID2D1Bitmap *pBitmap, FL
 
 void ARGB2ColorF(EXARGB argb, D2D1_COLOR_F *color)
 {
-    color->r = (FLOAT)(argb & 0xFF) / 255;
+    color->r = (FLOAT)((argb >> 16) & 0xFF) / 255;
     color->g = (FLOAT)((argb >> 8) & 0xFF) / 255;
-    color->b = (FLOAT)((argb >> 16) & 0xFF) / 255;
+    color->b = (FLOAT)(argb & 0xFF) / 255;
     color->a = (FLOAT)((argb >> 24) & 0xFF) / 255;
 }
 

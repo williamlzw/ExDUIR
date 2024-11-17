@@ -462,6 +462,11 @@ namespace ExDUIR
 					Ex_ObjSetLong(m_handle, OBJECT_LONG_LPARAM, LParam);
 				}
 
+				inline HEXCANVAS GetLongCanvas()
+				{
+					return Ex_ObjGetLong(m_handle, OBJECT_LONG_HCANVAS);
+				}
+
 				inline LONG_PTR GetLongLParam()
 				{
 					return Ex_ObjGetLong(m_handle, OBJECT_LONG_LPARAM);

@@ -1110,7 +1110,7 @@
 #pragma region template listview message constant
 // 消息_模板列表_创建 返回值将作为列表项控件
 #define TEMPLATELISTVIEW_MESSAGE_ITEM_CREATE 10010
-// 消息_模板列表_创建完毕
+// 消息_模板列表_创建完毕, lParam 项目句柄
 #define TEMPLATELISTVIEW_MESSAGE_ITEM_CREATED 10011
 // 消息_模板列表_销毁
 #define TEMPLATELISTVIEW_MESSAGE_ITEM_DESTROY 10012
@@ -1184,7 +1184,7 @@
 #define LISTVIEW_MESSAGE_GETITEMTEXT 4141
 // 消息_报表_设置表项文本 (wParam若不为0则为表项索引,lParam为EX_REPORTLIST_ITEMINFO指针)
 #define LISTVIEW_MESSAGE_SETITEMTEXT 4142
-// 消息_列表_设置表项总数 wParam为表项条数,lParmam为MAKELONG(LVSICF_NOSCROLL, 表项条数)
+// 消息_列表_设置表项总数 wParam为表项条数,lParmam为表项条数,若要将滚动条位置设为选中项目作为顶部则设置为MAKELONG(LVSICF_NOSCROLL, 表项条数)
 #define LISTVIEW_MESSAGE_SETITEMCOUNT 4143
 // 消息_报表_排序 (lParam为EX_REPORTLIST_SORTINFO指针)
 #define LISTVIEW_MESSAGE_SORTITEMS 4144
@@ -1625,15 +1625,24 @@
 #define EX_DECLEAR_API(NAME)			ExPFN_##NAME NAME	
 #define EX_GET_API(NAME)				NAME = (ExPFN_##NAME) ::GetProcAddress(hModule, #NAME)		//获取函数指针
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
-#define ExGetR(argb) (LOBYTE(argb))
+#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))\
+// 提取颜色分量
+#define ExGetB(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
-#define ExGetB(argb) (LOBYTE((argb) >> 16))
+#define ExGetR(argb) (LOBYTE((argb) >> 16))
 #define ExGetA(argb) (LOBYTE((argb) >> 24))
-#define ExRGB(r, g, b) ((EXARGB)(((BYTE)(r) | ((WORD)((BYTE)(g)) << 8)) | (((INT)(BYTE)(b)) << 16)))
+
+// 构建 RGB 颜色值
+#define ExRGB(r, g, b) ((EXARGB)(((BYTE)(b) | ((WORD)((BYTE)(g)) << 8)) | (((INT)(BYTE)(r)) << 16)))
+
+// 构建 ARGB 颜色值
 #define ExARGB(r, g, b, a) ((EXARGB)(ExRGB(r, g, b) | (a << 24)))
+
+// 将 ARGB 颜色值转换为 RGB 颜色值
 #define ExARGB2RGB(argb) ExRGB(ExGetR(argb), ExGetG(argb), ExGetB(argb))
-#define ExRGB2ARGB(rgb, a) ((EXARGB)(ExGetR(rgb) | (ExGetG(rgb) << 8) | (ExGetB(rgb) << 16) | ((EXARGB)(a) << 24)))
+
+// 将 RGB 颜色值转换为 ARGB 颜色值
+#define ExRGB2ARGB(rgb, a) ((EXARGB)(ExGetB(rgb) | (ExGetG(rgb) << 8) | (ExGetR(rgb) << 16) | ((EXARGB)(a) << 24)))
 
 
 

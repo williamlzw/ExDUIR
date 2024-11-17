@@ -197,6 +197,18 @@
     <ClInclude Include="CarouselWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="TemplateListViewWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawingBoardWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PaletteWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyGridWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

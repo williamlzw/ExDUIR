@@ -189,6 +189,7 @@
     <ClInclude Include="CustomRedrawWindow.hpp" />
     <ClInclude Include="DateBoxWindow.hpp" />
     <ClInclude Include="DragObjWindow.hpp" />
+    <ClInclude Include="DrawingBoardWindow.hpp" />
     <ClInclude Include="DropObjWindow.hpp" />
     <ClInclude Include="EasingWindow.hpp" />
     <ClInclude Include="EditExWindow.hpp" />
@@ -226,7 +227,9 @@
     <ClInclude Include="ModalWindow.hpp" />
     <ClInclude Include="NavButtonWindow.hpp" />
     <ClInclude Include="NchitTestWindow.hpp" />
+    <ClInclude Include="PaletteWindow.hpp" />
     <ClInclude Include="ProgressBarWindow.hpp" />
+    <ClInclude Include="PropertyGridWindow.hpp" />
     <ClInclude Include="RelativeLayoutWindow.hpp" />
     <ClInclude Include="ReportListViewWindow.hpp" />
     <ClInclude Include="resource.h" />
@@ -234,6 +237,7 @@
     <ClInclude Include="ScoreButtonWindow.hpp" />
     <ClInclude Include="SliderbarWindow.hpp" />
     <ClInclude Include="TableLayoutWindow.hpp" />
+    <ClInclude Include="TemplateListViewWindow.hpp" />
     <ClInclude Include="TitleBarWindow.hpp" />
     <ClInclude Include="TreeViewWindow.hpp" />
   </ItemGroup>

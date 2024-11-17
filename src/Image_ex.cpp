@@ -157,6 +157,7 @@ BOOL _img_selectactiveframe(HEXIMAGE hImg, INT nIndex)
 
 EXARGB _wic_getpixel(IWICBitmapSource* pBitmap, INT x, INT y, INT* nError)
 {
+	//GUID_WICPixelFormat32bppPBGRA
 	WICRect rcl = { x, y, 1, 1 };
 	EXARGB ret = 0;
 	*nError = pBitmap->CopyPixels(&rcl, 4, 4, (BYTE*)&ret);
