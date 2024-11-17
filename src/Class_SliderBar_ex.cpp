@@ -133,7 +133,7 @@ void _sliderbar_paint(HEXOBJ hObj)
         {
             _canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)RC.right / 2), Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE), Ex_Scale((FLOAT)RC.right / 2), Ex_Scale((FLOAT)(RC.bottom)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
             x = Ex_Scale((FLOAT)RC.right / 2);
-            if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_POINT) == 1)
+            if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1)
             {
                 y = Ex_Scale((FLOAT)RC.bottom);
             }
@@ -145,7 +145,7 @@ void _sliderbar_paint(HEXOBJ hObj)
         else
         {
             _canvas_drawline(ps.hCanvas, hBrush, Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE), Ex_Scale((FLOAT)RC.bottom / 2), Ex_Scale((FLOAT)(RC.right)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE), Ex_Scale((FLOAT)RC.bottom / 2), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
-            if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_POINT) == 1)
+            if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1)
             {
                 x = Ex_Scale((FLOAT)RC.right);
             }
@@ -174,7 +174,7 @@ void _sliderbar_getrect(HEXOBJ hObj, RECT *rc)
 
     if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & SLIDERBAR_STYLE_VERTICAL) == SLIDERBAR_STYLE_VERTICAL)
     {
-        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_POINT) == 1)
+        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1)
         {
             *rc = RECT{(long)(rc->right / 2 - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)),
                        (long)((rc->bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) + Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2 - (rc->bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) * value),
@@ -191,7 +191,7 @@ void _sliderbar_getrect(HEXOBJ hObj, RECT *rc)
     }
     else
     {
-        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_POINT) == 1)
+        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1)
         {
             *rc = RECT{(long)((rc->right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) + Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2 - (rc->right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) * value),
                        (long)(rc->bottom / 2 - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)),
@@ -217,7 +217,7 @@ FLOAT _sliderbar_getvalueofthepoint(HEXOBJ hObj, LPARAM lParam)
 
     if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & SLIDERBAR_STYLE_VERTICAL) == SLIDERBAR_STYLE_VERTICAL)
     {
-        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_POINT) == 1)
+        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1)
         {
             value = (Ex_Scale((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) - (short)HIWORD(lParam)) / Ex_Scale((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
         }
@@ -228,7 +228,7 @@ FLOAT _sliderbar_getvalueofthepoint(HEXOBJ hObj, LPARAM lParam)
     }
     else
     {
-        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_POINT) == 1)
+        if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1)
         {
             value = (Ex_Scale((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) - (short)LOWORD(lParam)) / Ex_Scale((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
         }

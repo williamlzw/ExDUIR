@@ -59,14 +59,14 @@ namespace ExDUIR
 					Ex_ObjSendMessage(m_handle, WM_EX_PROPS, 0, (LPARAM)&props);
 				}
 
-				inline void SetImageInfo(EX_IMAGEINFO info)
+				inline void SetImage(EX_IMAGEINFO info)
 				{
 					Ex_ObjSendMessage(m_handle, BM_SETIMAGE, 0, (LPARAM)&info);
 				}
 
 				inline void SetIcon(ExImage img)
 				{
-					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, (LPARAM)&img.m_image);
+					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, (LPARAM)img.m_image);
 				}
 			};
 
@@ -215,10 +215,10 @@ namespace ExDUIR
 
 				inline std::wstring GetText()
 				{
-					size_t len = Ex_ObjGetTextLength(m_handle) * 2 + 2;
+					size_t len = Ex_ObjGetTextLength(m_handle);
 					std::wstring text;
 					text.resize(len);
-					Ex_ObjGetText(m_handle, text.c_str(), len);
+					Ex_ObjGetText(m_handle, text.data(), len * 2);
 					return text;
 				}
 
@@ -330,7 +330,7 @@ namespace ExDUIR
 				}
 			};
 
-			class ExEdit : public ExControl
+			class ExEdit : public virtual ExControl
 			{
 			public:
 				ExEdit() = default;
@@ -534,7 +534,7 @@ namespace ExDUIR
 					size_t len = Ex_ObjGetTextLength(m_handle);
 					std::wstring str;
 					str.resize(len);
-					Ex_ObjGetText(m_handle, str.c_str(), len + 1);
+					Ex_ObjGetText(m_handle, str.data(), len * 2);
 					return str;
 				}
 
@@ -568,7 +568,7 @@ namespace ExDUIR
 				}
 			};
 
-			class ExEditEx : public ExEdit, public ExControl
+			class ExEditEx : public ExEdit
 			{
 			public:
 				ExEditEx() = default;
@@ -578,6 +578,16 @@ namespace ExDUIR
 				ExEditEx(HWND hWnd, POINT point) : ExControl(hWnd, point) {}
 				ExEditEx(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"EditEx", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
+			
+				inline void SetIcon(ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, (LPARAM)img.m_image);
+				}
+
+				inline void SetProps(EX_OBJ_PROPS props)
+				{
+					Ex_ObjSendMessage(m_handle, WM_EX_PROPS, 0, (LPARAM)&props);
+				}
 			};
 
 			class ExGroupBox : public ExControl
@@ -942,14 +952,54 @@ namespace ExDUIR
 				ExSliderBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"SliderBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
 
-				inline void SetBlockDirection(INT direction)
+				inline void SetLongBlockDirection(DWORD direction)
 				{
-					Ex_ObjSetLong(m_handle, SLIDERBAR_LONG_BLOCK_POINT, direction);
+					Ex_ObjSetLong(m_handle, SLIDERBAR_LONG_BLOCK_DIRECTION, direction);
 				}
 
-				inline INT GetBlockDirection()
+				inline DWORD GetLongBlockDirection()
 				{
-					return Ex_ObjGetLong(m_handle, SLIDERBAR_LONG_BLOCK_POINT);
+					return Ex_ObjGetLong(m_handle, SLIDERBAR_LONG_BLOCK_DIRECTION);
+				}
+
+				inline void SetLongBlockSize(DWORD size)
+				{
+					Ex_ObjSetLong(m_handle, SLIDERBAR_LONG_BLOCK_SIZE, size);
+				}
+
+				inline DWORD GetLongBlockSize()
+				{
+					return Ex_ObjGetLong(m_handle, SLIDERBAR_LONG_BLOCK_SIZE);
+				}
+
+				inline void SetLongPos(DWORD pos)
+				{
+					Ex_ObjSetLong(m_handle, SLIDERBAR_LONG_POS, pos);
+				}
+
+				inline DWORD GetLongPos()
+				{
+					return Ex_ObjGetLong(m_handle, SLIDERBAR_LONG_POS);
+				}
+
+				inline void SetLongMin(DWORD min)
+				{
+					Ex_ObjSetLong(m_handle, SLIDERBAR_LONG_MIN, min);
+				}
+
+				inline DWORD GetLongMin()
+				{
+					return Ex_ObjGetLong(m_handle, SLIDERBAR_LONG_MIN);
+				}
+
+				inline void SetLongMax(DWORD max)
+				{
+					Ex_ObjSetLong(m_handle, SLIDERBAR_LONG_MAX, max);
+				}
+
+				inline DWORD GetLongMax()
+				{
+					return Ex_ObjGetLong(m_handle, SLIDERBAR_LONG_MAX);
 				}
 			};
 
@@ -1012,7 +1062,7 @@ namespace ExDUIR
 
 				inline void SetIcon(ExImage img)
 				{
-					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, img.m_image);
+					Ex_ObjSendMessage(m_handle, WM_SETICON, 0, (LPARAM)img.m_image);
 				}
 
 				inline void SetCheck(BOOL check, BOOL notifyBrother = TRUE)
@@ -1049,39 +1099,54 @@ namespace ExDUIR
 				ExProgressBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"ProgressBar", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
 
-				inline void SetRadius(INT radius)
+				inline INT SetLongRadius(INT radius)
 				{
-					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETRADIUS, radius, 0);
+					return Ex_ObjSetLong(m_handle, PROGRESSBAR_LONG_RADIUS, radius);
 				}
 
-				inline void SetColorBackground(EXARGB color)
+				inline INT GetLongRadius()
 				{
-					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETBKCOLOR, color, 0);
+					Ex_ObjGetLong(m_handle, PROGRESSBAR_LONG_RADIUS);
 				}
 
-				inline void SetColorFont(EXARGB color)
+				inline EXARGB SetLongColorBackground(EXARGB color)
 				{
-					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETBARCOLOR, color, 0);
+					return Ex_ObjSetLong(m_handle, PROGRESSBAR_LONG_BACKGROUNDCOLOR, color);
 				}
 
-				inline void SetPos(INT pos)
+				inline EXARGB GetLongColorBackground()
 				{
-					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETPOS, pos, 0);
+					return Ex_ObjGetLong(m_handle, PROGRESSBAR_LONG_BACKGROUNDCOLOR);
 				}
 
-				inline INT GetPos()
+				inline EXARGB SetLongColorForeground(EXARGB color)
 				{
-					return Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_GETPOS, 0, 0);
+					return Ex_ObjSetLong(m_handle, PROGRESSBAR_LONG_FOREGROUNDCOLOR, color);
 				}
 
-				inline void SetRange(INT range)
+				inline EXARGB GetLongColorForeground()
 				{
-					Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_SETRANGE, range, 0);
+					return Ex_ObjGetLong(m_handle, PROGRESSBAR_LONG_FOREGROUNDCOLOR);
 				}
 
-				inline INT GetRange()
+				inline INT SetLongPos(INT pos)
 				{
-					return Ex_ObjSendMessage(m_handle, PROGRESSBAR_MESSAGE_GETRANGE, 0, 0);
+					return Ex_ObjSetLong(m_handle, PROGRESSBAR_LONG_POS, pos);
+				}
+
+				inline INT GetLongPos()
+				{
+					return Ex_ObjGetLong(m_handle, PROGRESSBAR_LONG_POS);
+				}
+
+				inline INT SetLongRange(INT range)
+				{
+					return Ex_ObjSetLong(m_handle, PROGRESSBAR_LONG_RANGE, range);
+				}
+
+				inline INT GetLongRange()
+				{
+					return Ex_ObjGetLong(m_handle, PROGRESSBAR_LONG_RANGE);
 				}
 			};
 
@@ -1111,18 +1176,6 @@ namespace ExDUIR
 				{
 					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_GROUP, (LPARAM)&info);
 				}
-			};
-
-			class ExSoliderBar : public ExControl
-			{
-			public:
-				ExSoliderBar() = default;
-				~ExSoliderBar() = default;
-				ExSoliderBar(EXHANDLE hObj) : ExControl(hObj) {}
-				ExSoliderBar(ExControl obj) : ExControl(obj) {}
-				ExSoliderBar(HWND hWnd, POINT point) : ExControl(hWnd, point) {}
-				ExSoliderBar(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
-					:ExControl(pOwner, x, y, width, height, L"SoliderBarEx", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
 			};
 
 			class ExCalendar : public ExControl
@@ -1156,6 +1209,16 @@ namespace ExDUIR
 				inline void AddImage(ExImage img)
 				{
 					Ex_ObjSendMessage(m_handle, CAROUSEL_MESSAGE_ADDIMG, 0, img.m_image);
+				}
+
+				inline void SetTimer(INT uElapse)
+				{
+					Ex_ObjSendMessage(m_handle, CAROUSEL_MESSAGE_SETTIMER, 0, uElapse);
+				}
+
+				inline void ClearAllImage()
+				{
+					Ex_ObjSendMessage(m_handle, CAROUSEL_MESSAGE_CLEAR, 0, 0);
 				}
 			};
 

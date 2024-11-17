@@ -2050,25 +2050,25 @@ BOOL Ex_ObjDrawBackgroundProc(HEXOBJ hObj, HEXCANVAS hCanvas, RECT* lprcPaint);
 /// 组件设置可用状态
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="fEnable">是否可用</param>
+/// <param name="bEnable">是否可用</param>
 /// <returns></returns>
-BOOL Ex_ObjEnable(HEXOBJ hObj, BOOL fEnable);
+BOOL Ex_ObjEnable(HEXOBJ hObj, BOOL bEnable);
 
 /// <summary>
-/// 组件设置是否启用事件冒泡
+/// 组件设置是否启用事件冒泡, 事件冒泡是指事件将根据父控件逐层传递至窗口
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="fEnable"></param>
+/// <param name="bEnable"></param>
 /// <returns></returns>
-BOOL Ex_ObjEnableEventBubble(HEXOBJ hObj, BOOL fEnable);
+BOOL Ex_ObjEnableEventBubble(HEXOBJ hObj, BOOL bEnable);
 
 /// <summary>
 /// 组件是否允许启用输入法
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="fEnable"></param>
+/// <param name="bEnable"></param>
 /// <returns></returns>
-BOOL Ex_ObjEnableIME(HEXOBJ hObj, BOOL fEnable);
+BOOL Ex_ObjEnableIME(HEXOBJ hObj, BOOL bEnable);
 
 /// <summary>
 /// 组件设置是否启用绘画中消息
@@ -2264,7 +2264,7 @@ BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT* lpRect, INT nType);
 /// <param name="hObj"></param>
 /// <param name="lpString">缓冲区指针</param>
 /// <param name="nMaxCount">缓冲区长度</param>
-/// <returns>返回已拷贝字符长度</returns>
+/// <returns>返回已拷贝字符长度,unicode每个字符两字节,包括终止符2字节,拼接文本注意减去终止符两字节</returns>
 size_t Ex_ObjGetText(HEXOBJ hObj, LPCWSTR lpString, size_t nMaxCount);
 
 /// <summary>

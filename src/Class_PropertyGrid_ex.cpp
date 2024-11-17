@@ -18,10 +18,10 @@ RECT Ex_TreRect(RECT OldRect, INT Left = 0, INT Top = 0, INT Right = 0, INT Bott
 }
 std::wstring _propertygrid_getedittext(HEXOBJ hObj)
 {
-	size_t len = Ex_ObjGetTextLength(hObj) + 1;//* 2+2
+	size_t len = Ex_ObjGetTextLength(hObj);
 	std::wstring text;
 	text.resize(len);
-	Ex_ObjGetText(hObj, text.c_str(), len);
+	Ex_ObjGetText(hObj, text.data(), len * 2);
 	return text;
 }
 void _propertygrid_setitemtext(HEXOBJ hObj, INT index, std::wstring text)

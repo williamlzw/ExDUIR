@@ -25,7 +25,7 @@ public:
 		{
 			ExCanvas canvas = ExCanvas(wParam);
 			RECT rc;
-			CustomRedrawWindow::GetInstance().m_skin.GetClientRect(&rc);
+			CustomRedrawWindow::GetInstance().m_skin.GetClientRect(rc);
 			constexpr EX_STOPPTS arrStopPts[]{
 			{0.0,ExARGB(10, 127, 213, 220)},
 			{1.0, ExARGB(200, 10, 10, 220)}

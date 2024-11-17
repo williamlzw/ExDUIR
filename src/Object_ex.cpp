@@ -1037,16 +1037,16 @@ BOOL Ex_ObjClientToScreen(HEXOBJ hObj, INT *x, INT *y)
     return nError == 0;
 }
 
-BOOL Ex_ObjEnable(HEXOBJ hObj, BOOL fEnable)
+BOOL Ex_ObjEnable(HEXOBJ hObj, BOOL bEnable)
 {
     INT nError = 0;
     obj_s *pObj = nullptr;
     BOOL ret = FALSE;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (fEnable != (!((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) == OBJECT_STYLE_DISABLED)))
+        if (bEnable != (!((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) == OBJECT_STYLE_DISABLED)))
         {
-            ret = Ex_ObjSendMessage(hObj, WM_ENABLE, fEnable ? 1 : 0, 0);
+            ret = Ex_ObjSendMessage(hObj, WM_ENABLE, bEnable ? 1 : 0, 0);
         }
     }
     Ex_SetLastError(nError);
@@ -3866,8 +3866,10 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
             if (!IsBadWritePtr((LPVOID)lParam, wParam))
             {
                 tmp = lstrlenW(pObj->pstrTitle_) * 2 + 2;
-                if (tmp > wParam)
-                    tmp = wParam;
+				if (tmp > wParam)
+				{
+					tmp = wParam;
+				} 
                 RtlMoveMemory((LPVOID)lParam, pObj->pstrTitle_, tmp);
             }
             return tmp;
@@ -4283,13 +4285,13 @@ BOOL Ex_ObjPointTransform(HEXOBJ hObjSrc, HEXOBJ hObjDst, INT *ptX, INT *ptY)
     return nError == 0;
 }
 
-BOOL Ex_ObjEnableEventBubble(HEXOBJ hObj, BOOL fEnable)
+BOOL Ex_ObjEnableEventBubble(HEXOBJ hObj, BOOL bEnable)
 {
     obj_s *pObj = nullptr;
     INT nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (fEnable)
+        if (bEnable)
         {
             pObj->dwFlags_ = pObj->dwFlags_ | EOF_BEVENTBUBBLE;
         }
@@ -4563,13 +4565,13 @@ BOOL Ex_ObjEnablePaintingMsg(HEXOBJ hObj, BOOL bEnable)
     return nError == 0;
 }
 
-BOOL Ex_ObjEnableIME(HEXOBJ hObj, BOOL fEnable)
+BOOL Ex_ObjEnableIME(HEXOBJ hObj, BOOL bEnable)
 {
     obj_s *pObj;
     INT nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (fEnable)
+        if (bEnable)
         {
             FLAGS_ADD(pObj->dwFlags_, EOF_BIME);
         }
@@ -4836,7 +4838,7 @@ INT Ex_ObjGetDropString(HEXOBJ hObj, LPVOID pDataObject, LPWSTR lpwzBuffer, INT 
                     std::string str = (LPCSTR)lpMem;
                     std::wstring retwStr;
                     retwStr = a2w(str);
-                    lstrcpynW(lpwzBuffer, (LPCWSTR)retwStr.c_str(), cchMaxLength);
+                    lstrcpynW(lpwzBuffer, (LPCWSTR)retwStr.data(), cchMaxLength);
                 }
             }
         }

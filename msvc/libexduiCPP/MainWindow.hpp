@@ -21,6 +21,24 @@
 #include "IconListViewWindow.hpp"
 #include "TreeViewWindow.hpp"
 #include "MatrixWindow.hpp"
+#include "ButtonExWindow.hpp"
+#include "EditExWindow.hpp"
+#include "CustomMenuWindow.hpp"
+#include "EventWindow.hpp"
+#include "LoadingWindow.hpp"
+#include "SliderbarWindow.hpp"
+#include "RotateImageBoxWindow.hpp"
+#include "DragObjWindow.hpp"
+#include "DropObjWindow.hpp"
+#include "ProgressBarWindow.hpp"
+#include "NchitTestWindow.hpp"
+#include "ModalWindow.hpp"
+#include "TitleBarWindow.hpp"
+#include "DateBoxWindow.hpp"
+#include "ColorPickerWindow.hpp"
+#include "CalendarWindow.hpp"
+#include "ScoreButtonWindow.hpp"
+#include "CarouselWindow.hpp"
 
 using namespace ExDUIR::FrameWorks;
 
@@ -45,65 +63,83 @@ public:
 		m_skin.SetBackgroundColor(ExARGB(120, 120, 120, 255));
 
 		m_skin.SetBackgroundImage(L"../test/res/bkg.png");
-		m_buttons.push_back(ExButton(m_skin, 10, 30, 100, 30, L"测试按钮开关", -1, -1, DT_VCENTER | DT_CENTER, 101));
-		m_buttons.push_back(ExButton(m_skin, 10, 70, 100, 30, L"测试标签", -1, -1, DT_VCENTER | DT_CENTER, 102));
-		m_buttons.push_back(ExButton(m_skin, 10, 110, 100, 30, L"测试单选复选框", -1, -1, DT_VCENTER | DT_CENTER, 103));
-		m_buttons.push_back(ExButton(m_skin, 10, 150, 100, 30, L"测试编辑框", -1, -1, DT_VCENTER | DT_CENTER, 104));
-		m_buttons.push_back(ExButton(m_skin, 10, 190, 100, 30, L"测试列表框", -1, -1, DT_VCENTER | DT_CENTER, 105));
-		m_buttons.push_back(ExButton(m_skin, 10, 230, 100, 30, L"测试菜单", -1, -1, DT_VCENTER | DT_CENTER, 106));
-		m_buttons.push_back(ExButton(m_skin, 10, 270, 100, 30, L"九宫格自定外形", -1, -1, DT_VCENTER | DT_CENTER, 107));
-		m_buttons.push_back(ExButton(m_skin, 10, 310, 100, 30, L"测试布局选项卡", -1, -1, DT_VCENTER | DT_CENTER, 108));
-		m_buttons.push_back(ExButton(m_skin, 10, 350, 100, 30, L"测试分组框", -1, -1, DT_VCENTER | DT_CENTER, 109));
-		m_buttons.push_back(ExButton(m_skin, 10, 390, 100, 30, L"测试绝对布局", -1, -1, DT_VCENTER | DT_CENTER, 110));
-		m_buttons.push_back(ExButton(m_skin, 10, 430, 100, 30, L"测试相对布局", -1, -1, DT_VCENTER | DT_CENTER, 111));
-		m_buttons.push_back(ExButton(m_skin, 10, 470, 100, 30, L"测试线性布局", -1, -1, DT_VCENTER | DT_CENTER, 112));
-		m_buttons.push_back(ExButton(m_skin, 10, 510, 100, 30, L"测试流式布局", -1, -1, DT_VCENTER | DT_CENTER, 113));
-		m_buttons.push_back(ExButton(m_skin, 10, 550, 100, 30, L"测试表格布局", -1, -1, DT_VCENTER | DT_CENTER, 114));
+		const int buttonWidth = 100;
+		const int buttonHeight = 30;
+		const int column1X = 10;
+		const int column2X = 120;
+		const int column3X = 230;
+		const int column4X = 340;
+		const int rowYOffset = 40;
 
-		m_buttons.push_back(ExButton(m_skin, 120, 30, 100, 30, L"测试组合框", -1, -1, DT_VCENTER | DT_CENTER, 115));
-		m_buttons.push_back(ExButton(m_skin, 120, 70, 100, 30, L"测试缓动窗口", -1, -1, DT_VCENTER | DT_CENTER, 116));
-		m_buttons.push_back(ExButton(m_skin, 120, 110, 100, 30, L"测试异型窗口", -1, -1, DT_VCENTER | DT_CENTER, 117));
-		m_buttons.push_back(ExButton(m_skin, 120, 150, 100, 30, L"测试消息框", -1, -1, DT_VCENTER | DT_CENTER, 118));
-		m_buttons.push_back(ExButton(m_skin, 120, 190, 100, 30, L"测试自定义按钮", -1, -1, DT_VCENTER | DT_CENTER, 119));
-		m_buttons.push_back(ExButton(m_skin, 120, 230, 100, 30, L"测试报表列表", -1, -1, DT_VCENTER | DT_CENTER, 120));
-		m_buttons.push_back(ExButton(m_skin, 120, 270, 100, 30, L"测试图标列表", -1, -1, DT_VCENTER | DT_CENTER, 121));
-		m_buttons.push_back(ExButton(m_skin, 120, 310, 100, 30, L"测试树形列表", -1, -1, DT_VCENTER | DT_CENTER, 122));
-		m_buttons.push_back(ExButton(m_skin, 120, 350, 100, 30, L"测试矩阵", -1, -1, DT_VCENTER | DT_CENTER, 123));
-		m_buttons.push_back(ExButton(m_skin, 120, 390, 100, 30, L"测试扩展按钮", -1, -1, DT_VCENTER | DT_CENTER, 124));
-		m_buttons.push_back(ExButton(m_skin, 120, 430, 100, 30, L"测试扩展编辑框", -1, -1, DT_VCENTER | DT_CENTER, 125));
-		m_buttons.push_back(ExButton(m_skin, 120, 470, 100, 30, L"测试自定义菜单", -1, -1, DT_VCENTER | DT_CENTER, 126));
-		m_buttons.push_back(ExButton(m_skin, 120, 510, 100, 30, L"测试事件分发", -1, -1, DT_VCENTER | DT_CENTER, 127));
-		m_buttons.push_back(ExButton(m_skin, 120, 550, 100, 30, L"测试加载动画", -1, -1, DT_VCENTER | DT_CENTER, 128));
+		std::vector<std::pair<int, std::wstring>> buttonData = {
+			{ 30, L"测试按钮开关" },
+			{ 70, L"测试标签" },
+			{ 110, L"测试单选复选框" },
+			{ 150, L"测试编辑框" },
+			{ 190, L"测试列表框" },
+			{ 230, L"测试菜单" },
+			{ 270, L"九宫格自定外形" },
+			{ 310, L"测试布局选项卡" },
+			{ 350, L"测试分组框" },
+			{ 390, L"测试绝对布局" },
+			{ 430, L"测试相对布局" },
+			{ 470, L"测试线性布局" },
+			{ 510, L"测试流式布局" },
+			{ 550, L"测试表格布局" },
 
-		m_buttons.push_back(ExButton(m_skin, 230, 30, 100, 30, L"测试滑块条", -1, -1, DT_VCENTER | DT_CENTER, 129));
-		m_buttons.push_back(ExButton(m_skin, 230, 70, 100, 30, L"测试旋转图片框", -1, -1, DT_VCENTER | DT_CENTER, 130));
-		m_buttons.push_back(ExButton(m_skin, 230, 110, 100, 30, L"测试拖动组件", -1, -1, DT_VCENTER | DT_CENTER, 131));
-		m_buttons.push_back(ExButton(m_skin, 230, 150, 100, 30, L"测试接收拖曳", -1, -1, DT_VCENTER | DT_CENTER, 132));
-		m_buttons.push_back(ExButton(m_skin, 230, 190, 100, 30, L"测试进度条", -1, -1, DT_VCENTER | DT_CENTER, 133));
-		m_buttons.push_back(ExButton(m_skin, 230, 230, 100, 30, L"测试限制通知", -1, -1, DT_VCENTER | DT_CENTER, 134));
-		m_buttons.push_back(ExButton(m_skin, 230, 270, 100, 30, L"测试模态窗口", -1, -1, DT_VCENTER | DT_CENTER, 135));
-		m_buttons.push_back(ExButton(m_skin, 230, 310, 100, 30, L"测试标题框", -1, -1, DT_VCENTER | DT_CENTER, 136));
-		m_buttons.push_back(ExButton(m_skin, 230, 350, 100, 30, L"测试日期框", -1, -1, DT_VCENTER | DT_CENTER, 137));
-		m_buttons.push_back(ExButton(m_skin, 230, 390, 100, 30, L"测试调色板", -1, -1, DT_VCENTER | DT_CENTER, 138));
-		m_buttons.push_back(ExButton(m_skin, 230, 430, 100, 30, L"测试月历", -1, -1, DT_VCENTER | DT_CENTER, 139));
-		m_buttons.push_back(ExButton(m_skin, 230, 470, 100, 30, L"测试CEF浏览框", -1, -1, DT_VCENTER | DT_CENTER, 140));
-		m_buttons.push_back(ExButton(m_skin, 230, 510, 100, 30, L"测试打分按钮", -1, -1, DT_VCENTER | DT_CENTER, 141));
-		m_buttons.push_back(ExButton(m_skin, 230, 550, 100, 30, L"测试轮播", -1, -1, DT_VCENTER | DT_CENTER, 142));
+			{ 30, L"测试组合框" },
+			{ 70, L"测试缓动窗口" },
+			{ 110, L"测试异型窗口" },
+			{ 150, L"测试消息框" },
+			{ 190, L"测试自定义按钮" },
+			{ 230, L"测试报表列表" },
+			{ 270, L"测试图标列表" },
+			{ 310, L"测试树形列表" },
+			{ 350, L"测试矩阵" },
+			{ 390, L"测试扩展按钮" },
+			{ 430, L"测试扩展编辑框" },
+			{ 470, L"测试自定义菜单" },
+			{ 510, L"测试事件分发" },
+			{ 550, L"测试加载动画" },
 
-		m_buttons.push_back(ExButton(m_skin, 340, 30, 100, 30, L"测试模板列表", -1, -1, DT_VCENTER | DT_CENTER, 143));
-		m_buttons.push_back(ExButton(m_skin, 340, 70, 100, 30, L"测试鼠标绘制板", -1, -1, DT_VCENTER | DT_CENTER, 144));
-		m_buttons.push_back(ExButton(m_skin, 340, 110, 100, 30, L"测试调色板", -1, -1, DT_VCENTER | DT_CENTER, 145));
-		m_buttons.push_back(ExButton(m_skin, 340, 150, 100, 30, L"测试属性框", -1, -1, DT_VCENTER | DT_CENTER, 146));
-		m_buttons.push_back(ExButton(m_skin, 340, 190, 100, 30, L"测试原生子窗口", -1, -1, DT_VCENTER | DT_CENTER, 147));
-		m_buttons.push_back(ExButton(m_skin, 340, 230, 100, 30, L"测试全屏置顶", -1, -1, DT_VCENTER | DT_CENTER, 148));
-		m_buttons.push_back(ExButton(m_skin, 340, 270, 100, 30, L"测试路径与区域", -1, -1, DT_VCENTER | DT_CENTER, 149));
-		m_buttons.push_back(ExButton(m_skin, 340, 310, 100, 30, L"测试VLC播放器", -1, -1, DT_VCENTER | DT_CENTER, 150));
-		m_buttons.push_back(ExButton(m_skin, 340, 350, 100, 30, L"自定字体和SVG", -1, -1, DT_VCENTER | DT_CENTER, 151));
-		m_buttons.push_back(ExButton(m_skin, 340, 390, 100, 30, L"测试卷帘菜单", -1, -1, DT_VCENTER | DT_CENTER, 152));
-		m_buttons.push_back(ExButton(m_skin, 340, 430, 100, 30, L"测试托盘图标", -1, -1, DT_VCENTER | DT_CENTER, 153));
-		m_buttons.push_back(ExButton(m_skin, 340, 470, 100, 30, L"测试蒙板", -1, -1, DT_VCENTER | DT_CENTER, 154));
-		m_buttons.push_back(ExButton(m_skin, 340, 510, 100, 30, L"测试标注画板", -1, -1, DT_VCENTER | DT_CENTER, 155));
-		m_buttons.push_back(ExButton(m_skin, 340, 550, 100, 30, L"测试效果器", -1, -1, DT_VCENTER | DT_CENTER, 156));
+			{ 30, L"测试滑块条" },
+			{ 70, L"测试旋转图片框" },
+			{ 110, L"测试拖动组件" },
+			{ 150, L"测试接收拖曳" },
+			{ 190, L"测试进度条" },
+			{ 230, L"测试限制通知" },
+			{ 270, L"测试模态窗口" },
+			{ 310, L"测试标题框" },
+			{ 350, L"测试日期框" },
+			{ 390, L"测试颜色选择器" },
+			{ 430, L"测试月历" },
+			{ 470, L"测试CEF浏览框" },
+			{ 510, L"测试打分按钮" },
+			{ 550, L"测试轮播" },
+
+			{ 30, L"测试模板列表" },
+			{ 70, L"测试鼠标绘制板" },
+			{ 110, L"测试调色板" },
+			{ 150, L"测试属性框" },
+			{ 190, L"测试原生子窗口" },
+			{ 230, L"测试全屏置顶" },
+			{ 270, L"测试路径与区域" },
+			{ 310, L"测试VLC播放器" },
+			{ 350, L"自定字体和SVG" },
+			{ 390, L"测试卷帘菜单" },
+			{ 430, L"测试托盘图标" },
+			{ 470, L"测试蒙板" },
+			{ 510, L"测试标注画板" },
+			{ 550, L"测试效果器" }
+		};
+
+		for (size_t i = 0; i < buttonData.size(); ++i) {
+			int y = buttonData[i].first;
+			std::wstring text = buttonData[i].second;
+			int x = (i < 14) ? column1X : (i < 28) ? column2X : (i < 42) ? column3X : column4X;
+			m_buttons.push_back(ExButton(m_skin, x, y, buttonWidth, buttonHeight, text, -1, -1, DT_VCENTER | DT_CENTER, 101 + i));
+		}
+		
 		for (auto button : m_buttons)
 		{
 			button.HandleEvent(NM_CLICK, OnMainButtonEvent);
@@ -231,6 +267,101 @@ public:
 			case 123:
 			{
 				MatrixWindow::GetInstance().CreateMatrixWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 124:
+			{
+				ButtonExWindow::GetInstance().CreateButtonExWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 125:
+			{
+				EditExWindow::GetInstance().CreateEditExWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 126:
+			{
+				CustomMenuWindow::GetInstance().CreateCustomMenuWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 127:
+			{
+				EventWindow::GetInstance().CreateEventWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 128:
+			{
+				LoadingWindow::GetInstance().CreateLoadingWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 129:
+			{
+				SliderbarWindow::GetInstance().CreateSliderbarWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 130:
+			{
+				RotateImageBoxWindow::GetInstance().CreateRotateImageBoxWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 131:
+			{
+				DragObjWindow::GetInstance().CreateDragObjWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 132:
+			{
+				DropObjWindow::GetInstance().CreateDropObjWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 133:
+			{
+				ProgressBarWindow::GetInstance().CreateProgressBarWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 134:
+			{
+				NchitTestWindow::GetInstance().CreateNchitTestWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 135:
+			{
+				ModalWindow::GetInstance().CreateModalWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 136:
+			{
+				TitleBarWindow::GetInstance().CreateTitleBarWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 137:
+			{
+				DateBoxWindow::GetInstance().CreateDateBoxWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 138:
+			{
+				ColorPickerWindow::GetInstance().CreateColorPickerWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 139:
+			{
+				CalendarWindow::GetInstance().CreateCalendarWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 140:
+			{
+				
+				break;
+			}
+			case 141:
+			{
+				ScoreButtonWindow::GetInstance().CreateScoreButtonWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 142:
+			{
+				CarouselWindow::GetInstance().CreateCarouselWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			default:

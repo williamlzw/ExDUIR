@@ -21,6 +21,11 @@ namespace ExDUIR
 				m_handle = hObj;
 			}
 
+			inline static ExSkin GetSkinFromWindow(HWND hWnd)
+			{
+				return ExSkin(Ex_DUIFromWindow(hWnd));
+			}
+
 			ExSkin(ExSkin pOwner, INT dwStyleDui, DWORD dwStyleExWindow = NULL, WinMsgPROC lpfnMsgProc = NULL)
 			{
 				auto hWndParent = pOwner.m_hWnd == NULL ? 0 : pOwner.m_hWnd;
@@ -57,14 +62,24 @@ namespace ExDUIR
 				return retTitle;
 			}
 
-			inline BOOL GetClientRect(RECT* rc)
+			inline BOOL GetClientRect(RECT& rc)
 			{
-				return Ex_DUIGetClientRect(m_handle, rc);
+				return Ex_DUIGetClientRect(m_handle, &rc);
 			}
 			
 			inline ExControl GetCaptionObj()
 			{
 				return ExControl(Ex_DUIGetLong(m_handle, ENGINE_LONG_OBJCAPTION));
+			}
+
+			inline ExControl FindObj(std::wstring className)
+			{
+				return ExControl(Ex_ObjFind(m_handle, 0, className.c_str(), 0));
+			}
+
+			inline ExControl FindObjByTitle(std::wstring className, std::wstring title = L"")
+			{
+				return ExControl(Ex_ObjFind(m_handle, 0, className.c_str(), title.c_str()));
 			}
 
 			inline BOOL SetBackgroundImage(std::vector<CHAR> imageData, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)

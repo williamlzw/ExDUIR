@@ -109,15 +109,15 @@ public:
 		{
 			if (hObj == GomboBoxBoxWindow::GetInstance().m_combobox1.m_handle)
 			{
-				output(L"组合框1表项被改变", wParam);
+				OUTPUTW(L"组合框1表项被改变", wParam);
 			}
 			else if (hObj == GomboBoxBoxWindow::GetInstance().m_combobox2.m_handle)
 			{
-				output(L"组合框2表项被改变", wParam);
+				OUTPUTW(L"组合框2表项被改变", wParam);
 			}
 			else if (hObj == GomboBoxBoxWindow::GetInstance().m_combobox3.m_handle)
 			{
-				output(L"组合框3表项被改变", wParam);
+				OUTPUTW(L"组合框3表项被改变", wParam);
 			}
 		}
 		return 0;

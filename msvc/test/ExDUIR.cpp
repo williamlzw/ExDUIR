@@ -95,67 +95,82 @@ void test_exdui()
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
 
-
         std::vector<HEXOBJ> buttons;
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试按钮开关", -1, 10, 30, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标签", -1, 10, 70, 100, 30, hExDui, 102, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试单选复选框", -1, 10, 110, 100, 30, hExDui, 103, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试编辑框", -1, 10, 150, 100, 30, hExDui, 104, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试列表框", -1, 10, 190, 100, 30, hExDui, 105, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试菜单", -1, 10, 230, 100, 30, hExDui, 106, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"九宫格自定外形", -1, 10, 270, 100, 30, hExDui, 107, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试布局选项卡", -1, 10, 310, 100, 30, hExDui, 108, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试分组框", -1, 10, 350, 100, 30, hExDui, 109, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试绝对布局", -1, 10, 390, 100, 30, hExDui, 110, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试相对布局", -1, 10, 430, 100, 30, hExDui, 111, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试线性布局", -1, 10, 470, 100, 30, hExDui, 112, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试流式布局", -1, 10, 510, 100, 30, hExDui, 113, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试表格布局", -1, 10, 550, 100, 30, hExDui, 114, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+		const int buttonWidth = 100;
+		const int buttonHeight = 30;
+		const int column1X = 10;
+		const int column2X = 120;
+		const int column3X = 230;
+		const int column4X = 340;
+		const int rowYOffset = 40;
+		std::vector<std::pair<int, std::wstring>> buttonData = {
+			{ 30, L"测试按钮开关" },
+			{ 70, L"测试标签" },
+			{ 110, L"测试单选复选框" },
+			{ 150, L"测试编辑框" },
+			{ 190, L"测试列表框" },
+			{ 230, L"测试菜单" },
+			{ 270, L"九宫格自定外形" },
+			{ 310, L"测试布局选项卡" },
+			{ 350, L"测试分组框" },
+			{ 390, L"测试绝对布局" },
+			{ 430, L"测试相对布局" },
+			{ 470, L"测试线性布局" },
+			{ 510, L"测试流式布局" },
+			{ 550, L"测试表格布局" },
 
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试组合框", -1, 120, 30, 100, 30, hExDui, 115, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试缓动窗口", -1, 120, 70, 100, 30, hExDui, 116, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试异型窗口", -1, 120, 110, 100, 30, hExDui, 117, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试消息框", -1, 120, 150, 100, 30, hExDui, 118, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试自定义按钮", -1, 120, 190, 100, 30, hExDui, 119, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试报表列表", -1, 120, 230, 100, 30, hExDui, 120, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试图标列表", -1, 120, 270, 100, 30, hExDui, 121, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试树形列表", -1, 120, 310, 100, 30, hExDui, 122, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试矩阵", -1, 120, 350, 100, 30, hExDui, 123, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试扩展按钮", -1, 120, 390, 100, 30, hExDui, 124, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试扩展编辑框", -1, 120, 430, 100, 30, hExDui, 125, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试自定义菜单", -1, 120, 470, 100, 30, hExDui, 126, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试事件分发", -1, 120, 510, 100, 30, hExDui, 127, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试加载动画", -1, 120, 550, 100, 30, hExDui, 128, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+			{ 30, L"测试组合框" },
+			{ 70, L"测试缓动窗口" },
+			{ 110, L"测试异型窗口" },
+			{ 150, L"测试消息框" },
+			{ 190, L"测试自定义按钮" },
+			{ 230, L"测试报表列表" },
+			{ 270, L"测试图标列表" },
+			{ 310, L"测试树形列表" },
+			{ 350, L"测试矩阵" },
+			{ 390, L"测试扩展按钮" },
+			{ 430, L"测试扩展编辑框" },
+			{ 470, L"测试自定义菜单" },
+			{ 510, L"测试事件分发" },
+			{ 550, L"测试加载动画" },
 
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试滑块条", -1, 230, 30, 100, 30, hExDui, 129, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试旋转图片框", -1, 230, 70, 100, 30, hExDui, 130, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试拖动组件", -1, 230, 110, 100, 30, hExDui, 131, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试接收拖曳", -1, 230, 150, 100, 30, hExDui, 132, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试进度条", -1, 230, 190, 100, 30, hExDui, 133, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试限制通知", -1, 230, 230, 100, 30, hExDui, 134, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模态窗口", -1, 230, 270, 100, 30, hExDui, 135, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标题框", -1, 230, 310, 100, 30, hExDui, 136, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试日期框", -1, 230, 350, 100, 30, hExDui, 137, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试颜色选择器", -1, 230, 390, 100, 30, hExDui, 138, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试月历", -1, 230, 430, 100, 30, hExDui, 139, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试CEF浏览框", -1, 230, 470, 100, 30, hExDui, 140, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试打分按钮", -1, 230, 510, 100, 30, hExDui, 141, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试轮播", -1, 230, 550, 100, 30, hExDui, 142, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试模板列表", -1, 340, 30, 100, 30, hExDui, 143, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试鼠标绘制板", -1, 340, 70, 100, 30, hExDui, 144, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试调色板", -1, 340, 110, 100, 30, hExDui, 145, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试属性框", -1, 340, 150, 100, 30, hExDui, 146, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试原生子窗口", -1, 340, 190, 100, 30, hExDui, 147, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试全屏置顶", -1, 340, 230, 100, 30, hExDui, 148, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试路径与区域", -1, 340, 270, 100, 30, hExDui, 149, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试VLC播放器", -1, 340, 310, 100, 30, hExDui, 150, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"自定字体和SVG", -1, 340, 350, 100, 30, hExDui, 151, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试卷帘菜单", -1, 340, 390, 100, 30, hExDui, 152, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试托盘图标", -1, 340, 430, 100, 30, hExDui, 153, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-        buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试蒙板", -1, 340, 470, 100, 30, hExDui, 154, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试标注画板", -1, 340, 510, 100, 30, hExDui, 155, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-		buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"测试效果器", -1, 340, 550, 100, 30, hExDui, 156, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+			{ 30, L"测试滑块条" },
+			{ 70, L"测试旋转图片框" },
+			{ 110, L"测试拖动组件" },
+			{ 150, L"测试接收拖曳" },
+			{ 190, L"测试进度条" },
+			{ 230, L"测试限制通知" },
+			{ 270, L"测试模态窗口" },
+			{ 310, L"测试标题框" },
+			{ 350, L"测试日期框" },
+			{ 390, L"测试颜色选择器" },
+			{ 430, L"测试月历" },
+			{ 470, L"测试CEF浏览框" },
+			{ 510, L"测试打分按钮" },
+			{ 550, L"测试轮播" },
+
+			{ 30, L"测试模板列表" },
+			{ 70, L"测试鼠标绘制板" },
+			{ 110, L"测试调色板" },
+			{ 150, L"测试属性框" },
+			{ 190, L"测试原生子窗口" },
+			{ 230, L"测试全屏置顶" },
+			{ 270, L"测试路径与区域" },
+			{ 310, L"测试VLC播放器" },
+			{ 350, L"自定字体和SVG" },
+			{ 390, L"测试卷帘菜单" },
+			{ 430, L"测试托盘图标" },
+			{ 470, L"测试蒙板" },
+			{ 510, L"测试标注画板" },
+			{ 550, L"测试效果器" }
+		};
+
+		for (size_t i = 0; i < buttonData.size(); ++i) {
+			int y = buttonData[i].first;
+			std::wstring text = buttonData[i].second;
+			int x = (i < 14) ? column1X : (i < 28) ? column2X : (i < 42) ? column3X : column4X;
+			buttons.push_back(Ex_ObjCreateEx(-1, L"button", text.c_str(), -1, x, y, buttonWidth, buttonHeight, hExDui, 101 + i, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+		}
 
 		for (auto button : buttons)
         {

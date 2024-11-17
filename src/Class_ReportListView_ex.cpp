@@ -872,9 +872,10 @@ void _reportlistview_edit_killfous_settext(HWND hWnd, HEXOBJ hObj, WPARAM wParam
 		_obj_baseproc(hWnd, hObj, pObj, WM_KILLFOCUS, wParam, lParam);
 		Ex_ObjShow(hObj, FALSE);
 		pObj->pWnd_->objFocus_ = pObj->objParent_;
-		size_t len = Ex_ObjGetTextLength(hObj) * 2 + 2;
-		std::wstring text; text.resize(len);
-		Ex_ObjGetText(hObj, (LPCWSTR)text.data(), len);
+		size_t len = Ex_ObjGetTextLength(hObj);
+		std::wstring text; 
+		text.resize(len);
+		Ex_ObjGetText(hObj, text.data(), len * 2);
 		obj_s* pObjRL = nullptr;
 		if (_handle_validate(pObj->objParent_, HT_OBJECT, (LPVOID*)&pObjRL, 0))
 		{

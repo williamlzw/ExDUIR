@@ -22,8 +22,8 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
 	{
 		auto text_length = Ex_ObjGetTextLength(Ex_ObjGetFromID(m_hExDuiButton, 201)); //取按钮1文本长度
 		std::wstring str;
-		str.resize(text_length * 2 + 2);
-		Ex_ObjGetText(Ex_ObjGetFromID(m_hExDuiButton, 201), str.c_str(), text_length * 2 + 2);
+		str.resize(text_length);
+		Ex_ObjGetText(Ex_ObjGetFromID(m_hExDuiButton, 201), str.data(), text_length * 2);
 		Ex_ObjSetText(hObj, (L"按钮1文本:" + str).c_str(), TRUE);
 	}
 	else if (nID == 205)
@@ -1116,10 +1116,10 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 		}
 		else if (hObj == m_hComboBoxButton[2])
 		{
-			size_t len = Ex_ObjGetTextLength(m_hComboBox) * 2 + 2;
+			size_t len = Ex_ObjGetTextLength(m_hComboBox);
 			std::wstring text;
 			text.resize(len);
-			Ex_ObjGetText(m_hComboBox, text.c_str(), len);
+			Ex_ObjGetText(m_hComboBox, text.data(), len * 2);
 			OUTPUTW(text);
 		}
 		else if (hObj == m_hComboBoxButton[3])
@@ -1144,15 +1144,15 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 	{
 		if (hObj == m_hComboBox)
 		{
-			output(L"组合框1表项被改变", wParam);
+			OUTPUTW(L"组合框1表项被改变", wParam);
 		}
 		else if (hObj == m_hComboBox1)
 		{
-			output(L"组合框2表项被改变", wParam);
+			OUTPUTW(L"组合框2表项被改变", wParam);
 		}
 		else if (hObj == m_hComboBox2)
 		{
-			output(L"组合框3表项被改变", wParam);
+			OUTPUTW(L"组合框3表项被改变", wParam);
 		}
 	}
 	return 0;
@@ -1986,7 +1986,7 @@ void test_buttonex(HWND hWnd)
 	_img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal);
 	_img_createfromfile(L"buttonex/4点燃.png", &IMG0.imgHover);
 	_img_createfromfile(L"buttonex/4按下.png", &IMG0.imgDownOrChecked);
-	HEXOBJ hObj_btnex5 = Ex_ObjCreate(L"ButtonEx", NULL, -1, 50, 250, 100, 30, hExDui_buttonex); /*图片按钮*/
+	HEXOBJ hObj_btnex5 = Ex_ObjCreate(L"ButtonEx", NULL, -1, 50, 250, 100, 30, hExDui_buttonex); //图片按钮
 	Ex_ObjSendMessage(hObj_btnex5, BM_SETIMAGE, 0, (LPARAM)&IMG0);
 
 	HEXOBJ hObj_btnex6 = Ex_ObjCreate(L"ButtonEx", L"背景按钮", -1, 180, 50, 100, 30, hExDui_buttonex);
@@ -2136,11 +2136,9 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 		if (hImg != 0)
 		{
 			_img_getsize(hImg, &nWidthIcon, &nHeightIcon);
-		}
-		if (hImg != 0)
-		{
 			_canvas_drawimage(ps.hCanvas, hImg, (ps.uWidth - nWidthIcon) / 2, (ps.uHeight - nHeightIcon - nHeightText - 3) / 2, 255);
 		}
+
 		_canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat | DT_CENTER | DT_VCENTER, (ps.uWidth - nWidthText) / 2, (ps.uHeight - nHeightIcon - nHeightText - 3) / 2 + nHeightIcon + 3, (ps.uWidth + nWidthText) / 2, (ps.uHeight - nHeightIcon - nHeightText - 3) / 2 + nHeightIcon + 3 + nHeightText);
 
 		Ex_ObjEndPaint(hObj, &ps);
@@ -2150,12 +2148,11 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 	else if (uMsg == WM_EX_LCLICK)
 	{
 		auto id = Ex_ObjGetLong(hObj, OBJECT_LONG_ID);
-		output(L"菜单按钮点击,id:", id);
+		OUTPUTW(L"菜单按钮点击,id:", id);
 		EndMenu();
 		*lpResult = 1;
 		return 1;
 	}
-
 	return 0;
 }
 
@@ -2185,7 +2182,7 @@ LRESULT CALLBACK OnMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 	else if (uMsg == WM_EX_LCLICK)
 	{
 		auto id = Ex_ObjGetLong(hObj, OBJECT_LONG_ID);
-		output(L"菜单项目点击,id:", id);
+		OUTPUTW(L"菜单项目点击,id:", id);
 	}
 	return 0;
 }
@@ -2400,7 +2397,10 @@ LRESULT CALLBACK OnSideButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 			{
 				std::wstring str;
 				str.resize(512);
-				Ex_ObjGetText(hObj, str.c_str(), 512);
+				// 使用 str.data() 而不是 str.c_str()
+				auto len = Ex_ObjGetText(hObj, str.data(), 512);
+				// 确保字符串以空字符结尾
+				str.resize((len - 2) / 2);// 因为 len 是字节数，而 wstring 的长度是以字符为单位的
 				auto title = str + L"收到了单击事件";
 				Ex_MessageBox(hObj, title.c_str(), 0, 0, 0);
 			}
@@ -2533,8 +2533,8 @@ HEXOBJ m_hSliderBarLabel;
 
 LRESULT CALLBACK OnSliderBarPosChangeEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	std::wstring t = L"滑块条,当前值是：" + std::to_wstring(lParam);
-	Ex_ObjSetText(m_hSliderBarLabel, t.c_str(), TRUE);
+	std::wstring text = L"滑块条,当前值是：" + std::to_wstring(lParam);
+	Ex_ObjSetText(m_hSliderBarLabel, text.c_str(), TRUE);
 	return 0;
 }
 
@@ -2551,18 +2551,18 @@ void test_sliderbar(HWND hWnd)
 	HEXOBJ hObj_sliderbarex2 = Ex_ObjCreate(ATOM_sliderbarEx, NULL, OBJECT_STYLE_VISIBLE | SLIDERBAR_STYLE_VERTICAL, 50, 60, 20, 100, hExDui_sliderbar);
 	Ex_ObjSetColor(hObj_sliderbarex2, COLOR_EX_BACKGROUND, ExARGB(100, 236, 255, 250), TRUE);
 	Ex_ObjHandleEvent(hObj_sliderbarex2, SLIDERBAR_EVENT_VALUE, OnSliderBarPosChangeEvent);
-	Ex_ObjSetLong(hObj_sliderbarex2, SLIDERBAR_LONG_BLOCK_POINT, 1);
+	Ex_ObjSetLong(hObj_sliderbarex2, SLIDERBAR_LONG_BLOCK_DIRECTION, 1);
 
 	HEXOBJ hObj_sliderbarex3 = Ex_ObjCreate(ATOM_sliderbarEx, NULL, OBJECT_STYLE_VISIBLE | SLIDERBAR_STYLE_VERTICAL, 350, 60, 20, 100, hExDui_sliderbar);
 	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_BACKGROUND, ExARGB(100, 136, 255, 250), TRUE);
 	Ex_ObjHandleEvent(hObj_sliderbarex3, SLIDERBAR_EVENT_VALUE, OnSliderBarPosChangeEvent);
-	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 125), TRUE); /*滑块条底色*/
-	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_CHECKED, ExARGB(200, 16, 25, 250), TRUE);  /*滑块条走过的颜色*/
+	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 125), TRUE); //滑块条底色
+	Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_CHECKED, ExARGB(200, 16, 25, 250), TRUE);  //滑块条走过的颜色
 
 	HEXOBJ hObj_sliderbarex4 = Ex_ObjCreate(ATOM_sliderbarEx, NULL, -1, 80, 150, 250, 20, hExDui_sliderbar);
 	Ex_ObjSetColor(hObj_sliderbarex4, COLOR_EX_BACKGROUND, ExARGB(0, 136, 255, 250), TRUE);
 	Ex_ObjHandleEvent(hObj_sliderbarex4, SLIDERBAR_EVENT_VALUE, OnSliderBarPosChangeEvent);
-	Ex_ObjSetLong(hObj_sliderbarex4, SLIDERBAR_LONG_BLOCK_POINT, 1);
+	Ex_ObjSetLong(hObj_sliderbarex4, SLIDERBAR_LONG_BLOCK_DIRECTION, 1);
 	m_hSliderBarLabel = Ex_ObjCreate(L"static", L"滑块条,当前值是：", -1, 80, 80, 300, 30, hExDui_sliderbar);
 	Ex_DUIShowWindow(hExDui_sliderbar, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -2668,11 +2668,11 @@ void test_dragobj(HWND hWnd)
 	HWND hWnd_dragobj = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试拖动组件", 0, 0, 500, 500, 0, 0);
 	HEXDUI hExDui_dragobj = Ex_DUIBindWindowEx(hWnd_dragobj, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_dragobj, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-	HEXOBJ hObj_label1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"可拖动组件1", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 35, 250, 250, hExDui_dragobj, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0, OnDragMsgProc);
+	HEXOBJ hObj_label1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"可拖动组件1", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 35, 250, 250, hExDui_dragobj, 0, DT_SINGLELINE | DT_LEFT | DT_TOP, 0, 0, OnDragMsgProc);
 	if (hObj_label1 != 0)
 	{
 		Ex_ObjSetColor(hObj_label1, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
-		HEXOBJ hObj_label2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"可拖动组件2", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 35, 150, 150, hObj_label1, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0, OnDragMsgProc);
+		HEXOBJ hObj_label2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"可拖动组件2", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 35, 150, 150, hObj_label1, 0, DT_SINGLELINE | DT_LEFT | DT_TOP, 0, 0, OnDragMsgProc);
 		if (hObj_label2 != 0)
 		{
 			Ex_ObjSetColor(hObj_label2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16722680, 100), TRUE);
@@ -2693,8 +2693,8 @@ LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			if (len > 0)
 			{
 				std::wstring str;
-				str.resize(len * 2 + 2);
-				Ex_ObjGetDropString(hObj, di.pDataObject, (LPWSTR)str.c_str(), len + 1);
+				str.resize(len);
+				Ex_ObjGetDropString(hObj, di.pDataObject, (LPWSTR)str.data(), len * 2);
 				OUTPUTW(L"接收到文本拖拽:", str);
 				*lpResult = DROPEFFECT_COPY; //按复制模式处理
 				return 1;
@@ -2711,7 +2711,7 @@ LRESULT CALLBACK OnDropObjDataMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 			{
 				std::wstring fileName;
 				fileName.resize(fileNameLength);
-				DragQueryFileW((HDROP)wParam, index, (LPWSTR)fileName.c_str(), fileNameLength + 2);
+				DragQueryFileW((HDROP)wParam, index, (LPWSTR)fileName.data(), fileNameLength * 2);
 				OUTPUTW(L"接收到文件拖拽:", fileName);
 			}
 		}
@@ -2734,9 +2734,9 @@ LRESULT CALLBACK OnProgressBarProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 {
 	if (uMsg == WM_TIMER)
 	{
-		size_t nPos = Ex_ObjSendMessage(hObj, PROGRESSBAR_MESSAGE_GETPOS, 0, 0);
-		size_t nRange = Ex_ObjSendMessage(hObj, PROGRESSBAR_MESSAGE_GETRANGE, 0, 0);
-		Ex_ObjSendMessage(hObj, PROGRESSBAR_MESSAGE_SETPOS, nPos + Random(1, 20), 0);
+		size_t nPos = Ex_ObjGetLong(hObj, PROGRESSBAR_LONG_POS);
+		size_t nRange = Ex_ObjGetLong(hObj, PROGRESSBAR_LONG_RANGE);
+		Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_POS, nPos + Random(1, 20));
 		Ex_ObjSendMessage(hObj, WM_PAINT, 0, 0);
 		if (nRange == nPos)
 		{
@@ -2756,14 +2756,14 @@ void test_progressbar(HWND hWnd)
 	HEXOBJ hObj_progressbar = Ex_ObjCreate(L"ProgressBar", NULL, -1, 50, 100, 300, 20, hExDui_progressbar);
 	Ex_ObjSetLong(hObj_progressbar, OBJECT_LONG_OBJPROC, (size_t)OnProgressBarProc);
 	Ex_ObjSetColor(hObj_progressbar, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);
-	Ex_ObjSendMessage(hObj_progressbar, PROGRESSBAR_MESSAGE_SETRADIUS, 10, 0);
-	Ex_ObjSendMessage(hObj_progressbar, PROGRESSBAR_MESSAGE_SETRANGE, 255, 0);
+	Ex_ObjSetLong(hObj_progressbar, PROGRESSBAR_LONG_RADIUS, 10);
+	Ex_ObjSetLong(hObj_progressbar, PROGRESSBAR_LONG_RANGE, 255);
 	Ex_ObjInvalidateRect(hObj_progressbar, NULL);
 	Ex_ObjSetTimer(hObj_progressbar, 50);
 	Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL, 0, 0, 0);
 }
 
-LRESULT CALLBACK OnNchitTestButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+LRESULT CALLBACK OnNchitTestMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_NCHITTEST)
 	{
@@ -2799,7 +2799,7 @@ void test_nchittest(HWND hWnd)
 	HWND hWnd_nchittest = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试限制通知区域", 0, 0, 400, 200, 0, 0);
 	HEXDUI hExDui_nchittest = Ex_DUIBindWindowEx(hWnd_nchittest, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON, 0, 0);
 	Ex_DUISetLong(hExDui_nchittest, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-	Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"鼠标只能在红色区域里响应", -1, 50, 50, 300, 100, hExDui_nchittest, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0, OnNchitTestButtonMsgProc);
+	Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"鼠标只能在红色区域里响应", -1, 50, 50, 300, 100, hExDui_nchittest, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0, OnNchitTestMsgProc);
 	Ex_DUIShowWindow(hExDui_nchittest, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -3143,7 +3143,7 @@ void test_carousel(HWND hParent)
 	HEXDUI hExDui_carousel = Ex_DUIBindWindowEx(hWnd_carousel, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE, 0, 0);
 	Ex_DUISetLong(hExDui_carousel, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	HEXOBJ hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20, 40, 760, 550, hExDui_carousel);
-
+	//添加图片前必须设置尺寸
 	Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_SIZE, 1600, 1200);
 	HEXIMAGE hImg = 0;
 	_img_createfromfile(L"res/1.jpeg", &hImg);
@@ -3152,7 +3152,7 @@ void test_carousel(HWND hParent)
 	Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_ADDIMG, 0, hImg);
 	_img_createfromfile(L"res/3.jpeg", &hImg);
 	Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_ADDIMG, 0, hImg);
-	Ex_ObjSetTimer(hObj, 5000);
+	Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_SETTIMER, 0, 5000);//设置轮播间隔
 
 	// 全部销毁用下面的
 	//Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_CLEAR, 0, 0);
@@ -3178,7 +3178,7 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
 	}
 	if (nCode == NM_DBLCLK)
 	{
-		output(L"OnTemplateListViewItemBtnClick NM_DBLCLK", wParam, lParam);
+		OUTPUTW(L"OnTemplateListViewItemBtnClick NM_DBLCLK", wParam, lParam);
 	}
 	return 0;
 }
@@ -3201,23 +3201,23 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 			}
 			else if (ni->nCode == LISTVIEW_EVENT_ITEMSELECTD)//ni->wParam:当前选中索引   ni->lParam:上次选中索引  索引从1开始
 			{
-				output(L"TList表项选中改变", ni->wParam, ni->lParam);
+				OUTPUTW(L"TList表项选中改变", ni->wParam, ni->lParam);
 			}
 			else if (ni->nCode == LISTVIEW_EVENT_ITEMSELECTC)//ni->wParam:当前选中索引   ni->lParam:上次选中索引  索引从1开始
 			{
-				output(L"TList表项取消选中", ni->wParam, ni->lParam);
+				OUTPUTW(L"TList表项取消选中", ni->wParam, ni->lParam);
 			}
 			else if (ni->nCode == LISTVIEW_EVENT_ITEMCHANGED)//ni->wParam:当前选中索引   ni->lParam:上次选中索引  索引从1开始
 			{
-				output(L"TList现行选中项被改变", ni->wParam, ni->lParam);
+				OUTPUTW(L"TList现行选中项被改变", ni->wParam, ni->lParam);
 			}
 			else if (ni->nCode == LISTVIEW_EVENT_ITEMRCLICK)//ni->wParam:当前选中索引   ni->lParam:当前选中数目
 			{
-				output(L"TList表项被右击", ni->wParam, ni->lParam);
+				OUTPUTW(L"TList表项被右击", ni->wParam, ni->lParam);
 			}
 			else if (ni->nCode == LISTVIEW_EVENT_ITEMDCLICK)
 			{
-				output(L"TList NM_DBLCLK", ni->wParam, ni->lParam);
+				OUTPUTW(L"TList NM_DBLCLK", ni->wParam, ni->lParam);
 			}
 		}
 	}
@@ -3722,7 +3722,7 @@ LRESULT CALLBACK OnRollMenuWndBtnEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
 	{
 		int group = 0, item = 0;
 		Ex_ObjSendMessage(m_hObjRM, ROLLMENU_MESSAGE_GETSEL, (WPARAM)&group, (LPARAM)&item);
-		output(L"ROLLMENU_MESSAGE_GETSEL 所在分组:", group, L"选中子项:", item);
+		OUTPUTW(L"ROLLMENU_MESSAGE_GETSEL 所在分组:", group, L"选中子项:", item);
 	}
 	else if (nID == 106)//设置 
 	{
@@ -3735,7 +3735,7 @@ LRESULT CALLBACK OnRollMenuBtnEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPar
 {
 	if (nCode == ROLLMENU_EVENT_CLICK)
 	{
-		output(L"RollMenu单击子项  子项:", wParam, L"所在分组: ", lParam);
+		OUTPUTW(L"RollMenu单击子项  子项:", wParam, L"所在分组: ", lParam);
 	}
 	return 0;
 }
@@ -3924,7 +3924,7 @@ HEXOBJ hObj_taggingBoard;
 
 LRESULT CALLBACK OnTaggingBoardEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	output(L"命中闭合路径", (size_t)lParam);
+	OUTPUTW(L"命中闭合路径", (size_t)lParam);
 	return 0;
 }
 
@@ -3965,7 +3965,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 					RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
 					RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
 					//缩放图坐标转原图坐标
-					output(L"原图坐标 arr", i, L"index", j, L"x", (x - offsetLeft) * scale, L"y", (y - offsetTop) * scale);
+					OUTPUTW(L"原图坐标 arr", i, L"index", j, L"x", (x - offsetLeft) * scale, L"y", (y - offsetTop) * scale);
 				}
 			}
 		}
@@ -4330,7 +4330,7 @@ LRESULT CALLBACK OnMediaVLCBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPar
 		auto totalTime = Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_GET_DURATION, 0, 0);
 		auto rate = Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_GET_RATE, 0, 0);
 		auto volume = Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_GET_VOLUME, 0, 0);
-		output(L"当前时间(ms):", curTime, L"总时间(ms):", totalTime, L"速率:", rate, L"音量:", volume);
+		OUTPUTW(L"当前时间(ms):", curTime, L"总时间(ms):", totalTime, L"速率:", rate, L"音量:", volume);
 	}
 	else if (hObj == m_hObjMediaVLCButton4)
 	{

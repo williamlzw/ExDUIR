@@ -10,7 +10,7 @@ namespace ExDUIR
 	{
 		namespace Control
 		{
-			class ExControl : virtual public ExUIbase
+			class ExControl : public virtual ExUIbase
 			{
 			public:
 				ExControl() = default;
@@ -49,8 +49,8 @@ namespace ExDUIR
 				{
 					size_t len = Ex_ObjGetTextLength(m_handle);
 					std::wstring str;
-					str.resize(len * 2);
-					Ex_ObjGetText(m_handle, str.c_str(), len * 2);
+					str.resize(len);
+					Ex_ObjGetText(m_handle, str.data(), len * 2);
 					return str;
 				}
 
@@ -58,9 +58,7 @@ namespace ExDUIR
 				{
 					return Ex_ObjSetText(m_handle, text.c_str(), bRepaint);
 				}
-
-				inline BOOL GetBackgroundImage(EX_BACKGROUNDIMAGEINFO& BkgInfo) { return Ex_ObjGetBackgroundImage(m_handle, &BkgInfo); }
-
+				
 				inline size_t GetLong(INT nIndex)
 				{
 					return Ex_ObjGetLong(m_handle, nIndex);
@@ -94,6 +92,11 @@ namespace ExDUIR
 				inline BOOL SetRadius(FLOAT topLeft, FLOAT topRight, FLOAT bottomRight, FLOAT bottomLeft, BOOL fUpdate = FALSE)
 				{
 					return Ex_ObjSetRadius(m_handle, topLeft, topRight, bottomRight, bottomLeft, fUpdate);
+				}
+
+				inline BOOL SetPosNoAfter(INT x, INT y, INT width, INT height, INT flags)
+				{
+					return Ex_ObjSetPos(m_handle, 0, x, y, width, height, flags);
 				}
 
 				inline BOOL SetPos(ExControl InsertAfter, INT x, INT y, INT width, INT height, INT flags)
@@ -198,9 +201,14 @@ namespace ExDUIR
 					return Ex_ObjEnablePaintingMsg(m_handle, bEnable);
 				}
 
-				inline INT GetDropString(LPVOID pDataObject, LPWSTR lpwzBuffer, INT cchMaxLength)
+				inline INT GetDropStringLen(LPVOID pDataObject)
 				{
-					return Ex_ObjGetDropString(m_handle, pDataObject, lpwzBuffer, cchMaxLength);
+					return Ex_ObjGetDropString(m_handle, pDataObject, 0, 0);
+				}
+
+				inline INT GetDropString(LPVOID pDataObject, std::wstring& retStr, INT cchMaxLength)
+				{
+					return Ex_ObjGetDropString(m_handle, pDataObject, (LPWSTR)retStr.data(), cchMaxLength);
 				}
 
 				inline BOOL CheckDropFormat(LPVOID pDataObject, DWORD dwFormat)
@@ -214,17 +222,39 @@ namespace ExDUIR
 					return ExControl(hObj);
 				}
 
+				inline ExControl FindObj(std::wstring className)
+				{
+					return ExControl(Ex_ObjFind(m_handle, 0, className.c_str(), 0));
+				}
+
+				inline ExControl FindObjByTitle(std::wstring className, std::wstring title = L"")
+				{
+					return ExControl(Ex_ObjFind(m_handle, 0, className.c_str(), title.c_str()));
+				}
+
 				inline ExControl GetFromNodeID(INT nID)
 				{
 					auto hObj = Ex_ObjGetFromNodeID(m_handle, nID);
 					return ExControl(hObj);
 				}
 
+				inline ExControl GetObj(INT nCmd)
+				{
+					return ExControl(Ex_ObjGetObj(m_handle, nCmd));
+				}
+
+			/*	inline std::wstring GetText()
+				{
+					return std::wstring((LPCWSTR)Ex_ObjGetLong(m_handle, OBJECT_LONG_LPWZTITLE));
+				}*/
+
 				inline ExControl GetParent()
 				{
 					auto hObj = Ex_ObjGetParent(m_handle);
 					return ExControl(hObj);
 				}
+
+				inline BOOL GetBackgroundImage(EX_BACKGROUNDIMAGEINFO& BkgInfo) { return Ex_ObjGetBackgroundImage(m_handle, &BkgInfo); }
 
 				inline BOOL SetBackgroundImage(std::vector<CHAR> imageData, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
 				{
@@ -247,9 +277,19 @@ namespace ExDUIR
 					return Ex_ObjSetColor(m_handle, COLOR_EX_BACKGROUND, nColor, fRepaint);
 				}
 
+				inline EXARGB GetColorBorder()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_BORDER);
+				}
+
 				inline BOOL SetColorBorder(EXARGB nColor, BOOL fRepaint = FALSE)
 				{
 					return Ex_ObjSetColor(m_handle, COLOR_EX_BORDER, nColor, fRepaint);
+				}
+
+				inline EXARGB GetColorTextNormal()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_NORMAL);
 				}
 
 				inline BOOL SetColorTextNormal(EXARGB nColor, BOOL fRepaint = FALSE)
@@ -257,9 +297,19 @@ namespace ExDUIR
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_NORMAL, nColor, fRepaint);
 				}
 
+				inline EXARGB GetColorTextFocus()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_FOCUS);
+				}
+
 				inline BOOL SetColorTextFocus(EXARGB nColor, BOOL fRepaint = FALSE)
 				{
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_FOCUS, nColor, fRepaint);
+				}
+
+				inline EXARGB GetColorTextHover()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_HOVER);
 				}
 
 				inline BOOL SetColorTextHover(EXARGB nColor, BOOL fRepaint = FALSE)
@@ -267,9 +317,19 @@ namespace ExDUIR
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_HOVER, nColor, fRepaint);
 				}
 
+				inline EXARGB GetColorTextDown()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_DOWN);
+				}
+
 				inline BOOL SetColorTextDown(EXARGB nColor, BOOL fRepaint = FALSE)
 				{
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_DOWN, nColor, fRepaint);
+				}
+
+				inline EXARGB GetColorTextChecked()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_CHECKED);
 				}
 
 				inline BOOL SetColorTextChecked(EXARGB nColor, BOOL fRepaint = FALSE)
@@ -277,9 +337,19 @@ namespace ExDUIR
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_CHECKED, nColor, fRepaint);
 				}
 
+				inline EXARGB GetColorTextSelect()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_SELECT);
+				}
+
 				inline BOOL SetColorTextSelect(EXARGB nColor, BOOL fRepaint = FALSE)
 				{
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_SELECT, nColor, fRepaint);
+				}
+
+				inline EXARGB GetColorTextVisted()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_VISTED);
 				}
 
 				inline BOOL SetColorTextVisted(EXARGB nColor, BOOL fRepaint = FALSE)
@@ -287,9 +357,19 @@ namespace ExDUIR
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_VISTED, nColor, fRepaint);
 				}
 
+				inline EXARGB GetColorTextShadow()
+				{
+					return Ex_ObjGetColor(m_handle, COLOR_EX_TEXT_SHADOW);
+				}
+
 				inline BOOL SetColorTextShadow(EXARGB nColor, BOOL fRepaint = FALSE)
 				{
 					return Ex_ObjSetColor(m_handle, COLOR_EX_TEXT_SHADOW, nColor, fRepaint);
+				}
+
+				inline DWORD GetUIState()
+				{
+					return Ex_ObjGetUIState(m_handle);
 				}
 
 				inline BOOL SetUIState(DWORD dwState, BOOL fRemove, RECT* lprcRedraw, BOOL fRedraw)
@@ -410,6 +490,11 @@ namespace ExDUIR
 				inline void SetLongProc(MsgPROC proc)
 				{
 					Ex_ObjSetLong(m_handle, OBJECT_LONG_OBJPROC, (size_t)proc);
+				}
+
+				inline BOOL EnableEventBubble(BOOL bEnable)
+				{
+					return Ex_ObjEnableEventBubble(m_handle, bEnable);
 				}
 			};
 		}

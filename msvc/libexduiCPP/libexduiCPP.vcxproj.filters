@@ -12,6 +12,9 @@
     <Filter Include="源文件\Global">
       <UniqueIdentifier>{640a3a2d-37d9-4624-9a6f-b97dd4441054}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{a8661e14-7d87-41bb-afb4-25ddb6dddfac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ButtonWindow.hpp">
@@ -135,6 +138,63 @@
       <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="MatrixWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonExWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EditExWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomMenuWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EventWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SliderbarWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RotateImageBoxWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DragObjWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DropObjWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressBarWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NchitTestWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ModalWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleBarWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DateBoxWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPickerWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CalendarWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreButtonWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CarouselWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -177,13 +177,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AbsoluteLayoutWindow.hpp" />
+    <ClInclude Include="ButtonExWindow.hpp" />
     <ClInclude Include="ButtonWindow.hpp" />
+    <ClInclude Include="CalendarWindow.hpp" />
+    <ClInclude Include="CarouselWindow.hpp" />
     <ClInclude Include="CheckButtonWindow.hpp" />
+    <ClInclude Include="ColorPickerWindow.hpp" />
     <ClInclude Include="ComboBoxWindow.hpp" />
     <ClInclude Include="CustomBackgroundWindow.hpp" />
+    <ClInclude Include="CustomMenuWindow.hpp" />
     <ClInclude Include="CustomRedrawWindow.hpp" />
+    <ClInclude Include="DateBoxWindow.hpp" />
+    <ClInclude Include="DragObjWindow.hpp" />
+    <ClInclude Include="DropObjWindow.hpp" />
     <ClInclude Include="EasingWindow.hpp" />
+    <ClInclude Include="EditExWindow.hpp" />
     <ClInclude Include="EditWindow.hpp" />
+    <ClInclude Include="EventWindow.hpp" />
     <ClInclude Include="ExDUIRCPP.hpp" />
     <ClInclude Include="FlowLayoutWindow.hpp" />
     <ClInclude Include="Global\ExApp.hpp" />
@@ -209,13 +219,22 @@
     <ClInclude Include="LinearLayoutWindow.hpp" />
     <ClInclude Include="ListButtonWindow.hpp" />
     <ClInclude Include="ListViewWindow.hpp" />
+    <ClInclude Include="LoadingWindow.hpp" />
     <ClInclude Include="MainWindow.hpp" />
     <ClInclude Include="MatrixWindow.hpp" />
     <ClInclude Include="MessageBoxWindow.hpp" />
+    <ClInclude Include="ModalWindow.hpp" />
     <ClInclude Include="NavButtonWindow.hpp" />
+    <ClInclude Include="NchitTestWindow.hpp" />
+    <ClInclude Include="ProgressBarWindow.hpp" />
     <ClInclude Include="RelativeLayoutWindow.hpp" />
     <ClInclude Include="ReportListViewWindow.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="RotateImageBoxWindow.hpp" />
+    <ClInclude Include="ScoreButtonWindow.hpp" />
+    <ClInclude Include="SliderbarWindow.hpp" />
     <ClInclude Include="TableLayoutWindow.hpp" />
+    <ClInclude Include="TitleBarWindow.hpp" />
     <ClInclude Include="TreeViewWindow.hpp" />
   </ItemGroup>
   <ItemGroup>

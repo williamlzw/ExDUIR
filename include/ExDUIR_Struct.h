@@ -1301,27 +1301,10 @@
 // 进度条属性_圆角度
 #define PROGRESSBAR_LONG_RADIUS 2
 // 进度条属性_背景颜色
-#define PROGRESSBAR_LONG_BKCOLOR 3
+#define PROGRESSBAR_LONG_BACKGROUNDCOLOR 3
 // 进度条属性_前景颜色
-#define PROGRESSBAR_LONG_BARCOLOR 4
+#define PROGRESSBAR_LONG_FOREGROUNDCOLOR 4
 #pragma endregion progressbar long constant
-
-#pragma region progressbar message constant
-// 消息_进度条_设置进度条范围  wParam范围
-#define PROGRESSBAR_MESSAGE_SETRANGE 1025
-// 消息_进度条_设置进度条位置  wParam位置
-#define PROGRESSBAR_MESSAGE_SETPOS 1026
-// 消息_进度条_获取进度条范围
-#define PROGRESSBAR_MESSAGE_GETRANGE 1031
-// 消息_进度条_获取进度条位置
-#define PROGRESSBAR_MESSAGE_GETPOS 1032
-// 消息_进度条_设置进度条颜色  wParam颜色
-#define PROGRESSBAR_MESSAGE_SETBARCOLOR 1033
-// 消息_进度条_设置进度条背景颜色 wParam颜色
-#define PROGRESSBAR_MESSAGE_SETBKCOLOR 8193
-// 消息_进度条_设置进度条圆角度 wParam圆角度
-#define PROGRESSBAR_MESSAGE_SETRADIUS 1027
-#pragma endregion progressbar message constant
 
 // 主题包头
 #define PACKAGEHEADER_THEME 254
@@ -1375,7 +1358,7 @@
 // 滑块条属性_当前值
 #define SLIDERBAR_LONG_POS 2
 // 滑块条属性_滑块圆滑动方向 设定值：1，横向风格（从右往左）|纵向风格（从下往上）
-#define SLIDERBAR_LONG_BLOCK_POINT 3
+#define SLIDERBAR_LONG_BLOCK_DIRECTION 3
 // 滑块条属性_滑块圆半径
 #define SLIDERBAR_LONG_BLOCK_SIZE 4
 #pragma endregion soliderbar long constant
@@ -1460,7 +1443,7 @@
 #define CAROUSEL_MESSAGE_ADDIMG 5003
 // 消息_轮播_清空
 #define CAROUSEL_MESSAGE_CLEAR 5004
-// 消息_轮播_设置时钟周期
+// 消息_轮播_设置轮播时间间隔,单位毫秒
 #define CAROUSEL_MESSAGE_SETTIMER 5005
 #pragma endregion carousel message
 

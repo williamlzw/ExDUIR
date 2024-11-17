@@ -10,7 +10,10 @@ namespace ExDUIR
 		{
 		public:
 			HWND m_hWnd = 0;
-
+			ExWindow(HWND hWnd)
+			{
+				m_hWnd = hWnd;
+			}
 			inline static WORD RegisterWndClass(std::wstring sWindowName, HICON hIcon = NULL, HICON hIconSm = NULL, HCURSOR hCursor = NULL)
 			{
 				return Ex_WndRegisterClass(sWindowName.c_str(), hIcon, hIconSm, hCursor);
