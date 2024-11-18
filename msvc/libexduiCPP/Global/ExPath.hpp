@@ -17,9 +17,9 @@ namespace ExDUIR
 					m_path = path;
 				}
 
-				ExPath()
+				ExPath(DWORD flag = 0)
 				{
-					_path_create(1, &m_path);
+					_path_create(flag, &m_path);
 				}
 
 				inline BOOL Close()

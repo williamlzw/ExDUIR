@@ -47,9 +47,7 @@ public:
 	{
 		if (uMsg == WM_SIZE)
 		{
-			HDC dc = GetDC(NULL);
-			FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
-			ReleaseDC(0, dc);
+			auto dpix = Ex_DUIGetSystemDpi();;
 			IconListViewWindow::GetInstance().m_iconlistview.Move(25, 50, (LOWORD(lParam) - 50) / dpix, (HIWORD(lParam) - 75) / dpix, TRUE);
 		}
 	}

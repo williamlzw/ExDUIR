@@ -164,7 +164,7 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             Ex_ObjGetClientRect(hObj, &rc);
             auto x = GET_X_LPARAM(lParam);
             auto y = GET_Y_LPARAM(lParam);
-            auto dpi = GetSysDpi();
+            auto dpi = Ex_DUIGetSystemDpi();
             auto width = rc.right - rc.left;
             auto height = rc.bottom - rc.top;
             auto index = (INT)(count - (FLOAT)(width - x / dpi + 8) / 20 + 2);

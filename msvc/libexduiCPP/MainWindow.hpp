@@ -17,6 +17,7 @@
 #include "EasingWindow.hpp"
 #include "CustomRedrawWindow.hpp"
 #include "MessageBoxWindow.hpp"
+#include "CustomButtonWindow.hpp"
 #include "ReportListViewWindow.hpp"
 #include "IconListViewWindow.hpp"
 #include "TreeViewWindow.hpp"
@@ -37,12 +38,23 @@
 #include "DateBoxWindow.hpp"
 #include "ColorPickerWindow.hpp"
 #include "CalendarWindow.hpp"
+#include "CEFBrowserWindow.hpp"
 #include "ScoreButtonWindow.hpp"
 #include "CarouselWindow.hpp"
 #include "TemplateListViewWindow.hpp"
 #include "DrawingBoardWindow.hpp"
 #include "PaletteWindow.hpp"
 #include "PropertyGridWindow.hpp"
+#include "NativeWindow.hpp"
+#include "FullScreenWindow.hpp"
+#include "PathAndRegionWindow.hpp"
+#include "VLCPlayerWindow.hpp"
+#include "SVGWindow.hpp"
+#include "RollMenuWindow.hpp"
+#include "TrayWindow.hpp"
+#include "MaskWindow.hpp"
+#include "TaggingBoardWindow.hpp"
+#include "EffectWindow.hpp"
 
 using namespace ExDUIR::FrameWorks;
 
@@ -66,7 +78,7 @@ public:
 
 		m_skin.SetBackgroundColor(ExARGB(120, 120, 120, 255));
 
-		m_skin.SetBackgroundImage(L"../test/res/bkg.png");
+		m_skin.SetBackgroundImageFromFile(L"../test/res/bkg.png");
 		const int buttonWidth = 100;
 		const int buttonHeight = 30;
 		const int column1X = 10;
@@ -250,7 +262,7 @@ public:
 			}
 			case 119:
 			{
-				
+				CustomButtonWindow::GetInstance().CreateCustomButtonWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			case 120:
@@ -355,7 +367,7 @@ public:
 			}
 			case 140:
 			{
-				
+				CEFBrowserWindow::GetInstance().CreateCEFBrowserWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			case 141:
@@ -386,6 +398,56 @@ public:
 			case 146:
 			{
 				PropertyGridWindow::GetInstance().CreatePropertyGridWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 147:
+			{
+				NativeWindow::GetInstance().CreateNativeWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 148:
+			{
+				FullScreenWindow::GetInstance().CreateFullScreenWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 149:
+			{
+				PathAndRegionWindow::GetInstance().CreatePathAndRegionWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 150:
+			{
+				VLCPlayerWindow::GetInstance().CreateVLCPlayerWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 151:
+			{
+				SVGWindow::GetInstance().CreateSVGWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 152:
+			{
+				RollMenuWindow::GetInstance().CreateRollMenuWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 153:
+			{
+				TrayWindow::GetInstance().CreateTrayWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 154:
+			{
+				MaskWindow::GetInstance().CreateMaskWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 155:
+			{
+				TaggingBoardWindow::GetInstance().CreateTaggingBoardWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				break;
+			}
+			case 156:
+			{
+				EffectWindow::GetInstance().CreateEffectWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			default:

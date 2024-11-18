@@ -478,7 +478,6 @@ void _struct_destroyfromaddr(LPVOID lpAddr, size_t Offset);
 LPVOID _struct_createfromaddr(LPVOID lpAddr, size_t Offset, INT sizeofstruct, INT *nError);
 INT DtoHimetric(INT d, INT PerInchc);
 LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi);
-DOUBLE GetSysDpi();
 INT GetNearestPrime(INT value);
 void RC4(LPVOID dest, size_t dstlen, const LPVOID pwd, size_t pwdlen);
 UINT Crc32_Addr(LPVOID buf, UINT nLength);

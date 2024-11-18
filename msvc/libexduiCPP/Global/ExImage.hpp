@@ -61,9 +61,9 @@ namespace ExDUIR
 					return _img_destroy(m_image);
 				}
 
-				inline BOOL GetFrameCount(INT* nFrameCount)
+				inline BOOL GetFrameCount(INT& nFrameCount)
 				{
-					return _img_getframecount(m_image, nFrameCount);
+					return _img_getframecount(m_image, &nFrameCount);
 				}
 
 				inline BOOL GetFrameDelay(INT* lpDelayAry, INT nFrames)
@@ -71,9 +71,9 @@ namespace ExDUIR
 					return _img_getframedelay(m_image, lpDelayAry, nFrames);
 				}
 
-				inline BOOL GetSize(INT* lpWidth, INT* lpHeight)
+				inline BOOL GetSize(INT& lpWidth, INT& lpHeight)
 				{
-					return _img_getsize(m_image, lpWidth, lpHeight);
+					return _img_getsize(m_image, &lpWidth, &lpHeight);
 				}
 
 				inline INT Height(){ return _img_height(m_image); }
@@ -152,13 +152,21 @@ namespace ExDUIR
 				inline HBITMAP GetBitmap()
 				{
 					INT width, height;
-					GetSize(&width, &height);
+					GetSize(width, height);
 					std::vector<CHAR> imgData;
 					imgData.resize(width * height * 4);
 					_img_savetomemory(m_image, imgData.data());
 					HBITMAP hbitmap = 0;
 					Ex_LoadBitMapFromMemory(imgData.data(), imgData.size(), &hbitmap);
 					return hbitmap;
+				}
+
+				inline ExImage MaskImage(ExImage imgMask, DWORD nChannel, BOOL bBlackMask)
+				{
+					HEXIMAGE retImg = 0;
+					_img_mask(m_image, imgMask.m_image, nChannel, bBlackMask, &retImg);
+					ExImage ret = ExImage(retImg);
+					return ret;
 				}
 			};
 		}

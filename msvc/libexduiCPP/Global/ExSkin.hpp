@@ -62,6 +62,16 @@ namespace ExDUIR
 				return retTitle;
 			}
 
+			inline BOOL SetTrayIcon(HICON hIcon, std::wstring tips)
+			{
+				return Ex_DUITrayIconSet(m_handle, hIcon, tips.c_str());
+			}
+
+			inline BOOL PopupTrayIcon(std::wstring info, std::wstring title, INT flags)
+			{
+				return Ex_DUITrayIconPopup(m_handle, info.c_str(), title.c_str(), flags);
+			}
+
 			inline BOOL GetClientRect(RECT& rc)
 			{
 				return Ex_DUIGetClientRect(m_handle, &rc);
@@ -82,16 +92,16 @@ namespace ExDUIR
 				return ExControl(Ex_ObjFind(m_handle, 0, className.c_str(), title.c_str()));
 			}
 
-			inline BOOL SetBackgroundImage(std::vector<CHAR> imageData, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+			inline BOOL SetBackgroundImageFromData(std::vector<CHAR> imageData, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
 			{
 				return Ex_ObjSetBackgroundImage(m_handle, imageData.data(), imageData.size(), x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 			}
 
-			inline BOOL SetBackgroundImage(std::wstring imageFilePath, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+			inline BOOL SetBackgroundImageFromFile(std::wstring imageFilePath, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
 			{
 				std::vector<CHAR> imgdata;
 				Ex_ReadFile(imageFilePath.c_str(), &imgdata);
-				return SetBackgroundImage(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+				return SetBackgroundImageFromData(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 			}
 
 			inline ExControl GetFromID(INT nID)

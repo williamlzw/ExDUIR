@@ -4177,20 +4177,20 @@ void _sb_show(HEXOBJ hSB, BOOL fShow)
     }
 }
 
-BOOL Ex_ObjScrollShow(HEXOBJ hObj, INT wBar, BOOL fShow)
+BOOL Ex_ObjScrollShow(HEXOBJ hObj, INT nBar, BOOL fShow)
 {
     obj_s *pObj = nullptr;
     INT nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID *)&pObj, &nError))
     {
-        if (wBar == SCROLLBAR_TYPE_BOTH)
+        if (nBar == SCROLLBAR_TYPE_BOTH)
         {
             _sb_show(_scrollbar_getscroll(pObj, SCROLLBAR_TYPE_VERT), fShow);
             _sb_show(_scrollbar_getscroll(pObj, SCROLLBAR_TYPE_HORZ), fShow);
         }
         else
         {
-            _sb_show(_scrollbar_getscroll(pObj, wBar), fShow);
+            _sb_show(_scrollbar_getscroll(pObj, nBar), fShow);
         }
     }
     return nError == 0;

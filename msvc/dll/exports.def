@@ -29,6 +29,7 @@ Ex_DUIFromWindow
 Ex_DUIGetBackgroundImage
 Ex_DUIGetClientRect
 Ex_DUIGetLong
+Ex_DUIGetSystemDpi
 Ex_DUISetLong
 Ex_DUIShowWindow
 Ex_DUIShowWindowEx

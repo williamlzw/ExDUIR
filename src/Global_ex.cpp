@@ -388,3 +388,28 @@ BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<CHAR>* retData)
     }
     return (fOK);
 }
+
+//取系统缩放比例
+DOUBLE Ex_DUIGetSystemDpi()
+{
+	HDC desktopDc = GetDC(NULL);
+	DOUBLE dpiA = (DOUBLE)GetDeviceCaps(desktopDc, DESKTOPHORZRES) / GetDeviceCaps(desktopDc, HORZRES);
+	DOUBLE dpiB = (DOUBLE)GetDeviceCaps(desktopDc, LOGPIXELSX) / 96;
+	ReleaseDC(NULL, desktopDc);
+	if (dpiA == 1)
+	{
+		return (dpiB);
+	}
+	else if (dpiB == 1)
+	{
+		return (dpiA);
+	}
+	else if (dpiA == dpiB)
+	{
+		return (dpiA);
+	}
+	else
+	{
+		return 1;
+	}
+}

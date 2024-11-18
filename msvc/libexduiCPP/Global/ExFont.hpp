@@ -30,6 +30,11 @@ namespace ExDUIR
 					m_font = _font_createfromfamily(lpwzFontFace.c_str(), dwFontSize, dwFontStyle);
 				}
 
+				ExFont(std::wstring lpwzFontFace, INT dwFontSize)
+				{
+					m_font = _font_createfromfile(lpwzFontFace.c_str(), dwFontSize);
+				}
+
 				ExFont(LOGFONTW* lpLogfont)
 				{
 					m_font = _font_createfromlogfont(lpLogfont);

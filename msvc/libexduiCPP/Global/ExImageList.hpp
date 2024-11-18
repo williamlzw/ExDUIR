@@ -31,9 +31,9 @@ namespace ExDUIR
 					return _imglist_destroy(m_imagelist);
 				}
 
-				inline BOOL GetImageSize(INT* pWidth, INT* pHeight)
+				inline BOOL GetImageSize(INT& pWidth, INT& pHeight)
 				{
-					return _imglist_size(m_imagelist, pWidth, pHeight);
+					return _imglist_size(m_imagelist, &pWidth, &pHeight);
 				}
 
 				inline BOOL DelImage(size_t nIndex)

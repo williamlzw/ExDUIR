@@ -147,7 +147,7 @@ public:
 				ExImage img3 = ExImage(L"../test/custommenu/btn3.png");
 				ExButton button3 = ExButton(ExControl(hExDUI), rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, Ex_Scale(70), L"文件", OBJECT_STYLE_VISIBLE, -1, -1, 102, img3.m_image, 0, OnMenuBtnMsgProc);
 				ExStatic bkg = ExStatic(ExControl(hExDUI), 0, 0, 45, 38, L"", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TRANSPARENT | OBJECT_STYLE_EX_TOPMOST);
-				bkg.SetBackgroundImage(L"../test/custommenu/Icon.png", 0, 0, BACKGROUND_REPEAT_NO_REPEAT);
+				bkg.SetBackgroundImageFromFile(L"../test/custommenu/Icon.png", 0, 0, BACKGROUND_REPEAT_NO_REPEAT);
 				rc.top = rc.top + Ex_Scale(75);
 				rc.bottom = rc.bottom - Ex_Scale(75);
 			}
@@ -179,9 +179,7 @@ public:
 		else if (uMsg == WM_ERASEBKGND)
 		{
 			RECT rc{ 0 };
-			HDC dc = GetDC(NULL);
-			FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
-			ReleaseDC(0, dc);
+			auto dpix = Ex_DUIGetSystemDpi();
 			ExCanvas canvas = ExCanvas(wParam);
 			canvas.Clear(0);
 			if (GetPropW(hWnd, L"IsMainMenu") != 0)
@@ -264,7 +262,7 @@ public:
 			if (hImg != 0)
 			{
 				ExImage img = ExImage(hImg);
-				img.GetSize(&nWidthIcon, &nHeightIcon);
+				img.GetSize(nWidthIcon, nHeightIcon);
 				canvas.DrawImage(img, (ps.uWidth - nWidthIcon) / 2, (ps.uHeight - nHeightIcon - nHeightText - 3) / 2, 255);
 			}
 			canvas.DrawTextFromColor(ExFont::GetFontFromObj(hObj), obj.GetColorTextNormal(), obj.GetText(), -1, ps.dwTextFormat | DT_CENTER | DT_VCENTER, (ps.uWidth - nWidthText) / 2, (ps.uHeight - nHeightIcon - nHeightText - 3) / 2 + nHeightIcon + 3, (ps.uWidth + nWidthText) / 2, (ps.uHeight - nHeightIcon - nHeightText - 3) / 2 + nHeightIcon + 3 + nHeightText);

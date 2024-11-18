@@ -118,6 +118,16 @@ namespace ExDUIR
 					return _canvas_drawtext2(m_canvas, font.m_font, brush.m_brush, lpwzText.c_str(), dwLen, dwDTFormat, left, top, right, bottom);
 				}
 
+				inline BOOL DrawSvgFromData(std::vector<CHAR> data, EXARGB crText, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				{
+					return _canvas_drawsvg(m_canvas, data.data(), crText, left, top, right, bottom);
+				}
+
+				inline BOOL DrawSvgFromFile(std::wstring svgFilePath, EXARGB crText, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				{
+					return _canvas_drawsvgfromfile(m_canvas, svgFilePath.c_str(), crText, left, top, right, bottom);
+				}
+
 				inline BOOL BeginDraw()
 				{
 					return _canvas_begindraw(m_canvas);
@@ -173,9 +183,9 @@ namespace ExDUIR
 					return _canvas_getdc(m_canvas);
 				}
 
-				inline BOOL GetSize(INT* width, INT* height)
+				inline BOOL GetSize(INT& width, INT& height)
 				{
-					return _canvas_getsize(m_canvas, width, height);
+					return _canvas_getsize(m_canvas, &width, &height);
 				}
 
 				inline BOOL ReleaseDC()
@@ -241,6 +251,11 @@ namespace ExDUIR
 				inline BOOL SetTransformNULL()
 				{
 					return _canvas_settransform(m_canvas, 0);
+				}
+
+				inline void ApplyEffect(HEXEFFECT hEffect)
+				{
+					_canvas_applyeffect(m_canvas, hEffect);
 				}
 			};
 		}

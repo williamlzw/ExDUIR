@@ -1,5 +1,6 @@
 #pragma once
 #include "ExDUIR_Func.h"
+#include "ExDUIR_Interface.h"
 
 namespace ExDUIR
 {

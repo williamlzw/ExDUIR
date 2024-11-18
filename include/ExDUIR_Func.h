@@ -1778,6 +1778,12 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex);
 HEXOBJ Ex_DUIGetObjFromPoint(EXHANDLE handle, INT x, INT y);
 
 /// <summary>
+/// 取系统dpi缩放系数
+/// </summary>
+/// <returns></returns>
+DOUBLE Ex_DUIGetSystemDpi();
+
+/// <summary>
 /// 设置引擎数值
 /// </summary>
 /// <param name="hExDui"></param>
@@ -1819,7 +1825,7 @@ BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, 
 /// <param name="lpwzInfoTitle">弹出标题文本</param>
 /// <param name="dwInfoFlags">#NIIF_</param>
 /// <returns></returns>
-BOOL Ex_DUITrayIconPopup(HEXDUI hExDui, LPCWSTR lpwzInfo, LPCWSTR lpwzInfoTitle, INT dwInfoFlags);
+BOOL Ex_DUITrayIconPopup(HEXDUI hExDui, LPCWSTR lpwzInfo, LPCWSTR lpwzInfoTitle, DWORD dwInfoFlags);
 
 /// <summary>
 /// 设置托盘图标

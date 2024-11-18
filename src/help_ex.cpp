@@ -22,31 +22,6 @@ LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
 	return ret;
 }
 
-//取系统缩放比例
-DOUBLE GetSysDpi()
-{
-	HDC desktopDc = GetDC(NULL);
-	DOUBLE dpiA = (DOUBLE)GetDeviceCaps(desktopDc, DESKTOPHORZRES) / GetDeviceCaps(desktopDc, HORZRES);
-	DOUBLE dpiB = (DOUBLE)GetDeviceCaps(desktopDc, LOGPIXELSX) / 96;
-	ReleaseDC(NULL, desktopDc);
-	if (dpiA == 1)
-	{
-		return (dpiB);
-	}
-	else if (dpiB == 1)
-	{
-		return (dpiA);
-	}
-	else if (dpiA == dpiB)
-	{
-		return (dpiA);
-	}
-	else
-	{
-		return 1;
-	}
-}
-
 std::vector<std::wstring> WStringSplit(const std::wstring& str, const std::wstring& delim)
 {
 	std::wstring stra = str;

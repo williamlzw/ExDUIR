@@ -1523,14 +1523,14 @@ void ColorButton2::SetBkgDownColor(EXARGB color, BOOL redraw)
 	Ex_ObjSetColor(mhObj, COLOR_EX_CBTN_CRBKG_DOWN, color, redraw);
 }
 
-void ColorButton2::SetTextHoverColor(EXARGB color, BOOL redraw)
+void ColorButton2::SetBkgFocusColor(EXARGB color, BOOL redraw)
 {
 	if (mhObj == 0)
 		return;
 	Ex_ObjSetColor(mhObj, COLOR_EX_CBTN_CRBKG_FOCUS, color, redraw);
 }
 
-void ColorButton2::SetBkgFocusColor(EXARGB color, BOOL redraw)
+void ColorButton2::SetTextHoverColor(EXARGB color, BOOL redraw)
 {
 	if (mhObj == 0)
 		return;
@@ -1744,9 +1744,7 @@ LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 {
 	if (uMsg == WM_SIZE)
 	{
-		HDC dc = GetDC(NULL);
-		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
-		ReleaseDC(0, dc);
+		auto dpix = Ex_DUIGetSystemDpi();
 		//因为LOWORD(lParam)是DPI缩放后的窗口坐标,而Ex_ObjMove接受缩放前坐标，因此这里需要除以dpix
 		Ex_ObjMove(m_hListViewIcon, 25, 50, (LOWORD(lParam) - 50) / dpix, (HIWORD(lParam) - 75) / dpix, TRUE);
 	}
@@ -2270,9 +2268,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 	else if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
 		RECT rc{ 0 };
-		HDC dc = GetDC(NULL);
-		FLOAT dpix = (FLOAT)GetDeviceCaps(dc, 88) / 96;
-		ReleaseDC(0, dc);
+		auto dpix = Ex_DUIGetSystemDpi();
 		_canvas_clear(wParam, 0);
 		HEXIMAGE hImg;
 		if (GetPropW(hWnd, L"IsMainMenu") != 0)
@@ -2972,9 +2968,7 @@ LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
 {
 	if (uMsg == WM_SIZE)
 	{
-		HDC dc = GetDC(NULL);
-		FLOAT dpiy = (FLOAT)GetDeviceCaps(dc, 90) / 96;
-		ReleaseDC(0, dc);
+		auto dpiy = Ex_DUIGetSystemDpi();
 		Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100) / dpiy, (HIWORD(lParam) - 100) / dpiy, FALSE);
 	}
 	return 0;
@@ -3043,7 +3037,6 @@ void CALLBACK OnFunAccessor(int uMsg, LPCWSTR name, HV8VALUE object, uintptr_t* 
 			*pbHandled = TRUE;
 		}
 	}
-
 }
 
 void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam)
@@ -3052,7 +3045,8 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
 	{
 		OUTPUTW(L"即将处理命令行");
 	}
-	else if (uMsg == 2) {
+	else if (uMsg == 2) 
+	{
 		OUTPUTW(L"即将创建V8环境");
 		//绑定js文本值变量示例
 		HV8VALUE window = Ck_V8CGetGlobal((HV8CONTEXE)attach1);
@@ -3103,7 +3097,6 @@ LRESULT CALLBACK OnChromiumEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
 	{
 		OUTPUTW(L"cef浏览框加载完毕");
 	}
-
 	return 0;
 }
 
@@ -3517,9 +3510,7 @@ LRESULT CALLBACK OnNativeParentWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 	{
 		INT width = LOWORD(lParam);
 		INT height = HIWORD(lParam);
-		HDC dc = GetDC(NULL);
-		FLOAT dpiy = (FLOAT)GetDeviceCaps(dc, 90) / 96;
-		ReleaseDC(0, dc);
+		auto dpiy = Ex_DUIGetSystemDpi();
 		MoveWindow(m_hWndNativeWindow2, 0, 30 * dpiy, width, height - 30 * dpiy, TRUE);
 		MoveWindow(m_hWndChild, 0, 0, width - 30, 300 * dpiy, TRUE);
 		MoveWindow(m_hWndChild2, 0, 310 * dpiy, width - 30, 300 * dpiy, TRUE);
@@ -3607,9 +3598,7 @@ LRESULT CALLBACK OnNativeWndScrollMsg(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 		auto nPos = Ex_ObjScrollDefaultProc(hObj, SCROLLBAR_TYPE_VERT, wParam, 1, 10, TRUE);
 		RECT rc;
 		GetWindowRect(m_hWndChild, &rc);
-		HDC dc = GetDC(NULL);
-		FLOAT dpiy = (FLOAT)GetDeviceCaps(dc, 90) / 96;
-		ReleaseDC(0, dc);
+		auto dpiy = Ex_DUIGetSystemDpi();
 		MoveWindow(m_hWndChild, 0, 0 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
 		MoveWindow(m_hWndChild2, 0, 310 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
 	}
@@ -3683,7 +3672,7 @@ void test_fullscreen(HWND hWnd)
 }
 
 
-LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_ERASEBKGND) //wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
 	{
@@ -3707,7 +3696,7 @@ LRESULT CALLBACK OnsvgAndfontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 void test_svgAndfont(HWND hWnd)
 {
 	HWND hWnd_svgAndfont = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"自定义字体和SVG测试", 0, 0, 500, 600, 0, 0);
-	HEXDUI hExDui_svgAndfont = Ex_DUIBindWindowEx(hWnd_svgAndfont, 0, WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE, 0, OnsvgAndfontProc);
+	HEXDUI hExDui_svgAndfont = Ex_DUIBindWindowEx(hWnd_svgAndfont, 0, WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE, 0, OnSvgAndFontProc);
 	Ex_DUISetLong(hExDui_svgAndfont, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 	auto obj = Ex_ObjCreate(L"static", NULL, -1, 50, 250, 150, 150, hExDui_svgAndfont);
 	std::vector<CHAR> imgdata;
@@ -3802,7 +3791,7 @@ void test_rollmenu(HWND hWnd)
 	Ex_ReadFile(L"res/authorization.png", &imgdata);
 	size_t nImageAuthIndex = _imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size());
 
-	std::vector<HEXIMAGE> emoji;
+	std::vector<INT> emoji;
 	Ex_ReadFile(L"navbtn/大图标1.png", &imgdata);
 	emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
 	Ex_ReadFile(L"navbtn/大图标2.png", &imgdata);
@@ -3992,7 +3981,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
 	else if (nID == 1050)
 	{
 		HEXIMAGE img;
-		_img_createfromfile(L"res//3.jpeg", &img);
+		_img_createfromfile(L"res/3.jpeg", &img);
 		Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_BKG, 0, img);
 		float scale;
 		auto scalePtr = (LPVOID)Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_SCALE, 0, 0);
@@ -4040,9 +4029,7 @@ LRESULT CALLBACK OnTaggingWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM 
 {
 	if (uMsg == WM_SIZE)
 	{
-		HDC dc = GetDC(NULL);
-		FLOAT dpiy = (FLOAT)GetDeviceCaps(dc, 90) / 96;
-		ReleaseDC(0, dc);
+		auto dpiy = Ex_DUIGetSystemDpi();
 		//Ex_ObjMove(hObj_taggingBoard, 30, 30, (LOWORD(lParam) - 200) / dpiy, (HIWORD(lParam) - 50) / dpiy, TRUE);
 	}
 	return 0;
@@ -4093,7 +4080,7 @@ void test_tagging(HWND hWnd)
 	Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_PEN_COLOR, 0, ExARGB(0, 255, 0, 255));
 
 	HEXIMAGE img;
-	_img_createfromfile(L"res//3.jpeg", &img);
+	_img_createfromfile(L"res/3.jpeg", &img);
 	Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_BKG, 0, img);
 	Ex_ObjHandleEvent(hObj_taggingBoard, TAGGINGBOARD_EVENT_MOUSEMOVE, OnTaggingBoradMouseMove);
 
@@ -4164,6 +4151,7 @@ LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	}
 	else if (uMsg == WM_DESTROY)
 	{
+		Ex_ObjKillTimer(hObj);
 		HEXEFFECT pEffect = (HEXEFFECT)Ex_ObjGetProp(hObj, 0);
 		_effect_destroy(pEffect);
 	}
@@ -4281,6 +4269,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 					}
 				}
 				free(points);
+				_rgn_destroy(hRgn3);
 			}
 			else {
 				_brush_setcolor(hBrushRgn, ExARGB(255, 255, 0, 255));
@@ -4296,7 +4285,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 	}
 	else if (uMsg == WM_MOUSEMOVE)
 	{
-		auto dpi = GetSysDpi();
+		auto dpi = Ex_DUIGetSystemDpi();
 		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
 		Ex_ObjSetProp(hObj, 0, pt.x/ dpi);
 		Ex_ObjSetProp(hObj, 1, pt.y/ dpi);

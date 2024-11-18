@@ -43,9 +43,19 @@ namespace ExDUIR
 					return _rgn_hittest(m_region, x, y);
 				}
 
-				inline ExRegion Combine(ExRegion RgnSrc, ExRegion RgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY)
+				inline BOOL Hittest2(ExRegion rgn2, INT& retRelation)
 				{
-					return ExRegion(_rgn_combine(RgnSrc.m_region, RgnDst.m_region, nCombineMode, dstOffsetX, dstOffsetY));
+					return _rgn_hittest2(m_region, rgn2.m_region, &retRelation);
+				}
+
+				inline ExRegion Combine(ExRegion RgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY)
+				{
+					return ExRegion(_rgn_combine(m_region, RgnDst.m_region, nCombineMode, dstOffsetX, dstOffsetY));
+				}
+
+				inline BOOL GetLines(EX_POINTF** points, INT& pointsCount)
+				{
+					return _rgn_getlines(m_region, points, &pointsCount);
 				}
 			};
 		}

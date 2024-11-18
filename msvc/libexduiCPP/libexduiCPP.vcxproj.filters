@@ -209,6 +209,42 @@
     <ClInclude Include="PropertyGridWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="NativeWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FullScreenWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="PathAndRegionWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VLCPlayerWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SVGWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RollMenuWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TrayWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MaskWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TaggingBoardWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CEFBrowserWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomButtonWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

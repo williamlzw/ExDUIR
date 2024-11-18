@@ -746,14 +746,14 @@ namespace ExDUIR
 				ExRollMenu(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"RollMenu", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
 
-				inline void AddGroup(EX_ROLLMENU_DATA info)
+				inline size_t AddGroup(EX_ROLLMENU_DATA info)
 				{
-					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_ADDGROUP, 0, (LPARAM)&info);
+					return Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_ADDGROUP, 0, (LPARAM)&info);
 				}
 
-				inline void AddItem(INT indexGroup, EX_ROLLMENU_ITEM info)
+				inline size_t AddItem(INT indexGroup, EX_ROLLMENU_ITEM info)
 				{
-					Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_ADDITEM, indexGroup, (LPARAM)&info);
+					return Ex_ObjSendMessage(m_handle, ROLLMENU_MESSAGE_ADDITEM, indexGroup, (LPARAM)&info);
 				}
 
 				inline void GetSelect(INT& group, INT& item)
@@ -1267,6 +1267,16 @@ namespace ExDUIR
 				ExCefBrowser(HWND hWnd, POINT point) : ExControl(hWnd, point) {}
 				ExCefBrowser(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"CefBrowser", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
+			
+				inline static void InitializeCEF(std::wstring libPath, void* callBack)
+				{
+					Ex_ObjCefBrowserInitialize(0, 0, libPath.c_str(), NULL, 0, 0, callBack);
+				}
+
+				inline void LoadUrl(std::wstring url)
+				{
+					Ex_ObjSendMessage(m_handle, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)url.c_str());
+				}
 			};
 
 			class ExColorPicker : public ExControl
@@ -1335,6 +1345,146 @@ namespace ExDUIR
 				ExVLCPlayer(HWND hWnd, POINT point) : ExControl(hWnd, point) {}
 				ExVLCPlayer(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
 					:ExControl(pOwner, x, y, width, height, L"VLCPlayer", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
+			
+				inline void PlayFromFile(std::wstring filePath)
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_STATE_PLAY, 0, (LPARAM)filePath.c_str());
+				}
+
+				inline void PlayFromUrl(std::wstring url)
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_STATE_PLAYFROMURL, 0, (LPARAM)url.c_str());
+				}
+
+				inline void Pause()
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_STATE_PAUSE, 0, 0);
+				}
+
+				inline void Resume()
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_STATE_RESUME, 0, 0);
+				}
+
+				inline void Stop()
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_STATE_STOP, 0, 0);
+				}
+
+				inline void SetRate(INT rate)
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_SET_RATE, 0, rate);
+				}
+
+				inline INT GetRate()
+				{
+					return Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_GET_RATE, 0, 0);
+				}
+
+				inline void SetVolume(INT volume)
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_SET_VOLUME, 0, volume);
+				}
+
+				inline INT GetVolume()
+				{
+					return Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_GET_VOLUME, 0, 0);
+				}
+
+				inline void SetMediaTime(INT64 time)
+				{
+					Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_SET_MEDIATIME, 0, time);
+				}
+
+				inline INT64 GetMediaTime()
+				{
+					return Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_GET_MEDIATIME, 0, 0);
+				}
+
+				inline INT64 GetDuration()
+				{
+					return Ex_ObjSendMessage(m_handle, VLCPLAYER_MESSAGE_GET_DURATION, 0, 0);
+				}
+			};
+
+			class ExTaggingBoard : public ExControl
+			{
+			public:
+				ExTaggingBoard() = default;
+				~ExTaggingBoard() = default;
+				ExTaggingBoard(EXHANDLE hObj) : ExControl(hObj) {}
+				ExTaggingBoard(ExControl obj) : ExControl(obj) {}
+				ExTaggingBoard(HWND hWnd, POINT point) : ExControl(hWnd, point) {}
+				ExTaggingBoard(ExUIbase pOwner, INT x, INT y, INT width, INT height, std::wstring lptszObjTitle = L"", INT dwStyle = -1, INT dwStyleEx = -1, INT dwTextFormat = -1, INT nID = NULL, LPARAM lParam = NULL, HEXTHEME hTheme = NULL, MsgPROC lpfnMsgProc = NULL)
+					:ExControl(pOwner, x, y, width, height, L"TaggingBoard", lptszObjTitle, dwStyle, dwStyleEx, dwTextFormat, nID, lParam, hTheme, lpfnMsgProc) {}
+			
+				inline void StartTagging()
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_START, 0, 0);
+				}
+
+				inline void StopTagging()
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_STOP, 0, 0);
+				}
+
+				inline void ClearTagging()
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_CLEAR, 0, 0);
+				}
+
+				inline void SetPenColor(EXARGB color)
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_SET_PEN_COLOR, 0, color);
+				}
+
+				inline void SetPointData(EX_POLYGON_ARRAY* points)
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_SET_DATA, 0, (size_t)points);
+				}
+
+				inline EX_POLYGON_ARRAY* GetPointData()
+				{
+					return (EX_POLYGON_ARRAY*)Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_GET_DATA, 0, 0);
+				}
+
+				inline FLOAT GetImageScale()
+				{
+					auto scalePtr = (LPVOID)Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_GET_IMG_SCALE, 0, 0);
+					FLOAT scale;
+					RtlMoveMemory(&scale, scalePtr, 4);
+					return scale;
+				}
+
+				inline INT GetImageLeftOffset()
+				{
+					return Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_GET_IMG_LEFT_OFFSET, 0, 0);
+				}
+
+				inline INT GetImageTopOffset()
+				{
+					return Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_GET_IMG_TOP_OFFSET, 0, 0);
+				}
+
+				inline INT GetHitPath()
+				{
+					return Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_GET_HIT_PATH, 0, 0);
+				}
+
+				inline void DelPath(INT nIndex)
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_DELETE_PATH, 0, nIndex);
+				}
+
+				inline void SetBackgroundImageNull()
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_SET_BKG, 0, 0);
+				}
+
+				inline void SetBackgroundImage(ExImage img)
+				{
+					Ex_ObjSendMessage(m_handle, TAGGINGBOARD_MESSAGE_SET_BKG, 0, img.m_image);
+				}
 			};
 		}
 	}

@@ -161,14 +161,14 @@ namespace ExDUIR
 					return Ex_ObjDispatchNotify(m_handle, nCode, wParam, lParam);
 				}
 
-				inline BOOL ClientToScreen(INT* x, INT* y)
+				inline BOOL ClientToScreen(INT& x, INT& y)
 				{
-					return Ex_ObjClientToScreen(m_handle, x, y);
+					return Ex_ObjClientToScreen(m_handle, &x, &y);
 				}
 
-				inline BOOL ClientToWindow(INT* x, INT* y)
+				inline BOOL ClientToWindow(INT& x, INT& y)
 				{
-					return Ex_ObjClientToWindow(m_handle, x, y);
+					return Ex_ObjClientToWindow(m_handle, &x, &y);
 				}
 
 				inline BOOL Invalidate()
@@ -256,15 +256,28 @@ namespace ExDUIR
 
 				inline BOOL GetBackgroundImage(EX_BACKGROUNDIMAGEINFO& BkgInfo) { return Ex_ObjGetBackgroundImage(m_handle, &BkgInfo); }
 
-				inline BOOL SetBackgroundImage(std::vector<CHAR> imageData, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+				inline BOOL SetBackgroundImageFromData(std::vector<CHAR> imageData, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
 				{
 					return Ex_ObjSetBackgroundImage(m_handle, imageData.data(), imageData.size(), x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 				}
-				inline BOOL SetBackgroundImage(std::wstring imageFilePath, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+
+				inline BOOL SetBackgroundImageFromFile(std::wstring imageFilePath, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
 				{
 					std::vector<CHAR> imgdata;
 					Ex_ReadFile(imageFilePath.c_str(), &imgdata);
-					return SetBackgroundImage(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+					return SetBackgroundImageFromData(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+				}
+
+				inline BOOL SetBackgroundImageFromSvgData(std::vector<CHAR> imageData, EXARGB color, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+				{
+					return Ex_ObjSetBackgroundImageFromSvgBuf(m_handle, imageData.data(), color, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+				}
+
+				inline BOOL SetBackgroundImageFromSvgFile(std::wstring imageFilePath, EXARGB color, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+				{
+					std::vector<CHAR> imgdata;
+					Ex_ReadFile(imageFilePath.c_str(), &imgdata);
+					return SetBackgroundImageFromSvgData(imgdata, color, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 				}
 
 				inline EXARGB GetColorBackground()
@@ -500,6 +513,56 @@ namespace ExDUIR
 				inline BOOL EnableEventBubble(BOOL bEnable)
 				{
 					return Ex_ObjEnableEventBubble(m_handle, bEnable);
+				}
+
+				inline INT SetScrollInfo(INT nBar, INT Mask, INT nMin, INT nMax, INT nPage, INT nPos, BOOL bRedraw)
+				{
+					return Ex_ObjScrollSetInfo(m_handle, nBar, Mask, nMin, nMax, nPage, nPos, bRedraw);
+				}
+
+				inline void ScrollShow(INT nBar, BOOL fShow)
+				{
+					Ex_ObjScrollShow(m_handle, nBar, fShow);
+				}
+
+				inline ExControl ScrollGetControl(INT nBar)
+				{
+					return ExControl(Ex_ObjScrollGetControl(m_handle, nBar));
+				}
+
+				inline INT ScrollGetTrackPos(INT nBar)
+				{
+					return Ex_ObjScrollGetTrackPos(m_handle, nBar);
+				}
+
+				inline INT ScrollSetPos(INT nBar, INT nPos, BOOL bRedraw)
+				{
+					return Ex_ObjScrollSetPos(m_handle, nBar, nPos, bRedraw);
+				}
+
+				inline BOOL ScrollGetInfo(INT nBar, INT& lpnMin, INT& lpnMax, INT& lpnPos, INT& lpnTrackPos)
+				{
+					return Ex_ObjScrollGetInfo(m_handle, nBar, &lpnMin, &lpnMax, &lpnPos, &lpnTrackPos);
+				}
+
+				inline BOOL InitPropList(INT nPropCount)
+				{
+					return Ex_ObjInitPropList(m_handle, nPropCount);
+				}
+
+				inline size_t SetObjProp(size_t dwKey, size_t dwValue)
+				{
+					return Ex_ObjSetProp(m_handle, dwKey, dwValue);
+				}
+
+				inline size_t GetObjProp(size_t dwKey)
+				{
+					return Ex_ObjGetProp(m_handle, dwKey);
+				}
+
+				inline BOOL Update()
+				{
+					return Ex_ObjUpdate(m_handle);
 				}
 			};
 		}

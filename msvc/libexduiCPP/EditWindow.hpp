@@ -30,7 +30,7 @@ public:
 
 		m_edit1 = ExEdit(m_skin, 10, 30, 150, 30, L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_CUSTOMDRAW, DT_VCENTER);
 		m_edit1.SetCueBanner(L"背景图片编辑框", ExARGB(0, 0, 0, 100));
-		m_edit1.SetBackgroundImage(L"../test/res/editbkg.jpg");
+		m_edit1.SetBackgroundImageFromFile(L"../test/res/editbkg.jpg");
 
 		m_edit2 = ExEdit(m_skin, 10, 70, 150, 30, L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_USEPASSWORD, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, DT_VCENTER);
 		m_edit2.SetCueBanner(L"密码输入编辑框", ExARGB(0, 0, 0, 100));
