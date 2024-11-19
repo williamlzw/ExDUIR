@@ -98,24 +98,20 @@ void _brush_settransform(HEXBRUSH hBrush, HEXMATRIX matrix)
     ((ID2D1BitmapBrush *)hBrush)->SetTransform(&mx);
 }
 
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const EX_STOPPTS* arrStopPts, INT cStopPts)
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrPts, INT* arrColors)
 {
-    if (cStopPts < 2)
-    {
-        return NULL;
-    }
     ID2D1GradientStopCollection* gradientStopCollection = nullptr;
     ID2D1LinearGradientBrush* hBrush = nullptr;
-    D2D1_GRADIENT_STOP* gradientStops = (D2D1_GRADIENT_STOP*)malloc(cStopPts * sizeof(D2D1_GRADIENT_STOP));
+    D2D1_GRADIENT_STOP* gradientStops = (D2D1_GRADIENT_STOP*)malloc(2 * sizeof(D2D1_GRADIENT_STOP));
     D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES gradientProperties{};
     if (gradientStops)
     {
-        for (INT i = 0; i < cStopPts; i++)
+        for (INT i = 0; i < 2; i++)
         {
-            ARGB2ColorF(arrStopPts[i].m_color, &gradientStops[i].color);
-            gradientStops[i].position = arrStopPts[i].m_position;
+            ARGB2ColorF(arrColors[i], &gradientStops[i].color);
+            gradientStops[i].position = arrPts[i];
         }
-        g_Ri.pD2DDeviceContext->CreateGradientStopCollection(gradientStops, cStopPts, D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &gradientStopCollection);
+        g_Ri.pD2DDeviceContext->CreateGradientStopCollection(gradientStops, 2, D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &gradientStopCollection);
 
         gradientProperties.startPoint.x = xStart;
         gradientProperties.startPoint.y = yStart;
@@ -134,9 +130,7 @@ HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yE
 
 HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, EXARGB crBegin, EXARGB crEnd)
 {
-    EX_STOPPTS arrStopPts[] = {
-        { 0, crBegin },
-        {1, crEnd}
-    };
-    return _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrStopPts, 2);
+	FLOAT arrPts[] = { 0.0f, 1.0f };
+	INT arrColors[] = { crBegin, crEnd };
+    return _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrPts, arrColors);
 }

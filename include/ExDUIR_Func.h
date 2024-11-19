@@ -49,10 +49,10 @@ HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,
 /// <param name="yStart">起点Y</param>
 /// <param name="xEnd">终点X</param>
 /// <param name="yEnd">终点Y</param>
-/// <param name="arrStopPts">两个点位置和颜色数据,只能两个{位置(0-1.0),颜色(ARGB),位置(0-1.0),颜色(ARGB)}这样传参</param>
-/// <param name="cStopPts">点个数，只能两个传2</param>
+/// <param name="arrPts">位置数组(取值0-1.0),两个</param>
+/// <param name="arrColors">ARGB颜色数组,两个</param>
 /// <returns></returns>
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,const EX_STOPPTS* arrStopPts, INT cStopPts);
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrPts, INT* arrColors);
 
 /// <summary>
 /// 画刷销毁

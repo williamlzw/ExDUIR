@@ -48,9 +48,9 @@ namespace ExDUIR
 					m_brush = _brush_createlinear(xStart, yStart, xEnd, yEnd, crBegin, crEnd);
 				}
 
-				ExBrush(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, const EX_STOPPTS* arrStopPts, INT cStopPts)
+				ExBrush(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrPts, INT* arrColors)
 				{
-					m_brush = _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrStopPts, cStopPts);
+					m_brush = _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrPts, arrColors);
 				}
 
 				inline BOOL SetColor(EXARGB Color)

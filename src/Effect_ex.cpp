@@ -105,7 +105,6 @@ BOOL _shader_loadfromfile(LPVOID pEffectContext, LPCWSTR csoFileNameInOut,  cons
 		return TRUE;
 	}
 	ID3DBlob* pBlob;
-	ID3DBlob* pErrorMsg;
 	auto hr = D3DReadFileToBlob(csoFileNameInOut, &pBlob);
 	if (FAILED(hr))
 	{
@@ -116,7 +115,6 @@ BOOL _shader_loadfromfile(LPVOID pEffectContext, LPCWSTR csoFileNameInOut,  cons
 	hr = ((ID2D1EffectContext*)pEffectContext)->LoadPixelShader(shaderID, (BYTE*)lpShaderBytecode, nShaderBytecodeLength);
 	if (FAILED(hr))
 	{
-		pErrorMsg->Release();
 		pBlob->Release();
 		return FALSE;
 	}

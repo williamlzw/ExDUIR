@@ -1362,11 +1362,9 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 		_canvas_setantialias(wParam, TRUE);
 		RECT rc{ 0 };
 		Ex_DUIGetClientRect(hExDui, &rc);
-		constexpr EX_STOPPTS arrStopPts[]{
-			{0.0,ExARGB(10, 127, 213, 220)},
-			{1.0, ExARGB(200, 10, 10, 220)}
-		};
-		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, arrStopPts, 2);
+		FLOAT arrPts[] = {0.0f, 1.0f};
+		INT arrColors[] = { ExARGB(10, 127, 213, 220), ExARGB(200, 10, 10, 220) };
+		HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, arrPts, arrColors);
 		_canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 		_brush_destroy(hBrush);
 		*lpResult = 1;
@@ -2753,7 +2751,8 @@ LRESULT CALLBACK OnProgressBarProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 		size_t nPos = Ex_ObjGetLong(hObj, PROGRESSBAR_LONG_POS);
 		size_t nRange = Ex_ObjGetLong(hObj, PROGRESSBAR_LONG_RANGE);
 		Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_POS, nPos + Random(1, 20));
-		Ex_ObjSendMessage(hObj, WM_PAINT, 0, 0);
+		Ex_ObjInvalidateRect(hObj, 0);
+		//Ex_ObjSendMessage(hObj, WM_PAINT, 0, 0);
 		if (nRange == nPos)
 		{
 			Ex_ObjKillTimer(hObj);
