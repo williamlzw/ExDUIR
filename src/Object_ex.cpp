@@ -2106,7 +2106,8 @@ void _obj_destroy(HEXOBJ hObj, obj_s *pObj, INT *nError)
         DestroyCursor((HCURSOR)(pObj->hCursor_));
         pObj->hCursor_ = nullptr;
     }
-
+	Ex_MemFree((LPVOID)pObj->pstrTips_);
+	Ex_MemFree((LPVOID)pObj->pstrTitle_);
     if (fRelaseCaption)
     {
         ReleaseCapture();

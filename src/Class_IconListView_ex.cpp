@@ -224,7 +224,6 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW *cdr)
         }
         if (pItemInfo->pwzText != 0) //当前表项有文本
         {
-
             _canvas_drawtext(cdr->hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pItemInfo->pwzText, -1, Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), rcIconAndText.left, rcIconAndText.bottom - nHeightText, rcIconAndText.right, rcIconAndText.bottom);
         }
         _canvas_resetclip(cdr->hCanvas); //重置剪辑区

@@ -2752,7 +2752,6 @@ LRESULT CALLBACK OnProgressBarProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
 		size_t nRange = Ex_ObjGetLong(hObj, PROGRESSBAR_LONG_RANGE);
 		Ex_ObjSetLong(hObj, PROGRESSBAR_LONG_POS, nPos + Random(1, 20));
 		Ex_ObjInvalidateRect(hObj, 0);
-		//Ex_ObjSendMessage(hObj, WM_PAINT, 0, 0);
 		if (nRange == nPos)
 		{
 			Ex_ObjKillTimer(hObj);

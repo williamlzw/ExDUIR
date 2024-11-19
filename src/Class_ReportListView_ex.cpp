@@ -1010,19 +1010,10 @@ void _reportlistview_uninit(HEXOBJ hObj)
 	{
 		_imglist_destroy(ptr);
 	}
-	Array_Destroy((array_s*)Ex_ObjGetLong(hObj, REPORTLISTVIEW_LONG_TRINFO));
-	INT nCount = Ex_ObjSetLong(hObj, REPORTLISTVIEW_LONG_CTCS, 0);
-	LPVOID pTCs = (LPVOID)Ex_ObjSetLong(hObj, REPORTLISTVIEW_LONG_TCINFO, 0);
-	EX_REPORTLIST_COLUMNINFO* ptc = nullptr;
-	if (pTCs != 0)
-	{
-		for (INT i = 0; i < nCount; i++)
-		{
-			ptc = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTCs + i * sizeof(EX_REPORTLIST_COLUMNINFO));
-			Ex_MemFree((LPVOID)ptc->pwzText);
-		}
-		Ex_MemFree(pTCs);
-	}
+	array_s* pTRI = (array_s*)Ex_ObjGetLong(hObj, REPORTLISTVIEW_LONG_TRINFO);
+
+	_reportlistview_tc_clear(hObj);
+	Array_Destroy(pTRI);
 }
 
 void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
