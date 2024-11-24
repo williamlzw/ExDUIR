@@ -1412,7 +1412,9 @@ BOOL _reportlistview_li_getcell(HEXOBJ hObj, EX_REPORTLIST_CELLINFO* lParam, BOO
 		reportlistview_td_s* pTD = _reportlistview_td_get(hObj, nIndexTR, nIndexTC);
 		lParam->pwzText = pTD->wzText_;
 		if (fJustText)
+		{
 			return TRUE;
+		}
 		lParam->cellStyle = pTD->cellStyle_;
 		lParam->cellBkgCr = pTD->crbk_;
 		lParam->cellTextCr = pTD->crText_;

@@ -1624,7 +1624,19 @@ LRESULT CALLBACK OnReportListViewColumnClick(HEXOBJ hObj, INT nID, INT nCode, WP
 
 LRESULT CALLBACK OnReportListViewButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-	Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_DELETECOLUMN, 1, 2);
+	if (nID == 1001)
+	{
+		Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_DELETECOLUMN, 1, 2);
+	}
+	else if (nID == 1002)
+	{
+		EX_REPORTLIST_CELLINFO info{ 0 }; 
+		//传入第1行第4列
+		info.iCol = 4;
+		info.iRow = 1;
+		Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_GETCELL, 0, (size_t)&info);
+		OUTPUTW(L"文本内容", info.pwzText);
+	}
 	return 0;
 }
 
@@ -1730,8 +1742,10 @@ void test_reportlistview(HWND hWnd)
 	Ex_ObjHandleEvent(m_hReportListView, REPORTLISTVIEW_EVENT_COLUMNCLICK, OnReportListViewColumnClick);
 	Ex_ObjHandleEvent(m_hReportListView, REPORTLISTVIEW_EVENT_CHECK, OnReportListViewItemChecked);
 
-	HEXOBJ hObj_button = Ex_ObjCreate(L"button", L"删除列", -1, 20, 330, 100, 30, hExDui_reportlistview);
+	HEXOBJ hObj_button = Ex_ObjCreateEx(-1, L"button", L"删除列", -1, 20, 330, 100, 30, hExDui_reportlistview, 1001, -1, 0, 0, 0);
 	Ex_ObjHandleEvent(hObj_button, NM_CLICK, OnReportListViewButtonEvent);
+	HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"button", L"取表项信息", -1, 150, 330, 100, 30, hExDui_reportlistview, 1002, -1, 0, 0, 0);
+	Ex_ObjHandleEvent(hObj_button2, NM_CLICK, OnReportListViewButtonEvent);
 	Ex_DUIShowWindow(hExDui_reportlistview, SW_SHOWNORMAL, 0, 0, 0);
 }
 

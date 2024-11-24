@@ -1783,8 +1783,8 @@ struct EX_REPORTLIST_ITEMINFO
 // 报表单元格信息 (用户取/置数据时使用)  对应内部 结构体 reportlistview_td_s
 struct EX_REPORTLIST_CELLINFO
 {
-	UINT iRow;         //所在行[IN / OUT]
-	UINT iCol;         //所在列[IN / OUT]
+	UINT iRow;         //所在行[IN / OUT] 索引从1开始
+	UINT iCol;         //所在列[IN / OUT] 索引从1开始
 	LPCWSTR pwzText;   //项目文本
 	DWORD cellStyle;   //单元格风格
 	EXARGB cellBkgCr;   //cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR"风格时,单元格的背景色
