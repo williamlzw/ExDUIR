@@ -21,12 +21,15 @@ BOOL _brush_destroy(HEXBRUSH hBrush)
 
 EXARGB _brush_setcolor(HEXBRUSH hBrush, EXARGB argb)
 {
-    D2D1_COLOR_F newColor = {};
-    ARGB2ColorF(argb, &newColor);
-    D2D1_COLOR_F oldColor = ((ID2D1SolidColorBrush *)hBrush)->GetColor();
-    EXARGB retColor = 0;
-    ColorF2ARGB(oldColor, &retColor);
-    ((ID2D1SolidColorBrush *)hBrush)->SetColor(newColor);
+	EXARGB retColor = 0;
+	if (hBrush != 0)
+	{
+		D2D1_COLOR_F newColor = {};
+		ARGB2ColorF(argb, &newColor);
+		D2D1_COLOR_F oldColor = ((ID2D1SolidColorBrush*)hBrush)->GetColor();
+		ColorF2ARGB(oldColor, &retColor);
+		((ID2D1SolidColorBrush*)hBrush)->SetColor(newColor);
+	}
     return retColor;
 }
 
@@ -40,13 +43,13 @@ HEXBRUSH _brush_createfromimg(HEXIMAGE hImg)
         IWICBitmapSource *pBitmapSource = pImg->pBitmapSource_;
         ID2D1Bitmap *pBitmap = nullptr;
         HRESULT hr = g_Ri.pD2DDeviceContext->CreateBitmapFromWicBitmap(pBitmapSource, &pBitmap);
-        if (hr == 0)
+        if (hr == S_OK)
         {
-            D2D1_BITMAP_BRUSH_PROPERTIES pro2 = {};
-            pro2.extendModeX = D2D1_EXTEND_MODE_WRAP;
-            pro2.extendModeY = D2D1_EXTEND_MODE_WRAP;
-            pro2.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-            g_Ri.pD2DDeviceContext->CreateBitmapBrush(pBitmap, pro2, &hBrush);
+            D2D1_BITMAP_BRUSH_PROPERTIES bitmapBrushProperties = {};
+			bitmapBrushProperties.extendModeX = D2D1_EXTEND_MODE_WRAP;
+			bitmapBrushProperties.extendModeY = D2D1_EXTEND_MODE_WRAP;
+			bitmapBrushProperties.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+            g_Ri.pD2DDeviceContext->CreateBitmapBrush(pBitmap, bitmapBrushProperties, &hBrush);
         }
         pBitmap->Release();
     }
@@ -60,7 +63,7 @@ HEXBRUSH _brush_createfromcanvas2(HEXCANVAS hCanvas, DWORD alpha)
     ID2D1BitmapBrush *hBrush = nullptr;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID *)&pCanvas, &nError))
     {
-        ID2D1DeviceContext *pContext = _cv_context(pCanvas);
+        ID2D1DeviceContext *pContext = pCanvas->pContext_;
         D2D1_BITMAP_BRUSH_PROPERTIES bitmapBrushProperties = {};
         D2D1_BRUSH_PROPERTIES brushProperties = {0};
         brushProperties.opacity = (FLOAT)alpha / 255;
@@ -69,7 +72,7 @@ HEXBRUSH _brush_createfromcanvas2(HEXCANVAS hCanvas, DWORD alpha)
         bitmapBrushProperties.extendModeX = D2D1_EXTEND_MODE_WRAP;
         bitmapBrushProperties.extendModeY = D2D1_EXTEND_MODE_WRAP;
         bitmapBrushProperties.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-        pContext->CreateBitmapBrush((ID2D1Bitmap *)_cv_dx_bmp(pCanvas), bitmapBrushProperties, brushProperties, &hBrush);
+        pContext->CreateBitmapBrush(pCanvas->pBitmap_, bitmapBrushProperties, brushProperties, &hBrush);
     }
     return (HEXBRUSH)hBrush;
 }
@@ -81,12 +84,11 @@ HEXBRUSH _brush_createfromcanvas(HEXCANVAS hCanvas)
     ID2D1BitmapBrush *hBrush = nullptr;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID *)&pCanvas, &nError))
     {
-        ID2D1DeviceContext *pContext = _cv_context(pCanvas);
         D2D1_BITMAP_BRUSH_PROPERTIES bitmapBrushProperties = {};
         bitmapBrushProperties.extendModeX = D2D1_EXTEND_MODE_WRAP;
         bitmapBrushProperties.extendModeY = D2D1_EXTEND_MODE_WRAP;
         bitmapBrushProperties.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-        pContext->CreateBitmapBrush((ID2D1Bitmap *)_cv_dx_bmp(pCanvas), bitmapBrushProperties, &hBrush);
+		pCanvas->pContext_->CreateBitmapBrush(pCanvas->pBitmap_, bitmapBrushProperties, &hBrush);
     }
     return (HEXBRUSH)hBrush;
 }
@@ -120,12 +122,12 @@ HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yE
         if (gradientStopCollection)
         {
             g_Ri.pD2DDeviceContext->CreateLinearGradientBrush(&gradientProperties, NULL, gradientStopCollection, &hBrush);
-        }
-        gradientStopCollection->Release();
+			gradientStopCollection->Release();
+		}
         free(gradientStops);
         return hBrush;
     }
-    return NULL;
+    return hBrush;
 }
 
 HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, EXARGB crBegin, EXARGB crEnd)

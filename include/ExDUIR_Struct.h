@@ -53,8 +53,8 @@
 #pragma endregion resource type constant
 
 #pragma region messagebox flag constant
-// 信息框标识_显示倒计时
-#define MESSAGEBOX_FLAG_SHOWTIMEOUT 0x20000000
+// 信息框标识_不继承窗口背景
+#define MESSAGEBOX_FLAG_NOINHERITBKG 0X20000000
 // 信息框标识_居父窗口中间
 #define MESSAGEBOX_FLAG_CENTEWINDOW 0x40000000
 // 信息框标识_显示窗口图标

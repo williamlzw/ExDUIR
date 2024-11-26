@@ -28,12 +28,17 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
             if (pMsg != 0)
             {
                 SetClassLongPtrW(hWnd, GCLP_HCURSOR, (LONG_PTR)g_Li.hCursor);
-                INT style = WINDOW_STYLE_TITLE | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_MESSAGEBOX;
+				SetClassLongPtrW(hWnd, GCLP_HICONSM, (LONG_PTR)g_Li.hIconsm);
+                INT style = WINDOW_STYLE_TITLE | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_MESSAGEBOX;
 
                 if (((pMsg->dwFlags_ & MESSAGEBOX_FLAG_WINDOWICON) == MESSAGEBOX_FLAG_WINDOWICON))
                 {
                     style = style | WINDOW_STYLE_HASICON;
                 }
+				if (((pMsg->dwFlags_ & MESSAGEBOX_FLAG_NOINHERITBKG) == MESSAGEBOX_FLAG_NOINHERITBKG))
+				{
+					style = style | WINDOW_STYLE_NOINHERITBKG;
+				}
                 Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, style, (size_t)pMsg, pMsg->lpfnNotifyCallback_);
             }
         }

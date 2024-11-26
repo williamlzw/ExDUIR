@@ -92,7 +92,7 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, L
     }
     else
     {
-        if ((dwGlobalFlags & ENGINE_FLAG_DPI_ENABLE) != 0)
+        if ((dwGlobalFlags & ENGINE_FLAG_DPI_ENABLE) == ENGINE_FLAG_DPI_ENABLE)
         {
             g_Li.DpiX = g_Li.DpiX_Real;
             g_Li.DpiY = g_Li.DpiY_Real;

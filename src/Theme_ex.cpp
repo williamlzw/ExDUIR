@@ -26,7 +26,6 @@ BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLe
                     INT len = __get_int(retPtr, 5) + 4;
                     if (len > 4)
                     {
-
                         LPVOID tmp = Ex_MemAlloc(len + 2);
                         if (tmp != 0)
                         {

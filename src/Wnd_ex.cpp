@@ -1499,12 +1499,10 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s *pWnd, INT dwStyle)
 
         if (((pWnd->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) == WINDOW_STYLE_MESSAGEBOX))
         {
-
             lpTitle = pWnd->lpMsgParams_->lpCaption_;
         }
         else
         {
-
             title = _wnd_gettitle(hWnd);
             lpTitle = title.data();
         }
@@ -1576,9 +1574,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s *pWnd, INT dwStyle)
     {
         if ((dwStyle & aryBtn[i]) != 0)
         {
-
             LPVOID lpValuea = Ex_ThemeGetValuePtr(hTheme, aryAtom[i], ATOM_NORMAL);
-
             if (lpValuea != 0)
             {
 

@@ -302,7 +302,7 @@ BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT s
 /// <param name="strokeWidth">绘制的线宽</param>
 /// <param name="strokeStyle">绘制的线型</param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle, FLOAT strokeWidth, UINT strokeStyle);
+BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT numberOfEdges, FLOAT angle, FLOAT strokeWidth, UINT strokeStyle);
 
 /// <summary>
 /// 画布画矩形
@@ -447,7 +447,7 @@ BOOL _canvas_fillpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush);
 /// <param name="NumberOfEdges">边数</param>
 /// <param name="Angle">角度</param>
 /// <returns></returns>
-BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle);
+BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT numberOfEdges, FLOAT angle);
 
 /// <summary>
 /// 画布填充矩形

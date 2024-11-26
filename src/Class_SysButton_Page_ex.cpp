@@ -75,12 +75,13 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s *pObj)
 
         INT left;
         Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomState, 255);
-        if ((ps.dwStyle & WINDOW_STYLE_TITLE) != 0)
+        if ((ps.dwStyle & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE)
         {
             left = ps.rcText.left;
             if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_HASICON) == WINDOW_STYLE_HASICON))
             {
                 HICON hicon = (HICON)_wnd_geticonhandle(hWnd, FALSE);
+				
                 if (hicon != 0)
                 {
                     HEXIMAGE hImg = 0;
@@ -153,9 +154,9 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         else if (uMsg == WM_NCHITTEST)
         {
             INT ret = pObj->dwStyle_;
-            if ((ret & WINDOW_STYLE_TITLE) != 0)
+            if ((ret & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE)
             {
-                if ((ret & WINDOW_STYLE_HASICON) != 0)
+                if ((ret & WINDOW_STYLE_HASICON) == WINDOW_STYLE_HASICON)
                 {
                     ret = HTCAPTION;
                 }

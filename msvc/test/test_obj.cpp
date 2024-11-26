@@ -1391,6 +1391,7 @@ LRESULT CALLBACK OnMessageBoxProc(HWND hWnd, HEXOBJ hExDui, INT uMsg, WPARAM wPa
 		RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
 		if (ni.nCode == NM_INTDLG)
 		{
+			Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 			//改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
 			HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, ENGINE_LONG_OBJCAPTION);
 			//标题栏窗口风格就是标题栏子组件的ID
@@ -1403,13 +1404,26 @@ LRESULT CALLBACK OnMessageBoxProc(HWND hWnd, HEXOBJ hExDui, INT uMsg, WPARAM wPa
 
 void test_messagebox(HWND hWnd)
 {
-	HWND hWnd_messagebox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试消息框", 0, 0, 200, 200, 0, 0);
-	HEXDUI hExDui_messagebox = Ex_DUIBindWindowEx(hWnd_messagebox, 0, WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE, 0, 0);
-	Ex_DUISetLong(hExDui_messagebox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
+	if (Ex_MessageBox((size_t)hWnd, L"确定或者取消", L"信息框1", MB_OKCANCEL | MB_ICONQUESTION, MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_WINDOWICON) == IDOK)//用户点击按钮才会关闭,继承父窗口背景
+	{
+		OUTPUTW(L"按下确定按钮");
+	}
+
+	if (Ex_MessageBox((size_t)hWnd, L"重试或者取消", L"信息框2", MB_RETRYCANCEL | MB_ICONQUESTION, MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_WINDOWICON) == IDRETRY)//用户点击按钮才会关闭,继承父窗口背景
+	{
+		OUTPUTW(L"按下重试按钮");
+	}
+
+	if (Ex_MessageBox((size_t)hWnd, L"是或者否或者取消", L"信息框3", MB_YESNOCANCEL | MB_ICONQUESTION, MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_WINDOWICON) == IDCANCEL)//用户点击按钮才会关闭,继承父窗口背景
+	{
+		OUTPUTW(L"按下取消按钮");
+	}
+
 	BOOL check = TRUE;
-	//Ex_MessageBox(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, MESSAGEBOX_FLAG_CENTEWINDOW);
-	Ex_MessageBoxEx(hExDui_messagebox, L"内容", L"标题", MB_YESNO | MB_ICONQUESTION, NULL, &check, 1000, MESSAGEBOX_FLAG_CENTEWINDOW, OnMessageBoxProc);//可以修改信息框标题颜色等等
-	Ex_DUIShowWindow(hExDui_messagebox, SW_SHOWNORMAL, 0, 0, 0);
+	if (Ex_MessageBoxEx((size_t)hWnd, L"是或者否", L"信息框4", MB_YESNO | MB_ICONQUESTION, NULL, &check, 10000, MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_NOINHERITBKG | MESSAGEBOX_FLAG_WINDOWICON, OnMessageBoxProc) == IDYES)//不继承父窗口背景,超时自动关闭，可以修改信息框标题颜色等等
+	{
+		OUTPUTW(L"按下是按钮");
+	}
 }
 
 LRESULT CALLBACK OnColorButtonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)

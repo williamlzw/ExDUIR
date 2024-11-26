@@ -8,7 +8,7 @@ protected:
 	ID2D1DeviceContext* m_pRenderTarget = nullptr;
 	ID2D1Brush* m_pTextBodyBrush = nullptr;
 	ID2D1Brush* m_pTextOutlineBrush = nullptr;
-	float mStrokeWidth = NULL;
+	float m_fStrokeWidth = NULL;
 
 public:
 	CustomTextRenderer(ID2D1DeviceContext* pRenderTarget,
@@ -18,7 +18,7 @@ public:
 		m_pRenderTarget = pRenderTarget;
 		m_pTextBodyBrush = pTextBodyBrush;
 		m_pTextOutlineBrush = pTextOutlineBrush;
-		mStrokeWidth = strokeWidth;
+		m_fStrokeWidth = strokeWidth;
 	};
 
 	~CustomTextRenderer()
@@ -67,7 +67,7 @@ public:
 				{
 					// 绘制文字描边部分
 					if (m_pTextOutlineBrush)
-						m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, mStrokeWidth);
+						m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, m_fStrokeWidth);
 					// 绘制文字填充部分
 					if (m_pTextBodyBrush)
 						m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
@@ -115,7 +115,7 @@ public:
 			{
 				// 绘制文字下划线描边部分
 				if (m_pTextOutlineBrush)
-					m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, mStrokeWidth);
+					m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, m_fStrokeWidth);
 				// 绘制文字下划线填充部分
 				if (m_pTextBodyBrush)
 					m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
@@ -162,7 +162,7 @@ public:
 			{
 				// 绘制文字删除线描边部分
 				if (m_pTextOutlineBrush)
-					m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, mStrokeWidth);
+					m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush, m_fStrokeWidth);
 				// 绘制文字删除线填充部分
 				if (m_pTextBodyBrush)
 					m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
@@ -271,8 +271,8 @@ BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrTex
 						((IDWriteTextLayout*)pLayout)->Draw(nullptr, m_pTextRenderer, left, top);
 						delete m_pTextRenderer;
 						nError = 0;
+						((IDWriteTextLayout*)pLayout)->Release();
 					}
-					((IDWriteTextLayout*)pLayout)->Release();
 				}
 			}
 		}
@@ -287,7 +287,7 @@ BOOL _canvas_destroy(HEXCANVAS hCanvas)
 	canvas_s* pCanvas = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1Bitmap* bmp = _cv_dx_bmp(pCanvas);
+		ID2D1Bitmap* bmp = pCanvas->pBitmap_;
 		if (bmp)
 		{
 			bmp->Release();
@@ -437,22 +437,6 @@ void _canvas_uninit()
 	}
 }
 
-ID2D1Bitmap* _cv_dx_bmp(canvas_s* pCanvas)
-{
-
-	return pCanvas->pBitmap_;
-}
-
-ID2D1DeviceContext* _cv_context(canvas_s* pCanvas)
-{
-	return pCanvas->pContext_;
-}
-
-ID2D1GdiInteropRenderTarget* _cv_dx_gdiinterop(canvas_s* pCanvas)
-{
-	return pCanvas->pGdiInterop_;
-}
-
 LPVOID _canvas_getcontext(HEXCANVAS hCanvas, INT nType)
 {
 	canvas_s* pCanvas = nullptr;
@@ -462,15 +446,15 @@ LPVOID _canvas_getcontext(HEXCANVAS hCanvas, INT nType)
 	{
 		if (nType == CANVAS_DX_D2DCONTEXT)
 		{
-			ret = _cv_context(pCanvas);
+			ret = pCanvas->pContext_;
 		}
 		else if (nType == CANVAS_DX_D2DBITMAP)
 		{
-			ret = _cv_dx_bmp(pCanvas);
+			ret = pCanvas->pBitmap_;
 		}
 		else if (nType == CANVAS_DX_GDIRENDERTARGET)
 		{
-			ret = _cv_dx_gdiinterop(pCanvas);
+			ret = pCanvas->pGdiInterop_;
 		}
 	}
 	Ex_SetLastError(nError);
@@ -493,7 +477,7 @@ BOOL _canvas_begindraw(HEXCANVAS hCanvas)
 		}
 
 		InterlockedExchangeAdd((long*)&(pWnd->dx_counts_), 1);
-		auto target = _cv_dx_bmp(pCanvas);
+		auto target = pCanvas->pBitmap_;
 		if (target)
 		{
 			_dx_settarget(pContext, target);
@@ -528,7 +512,7 @@ BOOL _canvas_clear(HEXCANVAS hCanvas, EXARGB Color)
 	INT nError = -1;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1DeviceContext* context = _cv_context(pCanvas);
+		ID2D1DeviceContext* context = pCanvas->pContext_;
 		if (context)
 		{
 			_dx_clear(context, Color);
@@ -552,7 +536,7 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 			Ex_Scale(strokeWidth) / 2,
 			(D2D1_DASH_STYLE)strokeStyle, 0);
 
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		D2D1_POINT_2F point1 = { X1 + 0.5f, Y1 + 0.5f };
 		D2D1_POINT_2F point2 = { X2 + 0.5f, Y2 + 0.5f };
 		pContext->DrawLine(point1, point2, (ID2D1Brush*)hBrush, Ex_Scale(strokeWidth), stroke);
@@ -575,7 +559,7 @@ BOOL _canvas_drawrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top,
 			D2D1_LINE_JOIN_MITER,
 			Ex_Scale(strokeWidth) / 2,
 			(D2D1_DASH_STYLE)strokeStyle, 0);
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		D2D1_RECT_F rect = { left + 0.5f, top + 0.5f, right - 0.5f, bottom - 0.5f };
 		pContext->DrawRectangle(rect, (ID2D1Brush*)hBrush, Ex_Scale(strokeWidth), stroke);
 		_strokestyle_destroy(stroke);
@@ -590,7 +574,7 @@ BOOL _canvas_fillrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top,
 	INT nError = -1;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		D2D1_RECT_F rect = { left + 0.5f, top + 0.5f, right - 0.5f, bottom - 0.5f };
 		pContext->FillRectangle(rect, (ID2D1Brush*)hBrush);
 	}
@@ -611,7 +595,7 @@ BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 			D2D1_LINE_JOIN_MITER,
 			Ex_Scale(strokeWidth) / 2,
 			(D2D1_DASH_STYLE)strokeStyle, 0);
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		D2D1_ROUNDED_RECT rect = {};
 		rect.rect = { left + 0.5f, top + 0.5f, right - 0.5f, bottom - 0.5f };
 		rect.radiusX = radiusX;
@@ -629,7 +613,7 @@ BOOL _canvas_fillroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 	INT nError = -1;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		D2D1_ROUNDED_RECT rect = {};
 		rect.rect = { left + 0.5f, top + 0.5f, right - 0.5f, bottom - 0.5f };
 
@@ -657,7 +641,7 @@ BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT s
 				D2D1_LINE_JOIN_BEVEL,
 				1.0,
 				(D2D1_DASH_STYLE)strokeStyle, 0);
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			ID2D1DeviceContext* pContext = pCanvas->pContext_;
 			pContext->DrawGeometry((ID2D1Geometry*)pPath->pGeometry_, (ID2D1Brush*)hBrush, strokeWidth, stroke);
 			_strokestyle_destroy(stroke);
 		}
@@ -675,7 +659,7 @@ BOOL _canvas_fillpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush)
 	{
 		if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError))
 		{
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			ID2D1DeviceContext* pContext = pCanvas->pContext_;
 			pContext->FillGeometry((ID2D1Geometry*)pPath->pGeometry_, (ID2D1Brush*)hBrush, 0);
 		}
 	}
@@ -696,7 +680,7 @@ BOOL _canvas_drawellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, F
 			D2D1_LINE_JOIN_BEVEL,
 			1.0f,
 			(D2D1_DASH_STYLE)strokeStyle, 0);
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		D2D1_ELLIPSE ELLIPSE = {};
 		ELLIPSE.point = { x + 0.5f, y + 0.5f };
 		ELLIPSE.radiusX = radiusX;
@@ -714,7 +698,7 @@ BOOL _canvas_fillellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, F
 	INT nError = -1;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		D2D1_ELLIPSE ELLIPSE = {};
 		ELLIPSE.point = { x + 0.5f, y + 0.5f };
 		ELLIPSE.radiusX = radiusX;
@@ -731,7 +715,7 @@ BOOL _canvas_fillregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush)
 	canvas_s* pCanvas = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		pContext->FillGeometry((ID2D1Geometry*)hRgn, (ID2D1Brush*)hBrush, 0);
 	}
 	Ex_SetLastError(nError);
@@ -749,7 +733,7 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 		if (_handle_validate(hImage, HT_IMAGE, (LPVOID*)&pImage, &nError))
 		{
 			IWICBitmapSource* pBitmapSource = pImage->pBitmapSource_;
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			ID2D1DeviceContext* pContext = pCanvas->pContext_;
 			ID2D1Bitmap* pBitmap = nullptr;
 			nError = pContext->CreateBitmapFromWicBitmap(pBitmapSource, &pBitmap);
 			if (nError == 0)
@@ -845,7 +829,6 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
 			}
 			else
 			{
-
 				RtlMoveMemory(&rcfDst, lpRCFDst, sizeof(D2D1_RECT_F));
 			}
 			if (lpRcSrc == 0)
@@ -974,7 +957,7 @@ BOOL _canvas_cliprect(HEXCANVAS hCanvas, INT left, INT top, INT right, INT botto
 	{
 		if ((pCanvas->dwFlags_ & CANVAS_FLAG_CLIPED) == CANVAS_FLAG_CLIPED)
 		{
-			_dx_resetclip(_cv_context(pCanvas));
+			_dx_resetclip(pCanvas->pContext_);
 		}
 		else
 		{
@@ -984,7 +967,7 @@ BOOL _canvas_cliprect(HEXCANVAS hCanvas, INT left, INT top, INT right, INT botto
 		pCanvas->c_top_ = top;
 		pCanvas->c_right_ = right;
 		pCanvas->c_bottom_ = bottom;
-		_dx_cliprect(_cv_context(pCanvas), pCanvas->c_left_, pCanvas->c_top_, pCanvas->c_right_, pCanvas->c_bottom_);
+		_dx_cliprect(pCanvas->pContext_, pCanvas->c_left_, pCanvas->c_top_, pCanvas->c_right_, pCanvas->c_bottom_);
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -998,7 +981,7 @@ BOOL _canvas_resetclip(HEXCANVAS hCanvas)
 	{
 		if ((pCanvas->dwFlags_ & CANVAS_FLAG_CLIPED) == CANVAS_FLAG_CLIPED)
 		{
-			_dx_resetclip(_cv_context(pCanvas));
+			_dx_resetclip(pCanvas->pContext_);
 			pCanvas->dwFlags_ = pCanvas->dwFlags_ - (pCanvas->dwFlags_ & CANVAS_FLAG_CLIPED);
 		}
 	}
@@ -1012,7 +995,7 @@ BOOL _canvas_flush(HEXCANVAS hCanvas)
 	INT nError = -1;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		_dx_flush(_cv_context(pCanvas));
+		_dx_flush(pCanvas->pContext_);
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -1039,8 +1022,8 @@ BOOL _canvas_bitblt(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTo
 	{
 		if (_handle_validate(sCanvas, HT_CANVAS, (LPVOID*)&psCanvas, &nError))
 		{
-			_dx_flush(_cv_context(phCanvas));
-			_dx_bmp_copyfrom(&phCanvas->pBitmap_, _cv_dx_bmp(psCanvas), dstLeft, dstTop, srcLeft, srcTop, srcLeft + dstRight - dstLeft, srcTop + dstBottom - dstTop);
+			_dx_flush(phCanvas->pContext_);
+			_dx_bmp_copyfrom(&phCanvas->pBitmap_, psCanvas->pBitmap_, dstLeft, dstTop, srcLeft, srcTop, srcLeft + dstRight - dstLeft, srcTop + dstBottom - dstTop);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -1056,7 +1039,7 @@ BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLO
 	{
 		if (_handle_validate(sCanvas, HT_CANVAS, (LPVOID*)&psCanvas, &nError))
 		{
-			_dx_drawbitmaprectrect(_cv_context(phCanvas), _cv_dx_bmp(psCanvas), dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
+			_dx_drawbitmaprectrect(phCanvas->pContext_, psCanvas->pBitmap_, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom, alpha);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -1222,7 +1205,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
 						HEXBRUSH hBrush = _brush_create(crText);
 						if (hBrush)
 						{
-							ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+							ID2D1DeviceContext* pContext = pCanvas->pContext_;
 							D2D1_POINT_2F point = { left, top };
 							pContext->DrawTextLayout(point, pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
 							_brush_destroy(hBrush);
@@ -1262,7 +1245,7 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCW
 					IDWriteTextLayout* pLayout = nullptr;
 					if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam, right - left, bottom - top, &iWidth, &iHeight, &pLayout, &nError))
 					{
-						ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+						ID2D1DeviceContext* pContext = pCanvas->pContext_;
 						D2D1_POINT_2F point = { left, top };
 						pContext->DrawTextLayout(point, (IDWriteTextLayout*)pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
 					}
@@ -1296,7 +1279,7 @@ BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc)
 		canvas_s* pCanvas = nullptr;
 		if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 		{
-			_dx_blur(_cv_context(pCanvas), pCanvas->pBitmap_, fDeviation, lprc, &nError);
+			_dx_blur(pCanvas->pContext_, pCanvas->pBitmap_, fDeviation, lprc, &nError);
 		}
 	}
 	Ex_SetLastError(nError);
@@ -1309,7 +1292,7 @@ BOOL _canvas_rotate_hue(HEXCANVAS hCanvas, FLOAT fAngle)
 	canvas_s* pCanvas = nullptr;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		_dx_rotate_hue(_cv_context(pCanvas), pCanvas->pBitmap_, fAngle, &nError);
+		_dx_rotate_hue(pCanvas->pContext_, pCanvas->pBitmap_, fAngle, &nError);
 	}
 	Ex_SetLastError(nError);
 	return nError == 0;
@@ -1361,8 +1344,7 @@ HDC _canvas_getdc_ex(canvas_s* pCanvas, INT* nError)
 	HDC hDC = nullptr;
 	if (pWnd->dx_counts_ > 0)
 	{
-		ID2D1GdiInteropRenderTarget* pGdiInterop = _cv_dx_gdiinterop(pCanvas);
-		*nError = pGdiInterop->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hDC);
+		*nError = pCanvas->pGdiInterop_->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hDC);
 	}
 	return hDC;
 }
@@ -1385,8 +1367,7 @@ void _canvas_releasedc_ex(canvas_s* pCanvas, INT* nError)
 	wnd_s* pWnd = pCanvas->pWnd_;
 	if (pWnd->dx_counts_ > 0)
 	{
-		ID2D1GdiInteropRenderTarget* pgdiinterop = _cv_dx_gdiinterop(pCanvas);
-		*nError = pgdiinterop->ReleaseDC(0);
+		*nError = pCanvas->pGdiInterop_->ReleaseDC(0);
 	}
 }
 
@@ -1441,7 +1422,7 @@ BOOL _canvas_setantialias(HEXCANVAS hCanvas, BOOL antialias)
 		}
 		if (doChange)
 		{
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			ID2D1DeviceContext* pContext = pCanvas->pContext_;
 			if (antialias)
 			{
 				mode = D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
@@ -1492,7 +1473,7 @@ BOOL _canvas_setimageantialias(HEXCANVAS hCanvas, BOOL antialias)
 		}
 		if (doChange)
 		{
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			ID2D1DeviceContext* pContext = pCanvas->pContext_;
 			D2D1_ANTIALIAS_MODE mode;
 			D2D1_TEXT_ANTIALIAS_MODE textMode;
 			if (antialias)
@@ -1540,7 +1521,7 @@ BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, BOOL antialias)
 		}
 		if (doChange)
 		{
-			ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+			ID2D1DeviceContext* pContext = pCanvas->pContext_;
 			if (antialias)
 			{
 				mode = D2D1_TEXT_ANTIALIAS_MODE_DEFAULT;
@@ -1562,7 +1543,7 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
 	canvas_s* pCanvas = NULL;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 		if (pMatrix)
 		{
 			D2D1::Matrix3x2F mx;
@@ -1624,7 +1605,7 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
 	INT nError = -1;
 	if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
 	{
-		ID2D1DeviceContext* pContext = _cv_context(pCanvas);
+		ID2D1DeviceContext* pContext = pCanvas->pContext_;
 
 		//创建兼容渲染目标
 		ID2D1BitmapRenderTarget* bmpRenderTarget = nullptr;
@@ -1720,13 +1701,13 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
 	return nError == 0;
 }
 
-HEXPATH create_polygonpath(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle)
+HEXPATH create_polygonpath(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT numberOfEdges, FLOAT angle)
 {
 	HEXPATH p = NULL;
 	_path_create(1, &p);
 	if (p != NULL)
 	{
-		if (NumberOfEdges > 2)
+		if (numberOfEdges > 2)
 		{
 			UINT i;
 			FLOAT rx = (right - left) / 2;// x半径
@@ -1737,15 +1718,15 @@ HEXPATH create_polygonpath(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UIN
 			_path_open(p);
 
 			// 求与x正方向夹角θ
-			theta = Angle;
+			theta = angle;
 			// 求点坐标
 			pPoints.x = cos(theta * PI / 180) * rx + ptOrg.x;
 			pPoints.y = sin(theta * PI / 180) * ry + ptOrg.y;
 			_path_beginfigure2(p, pPoints.x, pPoints.y);
-			for (i = 0; i < NumberOfEdges; i++)
+			for (i = 0; i < numberOfEdges; i++)
 			{
 				// 求与x正方向夹角θ
-				theta = Angle + 360 / NumberOfEdges * i;
+				theta = angle + 360 / numberOfEdges * i;
 				// 求点坐标
 				pPoints.x = cos(theta * PI / 180) * rx + ptOrg.x;
 				pPoints.y = sin(theta * PI / 180) * ry + ptOrg.y;
@@ -1758,10 +1739,10 @@ HEXPATH create_polygonpath(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UIN
 	return p;
 }
 
-BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle, FLOAT strokeWidth, UINT strokeStyle)
+BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT numberOfEdges, FLOAT angle, FLOAT strokeWidth, UINT strokeStyle)
 {
 	BOOL ret = FALSE;
-	HEXPATH p = create_polygonpath(left, top, right, bottom, NumberOfEdges, Angle);
+	HEXPATH p = create_polygonpath(left, top, right, bottom, numberOfEdges, angle);
 	if (p)
 	{
 		_canvas_drawpath(hCanvas, p, hBrush, strokeWidth, strokeStyle);
@@ -1771,10 +1752,10 @@ BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT t
 	return ret;
 }
 
-BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT NumberOfEdges, FLOAT Angle)
+BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT numberOfEdges, FLOAT angle)
 {
 	BOOL ret = FALSE;
-	HEXPATH p = create_polygonpath(left, top, right, bottom, NumberOfEdges, Angle);
+	HEXPATH p = create_polygonpath(left, top, right, bottom, numberOfEdges, angle);
 	if (p)
 	{
 		_canvas_fillpath(hCanvas, p, hBrush);
