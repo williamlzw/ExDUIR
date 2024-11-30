@@ -7,7 +7,6 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-#include "help_ex.h"
 
 #include "ExDUIR_Func.h"
 #include "ExDUIR_Interface.h"
@@ -295,11 +294,11 @@ public:
 		_In_ ID2D1EffectContext* pEffectContext,
 		_In_ ID2D1TransformGraph* pTransformGraph
 	) {
-		std::vector<CHAR> data1;
-		Ex_ReadFile(L"res/effect.hlsl", &data1);
-		std::string buf = u2a2(data1);
 		_shader_loadfromfile(pEffectContext, L"res/effect.cso", GUID_MYSHADER);
-		/*if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
+		/*std::vector<CHAR> data1;
+		Ex_ReadFile(L"res/effect.hlsl", &data1);
+		std::string buf = Ex_U2A2(data1);
+		if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
 		{
 			return E_INVALIDARG;
 		}*/

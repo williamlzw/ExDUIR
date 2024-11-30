@@ -1,7 +1,5 @@
 #include <vector>
 #include "ExDUIRCPP.hpp"
-#include "help_ex.h"
-
 
 // {982B95F0-FFA4-4BDB-A933-2B2EE5F74B58}
 DEFINE_GUID(GUID_MYSHADER, 0x982b95f0, 0xffa4, 0x4bdb, 0xa9, 0x33, 0x2b, 0x2e, 0xe5, 0xf7, 0x4b, 0x58);
@@ -77,11 +75,11 @@ public:
 		_In_ ID2D1EffectContext* pEffectContext,
 		_In_ ID2D1TransformGraph* pTransformGraph
 	) {
-		std::vector<CHAR> data1;
-		Ex_ReadFile(L"../test/res/effect.hlsl", &data1);
-		std::string buf = u2a2(data1);
 		_shader_loadfromfile(pEffectContext, L"../test/res/effect.cso", GUID_MYSHADER);
-		/*if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
+		/*std::vector<CHAR> data1;
+		Ex_ReadFile(L"../test/res/effect.hlsl", &data1);
+		std::string buf = Ex_U2A2(data1);
+		if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
 		{
 			return E_INVALIDARG;
 		}*/
@@ -169,7 +167,7 @@ public:
 			std::wstring pProperityXml;
 			std::vector<CHAR> data1;
 			Ex_ReadFile(L"../test/res/effect.xml", &data1);
-			pProperityXml = u2w2(data1);
+			pProperityXml = Ex_U2W2(data1);
 
 			EX_EFFECT_PROPERITY_INFO bindings[] =
 			{

@@ -1792,7 +1792,7 @@ BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, F
 }
 
 BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom) {
-	std::string name = w2u(svgName);
+	std::string name = Ex_W2U(svgName);
 	NSVGimage* image = nsvgParseFromFile(name.data(), "px", 96);
 	if (image)
 	{

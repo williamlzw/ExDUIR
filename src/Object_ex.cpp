@@ -4838,7 +4838,7 @@ INT Ex_ObjGetDropString(HEXOBJ hObj, LPVOID pDataObject, LPWSTR lpwzBuffer, INT 
                 {
                     std::string str = (LPCSTR)lpMem;
                     std::wstring retwStr;
-                    retwStr = a2w(str);
+                    retwStr = Ex_A2W(str);
                     lstrcpynW(lpwzBuffer, (LPCWSTR)retwStr.data(), cchMaxLength);
                 }
             }

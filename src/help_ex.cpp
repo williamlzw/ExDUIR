@@ -429,7 +429,7 @@ LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT* nOffset)
 	return ret;
 }
 
-std::wstring a2w(const std::string& str) {
+std::wstring Ex_A2W(const std::string& str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -442,7 +442,7 @@ std::wstring a2w(const std::string& str) {
 	return std::wstring(result.data(), result.size());
 }
 
-std::string w2a(const std::wstring& wstr) {
+std::string Ex_W2A(const std::wstring& wstr) {
 	if (wstr.empty()) {
 		return "";
 	}
@@ -455,7 +455,7 @@ std::string w2a(const std::wstring& wstr) {
 	return std::string(result.data(), result.size());
 }
 
-std::wstring a2w2(std::vector<UCHAR> str) {
+std::wstring Ex_A2W2(std::vector<UCHAR> str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -468,21 +468,21 @@ std::wstring a2w2(std::vector<UCHAR> str) {
 	return std::wstring(result.data(), result.size());
 }
 
-std::string a2u(const std::string& str) {
-	return w2u(a2w(str));
+std::string Ex_A2U(const std::string& str) {
+	return Ex_W2U(Ex_A2W(str));
 }
 
-std::string u2a(const std::string& str)
+std::string Ex_U2A(const std::string& str)
 {
-	return w2a(u2w(str));
+	return Ex_W2A(Ex_U2W(str));
 }
 
-std::string u2a2(std::vector<CHAR> str)
+std::string Ex_U2A2(std::vector<CHAR> str)
 {
-	return w2a(u2w2(str));
+	return Ex_W2A(Ex_U2W2(str));
 }
 
-std::string w2u(const std::wstring& wstr) {
+std::string Ex_W2U(const std::wstring& wstr) {
 	if (wstr.empty()) {
 		return "";
 	}
@@ -495,7 +495,7 @@ std::string w2u(const std::wstring& wstr) {
 	return std::string(result.data(), result.size());
 }
 
-std::vector<UCHAR> w2u2(const std::wstring& wstr) {
+std::vector<UCHAR> Ex_W2U2(const std::wstring& wstr) {
 	std::vector<UCHAR> ret;
 	if (wstr.empty()) {
 		return ret;
@@ -509,7 +509,7 @@ std::vector<UCHAR> w2u2(const std::wstring& wstr) {
 	return ret;
 }
 
-std::wstring u2w(const std::string& str) {
+std::wstring Ex_U2W(const std::string& str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -522,7 +522,7 @@ std::wstring u2w(const std::string& str) {
 	return std::wstring(result.data(), result.size());
 }
 
-std::wstring u2w2(std::vector<UCHAR> str) {
+std::wstring Ex_U2W2(std::vector<UCHAR> str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -535,7 +535,7 @@ std::wstring u2w2(std::vector<UCHAR> str) {
 	return std::wstring(result.data(), result.size());
 }
 
-std::wstring u2w2(std::vector<CHAR> str) {
+std::wstring Ex_U2W2(std::vector<CHAR> str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -1012,7 +1012,7 @@ int HexToInt(char c)
 
 std::wstring UrlDecode(const std::wstring& url, BOOL utf8)
 {
-	std::vector<UCHAR> data = w2u2(url);
+	std::vector<UCHAR> data = Ex_W2U2(url);
 	auto dataLen = data.size();
 	DWORD pos = 0;
 	DWORD retLen = 0;
@@ -1035,9 +1035,9 @@ std::wstring UrlDecode(const std::wstring& url, BOOL utf8)
 
 	if (utf8)
 	{
-		return u2w2(retData);
+		return Ex_U2W2(retData);
 	}
-	return a2w2(retData);
+	return Ex_A2W2(retData);
 }
 
 
@@ -1054,7 +1054,7 @@ std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, I
 
 	std::wstring text(url);
 	std::string utext;
-	utext = w2u(text);
+	utext = Ex_W2U(text);
 	size_t len = utext.length();
 	std::string decoded = "";
 
@@ -1102,7 +1102,7 @@ std::string UrlEncode(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, I
 
 std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric, BOOL utf8, INT mode)
 {
-	return u2w(UrlEncode(url, notEncodeAlphanumeric, utf8, mode));
+	return Ex_U2W(UrlEncode(url, notEncodeAlphanumeric, utf8, mode));
 }
 
 HRESULT IsEffectRegistered(ID2D1Factory1* d2dFactory, const CLSID& effectID, bool& result) {

@@ -1289,7 +1289,7 @@ BOOL _img_createfromsvg(EXARGB color, NSVGimage* image, HEXIMAGE* phImg)
 BOOL _img_createfromsvgfile(LPCWSTR lpwzFilename, EXARGB color, HEXIMAGE* phImg)
 {
 	BOOL ret = FALSE;
-	std::string name = w2u(lpwzFilename);
+	std::string name = Ex_W2U(lpwzFilename);
 	NSVGimage* image = nsvgParseFromFile(name.data(), "px", 96);
 	if (image)
 	{

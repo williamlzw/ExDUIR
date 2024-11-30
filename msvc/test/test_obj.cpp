@@ -4122,7 +4122,7 @@ LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		std::wstring pProperityXml;
 		std::vector<CHAR> data1;
 		Ex_ReadFile(L"res/effect.xml", &data1);
-		pProperityXml = u2w2(data1);
+		pProperityXml = Ex_U2W2(data1);
 
 		EX_EFFECT_PROPERITY_INFO bindings[] =
 		{

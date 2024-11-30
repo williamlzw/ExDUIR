@@ -1699,6 +1699,76 @@ BOOL _shader_load(LPVOID pEffectContext, LPCSTR pHlsl, int pHlslLen, const GUID&
 BOOL _shader_loadfromfile(LPVOID pEffectContext, LPCWSTR csoFileNameInOut, const GUID& shaderID);
 
 /// <summary>
+/// ansi to unicode
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::wstring Ex_A2W(const std::string& str);
+
+/// <summary>
+/// ansi to unicode
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::wstring Ex_A2W2(std::vector<UCHAR> str);
+
+/// <summary>
+/// ansi to utf8
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::string Ex_A2U(const std::string& str);
+
+/// <summary>
+/// utf8 to ansi
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::string Ex_U2A(const std::string& str);
+
+/// <summary>
+/// utf to ansi
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::string Ex_U2A2(std::vector<CHAR> str);
+
+/// <summary>
+/// unicode to utf8
+/// </summary>
+/// <param name="wstr"></param>
+/// <returns></returns>
+std::string Ex_W2U(const std::wstring& wstr);
+
+/// <summary>
+/// unicode to utf8
+/// </summary>
+/// <param name="wstr"></param>
+/// <returns></returns>
+std::vector<UCHAR> Ex_W2U2(const std::wstring& wstr);
+
+/// <summary>
+/// utf8 to unicode
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::wstring Ex_U2W(const std::string& str);
+
+/// <summary>
+/// utf8 to unicode
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::wstring Ex_U2W2(std::vector<UCHAR> str);
+
+/// <summary>
+/// utf8 to unicode
+/// </summary>
+/// <param name="str"></param>
+/// <returns></returns>
+std::wstring Ex_U2W2(std::vector<CHAR> str);
+
+/// <summary>
 /// 申请内存
 /// </summary>
 /// <param name="dwSize"></param>

@@ -99,7 +99,7 @@ BOOL _theme_fillclasses(EX_HASHTABLE *pTableFiles, EX_HASHTABLE *pTableClass, st
     if (HashTable_Get(pTableFiles, atomINI, &lpFile))
     {
         std::string utf8Str((char*)(lpFile + 4), __get_int((LPVOID)lpFile, 0));
-        std::wstring unicodeStr = u2w(utf8Str);
+        std::wstring unicodeStr = Ex_U2W(utf8Str);
         transform(unicodeStr.begin(), unicodeStr.end(), unicodeStr.begin(), ::tolower);
         aryAtomKey.resize(32);
         arylpValue.resize(32);

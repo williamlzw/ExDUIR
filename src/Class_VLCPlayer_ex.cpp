@@ -332,10 +332,10 @@ void VLCPlayer::SetFileName(const WCHAR* pwszFileName, int type)
 	libvlc_media_t* m;
 	if (type == 0)
 	{
-		m = libvlc_media_new_path(m_libVlc, w2u(pwszFileName).c_str());
+		m = libvlc_media_new_path(m_libVlc, Ex_W2U(pwszFileName).c_str());
 	}
 	else {
-		m = libvlc_media_new_location(m_libVlc, w2u(pwszFileName).c_str());
+		m = libvlc_media_new_location(m_libVlc, Ex_W2U(pwszFileName).c_str());
 	}
 	
 	m_mediaPlayer = libvlc_media_player_new_from_media(m);

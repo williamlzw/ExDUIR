@@ -482,16 +482,8 @@ INT GetNearestPrime(INT value);
 void RC4(LPVOID dest, size_t dstlen, const LPVOID pwd, size_t pwdlen);
 UINT Crc32_Addr(LPVOID buf, UINT nLength);
 LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT *nOffset);
-std::wstring a2w(const std::string& str);
-std::wstring a2w2(std::vector<UCHAR> str);
-std::string a2u(const std::string& str);
-std::string u2a(const std::string& str);
-std::string u2a2(std::vector<CHAR> str);
-std::string w2u(const std::wstring& wstr);
-std::vector<UCHAR> w2u2(const std::wstring& wstr);
-std::wstring u2w(const std::string& str);
-std::wstring u2w2(std::vector<UCHAR> str);
-std::wstring u2w2(std::vector<CHAR> str);
+
+
 std::wstring WStringFormat(const wchar_t* fmt, ...);
 
 const TCHAR Chjrmc[][4] = { L"", L"元旦", L"情人",L"妇女",L"植树",L"愚人",L"劳动",L"青年",L"护士",L"儿童",L"建党",L"建军",L"教师",L"国庆",L"平安",L"圣诞",
