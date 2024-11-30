@@ -9,12 +9,24 @@ namespace ExDUIR
 		{
 		public:
 			ExApp() = default;
-			ExApp(std::vector<CHAR> theme, DWORD dwGlobalFlags = 0, HCURSOR hDefaultCursor = NULL)
+			ExApp(std::vector<CHAR> themeData, DWORD dwGlobalFlags = 0, HCURSOR hDefaultCursor = NULL)
 			{
-				if (!Ex_Init(GetModuleHandleW(NULL), dwGlobalFlags, hDefaultCursor, 0, theme.data(), theme.size(), 0, 0))
+				if (!Ex_Init(GetModuleHandleW(NULL), dwGlobalFlags, hDefaultCursor, 0, themeData.data(), themeData.size(), 0, 0))
 				{
 					Ex_MessageBox(0, L"engine init failed", L"engine init failed", MB_ICONWARNING, MESSAGEBOX_FLAG_CENTEWINDOW);
 				}
+			}
+
+			ExApp(std::vector<CHAR> themeData, DWORD dwGlobalFlags = 0, std::wstring cursorFilePath = L"")
+			{
+				HCURSOR hCursor = NULL;
+				if (cursorFilePath != L"")
+				{
+					std::vector<CHAR> data;
+					Ex_ReadFile(cursorFilePath.c_str(), &data);
+					hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
+				}
+				ExApp(themeData, dwGlobalFlags, hCursor);
 			}
 
 			ExApp(std::wstring themeFilePath, DWORD dwGlobalFlags = 0, std::wstring cursorFilePath = L"")

@@ -3418,7 +3418,7 @@ void _obj_setradius(HEXOBJ hObj, obj_s *pObj, FLOAT topleft, FLOAT topright, FLO
         pObj->radius_bottomright_ = bottomright;
         pObj->radius_bottomleft_ = bottomleft;
         pObj->dwFlags_ |= (EOF_BPATH | EOF_BPATHBYROUNDEDRECT);
-        INT flags = SWP_NOZORDER | SWP_NOCOPYBITS | SWP_NOSENDCHANGING | SWP_ASYNCWINDOWPOS | SWP_EX_UPDATEPATH;
+        INT flags = SWP_NOZORDER | SWP_NOCOPYBITS | SWP_NOSENDCHANGING | SWP_ASYNCWINDOWPOS;
         if (fUpdate)
         {
             flags |= SWP_EX_UPDATEOBJECT;

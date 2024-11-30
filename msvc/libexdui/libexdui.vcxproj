@@ -150,7 +150,6 @@
     <ClInclude Include="..\..\include\Layout_ex.h" />
     <ClInclude Include="..\..\include\LunarData.h" />
     <ClInclude Include="..\..\include\Matrix_ex.h" />
-    <ClInclude Include="..\..\include\mb.h" />
     <ClInclude Include="..\..\include\MemPool_ex.h" />
     <ClInclude Include="..\..\include\nanosvg.h" />
     <ClInclude Include="..\..\include\nanosvgrast.h" />

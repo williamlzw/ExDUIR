@@ -214,9 +214,6 @@
       <Project>{f8c5c742-d8e0-414e-a6b6-e6ff95482e37}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Res.exr" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

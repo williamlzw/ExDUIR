@@ -410,9 +410,6 @@
     <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\mb.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\nanosvg.h">
       <Filter>头文件</Filter>
     </ClInclude>

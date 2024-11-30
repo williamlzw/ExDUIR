@@ -69,7 +69,11 @@ public:
 	void CreateMainWindow()
 	{
 		DWORD dwGlobalFlags = ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL;
-		m_theApp = ExApp(L"../test/res/Default.ext", dwGlobalFlags, L"../test/res/cursor.cur");
+		std::vector<CHAR> data;
+		data.resize(Default_ext_size);
+		RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
+		//m_theApp = ExApp(L"../test/res/Default.ext", dwGlobalFlags, L"../test/res/cursor.cur");
+		m_theApp = ExApp(data, dwGlobalFlags, L"../test/res/cursor.cur");
 
 		DWORD dwStyleDUI = WINDOW_STYLE_MAINWINDOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_BUTTON_MAX |
 			WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW;

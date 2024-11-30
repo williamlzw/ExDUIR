@@ -791,7 +791,6 @@
 #define IDR_MENU1                       101
 #define VK_NUMPAD6                      0x66
 #define IDI_ICON2                       102
-#define IDR_BIN1                        102
 #define IDD_PROPPAGE_SMALL              102
 #define VK_NUMPAD7                      0x67
 #define LANG_FULAH                      0x67
@@ -1341,10 +1340,10 @@
 #define ctl1                            0x04A0
 #define ctlLast                         0x04ff
 #define WINVER                          0x0500
-#define _WIN32_WINNT                    0x0602
 #define _WIN32_IE                       0x0501
 #define FILEOPENORD                     1536
 #define MULTIFILEOPENORD                1537
+#define _WIN32_WINNT                    0x0602
 #define PRINTDLGORD                     1538
 #define PRNSETUPDLGORD                  1539
 #define FINDDLGORD                      1540
