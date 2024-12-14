@@ -84,7 +84,7 @@ void test_exdui()
     {
         HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0, WINDOW_STYLE_MAINWINDOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | 
 			WINDOW_STYLE_BUTTON_MAX | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE | 
-			WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON , 0, 0);
+			WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON, 0, 0);
         //改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
         HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, ENGINE_LONG_OBJCAPTION);
         //标题栏窗口风格就是标题栏子组件的ID
@@ -96,7 +96,8 @@ void test_exdui()
         Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
-
+		//设置不抗锯齿的圆角，需要抗锯齿方案就重画窗口背景参照异形窗口例子
+		Ex_DUISetLong(hExDui, ENGINE_LONG_RADIUS, 50);
         std::vector<HEXOBJ> buttons;
 		const int buttonWidth = 100;
 		const int buttonHeight = 30;

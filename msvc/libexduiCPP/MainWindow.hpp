@@ -83,6 +83,8 @@ public:
 		m_skin.SetBackgroundColor(ExARGB(120, 120, 120, 255));
 
 		m_skin.SetBackgroundImageFromFile(L"../test/res/bkg.png");
+		//设置不抗锯齿的圆角，需要抗锯齿方案就重画窗口背景参照异形窗口例子
+		m_skin.SetRadius(50);
 		const int buttonWidth = 100;
 		const int buttonHeight = 30;
 		const int column1X = 10;

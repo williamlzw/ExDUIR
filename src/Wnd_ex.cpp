@@ -351,6 +351,15 @@ void _wnd_recalcclient(wnd_s *pWnd, HWND hWnd, INT width, INT height)
         _rgn_destroy(hRgnNC);
         pWnd->hrgn_sizebox_ = hRgnSizebox;
     }
+	//20241214修改圆角
+	auto rectround = pWnd->Radius_;
+
+	if (rectround != 0)
+	{
+		auto hRgn = CreateRoundRectRgn(0, 0, width, height, rectround, rectround);
+		SetWindowRgn(hWnd, hRgn, 1);
+		DeleteObject(hRgn);
+	}
 }
 
 BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
@@ -454,7 +463,14 @@ void _wnd_loadtheme(wnd_s *pWnd, HWND hWnd, HEXTHEME hTheme)
     {
         pWnd->margin_caption_ = pMARGIN;
     }
+	//20241214修改圆角 使其能够 圆角 shadow
+	void* pRADIUS = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_RADIUS);
 
+	if (pRADIUS != 0)
+	{
+		pWnd->Radius_ = __get_int(pRADIUS, 0);
+
+	}
     LPVOID pBACKGROUND_COLOR = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_BACKGROUND_COLOR);
 
     if (pBACKGROUND_COLOR != 0)
@@ -2365,12 +2381,32 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
             if (prcPadding != 0)
             {
                 RtlMoveMemory(&rcPadding, prcPadding, sizeof(RECT));
-                ptDst.x = ptDst.x - rcPadding.left;
-                ptDst.y = ptDst.y - rcPadding.top;
-                sz.cx = sz.cx + rcPadding.left + rcPadding.right;
-                sz.cy = sz.cy + rcPadding.top + rcPadding.bottom;
+                ptDst.x = ptDst.x - Ex_Scale(rcPadding.left);
+                ptDst.y = ptDst.y - Ex_Scale(rcPadding.top);
+                sz.cx = sz.cx + Ex_Scale(rcPadding.left) + Ex_Scale(rcPadding.right);
+                sz.cy = sz.cy + Ex_Scale(rcPadding.top) + Ex_Scale(rcPadding.bottom);
             }
             MoveWindow(hWnd, ptDst.x, ptDst.y, sz.cx, sz.cy, FALSE);
+			//20241214修改圆角
+			if (bUpdateRgn)
+			{
+				auto rectround = pWnd->Radius_;
+				HRGN hRgn = CreateRectRgn(0, 0, sz.cx, sz.cy);
+				HRGN hRgnClient;
+				if (rectround == 0)
+				{
+					hRgnClient = CreateRectRgn(rcPadding.left, rcPadding.top, sz.cx - rcPadding.right, sz.cy - rcPadding.bottom);
+				}
+				else {
+					hRgnClient = CreateRoundRectRgn(rcPadding.left, rcPadding.top, sz.cx - rcPadding.right, sz.cy - rcPadding.bottom, rectround, rectround);
+				}
+				HRGN hRgnNC = CreateRectRgn(0, 0, 0, 0);
+				CombineRgn(hRgnNC, hRgn, hRgnClient, 3);
+				SetWindowRgn(hWnd, hRgnNC, 1);
+				DeleteObject(hRgn);
+				DeleteObject(hRgnClient);
+				DeleteObject(hRgnNC);
+			}
             if (bUpdateRgn || bFlush)
             {
                 auto hDC = GetDC(hWnd);
@@ -2386,8 +2422,8 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
                         {
                             _canvas_setantialias(cvShadow, TRUE);
                             _canvas_setimageantialias(cvShadow, TRUE);
-                            _canvas_drawshadow(cvShadow,11,11,sz.cx-11,sz.cy-11,11,pWnd->crSD_,pWnd->Radius_,pWnd->Radius_,pWnd->Radius_,pWnd->Radius_,0,0);
-                            LPVOID mDC = _canvas_getdc(cvShadow);
+							_canvas_drawshadow(cvShadow, 11, 11, sz.cx - 12, sz.cy - 12, 11, pWnd->crSD_, pWnd->Radius_ / 2 + 3, pWnd->Radius_ / 2 + 3, pWnd->Radius_ / 2 + 3, pWnd->Radius_ / 2 + 3, 0, 0);
+							LPVOID mDC = _canvas_getdc(cvShadow);
                             if (mDC != 0)
                             {
                                 POINT ptSrc = {0};
