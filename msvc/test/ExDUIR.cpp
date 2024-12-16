@@ -96,8 +96,8 @@ void test_exdui()
         Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
-		//设置不抗锯齿的圆角，需要抗锯齿方案就重画窗口背景参照异形窗口例子
-		Ex_DUISetLong(hExDui, ENGINE_LONG_RADIUS, 50);
+		//设置圆角，另一种方案是重画窗口背景参照异形窗口例子
+		Ex_DUISetLong(hExDui, ENGINE_LONG_RADIUS, 30);
         std::vector<HEXOBJ> buttons;
 		const int buttonWidth = 100;
 		const int buttonHeight = 30;

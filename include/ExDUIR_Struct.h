@@ -137,7 +137,7 @@
 #define ENGINE_LONG_OBJCAPTION -54
 // 引擎数值_焦点组件句柄
 #define ENGINE_LONG_OBJFOCUS -53
-// 引擎数值_阴影圆角大小
+// 引擎数值_窗口圆角大小
 #define ENGINE_LONG_RADIUS -11
 #pragma endregion engine long constant
 

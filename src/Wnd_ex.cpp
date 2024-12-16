@@ -351,15 +351,15 @@ void _wnd_recalcclient(wnd_s *pWnd, HWND hWnd, INT width, INT height)
         _rgn_destroy(hRgnNC);
         pWnd->hrgn_sizebox_ = hRgnSizebox;
     }
-	//20241214修改圆角
 	auto rectround = pWnd->Radius_;
-
-	if (rectround != 0)
-	{
-		auto hRgn = CreateRoundRectRgn(0, 0, width, height, rectround, rectround);
-		SetWindowRgn(hWnd, hRgn, 1);
-		DeleteObject(hRgn);
-	}
+	
+ 	if (rectround != 0)
+ 	{
+		//外缩1px防止锯齿
+  		auto hRgn = CreateRoundRectRgn(-1, -1, width + 1, height + 1, rectround * 2 + 1, rectround * 2 + 1);
+  		SetWindowRgn(hWnd, hRgn, TRUE);
+  		DeleteObject(hRgn);
+ 	}
 }
 
 BOOL _wnd_wm_stylechanging(wnd_s *pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
@@ -557,7 +557,6 @@ void _wnd_calc_captionrect(wnd_s *pWnd, RECT *rcCaption)
 
 void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-   // KillTimer(hWnd, idEvent);
     wnd_s *pWnd = (wnd_s *)(idEvent - TIMER_BKG_INHERIT);
 
     if (!((pWnd->dwStyle_ & WINDOW_STYLE_NOINHERITBKG) == WINDOW_STYLE_NOINHERITBKG))
@@ -574,7 +573,6 @@ void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR 
                 {
                     _wnd_redraw_bkg(hWnd, pWnd, 0, TRUE, FALSE);
                     UpdateWindow(hWnd);
-                    //SetTimer(hWnd, idEvent, pDelay[lpBI->curFrame] * 10, _wnd_backgroundimage_timer_inherit);
                 }
             }
         }
@@ -597,7 +595,7 @@ size_t _wnd_dispatch_msg(HWND hWnd, wnd_s *pWnd, INT uMsg, WPARAM wParam, LPARAM
         }
         else if (wParam == EMV_PFN_PACK)
         {
-            ///////////return (size_t)(&_res_pack);
+            
         }
     }
     else if (nType >= WM_MOUSEFIRST && nType <= WM_MOUSELAST || nType >= NIN_SELECT && nType <= NIN_BALLOONUSERCLICK)
@@ -774,7 +772,8 @@ LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA *pData, INT uMsg, WPARAM wParam, LPARAM
         return 0;
     }
     else if (uMsg == WM_MOUSEACTIVATE)
-    { //防止弹出窗获取焦点
+    { 
+		//防止弹出窗获取焦点
         if (FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW))
         {
             return MA_NOACTIVATE;
@@ -2082,14 +2081,58 @@ void _wnd_render(HWND hWnd, wnd_s *pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
         if (fDX)
         {
             pContext = pWnd->dx_context_;
-            pBitmapDisplay = (ID2D1Bitmap *)_canvas_getcontext(cvDisplay, CANVAS_DX_D2DBITMAP);
-            _dx_bmp_copyfrom(&pBitmapDisplay, (ID2D1Bitmap *)_canvas_getcontext(pWnd->canvas_bkg_, CANVAS_DX_D2DBITMAP), rcPaint.left, rcPaint.top, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom);
+			if (pWnd->Radius_ == 0)
+			{
+				_dx_bmp_copyfrom(&pBitmapDisplay, (ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_, CANVAS_DX_D2DBITMAP), rcPaint.left, rcPaint.top, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom);
+				
+			}
+			else {
+				pBitmapDisplay = (ID2D1Bitmap*)_canvas_getcontext(cvDisplay, CANVAS_DX_D2DBITMAP);
+				int nError = 0;
+				canvas_s* pCanvas = nullptr;
+				if (_handle_validate(pWnd->canvas_bkg_, HT_CANVAS, (LPVOID*)&pCanvas, &nError))
+				{
+					ID2D1DeviceContext* pContext = pCanvas->pContext_;
+					pContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+					pContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
+					// 创建兼容渲染目标
+					ID2D1BitmapRenderTarget * bmpRenderTarget = nullptr;
+					pContext->CreateCompatibleRenderTarget(&bmpRenderTarget);
+					ID2D1BitmapBrush* br = nullptr;
+					HRESULT  hr = g_Ri.pD2DDeviceContext->CreateBitmapBrush((ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_, CANVAS_DX_D2DBITMAP), &br);
+					if (SUCCEEDED(hr))
+					{
+						bmpRenderTarget->BeginDraw();
+						bmpRenderTarget->Clear(0);
+						D2D1_ROUNDED_RECT rc = { 0 };
+						rc.radiusX = pWnd->Radius_;
+						rc.radiusY = pWnd->Radius_;
+						rc.rect = D2D1::RectF(0, 0, pWnd->width_, pWnd->height_);
+						bmpRenderTarget->FillRoundedRectangle(
+							rc
+							, br);
+						br->Release();
+						hr = bmpRenderTarget->EndDraw();
+					}
+					if (SUCCEEDED(hr)) {
 
+						ID2D1Bitmap* bitmap;
+						bmpRenderTarget->GetBitmap(&bitmap);
+						_dx_bmp_copyfrom(&pBitmapDisplay, bitmap, rcPaint.left, rcPaint.top, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom);
+						bitmap->Release();
+					}
+					else
+					{
+						_dx_bmp_copyfrom(&pBitmapDisplay, (ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_, CANVAS_DX_D2DBITMAP), rcPaint.left, rcPaint.top, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom);
+					}
+
+					bmpRenderTarget->Release();
+				}
+			}
             _dx_settarget(pContext, (ID2D1Bitmap *)pBitmapDisplay);
         }
         else
         {
-
             _canvas_bitblt(cvDisplay, pWnd->canvas_bkg_, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom, rcPaint.left, rcPaint.top);
         }
 
@@ -2349,7 +2392,6 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s *pWnd)
 
 void _wnd_menu_init(HWND hWnd, wnd_s *pWnd)
 {
-
     if ((pWnd->dwFlags_ & EWF_BMENUINITED) != EWF_BMENUINITED)
     {
         pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMENUINITED;
@@ -2363,7 +2405,6 @@ void _wnd_menu_init(HWND hWnd, wnd_s *pWnd)
 
 void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
 {
-
     if (!((pWnd->dwStyle_ & WINDOW_STYLE_NOSHADOW) == WINDOW_STYLE_NOSHADOW))
     {
 
@@ -2387,26 +2428,7 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
                 sz.cy = sz.cy + Ex_Scale(rcPadding.top) + Ex_Scale(rcPadding.bottom);
             }
             MoveWindow(hWnd, ptDst.x, ptDst.y, sz.cx, sz.cy, FALSE);
-			//20241214修改圆角
-			if (bUpdateRgn)
-			{
-				auto rectround = pWnd->Radius_;
-				HRGN hRgn = CreateRectRgn(0, 0, sz.cx, sz.cy);
-				HRGN hRgnClient;
-				if (rectround == 0)
-				{
-					hRgnClient = CreateRectRgn(rcPadding.left, rcPadding.top, sz.cx - rcPadding.right, sz.cy - rcPadding.bottom);
-				}
-				else {
-					hRgnClient = CreateRoundRectRgn(rcPadding.left, rcPadding.top, sz.cx - rcPadding.right, sz.cy - rcPadding.bottom, rectround, rectround);
-				}
-				HRGN hRgnNC = CreateRectRgn(0, 0, 0, 0);
-				CombineRgn(hRgnNC, hRgn, hRgnClient, 3);
-				SetWindowRgn(hWnd, hRgnNC, 1);
-				DeleteObject(hRgn);
-				DeleteObject(hRgnClient);
-				DeleteObject(hRgnNC);
-			}
+			
             if (bUpdateRgn || bFlush)
             {
                 auto hDC = GetDC(hWnd);
@@ -2422,7 +2444,7 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
                         {
                             _canvas_setantialias(cvShadow, TRUE);
                             _canvas_setimageantialias(cvShadow, TRUE);
-							_canvas_drawshadow(cvShadow, 11, 11, sz.cx - 12, sz.cy - 12, 11, pWnd->crSD_, pWnd->Radius_ / 2 + 3, pWnd->Radius_ / 2 + 3, pWnd->Radius_ / 2 + 3, pWnd->Radius_ / 2 + 3, 0, 0);
+							_canvas_drawshadow(cvShadow, 11, 11, sz.cx - 12, sz.cy - 12, 11, pWnd->crSD_, pWnd->Radius_, pWnd->Radius_, pWnd->Radius_, pWnd->Radius_, 0, 0);
 							LPVOID mDC = _canvas_getdc(cvShadow);
                             if (mDC != 0)
                             {
