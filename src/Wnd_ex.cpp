@@ -2422,10 +2422,10 @@ void _wnd_paint_shadow(wnd_s *pWnd, BOOL bUpdateRgn, BOOL bFlush)
             if (prcPadding != 0)
             {
                 RtlMoveMemory(&rcPadding, prcPadding, sizeof(RECT));
-                ptDst.x = ptDst.x - Ex_Scale(rcPadding.left);
-                ptDst.y = ptDst.y - Ex_Scale(rcPadding.top);
-                sz.cx = sz.cx + Ex_Scale(rcPadding.left) + Ex_Scale(rcPadding.right);
-                sz.cy = sz.cy + Ex_Scale(rcPadding.top) + Ex_Scale(rcPadding.bottom);
+                ptDst.x = ptDst.x - rcPadding.left;
+                ptDst.y = ptDst.y - rcPadding.top;
+                sz.cx = sz.cx + rcPadding.left + rcPadding.right;
+                sz.cy = sz.cy + rcPadding.top + rcPadding.bottom;
             }
             MoveWindow(hWnd, ptDst.x, ptDst.y, sz.cx, sz.cy, FALSE);
 			
