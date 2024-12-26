@@ -1,4 +1,4 @@
-#include "Class_TitleBar_ex.h"
+#include "stdafx.h"
 
 void _titlebar_register()
 {

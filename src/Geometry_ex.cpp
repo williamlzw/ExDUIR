@@ -1,4 +1,4 @@
-#include "Geometry_ex.h"
+#include "stdafx.h"
 
 D2DLine::D2DLine() :
 	end({ 0.0f,0.0f }),

@@ -1,4 +1,4 @@
-#include "Class_ProgressBar_ex.h"
+#include "stdafx.h"
 
 void _progressbar_register()
 {

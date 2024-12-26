@@ -1,4 +1,5 @@
-#include "help_ex.h"
+#include "stdafx.h"
+
 LOCALINFO g_Li;
 RENDERINFO g_Ri;
 
@@ -22,24 +23,33 @@ LPVOID GetProcAddr(LPCWSTR szMod, LPCSTR szApi)
 	return ret;
 }
 
-std::vector<std::wstring> WStringSplit(const std::wstring& str, const std::wstring& delim)
-{
-	std::wstring stra = str;
-	std::vector<std::wstring> tokens;
-	// Skip delimiters at beginning.
-	std::wstring::size_type lastPos = stra.find_first_not_of(delim, 0);
-	// Find first "non-delimiter".
-	std::wstring::size_type pos = stra.find_first_of(delim, lastPos);
-	while (std::wstring::npos != pos || std::wstring::npos != lastPos)
-	{
-		// Found a token, add it to the vector.
-		tokens.push_back(stra.substr(lastPos, pos - lastPos));
-		// Skip delimiters.  Note the "not_of"
-		lastPos = stra.find_first_not_of(delim, pos);
-		// Find next "non-delimiter"
-		pos = stra.find_first_of(delim, lastPos);
+void text_split(const wchar_t* pText, const wchar_t* pSplit,
+				std::vector<std::wstring>& list) {
+	if (nullptr == pText || nullptr == pSplit)
+		return;
+	if (L'\0' == *pText || L'\0' == *pSplit)
+		return;
+
+	size_t len = wcslen(pSplit);
+	const wchar_t* p = pText;
+	const wchar_t* pStart = p;
+	while (*p) {
+		p = wcsstr(p, pSplit);
+		if (p) {
+			if ((p - pStart) > 0) {
+				list.push_back(std::wstring(pStart, p - pStart));
+			}
+			// No need to add an empty string if (p - pStart) == 0
+			p += len;
+			pStart = p;
+		}
+		else {
+			if (*pStart) {
+				list.push_back(std::wstring(pStart));
+			}
+			break;
+		}
 	}
-	return tokens;
 }
 
 INT DtoHimetric(INT d, INT PerInchc)
@@ -522,7 +532,7 @@ std::wstring Ex_U2W(const std::string& str) {
 	return std::wstring(result.data(), result.size());
 }
 
-std::wstring Ex_U2W2(std::vector<UCHAR> str) {
+std::wstring Ex_U2W3(std::vector<UCHAR> str) {
 	if (str.empty()) {
 		return L"";
 	}
@@ -1035,7 +1045,7 @@ std::wstring UrlDecode(const std::wstring& url, BOOL utf8)
 
 	if (utf8)
 	{
-		return Ex_U2W2(retData);
+		return Ex_U2W3(retData);
 	}
 	return Ex_A2W2(retData);
 }

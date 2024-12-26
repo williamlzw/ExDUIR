@@ -1,4 +1,4 @@
-#include "Class_CheckBox_ex.h"
+#include "stdafx.h"
 
 ClsPROC m_pfnCheckBoxProc; /*控件基类的消息回调函数*/
 

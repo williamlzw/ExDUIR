@@ -1,4 +1,4 @@
-#include "Class_switch_ex.h"
+#include "stdafx.h"
 
 void _switch_register()
 {
@@ -178,8 +178,8 @@ void _switch_paint(HEXOBJ hObj)
             title = L"是|否";
         }
 
-        std::vector<std::wstring> tokens = WStringSplit(title, L"|");
-
+        std::vector<std::wstring> tokens;
+		text_split(title.data(), L"|", tokens);
         if ((FLOAT)nProgress / 100 * 255)
         {
             std::wstring str = tokens[0];

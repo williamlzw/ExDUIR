@@ -1,4 +1,4 @@
-#include "Array_ex.h"
+#include "stdafx.h"
 
 LPVOID Array_MoveMember(LPVOID pData, INT nCount, INT nSize, INT nNewCount)
 {

@@ -1,4 +1,4 @@
-#include "Brush_ex.h"
+#include "stdafx.h"
 
 HEXBRUSH _brush_create(EXARGB argb)
 {

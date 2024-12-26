@@ -1,4 +1,4 @@
-#include "Class_Scrollbar_ex.h"
+#include "stdafx.h"
 
 void _scrollbar_register()
 {

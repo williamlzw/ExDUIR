@@ -1,4 +1,4 @@
-#include "Class_ColorPicker_ex.h"
+#include "stdafx.h"
 
 void _color_picker_register()
 {

@@ -1,4 +1,4 @@
-#include "Class_ButtonEx_ex.h"
+#include "stdafx.h"
 
 void _buttonex_register()
 {

@@ -1,4 +1,4 @@
-#include "Class_MosaicLoading_ex.h"
+#include "stdafx.h"
 
 void _mosaic_loading_register()
 {

@@ -1,4 +1,4 @@
-#include "Global_ex.h"
+#include "stdafx.h"
 
 void Ex_SetLastError(INT nError)
 {

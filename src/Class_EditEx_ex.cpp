@@ -1,4 +1,4 @@
-#include "Class_EditEx_ex.h"
+#include "stdafx.h"
 
 ClsPROC m_pfnEditExProc; /*控件基类的消息回调函数*/
 

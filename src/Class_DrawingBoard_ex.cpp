@@ -1,4 +1,4 @@
-#include "Class_DrawingBoard_ex.h"
+#include "stdafx.h"
 
 void _drawingboard_register()
 {

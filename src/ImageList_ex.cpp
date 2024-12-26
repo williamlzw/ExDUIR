@@ -1,4 +1,4 @@
-#include "ImageList_ex.h"
+#include "stdafx.h"
 
 BOOL _imglist_del(HEXIMAGELIST hImageList, size_t nIndex)
 {

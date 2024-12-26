@@ -1,4 +1,4 @@
-#include "Format_ex.h"
+#include "stdafx.h"
 
 EXATOM _fmt_getatom(LPVOID lpValue, LPVOID *lpValueOffset)
 {

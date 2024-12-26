@@ -1,4 +1,4 @@
-#include "DropTarget_ex.h"
+#include "stdafx.h"
 
 HRESULT DropTarget::QueryInterface(
     /* [in] */ REFIID riid,

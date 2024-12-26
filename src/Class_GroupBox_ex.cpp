@@ -1,4 +1,4 @@
-#include "Class_GroupBox_ex.h"
+#include "stdafx.h"
 
 void _groupbox_regsiter()
 {

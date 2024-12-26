@@ -1,4 +1,4 @@
-#include "Class_Win10Loading_ex.h"
+#include "stdafx.h"
 
 void _win10_loading_register()
 {

@@ -1,4 +1,4 @@
-#include "Font_ex.h"
+#include "stdafx.h"
 
 void CALLBACK pfnDefaultFreeFont(LPVOID dwData)
 {

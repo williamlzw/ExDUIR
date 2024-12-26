@@ -1,4 +1,4 @@
-#include "Class_Carousel_ex.h"
+#include "stdafx.h"
 
 void _carousel_paint(HEXOBJ hObj)
 {

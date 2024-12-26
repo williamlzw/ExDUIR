@@ -1,4 +1,4 @@
-#include "Class_PropertyGrid_ex.h"
+#include "stdafx.h"
 
 void _propertygrid_register()
 {

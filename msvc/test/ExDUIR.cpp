@@ -90,6 +90,8 @@ void test_exdui()
         //标题栏窗口风格就是标题栏子组件的ID
         HEXOBJ hObjTitle = Ex_ObjGetFromID(hObjCaption, WINDOW_STYLE_TITLE);
         Ex_ObjSetColor(hObjTitle, COLOR_EX_TEXT_NORMAL, ExARGB(120, 230, 21, 255), TRUE);
+		// 设置标题栏文本居中，单行显示，不自动换行
+		Ex_ObjSetTextFormat(hObjTitle, DT_VCENTER | DT_CENTER | DT_SINGLELINE, TRUE);
         //改变阴影颜色
         Ex_DUISetLong(hExDui, ENGINE_LONG_CRSD, ExARGB(0, 0, 0, 240));
         std::vector<CHAR> imgdata;
@@ -107,10 +109,10 @@ void test_exdui()
 		const int column4X = 340;
 		const int rowYOffset = 40;
 		std::vector<std::pair<int, std::wstring>> buttonData = {
-			{ 30, L"测试按钮开关" },
-			{ 70, L"测试标签" },
+			{ 30, L"🐸测试按钮开关" },
+			{ 70, L"🐓测试标签" },
 			{ 110, L"测试单选复选框" },
-			{ 150, L"测试编辑框" },
+			{ 150, L"🦜测试编辑框" },
 			{ 190, L"测试列表框" },
 			{ 230, L"测试菜单" },
 			{ 270, L"九宫格自定外形" },

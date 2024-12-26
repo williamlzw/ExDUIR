@@ -1,4 +1,4 @@
-#include "Class_DateBox_ex.h"
+#include "stdafx.h"
 
 void _datebox_register()
 {

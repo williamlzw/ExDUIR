@@ -1,4 +1,4 @@
-#include "Theme_ex.h"
+#include "stdafx.h"
 
 BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen, std::vector<INT> *atomFiles, std::vector<LPVOID> *lpFiles, std::vector<UCHAR> *dwFileProps)
 {

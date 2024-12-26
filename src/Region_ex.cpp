@@ -1,4 +1,4 @@
-#include "Region_ex.h"
+#include "stdafx.h"
 
 BOOL _rgn_destroy(HEXRGN hRgn)
 {

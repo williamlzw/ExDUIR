@@ -1,4 +1,4 @@
-#include "Layout_ex.h"
+#include "stdafx.h"
 
 BOOL _layout_register(INT nType, LayoutPROC lpfnLayoutProc)
 {

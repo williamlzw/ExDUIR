@@ -1,4 +1,4 @@
-#include "Class_NavButton_ex.h"
+#include "stdafx.h"
 
 void _navbtn_paint(HEXOBJ hObj)
 {

@@ -1,4 +1,4 @@
-#include "Class_ComboBox_ex.h"
+#include "stdafx.h"
 
 void _combobox_regsiter()
 {

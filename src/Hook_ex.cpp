@@ -1,4 +1,4 @@
-#include "Hook_ex.h"
+#include "stdafx.h"
 
 LRESULT CALLBACK _hook_proc(INT code, WPARAM wParam, LPARAM lParam)
 {

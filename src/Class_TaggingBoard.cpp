@@ -1,4 +1,4 @@
-#include "Class_TaggingBoard.h"
+#include "stdafx.h"
 
 void _taggingboard_register()
 {

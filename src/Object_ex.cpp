@@ -1,4 +1,4 @@
-#include "Object_ex.h"
+#include "stdafx.h"
 
 void _object_init()
 {
@@ -40,7 +40,9 @@ void _object_init()
     _propertygrid_register();
     _rollmenu_register();
 	_taggingboard_register();
+#ifdef ENABLE_VLC
 	_vlcplayer_register();
+#endif
 }
 
 

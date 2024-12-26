@@ -1,4 +1,4 @@
-#include "HashTable_ex.h"
+#include "stdafx.h"
 
 EX_HASHTABLE *HashTable_Create(size_t dwBound, HashTablePROC pfnDelete)
 {

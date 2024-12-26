@@ -1759,7 +1759,7 @@ std::wstring Ex_U2W(const std::string& str);
 /// </summary>
 /// <param name="str"></param>
 /// <returns></returns>
-std::wstring Ex_U2W2(std::vector<UCHAR> str);
+std::wstring Ex_U2W3(std::vector<UCHAR> str);
 
 /// <summary>
 /// utf8 to unicode

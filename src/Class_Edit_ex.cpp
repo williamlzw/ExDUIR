@@ -1,7 +1,4 @@
-#include "Class_Edit_ex.h"
-#include <textserv.h>
-#include <WinUser.h>
-
+#include "stdafx.h"
 
 class TextHost : public ITextHost
 {

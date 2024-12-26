@@ -1,4 +1,4 @@
-#include "Image_ex.h"
+#include "stdafx.h"
 
 BOOL _img_destroy(HEXIMAGE hImg)
 {

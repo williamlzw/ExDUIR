@@ -1,4 +1,4 @@
-#include "Easing_ex.h"
+#include "stdafx.h"
 
 void _easing_curve_free(LPVOID pCurveInfo)
 {

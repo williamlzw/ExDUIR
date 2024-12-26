@@ -1,5 +1,4 @@
-#pragma once
-#include "Class_RollMenu.h"
+#include "stdafx.h"
 
 void _rollmenu_register()
 {

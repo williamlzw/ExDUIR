@@ -1,4 +1,4 @@
-#include "DirectX_ex.h"
+#include "stdafx.h"
 
 BOOL _dx_init(INT *nError)
 {

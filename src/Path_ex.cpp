@@ -1,4 +1,4 @@
-#include "Path_ex.h"
+#include "stdafx.h"
 
 void _path_destroy_dx(path_s *pPath)
 {

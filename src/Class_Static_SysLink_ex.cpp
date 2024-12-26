@@ -1,4 +1,4 @@
-#include "Class_Static_SysLink_ex.h"
+#include "stdafx.h"
 
 void _static_register()
 {

@@ -1,4 +1,4 @@
-#include "Class_Palette_ex.h"
+#include "stdafx.h"
 
 void _palette_register()
 {

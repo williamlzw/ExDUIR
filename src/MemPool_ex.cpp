@@ -1,4 +1,4 @@
-#include "MemPool_ex.h"
+#include "stdafx.h"
 
 mempool_s *MemPool_Create(size_t nMax, size_t dwSize, size_t dwFlags)
 {

@@ -1,4 +1,4 @@
-#include "Class_RotateImageBox_ex.h"
+#include "stdafx.h"
 
 ClsPROC m_pfnStaticProc; /*控件基类的消息回调函数*/
 

@@ -1,4 +1,4 @@
-#include "Wnd_ex.h"
+#include "stdafx.h"
 
 LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam)
 {

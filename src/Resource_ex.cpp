@@ -1,4 +1,4 @@
-#include "Resource_ex.h"
+#include "stdafx.h"
 
 void _bin_uncompress(LPVOID lpData, size_t dwSize, LPVOID lpKey, size_t dwLen, LPVOID *retPtr, size_t *retLen)
 {

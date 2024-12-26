@@ -1,4 +1,6 @@
-#include "Class_VLCPlayer_ex.h"
+#include "stdafx.h"
+
+#ifdef VCL_PLAYER
 
 void _vlcplayer_register()
 {
@@ -472,3 +474,5 @@ void VLCPlayer::paintFrame(HEXOBJ hObj)
 {
 	Ex_ObjInvalidateRect(hObj, 0);
 }
+
+#endif

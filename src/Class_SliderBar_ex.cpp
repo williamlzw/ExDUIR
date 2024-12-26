@@ -1,4 +1,4 @@
-#include "Class_sliderBar_ex.h"
+#include "stdafx.h"
 
 void _sliderbar_register()
 {

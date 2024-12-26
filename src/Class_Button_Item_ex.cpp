@@ -1,4 +1,4 @@
-#include "Class_Button_Item_ex.h"
+#include "stdafx.h"
 
 void _button_regsiter()
 {

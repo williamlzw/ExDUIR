@@ -1,12 +1,15 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <sstream>
-#include <tchar.h>
-#include <ocidl.h>
 #include <Windows.h>
+#include <ocidl.h>
+#include <sstream>
+#include <string>
+#include <tchar.h>
+#include <vector>
 
-
+#pragma region 编译配置
+// 启用VLC播放引擎
+// #define ENABLE_VLC
+#pragma endregion 编译配置
 
 #pragma region engine flag constant
 // 引擎标识_启用DPI缩放

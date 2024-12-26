@@ -1,4 +1,4 @@
-#include "Class_ReportListView_ex.h"
+#include "stdafx.h"
 
 ClsPROC m_pfnListView;
 

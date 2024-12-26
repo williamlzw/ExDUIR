@@ -1,4 +1,4 @@
-#include "Canvas_ex.h"
+#include "stdafx.h"
 
 class CustomTextRenderer : public IDWriteTextRenderer
 {
@@ -1207,7 +1207,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
 						{
 							ID2D1DeviceContext* pContext = pCanvas->pContext_;
 							D2D1_POINT_2F point = { left, top };
-							pContext->DrawTextLayout(point, pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+							pContext->DrawTextLayout(point, pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP | D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
 							_brush_destroy(hBrush);
 						}
 					}
@@ -1247,7 +1247,7 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCW
 					{
 						ID2D1DeviceContext* pContext = pCanvas->pContext_;
 						D2D1_POINT_2F point = { left, top };
-						pContext->DrawTextLayout(point, (IDWriteTextLayout*)pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+						pContext->DrawTextLayout(point, (IDWriteTextLayout*)pLayout, (ID2D1Brush*)hBrush, D2D1_DRAW_TEXT_OPTIONS_CLIP | D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
 					}
 					if (pLayout)
 					{

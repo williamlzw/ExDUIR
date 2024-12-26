@@ -1,4 +1,4 @@
-#include "Effect_ex.h"
+#include "stdafx.h"
 
 BOOL _effect_register(const GUID& guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys, int properityCount, LPVOID createEffect)
 {

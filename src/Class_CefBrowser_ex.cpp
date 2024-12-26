@@ -1,4 +1,4 @@
-#include "Class_CefBrowser_ex.h"
+#include "stdafx.h"
 
 static INT M_CefInitialize = 0;
 

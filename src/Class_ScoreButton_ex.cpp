@@ -1,4 +1,4 @@
-#include "Class_ScoreButton_ex.h"
+#include "stdafx.h"
 
 void _scorebtn_paint(HEXOBJ hObj)
 {

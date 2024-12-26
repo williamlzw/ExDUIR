@@ -1,4 +1,4 @@
-#include "Thread_ex.h"
+#include "stdafx.h"
 
 LPVOID Thread_InitializeCriticalSection()
 {
