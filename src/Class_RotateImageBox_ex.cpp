@@ -7,7 +7,7 @@ void _rotateimagebox_register()
     EX_CLASSINFO pClsInfoStatic;
 
     /* 超类化(从现有控件派生)过程
-	 * 超类化的好处是可以直接利用现有控件，省去从头编写控件的时间，提高扩展效率*/
+     * 超类化的好处是可以直接利用现有控件，省去从头编写控件的时间，提高扩展效率*/
 
     /* 1、获取父类控件信息*/
     WCHAR oldwzCls[] = L"Static";
@@ -18,22 +18,28 @@ void _rotateimagebox_register()
 
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"RotateImageBox";
-    Ex_ObjRegister(newwzCls, pClsInfoStatic.dwStyle, pClsInfoStatic.dwStyleEx, pClsInfoStatic.dwTextFormat, NULL, pClsInfoStatic.hCursor, pClsInfoStatic.dwFlags, _rotateimagebox_proc);
+    Ex_ObjRegister(newwzCls,
+                   pClsInfoStatic.dwStyle,
+                   pClsInfoStatic.dwStyleEx,
+                   pClsInfoStatic.dwTextFormat,
+                   NULL,
+                   pClsInfoStatic.hCursor,
+                   pClsInfoStatic.dwFlags,
+                   _rotateimagebox_proc);
 }
 
-LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
+                                      LPARAM lParam)
 {
 
-    if (uMsg == WM_CREATE)
-    {
+    if (uMsg == WM_CREATE) {
         /* 创建时启用 绘图中消息*/
         Ex_ObjEnablePaintingMsg(hObj, TRUE);
         /* 开启时钟*/
         Ex_ObjSetTimer(hObj, 50);
     }
-    else if (uMsg == WM_EX_PAINTING)
-    {
-        EX_PAINTSTRUCT *ps = (EX_PAINTSTRUCT *)lParam;
+    else if (uMsg == WM_EX_PAINTING) {
+        EX_PAINTSTRUCT* ps = (EX_PAINTSTRUCT*)lParam;
         if (wParam == PAINT_PROGRESS_BEGIN) /* 当控件开始绘制时*/
         {
             /*创建矩阵，并旋转一个角度*/
@@ -58,27 +64,25 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
             // _canvas_settransform (ps.hCanvas, 0);
         }
     }
-    else if (uMsg == WM_TIMER)
-    {
-        Ex_ObjSetLong(hObj, OBJECT_LONG_USERDATA, (Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA) + 1) % 360); /* 每50ms增加1°*/
+    else if (uMsg == WM_TIMER) {
+        Ex_ObjSetLong(hObj,
+                      OBJECT_LONG_USERDATA,
+                      (Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA) + 1) % 360); /* 每50ms增加1°*/
         Ex_ObjInvalidateRect(hObj, 0);
     }
-    else if (uMsg == WM_MOUSEHOVER)
-    {
+    else if (uMsg == WM_MOUSEHOVER) {
         /*移入则停止旋转*/
         Ex_ObjKillTimer(hObj);
         Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);
     }
-    else if (uMsg == WM_MOUSELEAVE)
-    {
+    else if (uMsg == WM_MOUSELEAVE) {
         /*移出则恢复旋转*/
         Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, FALSE);
-        
+
         INT ntimer_ = (INT)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
         Ex_ObjSetTimer(hObj, 50);
     }
-    else if (uMsg == WM_DESTROY)
-    {
+    else if (uMsg == WM_DESTROY) {
         Ex_ObjKillTimer(hObj);
     }
     return Ex_ObjCallProc(m_pfnStaticProc, hWnd, hObj, uMsg, wParam, lParam);

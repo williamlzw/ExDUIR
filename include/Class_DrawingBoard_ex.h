@@ -1,5 +1,4 @@
-#pragma once
-#include "help_ex.h"
+﻿#pragma once
 
 #pragma region drawingboard long constant
 // 鼠绘板属性_画刷宽度
@@ -24,7 +23,7 @@
 #define DRAWINGBOARD_LONG_DOWN 9
 #pragma endregion drawingboard long constant
 
-void _drawingboard_register();
+void             _drawingboard_register();
 LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _drawingboard_updatedraw(HEXOBJ hObj, INT x, INT y);
-void _drawingboard_paint(HEXOBJ hObj);
+void             _drawingboard_updatedraw(HEXOBJ hObj, INT x, INT y);
+void             _drawingboard_paint(HEXOBJ hObj);

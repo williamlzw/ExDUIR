@@ -26,8 +26,7 @@ void Thread_LeaveCriticalSection(LPVOID addr)
 void Thread_Create(LPTHREAD_START_ROUTINE fun, LPVOID parameter)
 {
     auto hThread = CreateThread(NULL, 0, fun, parameter, 0, 0);
-    if (hThread != NULL)
-    {
+    if (hThread != NULL) {
         CloseHandle(hThread);
     }
 }

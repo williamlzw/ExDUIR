@@ -1,5 +1,4 @@
-#pragma once
-#include "help_ex.h"
+﻿#pragma once
 
 // 属性_标注板_临时点数组指针
 #define TAGGINGBOARD_LONG_DATA 0
@@ -42,9 +41,9 @@
 // 属性_标注板_滚动条纵坐标偏移
 #define TAGGINGBOARD_LONG_SB_TOP_OFFSET 19
 
-void _taggingboard_register();
+void             _taggingboard_register();
 LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _taggingboard_paint(HEXOBJ hObj);
-void _taggingboard_updatedraw(HEXOBJ hObj);
+void             _taggingboard_paint(HEXOBJ hObj);
+void             _taggingboard_updatedraw(HEXOBJ hObj);
 void _taggingboard_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL _taggingboard_ptinregion(HEXOBJ hObj, FLOAT x, FLOAT y, INT* index);

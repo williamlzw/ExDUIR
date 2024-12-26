@@ -1,6 +1,5 @@
-#pragma once
-#include "help_ex.h"
-#pragma comment (lib, "Msimg32.lib")
+﻿#pragma once
+#pragma comment(lib, "Msimg32.lib")
 
 
 // 调色板属性_鼠标开始位置X
@@ -14,8 +13,9 @@
 // 调色板属性_图片句柄
 #define PALETTE_LONG_IMAGE 4
 
-void _palette_register();
+void             _palette_register();
 LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _palette_genimage(HEXOBJ hObj);
-void _palette_drawgradientrect(HDC hdc, INT left, INT top, INT right, INT bottom, EXARGB startColor, EXARGB endColor, BOOL horizontalGradient);
+void             _palette_genimage(HEXOBJ hObj);
+void _palette_drawgradientrect(HDC hdc, INT left, INT top, INT right, INT bottom, EXARGB startColor,
+                               EXARGB endColor, BOOL horizontalGradient);
 void _palette_paint(HEXOBJ hObj);

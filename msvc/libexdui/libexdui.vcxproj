@@ -106,7 +106,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Array_ex.h" />
-    <ClInclude Include="..\..\include\Brush_ex.h" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
@@ -147,7 +146,6 @@
     <ClInclude Include="..\..\include\Class_Win10Loading_ex.h" />
     <ClInclude Include="..\..\include\CustomFont.h" />
     <ClInclude Include="..\..\include\DropTarget_ex.h" />
-    <ClInclude Include="..\..\include\Effect_ex.h" />
     <ClInclude Include="..\..\include\ExDUIR_Struct.h" />
     <ClInclude Include="..\..\include\DirectX_ex.h" />
     <ClInclude Include="..\..\include\Easing_ex.h" />
@@ -161,7 +159,6 @@
     <ClInclude Include="..\..\include\HashTable_ex.h" />
     <ClInclude Include="..\..\include\help_ex.h" />
     <ClInclude Include="..\..\include\Hook_ex.h" />
-    <ClInclude Include="..\..\include\ImageList_ex.h" />
     <ClInclude Include="..\..\include\Image_ex.h" />
     <ClInclude Include="..\..\include\Layout_ex.h" />
     <ClInclude Include="..\..\include\LunarData.h" />
@@ -169,7 +166,6 @@
     <ClInclude Include="..\..\include\MemPool_ex.h" />
     <ClInclude Include="..\..\include\Object_ex.h" />
     <ClInclude Include="..\..\include\Path_ex.h" />
-    <ClInclude Include="..\..\include\Region_ex.h" />
     <ClInclude Include="..\..\include\Resource_ex.h" />
     <ClInclude Include="..\..\include\stdafx.h" />
     <ClInclude Include="..\..\include\StrokeStyle_ex.h" />

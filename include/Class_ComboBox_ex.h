@@ -1,6 +1,4 @@
-#pragma once
-#include "help_ex.h"
-
+﻿#pragma once
 
 // 组合框属性_按下状态
 #define COMBOBOX_LONG_STATE 0
@@ -43,35 +41,36 @@
 
 struct EX_COMBOX_ITEM
 {
-	LPCWSTR lpwzTitle;
-	LONG_PTR data;
+    LPCWSTR  lpwzTitle;
+    LONG_PTR data;
 };
 struct EX_COMBOX_ITEMLIST
 {
-	INT size;
-	EX_COMBOX_ITEM items[1];
+    INT            size;
+    EX_COMBOX_ITEM items[1];
 };
 
-void _combobox_regsiter();
-LRESULT CALLBACK _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-size_t _combobox_size(HWND hWnd, obj_s *pObj, HEXOBJ hObj, INT width, INT height);
-EX_COMBOX_ITEMLIST *_combobox_realloc(obj_s *pObj, INT need, INT nIndex, BOOL add);
-INT _combobox_insertstring(obj_s *pObj, size_t nIndex, LPCWSTR lpTitle);
-INT _combobox_addstring(obj_s *pObj, LPCWSTR lpTitle);
-void _combobox_paint(HEXOBJ hObj, obj_s *pObj);
-void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s *pObj);
-LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT *lpResult);
-INT _combobox_delstring(obj_s *pObj, size_t nIndex);
-size_t _combobox_getleftbuttontext(obj_s *pObj, size_t nIndex, LPVOID buffer);
-INT _combobox_findstring(obj_s *pObj, size_t startIndex, LPCWSTR lpTitle);
-void _combobox_wnd_customdraw(obj_s *pObj, WPARAM wParam, EX_CUSTOMDRAW *lParam);
-void _combobox_init(obj_s *pObj, HEXOBJ hObj);
-INT _combobox_setcursel(obj_s *pObj, size_t nIndex);
-BOOL _combobox_uninit(obj_s *pObj);
-INT _combobox_resetcontent(obj_s *pObj);
-void _combobox_notify(HWND hWnd, obj_s *pObj, HEXOBJ hObj, EX_NMHDR *lParam);
-INT _combobox_getleftbuttontextlen(obj_s *pObj, size_t nIndex);
-LPCWSTR _combobox_getitemtitle(obj_s *pObj, size_t nIndex);
-INT _combobox_initstorage(obj_s *pObj, size_t size);
-INT _combobox_setitemdata(obj_s *pObj, size_t nIndex, LONG_PTR data);
-LONG_PTR _combobox_getitemdata(obj_s *pObj, size_t nIndex);
+void                _combobox_regsiter();
+LRESULT CALLBACK    _combobox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+size_t              _combobox_size(HWND hWnd, obj_s* pObj, HEXOBJ hObj, INT width, INT height);
+EX_COMBOX_ITEMLIST* _combobox_realloc(obj_s* pObj, INT need, INT nIndex, BOOL add);
+INT                 _combobox_insertstring(obj_s* pObj, size_t nIndex, LPCWSTR lpTitle);
+INT                 _combobox_addstring(obj_s* pObj, LPCWSTR lpTitle);
+void                _combobox_paint(HEXOBJ hObj, obj_s* pObj);
+void                _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj);
+LRESULT CALLBACK _combobox_wnd_proc(HWND hWnd, HEXDUI hDUI, INT uMsg, WPARAM wParam, LPARAM lParam,
+                                    LRESULT* lpResult);
+INT              _combobox_delstring(obj_s* pObj, size_t nIndex);
+size_t           _combobox_getleftbuttontext(obj_s* pObj, size_t nIndex, LPVOID buffer);
+INT              _combobox_findstring(obj_s* pObj, size_t startIndex, LPCWSTR lpTitle);
+void             _combobox_wnd_customdraw(obj_s* pObj, WPARAM wParam, EX_CUSTOMDRAW* lParam);
+void             _combobox_init(obj_s* pObj, HEXOBJ hObj);
+INT              _combobox_setcursel(obj_s* pObj, size_t nIndex);
+BOOL             _combobox_uninit(obj_s* pObj);
+INT              _combobox_resetcontent(obj_s* pObj);
+void             _combobox_notify(HWND hWnd, obj_s* pObj, HEXOBJ hObj, EX_NMHDR* lParam);
+INT              _combobox_getleftbuttontextlen(obj_s* pObj, size_t nIndex);
+LPCWSTR          _combobox_getitemtitle(obj_s* pObj, size_t nIndex);
+INT              _combobox_initstorage(obj_s* pObj, size_t size);
+INT              _combobox_setitemdata(obj_s* pObj, size_t nIndex, LONG_PTR data);
+LONG_PTR         _combobox_getitemdata(obj_s* pObj, size_t nIndex);

@@ -1,5 +1,4 @@
-#pragma once
-#include "help_ex.h"
+﻿#pragma once
 
 // 开关属性_背景颜色_普通
 #define SWITCH_PROP_CRBKGNORMAL 1
@@ -18,6 +17,6 @@
 // 开关属性_线宽
 #define SWITCH_PROP_STROKEWIDTH 8
 
-void _switch_register();
+void             _switch_register();
 LRESULT CALLBACK _switch_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _switch_paint(HEXOBJ hObj);
+void             _switch_paint(HEXOBJ hObj);

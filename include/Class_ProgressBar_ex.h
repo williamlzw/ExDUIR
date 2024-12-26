@@ -1,6 +1,5 @@
-#pragma once
-#include "help_ex.h"
+﻿#pragma once
 
-void _progressbar_register();
+void             _progressbar_register();
 LRESULT CALLBACK _progressbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _progressbar_paint(HEXOBJ hObj);
+void             _progressbar_paint(HEXOBJ hObj);

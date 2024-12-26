@@ -7,7 +7,7 @@ void _checkbuttonex_register()
     EX_CLASSINFO pClsInfoCheckButton;
 
     /* 超类化(从现有控件派生)过程
-	 * 超类化的好处是可以直接利用现有控件，省去从头编写控件的时间，提高扩展效率*/
+     * 超类化的好处是可以直接利用现有控件，省去从头编写控件的时间，提高扩展效率*/
 
     /* 1、获取父类控件信息*/
     WCHAR oldwzCls[] = L"CheckButton";
@@ -18,14 +18,20 @@ void _checkbuttonex_register()
 
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"CheckButtonEx";
-    Ex_ObjRegister(newwzCls, pClsInfoCheckButton.dwStyle, pClsInfoCheckButton.dwStyleEx, pClsInfoCheckButton.dwTextFormat, NULL, pClsInfoCheckButton.hCursor, pClsInfoCheckButton.dwFlags, _checkbuttonex_proc);
+    Ex_ObjRegister(newwzCls,
+                   pClsInfoCheckButton.dwStyle,
+                   pClsInfoCheckButton.dwStyleEx,
+                   pClsInfoCheckButton.dwTextFormat,
+                   NULL,
+                   pClsInfoCheckButton.hCursor,
+                   pClsInfoCheckButton.dwFlags,
+                   _checkbuttonex_proc);
 }
 
 LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
-    if (uMsg == WM_CREATE)
-    {
+    if (uMsg == WM_CREATE) {
         Ex_ObjInitPropList(hObj, 5);
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERNORMAL, ExARGB(0, 0, 0, 255));
@@ -33,36 +39,30 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
     }
     /*销毁时释放资源*/
-    else if (uMsg == WM_DESTROY)
-    {
-    }
-    else if (uMsg == WM_PAINT)
-    {
+    else if (uMsg == WM_DESTROY) {}
+    else if (uMsg == WM_PAINT) {
         _checkbuttonex_paint(hObj);
     }
-    else if (uMsg == WM_MOUSEHOVER)
-    {
+    else if (uMsg == WM_MOUSEHOVER) {
         Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
     }
-    else if (uMsg == WM_MOUSELEAVE)
-    {
+    else if (uMsg == WM_MOUSELEAVE) {
         Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
     }
-    else if (uMsg == WM_LBUTTONDOWN)
-    {
+    else if (uMsg == WM_LBUTTONDOWN) {
         Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
     }
-    else if (uMsg == WM_LBUTTONUP)
-    {
+    else if (uMsg == WM_LBUTTONUP) {
         Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
     }
-    else if (uMsg == WM_EX_PROPS)
-    {
-        EX_OBJ_PROPS *CheckButtonExprops = (EX_OBJ_PROPS *)lParam;
-        Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBKGDOWNORCHECKED, CheckButtonExprops->crBkgDownOrChecked);
+    else if (uMsg == WM_EX_PROPS) {
+        EX_OBJ_PROPS* CheckButtonExprops = (EX_OBJ_PROPS*)lParam;
+        Ex_ObjSetProp(
+            hObj, CHECKBOXEX_PROP_CRBKGDOWNORCHECKED, CheckButtonExprops->crBkgDownOrChecked);
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERNORMAL, CheckButtonExprops->crBorderNormal);
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERHOVER, CheckButtonExprops->crBorderHover);
-        Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED, CheckButtonExprops->crBorderDownOrChecked);
+        Ex_ObjSetProp(
+            hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED, CheckButtonExprops->crBorderDownOrChecked);
     }
 
     return Ex_ObjCallProc(m_pfnCheckButtonProc, hWnd, hObj, uMsg, wParam, lParam);
@@ -71,51 +71,69 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 void _checkbuttonex_paint(HEXOBJ hObj)
 {
     EX_PAINTSTRUCT ps{0};
-    RECT rcBlock = {0};
-    if (Ex_ObjBeginPaint(hObj, &ps))
-    {
-        HEXBRUSH hBrush = _brush_create((EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERNORMAL));
+    RECT           rcBlock = {0};
+    if (Ex_ObjBeginPaint(hObj, &ps)) {
+        HEXBRUSH hBrush =
+            _brush_create((EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERNORMAL));
         EXARGB crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
-        if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
-        {
+        if ((ps.dwState & STATE_HOVER) == STATE_HOVER) {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
             _brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERHOVER));
         }
 
-        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0)
-        {
-            _brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED));
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0) {
+            _brush_setcolor(hBrush,
+                            (EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED));
         }
         /* 计算文本尺寸 */
-        FLOAT nTextWidth = NULL;
+        FLOAT nTextWidth  = NULL;
         FLOAT nTextHeight = NULL;
-        _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
+        _canvas_calctextsize(ps.hCanvas,
+                             Ex_ObjGetFont(hObj),
+                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
+                             -1,
+                             ps.dwTextFormat,
+                             0,
+                             (FLOAT)ps.uWidth,
+                             (FLOAT)ps.uHeight,
+                             &nTextWidth,
+                             &nTextHeight);
 
         /* 定义选择框矩形 */
-        rcBlock.left = ps.rcPaint.left + (long)Ex_Scale(2);
-        rcBlock.top = (ps.uHeight - (long)nTextHeight) / 2;
-        rcBlock.right = rcBlock.left + (long)nTextHeight;
+        rcBlock.left   = ps.rcPaint.left + (long)Ex_Scale(2);
+        rcBlock.top    = (ps.uHeight - (long)nTextHeight) / 2;
+        rcBlock.right  = rcBlock.left + (long)nTextHeight;
         rcBlock.bottom = (ps.uHeight + (long)nTextHeight) / 2;
         /* 绘制边框 */
-        _canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, 1, D2D1_DASH_STYLE_SOLID);
+        _canvas_drawrect(ps.hCanvas,
+                         hBrush,
+                         (FLOAT)rcBlock.left,
+                         (FLOAT)rcBlock.top,
+                         (FLOAT)rcBlock.right,
+                         (FLOAT)rcBlock.bottom,
+                         1,
+                         D2D1_DASH_STYLE_SOLID);
 
         /* 定义选中色 */
         EXARGB CHECKCLR = (EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBKGDOWNORCHECKED);
 
         _brush_setcolor(hBrush, CHECKCLR);
 
-        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_HALFSELECT) != 0)
-        {
+        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_HALFSELECT) != 0) {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED);
             /* 把矩形往里缩2像素 */
-            rcBlock.left = rcBlock.left + (long)Ex_Scale(2);
-            rcBlock.top = rcBlock.top + (long)Ex_Scale(2);
-            rcBlock.right = rcBlock.right - (long)Ex_Scale(2);
+            rcBlock.left   = rcBlock.left + (long)Ex_Scale(2);
+            rcBlock.top    = rcBlock.top + (long)Ex_Scale(2);
+            rcBlock.right  = rcBlock.right - (long)Ex_Scale(2);
             rcBlock.bottom = rcBlock.bottom - (long)Ex_Scale(2);
-            _canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom);
+            _canvas_fillrect(ps.hCanvas,
+                             hBrush,
+                             (FLOAT)rcBlock.left,
+                             (FLOAT)rcBlock.top,
+                             (FLOAT)rcBlock.right,
+                             (FLOAT)rcBlock.bottom);
         }
-        else if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0)
-        {
+        else if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0) {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED);
 
             _canvas_drawtext(ps.hCanvas,
@@ -124,7 +142,10 @@ void _checkbuttonex_paint(HEXOBJ hObj)
                              L"✔",
                              -1,
                              DT_CENTER | DT_VCENTER,
-                             (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom);
+                             (FLOAT)rcBlock.left,
+                             (FLOAT)rcBlock.top,
+                             (FLOAT)rcBlock.right,
+                             (FLOAT)rcBlock.bottom);
         }
 
         /* 绘制组件文本 */

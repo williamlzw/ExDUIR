@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 // clang-format off
 #include <Windows.h>
 #include <Windowsx.h>
@@ -24,7 +24,11 @@
 #include <d3d11.h>
 #include <dwrite.h>
 #include <wincodec.h>
-
+#include <Initguid.h>
+#include <d2d1effectauthor.h>
+#include <d2d1effecthelpers.h>
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")
 #pragma comment(lib, "Dwrite.lib")
@@ -77,14 +81,10 @@
 #include "nanosvg/nanosvg.h"
 #include "nanosvg/nanosvgrast.h"
 #include "CustomFont.h"
-#include "Effect_ex.h"
-
 #include "help_ex.h"
 #include "Array_ex.h"
-#include "Brush_ex.h"
 #include "Geometry_ex.h"
 #include "Canvas_ex.h"
-
 
 #include "DirectX_ex.h"
 #include "DropTarget_ex.h"
@@ -95,7 +95,6 @@
 #include "HandelTable_ex.h"
 #include "HashTable_ex.h"
 #include "Hook_ex.h"
-#include "ImageList_ex.h"
 #include "Image_ex.h"
 #include "Layout_ex.h"
 #include "Matrix_ex.h"

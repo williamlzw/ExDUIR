@@ -40,7 +40,8 @@ HEXBRUSH _brush_createfromimg(HEXIMAGE hImg);
 /// <param name="crBegin">起点颜色ARGB</param>
 /// <param name="crEnd">终点颜色ARGB</param>
 /// <returns></returns>
-HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, EXARGB crBegin, EXARGB crEnd);
+HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, EXARGB crBegin,
+                             EXARGB crEnd);
 
 /// <summary>
 /// 创建线性渐变画刷2
@@ -52,7 +53,8 @@ HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,
 /// <param name="arrPts">位置数组(取值0-1.0),两个</param>
 /// <param name="arrColors">ARGB颜色数组,两个</param>
 /// <returns></returns>
-HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrPts, INT* arrColors);
+HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrPts,
+                                INT* arrColors);
 
 /// <summary>
 /// 画刷销毁
@@ -113,7 +115,9 @@ BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc);
 /// <param name="lpWidth"></param>
 /// <param name="lpHeight"></param>
 /// <returns></returns>
-BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight);
+BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, INT dwLen,
+                          INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight,
+                          FLOAT* lpWidth, FLOAT* lpHeight);
 
 /// <summary>
 /// 画布清除背景
@@ -175,7 +179,9 @@ BOOL _canvas_destroy(HEXCANVAS hCanvas);
 /// <param name="dwAlpha"></param>
 /// <param name="dwCompositeMode">#CANVAS_COMPOSITE_MODE_</param>
 /// <returns></returns>
-BOOL _canvas_drawcanvas(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight, INT dstBottom, INT srcLeft, INT srcTop, DWORD dwAlpha, DWORD dwCompositeMode);
+BOOL _canvas_drawcanvas(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight,
+                        INT dstBottom, INT srcLeft, INT srcTop, DWORD dwAlpha,
+                        DWORD dwCompositeMode);
 
 /// <summary>
 /// 画布画椭圆
@@ -189,7 +195,8 @@ BOOL _canvas_drawcanvas(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT d
 /// <param name="strokeWidth"></param>
 /// <param name="strokeStyle"></param>
 /// <returns></returns>
-BOOL _canvas_drawellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY, FLOAT strokeWidth, DWORD strokeStyle);
+BOOL _canvas_drawellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, FLOAT radiusX,
+                         FLOAT radiusY, FLOAT strokeWidth, DWORD strokeStyle);
 
 /// <summary>
 /// 画布画图片
@@ -222,9 +229,11 @@ BOOL _canvas_drawimage(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT Top
 /// <param name="dwFlags">#BACKGROUND_FLAG_</param>
 /// <param name="dwAlpha"></param>
 /// <returns></returns>
-BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, FLOAT gridPaddingLeft, FLOAT gridPaddingTop, FLOAT gridPaddingRight,
-	FLOAT gridPaddingBottom, INT dwFlags, DWORD dwAlpha);
+BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop,
+                               FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop,
+                               FLOAT srcRight, FLOAT srcBottom, FLOAT gridPaddingLeft,
+                               FLOAT gridPaddingTop, FLOAT gridPaddingRight,
+                               FLOAT gridPaddingBottom, INT dwFlags, DWORD dwAlpha);
 
 /// <summary>
 /// 画布画图像矩形
@@ -237,7 +246,8 @@ BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 /// <param name="Bottom"></param>
 /// <param name="alpha"></param>
 /// <returns></returns>
-BOOL _canvas_drawimagerect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT Top, FLOAT Right, FLOAT Bottom, DWORD alpha);
+BOOL _canvas_drawimagerect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT Top, FLOAT Right,
+                           FLOAT Bottom, DWORD alpha);
 
 /// <summary>
 /// 画布画图像缩放到
@@ -254,8 +264,9 @@ BOOL _canvas_drawimagerect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT
 /// <param name="srcBottom"></param>
 /// <param name="alpha"></param>
 /// <returns></returns>
-BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	FLOAT srcLeft, FLOAT srcTop, FLOAT srcRight, FLOAT srcBottom, DWORD alpha);
+BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop,
+                               FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop,
+                               FLOAT srcRight, FLOAT srcBottom, DWORD alpha);
 
 /// <summary>
 /// 画布画直线
@@ -268,14 +279,15 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
 /// <param name="Y2"></param>
 /// <param name="strokeWidth"></param>
 /// <param name="strokeStyle">
-///	0无分隔符的实线 
-/// 1短划线，后跟长度相等的间隙  
-/// 2一个点，后跟一个较长的间距  
-/// 3一个短划线，后跟一个间隙，后跟一个点，然后是另一个间隙 
+///	0无分隔符的实线
+/// 1短划线，后跟长度相等的间隙
+/// 2一个点，后跟一个较长的间距
+/// 3一个短划线，后跟一个间隙，后跟一个点，然后是另一个间隙
 /// 4破折号，后跟一个间隙，后跟一个点，后跟另一个间隙，后跟另一个点，然后是另一个间距
 /// 5短划线模式由浮点值数组指定</param>
 /// <returns></returns>
-BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FLOAT X2, FLOAT Y2, FLOAT strokeWidth, DWORD strokeStyle);
+BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FLOAT X2, FLOAT Y2,
+                      FLOAT strokeWidth, DWORD strokeStyle);
 
 /// <summary>
 /// 画布画路径
@@ -286,7 +298,8 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 /// <param name="strokeWidth"></param>
 /// <param name="strokeStyle"></param>
 /// <returns></returns>
-BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth, DWORD strokeStyle);
+BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth,
+                      DWORD strokeStyle);
 
 /// <summary>
 /// 画布画多边形
@@ -302,7 +315,9 @@ BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT s
 /// <param name="strokeWidth">绘制的线宽</param>
 /// <param name="strokeStyle">绘制的线型</param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT numberOfEdges, FLOAT angle, FLOAT strokeWidth, UINT strokeStyle);
+BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right,
+                         FLOAT bottom, UINT numberOfEdges, FLOAT angle, FLOAT strokeWidth,
+                         UINT strokeStyle);
 
 /// <summary>
 /// 画布画矩形
@@ -316,7 +331,8 @@ BOOL _canvas_drawpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT t
 /// <param name="strokeWidth"></param>
 /// <param name="strokeStyle"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT strokeWidth, DWORD strokeStyle);
+BOOL _canvas_drawrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right,
+                      FLOAT bottom, FLOAT strokeWidth, DWORD strokeStyle);
 
 /// <summary>
 /// 画布画圆角矩形
@@ -332,7 +348,9 @@ BOOL _canvas_drawrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top,
 /// <param name="strokeWidth">画刷宽度</param>
 /// <param name="strokeStyle"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX, FLOAT radiusY, FLOAT strokeWidth, DWORD strokeStyle);
+BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right,
+                             FLOAT bottom, FLOAT radiusX, FLOAT radiusY, FLOAT strokeWidth,
+                             DWORD strokeStyle);
 
 /// <summary>
 /// 画布画阴影
@@ -351,10 +369,10 @@ BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 /// <param name="OffsetX">阴影横向偏移</param>
 /// <param name="OffsetY">阴影纵向偏移</param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
-	FLOAT fLeft, FLOAT fTop, FLOAT fRight, FLOAT fBottom,
-	FLOAT fShadowSize, EXARGB crShadow,
-	FLOAT radiusTopLeft, FLOAT radiusTopRight, FLOAT radiusBottomLeft, FLOAT radiusBottomRight, FLOAT OffsetX, FLOAT OffsetY);
+BOOL _canvas_drawshadow(HEXCANVAS hCanvas, FLOAT fLeft, FLOAT fTop, FLOAT fRight, FLOAT fBottom,
+                        FLOAT fShadowSize, EXARGB crShadow, FLOAT radiusTopLeft,
+                        FLOAT radiusTopRight, FLOAT radiusBottomLeft, FLOAT radiusBottomRight,
+                        FLOAT OffsetX, FLOAT OffsetY);
 
 /// <summary>
 /// 画布画文本
@@ -370,7 +388,8 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas,
 /// <param name="right"></param>
 /// <param name="bottom"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, INT dwLen,
+                      INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布画文本2
@@ -386,7 +405,8 @@ BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR l
 /// <param name="right"></param>
 /// <param name="bottom"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText,
+                       INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布画文本Ex
@@ -405,7 +425,9 @@ BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWST
 /// <param name="crShadom"></param>
 /// <param name="lParam"></param>
 /// <returns>返回是否成功</returns>
-BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam);
+BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText,
+                        INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom,
+                        INT iGlowsize, EXARGB crShadom, LPARAM lParam);
 
 /// <summary>
 /// 画布结束绘制
@@ -424,7 +446,8 @@ BOOL _canvas_enddraw(HEXCANVAS hCanvas);
 /// <param name="radiusX"></param>
 /// <param name="radiusY"></param>
 /// <returns></returns>
-BOOL _canvas_fillellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY);
+BOOL _canvas_fillellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, FLOAT radiusX,
+                         FLOAT radiusY);
 
 /// <summary>
 /// 画布填充路径
@@ -447,7 +470,8 @@ BOOL _canvas_fillpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush);
 /// <param name="NumberOfEdges">边数</param>
 /// <param name="Angle">角度</param>
 /// <returns></returns>
-BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UINT numberOfEdges, FLOAT angle);
+BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right,
+                         FLOAT bottom, UINT numberOfEdges, FLOAT angle);
 
 /// <summary>
 /// 画布填充矩形
@@ -459,7 +483,8 @@ BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT t
 /// <param name="right"></param>
 /// <param name="bottom"></param>
 /// <returns></returns>
-BOOL _canvas_fillrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_fillrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right,
+                      FLOAT bottom);
 
 /// <summary>
 /// 画布填充区域
@@ -485,7 +510,9 @@ BOOL _canvas_fillregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush);
 /// <param name="number">透明度数量</param>
 /// <param name="crShadow"></param>
 /// <returns></returns>
-BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT width, FLOAT height, FLOAT radiusX, FLOAT radiusY, INT* shadowNum, INT number, EXARGB crShadow);
+BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT width,
+                              FLOAT height, FLOAT radiusX, FLOAT radiusY, INT* shadowNum,
+                              INT number, EXARGB crShadow);
 
 /// <summary>
 /// 画布填充圆角矩形
@@ -499,7 +526,8 @@ BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOA
 /// <param name="radiusX"></param>
 /// <param name="radiusY"></param>
 /// <returns></returns>
-BOOL _canvas_fillroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX, FLOAT radiusY);
+BOOL _canvas_fillroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right,
+                             FLOAT bottom, FLOAT radiusX, FLOAT radiusY);
 
 /// <summary>
 /// 画布刷新
@@ -543,7 +571,8 @@ BOOL _canvas_getsize(HEXCANVAS hCanvas, INT* width, INT* height);
 /// <param name="right"></param>
 /// <param name="bottom"></param>
 /// <returns></returns>
-BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top,
+                     FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布画SVG从文件
@@ -556,7 +585,8 @@ BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, F
 /// <param name="right"></param>
 /// <param name="bottom"></param>
 /// <returns></returns>
-BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
+BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, FLOAT left,
+                             FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布释放DC
@@ -638,7 +668,9 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix);
 /// <param name="param3"></param>
 /// <param name="param4"></param>
 /// <returns></returns>
-HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG_PTR pContext, INT nTotalTime, INT nInterval, DWORD nState, INT nStart, INT nStop, LONG_PTR param1, LONG_PTR param2, LONG_PTR param3, LONG_PTR param4);
+HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG_PTR pContext,
+                         INT nTotalTime, INT nInterval, DWORD nState, INT nStart, INT nStop,
+                         LONG_PTR param1, LONG_PTR param2, LONG_PTR param3, LONG_PTR param4);
 
 /// <summary>
 /// 缓动取状态
@@ -686,7 +718,8 @@ void _effect_destroy(HEXEFFECT hEffect);
 /// <param name="properityCount">效果器属性个数</param>
 /// <param name="createEffect">效果器创建方法地址</param>
 /// <returns></returns>
-BOOL _effect_register(const GUID& guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys, int properityCount, LPVOID createEffect);
+BOOL _effect_register(const GUID& guid, LPCWSTR pProperityXml, EX_EFFECT_PROPERITY_INFO* properitys,
+                      int properityCount, LPVOID createEffect);
 
 /// <summary>
 /// 效果器置布尔值
@@ -737,7 +770,8 @@ BOOL _effect_set_vector2(HEXEFFECT hEffect, PCWSTR lpszProperityName, float valu
 /// <param name="value1">值1</param>
 /// <param name="value2">值2</param>
 /// <param name="value3">值3</param>
-BOOL _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3);
+BOOL _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2,
+                         float value3);
 
 /// <summary>
 /// 效果器置vector4值
@@ -748,7 +782,8 @@ BOOL _effect_set_vector3(HEXEFFECT hEffect, PCWSTR lpszProperityName, float valu
 /// <param name="value2">值2</param>
 /// <param name="value3">值3</param>
 /// <param name="value4">值4</param>
-BOOL _effect_set_vector4(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2, float value3, float value4);
+BOOL _effect_set_vector4(HEXEFFECT hEffect, PCWSTR lpszProperityName, float value1, float value2,
+                         float value3, float value4);
 
 /// <summary>
 /// 创建默认字体
@@ -996,10 +1031,12 @@ INT _img_height(HEXIMAGE hImg);
 /// <param name="hImg"></param>
 /// <param name="lpRectL">锁定矩形指针，如果为0，则锁定整张图像</param>
 /// <param name="flags">READ:1 / WRITE:2 / READ&WRITE:3</param>
-/// <param name="PixelFormat">参考:https://msdn.microsoft.com/en-us/library/ms534412(v=vs.85).aspx</param>
+/// <param
+/// name="PixelFormat">参考:https://msdn.microsoft.com/en-us/library/ms534412(v=vs.85).aspx</param>
 /// <param name="lpLockedBitmapData">BITMAPDATA</param>
 /// <returns></returns>
-BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BITMAPDATA* lpLockedBitmapData);
+BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat,
+               EX_BITMAPDATA* lpLockedBitmapData);
 
 /// <summary>
 /// 图像蒙板
@@ -1010,7 +1047,8 @@ BOOL _img_lock(HEXIMAGE hImg, RECT* lpRectL, DWORD flags, INT PixelFormat, EX_BI
 /// <param name="bBlackMask">蒙版通道是否为 黑色/透明</param>
 /// <param name="phImg">返回图像</param>
 /// <returns></returns>
-BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask, HEXIMAGE* phImg);
+BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMask,
+               HEXIMAGE* phImg);
 
 /// <summary>
 /// 图形粘贴,将小图粘贴到大图并输出新图像
@@ -1027,7 +1065,8 @@ BOOL _img_paste(HEXIMAGE dstImg, HEXIMAGE srcImg, INT destX, INT destY, HEXIMAGE
 /// 图像旋转翻转
 /// </summary>
 /// <param name="hImg"></param>
-/// <param name="rfType">参考:https://msdn.microsoft.com/en-us/library/windows/desktop/ms534171(v=vs.85).aspx</param>
+/// <param
+/// name="rfType">参考:https://msdn.microsoft.com/en-us/library/windows/desktop/ms534171(v=vs.85).aspx</param>
 /// <param name="phImg"></param>
 /// <returns></returns>
 BOOL _img_rotateflip(HEXIMAGE hImg, INT rfType, HEXIMAGE* phImg);
@@ -1152,7 +1191,8 @@ BOOL _imglist_destroy(HEXIMAGELIST hImageList);
 /// <param name="nBottom"></param>
 /// <param name="nAlpha">透明度0-255</param>
 /// <returns></returns>
-BOOL _imglist_draw(HEXIMAGELIST hImageList, size_t nIndex, HEXCANVAS hCanvas, INT nLeft, INT nTop, INT nRight, INT nBottom, DWORD nAlpha);
+BOOL _imglist_draw(HEXIMAGELIST hImageList, size_t nIndex, HEXCANVAS hCanvas, INT nLeft, INT nTop,
+                   INT nRight, INT nBottom, DWORD nAlpha);
 
 /// <summary>
 /// 图片组获取图片句柄
@@ -1202,7 +1242,8 @@ BOOL _imglist_size(HEXIMAGELIST hImageList, INT* pWidth, INT* pHeight);
 /// <param name="tWidth"></param>
 /// <param name="tHeight"></param>
 /// <returns></returns>
-BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT tTop, INT tRight, INT tBottom, INT tWidth, INT tHeight);
+BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT tTop, INT tRight,
+                           INT tBottom, INT tWidth, INT tHeight);
 
 /// <summary>
 /// 绝对布局置边界信息
@@ -1213,7 +1254,8 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 /// <param name="dwType">#LAYOUT_SUBPROP_ABSOLUTE_TYPE_</param>
 /// <param name="nValue"></param>
 /// <returns></returns>
-BOOL _layout_absolute_setedge(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT dwEdge, INT dwType, size_t nValue);
+BOOL _layout_absolute_setedge(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT dwEdge, INT dwType,
+                              size_t nValue);
 
 /// <summary>
 /// 布局添加组件
@@ -1351,7 +1393,8 @@ BOOL _layout_setprop(HEXLAYOUT hLayout, INT dwPropID, size_t pvValue);
 /// <param name="aCellWidth"></param>
 /// <param name="cCells"></param>
 /// <returns></returns>
-BOOL _layout_table_setinfo(HEXLAYOUT hLayout, INT* aRowHeight, INT cRows, INT* aCellWidth, INT cCells);
+BOOL _layout_table_setinfo(HEXLAYOUT hLayout, INT* aRowHeight, INT cRows, INT* aCellWidth,
+                           INT cCells);
 
 /// <summary>
 /// 布局更新
@@ -1418,7 +1461,8 @@ BOOL _matrix_translate(HEXMATRIX pMatrix, FLOAT offsetX, FLOAT offsetY);
 /// <param name="radiusY">弧中心坐标Y</param>
 /// <param name="fClockwise">是否顺时针</param>
 /// <returns></returns>
-BOOL _path_addarc(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT radiusX, FLOAT radiusY, BOOL fClockwise);
+BOOL _path_addarc(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT radiusX,
+                  FLOAT radiusY, BOOL fClockwise);
 
 /// <summary>
 /// 路径添加弧 v2
@@ -1431,8 +1475,8 @@ BOOL _path_addarc(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT r
 /// <param name="nAngleBegin">弧的起始角度</param>
 /// <param name="nAngleEnd">弧的终止角度</param>
 /// <returns></returns>
-BOOL _path_addarc2(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right,
-                   FLOAT bottom, FLOAT nAngleBegin, FLOAT nAngleEnd);
+BOOL _path_addarc2(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom,
+                   FLOAT nAngleBegin, FLOAT nAngleEnd);
 
 /// <summary>
 /// 路径添加弧 v3
@@ -1447,7 +1491,8 @@ BOOL _path_addarc2(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right,
 /// <param name="fClockwise">是否顺时针</param>
 /// <param name="barcSize">是否大于180°</param>
 /// <returns></returns>
-BOOL _path_addarc3(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY, FLOAT startAngle, FLOAT sweepAngle, BOOL fClockwise, BOOL barcSize);
+BOOL _path_addarc3(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY, FLOAT startAngle,
+                   FLOAT sweepAngle, BOOL fClockwise, BOOL barcSize);
 
 /// <summary>
 /// 路径添加贝塞尔曲线
@@ -1508,7 +1553,9 @@ BOOL _path_addrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bott
 /// <param name="radiusBottomLeft"></param>
 /// <param name="radiusBottomRight"></param>
 /// <returns></returns>
-BOOL _path_addroundedrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusTopLeft, FLOAT radiusTopRight, FLOAT radiusBottomLeft, FLOAT radiusBottomRight);
+BOOL _path_addroundedrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom,
+                          FLOAT radiusTopLeft, FLOAT radiusTopRight, FLOAT radiusBottomLeft,
+                          FLOAT radiusBottomRight);
 
 /// <summary>
 /// 路径开始新图形
@@ -1606,7 +1653,8 @@ BOOL _path_reset(HEXPATH hPath);
 /// <param name="dstOffsetX"></param>
 /// <param name="dstOffsetY"></param>
 /// <returns></returns>
-HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOffsetX, INT dstOffsetY);
+HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOffsetX,
+                    INT dstOffsetY);
 
 /// <summary>
 /// 区域创建自路径
@@ -1635,7 +1683,8 @@ HEXRGN _rgn_createfromrect(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 /// <param name="radiusX"></param>
 /// <param name="radiusY"></param>
 /// <returns></returns>
-HEXRGN _rgn_createfromroundrect(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX, FLOAT radiusY);
+HEXRGN _rgn_createfromroundrect(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX,
+                                FLOAT radiusY);
 
 /// <summary>
 /// 区域销毁
@@ -1791,9 +1840,13 @@ EXATOM Ex_Atom(LPCWSTR lptstring);
 /// <param name="cachePath">临时文件保存路径,绝对路径,0为内存模式</param>
 /// <param name="userAgent">用户设备</param>
 /// <param name="debuggingPort">调试端口</param>
-/// <param name="lpBeforeCommandLine">可为0,初始化传入的命令行参数void(CALLBACK* OnBeforeCommandLine)(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam); </param>
+/// <param name="lpBeforeCommandLine">可为0,初始化传入的命令行参数void(CALLBACK*
+/// OnBeforeCommandLine)(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1, LONG_PTR
+/// attach2, LONG_PTR attach3, LONG_PTR attach4, bool* pbHWEBVIEWd, void* lParam); </param>
 /// <returns></returns>
-BOOL Ex_ObjCefBrowserInitialize(HMODULE hModule, LPCWSTR libPath, LPCWSTR dllName, LPCWSTR cachePath, LPCWSTR userAgent, INT debuggingPort, void* lpBeforeCommandLine);
+BOOL Ex_ObjCefBrowserInitialize(HMODULE hModule, LPCWSTR libPath, LPCWSTR dllName,
+                                LPCWSTR cachePath, LPCWSTR userAgent, INT debuggingPort,
+                                void* lpBeforeCommandLine);
 
 /// <summary>
 /// 绑定窗口
@@ -1811,9 +1864,10 @@ HEXDUI Ex_DUIBindWindow(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle);
 /// <param name="hTheme">主题句柄.(值可为0)</param>
 /// <param name="dwStyle">#WINDOW_STYLE_</param>
 /// <param name="lParam">附加参数.(值可为0)</param>
-/// <param name="lpfnMsgProc">(LRESULT)MsgProc(HWND hWnd,HEXDUI	hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult)</param>
-/// <returns></returns>
-HEXDUI Ex_DUIBindWindowEx(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle, LPARAM lParam, WinMsgPROC lpfnMsgProc);
+/// <param name="lpfnMsgProc">(LRESULT)MsgProc(HWND hWnd,HEXDUI	hExDui,INT uMsg,WPARAM wParam,LPARAM
+/// lParam,LRESULT* lpResult)</param> <returns></returns>
+HEXDUI Ex_DUIBindWindowEx(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle, LPARAM lParam,
+                          WinMsgPROC lpfnMsgProc);
 
 /// <summary>
 /// 从窗口句柄获取引擎句柄
@@ -1885,7 +1939,8 @@ BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, IN
 /// <param name="wParam">参数1</param>
 /// <param name="lParam">参数2</param>
 /// <returns></returns>
-BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, INT dwFlags, INT uEasing, WPARAM wParam, LPARAM lParam);
+BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames, INT dwFlags,
+                        INT uEasing, WPARAM wParam, LPARAM lParam);
 
 /// <summary>
 /// 弹出托盘图标
@@ -1931,8 +1986,9 @@ INT Ex_GetLastError();
 /// <param name="lpDefaultI18N">默认语言包指针.(值可为0)</param>
 /// <param name="dwDefaultI18NLen">默认语言包长度.(值可为0)</param>
 /// <returns></returns>
-BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor, LPCWSTR lpszDefaultClassName,
-	LPVOID lpDefaultTheme, size_t dwDefaultThemeLen, LPVOID lpDefaultI18N, size_t dwDefaultI18NLen);
+BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
+             LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme, size_t dwDefaultThemeLen,
+             LPVOID lpDefaultI18N, size_t dwDefaultI18NLen);
 
 /// <summary>
 /// 加载位图对象自内存
@@ -1956,7 +2012,8 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
 /// <summary>
 /// 弹出信息框
 /// </summary>
-/// <param name="handle">组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认信息框弹出)</param>
+/// <param
+/// name="handle">组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认信息框弹出)</param>
 /// <param name="lpText">消息框内容</param>
 /// <param name="lpCaption">消息框标题</param>
 /// <param name="uType">相关常量 #MB_</param>
@@ -1967,17 +2024,21 @@ INT Ex_MessageBox(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, I
 /// <summary>
 /// 弹出信息框Ex
 /// </summary>
-/// <param name="handle">组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认信息框弹出)</param>
+/// <param
+/// name="handle">组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认信息框弹出)</param>
 /// <param name="lpText">消息框内容</param>
 /// <param name="lpCaption">消息框标题</param>
 /// <param name="uType">相关常量 #MB_</param>
-/// <param name="lpCheckBox">检查框标题(消息框左下角显示一个检查框组件).(如果该窗口未使用引擎渲染,则该值无效)</param>
+/// <param
+/// name="lpCheckBox">检查框标题(消息框左下角显示一个检查框组件).(如果该窗口未使用引擎渲染,则该值无效)</param>
 /// <param name="lpCheckBoxChecked">返回检查框选中状态.(如果该窗口未使用引擎渲染,则该值无效)</param>
-/// <param name="dwMilliseconds">消息框延迟关闭时间，单位：毫秒。如果该值不为0,且超时后(即用户未操作)，消息框自动关闭，返回32000。</param>
+/// <param
+/// name="dwMilliseconds">消息框延迟关闭时间，单位：毫秒。如果该值不为0,且超时后(即用户未操作)，消息框自动关闭，返回32000。</param>
 /// <param name="dwFlags">相关常量 #MESSAGEBOX_FLAG_</param>
 /// <param name="lpfnMsgProc">(BOOL)MsgProc(hWnd,hExDui,uMsg,wParam,lParam,lpResult)</param>
 /// <returns></returns>
-INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, LPCWSTR lpCheckBox, BOOL* lpCheckBoxChecked, INT dwMilliseconds, INT dwFlags, MsgPROC lpfnMsgProc);
+INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType, LPCWSTR lpCheckBox,
+                    BOOL* lpCheckBoxChecked, INT dwMilliseconds, INT dwFlags, MsgPROC lpfnMsgProc);
 
 /// <summary>
 /// 组件开始绘制
@@ -1997,7 +2058,8 @@ BOOL Ex_ObjBeginPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS);
 /// <param name="wParam"></param>
 /// <param name="lParam"></param>
 /// <returns></returns>
-LRESULT Ex_ObjCallProc(ClsPROC lpPrevObjProc, HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT Ex_ObjCallProc(ClsPROC lpPrevObjProc, HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
+                       LPARAM lParam);
 
 /// <summary>
 /// 组件查询拖曳信息格式
@@ -2038,7 +2100,8 @@ BOOL Ex_ObjClientToWindow(HEXOBJ hObj, INT* x, INT* y);
 /// <param name="height">高度</param>
 /// <param name="hParent">父组件句柄</param>
 /// <returns></returns>
-HEXOBJ Ex_ObjCreate(LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, INT x, INT y, INT width, INT height, EXHANDLE hParent);
+HEXOBJ Ex_ObjCreate(LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, INT x, INT y,
+                    INT width, INT height, EXHANDLE hParent);
 
 /// <summary>
 /// 组件创建Ex
@@ -2056,9 +2119,11 @@ HEXOBJ Ex_ObjCreate(LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, 
 /// <param name="dwTextFormat">相关常量 DT_</param>
 /// <param name="lParam">附加参数</param>
 /// <param name="hTheme">主题句柄.0为默认</param>
-/// <param name="lpfnMsgProc">LRESULT CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult)</param>
-/// <returns>返回组件句柄</returns>
-HEXOBJ Ex_ObjCreateEx(INT dwStyleEx, LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, INT x, INT y, INT width, INT height, EXHANDLE hParent, INT nID, INT dwTextFormat, LPARAM lParam, HEXTHEME hTheme, MsgPROC lpfnMsgProc);
+/// <param name="lpfnMsgProc">LRESULT CALLBACK MsgProc(HWND hWnd,HEXOBJ hObj,INT uMsg,WPARAM
+/// wParam,LPARAM lParam,LRESULT* lpResult)</param> <returns>返回组件句柄</returns>
+HEXOBJ Ex_ObjCreateEx(INT dwStyleEx, LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle,
+                      INT x, INT y, INT width, INT height, EXHANDLE hParent, INT nID,
+                      INT dwTextFormat, LPARAM lParam, HEXTHEME hTheme, MsgPROC lpfnMsgProc);
 
 /// <summary>
 /// 组件默认过程
@@ -2175,19 +2240,18 @@ BOOL Ex_ObjEnumChild(EXHANDLE hObjParent, LPVOID lpEnumFunc, LPARAM lParam);
 /// 组件枚举属性表
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="lpfnCbk">回调LRESULT enum(HEXOBJ hObj,size_t dwKey,size_t dwValue,size_t param)</param>
-/// <param name="param"></param>
-/// <returns>返回个数</returns>
+/// <param name="lpfnCbk">回调LRESULT enum(HEXOBJ hObj,size_t dwKey,size_t dwValue,size_t
+/// param)</param> <param name="param"></param> <returns>返回个数</returns>
 INT Ex_ObjEnumProps(HEXOBJ hObj, EnumPropsPROC lpfnCbk, size_t param);
 
 /// <summary>
 /// 组件查找
 /// </summary>
 /// <param name="hObjParent">父组件句柄。从根部查找则为引擎句柄</param>
-/// <param name="hObjChildAfter"> 由此组件开始查找（不包含该组件）。如果为0，则从第一个组件开始查找</param>
-/// <param name="lpClassName">欲查找的组件类名指针/Ex_ATOM()</param>
-/// <param name="lpTitle">欲查找的组件标题</param>
-/// <returns></returns>
+/// <param name="hObjChildAfter">
+/// 由此组件开始查找（不包含该组件）。如果为0，则从第一个组件开始查找</param> <param
+/// name="lpClassName">欲查找的组件类名指针/Ex_ATOM()</param> <param
+/// name="lpTitle">欲查找的组件标题</param> <returns></returns>
 HEXOBJ Ex_ObjFind(EXHANDLE hObjParent, HEXOBJ hObjChildAfter, LPCWSTR lpClassName, LPCWSTR lpTitle);
 
 /// <summary>
@@ -2257,7 +2321,8 @@ HEXFONT Ex_ObjGetFont(HEXOBJ hObj);
 /// <summary>
 /// 获取组件句柄自ID
 /// </summary>
-/// <param name="hExDuiOrhObj">如果指定引擎句柄,则全部搜索;如果指定组件句柄,则从该组件的子组件开始搜索.</param>
+/// <param
+/// name="hExDuiOrhObj">如果指定引擎句柄,则全部搜索;如果指定组件句柄,则从该组件的子组件开始搜索.</param>
 /// <param name="nID"></param>
 /// <returns></returns>
 HEXOBJ Ex_ObjGetFromID(EXHANDLE hExDuiOrhObj, INT nID);
@@ -2265,7 +2330,8 @@ HEXOBJ Ex_ObjGetFromID(EXHANDLE hExDuiOrhObj, INT nID);
 /// <summary>
 /// 获取组件句柄自名称
 /// </summary>
-/// <param name="hExDuiOrhObj">如果指定引擎句柄,则全部搜索;如果指定组件句柄,则从该组件的子组件开始搜索.</param>
+/// <param
+/// name="hExDuiOrhObj">如果指定引擎句柄,则全部搜索;如果指定组件句柄,则从该组件的子组件开始搜索.</param>
 /// <param name="lpName"></param>
 /// <returns></returns>
 HEXOBJ Ex_ObjGetFromName(EXHANDLE hExDuiOrhObj, LPCWSTR lpName);
@@ -2273,7 +2339,8 @@ HEXOBJ Ex_ObjGetFromName(EXHANDLE hExDuiOrhObj, LPCWSTR lpName);
 /// <summary>
 /// 获取组件句柄自节点ID
 /// </summary>
-/// <param name="hExDUIOrObj">如果指定引擎句柄,则全部搜索;如果指定组件句柄,则从该组件的子组件开始搜索</param>
+/// <param
+/// name="hExDUIOrObj">如果指定引擎句柄,则全部搜索;如果指定组件句柄,则从该组件的子组件开始搜索</param>
 /// <param name="nNodeID"></param>
 /// <returns></returns>
 HEXOBJ Ex_ObjGetFromNodeID(EXHANDLE hExDUIOrObj, INT nNodeID);
@@ -2330,8 +2397,8 @@ BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect);
 /// </summary>
 /// <param name="hObj"></param>
 /// <param name="lpRect"></param>
-/// <param name="nType">0组件相对位置矩形 1组件客户区矩形 2组件窗口矩形 3组件脏区域矩形 4组件文本矩形</param>
-/// <returns></returns>
+/// <param name="nType">0组件相对位置矩形 1组件客户区矩形 2组件窗口矩形 3组件脏区域矩形
+/// 4组件文本矩形</param> <returns></returns>
 BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT* lpRect, INT nType);
 
 /// <summary>
@@ -2370,15 +2437,16 @@ INT Ex_ObjGetUIState(HEXOBJ hObj);
 /// </summary>
 /// <param name="hObj"></param>
 /// <param name="nEvent">#NM_</param>
-/// <param name="pfnCallback">(LRESULT) Handler(HEXOBJ hObj,INT nID,INT nCode,WPARAM wParam,LPARAM lParam) 返回0继续分发事件,返回1则停止继续分发事件</param>
-/// <returns></returns>
+/// <param name="pfnCallback">(LRESULT) Handler(HEXOBJ hObj,INT nID,INT nCode,WPARAM wParam,LPARAM
+/// lParam) 返回0继续分发事件,返回1则停止继续分发事件</param> <returns></returns>
 BOOL Ex_ObjHandleEvent(HEXOBJ hObj, INT nEvent, EventHandlerPROC pfnCallback);
 
 /// <summary>
 /// 初始化属性列表,要注意每次初始化都会清空之前存储的内容,若存储的是指针需要自己先行释放
 /// </summary>
 /// <param name="hObj"></param>
-/// <param name="nPropCount">-1为哈希表模式,0为不存储属性,正数为属性个数(每个sizeof(size_t)字节)</param>
+/// <param
+/// name="nPropCount">-1为哈希表模式,0为不存储属性,正数为属性个数(每个sizeof(size_t)字节)</param>
 /// <returns></returns>
 BOOL Ex_ObjInitPropList(HEXOBJ hObj, INT nPropCount);
 
@@ -2498,9 +2566,10 @@ BOOL Ex_ObjPostMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 /// <param name="cbObjExtra">组件额外分配字节数(值可为0),每个成员8字节</param>
 /// <param name="hCursor">组件默认鼠标指针句柄(值可为0)</param>
 /// <param name="dwFlags">画布标志 #ECVF_(值可为0)</param>
-/// <param name="pfnObjProc">组件默认回调 LRESULT CALLBACK ClsPROC(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)</param>
-/// <returns>成功返回组件类名原子,失败返回0</returns>
-EXATOM Ex_ObjRegister(LPCWSTR lptszClassName, INT dwStyle, INT dwStyleEx, INT dwTextFormat, DWORD cbObjExtra, HCURSOR hCursor, INT dwFlags, ClsPROC pfnObjProc);
+/// <param name="pfnObjProc">组件默认回调 LRESULT CALLBACK ClsPROC(HWND hWnd, HEXOBJ hObj, INT uMsg,
+/// WPARAM wParam, LPARAM lParam)</param> <returns>成功返回组件类名原子,失败返回0</returns>
+EXATOM Ex_ObjRegister(LPCWSTR lptszClassName, INT dwStyle, INT dwStyleEx, INT dwTextFormat,
+                      DWORD cbObjExtra, HCURSOR hCursor, INT dwFlags, ClsPROC pfnObjProc);
 
 /// <summary>
 /// 组件移除属性
@@ -2537,7 +2606,8 @@ HEXOBJ Ex_ObjScrollGetControl(HEXOBJ hObj, INT nBar);
 /// <param name="lpnPos"></param>
 /// <param name="lpnTrackPos"></param>
 /// <returns></returns>
-BOOL Ex_ObjScrollGetInfo(HEXOBJ hObj, INT nBar, INT* lpnMin, INT* lpnMax, INT* lpnPos, INT* lpnTrackPos);
+BOOL Ex_ObjScrollGetInfo(HEXOBJ hObj, INT nBar, INT* lpnMin, INT* lpnMax, INT* lpnPos,
+                         INT* lpnTrackPos);
 
 /// <summary>
 /// 组件获取滚动条位置
@@ -2577,7 +2647,8 @@ INT Ex_ObjScrollGetTrackPos(HEXOBJ hObj, INT nBar);
 /// <param name="nPos"></param>
 /// <param name="bRedraw"></param>
 /// <returns></returns>
-INT Ex_ObjScrollSetInfo(HEXOBJ hObj, INT nBar, INT Mask, INT nMin, INT nMax, INT nPage, INT nPos, BOOL bRedraw);
+INT Ex_ObjScrollSetInfo(HEXOBJ hObj, INT nBar, INT Mask, INT nMin, INT nMax, INT nPage, INT nPos,
+                        BOOL bRedraw);
 
 /// <summary>
 /// 组件设置滚动条位置
@@ -2633,7 +2704,9 @@ size_t Ex_ObjSendMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 /// <param name="dwAlpha">透明度(0-255)</param>
 /// <param name="fUpdate">是否立即刷新</param>
 /// <returns></returns>
-BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen, INT x, INT y, DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate);
+BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen, INT x, INT y,
+                              DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha,
+                              BOOL fUpdate);
 
 /// <summary>
 /// 组件设置背景信息从Svg文件数据
@@ -2649,7 +2722,9 @@ BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen
 /// <param name="dwAlpha">透明度(0-255)</param>
 /// <param name="fUpdate">是否立即刷新</param>
 /// <returns></returns>
-BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf, EXARGB color, INT x, INT y, DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha, BOOL fUpdate);
+BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf, EXARGB color, INT x, INT y,
+                                        DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha,
+                                        BOOL fUpdate);
 
 /// <summary>
 /// 组件设置背景图片播放状态
@@ -2659,7 +2734,8 @@ BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf, EXARGB co
 /// <param name="fResetFrame">是否重置当前帧为首帧</param>
 /// <param name="fUpdate">是否更新背景</param>
 /// <returns></returns>
-BOOL Ex_ObjSetBackgroundPlayState(EXHANDLE handle, BOOL fPlayFrames, BOOL fResetFrame, BOOL fUpdate);
+BOOL Ex_ObjSetBackgroundPlayState(EXHANDLE handle, BOOL fPlayFrames, BOOL fResetFrame,
+                                  BOOL fUpdate);
 
 /// <summary>
 /// 组件设置模糊度
@@ -2695,7 +2771,11 @@ EXARGB Ex_ObjSetColor(HEXOBJ hObj, INT nIndex, EXARGB dwColor, BOOL fRedraw);
 /// <param name="bStrikeOut">是否删除线,可空</param>
 /// <param name="bLink">是否超链接,可空</param>
 /// <returns>返回结果</returns>
-size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL, LPCWSTR wzFontFace = NULL, DWORD fontSize = NULL, INT yOffset = NULL, BOOL bBold = FALSE, BOOL bItalic = FALSE, BOOL bUnderLine = FALSE, BOOL bStrikeOut = FALSE, BOOL bLink = FALSE);
+size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL,
+                                  LPCWSTR wzFontFace = NULL, DWORD fontSize = NULL,
+                                  INT yOffset = NULL, BOOL bBold = FALSE, BOOL bItalic = FALSE,
+                                  BOOL bUnderLine = FALSE, BOOL bStrikeOut = FALSE,
+                                  BOOL bLink = FALSE);
 
 /// <summary>
 /// 编辑框设置选中行段落格式
@@ -2708,7 +2788,9 @@ size_t Ex_ObjEditSetSelCharFormat(HEXOBJ hObj, INT dwMask, EXARGB crText = NULL,
 /// <param name="dxOffset">非首行缩进,可空</param>
 /// <param name="wAlignment">段落对齐方式,可空 #EDIT_PARAGRAPHFALIGN_常量</param>
 /// <returns>返回结果</returns>
-size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering = NULL, INT dxStartIndent = NULL, INT dxRightIndent = NULL, INT dxOffset = NULL, WORD wAlignment = NULL);
+size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering = NULL,
+                                 INT dxStartIndent = NULL, INT dxRightIndent = NULL,
+                                 INT dxOffset = NULL, WORD wAlignment = NULL);
 
 /// <summary>
 /// 组件设置焦点
@@ -2727,15 +2809,15 @@ BOOL Ex_ObjSetFocus(HEXOBJ hObj);
 BOOL Ex_ObjSetFont(HEXOBJ hObj, HEXFONT hFont, BOOL fRedraw);
 
 /*
-* @fnType ExDirectUI
-* @brief Ex_ObjSetFontFromFamily 
-* @param 1  hObj                    [HEXOBJ]
-* @param 2  lpszFontfamily          [LPCWSTR]             -1 为默认字体
-* @param 3  dwFontsize              [INT]               -1 为默认尺寸
-* @param 4  dwFontstyle             [INT]               -1 为默认风格
-* @param 5  fRedraw                 [BOOL]
-* @return [BOOL]返回是否成功
-*/
+ * @fnType ExDirectUI
+ * @brief Ex_ObjSetFontFromFamily
+ * @param 1  hObj                    [HEXOBJ]
+ * @param 2  lpszFontfamily          [LPCWSTR]             -1 为默认字体
+ * @param 3  dwFontsize              [INT]               -1 为默认尺寸
+ * @param 4  dwFontstyle             [INT]               -1 为默认风格
+ * @param 5  fRedraw                 [BOOL]
+ * @return [BOOL]返回是否成功
+ */
 
 /// <summary>
 /// 组件设置文本字体从字体名称
@@ -2746,7 +2828,8 @@ BOOL Ex_ObjSetFont(HEXOBJ hObj, HEXFONT hFont, BOOL fRedraw);
 /// <param name="dwFontstyle">-1 为默认风格</param>
 /// <param name="fRedraw"></param>
 /// <returns></returns>
-BOOL Ex_ObjSetFontFromFamily(HEXOBJ hObj, LPCWSTR lpszFontfamily, INT dwFontsize, INT dwFontstyle, BOOL fRedraw);
+BOOL Ex_ObjSetFontFromFamily(HEXOBJ hObj, LPCWSTR lpszFontfamily, INT dwFontsize, INT dwFontstyle,
+                             BOOL fRedraw);
 
 /// <summary>
 /// 组件设置窗口的输入法状态
@@ -2776,7 +2859,8 @@ LONG_PTR Ex_ObjSetLong(HEXOBJ hObj, INT nIndex, LONG_PTR dwNewLong);
 /// <param name="bottom"></param>
 /// <param name="fRedraw"></param>
 /// <returns></returns>
-BOOL Ex_ObjSetPadding(HEXOBJ hObj, INT nPaddingType, INT left, INT top, INT right, INT bottom, BOOL fRedraw);
+BOOL Ex_ObjSetPadding(HEXOBJ hObj, INT nPaddingType, INT left, INT top, INT right, INT bottom,
+                      BOOL fRedraw);
 
 /// <summary>
 /// 组件置父
@@ -2797,7 +2881,8 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent);
 /// <param name="height"></param>
 /// <param name="flags">相关常量 #SWP_</param>
 /// <returns></returns>
-BOOL Ex_ObjSetPos(HEXOBJ hObj, HEXOBJ hObjInsertAfter, INT x, INT y, INT width, INT height, INT flags);
+BOOL Ex_ObjSetPos(HEXOBJ hObj, HEXOBJ hObjInsertAfter, INT x, INT y, INT width, INT height,
+                  INT flags);
 
 /// <summary>
 /// 组件设置属性
@@ -2818,7 +2903,8 @@ size_t Ex_ObjSetProp(HEXOBJ hObj, size_t dwKey, size_t dwValue);
 /// <param name="bottomleft"></param>
 /// <param name="fUpdate"></param>
 /// <returns></returns>
-BOOL Ex_ObjSetRadius(HEXOBJ hObj, FLOAT topleft, FLOAT topright, FLOAT bottomright, FLOAT bottomleft, BOOL fUpdate);
+BOOL Ex_ObjSetRadius(HEXOBJ hObj, FLOAT topleft, FLOAT topright, FLOAT bottomright,
+                     FLOAT bottomleft, BOOL fUpdate);
 
 /// <summary>
 /// 组件设置是否可以重画.如果组件扩展风格存在OBJECT_STYLE_EX_COMPOSITED,则该函数无效.
@@ -2893,7 +2979,8 @@ BOOL Ex_ObjTooltipsPop(HEXOBJ hObj, LPCWSTR lpText);
 /// <param name="nIcon"></param>
 /// <param name="fShow"></param>
 /// <returns></returns>
-BOOL Ex_ObjTooltipsPopEx(HEXOBJ hObj, LPCWSTR lpTitle, LPCWSTR lpText, INT x, INT y, INT dwTime, INT nIcon, BOOL fShow);
+BOOL Ex_ObjTooltipsPopEx(HEXOBJ hObj, LPCWSTR lpTitle, LPCWSTR lpText, INT x, INT y, INT dwTime,
+                         INT nIcon, BOOL fShow);
 
 /// <summary>
 /// 组件设置提示文本
@@ -3000,8 +3087,9 @@ void Ex_Sleep(INT us);
 /// <param name="atomSrcRect"></param>
 /// <param name="dwAlpha">透明度(0-255)</param>
 /// <returns></returns>
-BOOL Ex_ThemeDrawControl(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	EXATOM atomClass, EXATOM atomSrcRect, DWORD dwAlpha);
+BOOL Ex_ThemeDrawControl(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOAT dstTop,
+                         FLOAT dstRight, FLOAT dstBottom, EXATOM atomClass, EXATOM atomSrcRect,
+                         DWORD dwAlpha);
 
 /// <summary>
 /// 绘制主题数据Ex
@@ -3020,8 +3108,10 @@ BOOL Ex_ThemeDrawControl(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOA
 /// <param name="atomBackgroundFlags"></param>
 /// <param name="dwAlpha"></param>
 /// <returns></returns>
-BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOAT dstTop, FLOAT dstRight, FLOAT dstBottom,
-	EXATOM atomClass, EXATOM atomSrcRect, EXATOM atomBackgroundRepeat, EXATOM atomBackgroundPositon, EXATOM atomBackgroundGrid, EXATOM atomBackgroundFlags, DWORD dwAlpha);
+BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOAT dstTop,
+                           FLOAT dstRight, FLOAT dstBottom, EXATOM atomClass, EXATOM atomSrcRect,
+                           EXATOM atomBackgroundRepeat, EXATOM atomBackgroundPositon,
+                           EXATOM atomBackgroundGrid, EXATOM atomBackgroundFlags, DWORD dwAlpha);
 
 /// <summary>
 /// 释放主题
@@ -3066,7 +3156,8 @@ HEXTHEME Ex_ThemeLoadFromFile(LPCWSTR lptszFile, LPVOID lpKey, size_t dwKeyLen, 
 /// <param name="dwKeyLen"></param>
 /// <param name="bDefault"></param>
 /// <returns></returns>
-HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen, BOOL bDefault);
+HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen,
+                                BOOL bDefault);
 
 /// <summary>
 /// 弹出菜单
@@ -3076,12 +3167,14 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
 /// <param name="x">弹出坐标X(屏幕坐标)</param>
 /// <param name="y">弹出坐标Y(屏幕坐标)</param>
 /// <param name="nReserved">0.备用</param>
-/// <param name="handle">组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认菜单弹出)</param>
+/// <param
+/// name="handle">组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认菜单弹出)</param>
 /// <param name="lpRC"></param>
-/// <param name="pfnCallback">(LRESULT)MsgProc(HWND hWnd,size_t hExDui,INT uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult)</param>
-/// <param name="dwFlags">相关常量 EMNF_</param>
+/// <param name="pfnCallback">(LRESULT)MsgProc(HWND hWnd,size_t hExDui,INT uMsg,WPARAM wParam,LPARAM
+/// lParam,LRESULT* lpResult)</param> <param name="dwFlags">相关常量 EMNF_</param>
 /// <returns></returns>
-BOOL Ex_TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y, size_t nReserved, EXHANDLE handle, RECT* lpRC, MsgPROC pfnCallback, DWORD dwFlags);
+BOOL Ex_TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y, size_t nReserved, EXHANDLE handle,
+                       RECT* lpRC, MsgPROC pfnCallback, DWORD dwFlags);
 
 /// <summary>
 /// 反初始化引擎
@@ -3109,7 +3202,8 @@ void Ex_WndCenterFrom(HWND hWnd, HWND hWndFrom, BOOL bFullScreen);
 /// <param name="dwStyle">窗口风格</param>
 /// <param name="dwStyleEx">窗口扩展风格</param>
 /// <returns>返回窗口句柄</returns>
-HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName, INT x, INT y, INT width, INT height, INT dwStyle, INT dwStyleEx);
+HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName, INT x, INT y,
+                  INT width, INT height, INT dwStyle, INT dwStyleEx);
 
 /// <summary>
 /// 窗口消息循环

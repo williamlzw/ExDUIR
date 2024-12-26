@@ -1,5 +1,4 @@
-#pragma once
-#include "help_ex.h"
+﻿#pragma once
 
 // 图标列表属性_表项宽度
 #define ICONLISTVIEW_LONG_WIDTH 0
@@ -11,10 +10,12 @@
 #define ICONLISTVIEW_LONG_HIMAGELIST 3
 
 LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-void _iconlistview_register();
-EX_ICONLISTVIEW_ITEMINFO *_iconlistview_onarrappend(array_s *pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO *pvItem, INT nType);
-void _iconlistview_onarrdelete(array_s *pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO *pvItem, INT nType);
+void             _iconlistview_register();
+EX_ICONLISTVIEW_ITEMINFO* _iconlistview_onarrappend(array_s* pArray, INT nIndex,
+                                                    EX_ICONLISTVIEW_ITEMINFO* pvItem, INT nType);
+void _iconlistview_onarrdelete(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEMINFO* pvItem,
+                               INT nType);
 void _iconlistview_init(HEXOBJ hObj);
 void _iconlistview_uninit(HEXOBJ hObj);
 BOOL _iconlistview_onnotify(HEXOBJ hObj, WPARAM wParam, LPARAM lParam);
-BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW *cdr);
+BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr);
