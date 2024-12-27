@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void Ex_SetLastError(INT nError)
 {
@@ -78,8 +78,8 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
                             offsetof(obj_s, crVisted_),
                             offsetof(obj_s, crShadow_)};
     g_Li.hModuleUser     = GetModuleHandleW(L"user32.dll");
-    // g_Ri.hRiched20 = LoadLibraryW(L"Msftedit.dll");//编辑框空格选中首行bug
-    g_Ri.hRiched20 = LoadLibraryW(L"Riched20.dll");
+    g_Ri.hRiched20 = LoadLibraryW(L"Msftedit.dll");
+   // g_Ri.hRiched20 = LoadLibraryW(L"Riched20.dll");
     LPVOID i       = Ex_MemAlloc(64);
     INT    len;
     len           = LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);

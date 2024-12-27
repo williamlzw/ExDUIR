@@ -1017,6 +1017,11 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                         return 1;
                     }
                 }
+                else if (wParam == VK_SPACE)
+                {
+                    //拦截空格.Msftedit回到首行bug
+                    return 1;
+                }
             }
             LRESULT ret = _edit_sendmessage(pObj, uMsg, wParam, lParam, &bFree);
             if (bFree) {
