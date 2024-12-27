@@ -1,4 +1,4 @@
-#include "test_obj.h"
+﻿#include "test_obj.h"
 #include "resource.h"
 
 HEXDUI m_hExDuiButton;
@@ -785,9 +785,9 @@ void test_edit(HWND hWnd)
                        0,
                        0,
                        NULL);
-    Ex_ObjSendMessage(hobj_edit_multiline, EM_SETSEL, -1, -1);   // 移动到最后一行
+    Ex_ObjSendMessage(hobj_edit_multiline, EM_SETSEL, -1, -1);   // 光标移动到最后一行
     Ex_ObjSendMessage(hobj_edit_multiline, EM_REPLACESEL, -1, (LPARAM)L"新添加一行");   // 添加一行
-    Ex_ObjSetFocus(hobj_edit_multiline);   // 添加焦点自动滚动到最后一行
+    Ex_ObjSetFocus(hobj_edit_multiline);   // 添加焦点自动滚动到光标位置也就是最后一行
 
     HEXOBJ hObj_edit7 = Ex_ObjCreateEx(
         OBJECT_STYLE_EX_FOCUSABLE,
@@ -812,8 +812,10 @@ void test_edit(HWND hWnd)
     Ex_ObjHandleEvent(hObj_edit7, EDIT_EVENT_SELCHANGE, OnEditNotifyEvent);
     Ex_ObjHandleEvent(hObj_edit7, EDIT_EVENT_LINK, OnEditNotifyEvent);
 
-    Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, -1, -1);
+    // 在最后一行换行插入图片，现将光标设置到最后
+    Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, -1, -1); 
     Ex_ObjSendMessage(hObj_edit7, EM_REPLACESEL, -1, (LPARAM)L"\r\n");
+    
     HBITMAP  hbitmap   = 0;
     HEXIMAGE hImg      = 0;
     HEXIMAGE hImgSmall = 0;
@@ -825,7 +827,8 @@ void test_edit(HWND hWnd)
     Ex_ObjSendMessage(hObj_edit7, EDIT_MESSAGE_INSERT_BITMAP, 0, (size_t)hbitmap);
     _img_destroy(hImg);
     _img_destroy(hImgSmall);
-
+    Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, 0, 0);//光标恢复首行
+    
     std::vector<std::wstring> buttonTitles = {
         L"全选",     L"取消选择",   L"置选择",  L"左对齐 ",   L"居中对齐", L"右对齐", L"首行缩进 ",
         L"右侧缩进", L"非首行缩进", L"项目符",  L"文本红色 ", L"加粗",     L"倾斜",   L"下划线",

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 class TextHost : public ITextHost
 {
@@ -536,7 +536,6 @@ void CALLBACK _edit_timer_caret(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dw
         pOwner->flags_ = pOwner->flags_ | (EDIT_FLAG_BSHOWCARET | EDIT_FLAG_BCARETCONTEXT);
         pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & EDIT_FLAG_BCARETSHHOWED);
     }
-
     _obj_invalidaterect(pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), &nError);
 }
 
@@ -571,7 +570,8 @@ LRESULT _edit_sendmessage(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam, B
     LRESULT ret  = 0;
     LPVOID  pits = _edit_its(pObj);
     if (pits != nullptr) {
-        *sOK = ((ITextServices*)pits)->TxSendMessage(uMsg, wParam, lParam, &ret) == 0;
+        auto lret = ((ITextServices*)pits)->TxSendMessage(uMsg, wParam, lParam, &ret);
+        *sOK      = lret == 0;
     }
     return ret;
 }
@@ -802,9 +802,10 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
             if (pits != nullptr) {
                 if (LOWORD(wParam) == SB_THUMBTRACK || LOWORD(wParam) == SB_THUMBPOSITION) {
                     POINT scrollPos;
+                    
                     ((ITextServices*)pits)
                         ->TxSendMessage(
-                            EM_GETSCROLLPOS, 0, reinterpret_cast<LPARAM>(&scrollPos), NULL);
+                            EM_GETSCROLLPOS, 0, (LPARAM)&scrollPos, NULL);
                     if (uMsg == WM_VSCROLL) {
                         scrollPos.y = Ex_ObjScrollGetTrackPos(hObj, SB_VERT);
                     }
@@ -861,6 +862,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                     (EDIT_FLAG_BSHOWCARET | EDIT_FLAG_BCARETCONTEXT)) {
                     pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & (EDIT_FLAG_BSHOWCARET |
                                                                          EDIT_FLAG_BCARETCONTEXT));
+                    
                     _obj_invalidaterect(
                         pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), &nError);
                 }
