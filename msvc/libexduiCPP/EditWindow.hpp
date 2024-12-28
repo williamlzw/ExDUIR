@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include "ExDUIRCPP.hpp"
 
 using namespace ExDUIR::FrameWorks::Control;
@@ -48,6 +48,7 @@ public:
 
 		m_edit6 = ExEdit(m_skin, 10, 245, 150, 100, L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\n", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT | DT_TOP);
 		m_edit6.AddLine(L"新添加一行");
+        m_edit6.SetFocus();
 
 		m_edit7 = ExEdit(m_skin, 180, 30, 300, 300, L"", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL | EDIT_STYLE_RICHTEXT | EDIT_STYLE_PARSEURL | EDIT_STYLE_ALLOWTAB | EDIT_STYLE_NEWLINE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT | DT_TOP, 101);
 		m_edit7.LoadRtf(L"../test/res/test.rtf");
@@ -55,7 +56,7 @@ public:
 		m_edit7.HandleEvent(EDIT_EVENT_LINK, OnEditNotifyEvent);
 		m_edit7.AddLine(L"\r\n");
 		m_edit7.AddBitmap(L"../test/res/rotateimgbox.jpg", 200, 200);
-
+        m_edit7.Select(0, 0);
 		std::vector<std::wstring> buttonTitles = { L"全选", L"取消选择", L"置选择", L"左对齐 ", L"居中对齐",
 		L"右对齐", L"首行缩进 ", L"右侧缩进", L"非首行缩进", L"项目符", L"文本红色 ", L"加粗", L"倾斜",
 		L"下划线", L"删除线", L"超链接", L"幼圆30", L"撤销 ", L"重做", L"复制", L"剪切", L"粘贴",

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ExControl.hpp"
 
 using namespace ExDUIR::FrameWorks::Control;
@@ -541,8 +541,7 @@ namespace ExDUIR
 				inline void AddLine(std::wstring line)
 				{
 					Ex_ObjSendMessage(m_handle, EM_SETSEL, -1, -1);                        //移动到最后一行
-					Ex_ObjSendMessage(m_handle, EM_REPLACESEL, -1, (LPARAM)line.c_str()); //添加一行
-					Ex_ObjSetFocus(m_handle);                                              //添加焦点自动滚动到最后一行
+					Ex_ObjSendMessage(m_handle, EM_REPLACESEL, -1, (LPARAM)line.c_str()); //添加一行                                             //添加焦点自动滚动到最后一行
 				}
 
 				inline void AddBitmap(std::wstring imgFile, INT width, INT height)

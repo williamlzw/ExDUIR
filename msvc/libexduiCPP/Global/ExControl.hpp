@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ExUIbase.hpp"
 
 using namespace ExDUIR::FrameWorks;
@@ -130,6 +130,11 @@ namespace ExDUIR
 					auto ret = ExControl(hObj);
 					return ret;
 				}
+
+                inline BOOL SetFocus()
+                {
+                    return Ex_ObjSetFocus(m_handle);
+                }
 
 				inline BOOL KillFocus()
 				{
