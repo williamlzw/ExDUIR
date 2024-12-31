@@ -2,14 +2,9 @@
 
 void _win10_loading_register()
 {
-    Ex_ObjRegister(L"Win10Loading",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   NULL,
-                   2 * sizeof(size_t),
-                   NULL,
-                   NULL,
-                   _win10_loading_proc);
+    Ex_ObjRegister(L"Win10Loading", OBJECT_STYLE_VISIBLE,
+                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, NULL, 2 * sizeof(size_t),
+                   NULL, NULL, _win10_loading_proc);
 }
 
 LRESULT CALLBACK _win10_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -80,11 +75,8 @@ void _win10_loading_paint(HEXOBJ hObj)
             for (INT j = 0; j < 6; j++) {
                 FLOAT n = (FLOAT)(4 * (i[0] - 0.5) * (i[0] - 0.5) * (i[0] - 0.5) + 0.5 + i[0]) / 2;
                 i[0]    = (FLOAT)(i[0] - 0.045);
-                _canvas_fillellipse(ps.hCanvas,
-                                    hBrush,
-                                    (FLOAT)(ps.uWidth * n),
-                                    (FLOAT)(ps.uHeight * 3 / 5),
-                                    (FLOAT)Ex_Scale(3),
+                _canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)(ps.uWidth * n),
+                                    (FLOAT)(ps.uHeight * 3 / 5), (FLOAT)Ex_Scale(3),
                                     (FLOAT)Ex_Scale(3));
             }
             i[0] = a;
@@ -114,29 +106,23 @@ void _win10_loading_paint(HEXOBJ hObj)
                 i[0] = i[0] - 0.1;
 
                 if ((INT)(360 * n) > 0 && (INT)(360 * n) < 720) {
-                    _canvas_fillellipse(ps.hCanvas,
-                                        hBrush,
+                    _canvas_fillellipse(ps.hCanvas, hBrush,
                                         (FLOAT)((ps.uWidth - ptr[(INT)(360 * n)]) / 2 +
                                                 Ex_Scale(ptr[(INT)(360 * n)])),
                                         (FLOAT)((ps.uHeight - ptr[(INT)(360 * n) + 720]) / 2 +
                                                 Ex_Scale(ptr[(INT)(360 * n) + 720])),
-                                        (FLOAT)Ex_Scale(3),
-                                        (FLOAT)Ex_Scale(3));
+                                        (FLOAT)Ex_Scale(3), (FLOAT)Ex_Scale(3));
                 }
             }
             i[0] = a;
             Ex_ObjSetLong(hObj, 1, (LONG_PTR)i);
         }
 
-        _canvas_drawtext(ps.hCanvas,
-                         (HEXFONT)Ex_ObjGetLong(hObj, OBJECT_LONG_HFONT),
+        _canvas_drawtext(ps.hCanvas, (HEXFONT)Ex_ObjGetLong(hObj, OBJECT_LONG_HFONT),
                          Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                         -1,
-                         DT_BOTTOM | DT_VCENTER | DT_CENTER | DT_SINGLELINE,
-                         (FLOAT)ps.rcText.left,
-                         (FLOAT)(ps.uHeight * 3 / 5),
-                         (FLOAT)ps.rcText.right,
+                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                         DT_BOTTOM | DT_VCENTER | DT_CENTER | DT_SINGLELINE, (FLOAT)ps.rcText.left,
+                         (FLOAT)(ps.uHeight * 3 / 5), (FLOAT)ps.rcText.right,
                          (FLOAT)ps.rcText.bottom);
         _brush_destroy(hBrush);
 

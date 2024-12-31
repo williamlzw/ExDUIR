@@ -165,11 +165,11 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
                                             }
                                             else {
                                                 LPVOID lpValueaa = Ex_MemAlloc(dwLen + 2);
-                                                RtlMoveMemory(
-                                                    lpValueaa, (LPVOID)arylpValue[i], dwLen);
+                                                RtlMoveMemory(lpValueaa, (LPVOID)arylpValue[i],
+                                                              dwLen);
 
-                                                HashTable_Set(
-                                                    pTableProp, aryAtomKey[i], (size_t)lpValueaa);
+                                                HashTable_Set(pTableProp, aryAtomKey[i],
+                                                              (size_t)lpValueaa);
                                             }
                                         }
                                         else {
@@ -181,11 +181,10 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
                                                 _fmt_color((LPVOID)arylpValue[i], lpValuea);
                                             }
                                             else {
-                                                _fmt_intary_ex(
-                                                    (LPVOID)arylpValue[i], &lpValuea, 0, TRUE);
+                                                _fmt_intary_ex((LPVOID)arylpValue[i], &lpValuea, 0,
+                                                               TRUE);
                                             }
-                                            HashTable_Set(pTableProp,
-                                                          (size_t)aryAtomKey[i],
+                                            HashTable_Set(pTableProp, (size_t)aryAtomKey[i],
                                                           (size_t)lpValuea);
                                         }
                                     }
@@ -253,8 +252,8 @@ HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, s
                             (LPVOID)__get(g_Li.hThemeDefault, offsetof(EX_THEME, aryColors)),
                             sizeof(colors_s));
                     }
-                    if (_theme_fillclasses(
-                            pTableFiles, pTableClass, atomFiles, lpFiles, dwFileProps, aryColors)) {
+                    if (_theme_fillclasses(pTableFiles, pTableClass, atomFiles, lpFiles,
+                                           dwFileProps, aryColors)) {
                         ((EX_THEME*)hTheme)->tableFiles = pTableFiles;
                         ((EX_THEME*)hTheme)->loadCount  = 1;
                         ((EX_THEME*)hTheme)->crcTheme   = crc;
@@ -341,16 +340,8 @@ BOOL Ex_ThemeDrawControlEx(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FL
                         RECT* pGird = nullptr;
                         HashTable_Get(pProp, atomBackgroundGrid, (size_t*)&pGird);
                         EX_RECTF rect = {dstLeft, dstTop, dstRight, dstBottom};
-                        ret           = _canvas_drawimagefrombkgimg_ex(hCanvas,
-                                                             hImg,
-                                                             x,
-                                                             y,
-                                                             dwRepeat,
-                                                             pGird,
-                                                             dwFlags,
-                                                             dwAlpha,
-                                                             pSrcRect,
-                                                             &rect);
+                        ret = _canvas_drawimagefrombkgimg_ex(hCanvas, hImg, x, y, dwRepeat, pGird,
+                                                             dwFlags, dwAlpha, pSrcRect, &rect);
                     }
                 }
             }
@@ -363,19 +354,9 @@ BOOL Ex_ThemeDrawControl(HEXTHEME hTheme, HEXCANVAS hCanvas, FLOAT dstLeft, FLOA
                          FLOAT dstRight, FLOAT dstBottom, EXATOM atomClass, EXATOM atomSrcRect,
                          DWORD dwAlpha)
 {
-    return Ex_ThemeDrawControlEx(hTheme,
-                                 hCanvas,
-                                 dstLeft,
-                                 dstTop,
-                                 dstRight,
-                                 dstBottom,
-                                 atomClass,
-                                 atomSrcRect,
-                                 ATOM_BACKGROUND_REPEAT,
-                                 ATOM_BACKGROUND_POSITION,
-                                 ATOM_BACKGROUND_GRID,
-                                 ATOM_BACKGROUND_FLAGS,
-                                 dwAlpha);
+    return Ex_ThemeDrawControlEx(hTheme, hCanvas, dstLeft, dstTop, dstRight, dstBottom, atomClass,
+                                 atomSrcRect, ATOM_BACKGROUND_REPEAT, ATOM_BACKGROUND_POSITION,
+                                 ATOM_BACKGROUND_GRID, ATOM_BACKGROUND_FLAGS, dwAlpha);
 }
 
 LPVOID Ex_ThemeGetValuePtr(HEXTHEME hTheme, EXATOM atomClass, EXATOM atomProp)

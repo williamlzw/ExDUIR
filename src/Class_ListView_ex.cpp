@@ -4,35 +4,18 @@ ClsPROC m_pfnTListView;
 
 void _listview_regsiter()
 {
-    Ex_ObjRegister(L"ListView",
-                   OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL,
+    Ex_ObjRegister(L"ListView", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL,
                    OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER,
-                   0,
-                   0,
-                   0,
-                   _listview_proc);
+                   DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 0, 0, 0, _listview_proc);
     EX_CLASSINFO clsInfo{0};
     Ex_ObjGetClassInfoEx(L"ListView", &clsInfo);
     m_pfnTListView = clsInfo.pfnClsProc;
-    _obj_register(Ex_Atom(L"TListView"),
-                  clsInfo.dwStyle,
-                  clsInfo.dwStyleEx,
-                  clsInfo.dwTextFormat,
-                  8 * sizeof(size_t),
-                  clsInfo.hCursor,
-                  _tlv_proc,
-                  clsInfo.dwFlags,
-                  0);
-    _obj_register(Ex_Atom(L"LISTITEM"),
-                  OBJECT_STYLE_VISIBLE,
+    _obj_register(Ex_Atom(L"TListView"), clsInfo.dwStyle, clsInfo.dwStyleEx, clsInfo.dwTextFormat,
+                  8 * sizeof(size_t), clsInfo.hCursor, _tlv_proc, clsInfo.dwFlags, 0);
+    _obj_register(Ex_Atom(L"LISTITEM"), OBJECT_STYLE_VISIBLE,
                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                  DT_VCENTER | DT_SINGLELINE | DT_CENTER,
-                  10 * sizeof(size_t),
-                  clsInfo.hCursor,
-                  _tlvi_proc,
-                  clsInfo.dwFlags,
-                  0);
+                  DT_VCENTER | DT_SINGLELINE | DT_CENTER, 10 * sizeof(size_t), clsInfo.hCursor,
+                  _tlvi_proc, clsInfo.dwFlags, 0);
 }
 
 void _tlv_array_del(array_s* hArray, int index, HEXOBJ pvData, int type)
@@ -74,32 +57,26 @@ void _tlv_refill(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_P
                 if (ishover && !is_select &&
                     ((pObj->dwStyle_ & LISTVIEW_STYLE_ITEMTRACKING) ==
                      LISTVIEW_STYLE_ITEMTRACKING)) {
-                    Ex_ObjSetLong(hObjItem,
-                                  TEMPLATELISTVIEW_LONG_ITEM_FILLCOLOR,
+                    Ex_ObjSetLong(hObjItem, TEMPLATELISTVIEW_LONG_ITEM_FILLCOLOR,
                                   Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_HOVERCOLOR));
                     Ex_ObjSetLong(
-                        hObjItem,
-                        TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR,
+                        hObjItem, TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR,
                         Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_BORDERCOLOR));   // 表项描边色
                     Ex_ObjInvalidateRect(hObjItem, 0);
                 }
                 else if (is_select && !ishover) {
-                    Ex_ObjSetLong(hObjItem,
-                                  TEMPLATELISTVIEW_LONG_ITEM_FILLCOLOR,
+                    Ex_ObjSetLong(hObjItem, TEMPLATELISTVIEW_LONG_ITEM_FILLCOLOR,
                                   Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_SELECTCOLOR));
-                    Ex_ObjSetLong(hObjItem,
-                                  TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR,
+                    Ex_ObjSetLong(hObjItem, TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR,
                                   Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_BORDERCOLOR));
                     Ex_ObjInvalidateRect(hObjItem, 0);
                 }
                 else if (is_select && ishover) {
-                    Ex_ObjSetLong(hObjItem,
-                                  TEMPLATELISTVIEW_LONG_ITEM_FILLCOLOR,
+                    Ex_ObjSetLong(hObjItem, TEMPLATELISTVIEW_LONG_ITEM_FILLCOLOR,
                                   ExRGB2ARGB(ExARGB2RGB(Ex_ObjGetLong(
                                                  hObj, TEMPLATELISTVIEW_LONG_SELECTCOLOR)),
                                              150));
-                    Ex_ObjSetLong(hObjItem,
-                                  TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR,
+                    Ex_ObjSetLong(hObjItem, TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR,
                                   Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_BORDERCOLOR));
                     Ex_ObjInvalidateRect(hObjItem, 0);
                 }
@@ -109,10 +86,9 @@ void _tlv_refill(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, LONG_P
                     Ex_ObjInvalidateRect(hObjItem, 0);
                 }
                 if (NeedUpdate || update) {
-                    _obj_baseproc(
-                        hWnd, hObj, pObj, TEMPLATELISTVIEW_MESSAGE_ITEM_FILL, nIndex, hObjItem);
-                    Ex_ObjSetLong(hObjItem,
-                                  TEMPLATELISTVIEW_LONG_ITEM_INDEX,
+                    _obj_baseproc(hWnd, hObj, pObj, TEMPLATELISTVIEW_MESSAGE_ITEM_FILL, nIndex,
+                                  hObjItem);
+                    Ex_ObjSetLong(hObjItem, TEMPLATELISTVIEW_LONG_ITEM_INDEX,
                                   nIndex);   // 当前表项组件对应的表项索引
                 }
                 if (((pObjItem->dwStyle_ & OBJECT_STYLE_VISIBLE) != OBJECT_STYLE_VISIBLE)) {
@@ -163,11 +139,7 @@ void _tlv_repos_items(HWND hWnd, HEXOBJ hObj, obj_s* pObj, EX_PAINTSTRUCT& ps, B
                 if (_listview_checkitem_view(pOwner, nIndex)) {
                     RECT rcItem = {0};
                     _listview_rectfromiitem(pObj, pOwner, nIndex, bHView, &rcItem);
-                    Ex_ObjSetPos(hObjItem,
-                                 0,
-                                 rcItem.left,
-                                 rcItem.top,
-                                 rcItem.right - rcItem.left,
+                    Ex_ObjSetPos(hObjItem, 0, rcItem.left, rcItem.top, rcItem.right - rcItem.left,
                                  rcItem.bottom - rcItem.top,
                                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER |
                                      SWP_ASYNCWINDOWPOS | SWP_EX_NODPISCALE);
@@ -189,23 +161,14 @@ void _tlv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM l
     if (iCur != pOwner->index_mouse_) {
         if ((pObj->dwStyle_ & LISTVIEW_STYLE_ITEMTRACKING) == LISTVIEW_STYLE_ITEMTRACKING) {
             if (_listview_checkitem(pOwner, pOwner->index_mouse_))
-                _listview_item_changestate(hWnd,
-                                           hObj,
-                                           pObj,
-                                           pOwner,
-                                           lpItems,
-                                           pOwner->index_mouse_,
-                                           STATE_HOVER,
-                                           TRUE,
-                                           0,
-                                           0,
-                                           0);
+                _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, pOwner->index_mouse_,
+                                           STATE_HOVER, TRUE, 0, 0, 0);
             pOwner->index_mouse_ = iCur;
         }
         BOOL vCur = _listview_checkitem(pOwner, iCur);
         if (vCur) {
-            _listview_item_changestate(
-                hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_HOVER, FALSE, 0, 0, 0);
+            _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_HOVER, FALSE,
+                                       0, 0, 0);
             INT tmp =
                 _obj_baseproc(hWnd, hObj, pObj, LISTVIEW_MESSAGE_HITTEST, iCur, MAKELONG(ox, oy));
             iHitTest = tmp == 0 ? LISTVIEW_HITTYPE_ONITEM : tmp;
@@ -226,8 +189,8 @@ void _tlv_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
     INT         imouse  = pOwner->index_mouse_;
     if (!iCur) {
         if (_listview_checkitem(pOwner, imouse)) {
-            _listview_item_changestate(
-                hWnd, hObj, pObj, pOwner, lpItems, imouse, STATE_HOVER, TRUE, 0, 0, 0);
+            _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, imouse, STATE_HOVER, TRUE,
+                                       0, 0, 0);
             pOwner->index_mouse_ = 0;
         }
     }
@@ -245,11 +208,7 @@ LRESULT CALLBACK _tlv_scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
             }
             else {
                 lParam = MAKELONG(-1, -1);
-                _obj_baseproc(hWnd,
-                              parent,
-                              pObj,
-                              WM_MOUSELEAVE,
-                              wParam,
+                _obj_baseproc(hWnd, parent, pObj, WM_MOUSELEAVE, wParam,
                               lParam);   // 移动到滚动条取消表项悬浮热点
             }
         }
@@ -300,12 +259,12 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
             Array_BindEvent(arr, ARRAY_EVENT_DELMEMBER, _tlv_array_del);
             Array_SetExtra(arr, hObj);
             Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_ITEMARRAY, (LONG_PTR)arr);
-            Ex_ObjSetLong(
-                hObj, TEMPLATELISTVIEW_LONG_HOVERCOLOR, ExRGB2ARGB(15066083, 200));   // 表项悬浮色
-            Ex_ObjSetLong(
-                hObj, TEMPLATELISTVIEW_LONG_SELECTCOLOR, ExRGB2ARGB(255, 250));   // 表项选中色
-            Ex_ObjSetLong(
-                hObj, TEMPLATELISTVIEW_LONG_BORDERCOLOR, ExRGB2ARGB(255, 250));   // 表项描边色
+            Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_HOVERCOLOR,
+                          ExRGB2ARGB(15066083, 200));   // 表项悬浮色
+            Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_SELECTCOLOR,
+                          ExRGB2ARGB(255, 250));   // 表项选中色
+            Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_BORDERCOLOR,
+                          ExRGB2ARGB(255, 250));   // 表项描边色
         }
         else if (uMsg == WM_DESTROY) {
             arr = (array_s*)Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEMARRAY);
@@ -334,8 +293,8 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
             return 0;   // 不执行父类
         }
         else if (uMsg == TEMPLATELISTVIEW_MESSAGE_ITEM_CREATE) {
-            HEXOBJ handle = Ex_ObjCreateEx(
-                OBJECT_STYLE_EX_TRANSPARENT, L"LISTITEM", 0, -1, 0, 0, 0, 0, hObj, 0, -1, 0, 0, 0);
+            HEXOBJ handle = Ex_ObjCreateEx(OBJECT_STYLE_EX_TRANSPARENT, L"LISTITEM", 0, -1, 0, 0, 0,
+                                           0, hObj, 0, -1, 0, 0, 0);
             _obj_baseproc(hWnd, hObj, pObj, TEMPLATELISTVIEW_MESSAGE_ITEM_CREATED, 0, handle);
             Ex_ObjEnumChild(handle, _tlv_EnumChild, handle);
             return handle;
@@ -381,30 +340,14 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
                 if (nCount > 0) {
                     for (INT i = 1; i < nCount + 1; i++) {
                         if (_listview_queryitemstate(lpItems, i, STATE_SELECT)) {
-                            _listview_item_changestate(hWnd,
-                                                       hObj,
-                                                       pObj,
-                                                       pOwner,
-                                                       lpItems,
-                                                       i,
-                                                       STATE_SELECT,
-                                                       TRUE,
-                                                       LISTVIEW_EVENT_ITEMSELECTC,
-                                                       i,
-                                                       pOwner->index_select_);
+                            _listview_item_changestate(
+                                hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, TRUE,
+                                LISTVIEW_EVENT_ITEMSELECTC, i, pOwner->index_select_);
                         }
                     }
-                    _listview_item_changestate(hWnd,
-                                               hObj,
-                                               pObj,
-                                               pOwner,
-                                               lpItems,
-                                               lParam,
-                                               STATE_SELECT,
-                                               FALSE,
-                                               LISTVIEW_EVENT_ITEMSELECTD,
-                                               lParam,
-                                               pOwner->index_select_);
+                    _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, lParam,
+                                               STATE_SELECT, FALSE, LISTVIEW_EVENT_ITEMSELECTD,
+                                               lParam, pOwner->index_select_);
                     if (wParam != 0) {
                         _listview_showitem(hWnd, hObj, pObj, lParam, FALSE);
                     }
@@ -461,16 +404,11 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                         _path_create(PATH_FLAG_DISABLESCALE, &hPath);
                         _path_open(hPath);
                         _path_beginfigure2(
-                            hPath,
-                            pObj->c_left_,
+                            hPath, pObj->c_left_,
                             pObj->c_top_ - Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_RADIUS1) *
                                                g_Li.DpiX);
                         _path_addroundedrect(
-                            hPath,
-                            pObj->c_left_,
-                            pObj->c_top_,
-                            pObj->c_right_,
-                            pObj->c_bottom_,
+                            hPath, pObj->c_left_, pObj->c_top_, pObj->c_right_, pObj->c_bottom_,
                             Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_RADIUS1) * g_Li.DpiX,
                             Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_RADIUS2) * g_Li.DpiX,
                             Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_RADIUS3) * g_Li.DpiX,
@@ -485,9 +423,7 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                                 hBrush,
                                 Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR));
                             _canvas_drawpath(
-                                ps.hCanvas,
-                                hPath,
-                                hBrush,
+                                ps.hCanvas, hPath, hBrush,
                                 Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_BORDERTHICKNESS),
                                 D2D1_DASH_STYLE_SOLID);
                         }
@@ -502,12 +438,7 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                                 hBrush,
                                 Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_BORDERCOLOR));
                             _canvas_drawrect(
-                                ps.hCanvas,
-                                hBrush,
-                                0,
-                                0,
-                                ps.uWidth,
-                                ps.uHeight,
+                                ps.hCanvas, hBrush, 0, 0, ps.uWidth, ps.uHeight,
                                 Ex_ObjGetLong(hObj, TEMPLATELISTVIEW_LONG_ITEM_BORDERTHICKNESS),
                                 D2D1_DASH_STYLE_SOLID);
                         }
@@ -516,19 +447,11 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                 }
                 LPCWSTR lpText = pObj->pstrTitle_;
                 if (lpText != 0) {
-                    _canvas_drawtextex(ps.hCanvas,
-                                       pObj->hFont_,
-                                       _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL),
-                                       lpText,
-                                       -1,
-                                       ps.dwTextFormat,
-                                       ps.rcText.left,
-                                       ps.rcText.top,
-                                       ps.rcText.right,
-                                       ps.rcText.bottom,
-                                       pObj->dwShadowSize_,
-                                       _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW),
-                                       0);
+                    _canvas_drawtextex(ps.hCanvas, pObj->hFont_,
+                                       _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), lpText, -1,
+                                       ps.dwTextFormat, ps.rcText.left, ps.rcText.top,
+                                       ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_,
+                                       _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
                 }
                 Ex_ObjEndPaint(hObj, &ps);
             }
@@ -630,19 +553,13 @@ void _listview_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT*
     pOwner->height_view_  = vHeight;     // 项目总高度
     if (hVSB != 0) {
         Ex_ObjScrollShow(hVSB, SCROLLBAR_TYPE_CONTROL, vHeight - height > 0);
-        Ex_ObjScrollSetInfo(hVSB,
-                            SCROLLBAR_TYPE_CONTROL,
-                            SIF_PAGE | SIF_RANGE,
-                            0,
-                            vHeight - height,
-                            height,
-                            0,
-                            FALSE);
+        Ex_ObjScrollSetInfo(hVSB, SCROLLBAR_TYPE_CONTROL, SIF_PAGE | SIF_RANGE, 0, vHeight - height,
+                            height, 0, FALSE);
     }
     if (hHSB != 0) {
         Ex_ObjScrollShow(hHSB, SCROLLBAR_TYPE_CONTROL, vWidth - width > 0);
-        Ex_ObjScrollSetInfo(
-            hHSB, SCROLLBAR_TYPE_CONTROL, SIF_PAGE | SIF_RANGE, 0, vWidth - width, width, 0, FALSE);
+        Ex_ObjScrollSetInfo(hHSB, SCROLLBAR_TYPE_CONTROL, SIF_PAGE | SIF_RANGE, 0, vWidth - width,
+                            width, 0, FALSE);
     }
 }
 
@@ -842,9 +759,7 @@ void _listview_redrawitem(obj_s* pObj, listview_s* pOwner, INT iItem)
         RECT rcItem{0};
         INT  nError = 0;
         _listview_rectfromiitem(
-            pObj,
-            pOwner,
-            iItem,
+            pObj, pOwner, iItem,
             (pObj->dwStyle_ & LISTVIEW_STYLE_HORIZONTALLIST) == LISTVIEW_STYLE_HORIZONTALLIST,
             &rcItem);
         _obj_invalidaterect(pObj, &rcItem, &nError);
@@ -969,30 +884,12 @@ void _listview_itemselectone(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, LPVO
         if (_listview_queryitemstate(lpItems, i, STATE_SELECT) &&
             i != iCur)   // 如果单选为已经选中的,则跳过
         {
-            _listview_item_changestate(hWnd,
-                                       hObj,
-                                       pObj,
-                                       pOwner,
-                                       lpItems,
-                                       i,
-                                       STATE_SELECT,
-                                       TRUE,
-                                       LISTVIEW_EVENT_ITEMSELECTC,
-                                       i,
-                                       iSelect);
+            _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, TRUE,
+                                       LISTVIEW_EVENT_ITEMSELECTC, i, iSelect);
         }
     }
-    _listview_item_changestate(hWnd,
-                               hObj,
-                               pObj,
-                               pOwner,
-                               lpItems,
-                               iCur,
-                               STATE_SELECT,
-                               FALSE,
-                               LISTVIEW_EVENT_ITEMSELECTD,
-                               iCur,
-                               iSelect);
+    _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_SELECT, FALSE,
+                               LISTVIEW_EVENT_ITEMSELECTD, iCur, iSelect);
     _obj_dispatchnotify(hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMCHANGED, iCur, iSelect);
     if (uMsg == WM_EX_LDCLICK) {
         _obj_dispatchnotify(hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMDCLICK, iCur, iSelect);
@@ -1005,26 +902,12 @@ void _listview_itemselectzero(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, LPV
 {
     for (INT i = 1; i <= nCount; i++) {
         if (_listview_queryitemstate(lpItems, i, STATE_SELECT)) {
-            _listview_item_changestate(hWnd,
-                                       hObj,
-                                       pObj,
-                                       pOwner,
-                                       lpItems,
-                                       i,
-                                       STATE_SELECT,
-                                       TRUE,
-                                       LISTVIEW_EVENT_ITEMSELECTC,
-                                       i,
-                                       iSelect);
+            _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, TRUE,
+                                       LISTVIEW_EVENT_ITEMSELECTC, i, iSelect);
         }
     }
     if (uMsg == WM_EX_LDCLICK) {
-        _obj_dispatchnotify(hWnd,
-                            pObj,
-                            hObj,
-                            0,
-                            LISTVIEW_EVENT_ITEMDCLICK,
-                            iCur,
+        _obj_dispatchnotify(hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMDCLICK, iCur,
                             iSelect);   // 即便右击空白,仍发送右击消息
     }
     pOwner->count_selects_ = 0;
@@ -1069,17 +952,9 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
                 {
                     if (!bShowAllwasy || vCur)   // bShowAllwasy默认时为假:单击空白处 取消选中
                     {
-                        _listview_item_changestate(hWnd,
-                                                   hObj,
-                                                   pObj,
-                                                   pOwner,
-                                                   lpItems,
-                                                   iSelect,
-                                                   STATE_SELECT,
-                                                   TRUE,
-                                                   LISTVIEW_EVENT_ITEMSELECTC,
-                                                   iCur,
-                                                   iSelect);
+                        _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iSelect,
+                                                   STATE_SELECT, TRUE, LISTVIEW_EVENT_ITEMSELECTC,
+                                                   iCur, iSelect);
                     }
                     else {
                         iCur = iSelect;
@@ -1088,30 +963,17 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
                 if (vCur)   // 当前鼠标按下表项有效
                 {
                     // 选中当前鼠标悬浮的表项
-                    _listview_item_changestate(hWnd,
-                                               hObj,
-                                               pObj,
-                                               pOwner,
-                                               lpItems,
-                                               iCur,
-                                               STATE_SELECT,
-                                               FALSE,
-                                               LISTVIEW_EVENT_ITEMSELECTD,
-                                               iCur,
-                                               iSelect);
-                    _obj_dispatchnotify(
-                        hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMCHANGED, iCur, iSelect);
+                    _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur,
+                                               STATE_SELECT, FALSE, LISTVIEW_EVENT_ITEMSELECTD,
+                                               iCur, iSelect);
+                    _obj_dispatchnotify(hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMCHANGED, iCur,
+                                        iSelect);
                 }
                 pOwner->index_select_  = iCur;
                 pOwner->count_selects_ = 1;
             }
             if (uMsg == WM_EX_RCLICK && vCur) {
-                _obj_dispatchnotify(hWnd,
-                                    pObj,
-                                    hObj,
-                                    0,
-                                    LISTVIEW_EVENT_ITEMRCLICK,
-                                    iCur,
+                _obj_dispatchnotify(hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMRCLICK, iCur,
                                     1);   // 单选只能是1  LISTVIEW_EVENT_ITEMDCLICK
             }
             if (uMsg == WM_EX_LDCLICK && vCur) {
@@ -1130,7 +992,7 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
             // ctrl shift 都没有按下, (左键单击) 或 (左键双击)
             if ((iKey & 1) == 0 &&
                 (iKey & 2) == 0)   //&& (uMsg == WM_EX_LCLICK || uMsg == WM_EX_LDCLICK || (uMsg ==
-                                   //WM_EX_RCLICK && nSelects <= 1))
+                                   // WM_EX_RCLICK && nSelects <= 1))
             {
                 // 始终显示选择项:    单(双)击:有效行 = 单选 , 空白处 = 不处理
                 //                    右击: 有效未选中行 = 单选 ,有效已选中行 = 不处理 ,  空白处 =
@@ -1141,13 +1003,13 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
                         (uMsg == WM_EX_RCLICK && vCur &&
                          !_listview_queryitemstate(lpItems, iCur, STATE_SELECT)))   // 单选
                     {
-                        _listview_itemselectone(
-                            hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur, pOwner, iSelect);
+                        _listview_itemselectone(hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur,
+                                                pOwner, iSelect);
                     }
                     else if (uMsg == WM_EX_RCLICK && !vCur)   // 全部取消
                     {
-                        _listview_itemselectzero(
-                            hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur, pOwner, iSelect);
+                        _listview_itemselectzero(hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur,
+                                                 pOwner, iSelect);
                     }
                     else {
                         // 不处理
@@ -1156,12 +1018,12 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
                 }
                 else {
                     if (vCur) {
-                        _listview_itemselectone(
-                            hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur, pOwner, iSelect);
+                        _listview_itemselectone(hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur,
+                                                pOwner, iSelect);
                     }
                     else {
-                        _listview_itemselectzero(
-                            hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur, pOwner, iSelect);
+                        _listview_itemselectzero(hWnd, hObj, pObj, uMsg, lpItems, nCount, iCur,
+                                                 pOwner, iSelect);
                     }
                 }
             }
@@ -1174,31 +1036,15 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
                 }
                 bool is_select = _listview_queryitemstate(lpItems, iCur, STATE_SELECT);
                 if (is_select) {
-                    _listview_item_changestate(hWnd,
-                                               hObj,
-                                               pObj,
-                                               pOwner,
-                                               lpItems,
-                                               iCur,
-                                               STATE_SELECT,
-                                               TRUE,
-                                               LISTVIEW_EVENT_ITEMSELECTC,
-                                               iCur,
+                    _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur,
+                                               STATE_SELECT, TRUE, LISTVIEW_EVENT_ITEMSELECTC, iCur,
                                                iSelect);
                     nSelects--;
                 }
                 else {
-                    _listview_item_changestate(hWnd,
-                                               hObj,
-                                               pObj,
-                                               pOwner,
-                                               lpItems,
-                                               iCur,
-                                               STATE_SELECT,
-                                               FALSE,
-                                               LISTVIEW_EVENT_ITEMSELECTD,
-                                               iCur,
-                                               iSelect);
+                    _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur,
+                                               STATE_SELECT, FALSE, LISTVIEW_EVENT_ITEMSELECTD,
+                                               iCur, iSelect);
                     nSelects++;
                 }
             }
@@ -1207,17 +1053,9 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
             {
                 if (!vSelect)   // 一个都未选中
                 {
-                    _listview_item_changestate(hWnd,
-                                               hObj,
-                                               pObj,
-                                               pOwner,
-                                               lpItems,
-                                               iCur,
-                                               STATE_SELECT,
-                                               FALSE,
-                                               LISTVIEW_EVENT_ITEMSELECTD,
-                                               iCur,
-                                               iSelect);
+                    _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur,
+                                               STATE_SELECT, FALSE, LISTVIEW_EVENT_ITEMSELECTD,
+                                               iCur, iSelect);
                     pOwner->index_select_ = iCur;
                     nSelects              = 1;   // 选中项目数
                 }
@@ -1229,41 +1067,25 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
                                           : (iCur <= i && i <= pOwner->index_select_);
                         if (inside) {
                             if (!_listview_queryitemstate(lpItems, i, STATE_SELECT)) {
-                                _listview_item_changestate(hWnd,
-                                                           hObj,
-                                                           pObj,
-                                                           pOwner,
-                                                           lpItems,
-                                                           i,
-                                                           STATE_SELECT,
-                                                           FALSE,
-                                                           LISTVIEW_EVENT_ITEMSELECTD,
-                                                           i,
-                                                           iSelect);
+                                _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i,
+                                                           STATE_SELECT, FALSE,
+                                                           LISTVIEW_EVENT_ITEMSELECTD, i, iSelect);
                             }
                             nSelects++;
                         }
                         else {
                             if (_listview_queryitemstate(lpItems, i, STATE_SELECT)) {
-                                _listview_item_changestate(hWnd,
-                                                           hObj,
-                                                           pObj,
-                                                           pOwner,
-                                                           lpItems,
-                                                           i,
-                                                           STATE_SELECT,
-                                                           TRUE,
-                                                           LISTVIEW_EVENT_ITEMSELECTC,
-                                                           i,
-                                                           iSelect);
+                                _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i,
+                                                           STATE_SELECT, TRUE,
+                                                           LISTVIEW_EVENT_ITEMSELECTC, i, iSelect);
                             }
                         }
                     }
                 }
             }
             if (uMsg == WM_EX_RCLICK && vCur) {
-                _obj_dispatchnotify(
-                    hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMRCLICK, iCur, pOwner->count_selects_);
+                _obj_dispatchnotify(hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMRCLICK, iCur,
+                                    pOwner->count_selects_);
             }
         }
     }
@@ -1278,8 +1100,8 @@ size_t _listview_reselect(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwne
     if (nCount > 0) {
         for (INT i = 1; i < nCount + 1; i++) {
             if (_listview_queryitemstate(lpItems, i, STATE_SELECT)) {
-                _listview_item_changestate(
-                    hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, TRUE, 0, 0, 0);
+                _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, i, STATE_SELECT, TRUE,
+                                           0, 0, 0);
             }
         }
         pOwner->count_selects_ = 0;
@@ -1289,17 +1111,8 @@ size_t _listview_reselect(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwne
             nCount                 = pOwner->index_select_;
             pOwner->index_select_  = iItem;
             pOwner->count_selects_ = 1;
-            _listview_item_changestate(hWnd,
-                                       hObj,
-                                       pObj,
-                                       pOwner,
-                                       lpItems,
-                                       iItem,
-                                       STATE_SELECT,
-                                       FALSE,
-                                       LISTVIEW_EVENT_ITEMCHANGED,
-                                       iItem,
-                                       nCount);
+            _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iItem, STATE_SELECT,
+                                       FALSE, LISTVIEW_EVENT_ITEMCHANGED, iItem, nCount);
             if (bShow) {
                 _listview_showitem(hWnd, hObj, pObj, iItem, FALSE);
             }
@@ -1377,8 +1190,8 @@ void _listview_mouseleave(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
     LPVOID      lpItems = pOwner->lpItems_;
     INT         iLast   = pOwner->index_mouse_;
     if (_listview_checkitem(pOwner, iLast)) {
-        _listview_item_changestate(
-            hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0, 0, 0);
+        _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0,
+                                   0, 0);
         pOwner->index_mouse_ = 0;
     }
 }
@@ -1413,17 +1226,8 @@ void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPA
             if (iCur != iSelect) {
                 if (vCur || !bShowAllwasy) {
                     if (iSelect != 0) {
-                        _listview_item_changestate(hWnd,
-                                                   hObj,
-                                                   pObj,
-                                                   pOwner,
-                                                   lpItems,
-                                                   iSelect,
-                                                   STATE_SELECT,
-                                                   TRUE,
-                                                   0,
-                                                   0,
-                                                   0);
+                        _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iSelect,
+                                                   STATE_SELECT, TRUE, 0, 0, 0);
                     }
                     pOwner->index_select_ = iCur;
                 }
@@ -1432,17 +1236,9 @@ void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPA
                         iCur = 0;
                     }
                     else {
-                        _listview_item_changestate(hWnd,
-                                                   hObj,
-                                                   pObj,
-                                                   pOwner,
-                                                   lpItems,
-                                                   iCur,
-                                                   STATE_SELECT,
-                                                   FALSE,
-                                                   LISTVIEW_EVENT_HOTTRACK,
-                                                   iCur,
-                                                   iSelect);
+                        _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur,
+                                                   STATE_SELECT, FALSE, LISTVIEW_EVENT_HOTTRACK,
+                                                   iCur, iSelect);
                     }
                 }
                 _obj_dispatchnotify(hWnd, pObj, hObj, 0, LISTVIEW_EVENT_ITEMCHANGED, iCur, iSelect);
@@ -1451,16 +1247,16 @@ void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPA
         else {
             if (iCur != iLast) {
                 if (vLast) {
-                    _listview_item_changestate(
-                        hWnd, hObj, pObj, pOwner, lpItems, iLast, STATE_HOVER, TRUE, 0, 0, 0);
+                    _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iLast,
+                                               STATE_HOVER, TRUE, 0, 0, 0);
                 }
                 if (vCur) {
                     if (_listview_queryitemstate(lpItems, iCur, STATE_DISABLE)) {
                         iCur = 0;
                     }
                     else {
-                        _listview_item_changestate(
-                            hWnd, hObj, pObj, pOwner, lpItems, iCur, STATE_HOVER, FALSE, 0, 0, 0);
+                        _listview_item_changestate(hWnd, hObj, pObj, pOwner, lpItems, iCur,
+                                                   STATE_HOVER, FALSE, 0, 0, 0);
                     }
                 }
             }
@@ -1491,19 +1287,9 @@ void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner,
             atomRect = ATOM_HOVER;
         }
         if (atomRect && pObj->crChecked_ != TRUE) {
-            Ex_ThemeDrawControlEx(ecd.hTheme,
-                                  ecd.hCanvas,
-                                  ecd.rcPaint.left,
-                                  ecd.rcPaint.top,
-                                  ecd.rcPaint.right,
-                                  ecd.rcPaint.bottom,
-                                  ATOM_ITEM,
-                                  atomRect,
-                                  0,
-                                  0,
-                                  0,
-                                  0,
-                                  255);
+            Ex_ThemeDrawControlEx(ecd.hTheme, ecd.hCanvas, ecd.rcPaint.left, ecd.rcPaint.top,
+                                  ecd.rcPaint.right, ecd.rcPaint.bottom, ATOM_ITEM, atomRect, 0, 0,
+                                  0, 0, 255);
         }
     }
 }
@@ -1539,16 +1325,8 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
     RECT* rcClient = (RECT*)&pObj->c_left_;
     FLOAT iWidth   = 0;
     FLOAT iHeight  = 0;
-    _canvas_calctextsize(pObj->canvas_obj_,
-                         pObj->hFont_,
-                         L"S",
-                         1,
-                         0,
-                         0,
-                         rcClient->right,
-                         rcClient->bottom,
-                         &iWidth,
-                         &iHeight);
+    _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, L"S", 1, 0, 0, rcClient->right,
+                         rcClient->bottom, &iWidth, &iHeight);
     if (bHView) {
         iWidth  = Ex_Scale(60);
         iHeight = Ex_Scale(60);
@@ -1574,12 +1352,7 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
     // 间隔尺寸
     pOwner->width_split_  = Ex_Scale(1);
     pOwner->height_split_ = Ex_Scale(1);
-    _obj_dispatchnotify(hWnd,
-                        pObj,
-                        hObj,
-                        pObj->id_,
-                        NM_CALCSIZE,
-                        0,
+    _obj_dispatchnotify(hWnd, pObj, hObj, pObj->id_, NM_CALCSIZE, 0,
                         (size_t)pOwner + offsetof(listview_s, width_item_));
     _listview_updatesbvalue(hObj, pObj, pOwner, rcClient);
     _listview_updateviewindex(hObj, pObj, pOwner, bHView, rcClient);
@@ -1648,9 +1421,7 @@ LRESULT CALLBACK _listview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
         else if (uMsg == LISTVIEW_MESSAGE_GETITEMRECT) {
             if (_listview_checkitem((listview_s*)_obj_pOwner(pObj), wParam)) {
-                _listview_lprectfromiitem(pObj,
-                                          (listview_s*)_obj_pOwner(pObj),
-                                          wParam,
+                _listview_lprectfromiitem(pObj, (listview_s*)_obj_pOwner(pObj), wParam,
                                           (pObj->dwStyle_ & LISTVIEW_STYLE_HORIZONTALLIST) ==
                                               LISTVIEW_STYLE_HORIZONTALLIST,
                                           (RECT*)lParam);
@@ -1663,8 +1434,8 @@ LRESULT CALLBACK _listview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             return ((listview_s*)_obj_pOwner(pObj))->index_select_;
         }
         else if (uMsg == LISTVIEW_MESSAGE_SETSELECTIONMARK) {
-            return _listview_reselect(
-                hWnd, hObj, pObj, (listview_s*)_obj_pOwner(pObj), lParam, wParam != 0);
+            return _listview_reselect(hWnd, hObj, pObj, (listview_s*)_obj_pOwner(pObj), lParam,
+                                      wParam != 0);
         }
         else if (uMsg == LISTVIEW_MESSAGE_GETTOPINDEX) {
             return ((listview_s*)_obj_pOwner(pObj))->index_start_;
@@ -1679,13 +1450,8 @@ LRESULT CALLBACK _listview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             return 0;
         }
         else if (uMsg == LISTVIEW_MESSAGE_CALCITEMSIZE) {
-            _obj_sendmessage(hWnd,
-                             hObj,
-                             pObj,
-                             WM_SIZE,
-                             0,
-                             MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_),
-                             0);
+            _obj_sendmessage(hWnd, hObj, pObj, WM_SIZE, 0,
+                             MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
         }
         else if (uMsg == LISTVIEW_MESSAGE_CANCELTHEME) {
             pObj->crChecked_ = wParam;

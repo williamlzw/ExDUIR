@@ -205,8 +205,8 @@ BOOL Ex_ObjCefBrowserInitialize(HMODULE hModule, LPCWSTR libPath, LPCWSTR dllNam
         _cefbrowser_init_(dllName);
 
 
-        ret = Ck_Browser_Init(
-            hModule, 1, NULL, cachePath, userAgent, debuggingPort, lpBeforeCommandLine, NULL);
+        ret        = Ck_Browser_Init(hModule, 1, NULL, cachePath, userAgent, debuggingPort,
+                                     lpBeforeCommandLine, NULL);
         BOOL is_ok = ret == -1;
         if (is_ok) {
             M_CefInitialize = 1;
@@ -303,8 +303,8 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
     else if (uMsg == type_LoadError) {
         auto status = std::wstring((TCHAR*)attach2);
         auto url    = std::wstring((TCHAR*)attach3);
-        Ex_ObjDispatchNotify(
-            hObj, CEFBROWSER_EVENT_LOADERROR, (WPARAM)status.c_str(), (LPARAM)url.c_str());
+        Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_LOADERROR, (WPARAM)status.c_str(),
+                             (LPARAM)url.c_str());
     }
     else if (uMsg == type_FaviconURLChange) {
         /*auto icon1 = std::wstring((TCHAR*)attach1);
@@ -315,8 +315,8 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
     else if (uMsg == type_BeforePopup) {
         HFRAME frame = (HFRAME)attach1;
         auto   url   = std::wstring((TCHAR*)attach2);
-        Ex_ObjDispatchNotify(
-            hObj, CEFBROWSER_EVENT_BEFOREPOPUP, (WPARAM)frame, (LPARAM)url.c_str());
+        Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_BEFOREPOPUP, (WPARAM)frame,
+                             (LPARAM)url.c_str());
     }
     else if (uMsg == type_DoClose) {
         Ex_ObjDispatchNotify(hObj, CEFBROWSER_EVENT_DOCLOSE, 0, (LPARAM)handler);
@@ -326,14 +326,9 @@ BOOL CALLBACK _cefbrowser_callback(int uMsg, LONG_PTR handler, LONG_PTR hObj, LO
 
 void _cefbrowser_register()
 {
-    Ex_ObjRegister(L"CefBrowser",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
-                   -1,
-                   4 * sizeof(size_t),
-                   0,
-                   0,
-                   _cefbrowser_proc);
+    Ex_ObjRegister(L"CefBrowser", OBJECT_STYLE_VISIBLE,
+                   OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE, -1, 4 * sizeof(size_t), 0,
+                   0, _cefbrowser_proc);
 }
 
 LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -344,13 +339,8 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
         Ex_ObjDisableTranslateSpaceAndEnterToClick(hObj, TRUE);
         RECT Rect;
         Ex_ObjGetRect(hObj, &Rect);
-        hWebView = Ck_Browser_Create(hWnd,
-                                     hObj,
-                                     &Rect,
-                                     Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND),
-                                     L"",
-                                     _cefbrowser_callback,
-                                     NULL);
+        hWebView = Ck_Browser_Create(hWnd, hObj, &Rect, Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND),
+                                     L"", _cefbrowser_callback, NULL);
         if (hWebView) {
             Ex_ObjSetLong(hObj, CEFBROWSER_LONG_VIEW, (LONG_PTR)hWebView);
         }
@@ -388,20 +378,14 @@ LRESULT CALLBACK _cefbrowser_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
     }
     else if (uMsg == WM_MOVE) {
         if (hWebView != 0) {
-            Ck_Browser_Move(hWebView,
-                            GET_X_LPARAM(lParam),
-                            GET_Y_LPARAM(lParam),
-                            OBJECT_POSITION_DEFAULT,
-                            OBJECT_POSITION_DEFAULT);
+            Ck_Browser_Move(hWebView, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam),
+                            OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT);
         }
     }
     else if (uMsg == WM_SIZE) {
         if (hWebView != 0) {
-            Ck_Browser_Move(hWebView,
-                            OBJECT_POSITION_DEFAULT,
-                            OBJECT_POSITION_DEFAULT,
-                            LOWORD(lParam),
-                            HIWORD(lParam));
+            Ck_Browser_Move(hWebView, OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT,
+                            LOWORD(lParam), HIWORD(lParam));
         }
     }
     else if (uMsg >= WM_MOUSEMOVE && uMsg <= WM_MBUTTONDBLCLK) {

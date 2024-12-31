@@ -10,13 +10,8 @@ void _carousel_paint(HEXOBJ hObj)
     if (hImageList != 0) {
         INT      index  = (INT)Ex_ObjGetLong(hObj, CAROUSEL_LONG_INDEX);
         HEXIMAGE hImage = _imglist_get(hImageList, index);
-        _canvas_drawimagerect(ps.hCanvas,
-                              hImage,
-                              ps.rcPaint.left,
-                              ps.rcPaint.top,
-                              ps.rcPaint.right,
-                              ps.rcPaint.bottom,
-                              255);
+        _canvas_drawimagerect(ps.hCanvas, hImage, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right,
+                              ps.rcPaint.bottom, 255);
         INT count = _imglist_count(hImageList);
         for (int i = 1; i < count + 1; i++) {
             int x = ps.rcPaint.right - (count + 1) * Ex_Scale(20) + i * Ex_Scale(20) - Ex_Scale(2);
@@ -157,12 +152,7 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 void _carousel_register()
 {
-    Ex_ObjRegister(L"Carousel",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_CENTER | DT_VCENTER,
-                   4 * sizeof(size_t),
-                   0,
-                   0,
-                   _carousel_proc);
+    Ex_ObjRegister(L"Carousel", OBJECT_STYLE_VISIBLE,
+                   OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER,
+                   4 * sizeof(size_t), 0, 0, _carousel_proc);
 }

@@ -284,22 +284,18 @@ public:
 
 void _edit_register()
 {
-    Ex_ObjRegister(L"Edit",
-                   OBJECT_STYLE_VISIBLE,
+    Ex_ObjRegister(L"Edit", OBJECT_STYLE_VISIBLE,
                    OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_NOPREFIX | DT_SINGLELINE,
-                   0,
-                   LoadCursorW(0, MAKEINTRESOURCEW(32513)),
-                   CANVAS_FLAG_GDI_COMPATIBLE,
-                   _edit_proc);
+                   DT_NOPREFIX | DT_SINGLELINE, 0, LoadCursorW(0, MAKEINTRESOURCEW(32513)),
+                   CANVAS_FLAG_GDI_COMPATIBLE, _edit_proc);
 }
 
 void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 {
     INT nError = 0;
 
-    edit_s* pOwner = (edit_s*)_struct_createfromaddr(
-        pObj, offsetof(obj_s, dwOwnerData_), sizeof(edit_s), &nError);
+    edit_s* pOwner = (edit_s*)_struct_createfromaddr(pObj, offsetof(obj_s, dwOwnerData_),
+                                                     sizeof(edit_s), &nError);
     if (pOwner != 0) {
         nError            = 0;
         pOwner->pObj_     = pObj;
@@ -334,12 +330,10 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                 pITS->TxSendMessage(EM_SETOLECALLBACK, 0, (LPARAM)ole_callback, &ret);
                 pITS->TxSendMessage(EM_SETLANGOPTIONS, 0, 0, &ret);
                 pITS->TxSendMessage(EM_LIMITTEXT, 0x7FFFFFFE, 0, &ret);
-                pITS->TxSendMessage(EM_SETEVENTMASK,
-                                    0,
-                                    ENM_CHANGE | ENM_SELCHANGE | ENM_LINK | ENM_DRAGDROPDONE,
-                                    &ret);
-                pITS->TxSendMessage(
-                    EM_AUTOURLDETECT, FLAGS_CHECK(pObj->dwStyle_, EDIT_STYLE_PARSEURL), 0, &ret);
+                pITS->TxSendMessage(EM_SETEVENTMASK, 0,
+                                    ENM_CHANGE | ENM_SELCHANGE | ENM_LINK | ENM_DRAGDROPDONE, &ret);
+                pITS->TxSendMessage(EM_AUTOURLDETECT,
+                                    FLAGS_CHECK(pObj->dwStyle_, EDIT_STYLE_PARSEURL), 0, &ret);
             }
         }
         if (g_Li.hMenuEdit == 0) {
@@ -361,8 +355,8 @@ void _edit_unint(obj_s* pObj)
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, prctext_));
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, prcinset_));
         _struct_destroyfromaddr(pOwner, offsetof(edit_s, pBanner_));
-        _md_destroy(
-            pOwner, offsetof(edit_s, mDc_), offsetof(edit_s, hBmp_), offsetof(edit_s, pBits_));
+        _md_destroy(pOwner, offsetof(edit_s, mDc_), offsetof(edit_s, hBmp_),
+                    offsetof(edit_s, pBits_));
         _struct_destroyfromaddr(pObj, offsetof(obj_s, dwOwnerData_));
     }
 }
@@ -370,8 +364,8 @@ void _edit_unint(obj_s* pObj)
 void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height)
 {
     INT           nError = 0;
-    CHARFORMAT2W* pcf    = (CHARFORMAT2W*)_struct_createfromaddr(
-        pOwner, offsetof(edit_s, pcf_), sizeof(CHARFORMAT2W), &nError);
+    CHARFORMAT2W* pcf    = (CHARFORMAT2W*)_struct_createfromaddr(pOwner, offsetof(edit_s, pcf_),
+                                                                 sizeof(CHARFORMAT2W), &nError);
     if (pcf != 0) {
         LOGFONTW logfont = {};
         _font_getlogfont(pObj->hFont_, &logfont);
@@ -402,8 +396,8 @@ void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height)
         pcf->bCharSet        = logfont.lfCharSet;
         pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
         pcf->crTextColor     = ExARGB2RGB(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
-        RtlMoveMemory(
-            pcf->szFaceName, logfont.lfFaceName, lstrlenW((LPCWSTR)logfont.lfFaceName) * (size_t)2);
+        RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName,
+                      lstrlenW((LPCWSTR)logfont.lfFaceName) * (size_t)2);
         pcf->dwMask = dwMask;
     }
 }
@@ -411,8 +405,8 @@ void _edit_setpcf(obj_s* pObj, edit_s* pOwner, INT height)
 void _edit_setppf(obj_s* pObj, edit_s* pOwner)
 {
     INT         nError = 0;
-    PARAFORMAT* ppf    = (PARAFORMAT*)_struct_createfromaddr(
-        pOwner, offsetof(edit_s, ppf_), sizeof(PARAFORMAT), &nError);
+    PARAFORMAT* ppf    = (PARAFORMAT*)_struct_createfromaddr(pOwner, offsetof(edit_s, ppf_),
+                                                             sizeof(PARAFORMAT), &nError);
     if (ppf != 0) {
         ppf->cbSize  = sizeof(PARAFORMAT);
         DWORD dwMask = EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT;
@@ -480,13 +474,8 @@ void _edit_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
     if (width <= 0) width = 1;
     if (height <= 0) height = 1;
     INT nError = 0;
-    if (_md_create(pOwner,
-                   offsetof(edit_s, mDc_),
-                   offsetof(edit_s, hBmp_),
-                   offsetof(edit_s, pBits_),
-                   width,
-                   height,
-                   &nError)) {
+    if (_md_create(pOwner, offsetof(edit_s, mDc_), offsetof(edit_s, hBmp_),
+                   offsetof(edit_s, pBits_), width, height, &nError)) {
         for (INT i = 0; i < width; i++) {
             for (INT j = 0; j < height; j++) {
                 ((INT*)pOwner->pBits_)[i * height + j] = ExARGB(0, 0, 0, 255);
@@ -544,17 +533,8 @@ void _edit_txpaint(LPVOID pits, DWORD dwDrawAspect, LONG lindex, LPVOID pvAspect
                    RECT* lprcUpdate, DWORD dwContinue, LONG lViewId)
 {
     ((ITextServices*)pits)
-        ->TxDraw(dwDrawAspect,
-                 lindex,
-                 pvAspect,
-                 (DVTARGETDEVICE*)ptd,
-                 hdcDraw,
-                 hicTargetDev,
-                 (LPCRECTL)lprcBounds,
-                 (LPCRECTL)lprcWBounds,
-                 (LPRECT)lprcUpdate,
-                 NULL,
-                 dwContinue,
+        ->TxDraw(dwDrawAspect, lindex, pvAspect, (DVTARGETDEVICE*)ptd, hdcDraw, hicTargetDev,
+                 (LPCRECTL)lprcBounds, (LPCRECTL)lprcWBounds, (LPRECT)lprcUpdate, NULL, dwContinue,
                  lViewId);
 }
 
@@ -664,8 +644,8 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
             atom = ATOM_NORMAL;
         }
         if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0) {
-            Ex_ThemeDrawControl(
-                ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_EDIT, atom, 255);
+            Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, ATOM_EDIT, atom,
+                                255);
         }
 
         LPCWSTR lpBanner    = ((edit_s*)ps.dwOwnerData)->pBanner_;
@@ -688,15 +668,8 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                     if ((pObj->dwTextFormat_ & DT_SINGLELINE) == DT_SINGLELINE) {
                         dt = DT_VCENTER;
                     }
-                    _canvas_drawtext(ps.hCanvas,
-                                     pObj->hFont_,
-                                     ((edit_s*)ps.dwOwnerData)->crBanner_,
-                                     lpBanner,
-                                     -1,
-                                     dt,
-                                     rcText->left,
-                                     rcText->top,
-                                     rcText->right,
+                    _canvas_drawtext(ps.hCanvas, pObj->hFont_, ((edit_s*)ps.dwOwnerData)->crBanner_,
+                                     lpBanner, -1, dt, rcText->left, rcText->top, rcText->right,
                                      rcText->bottom);
                     bDrawBanner = TRUE;
                 }
@@ -710,27 +683,10 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
             wnd_s* pWnd   = pObj->pWnd_;
             BOOL   ismove = (pWnd->dwFlags_ & EWF_BSIZEMOVING) == EWF_BSIZEMOVING;
             HDC    hDc    = _canvas_getdc(ps.hCanvas);
-            _edit_txpaint(pITS,
-                          DVASPECT_CONTENT,
-                          0,
-                          NULL,
-                          NULL,
-                          hDc,
-                          NULL,
-                          NULL,
-                          NULL,
-                          &rcTmp,
-                          NULL,
-                          ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);
-            BitBlt(hDc,
-                   rcTmp.left,
-                   rcTmp.top,
-                   rcTmp.right - rcTmp.left,
-                   rcTmp.bottom - rcTmp.top,
-                   mDc,
-                   0,
-                   0,
-                   SRCPAINT);
+            _edit_txpaint(pITS, DVASPECT_CONTENT, 0, NULL, NULL, hDc, NULL, NULL, NULL, &rcTmp,
+                          NULL, ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);
+            BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left, rcTmp.bottom - rcTmp.top,
+                   mDc, 0, 0, SRCPAINT);
             _canvas_releasedc(ps.hCanvas);
             if (!((pObj->dwStyle_ & EDIT_STYLE_HIDDENCARET) == EDIT_STYLE_HIDDENCARET)) {
                 if (!((((edit_s*)ps.dwOwnerData)->flags_ & EDIT_FLAG_BSELECTED) ==
@@ -746,11 +702,8 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                             if (rcTmp.right > 0 && rcTmp.bottom > 0) {
                                 HEXBRUSH hCaretBrush =
                                     _brush_create(((edit_s*)ps.dwOwnerData)->crCaret_);
-                                _canvas_fillrect(ps.hCanvas,
-                                                 hCaretBrush,
-                                                 (FLOAT)rcTmp.left,
-                                                 (FLOAT)rcTmp.top,
-                                                 (FLOAT)rcTmp.right,
+                                _canvas_fillrect(ps.hCanvas, hCaretBrush, (FLOAT)rcTmp.left,
+                                                 (FLOAT)rcTmp.top, (FLOAT)rcTmp.right,
                                                  (FLOAT)rcTmp.bottom);
                                 _brush_destroy(hCaretBrush);
                             }
@@ -802,10 +755,9 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
             if (pits != nullptr) {
                 if (LOWORD(wParam) == SB_THUMBTRACK || LOWORD(wParam) == SB_THUMBPOSITION) {
                     POINT scrollPos;
-                    
+
                     ((ITextServices*)pits)
-                        ->TxSendMessage(
-                            EM_GETSCROLLPOS, 0, (LPARAM)&scrollPos, NULL);
+                        ->TxSendMessage(EM_GETSCROLLPOS, 0, (LPARAM)&scrollPos, NULL);
                     if (uMsg == WM_VSCROLL) {
                         scrollPos.y = Ex_ObjScrollGetTrackPos(hObj, SB_VERT);
                     }
@@ -813,8 +765,8 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                         scrollPos.x = Ex_ObjScrollGetTrackPos(hObj, SB_HORZ);
                     }
                     ((ITextServices*)pits)
-                        ->TxSendMessage(
-                            EM_SETSCROLLPOS, 0, reinterpret_cast<LPARAM>(&scrollPos), &ret);
+                        ->TxSendMessage(EM_SETSCROLLPOS, 0, reinterpret_cast<LPARAM>(&scrollPos),
+                                        &ret);
                 }
                 else {
                     return _edit_scrollmsg(hObj, pObj, uMsg, wParam, lParam);
@@ -843,8 +795,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
             _obj_setuistate(pObj, STATE_HOVER, TRUE, 0, TRUE, &nError);
         }
         else if (uMsg == WM_SETFOCUS) {
-            IME_Control(hWnd,
-                        pObj->pWnd_,
+            IME_Control(hWnd, pObj->pWnd_,
                         !((pObj->dwStyle_ & EDIT_STYLE_USEPASSWORD) == EDIT_STYLE_USEPASSWORD));
             ((ITextServices*)_edit_its(pObj))->OnTxUIActivate();
             BOOL ret = FALSE;
@@ -862,7 +813,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                     (EDIT_FLAG_BSHOWCARET | EDIT_FLAG_BCARETCONTEXT)) {
                     pOwner->flags_ = pOwner->flags_ - (pOwner->flags_ & (EDIT_FLAG_BSHOWCARET |
                                                                          EDIT_FLAG_BCARETCONTEXT));
-                    
+
                     _obj_invalidaterect(
                         pObj, (RECT*)((size_t)pOwner + offsetof(edit_s, rcCaret_left_)), &nError);
                 }
@@ -901,8 +852,8 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
             _edit_sendmessage(pObj, uMsg, wParam, lParam, &ret);
         }
         else if (uMsg == WM_CONTEXTMENU) {
-            _edit_contextmenu(
-                hWnd, pObj->pWnd_, hObj, pObj, wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            _edit_contextmenu(hWnd, pObj->pWnd_, hObj, pObj, wParam, GET_X_LPARAM(lParam),
+                              GET_Y_LPARAM(lParam));
         }
         else if (uMsg == WM_COMMAND) {
             _edit_command(pObj, uMsg, wParam, lParam);
@@ -1017,9 +968,8 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                         return 1;
                     }
                 }
-                else if (wParam == VK_SPACE)
-                {
-                    //拦截空格.Msftedit回到首行bug
+                else if (wParam == VK_SPACE) {
+                    // 拦截空格.Msftedit回到首行bug
                     return 1;
                 }
             }
@@ -1183,13 +1133,8 @@ IOleObject* CImageDataObject::GetOleObject(IOleClientSite* pOleClientSite, IStor
 
     SCODE       sc;
     IOleObject* pOleObject;
-    sc = ::OleCreateStaticFromData(this,
-                                   IID_IOleObject,
-                                   OLERENDER_FORMAT,
-                                   &m_fromat,
-                                   pOleClientSite,
-                                   pStorage,
-                                   (void**)&pOleObject);
+    sc = ::OleCreateStaticFromData(this, IID_IOleObject, OLERENDER_FORMAT, &m_fromat,
+                                   pOleClientSite, pStorage, (void**)&pOleObject);
     if (sc != S_OK) return nullptr;
     return pOleObject;
 }

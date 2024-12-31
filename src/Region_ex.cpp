@@ -52,8 +52,7 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
             pTranform._32               = dstOffsetY;
             nError                      = ((ID2D1TransformedGeometry*)hRgnSrc)
                          ->CombineWithGeometry((ID2D1TransformedGeometry*)hRgnDst,
-                                               (D2D1_COMBINE_MODE)nCombineMode,
-                                               &pTranform,
+                                               (D2D1_COMBINE_MODE)nCombineMode, &pTranform,
                                                (ID2D1GeometrySink*)pSink);
             if (SUCCEEDED(nError)) {
                 ((ID2D1GeometrySink*)pSink)->Close();
@@ -100,8 +99,8 @@ HEXRGN _rgn_createfrompath(HEXPATH hPath)
     HEXRGN  hgn    = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError)) {
         D2D1_MATRIX_3X2_F transform = D2D1::Matrix3x2F::Identity();
-        g_Ri.pD2Dfactory->CreateTransformedGeometry(
-            pPath->pGeometry_, transform, (ID2D1TransformedGeometry**)&hgn);
+        g_Ri.pD2Dfactory->CreateTransformedGeometry(pPath->pGeometry_, transform,
+                                                    (ID2D1TransformedGeometry**)&hgn);
     }
     Ex_SetLastError(nError);
     return hgn;

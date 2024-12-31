@@ -21,8 +21,8 @@ BOOL _layout_unregister(INT nType)
 void _layout_free_info(array_s* hArr, INT nIndex, LPVOID pvItem, INT nType)
 {
     layout_s* pLayout = (layout_s*)Array_GetExtra(hArr);
-    ((LayoutPROC)pLayout->lpfnProc_)(
-        pLayout, LAYOUT_EVENT_UNINITCHILDPROPS, __get(pvItem, 0), (size_t)pvItem);
+    ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_UNINITCHILDPROPS, __get(pvItem, 0),
+                                     (size_t)pvItem);
     Ex_MemFree((LPVOID)((size_t)pvItem - 4 * sizeof(size_t)));
 }
 
@@ -110,8 +110,8 @@ BOOL _layout_destroy(HEXLAYOUT hLayout)
     layout_s* pLayout = nullptr;
     if (_handle_validate(hLayout, HT_LAYOUT, (LPVOID*)&pLayout, &nError)) {
         LPVOID lpfnProc = pLayout->lpfnProc_;
-        ((LayoutPROC)lpfnProc)(
-            pLayout, LAYOUT_EVENT_UNINITPROPS, 0, (size_t)pLayout->lpLayoutInfo_);
+        ((LayoutPROC)lpfnProc)(pLayout, LAYOUT_EVENT_UNINITPROPS, 0,
+                               (size_t)pLayout->lpLayoutInfo_);
         Array_Destroy(pLayout->hArrChildrenInfo_);
         Ex_MemFree((LPVOID)((size_t)pLayout->lpLayoutInfo_ - 4 * sizeof(size_t)));
         Ex_MemFree(pLayout);
@@ -238,8 +238,8 @@ BOOL _layout_setchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t p
                 if (pInfo != 0) {
                     pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
                     __set(pInfo, 0, hObj);
-                    ((LayoutPROC)pLayout->lpfnProc_)(
-                        pLayout, LAYOUT_EVENT_INITCHILDPROPS, hObj, (size_t)pInfo);
+                    ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_INITCHILDPROPS, hObj,
+                                                     (size_t)pInfo);
                     nIndex = Array_AddMember(hArr, (size_t)pInfo);
                 }
             }
@@ -248,10 +248,8 @@ BOOL _layout_setchildprop(HEXLAYOUT hLayout, HEXOBJ hObj, INT dwPropID, size_t p
             }
             if (pInfo != 0) {
 
-                if (((LayoutPROC)pLayout->lpfnProc_)(pLayout,
-                                                     LAYOUT_EVENT_CHECKCHILDPROPVALUE,
-                                                     MAKELONG(nIndex, dwPropID),
-                                                     pvValue) == 0) {
+                if (((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_CHECKCHILDPROPVALUE,
+                                                     MAKELONG(nIndex, dwPropID), pvValue) == 0) {
 
                     __set(pInfo, dwPropID * sizeof(size_t), pvValue);
                 }
@@ -523,11 +521,8 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
                 rcObj.right = rcObj.left + nSize;
             }
             if (nDAlign == 0) {
-                _layout_move_margin(hObj,
-                                    &rcObj,
-                                    (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)),
-                                    fVertical ? 5 : 10,
-                                    orgFlags);
+                _layout_move_margin(hObj, &rcObj, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)),
+                                    fVertical ? 5 : 10, orgFlags);
             }
             else {
                 rcObj.left = rcObj.left + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t));
@@ -592,10 +587,8 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
                 else {
                     OffsetRect(&rcObj, w, 0);
                 }
-                _layout_move_margin(__get(pInfo, 0),
-                                    &rcObj,
-                                    (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)),
-                                    15,
+                _layout_move_margin(__get(pInfo, 0), &rcObj,
+                                    (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15,
                                     arrOrg[i - 1]);
             }
         }
@@ -725,8 +718,8 @@ LRESULT CALLBACK __layout_page_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
             if (hObj == 0) continue;
             if (i == nCurrentPage) {
                 if (__get(pInfo, LAYOUT_SUBPROP_PAGE_FILL * sizeof(size_t)) != 0) {
-                    _layout_move_margin(
-                        hObj, &rcClient, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
+                    _layout_move_margin(hObj, &rcClient,
+                                        (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
                 }
             }
             Ex_ObjShow(hObj, i == nCurrentPage);
@@ -753,11 +746,9 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
         return 5;
     }
     else if (nEvent == LAYOUT_EVENT_INITPROPS) {
-        __set((LPVOID)lParam,
-              (LAYOUT_PROP_TABLE_ARRAY_ROW - 1) * sizeof(size_t),
+        __set((LPVOID)lParam, (LAYOUT_PROP_TABLE_ARRAY_ROW - 1) * sizeof(size_t),
               (size_t)Array_Create(0));
-        __set((LPVOID)lParam,
-              (LAYOUT_PROP_TABLE_ARRAY_CELL - 1) * sizeof(size_t),
+        __set((LPVOID)lParam, (LAYOUT_PROP_TABLE_ARRAY_CELL - 1) * sizeof(size_t),
               (size_t)Array_Create(0));
     }
     else if (nEvent == LAYOUT_EVENT_INITCHILDPROPS) {
@@ -872,8 +863,8 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
             rcClient.top    = aRects[rcTmp.top - 1][rcTmp.left - 1].top;
             rcClient.right  = aRects[rcTmp.bottom - 1][rcTmp.right - 1].right;
             rcClient.bottom = aRects[rcTmp.bottom - 1][rcTmp.right - 1].bottom;
-            _layout_move_margin(
-                hObj, &rcClient, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
+            _layout_move_margin(hObj, &rcClient, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15,
+                                0);
         }
     }
     return 0;
@@ -922,10 +913,8 @@ LRESULT CALLBACK __layout_relative_proc(layout_s* pLayout, INT nEvent, WPARAM wP
         }
     }
     else if (nEvent == LAYOUT_EVENT_UPDATE) {
-        _layout_relative_update((layout_s*)pLayout,
-                                ((layout_s*)pLayout)->lpLayoutInfo_,
-                                ((layout_s*)pLayout)->hArrChildrenInfo_,
-                                lParam);
+        _layout_relative_update((layout_s*)pLayout, ((layout_s*)pLayout)->lpLayoutInfo_,
+                                ((layout_s*)pLayout)->hArrChildrenInfo_, lParam);
     }
     return 0;
 }
@@ -979,13 +968,11 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
         if (fNoPosInfoH) {
             __set(pPosInfo, 0, 1);
             __set(pPosInfo, sizeof(size_t), 0);
-            __set(pPosInfo,
-                  2 * sizeof(size_t),
+            __set(pPosInfo, 2 * sizeof(size_t),
                   rcObj.left + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t)));
             __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), 0, 1);
             __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), sizeof(size_t), 0);
-            __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)),
-                  2 * sizeof(size_t),
+            __set((LPVOID)((size_t)pPosInfo + 6 * sizeof(size_t)), 2 * sizeof(size_t),
                   rcObj.right + __get(pInfo, LAYOUT_SUBPROP_MARGIN_LEFT * sizeof(size_t)) +
                       __get(pInfo, LAYOUT_SUBPROP_MARGIN_RIGHT * sizeof(size_t)));
         }
@@ -993,14 +980,12 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
 
             __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 0, 1);
             __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t), 0);
-            __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)),
-                  2 * sizeof(size_t),
+            __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t),
                   rcObj.top + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t)));
 
             __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), 0, 1);
             __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), sizeof(size_t), 0);
-            __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)),
-                  2 * sizeof(size_t),
+            __set((LPVOID)((size_t)pPosInfo + 9 * sizeof(size_t)), 2 * sizeof(size_t),
                   rcObj.bottom + __get(pInfo, LAYOUT_SUBPROP_MARGIN_TOP * sizeof(size_t)) +
                       __get(pInfo, LAYOUT_SUBPROP_MARGIN_BOTTOM * sizeof(size_t)));
         }
@@ -1108,8 +1093,8 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
             }
             __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0, Infos[0]);
             __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-            __set(
-                (LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+            __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t),
+                  Infos[2]);
         }
         if (fNoPosInfoV == FALSE) {
             // 上边界处理
@@ -1159,8 +1144,8 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
             }
             __set((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 0, Infos[0]);
             __set((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-            __set(
-                (LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+            __set((LPVOID)((size_t)pPosInfo + 1 * 3 * sizeof(size_t)), 2 * sizeof(size_t),
+                  Infos[2]);
 
             // 下边界处理
             Infos[0] = 1;
@@ -1212,8 +1197,8 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
             }
             __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0, Infos[0]);
             __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-            __set(
-                (LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t), Infos[2]);
+            __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t),
+                  Infos[2]);
         }
         __set(pPosInfo, 12 * sizeof(size_t), (size_t)pInfo);
         __set(pPosInfo, 12 * sizeof(size_t) + sizeof(size_t), orgFlags);
@@ -1316,10 +1301,9 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
                         }
                     }
                     __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 0, Infos[0]);
-                    __set(
-                        (LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t), Infos[1]);
-                    __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)),
-                          2 * sizeof(size_t),
+                    __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), sizeof(size_t),
+                          Infos[1]);
+                    __set((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t)), 2 * sizeof(size_t),
                           Infos[2]);
                 }
                 if (__get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 2), 0) == 0) {
@@ -1366,11 +1350,9 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
                         }
                     }
                     __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 0, Infos[0]);
-                    __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)),
-                          sizeof(size_t),
+                    __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), sizeof(size_t),
                           Infos[1]);
-                    __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)),
-                          2 * sizeof(size_t),
+                    __set((LPVOID)((size_t)pPosInfo + 2 * 3 * sizeof(size_t)), 2 * sizeof(size_t),
                           Infos[2]);
                 }
                 if (__get((LPVOID)((size_t)pPosInfo + 3 * sizeof(size_t) * 3), 0) == 0) {
@@ -1416,11 +1398,9 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
                         }
                     }
                     __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 0, Infos[0]);
-                    __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)),
-                          sizeof(size_t),
+                    __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), sizeof(size_t),
                           Infos[1]);
-                    __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)),
-                          2 * sizeof(size_t),
+                    __set((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t),
                           Infos[2]);
                 }
                 if (__get(pInfo, 0) != 0 && __get(pInfo, 3 * sizeof(size_t)) != 0 &&
@@ -1480,8 +1460,8 @@ void _layout_relative_update(layout_s* pLayout, LPVOID pLayoutInfo, array_s* hAr
                 __get((LPVOID)((size_t)pPosInfo + 3 * 3 * sizeof(size_t)), 2 * sizeof(size_t));
         }
 
-        _layout_move_margin(
-            hObj, &rcTmp, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, orgFlags);
+        _layout_move_margin(hObj, &rcTmp, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15,
+                            orgFlags);
     }
     HashTable_Destroy(hHashPosInfos);
 }
@@ -1720,8 +1700,8 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
                         if (pInfo != 0) {
                             pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
                             __set(pInfo, 0, hObj);
-                            ((LayoutPROC)pLayout->lpfnProc_)(
-                                pLayout, LAYOUT_EVENT_INITCHILDPROPS, hObj, (size_t)pInfo);
+                            ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_INITCHILDPROPS,
+                                                             hObj, (size_t)pInfo);
                             nIndex = Array_AddMember(hArr, (size_t)pInfo);
                         }
                         else {
@@ -1768,8 +1748,8 @@ BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, I
                         if (pInfo) {
                             pInfo = (LPVOID)((size_t)pInfo + 4 * sizeof(size_t));
                             __set(pInfo, 0, hObj);
-                            ((LayoutPROC)pLayout->lpfnProc_)(
-                                pLayout, LAYOUT_EVENT_INITCHILDPROPS, hObj, (size_t)pInfo);
+                            ((LayoutPROC)pLayout->lpfnProc_)(pLayout, LAYOUT_EVENT_INITCHILDPROPS,
+                                                             hObj, (size_t)pInfo);
                             Array_AddMember(hArr, (size_t)pInfo);
                             *nCount = *nCount + 1;
                         }
@@ -1893,173 +1873,121 @@ BOOL _layout_absolute_lock(HEXLAYOUT hLayout, HEXOBJ hObjChild, INT tLeft, INT t
 
             if (tLeft == 1)   // 数值锁
             {
-                _layout_setchildprop(
-                    hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT, rcObj.left - rcClient.left);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
+                                     rcObj.left - rcClient.left);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tLeft == 2)   // 比例锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_LEFT,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
                                      (FLOAT)rcObj.left / szClient.cx * 100);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else {
                 _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT, 0);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_LEFT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tTop == 1)   // 数值锁
             {
-                _layout_setchildprop(
-                    hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP, rcObj.top - rcClient.top);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP,
+                                     rcObj.top - rcClient.top);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tTop == 2)   // 比例锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_TOP,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP,
                                      (FLOAT)rcObj.top / szClient.cy * 100);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else {
                 _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP, 0);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_TOP_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tRight == 1)   // 数值锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
                                      rcClient.right - rcObj.right);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tRight == 2)   // 比例锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
                                      (FLOAT)(rcClient.right - rcObj.right) / szClient.cx * 100);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else {
                 _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT, 0);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_RIGHT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tBottom == 1)   // 数值锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
                                      rcClient.bottom - rcObj.bottom);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tBottom == 2)   // 比例锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
                                      (FLOAT)(rcClient.bottom - rcObj.bottom) / szClient.cy * 100);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else {
                 _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM, 0);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tWidth == 1)   // 数值锁
             {
-                _layout_setchildprop(
-                    hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH, rcObj.right - rcObj.left);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH,
+                                     rcObj.right - rcObj.left);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tWidth == 2)   // 比例锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_WIDTH,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH,
                                      (FLOAT)(rcObj.right - rcObj.left) / szClient.cx * 100);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else {
                 _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH, 0);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_WIDTH_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
 
             if (tHeight == 1)   // 数值锁
             {
-                _layout_setchildprop(
-                    hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, rcObj.bottom - rcObj.top);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT,
+                                     rcObj.bottom - rcObj.top);
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX);
             }
             else if (tHeight == 2)   // 比例锁
             {
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_HEIGHT,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT,
                                      (FLOAT)(rcObj.bottom - rcObj.top) / szClient.cy * 100);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS);
             }
             else {
                 _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, 0);
-                _layout_setchildprop(hLayout,
-                                     hObjChild,
-                                     LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE,
+                _layout_setchildprop(hLayout, hObjChild, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT_TYPE,
                                      LAYOUT_SUBPROP_ABSOLUTE_TYPE_UNKNOWN);
             }
         }

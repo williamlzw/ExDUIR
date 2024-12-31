@@ -51,8 +51,8 @@ LRESULT CALLBACK OnButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
             Ex_MessageBox(hObj, L"开启", L"取开关状态", MB_USERICON, MESSAGEBOX_FLAG_CENTEWINDOW);
         }
         else {
-            Ex_MessageBox(
-                hObj, L"关闭", L"取开关状态", MB_ICONWARNING, MESSAGEBOX_FLAG_CENTEWINDOW);
+            Ex_MessageBox(hObj, L"关闭", L"取开关状态", MB_ICONWARNING,
+                          MESSAGEBOX_FLAG_CENTEWINDOW);
         }
     }
     return 0;
@@ -89,72 +89,22 @@ LRESULT CALLBACK OnButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 void test_button(HWND hWnd)
 {
     HWND hWnd_button = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试按钮开关", 0, 0, 300, 200, 0, 0);
-    m_hExDuiButton = Ex_DUIBindWindowEx(hWnd_button,
-                                        0,
+    m_hExDuiButton = Ex_DUIBindWindowEx(hWnd_button, 0,
                                         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
                                             WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE |
                                             WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
                                             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-                                        0,
-                                        0);
+                                        0, 0);
     Ex_DUISetLong(m_hExDuiButton, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     std::vector<HEXOBJ> buttons;
-    buttons.push_back(Ex_ObjCreateEx(-1,
-                                     L"button",
-                                     L"禁用自身",
-                                     -1,
-                                     10,
-                                     30,
-                                     120,
-                                     30,
-                                     m_hExDuiButton,
-                                     201,
-                                     DT_VCENTER | DT_CENTER,
-                                     0,
-                                     0,
-                                     NULL));
-    buttons.push_back(Ex_ObjCreateEx(-1,
-                                     L"button",
-                                     L"解除按钮1禁用",
-                                     -1,
-                                     10,
-                                     70,
-                                     120,
-                                     30,
-                                     m_hExDuiButton,
-                                     202,
-                                     DT_VCENTER | DT_CENTER,
-                                     0,
-                                     0,
-                                     NULL));
-    buttons.push_back(Ex_ObjCreateEx(-1,
-                                     L"button",
-                                     L"改动自身文本",
-                                     -1,
-                                     10,
-                                     110,
-                                     120,
-                                     30,
-                                     m_hExDuiButton,
-                                     203,
-                                     DT_VCENTER | DT_CENTER,
-                                     0,
-                                     0,
-                                     NULL));
-    buttons.push_back(Ex_ObjCreateEx(-1,
-                                     L"button",
-                                     L"取按钮1文本",
-                                     -1,
-                                     10,
-                                     150,
-                                     120,
-                                     30,
-                                     m_hExDuiButton,
-                                     204,
-                                     DT_VCENTER | DT_CENTER,
-                                     0,
-                                     0,
-                                     NULL));
+    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"禁用自身", -1, 10, 30, 120, 30,
+                                     m_hExDuiButton, 201, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"解除按钮1禁用", -1, 10, 70, 120, 30,
+                                     m_hExDuiButton, 202, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"改动自身文本", -1, 10, 110, 120, 30,
+                                     m_hExDuiButton, 203, DT_VCENTER | DT_CENTER, 0, 0, NULL));
+    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"取按钮1文本", -1, 10, 150, 120, 30,
+                                     m_hExDuiButton, 204, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
     for (auto button : buttons) {
         Ex_ObjHandleEvent(button, NM_CLICK, OnButtonEvent);
@@ -162,37 +112,15 @@ void test_button(HWND hWnd)
 
     HEXOBJ hobj_customdrawbutton = Ex_ObjCreateEx(
         OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW | OBJECT_STYLE_EX_COMPOSITED,
-        L"button",
-        L"重画按钮1",
-        -1,
-        150,
-        30,
-        120,
-        30,
-        m_hExDuiButton,
-        205,
-        DT_VCENTER | DT_CENTER,
-        0,
-        0,
-        NULL);
+        L"button", L"重画按钮1", -1, 150, 30, 120, 30, m_hExDuiButton, 205, DT_VCENTER | DT_CENTER,
+        0, 0, NULL);
     Ex_ObjHandleEvent(
-        hobj_customdrawbutton,
-        NM_CUSTOMDRAW,
+        hobj_customdrawbutton, NM_CUSTOMDRAW,
         OnButtonEvent);   // 第一种重画背景方式,全部自带组件都可以采用这样的方式重画,注意带上扩展风格
 
     Ex_ObjCreateEx(
         OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW | OBJECT_STYLE_EX_COMPOSITED,
-        L"button",
-        L"重画按钮2",
-        -1,
-        150,
-        70,
-        120,
-        30,
-        m_hExDuiButton,
-        0,
-        DT_VCENTER | DT_CENTER,
-        0,
+        L"button", L"重画按钮2", -1, 150, 70, 120, 30, m_hExDuiButton, 0, DT_VCENTER | DT_CENTER, 0,
         0,
         OnButtonMsgProc);   // 第二种重画背景方式,全部自带组件都可以采用这样的方式重画,注意带上扩展风格
 
@@ -217,99 +145,41 @@ void test_button(HWND hWnd)
 void test_label(HWND hWnd)
 {
     HWND hWnd_label = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试基础组件", 0, 0, 400, 400, 0, 0);
-    HEXDUI hExDui_label = Ex_DUIBindWindowEx(hWnd_label,
-                                             0,
+    HEXDUI hExDui_label = Ex_DUIBindWindowEx(hWnd_label, 0,
                                              WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
                                                  WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE |
                                                  WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
                                                  WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-                                             0,
-                                             0);
+                                             0, 0);
     Ex_DUISetLong(hExDui_label, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    HEXOBJ            hObj_label = Ex_ObjCreateEx(-1,
-                                       L"static",
-                                       NULL,
-                                       OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE,
-                                       10,
-                                       30,
-                                       180,
-                                       150,
-                                       hExDui_label,
-                                       0,
-                                       DT_VCENTER,
-                                       0,
-                                       0,
-                                       NULL);
+    HEXOBJ hObj_label =
+        Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE, 10, 30, 180,
+                       150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
     std::vector<CHAR> imgdata;
     Ex_ReadFile(L"res/Loading.gif", &imgdata);
-    Ex_ObjSetBackgroundImage(hObj_label,
-                             imgdata.data(),
-                             imgdata.size(),
-                             0,
-                             0,
-                             BACKGROUND_REPEAT_ZOOM,
-                             0,
-                             BACKGROUND_FLAG_PLAYIMAGE,
-                             255,
-                             TRUE);
+    Ex_ObjSetBackgroundImage(hObj_label, imgdata.data(), imgdata.size(), 0, 0,
+                             BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_PLAYIMAGE, 255, TRUE);
 
     Ex_ObjSetRadius(hObj_label, 10, 10, 15, 10, TRUE);
 
     EX_BACKGROUNDIMAGEINFO bkg{0};
     Ex_ObjGetBackgroundImage(hObj_label, &bkg);
-    OUTPUTW(L"背景信息:",
-            bkg.x,
-            bkg.y,
-            bkg.dwAlpha,
-            bkg.dwRepeat,
-            bkg.hImage,
-            bkg.curFrame,
+    OUTPUTW(L"背景信息:", bkg.x, bkg.y, bkg.dwAlpha, bkg.dwRepeat, bkg.hImage, bkg.curFrame,
             bkg.maxFrame);
     RECT rect;
     Ex_ObjGetRect(hObj_label, &rect);
     OUTPUTW(L"标签矩形:", rect.right, rect.bottom);
 
-    HEXOBJ hObj_label2 = Ex_ObjCreateEx(-1,
-                                        L"static",
-                                        NULL,
-                                        OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE,
-                                        200,
-                                        30,
-                                        180,
-                                        150,
-                                        hExDui_label,
-                                        0,
-                                        DT_VCENTER,
-                                        0,
-                                        0,
-                                        NULL);
+    HEXOBJ hObj_label2 =
+        Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE, 200, 30,
+                       180, 150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);
     Ex_ReadFile(L"res/409.dds", &imgdata);
-    Ex_ObjSetBackgroundImage(hObj_label2,
-                             imgdata.data(),
-                             imgdata.size(),
-                             0,
-                             0,
-                             BACKGROUND_REPEAT_ZOOM,
-                             0,
-                             BACKGROUND_FLAG_PLAYIMAGE,
-                             255,
-                             TRUE);
+    Ex_ObjSetBackgroundImage(hObj_label2, imgdata.data(), imgdata.size(), 0, 0,
+                             BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_PLAYIMAGE, 255, TRUE);
 
-    HEXOBJ hObj_label3 =
-        Ex_ObjCreateEx(-1,
-                       L"static",
-                       L"基础组件可以填充动画,支持PNG,GIF,JPG,BMP,DDS,ICO,标签可以自动换行",
-                       -1,
-                       200,
-                       200,
-                       180,
-                       90,
-                       hExDui_label,
-                       0,
-                       DT_WORDBREAK,
-                       0,
-                       0,
-                       NULL);
+    HEXOBJ hObj_label3 = Ex_ObjCreateEx(
+        -1, L"static", L"基础组件可以填充动画,支持PNG,GIF,JPG,BMP,DDS,ICO,标签可以自动换行", -1,
+        200, 200, 180, 90, hExDui_label, 0, DT_WORDBREAK, 0, 0, NULL);
     Ex_ObjSetFontFromFamily(hObj_label3, L"宋体", 14, FONT_STYLE_BOLD, FALSE);
     Ex_ObjSetColor(hObj_label3, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
@@ -321,19 +191,12 @@ LRESULT CALLBACK OnCheckButtonCheckedEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 {
     if (wParam != 0) {
         BOOL fChecked = TRUE;   // 弹出的信息框里面复选框是选中状态
-        Ex_MessageBoxEx(hObj,
-                        L"选中啦",
-                        L"取CheckButton状态",
-                        MB_USERICON,
-                        L"不再提示",
-                        &fChecked,
-                        2000,
-                        MESSAGEBOX_FLAG_CENTEWINDOW,
-                        0);
+        Ex_MessageBoxEx(hObj, L"选中啦", L"取CheckButton状态", MB_USERICON, L"不再提示", &fChecked,
+                        2000, MESSAGEBOX_FLAG_CENTEWINDOW, 0);
     }
     else {
-        Ex_MessageBox(
-            hObj, L"取消选中啦", L"取CheckButton状态", MB_ICONWARNING, MESSAGEBOX_FLAG_CENTEWINDOW);
+        Ex_MessageBox(hObj, L"取消选中啦", L"取CheckButton状态", MB_ICONWARNING,
+                      MESSAGEBOX_FLAG_CENTEWINDOW);
     }
     return 0;
 }
@@ -343,57 +206,19 @@ void test_checkbutton(HWND hWnd)
     HWND hWnd_checkbutton =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试单选框复选框", 0, 0, 300, 250, 0, 0);
     HEXDUI hExDui_checkbutton = Ex_DUIBindWindowEx(
-        hWnd_checkbutton,
-        0,
+        hWnd_checkbutton, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_checkbutton, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
-    Ex_ObjCreateEx(-1,
-                   L"checkbutton",
-                   L"复选框",
-                   -1,
-                   10,
-                   30,
-                   60,
-                   20,
-                   hExDui_checkbutton,
-                   0,
-                   DT_VCENTER,
-                   0,
-                   0,
-                   NULL);
-    Ex_ObjCreateEx(-1,
-                   L"radiobutton",
-                   L"单选框1",
-                   -1,
-                   10,
-                   60,
-                   80,
-                   20,
-                   hExDui_checkbutton,
-                   0,
-                   DT_VCENTER,
-                   0,
-                   0,
-                   NULL);
-    Ex_ObjCreateEx(-1,
-                   L"radiobutton",
-                   L"单选框2",
-                   -1,
-                   100,
-                   60,
-                   80,
-                   20,
-                   hExDui_checkbutton,
-                   0,
-                   DT_VCENTER,
-                   0,
-                   0,
-                   NULL);
+    Ex_ObjCreateEx(-1, L"checkbutton", L"复选框", -1, 10, 30, 60, 20, hExDui_checkbutton, 0,
+                   DT_VCENTER, 0, 0, NULL);
+    Ex_ObjCreateEx(-1, L"radiobutton", L"单选框1", -1, 10, 60, 80, 20, hExDui_checkbutton, 0,
+                   DT_VCENTER, 0, 0, NULL);
+    Ex_ObjCreateEx(-1, L"radiobutton", L"单选框2", -1, 100, 60, 80, 20, hExDui_checkbutton, 0,
+                   DT_VCENTER, 0, 0, NULL);
 
     EX_OBJ_PROPS CheckButtonExProps = {0};
     HEXOBJ       hObj_checkbutton1 =
@@ -478,33 +303,18 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
         }
         else if (nID == 204)   // 左对齐
         {
-            Ex_ObjEditSetSelParFormat(hEdit,
-                                      EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      EDIT_PARAGRAPHFALIGN_LEFT);
+            Ex_ObjEditSetSelParFormat(hEdit, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, NULL, NULL,
+                                      NULL, NULL, EDIT_PARAGRAPHFALIGN_LEFT);
         }
         else if (nID == 205)   // 居中对齐
         {
-            Ex_ObjEditSetSelParFormat(hEdit,
-                                      EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      EDIT_PARAGRAPHFALIGN_CENTER);
+            Ex_ObjEditSetSelParFormat(hEdit, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, NULL, NULL,
+                                      NULL, NULL, EDIT_PARAGRAPHFALIGN_CENTER);
         }
         else if (nID == 206)   // 右对齐
         {
-            Ex_ObjEditSetSelParFormat(hEdit,
-                                      EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      NULL,
-                                      EDIT_PARAGRAPHFALIGN_RIGHT);
+            Ex_ObjEditSetSelParFormat(hEdit, EDIT_SELECT_PARAGRAPHFORMAT_ALIGNMENT, NULL, NULL,
+                                      NULL, NULL, EDIT_PARAGRAPHFALIGN_RIGHT);
         }
         else if (nID == 207)   // 首行缩进
         {
@@ -512,73 +322,54 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
         }
         else if (nID == 208)   // 右侧缩进
         {
-            Ex_ObjEditSetSelParFormat(
-                hEdit, EDIT_SELECT_PARAGRAPHFORMAT_RIGHTINDENT, NULL, NULL, 20);
+            Ex_ObjEditSetSelParFormat(hEdit, EDIT_SELECT_PARAGRAPHFORMAT_RIGHTINDENT, NULL, NULL,
+                                      20);
         }
         else if (nID == 209)   // 非首行缩进
         {
-            Ex_ObjEditSetSelParFormat(
-                hEdit, EDIT_SELECT_PARAGRAPHFORMAT_OFFSET, NULL, NULL, NULL, 50);
+            Ex_ObjEditSetSelParFormat(hEdit, EDIT_SELECT_PARAGRAPHFORMAT_OFFSET, NULL, NULL, NULL,
+                                      50);
         }
         else if (nID == 210)   // 项目符号
         {
-            Ex_ObjEditSetSelParFormat(
-                hEdit, EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING, EDIT_PARAGRAPHFSYMBOL_LCROMAN);
+            Ex_ObjEditSetSelParFormat(hEdit, EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING,
+                                      EDIT_PARAGRAPHFSYMBOL_LCROMAN);
         }
         else if (nID == 211)   // 文本颜色
         {
-            Ex_ObjEditSetSelCharFormat(
-                hEdit, EDIT_SELECT_CHARFORMAT_COLOR, ExRGB2ARGB(16711680, 255));
+            Ex_ObjEditSetSelCharFormat(hEdit, EDIT_SELECT_CHARFORMAT_COLOR,
+                                       ExRGB2ARGB(16711680, 255));
         }
         else if (nID == 212)   // 加粗
         {
-            Ex_ObjEditSetSelCharFormat(
-                hEdit, EDIT_SELECT_CHARFORMAT_BOLD, NULL, NULL, NULL, NULL, TRUE);
+            Ex_ObjEditSetSelCharFormat(hEdit, EDIT_SELECT_CHARFORMAT_BOLD, NULL, NULL, NULL, NULL,
+                                       TRUE);
         }
         else if (nID == 213)   // 倾斜
         {
-            Ex_ObjEditSetSelCharFormat(
-                hEdit, EDIT_SELECT_CHARFORMAT_ITALIC, NULL, NULL, NULL, NULL, NULL, TRUE);
+            Ex_ObjEditSetSelCharFormat(hEdit, EDIT_SELECT_CHARFORMAT_ITALIC, NULL, NULL, NULL, NULL,
+                                       NULL, TRUE);
         }
         else if (nID == 214)   // 下划线
         {
-            Ex_ObjEditSetSelCharFormat(
-                hEdit, EDIT_SELECT_CHARFORMAT_UNDERLINE, NULL, NULL, NULL, NULL, NULL, NULL, TRUE);
+            Ex_ObjEditSetSelCharFormat(hEdit, EDIT_SELECT_CHARFORMAT_UNDERLINE, NULL, NULL, NULL,
+                                       NULL, NULL, NULL, TRUE);
         }
         else if (nID == 215)   // 删除线
         {
-            Ex_ObjEditSetSelCharFormat(hEdit,
-                                       EDIT_SELECT_CHARFORMAT_STRIKEOUT,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       TRUE);
+            Ex_ObjEditSetSelCharFormat(hEdit, EDIT_SELECT_CHARFORMAT_STRIKEOUT, NULL, NULL, NULL,
+                                       NULL, NULL, NULL, NULL, TRUE);
         }
         else if (nID == 216)   // 超链接
         {
-            Ex_ObjEditSetSelCharFormat(hEdit,
-                                       EDIT_SELECT_CHARFORMAT_LINK,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       TRUE);
+            Ex_ObjEditSetSelCharFormat(hEdit, EDIT_SELECT_CHARFORMAT_LINK, NULL, NULL, NULL, NULL,
+                                       NULL, NULL, NULL, NULL, TRUE);
         }
         else if (nID == 217)   // 幼圆30
         {
             Ex_ObjEditSetSelCharFormat(hEdit,
                                        EDIT_SELECT_CHARFORMAT_SIZE | EDIT_SELECT_CHARFORMAT_FACE,
-                                       NULL,
-                                       L"幼圆",
-                                       30);
+                                       NULL, L"幼圆", 30);
         }
         else if (nID == 218)   // 撤销
         {
@@ -626,8 +417,8 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
             EX_SETTEXTEX textformat;
             textformat.flags    = 2;      // ST_SELECTION替换选择并保持富文本格式
             textformat.codePage = 1200;   // Unicode code page
-            Ex_ObjSendMessage(
-                hEdit, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat, (LPARAM)L"选中替换为这个");
+            Ex_ObjSendMessage(hEdit, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat,
+                              (LPARAM)L"选中替换为这个");
         }
     }
     return 0;
@@ -636,8 +427,7 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
     if (nCode == EDIT_EVENT_SELCHANGE) {
-        OUTPUTW(L"选中区域改变:",
-                ((EX_SELCHANGE*)lParam)->chrg.cpMin,
+        OUTPUTW(L"选中区域改变:", ((EX_SELCHANGE*)lParam)->chrg.cpMin,
                 ((EX_SELCHANGE*)lParam)->chrg.cpMax);
     }
     else if (nCode == EDIT_EVENT_LINK) {
@@ -657,110 +447,47 @@ LRESULT CALLBACK OnEditNotifyEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 void test_edit(HWND hWnd)
 {
     HWND hWnd_edit = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试编辑框", 0, 0, 850, 350, 0, 0);
-    m_hExDuiEdit   = Ex_DUIBindWindowEx(hWnd_edit,
-                                      0,
-                                      WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
-                                          WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE |
-                                          WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
-                                          WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-                                      0,
-                                      0);
+    m_hExDuiEdit   = Ex_DUIBindWindowEx(hWnd_edit, 0,
+                                        WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
+                                            WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE |
+                                            WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
+                                            WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
+                                        0, 0);
     Ex_DUISetLong(m_hExDuiEdit, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     HEXOBJ hObj_edit1 = Ex_ObjCreateEx(
         OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_CUSTOMDRAW,
-        L"edit",
-        L"",
-        OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION,
-        10,
-        30,
-        150,
-        30,
-        m_hExDuiEdit,
-        0,
-        DT_VCENTER,
-        0,
-        0,
-        NULL);
+        L"edit", L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION, 10, 30, 150, 30,
+        m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
     std::vector<CHAR> imgdata;
     Ex_ReadFile(L"res/editbkg.jpg", &imgdata);
-    Ex_ObjSendMessage(hObj_edit1,
-                      EDIT_MESSAGE_SETCUEBANNER,
-                      ExARGB(150, 150, 150, 255),
+    Ex_ObjSendMessage(hObj_edit1, EDIT_MESSAGE_SETCUEBANNER, ExARGB(150, 150, 150, 255),
                       (LPARAM)L"背景图片编辑框");
-    Ex_ObjSetBackgroundImage(hObj_edit1,
-                             imgdata.data(),
-                             imgdata.size(),
-                             0,
-                             0,
-                             BACKGROUND_REPEAT_ZOOM,
-                             0,
-                             BACKGROUND_FLAG_DEFAULT,
-                             255,
-                             TRUE);
-    HEXOBJ hObj_edit2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-                                       L"edit",
-                                       L"测试密码输入编辑框",
-                                       OBJECT_STYLE_VISIBLE | EDIT_STYLE_USEPASSWORD,
-                                       10,
-                                       70,
-                                       150,
-                                       30,
-                                       m_hExDuiEdit,
-                                       135,
-                                       DT_SINGLELINE,
-                                       0,
-                                       0,
-                                       NULL);
-    Ex_ObjSendMessage(
-        hObj_edit2, EDIT_MESSAGE_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"测试密码输入编辑框");
+    Ex_ObjSetBackgroundImage(hObj_edit1, imgdata.data(), imgdata.size(), 0, 0,
+                             BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_DEFAULT, 255, TRUE);
+    HEXOBJ hObj_edit2 =
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
+                       L"测试密码输入编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_USEPASSWORD, 10, 70,
+                       150, 30, m_hExDuiEdit, 135, DT_SINGLELINE, 0, 0, NULL);
+    Ex_ObjSendMessage(hObj_edit2, EDIT_MESSAGE_SETCUEBANNER, ExARGB(0, 0, 0, 100),
+                      (LPARAM)L"测试密码输入编辑框");
 
-    HEXOBJ hObj_edit3 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-                                       L"edit",
-                                       L"",
-                                       OBJECT_STYLE_VISIBLE | EDIT_STYLE_NUMERICINPUT,
-                                       10,
-                                       110,
-                                       150,
-                                       30,
-                                       m_hExDuiEdit,
-                                       0,
-                                       DT_SINGLELINE,
-                                       0,
-                                       0,
-                                       NULL);
-    Ex_ObjSendMessage(
-        hObj_edit3, EDIT_MESSAGE_SETCUEBANNER, ExARGB(0, 0, 0, 100), (LPARAM)L"测试数值输入编辑框");
-    HEXOBJ hObj_edit4 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-                                       L"edit",
-                                       L"测试只读编辑框",
-                                       OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY,
-                                       10,
-                                       150,
-                                       150,
-                                       30,
-                                       m_hExDuiEdit,
-                                       0,
-                                       DT_SINGLELINE,
-                                       0,
-                                       0,
-                                       NULL);
+    HEXOBJ hObj_edit3 =
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit", L"",
+                       OBJECT_STYLE_VISIBLE | EDIT_STYLE_NUMERICINPUT, 10, 110, 150, 30,
+                       m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+    Ex_ObjSendMessage(hObj_edit3, EDIT_MESSAGE_SETCUEBANNER, ExARGB(0, 0, 0, 100),
+                      (LPARAM)L"测试数值输入编辑框");
+    HEXOBJ hObj_edit4 =
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
+                       L"测试只读编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY, 10, 150, 150,
+                       30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
 
-    HEXOBJ hObj_edit5 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED |
-                                           OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW,
-                                       L"edit",
-                                       L"透明圆角编辑框",
-                                       OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION,
-                                       10,
-                                       190,
-                                       150,
-                                       44,
-                                       m_hExDuiEdit,
-                                       0,
-                                       DT_VCENTER,
-                                       0,
-                                       0,
-                                       NULL);
+    HEXOBJ hObj_edit5 =
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED |
+                           OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW,
+                       L"edit", L"透明圆角编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION,
+                       10, 190, 150, 44, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
     m_hEditFont = _font_createfromfamily(L"微软雅黑", 24, FONT_STYLE_UNDERLINE | FONT_STYLE_ITALIC);
     Ex_ObjSetFont(hObj_edit5, m_hEditFont, FALSE);
     Ex_ObjSetColor(hObj_edit5, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
@@ -768,43 +495,22 @@ void test_edit(HWND hWnd)
     Ex_ObjSetRadius(hObj_edit5, 10, 10, 10, 0, FALSE);
 
     HEXOBJ hobj_edit_multiline =
-        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-                       L"edit",
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
                        L"测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测"
                        L"试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试"
                        L"多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多"
                        L"行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\r\n测试多行编辑框\n",
-                       OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
-                       10,
-                       245,
-                       150,
-                       100,
-                       m_hExDuiEdit,
-                       0,
-                       DT_VCENTER,
-                       0,
-                       0,
-                       NULL);
+                       OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL, 10, 245, 150, 100, m_hExDuiEdit,
+                       0, DT_VCENTER, 0, 0, NULL);
     Ex_ObjSendMessage(hobj_edit_multiline, EM_SETSEL, -1, -1);   // 光标移动到最后一行
     Ex_ObjSendMessage(hobj_edit_multiline, EM_REPLACESEL, -1, (LPARAM)L"新添加一行");   // 添加一行
     Ex_ObjSetFocus(hobj_edit_multiline);   // 添加焦点自动滚动到光标位置也就是最后一行
 
     HEXOBJ hObj_edit7 = Ex_ObjCreateEx(
-        OBJECT_STYLE_EX_FOCUSABLE,
-        L"edit",
-        NULL,
+        OBJECT_STYLE_EX_FOCUSABLE, L"edit", NULL,
         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL | EDIT_STYLE_RICHTEXT |
             EDIT_STYLE_PARSEURL | EDIT_STYLE_ALLOWTAB | EDIT_STYLE_NEWLINE,
-        180,
-        30,
-        300,
-        300,
-        m_hExDuiEdit,
-        101,
-        DT_LEFT | DT_TOP,
-        0,
-        0,
-        NULL);
+        180, 30, 300, 300, m_hExDuiEdit, 101, DT_LEFT | DT_TOP, 0, 0, NULL);
     std::vector<CHAR> rtf;
     Ex_ReadFile(L"res/test.rtf", &rtf);
 
@@ -813,9 +519,9 @@ void test_edit(HWND hWnd)
     Ex_ObjHandleEvent(hObj_edit7, EDIT_EVENT_LINK, OnEditNotifyEvent);
 
     // 在最后一行换行插入图片，现将光标设置到最后
-    Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, -1, -1); 
+    Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, -1, -1);
     Ex_ObjSendMessage(hObj_edit7, EM_REPLACESEL, -1, (LPARAM)L"\r\n");
-    
+
     HBITMAP  hbitmap   = 0;
     HEXIMAGE hImg      = 0;
     HEXIMAGE hImgSmall = 0;
@@ -827,8 +533,8 @@ void test_edit(HWND hWnd)
     Ex_ObjSendMessage(hObj_edit7, EDIT_MESSAGE_INSERT_BITMAP, 0, (size_t)hbitmap);
     _img_destroy(hImg);
     _img_destroy(hImgSmall);
-    Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, 0, 0);//光标恢复首行
-    
+    Ex_ObjSendMessage(hObj_edit7, EM_SETSEL, 0, 0);   // 光标恢复首行
+
     std::vector<std::wstring> buttonTitles = {
         L"全选",     L"取消选择",   L"置选择",  L"左对齐 ",   L"居中对齐", L"右对齐", L"首行缩进 ",
         L"右侧缩进", L"非首行缩进", L"项目符",  L"文本红色 ", L"加粗",     L"倾斜",   L"下划线",
@@ -849,20 +555,8 @@ void test_edit(HWND hWnd)
             title = buttonTitles[i];
         }
 
-        m_hEditButton[i] = Ex_ObjCreateEx(OBJECT_STYLE_EX_AUTOSIZE,
-                                          L"button",
-                                          title.c_str(),
-                                          -1,
-                                          10,
-                                          30,
-                                          10,
-                                          10,
-                                          hObj_page,
-                                          201 + i,
-                                          -1,
-                                          0,
-                                          0,
-                                          0);
+        m_hEditButton[i] = Ex_ObjCreateEx(OBJECT_STYLE_EX_AUTOSIZE, L"button", title.c_str(), -1,
+                                          10, 30, 10, 10, hObj_page, 201 + i, -1, 0, 0, 0);
         _layout_setchildprop(hLayoutPage, m_hEditButton[i], LAYOUT_SUBPROP_MARGIN_RIGHT, 5);
         _layout_setchildprop(hLayoutPage, m_hEditButton[i], LAYOUT_SUBPROP_MARGIN_BOTTOM, 5);
         if (bWrapLine) {
@@ -900,17 +594,11 @@ LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
         EX_NMHDR notify{0};
         RtlMoveMemory(&notify, (LPVOID)lParam, sizeof(EX_NMHDR));
         if (notify.nCode == NM_CREATE) {
-            Ex_ObjSetColor(notify.hObjFrom,
-                           COLOR_EX_TEXT_NORMAL,
-                           ExARGB(210, 120, 55, 255),
+            Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExARGB(210, 120, 55, 255),
                            TRUE);   // 改变菜单项目字体正常颜色
-            Ex_ObjSetColor(notify.hObjFrom,
-                           COLOR_EX_TEXT_HOVER,
-                           ExRGB2ARGB(16711680, 255),
+            Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255),
                            TRUE);   // 改变菜单项目字体悬浮颜色
-            Ex_ObjSetColor(notify.hObjFrom,
-                           COLOR_EX_BACKGROUND,
-                           ExARGB(110, 120, 55, 255),
+            Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExARGB(110, 120, 55, 255),
                            TRUE);   // 改变菜单项目背景颜色
         }
     }
@@ -934,15 +622,9 @@ LRESULT CALLBACK OnListButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         RECT rcObj{0};
         GetWindowRect(hWnd, &rcWindow);
         Ex_ObjGetRectEx(hObj, &rcObj, 2);
-        Ex_TrackPopupMenu((HMENU)lParam,
-                          TPM_RECURSE,
-                          rcWindow.left + rcObj.left + wParam,
-                          rcWindow.top + Ex_Scale(rcObj.bottom),
-                          0,
-                          hObj,
-                          NULL,
-                          OnListButtonWndMsgProc,
-                          MENU_FLAG_NOSHADOW);
+        Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam,
+                          rcWindow.top + Ex_Scale(rcObj.bottom), 0, hObj, NULL,
+                          OnListButtonWndMsgProc, MENU_FLAG_NOSHADOW);
         *lpResult = 1;
         return 1;
     }
@@ -965,13 +647,11 @@ void test_listbutton(HWND hWnd)
     HWND hWnd_listbutton =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试列表按钮", 0, 0, 480, 200, 0, 0);
     HEXDUI hExDui_listbutton = Ex_DUIBindWindowEx(
-        hWnd_listbutton,
-        0,
+        hWnd_listbutton, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_listbutton, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HMENU hMenu = LoadMenuW(GetModuleHandleW(0), (LPWSTR)IDR_MENU1);
 
@@ -999,16 +679,16 @@ void test_listbutton(HWND hWnd)
 
     // 创建自定义回调菜单条
 
-    hObj = Ex_ObjCreateEx(
-        -1, L"Menubar", 0, -1, 0, 60, 220, 22, hExDui_listbutton, 0, -1, 0, 0, OnListButtonMsgProc);
-    Ex_ObjSetColor(
-        hObj, COLOR_EX_BACKGROUND, ExARGB(110, 120, 55, 255), FALSE);   // 改变菜单按钮背景色
-    Ex_ObjSetColor(
-        hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);   // 改变菜单按钮字体正常色
-    Ex_ObjSetColor(
-        hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55), FALSE);   // 改变菜单按钮字体热点色
-    Ex_ObjSetColor(
-        hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100), FALSE);   // 改变菜单按钮字体按下色
+    hObj = Ex_ObjCreateEx(-1, L"Menubar", 0, -1, 0, 60, 220, 22, hExDui_listbutton, 0, -1, 0, 0,
+                          OnListButtonMsgProc);
+    Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(110, 120, 55, 255),
+                   FALSE);   // 改变菜单按钮背景色
+    Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255),
+                   FALSE);   // 改变菜单按钮字体正常色
+    Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExARGB(255, 255, 255, 55),
+                   FALSE);   // 改变菜单按钮字体热点色
+    Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExARGB(255, 255, 255, 100),
+                   FALSE);   // 改变菜单按钮字体按下色
     item1.wzText = L"文件(&F)";
     item1.nMenu  = GetSubMenu(hMenu, 0);
     Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&item1);
@@ -1122,39 +802,18 @@ void test_custombkg(HWND hWnd)
 {
     HWND   hWnd_custombkg = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"", 0, 0, 175, 200, 0, 0);
     HEXDUI hExDui_custombkg =
-        Ex_DUIBindWindowEx(hWnd_custombkg,
-                           0,
+        Ex_DUIBindWindowEx(hWnd_custombkg, 0,
                            WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE |
                                WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW,
-                           0,
-                           0);
+                           0, 0);
     std::vector<CHAR> imgdata;
     Ex_ReadFile(L"res/custombkg.png", &imgdata);
     RECT grid = {45, 40, 15, 15};
-    Ex_ObjSetBackgroundImage(hExDui_custombkg,
-                             imgdata.data(),
-                             imgdata.size(),
-                             0,
-                             0,
-                             BACKGROUND_REPEAT_ZOOM,
-                             &grid,
-                             BACKGROUND_FLAG_DEFAULT,
-                             220,
-                             TRUE);
-    Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST,
-                   L"sysbutton",
-                   L"",
-                   OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE,
-                   140,
-                   8,
-                   30,
-                   30,
-                   hExDui_custombkg,
-                   0,
-                   0,
-                   0,
-                   0,
-                   NULL);
+    Ex_ObjSetBackgroundImage(hExDui_custombkg, imgdata.data(), imgdata.size(), 0, 0,
+                             BACKGROUND_REPEAT_ZOOM, &grid, BACKGROUND_FLAG_DEFAULT, 220, TRUE);
+    Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"",
+                   OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE, 140, 8, 30, 30,
+                   hExDui_custombkg, 0, 0, 0, 0, NULL);
     Ex_DUIShowWindow(hExDui_custombkg, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -1188,32 +847,23 @@ LRESULT CALLBACK OnListViewMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
                 }
                 if (crItemBkg != 0) {
                     HEXBRUSH hBrush = _brush_create(crItemBkg);
-                    _canvas_fillrect(cd.hCanvas,
-                                     hBrush,
-                                     cd.rcPaint.left,
-                                     cd.rcPaint.top,
-                                     cd.rcPaint.right,
-                                     cd.rcPaint.bottom);
+                    _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
+                                     cd.rcPaint.right, cd.rcPaint.bottom);
                     _brush_destroy(hBrush);
                 }
-                _canvas_drawtext(cd.hCanvas,
-                                 Ex_ObjGetFont(hObj),
-                                 m_listViewItemInfo[cd.iItem - 1].color,
-                                 m_listViewItemInfo[cd.iItem - 1].text.c_str(),
-                                 -1,
-                                 DT_SINGLELINE | DT_VCENTER,
-                                 cd.rcPaint.left + m_listViewItemInfo[cd.iItem - 1].depth * 5,
-                                 cd.rcPaint.top,
-                                 cd.rcPaint.right,
-                                 cd.rcPaint.bottom);
+                _canvas_drawtext(
+                    cd.hCanvas, Ex_ObjGetFont(hObj), m_listViewItemInfo[cd.iItem - 1].color,
+                    m_listViewItemInfo[cd.iItem - 1].text.c_str(), -1, DT_SINGLELINE | DT_VCENTER,
+                    cd.rcPaint.left + m_listViewItemInfo[cd.iItem - 1].depth * 5, cd.rcPaint.top,
+                    cd.rcPaint.right, cd.rcPaint.bottom);
 
                 *lpResult = 1;
                 return 1;
             }
             else if (ni.nCode == LISTVIEW_EVENT_ITEMCHANGED) {
                 // wParam 新选中项,lParam 旧选中项
-                OUTPUTW(
-                    L"改变选中ID:", ni.idFrom, L"新选中项:", ni.wParam, L"旧选中项:", ni.lParam);
+                OUTPUTW(L"改变选中ID:", ni.idFrom, L"新选中项:", ni.wParam, L"旧选中项:",
+                        ni.lParam);
             }
         }
     }
@@ -1240,29 +890,16 @@ void test_listview(HWND hWnd)
 {
     HWND hWnd_listview = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试列表框", 0, 0, 800, 600, 0, 0);
     HEXDUI hExDui_listview = Ex_DUIBindWindowEx(
-        hWnd_listview,
-        0,
+        hWnd_listview, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_listview, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hobj_listview =
-        Ex_ObjCreateEx(OBJECT_STYLE_EX_COMPOSITED,
-                       L"listview",
-                       NULL,
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_COMPOSITED, L"listview", NULL,
                        OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST | OBJECT_STYLE_VSCROLL,
-                       30,
-                       30,
-                       550,
-                       450,
-                       hExDui_listview,
-                       0,
-                       -1,
-                       0,
-                       0,
-                       OnListViewMsgProc);
+                       30, 30, 550, 450, hExDui_listview, 0, -1, 0, 0, OnListViewMsgProc);
     Ex_ObjSetColor(hobj_listview, COLOR_EX_BACKGROUND, ExARGB(120, 255, 240, 150), TRUE);
     const INT itemCount = 100;
     m_listViewItemInfo.resize(itemCount);
@@ -1273,14 +910,10 @@ void test_listview(HWND hWnd)
         m_listViewItemInfo[index].depth = (index + 1) % 5;
     }
     Ex_ObjSendMessage(
-        hobj_listview,
-        LISTVIEW_MESSAGE_SETITEMCOUNT,
-        itemCount,
+        hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, itemCount,
         MAKELONG(LVSICF_NOSCROLL, itemCount));   // MAKELONG(LVSICF_NOSCROLL,
                                                  // itemCount)可以将滚动条顶部位置停留在选中项目位置
-    Ex_ObjSendMessage(hobj_listview,
-                      LISTVIEW_MESSAGE_SETSELECTIONMARK,
-                      TRUE,
+    Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETSELECTIONMARK, TRUE,
                       40);   // 置选中项目，前面要先设置项目总数
     HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hobj_listview, SCROLLBAR_TYPE_VERT);
     Ex_ObjPostMessage(hObj_scroll, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);        // 隐藏滚动条
@@ -1292,13 +925,11 @@ void test_groupbox(HWND hWnd)
 {
     HWND hWnd_groupbox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试分组框", 0, 0, 400, 300, 0, 0);
     HEXDUI hExDui_groupbox = Ex_DUIBindWindowEx(
-        hWnd_groupbox,
-        0,
+        hWnd_groupbox, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_groupbox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj_groupbox =
         Ex_ObjCreate(L"groupbox", L"分组框", -1, 30, 30, 230, 230, hExDui_groupbox);
@@ -1331,13 +962,11 @@ void test_navbutton(HWND hWnd)
 {
     HWND hWnd_navbutton = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试选项卡", 0, 0, 800, 600, 0, 0);
     HEXDUI hExDui_navbutton = Ex_DUIBindWindowEx(
-        hWnd_navbutton,
-        0,
+        hWnd_navbutton, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_navbutton, ENGINE_LONG_CRBKG, ExRGB2ARGB(0, 255));
 
     for (INT i = 0; i < 4; i++) {
@@ -1372,25 +1001,11 @@ void test_navbutton(HWND hWnd)
     m_hLayout = _layout_create(LAYOUT_TYPE_PAGE, hPageNavbtnContainer);
     for (INT i = 0; i < 4; i++) {
         auto str         = L"页面" + std::to_wstring(i);
-        m_hPageNavBtn[i] = Ex_ObjCreateEx(-1,
-                                          L"static",
-                                          str.c_str(),
-                                          -1,
-                                          0,
-                                          0,
-                                          760,
-                                          600 - 120 - 20,
-                                          hPageNavbtnContainer,
-                                          0,
-                                          DT_CENTER | DT_VCENTER,
-                                          0,
-                                          0,
-                                          0);
+        m_hPageNavBtn[i] = Ex_ObjCreateEx(-1, L"static", str.c_str(), -1, 0, 0, 760, 600 - 120 - 20,
+                                          hPageNavbtnContainer, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
         Ex_ObjSetFontFromFamily(m_hPageNavBtn[i], 0, 40, 0, TRUE);
-        Ex_ObjSetColor(m_hPageNavBtn[i],
-                       COLOR_EX_BACKGROUND,
-                       ExRGB2ARGB(Random(1000000, 16777215), 255),
-                       TRUE);
+        Ex_ObjSetColor(m_hPageNavBtn[i], COLOR_EX_BACKGROUND,
+                       ExRGB2ARGB(Random(1000000, 16777215), 255), TRUE);
         Ex_ObjSetColor(m_hPageNavBtn[i], COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), TRUE);
         // 布局添加子页面
         _layout_addchild(m_hLayout, m_hPageNavBtn[i]);
@@ -1409,14 +1024,12 @@ void test_absolute(HWND hWnd)
 {
     HWND hWnd_absolute = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试绝对布局", 0, 0, 800, 300, 0, 0);
     HEXDUI hExDui_absolute = Ex_DUIBindWindowEx(
-        hWnd_absolute,
-        0,
+        hWnd_absolute, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MAX |
             WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON |
             WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_absolute, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_ABSOLUTE, hExDui_absolute);
 
@@ -1448,95 +1061,65 @@ void test_absolute(HWND hWnd)
     LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS, 50);
     _layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_MARGIN_TOP, 45);*/
 
-    HEXOBJ hObj1 = Ex_ObjCreate(
-        L"Static", L"固定在右下角50,50的位置，不变大小", -1, 0, 0, 200, 100, hExDui_absolute);
+    HEXOBJ hObj1 = Ex_ObjCreate(L"Static", L"固定在右下角50,50的位置，不变大小", -1, 0, 0, 200, 100,
+                                hExDui_absolute);
     Ex_ObjSetColor(hObj1, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
-    _layout_absolute_setedge(hLayout,
-                             hObj1,
-                             LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
+    _layout_absolute_setedge(hLayout, hObj1, LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
                              50);   // 设置距离右边为50像素
-    _layout_absolute_setedge(hLayout,
-                             hObj1,
-                             LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
+    _layout_absolute_setedge(hLayout, hObj1, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
                              50);   // 设置距离底边为50像素
 
-    HEXOBJ hObj2 = Ex_ObjCreate(
-        L"Static", L"固定在左下角50,50的位置，宽度为40%,高度为50", -1, 0, 0, 0, 0, hExDui_absolute);
+    HEXOBJ hObj2 = Ex_ObjCreate(L"Static", L"固定在左下角50,50的位置，宽度为40%,高度为50", -1, 0, 0,
+                                0, 0, hExDui_absolute);
     Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 100), TRUE);
-    _layout_absolute_setedge(hLayout,
-                             hObj2,
-                             LAYOUT_SUBPROP_ABSOLUTE_LEFT,
+    _layout_absolute_setedge(hLayout, hObj2, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
                              50);   // 设置距离左边为50像素
-    _layout_absolute_setedge(hLayout,
-                             hObj2,
-                             LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
+    _layout_absolute_setedge(hLayout, hObj2, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
                              50);   // 设置距离底边为50像素
-    _layout_absolute_setedge(hLayout,
-                             hObj2,
-                             LAYOUT_SUBPROP_ABSOLUTE_WIDTH,
+    _layout_absolute_setedge(hLayout, hObj2, LAYOUT_SUBPROP_ABSOLUTE_WIDTH,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              40);   // 注意单位是PS（百分比）
-    _layout_absolute_setedge(
-        hLayout, hObj2, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 50);
+    _layout_absolute_setedge(hLayout, hObj2, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT,
+                             LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 50);
 
     HEXOBJ hObj3 = Ex_ObjCreate(L"Static", L"距离四边均为20%", -1, 0, 0, 0, 0, hExDui_absolute);
     Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 100), TRUE);
-    _layout_absolute_setedge(hLayout,
-                             hObj3,
-                             LAYOUT_SUBPROP_ABSOLUTE_LEFT,
+    _layout_absolute_setedge(hLayout, hObj3, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              20);   // 注意单位是PS（百分比）
-    _layout_absolute_setedge(hLayout,
-                             hObj3,
-                             LAYOUT_SUBPROP_ABSOLUTE_TOP,
+    _layout_absolute_setedge(hLayout, hObj3, LAYOUT_SUBPROP_ABSOLUTE_TOP,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              20);   // 注意单位是PS（百分比）
-    _layout_absolute_setedge(hLayout,
-                             hObj3,
-                             LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
+    _layout_absolute_setedge(hLayout, hObj3, LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              20);   // 注意单位是PS（百分比）
-    _layout_absolute_setedge(hLayout,
-                             hObj3,
-                             LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
+    _layout_absolute_setedge(hLayout, hObj3, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              20);   // 注意单位是PS（百分比）
 
-    HEXOBJ hObj4 = Ex_ObjCreate(
-        L"Static", L"居中于窗口,宽度为窗口的30%,高度为100像素", -1, 0, 0, 0, 0, hExDui_absolute);
+    HEXOBJ hObj4 = Ex_ObjCreate(L"Static", L"居中于窗口,宽度为窗口的30%,高度为100像素", -1, 0, 0, 0,
+                                0, hExDui_absolute);
     Ex_ObjSetColor(hObj4, COLOR_EX_BACKGROUND, ExRGB2ARGB(65280, 100), TRUE);
-    _layout_absolute_setedge(hLayout,
-                             hObj4,
-                             LAYOUT_SUBPROP_ABSOLUTE_LEFT,
+    _layout_absolute_setedge(hLayout, hObj4, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              50);   // 注意单位是PS（百分比）
-    _layout_absolute_setedge(hLayout,
-                             hObj4,
-                             LAYOUT_SUBPROP_ABSOLUTE_TOP,
+    _layout_absolute_setedge(hLayout, hObj4, LAYOUT_SUBPROP_ABSOLUTE_TOP,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              50);   // 注意单位是PS（百分比）
-    _layout_absolute_setedge(hLayout,
-                             hObj4,
-                             LAYOUT_SUBPROP_ABSOLUTE_WIDTH,
+    _layout_absolute_setedge(hLayout, hObj4, LAYOUT_SUBPROP_ABSOLUTE_WIDTH,
                              LAYOUT_SUBPROP_ABSOLUTE_TYPE_PS,
                              30);   // 注意单位是PS（百分比）
+    _layout_absolute_setedge(hLayout, hObj4, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT,
+                             LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 100);   //
     _layout_absolute_setedge(
-        hLayout, hObj4, LAYOUT_SUBPROP_ABSOLUTE_HEIGHT, LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 100);   //
-    _layout_absolute_setedge(
-        hLayout,
-        hObj4,
-        LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H,
-        LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS,
+        hLayout, hObj4, LAYOUT_SUBPROP_ABSOLUTE_OFFSET_H, LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS,
         -50);   //  水平偏移控件-50%的控件宽度 注意单位是OBJ_PS（控件尺寸的百分比）
     _layout_absolute_setedge(
-        hLayout,
-        hObj4,
-        LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V,
-        LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS,
+        hLayout, hObj4, LAYOUT_SUBPROP_ABSOLUTE_OFFSET_V, LAYOUT_SUBPROP_ABSOLUTE_TYPE_OBJPS,
         -50);   //  水平偏移控件-50%的控件高度 注意单位是OBJ_PS（控件尺寸的百分比）
 
     Ex_ObjLayoutSet(hExDui_absolute, hLayout, TRUE);
@@ -1548,14 +1131,12 @@ void test_relative(HWND hWnd)
 {
     HWND hWnd_relative = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试相对布局", 0, 0, 600, 400, 0, 0);
     HEXDUI hExDui_relative = Ex_DUIBindWindowEx(
-        hWnd_relative,
-        0,
+        hWnd_relative, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MAX |
             WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON |
             WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_relative, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_RELATIVE, hExDui_relative);
     _layout_setprop(hLayout, LAYOUT_PROP_PADDING_LEFT, 10);
@@ -1563,130 +1144,59 @@ void test_relative(HWND hWnd)
     _layout_setprop(hLayout, LAYOUT_PROP_PADDING_RIGHT, 10);
     _layout_setprop(hLayout, LAYOUT_PROP_PADDING_BOTTOM, 10);
 
-    HEXOBJ hObj1 = Ex_ObjCreateEx(-1,
-                                  L"Static",
-                                  L"控件A：父容器的左下角",
-                                  -1,
-                                  0,
-                                  0,
-                                  200,
-                                  150,
-                                  hExDui_relative,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj1 = Ex_ObjCreateEx(-1, L"Static", L"控件A：父容器的左下角", -1, 0, 0, 200, 150,
+                                  hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj1, COLOR_EX_BACKGROUND, ExARGB(255, 0, 0, 100), TRUE);
-    _layout_setchildprop(
-        hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, -1);   // 左侧对齐于父容器
-    _layout_setchildprop(
-        hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, -1);   // 底部对齐于父容器
+    _layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF,
+                         -1);   // 左侧对齐于父容器
+    _layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF,
+                         -1);   // 底部对齐于父容器
 
-    HEXOBJ hObj2 = Ex_ObjCreateEx(-1,
-                                  L"Static",
-                                  L"控件B：父容器居中顶部",
-                                  -1,
-                                  0,
-                                  0,
-                                  200,
-                                  150,
-                                  hExDui_relative,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj2 = Ex_ObjCreateEx(-1, L"Static", L"控件B：父容器居中顶部", -1, 0, 0, 200, 150,
+                                  hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 100), TRUE);
-    _layout_setchildprop(
-        hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF, -1);   // 顶部对齐于父容器
-    _layout_setchildprop(
-        hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H, 1);   // 水平居中于父容器
+    _layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF,
+                         -1);   // 顶部对齐于父容器
+    _layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_RELATIVE_CENTER_PARENT_H,
+                         1);   // 水平居中于父容器
 
-    HEXOBJ hObj3 = Ex_ObjCreateEx(-1,
-                                  L"Static",
-                                  L"控件C：右侧与A对齐,宽度150,在A和B之间",
-                                  -1,
-                                  0,
-                                  0,
-                                  150,
-                                  150,
-                                  hExDui_relative,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"Static", L"控件C：右侧与A对齐,宽度150,在A和B之间", -1, 0, 0,
+                                  150, 150, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(65280, 100), TRUE);
     _layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_TOP_OF, hObj1);   // 在A控件顶部
     _layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, hObj2);   // 在B控件底部
-    _layout_setchildprop(
-        hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj1);   // 右侧对齐于A控件
+    _layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF,
+                         hObj1);   // 右侧对齐于A控件
 
-    HEXOBJ hObj4 = Ex_ObjCreateEx(-1,
-                                  L"Static",
-                                  L"控件D：高度100,在A和父控件右边界之间,在父容器底部",
-                                  -1,
-                                  0,
-                                  0,
-                                  150,
-                                  100,
-                                  hExDui_relative,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj4 =
+        Ex_ObjCreateEx(-1, L"Static", L"控件D：高度100,在A和父控件右边界之间,在父容器底部", -1, 0,
+                       0, 150, 100, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj4, COLOR_EX_BACKGROUND, ExRGB2ARGB(16754943, 100), TRUE);
     _layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_RIGHT_OF, hObj1);   // 在A控件右侧
-    _layout_setchildprop(
-        hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, -1);   // 底部对齐于父容器
-    _layout_setchildprop(
-        hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, -1);   // 右侧对齐于父容器
+    _layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF,
+                         -1);   // 底部对齐于父容器
+    _layout_setchildprop(hLayout, hObj4, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF,
+                         -1);   // 右侧对齐于父容器
 
-    HEXOBJ hObj5 = Ex_ObjCreateEx(-1,
-                                  L"Static",
-                                  L"控件E：与D同宽,在D和B之间",
-                                  -1,
-                                  0,
-                                  0,
-                                  150,
-                                  100,
-                                  hExDui_relative,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj5 = Ex_ObjCreateEx(-1, L"Static", L"控件E：与D同宽,在D和B之间", -1, 0, 0, 150, 100,
+                                  hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj5, COLOR_EX_BACKGROUND, ExRGB2ARGB(8445952, 100), TRUE);
     _layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_TOP_OF, hObj4);      // 在D顶部
     _layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_BOTTOM_OF, hObj2);   // 在B底部
-    _layout_setchildprop(
-        hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF, hObj4);   // 左侧对齐于D
-    _layout_setchildprop(
-        hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj4);   // 右侧对齐于D
+    _layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_LEFT_ALIGN_OF,
+                         hObj4);   // 左侧对齐于D
+    _layout_setchildprop(hLayout, hObj5, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF,
+                         hObj4);   // 右侧对齐于D
 
-    HEXOBJ hObj6 = Ex_ObjCreateEx(-1,
-                                  L"Static",
-                                  L"控件F：150宽度,垂直方向对齐于DE,右对齐于DE",
-                                  -1,
-                                  0,
-                                  0,
-                                  150,
-                                  100,
-                                  hExDui_relative,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj6 = Ex_ObjCreateEx(-1, L"Static", L"控件F：150宽度,垂直方向对齐于DE,右对齐于DE", -1,
+                                  0, 0, 150, 100, hExDui_relative, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj6, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), TRUE);
-    _layout_setchildprop(
-        hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF, hObj5);   // 顶部对齐于E
-    _layout_setchildprop(
-        hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF, hObj4);   // 底部对齐于D
-    _layout_setchildprop(
-        hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF, hObj4);   // 右对齐于D
+    _layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_TOP_ALIGN_OF,
+                         hObj5);   // 顶部对齐于E
+    _layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_BOTTOM_ALIGN_OF,
+                         hObj4);   // 底部对齐于D
+    _layout_setchildprop(hLayout, hObj6, LAYOUT_SUBPROP_RELATIVE_RIGHT_ALIGN_OF,
+                         hObj4);   // 右对齐于D
 
     Ex_ObjLayoutSet(hExDui_relative, hLayout, TRUE);
 
@@ -1697,46 +1207,37 @@ void test_linear(HWND hWnd)
 {
     HWND hWnd_linear = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试线性布局", 0, 0, 800, 400, 0, 0);
     HEXDUI hExDui_linear = Ex_DUIBindWindowEx(
-        hWnd_linear,
-        0,
+        hWnd_linear, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MAX |
             WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON |
             WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_linear, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_LINEAR, hExDui_linear);
-    _layout_setprop(
-        hLayout, LAYOUT_PROP_LINEAR_DIRECTION, LAYOUT_PROP_DIRECTION_H);   // 设置布局方向为水平
-    _layout_setprop(hLayout,
-                    LAYOUT_PROP_LINEAR_ALIGN,
+    _layout_setprop(hLayout, LAYOUT_PROP_LINEAR_DIRECTION,
+                    LAYOUT_PROP_DIRECTION_H);   // 设置布局方向为水平
+    _layout_setprop(hLayout, LAYOUT_PROP_LINEAR_ALIGN,
                     LAYOUT_PROP_LINEAR_ALIGN_CENTER);   // 设置布局方向对齐方式为居中
 
-    HEXOBJ hObj1 = Ex_ObjCreateEx(
-        -1, L"Static", L"容器1", -1, 0, 0, 200, 300, hExDui_linear, 0, DT_VCENTER, 0, 0, 0);
+    HEXOBJ hObj1 = Ex_ObjCreateEx(-1, L"Static", L"容器1", -1, 0, 0, 200, 300, hExDui_linear, 0,
+                                  DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj1, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
-    _layout_setchildprop(hLayout,
-                         hObj1,
-                         LAYOUT_SUBPROP_LINEAR_ALIGN,
+    _layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_LINEAR_ALIGN,
                          LAYOUT_SUBPROP_LINEAR_ALIGN_CENTER);                // 设置居中于父
     _layout_setchildprop(hLayout, hObj1, LAYOUT_SUBPROP_MARGIN_RIGHT, 10);   // 设置右边10像素间隔
 
-    HEXOBJ hObj2 = Ex_ObjCreateEx(
-        -1, L"Static", L"容器2", -1, 0, 0, 400, 200, hExDui_linear, 0, DT_VCENTER, 0, 0, 0);
+    HEXOBJ hObj2 = Ex_ObjCreateEx(-1, L"Static", L"容器2", -1, 0, 0, 400, 200, hExDui_linear, 0,
+                                  DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711680, 100), TRUE);
-    _layout_setchildprop(hLayout,
-                         hObj2,
-                         LAYOUT_SUBPROP_LINEAR_ALIGN,
+    _layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_LINEAR_ALIGN,
                          LAYOUT_SUBPROP_LINEAR_ALIGN_CENTER);                // 设置居中于父
     _layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_MARGIN_RIGHT, 10);   // 设置右边10像素间隔
 
-    HEXOBJ hObj3 = Ex_ObjCreateEx(
-        -1, L"Static", L"容器3", -1, 0, 0, 100, 100, hExDui_linear, 0, DT_VCENTER, 0, 0, 0);
+    HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"Static", L"容器3", -1, 0, 0, 100, 100, hExDui_linear, 0,
+                                  DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(65280, 100), TRUE);
-    _layout_setchildprop(hLayout,
-                         hObj3,
-                         LAYOUT_SUBPROP_LINEAR_ALIGN,
+    _layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_LINEAR_ALIGN,
                          LAYOUT_SUBPROP_LINEAR_ALIGN_CENTER);   // 设置居中于父
 
     Ex_ObjLayoutSet(hExDui_linear, hLayout, TRUE);
@@ -1746,19 +1247,17 @@ void test_linear(HWND hWnd)
 void test_flow(HWND hWnd)
 {
     HWND hWnd_flow = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试流式布局", 0, 0, 600, 400, 0, 0);
-    HEXDUI hExDui_flow = Ex_DUIBindWindowEx(hWnd_flow,
-                                            0,
+    HEXDUI hExDui_flow = Ex_DUIBindWindowEx(hWnd_flow, 0,
                                             WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
                                                 WINDOW_STYLE_BUTTON_MAX | WINDOW_STYLE_BUTTON_MIN |
                                                 WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
                                                 WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE |
                                                 WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-                                            0,
-                                            0);
+                                            0, 0);
     Ex_DUISetLong(hExDui_flow, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_FLOW, hExDui_flow);
-    _layout_setprop(
-        hLayout, LAYOUT_PROP_FLOW_DIRECTION, LAYOUT_PROP_DIRECTION_V);   // 设置布局方向为垂直
+    _layout_setprop(hLayout, LAYOUT_PROP_FLOW_DIRECTION,
+                    LAYOUT_PROP_DIRECTION_V);   // 设置布局方向为垂直
 
     _layout_setprop(hLayout, LAYOUT_PROP_PADDING_LEFT, 30);
     _layout_setprop(hLayout, LAYOUT_PROP_PADDING_TOP, 30);   // 设置距离顶边30
@@ -1768,8 +1267,8 @@ void test_flow(HWND hWnd)
     HEXOBJ hObj = 0;
     for (INT i = 0; i < 20; i++) {
         auto str = L"test" + std::to_wstring(i + 1);
-        hObj     = Ex_ObjCreate(
-            L"Static", str.c_str(), -1, 0, 0, Random(50, 150), Random(50, 150), hExDui_flow);
+        hObj     = Ex_ObjCreate(L"Static", str.c_str(), -1, 0, 0, Random(50, 150), Random(50, 150),
+                                hExDui_flow);
         Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
         _layout_setchildprop(hLayout, hObj, LAYOUT_SUBPROP_MARGIN_RIGHT, 10);
         _layout_setchildprop(hLayout, hObj, LAYOUT_SUBPROP_MARGIN_BOTTOM, 10);
@@ -1785,15 +1284,13 @@ void test_flow(HWND hWnd)
 void test_table(HWND hWnd)
 {
     HWND hWnd_table = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试表格布局", 0, 0, 400, 400, 0, 0);
-    HEXDUI hExDui_table = Ex_DUIBindWindowEx(hWnd_table,
-                                             0,
+    HEXDUI hExDui_table = Ex_DUIBindWindowEx(hWnd_table, 0,
                                              WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
                                                  WINDOW_STYLE_BUTTON_MAX | WINDOW_STYLE_BUTTON_MIN |
                                                  WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
                                                  WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE |
                                                  WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-                                             0,
-                                             0);
+                                             0, 0);
     Ex_DUISetLong(hExDui_table, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_TABLE, hExDui_table);
 
@@ -1808,58 +1305,22 @@ void test_table(HWND hWnd)
     for (INT i = 1; i <= 4; i++) {
         for (INT j = 1; j <= 3; j++) {
             auto str = std::to_wstring(i) + L"," + std::to_wstring(j);
-            hObj     = Ex_ObjCreateEx(-1,
-                                  L"static",
-                                  (LPCWSTR)str.c_str(),
-                                  -1,
-                                  0,
-                                  0,
-                                  200,
-                                  150,
-                                  hExDui_table,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+            hObj     = Ex_ObjCreateEx(-1, L"static", (LPCWSTR)str.c_str(), -1, 0, 0, 200, 150,
+                                      hExDui_table, 0, DT_VCENTER, 0, 0, 0);
             Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), FALSE);
             _layout_setchildprop(hLayout, hObj, LAYOUT_SUBPROP_TABLE_ROW, i);    // 设置所属行
             _layout_setchildprop(hLayout, hObj, LAYOUT_SUBPROP_TABLE_CELL, j);   // 设置所属列
         }
     }
-    HEXOBJ hObj2 = Ex_ObjCreateEx(-1,
-                                  L"static",
-                                  L"(起始第1行2列)[占2行]",
-                                  -1,
-                                  0,
-                                  0,
-                                  200,
-                                  150,
-                                  hExDui_table,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj2 = Ex_ObjCreateEx(-1, L"static", L"(起始第1行2列)[占2行]", -1, 0, 0, 200, 150,
+                                  hExDui_table, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj2, COLOR_EX_BACKGROUND, ExRGB2ARGB(65535, 150), TRUE);
     _layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_CELL, 2);       // 起始第2列
     _layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_ROW, 1);        // 起始第1行
     _layout_setchildprop(hLayout, hObj2, LAYOUT_SUBPROP_TABLE_ROW_SPAN, 2);   // 设置跨2行
 
-    HEXOBJ hObj3 = Ex_ObjCreateEx(-1,
-                                  L"static",
-                                  L"(起始第3行1列)[占3列2行]",
-                                  -1,
-                                  0,
-                                  0,
-                                  200,
-                                  150,
-                                  hExDui_table,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  0);
+    HEXOBJ hObj3 = Ex_ObjCreateEx(-1, L"static", L"(起始第3行1列)[占3列2行]", -1, 0, 0, 200, 150,
+                                  hExDui_table, 0, DT_VCENTER, 0, 0, 0);
     Ex_ObjSetColor(hObj3, COLOR_EX_BACKGROUND, ExRGB2ARGB(16711935, 120), TRUE);
     _layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_CELL, 1);        // 起始第1列
     _layout_setchildprop(hLayout, hObj3, LAYOUT_SUBPROP_TABLE_ROW, 3);         // 起始第3行
@@ -1929,56 +1390,21 @@ void test_combobox(HWND hWnd)
 {
     HWND hWnd_combobox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试组合框", 0, 0, 450, 300, 0, 0);
     HEXDUI hExDui_combobox = Ex_DUIBindWindowEx(
-        hWnd_combobox,
-        0,
+        hWnd_combobox, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_combobox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    m_hComboBox  = Ex_ObjCreateEx(-1,
-                                 L"combobox",
-                                 L"测试组合框1",
-                                 OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT,
-                                 10,
-                                 30,
-                                 200,
-                                 30,
-                                 hExDui_combobox,
-                                 0,
-                                 DT_VCENTER,
-                                 0,
-                                 0,
-                                 NULL);
-    m_hComboBox1 = Ex_ObjCreateEx(-1,
-                                  L"combobox",
-                                  L"测试组合框2",
-                                  OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT,
-                                  10,
-                                  230,
-                                  200,
-                                  30,
-                                  hExDui_combobox,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  NULL);
-    m_hComboBox2 = Ex_ObjCreateEx(-1,
-                                  L"combobox",
-                                  L"测试组合框3",
-                                  OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT,
-                                  230,
-                                  230,
-                                  200,
-                                  30,
-                                  hExDui_combobox,
-                                  0,
-                                  DT_VCENTER,
-                                  0,
-                                  0,
-                                  NULL);
+    m_hComboBox  = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框1",
+                                  OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 30, 200, 30,
+                                  hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+    m_hComboBox1 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框2",
+                                  OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 230, 200, 30,
+                                  hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+    m_hComboBox2 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框3",
+                                  OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 230, 230, 200,
+                                  30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
     Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
     Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
     Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
@@ -2052,13 +1478,8 @@ size_t CALLBACK OnAniEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent,
     INT index = nCurrent * 255;
     Ex_DUISetLong(m_hExDuiAni, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, index));
     Ex_DUISetLong(m_hExDuiAni, ENGINE_LONG_ALPHA, index);
-    SetWindowPos((HWND)Ex_DUIGetLong(m_hExDuiAni, ENGINE_LONG_HWND),
-                 0,
-                 p1 + p2 * nCurrent,
-                 p3 + p4 * nCurrent,
-                 0,
-                 0,
-                 SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
+    SetWindowPos((HWND)Ex_DUIGetLong(m_hExDuiAni, ENGINE_LONG_HWND), 0, p1 + p2 * nCurrent,
+                 p3 + p4 * nCurrent, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOZORDER);
     return 0;
 }
 
@@ -2071,19 +1492,9 @@ void AniShow(BOOL fShow)
     RECT rc{0};
     GetWindowRect((HWND)Ex_DUIGetLong(m_hExDuiAni, ENGINE_LONG_HWND), &rc);
     _easing_create(
-        EASING_TYPE_INOUTQUINT,
-        0,
+        EASING_TYPE_INOUTQUINT, 0,
         EASING_MODE_SINGLE | EASING_MODE_CALLFUNCTION | (fShow ? 0 : EASING_MODE_REVERSE),
-        (size_t)OnAniEasing,
-        500,
-        20,
-        EASING_STATE_PLAY,
-        0,
-        1,
-        rc.left,
-        0,
-        rc.top - 100,
-        100);
+        (size_t)OnAniEasing, 500, 20, EASING_STATE_PLAY, 0, 1, rc.left, 0, rc.top - 100, 100);
     Ex_DUIShowWindow(m_hExDuiAni, fShow ? SW_SHOW : SW_HIDE, 0, 0, 0);
 }
 
@@ -2109,38 +1520,19 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
 {
     if (nID == 10001) {
         if (nCode == NM_CLICK) {
-            _easing_create(EASING_TYPE_INOUTCUBIC,
-                           0,
+            _easing_create(EASING_TYPE_INOUTCUBIC, 0,
                            EASING_MODE_SINGLE | EASING_MODE_THREAD | EASING_MODE_CALLFUNCTION,
-                           (size_t)OnBtnEasing,
-                           200,
-                           20,
-                           EASING_STATE_PLAY,
-                           150,
-                           300,
-                           hObj,
-                           0,
-                           0,
+                           (size_t)OnBtnEasing, 200, 20, EASING_STATE_PLAY, 150, 300, hObj, 0, 0,
                            0);
         }
     }
     else if (nID == 10002) {
         if (nCode == NM_CLICK) {
-            _easing_create(EASING_TYPE_INOUTCUBIC,
-                           0,
+            _easing_create(EASING_TYPE_INOUTCUBIC, 0,
                            MAKELONG(EASING_MODE_MANYTIMES | EASING_MODE_BACKANDFORTH |
                                         EASING_MODE_THREAD | EASING_MODE_DISPATCHNOTIFY,
                                     10 * 2),
-                           hObj,
-                           150,
-                           20,
-                           EASING_STATE_PLAY,
-                           150,
-                           300,
-                           0,
-                           0,
-                           0,
-                           0);
+                           hObj, 150, 20, EASING_STATE_PLAY, 150, 300, 0, 0, 0, 0);
         }
         else if (nCode == NM_EASING) {
             EX_EASINGINFO pEasingInfo{0};
@@ -2169,20 +1561,10 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
     else if (nID == 10004) {
         if (nCode == NM_CLICK) {
             _easing_create(
-                EASING_TYPE_INOUTCIRC,
-                0,
+                EASING_TYPE_INOUTCIRC, 0,
                 MAKELONG(
                     EASING_MODE_MANYTIMES | EASING_MODE_BACKANDFORTH | EASING_MODE_CALLFUNCTION, 4),
-                (size_t)OnBtnEasing4,
-                400,
-                25,
-                0,
-                400,
-                150,
-                0,
-                0,
-                0,
-                0);
+                (size_t)OnBtnEasing4, 400, 25, 0, 400, 150, 0, 0, 0, 0);
         }
     }
     return 0;
@@ -2192,69 +1574,19 @@ void test_ani(HWND hWnd)
 {
     m_hWndAni   = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试缓动窗口", 0, 0, 400, 300, 0, 0);
     m_hExDuiAni = Ex_DUIBindWindowEx(
-        m_hWndAni,
-        0,
+        m_hWndAni, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_SIZEABLE |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
-        0,
-        OnAniWndMsgProc);
-    HEXOBJ hObj_button1 = Ex_ObjCreateEx(-1,
-                                         L"button",
-                                         L"点击就动1次",
-                                         -1,
-                                         10,
-                                         40,
-                                         120,
-                                         50,
-                                         m_hExDuiAni,
-                                         10001,
-                                         DT_VCENTER | DT_CENTER,
-                                         0,
-                                         0,
-                                         NULL);
-    HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1,
-                                         L"button",
-                                         L"来回",
-                                         -1,
-                                         10,
-                                         100,
-                                         120,
-                                         50,
-                                         m_hExDuiAni,
-                                         10002,
-                                         DT_VCENTER | DT_CENTER,
-                                         0,
-                                         0,
-                                         NULL);
-    HEXOBJ hObj_button3 = Ex_ObjCreateEx(-1,
-                                         L"button",
-                                         L"点击动/停",
-                                         -1,
-                                         10,
-                                         160,
-                                         120,
-                                         50,
-                                         m_hExDuiAni,
-                                         10003,
-                                         DT_VCENTER | DT_CENTER,
-                                         0,
-                                         0,
-                                         NULL);
-    HEXOBJ hObj_button4 = Ex_ObjCreateEx(-1,
-                                         L"button",
-                                         L"点击窗口动",
-                                         -1,
-                                         10,
-                                         220,
-                                         120,
-                                         50,
-                                         m_hExDuiAni,
-                                         10004,
-                                         DT_VCENTER | DT_CENTER,
-                                         0,
-                                         0,
-                                         NULL);
+        0, OnAniWndMsgProc);
+    HEXOBJ hObj_button1 = Ex_ObjCreateEx(-1, L"button", L"点击就动1次", -1, 10, 40, 120, 50,
+                                         m_hExDuiAni, 10001, DT_VCENTER | DT_CENTER, 0, 0, NULL);
+    HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"button", L"来回", -1, 10, 100, 120, 50, m_hExDuiAni,
+                                         10002, DT_VCENTER | DT_CENTER, 0, 0, NULL);
+    HEXOBJ hObj_button3 = Ex_ObjCreateEx(-1, L"button", L"点击动/停", -1, 10, 160, 120, 50,
+                                         m_hExDuiAni, 10003, DT_VCENTER | DT_CENTER, 0, 0, NULL);
+    HEXOBJ hObj_button4 = Ex_ObjCreateEx(-1, L"button", L"点击窗口动", -1, 10, 220, 120, 50,
+                                         m_hExDuiAni, 10004, DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(hObj_button1, NM_CLICK, OnAniButtonEvent);
     Ex_ObjHandleEvent(hObj_button2, NM_CLICK, OnAniButtonEvent);
     Ex_ObjHandleEvent(hObj_button2, NM_EASING, OnAniButtonEvent);
@@ -2262,20 +1594,10 @@ void test_ani(HWND hWnd)
     Ex_ObjHandleEvent(hObj_button3, NM_EASING, OnAniButtonEvent);
     Ex_ObjHandleEvent(hObj_button3, NM_DESTROY, OnAniButtonEvent);
     Ex_ObjHandleEvent(hObj_button4, NM_CLICK, OnAniButtonEvent);
-    m_hEasing = _easing_create(EASING_TYPE_INOUTCIRC,
-                               0,
+    m_hEasing = _easing_create(EASING_TYPE_INOUTCIRC, 0,
                                EASING_MODE_CYCLE | EASING_MODE_BACKANDFORTH | EASING_MODE_THREAD |
                                    EASING_MODE_DISPATCHNOTIFY,
-                               hObj_button3,
-                               200,
-                               20,
-                               EASING_STATE_PAUSE,
-                               150,
-                               300,
-                               0,
-                               0,
-                               0,
-                               0);
+                               hObj_button3, 200, 20, EASING_STATE_PAUSE, 150, 300, 0, 0, 0, 0);
     AniShow(TRUE);
 }
 
@@ -2290,12 +1612,8 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
         FLOAT    arrPts[]    = {0.0f, 1.0f};
         INT      arrColors[] = {ExARGB(10, 127, 213, 220), ExARGB(200, 10, 10, 220)};
         HEXBRUSH hBrush      = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, arrPts, arrColors);
-        _canvas_fillellipse(wParam,
-                            hBrush,
-                            LOWORD(lParam) / 2,
-                            HIWORD(lParam) / 2,
-                            LOWORD(lParam) / 2 - 2,
-                            HIWORD(lParam) / 2 - 2);
+        _canvas_fillellipse(wParam, hBrush, LOWORD(lParam) / 2, HIWORD(lParam) / 2,
+                            LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
         _brush_destroy(hBrush);
         *lpResult = 1;
         return 1;
@@ -2308,25 +1626,13 @@ void test_customredraw(HWND hWnd)
     // 异型窗口采用重画背景形式，才不会产生锯齿。用于需要圆角，不规则图形的窗口。
     HWND   hWnd_customredraw   = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"", 0, 0, 300, 200, 0, 0);
     HEXDUI hExDui_customredraw = Ex_DUIBindWindowEx(
-        hWnd_customredraw,
-        0,
-        WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW,
-        0,
+        hWnd_customredraw, 0,
+        WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW, 0,
         OnCustomRedrawWndMsgProc);
     Ex_DUISetLong(hExDui_customredraw, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST,
-                   L"sysbutton",
-                   L"",
-                   OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE,
-                   (300 - 32) / 2,
-                   (200 - 32) / 2,
-                   32,
-                   32,
-                   hExDui_customredraw,
-                   0,
-                   0,
-                   0,
-                   0,
+    Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"",
+                   OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE, (300 - 32) / 2, (200 - 32) / 2,
+                   32, 32, hExDui_customredraw, 0, 0, 0, 0,
                    NULL);   // 改变标题栏按钮位置
     Ex_DUIShowWindow(hExDui_customredraw, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -2351,29 +1657,21 @@ LRESULT CALLBACK OnMessageBoxProc(HWND hWnd, HEXOBJ hExDui, INT uMsg, WPARAM wPa
 
 void test_messagebox(HWND hWnd)
 {
-    if (Ex_MessageBox((size_t)hWnd,
-                      L"确定或者取消",
-                      L"信息框1",
-                      MB_OKCANCEL | MB_ICONQUESTION,
+    if (Ex_MessageBox((size_t)hWnd, L"确定或者取消", L"信息框1", MB_OKCANCEL | MB_ICONQUESTION,
                       MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_WINDOWICON) ==
         IDOK)   // 用户点击按钮才会关闭,继承父窗口背景
     {
         OUTPUTW(L"按下确定按钮");
     }
 
-    if (Ex_MessageBox((size_t)hWnd,
-                      L"重试或者取消",
-                      L"信息框2",
-                      MB_RETRYCANCEL | MB_ICONQUESTION,
+    if (Ex_MessageBox((size_t)hWnd, L"重试或者取消", L"信息框2", MB_RETRYCANCEL | MB_ICONQUESTION,
                       MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_WINDOWICON) ==
         IDRETRY)   // 用户点击按钮才会关闭,继承父窗口背景
     {
         OUTPUTW(L"按下重试按钮");
     }
 
-    if (Ex_MessageBox((size_t)hWnd,
-                      L"是或者否或者取消",
-                      L"信息框3",
+    if (Ex_MessageBox((size_t)hWnd, L"是或者否或者取消", L"信息框3",
                       MB_YESNOCANCEL | MB_ICONQUESTION,
                       MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_WINDOWICON) ==
         IDCANCEL)   // 用户点击按钮才会关闭,继承父窗口背景
@@ -2383,13 +1681,7 @@ void test_messagebox(HWND hWnd)
 
     BOOL check = TRUE;
     if (Ex_MessageBoxEx(
-            (size_t)hWnd,
-            L"是或者否",
-            L"信息框4",
-            MB_YESNO | MB_ICONQUESTION,
-            NULL,
-            &check,
-            10000,
+            (size_t)hWnd, L"是或者否", L"信息框4", MB_YESNO | MB_ICONQUESTION, NULL, &check, 10000,
             MESSAGEBOX_FLAG_CENTEWINDOW | MESSAGEBOX_FLAG_NOINHERITBKG | MESSAGEBOX_FLAG_WINDOWICON,
             OnMessageBoxProc) ==
         IDYES)   // 不继承父窗口背景,超时自动关闭，可以修改信息框标题颜色等等
@@ -2456,16 +1748,9 @@ LRESULT CALLBACK OnColorButtonProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
                 crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
             }
             _canvas_clear(ps.hCanvas, crBkg);
-            _canvas_drawtext(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             crText,
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             ps.dwTextFormat,
-                             0,
-                             0,
-                             ps.uWidth,
-                             ps.uHeight);
+            _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), crText,
+                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                             ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
             Ex_ObjEndPaint(hObj, &ps);
         }
     }
@@ -2476,20 +1761,8 @@ void ColorButton2::Create(EXHANDLE handle, INT left, INT top, INT width, INT hei
                           INT style, INT styleEx, INT nID, INT dwTextFormat, LPARAM lParam,
                           MsgPROC lpMsgProc)
 {
-    mhObj = Ex_ObjCreateEx(styleEx,
-                           L"colorbutton",
-                           title,
-                           style,
-                           left,
-                           top,
-                           width,
-                           height,
-                           handle,
-                           nID,
-                           dwTextFormat,
-                           lParam,
-                           0,
-                           lpMsgProc);
+    mhObj = Ex_ObjCreateEx(styleEx, L"colorbutton", title, style, left, top, width, height, handle,
+                           nID, dwTextFormat, lParam, 0, lpMsgProc);
 }
 
 void ColorButton2::SetBkgNormalColor(EXARGB color, BOOL redraw)
@@ -2546,25 +1819,18 @@ void test_colorbutton(HWND hWnd)
     HWND hWnd_colorbutton =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试自定义按钮", 0, 0, 300, 150, 0, 0);
     HEXDUI hExDui_colorbutton = Ex_DUIBindWindowEx(
-        hWnd_colorbutton,
-        0,
+        hWnd_colorbutton, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_colorbutton, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    Ex_ObjRegister(L"colorbutton",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_SINGLELINE | DT_CENTER | DT_VCENTER,
-                   4 * sizeof(size_t),
-                   0,
-                   0,
-                   OnColorButtonProc);
+    Ex_ObjRegister(
+        L"colorbutton", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
+        DT_SINGLELINE | DT_CENTER | DT_VCENTER, 4 * sizeof(size_t), 0, 0, OnColorButtonProc);
 
-    HEXOBJ hObj_colorbutton1 = Ex_ObjCreateEx(
-        -1, L"colorbutton", L"按钮1", -1, 50, 50, 100, 50, hExDui_colorbutton, 0, -1, 0, 0, NULL);
+    HEXOBJ hObj_colorbutton1 = Ex_ObjCreateEx(-1, L"colorbutton", L"按钮1", -1, 50, 50, 100, 50,
+                                              hExDui_colorbutton, 0, -1, 0, 0, NULL);
     Ex_ObjSetColor(hObj_colorbutton1, COLOR_EX_CBTN_CRBKG_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);
     Ex_ObjSetColor(hObj_colorbutton1, COLOR_EX_CBTN_CRBKG_HOVER, ExRGB2ARGB(65535, 255), FALSE);
     Ex_ObjSetColor(hObj_colorbutton1, COLOR_EX_CBTN_CRBKG_DOWN, ExRGB2ARGB(65280, 255), FALSE);
@@ -2646,30 +1912,17 @@ void test_reportlistview(HWND hWnd)
     HWND hWnd_reportlistview =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试报表列表", 0, 0, 400, 400, 0, 0);
     HEXDUI hExDui_reportlistview = Ex_DUIBindWindowEx(
-        hWnd_reportlistview,
-        0,
+        hWnd_reportlistview, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_reportlistview, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     m_hReportListView = Ex_ObjCreateEx(
-        -1,
-        L"ReportListView",
-        L"ReportListView",
+        -1, L"ReportListView", L"ReportListView",
         OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL |
             REPORTLISTVIEW_STYLE_EDIT | REPORTLISTVIEW_STYLE_DRAWVERTICALLINE,
-        25,
-        50,
-        350,
-        250,
-        hExDui_reportlistview,
-        0,
-        -1,
-        0,
-        0,
-        NULL);
+        25, 50, 350, 250, hExDui_reportlistview, 0, -1, 0, 0, NULL);
     Ex_ObjSetColor(m_hReportListView, COLOR_EX_BACKGROUND, ExRGB2ARGB(16777215, 100), FALSE);
     Ex_ObjSetColor(m_hReportListView, COLOR_EX_BORDER, ExARGB(120, 120, 120, 255), FALSE);
     Ex_ObjSetColor(m_hReportListView, COLOR_EX_RLV_HEAD, ExRGB2ARGB(16777215, 250), FALSE);
@@ -2682,8 +1935,8 @@ void test_reportlistview(HWND hWnd)
     _imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
     _imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
     _imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
-    Ex_ObjSendMessage(
-        m_hReportListView, LISTVIEW_MESSAGE_SETIMAGELIST, 0, (LPARAM)m_hReportListViewImgList);
+    Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETIMAGELIST, 0,
+                      (LPARAM)m_hReportListViewImgList);
 
     EX_REPORTLIST_COLUMNINFO col = {0};
     col.pwzText                  = L"第一列";
@@ -2731,18 +1984,14 @@ void test_reportlistview(HWND hWnd)
         item.iRow =
             Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&row);
         // 设置表项
-        Ex_ObjSendMessage(m_hReportListView,
-                          LISTVIEW_MESSAGE_SETITEM,
-                          0,
+        Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETITEM, 0,
                           (size_t)&item);   // wParam为是否立即更新
         cell.iCol         = 1;
         cell.iRow         = i;
         std::wstring wstr = L"第" + std::to_wstring(i) + L"项";
         cell.pwzText      = wstr.c_str();
         cell.cellStyle    = 0;
-        Ex_ObjSendMessage(m_hReportListView,
-                          LISTVIEW_MESSAGE_SETCELL,
-                          0,
+        Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETCELL, 0,
                           (size_t)&cell);   // wParam为是否立即更新
 
         cell.iCol      = 2;
@@ -2750,9 +1999,7 @@ void test_reportlistview(HWND hWnd)
         cell.pwzText   = L"第二列";
         cell.cellStyle = REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR;
         cell.cellBkgCr = ExARGB(130, 130, 25, 255);
-        Ex_ObjSendMessage(m_hReportListView,
-                          LISTVIEW_MESSAGE_SETCELL,
-                          0,
+        Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETCELL, 0,
                           (size_t)&cell);   // wParam为是否立即更新
 
         cell.iCol       = 3;
@@ -2760,9 +2007,7 @@ void test_reportlistview(HWND hWnd)
         cell.pwzText    = L"第三列";
         cell.cellStyle  = REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR;
         cell.cellTextCr = ExARGB(130, 25, 130, 255);
-        Ex_ObjSendMessage(m_hReportListView,
-                          LISTVIEW_MESSAGE_SETCELL,
-                          0,
+        Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETCELL, 0,
                           (size_t)&cell);   // wParam为是否立即更新
 
         cell.iCol = 4;
@@ -2775,34 +2020,21 @@ void test_reportlistview(HWND hWnd)
         cell.pwzText                             = str.c_str();
         cell.cellStyle                           = REPORTLISTVIEW_CELLSTYLE_CELLFONT;
         cell.cellFont                            = _font_createfromfamily(L"微软雅黑", 20, 0);
-        Ex_ObjSendMessage(m_hReportListView,
-                          LISTVIEW_MESSAGE_SETCELL,
-                          0,
+        Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETCELL, 0,
                           (size_t)&cell);   // wParam为是否立即更新
     }
-    Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_UPDATE, 0, 0);   // 整体更新,以加快绘制速度
+    Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_UPDATE, 0,
+                      0);   // 整体更新,以加快绘制速度
     Ex_ObjHandleEvent(m_hReportListView, LISTVIEW_EVENT_ITEMCHANGED, OnReportListViewItemChange);
-    Ex_ObjHandleEvent(
-        m_hReportListView, REPORTLISTVIEW_EVENT_COLUMNCLICK, OnReportListViewColumnClick);
+    Ex_ObjHandleEvent(m_hReportListView, REPORTLISTVIEW_EVENT_COLUMNCLICK,
+                      OnReportListViewColumnClick);
     Ex_ObjHandleEvent(m_hReportListView, REPORTLISTVIEW_EVENT_CHECK, OnReportListViewItemChecked);
 
-    HEXOBJ hObj_button = Ex_ObjCreateEx(
-        -1, L"button", L"删除列", -1, 20, 330, 100, 30, hExDui_reportlistview, 1001, -1, 0, 0, 0);
+    HEXOBJ hObj_button = Ex_ObjCreateEx(-1, L"button", L"删除列", -1, 20, 330, 100, 30,
+                                        hExDui_reportlistview, 1001, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj_button, NM_CLICK, OnReportListViewButtonEvent);
-    HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1,
-                                         L"button",
-                                         L"取表项信息",
-                                         -1,
-                                         150,
-                                         330,
-                                         100,
-                                         30,
-                                         hExDui_reportlistview,
-                                         1002,
-                                         -1,
-                                         0,
-                                         0,
-                                         0);
+    HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"button", L"取表项信息", -1, 150, 330, 100, 30,
+                                         hExDui_reportlistview, 1002, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj_button2, NM_CLICK, OnReportListViewButtonEvent);
     Ex_DUIShowWindow(hExDui_reportlistview, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -2816,12 +2048,8 @@ LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
     if (uMsg == WM_SIZE) {
         auto dpix = Ex_DUIGetSystemDpi();
         // 因为LOWORD(lParam)是DPI缩放后的窗口坐标,而Ex_ObjMove接受缩放前坐标，因此这里需要除以dpix
-        Ex_ObjMove(m_hListViewIcon,
-                   25,
-                   50,
-                   (LOWORD(lParam) - 50) / dpix,
-                   (HIWORD(lParam) - 75) / dpix,
-                   TRUE);
+        Ex_ObjMove(m_hListViewIcon, 25, 50, (LOWORD(lParam) - 50) / dpix,
+                   (HIWORD(lParam) - 75) / dpix, TRUE);
     }
     return 0;
 }
@@ -2831,33 +2059,18 @@ void test_iconlistview(HWND hWnd)
     HWND hWnd_iconlistview =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试图标列表", 0, 0, 500, 300, 0, 0);
     HEXDUI hExDui_iconlistview = Ex_DUIBindWindowEx(
-        hWnd_iconlistview,
-        0,
+        hWnd_iconlistview, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        OnIconWndMsgProc);
+        0, OnIconWndMsgProc);
 
-    m_hListViewIcon = Ex_ObjCreateEx(-1,
-                                     L"iconlistview",
-                                     L"iconlistview",
+    m_hListViewIcon = Ex_ObjCreateEx(-1, L"iconlistview", L"iconlistview",
                                      OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL |
                                          OBJECT_STYLE_VSCROLL | ICONLISTVIEW_STYLE_BUTTON,
-                                     25,
-                                     50,
-                                     400,
-                                     225,
-                                     hExDui_iconlistview,
-                                     0,
-                                     -1,
-                                     0,
-                                     0,
-                                     NULL);
+                                     25, 50, 400, 225, hExDui_iconlistview, 0, -1, 0, 0, NULL);
 
-    Ex_ObjSendMessage(m_hListViewIcon,
-                      ICONLISTVIEW_MESSAGE_SETITEMSIZE,
-                      0,
+    Ex_ObjSendMessage(m_hListViewIcon, ICONLISTVIEW_MESSAGE_SETITEMSIZE, 0,
                       MAKELONG(70, 75));   // 设置表项尺寸为70,75
     // 创建添加图片组信息
 
@@ -2893,31 +2106,18 @@ void test_treelistview(HWND hWnd)
     HWND hWnd_treelistview =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试树形列表", 0, 0, 350, 350, 0, 0);
     HEXDUI hExDui_treelistview = Ex_DUIBindWindowEx(
-        hWnd_treelistview,
-        0,
+        hWnd_treelistview, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_treelistview, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     HEXOBJ hObj_treeview =
-        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                       L"treeview",
-                       L"test_treeview",
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"treeview", L"test_treeview",
                        OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL |
                            OBJECT_STYLE_VSCROLL | TREEVIEW_STYLE_SHOWADDANDSUB,
-                       50,
-                       50,
-                       250,
-                       250,
-                       hExDui_treelistview,
-                       0,
-                       DT_VCENTER,
-                       0,
-                       0,
-                       NULL);
+                       50, 50, 250, 250, hExDui_treelistview, 0, DT_VCENTER, 0, 0, NULL);
     auto              m_hImageListIcon = _imglist_create(30, 30);
     std::vector<CHAR> imgdata;
     for (INT i = 3; i <= 5; i++) {
@@ -3030,8 +2230,8 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 
         HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
 
-        _canvas_fillellipse(
-            ps.hCanvas, hBrush, (FLOAT)ps.uWidth / 2, (FLOAT)ps.uHeight / 2, 75.f, 50.f);
+        _canvas_fillellipse(ps.hCanvas, hBrush, (FLOAT)ps.uWidth / 2, (FLOAT)ps.uHeight / 2, 75.f,
+                            50.f);
         _brush_destroy(hBrush);
 
         _canvas_settransform(ps.hCanvas, 0);
@@ -3052,19 +2252,9 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
     }
     else if (uMsg == WM_MOUSEHOVER) {
         HEXEASING hEasing =
-            _easing_create(EASING_TYPE_OUTELASTIC,
-                           0,
+            _easing_create(EASING_TYPE_OUTELASTIC, 0,
                            EASING_MODE_SINGLE | EASING_MODE_THREAD | EASING_MODE_DISPATCHNOTIFY,
-                           hObj,
-                           500,
-                           20,
-                           EASING_STATE_PLAY,
-                           0,
-                           100,
-                           0,
-                           0,
-                           0,
-                           0);
+                           hObj, 500, 20, EASING_STATE_PLAY, 0, 100, 0, 0, 0, 0);
         HEXEASING oldhEasing =
             (HEXEASING)Ex_ObjSetLong(hObj, OBJECT_LONG_USERDATA, (size_t)hEasing);
         if (oldhEasing != 0)   // 如果前一个缓动未结束,则停止前面的缓动
@@ -3074,20 +2264,10 @@ LRESULT CALLBACK OnMatrixMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, FALSE);   // 设置悬浮状态
     }
     else if (uMsg == WM_MOUSELEAVE) {
-        HEXEASING hEasing = _easing_create(EASING_TYPE_OUTELASTIC,
-                                           0,
+        HEXEASING hEasing = _easing_create(EASING_TYPE_OUTELASTIC, 0,
                                            EASING_MODE_SINGLE | EASING_MODE_THREAD |
                                                EASING_MODE_DISPATCHNOTIFY | EASING_MODE_REVERSE,
-                                           hObj,
-                                           500,
-                                           20,
-                                           EASING_STATE_PLAY,
-                                           0,
-                                           100,
-                                           0,
-                                           0,
-                                           0,
-                                           0);
+                                           hObj, 500, 20, EASING_STATE_PLAY, 0, 100, 0, 0, 0, 0);
         HEXEASING oldhEasing =
             (HEXEASING)Ex_ObjSetLong(hObj, OBJECT_LONG_USERDATA, (size_t)hEasing);
         if (oldhEasing != 0)   // 如果前一个缓动未结束,则停止前面的缓动
@@ -3103,28 +2283,14 @@ void test_matrix(HWND hWnd)
 {
     HWND   hWnd_matrix = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试矩阵", 0, 0, 400, 400, 0, 0);
     HEXDUI hExDui_matrix = Ex_DUIBindWindowEx(
-        hWnd_matrix,
-        0,
+        hWnd_matrix, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_matrix, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    HEXOBJ hObj = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                 L"static",
-                                 0,
-                                 -1,
-                                 50,
-                                 50,
-                                 200,
-                                 250,
-                                 hExDui_matrix,
-                                 0,
-                                 DT_VCENTER,
-                                 0,
-                                 0,
-                                 OnMatrixMsgProc);
+    HEXOBJ hObj = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", 0, -1, 50, 50, 200, 250,
+                                 hExDui_matrix, 0, DT_VCENTER, 0, 0, OnMatrixMsgProc);
     Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 255), TRUE);
 
     Ex_DUIShowWindow(hExDui_matrix, SW_SHOWNORMAL, 0, 0, 0);
@@ -3134,13 +2300,11 @@ void test_buttonex(HWND hWnd)
 {
     HWND hWnd_buttonex = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试扩展按钮", 0, 0, 300, 300, 0, 0);
     HEXDUI hExDui_buttonex = Ex_DUIBindWindowEx(
-        hWnd_buttonex,
-        0,
+        hWnd_buttonex, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_buttonex, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     HEXOBJ hObj_btnex1 =
@@ -3272,53 +2436,35 @@ void test_editex(HWND hWnd)
 {
     HWND hWnd_editex = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试扩展编辑框", 0, 0, 400, 200, 0, 0);
     HEXDUI hExDui_editex = Ex_DUIBindWindowEx(
-        hWnd_editex,
-        0,
+        hWnd_editex, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_editex, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     HEXIMAGE     hImage;
-    EX_OBJ_PROPS EditExprops  = {0};
-    HEXOBJ       hObj_editex1 = Ex_ObjCreate(L"EditEx",
-                                       NULL,
-                                       OBJECT_STYLE_VISIBLE | EDIT_STYLE_UNDERLINE,
-                                       30,
-                                       50,
-                                       150,
-                                       30,
-                                       hExDui_editex);
-    Ex_ObjSendMessage(hObj_editex1,
-                      EDIT_MESSAGE_SETCUEBANNER,
-                      ExARGB(255, 255, 255, 100),
+    EX_OBJ_PROPS EditExprops = {0};
+    HEXOBJ hObj_editex1 = Ex_ObjCreate(L"EditEx", NULL, OBJECT_STYLE_VISIBLE | EDIT_STYLE_UNDERLINE,
+                                       30, 50, 150, 30, hExDui_editex);
+    Ex_ObjSendMessage(hObj_editex1, EDIT_MESSAGE_SETCUEBANNER, ExARGB(255, 255, 255, 100),
                       (LPARAM)L"请输入账户名称");
     Ex_ObjSetColor(hObj_editex1, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 200), FALSE);
     _img_createfromfile(L"editex\\icon_contacts_normal.png", &hImage);
     Ex_ObjSendMessage(hObj_editex1, WM_SETICON, 0, (LPARAM)hImage);
 
-    HEXOBJ hObj_editex2 =
-        Ex_ObjCreate(L"EditEx",
-                     NULL,
-                     OBJECT_STYLE_VISIBLE | EDIT_STYLE_UNDERLINE | EDIT_STYLE_USEPASSWORD,
-                     30,
-                     100,
-                     150,
-                     30,
-                     hExDui_editex);
-    Ex_ObjSendMessage(hObj_editex2,
-                      EDIT_MESSAGE_SETCUEBANNER,
-                      ExARGB(255, 255, 255, 100),
+    HEXOBJ hObj_editex2 = Ex_ObjCreate(
+        L"EditEx", NULL, OBJECT_STYLE_VISIBLE | EDIT_STYLE_UNDERLINE | EDIT_STYLE_USEPASSWORD, 30,
+        100, 150, 30, hExDui_editex);
+    Ex_ObjSendMessage(hObj_editex2, EDIT_MESSAGE_SETCUEBANNER, ExARGB(255, 255, 255, 100),
                       (LPARAM)L"请输入账户密码");
     Ex_ObjSetColor(hObj_editex2, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 200), FALSE);
     _img_createfromfile(L"editex\\psw_normal.png", &hImage);
     Ex_ObjSendMessage(hObj_editex2, WM_SETICON, 0, (LPARAM)hImage);
 
     HEXOBJ hObj_editex3 = Ex_ObjCreate(L"EditEx", NULL, -1, 200, 50, 150, 30, hExDui_editex);
-    Ex_ObjSendMessage(
-        hObj_editex3, EDIT_MESSAGE_SETCUEBANNER, ExARGB(255, 255, 255, 100), (LPARAM)L"搜索一下");
+    Ex_ObjSendMessage(hObj_editex3, EDIT_MESSAGE_SETCUEBANNER, ExARGB(255, 255, 255, 100),
+                      (LPARAM)L"搜索一下");
     Ex_ObjSetColor(hObj_editex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 200), FALSE);
     EditExprops.crBkgNormal           = ExARGB(20, 20, 120, 150);
     EditExprops.crBorderHover         = ExARGB(255, 77, 77, 150);
@@ -3331,8 +2477,8 @@ void test_editex(HWND hWnd)
     Ex_ObjSendMessage(hObj_editex3, WM_SETICON, 0, (LPARAM)hImage);
 
     HEXOBJ hObj_editex4 = Ex_ObjCreate(L"EditEx", NULL, -1, 200, 100, 150, 30, hExDui_editex);
-    Ex_ObjSendMessage(
-        hObj_editex4, EDIT_MESSAGE_SETCUEBANNER, ExARGB(255, 255, 255, 100), (LPARAM)L"搜索一下");
+    Ex_ObjSendMessage(hObj_editex4, EDIT_MESSAGE_SETCUEBANNER, ExARGB(255, 255, 255, 100),
+                      (LPARAM)L"搜索一下");
     _img_createfromfile(L"editex\\search_normal.png", &hImage);
     Ex_ObjSendMessage(hObj_editex4, WM_SETICON, 0, (LPARAM)hImage); /* 设置图标; */
     Ex_ObjSetColor(hObj_editex4, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 200), FALSE);
@@ -3363,36 +2509,22 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
         }
         FLOAT nWidthText  = 0;
         FLOAT nHeightText = 0;
-        _canvas_calctextsize(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             ps.dwTextFormat,
-                             0,
-                             ps.uWidth,
-                             ps.uHeight,
-                             &nWidthText,
-                             &nHeightText);
+        _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj),
+                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                             ps.dwTextFormat, 0, ps.uWidth, ps.uHeight, &nWidthText, &nHeightText);
         HEXIMAGE hImg        = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
         INT      nWidthIcon  = 0;
         INT      nHeightIcon = 0;
         if (hImg != 0) {
             _img_getsize(hImg, &nWidthIcon, &nHeightIcon);
-            _canvas_drawimage(ps.hCanvas,
-                              hImg,
-                              (ps.uWidth - nWidthIcon) / 2,
-                              (ps.uHeight - nHeightIcon - nHeightText - 3) / 2,
-                              255);
+            _canvas_drawimage(ps.hCanvas, hImg, (ps.uWidth - nWidthIcon) / 2,
+                              (ps.uHeight - nHeightIcon - nHeightText - 3) / 2, 255);
         }
 
         _canvas_drawtext(
-            ps.hCanvas,
-            Ex_ObjGetFont(hObj),
-            Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-            (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-            -1,
-            ps.dwTextFormat | DT_CENTER | DT_VCENTER,
-            (ps.uWidth - nWidthText) / 2,
+            ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+            (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+            ps.dwTextFormat | DT_CENTER | DT_VCENTER, (ps.uWidth - nWidthText) / 2,
             (ps.uHeight - nHeightIcon - nHeightText - 3) / 2 + nHeightIcon + 3,
             (ps.uWidth + nWidthText) / 2,
             (ps.uHeight - nHeightIcon - nHeightText - 3) / 2 + nHeightIcon + 3 + nHeightText);
@@ -3447,11 +2579,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
             size_t value = 1;
             SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
             GetWindowRect(hWnd, &rc);
-            SetWindowPos(hWnd,
-                         0,
-                         0,
-                         0,
-                         Ex_Scale(rc.right - rc.left + 10),
+            SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(rc.right - rc.left + 10),
                          Ex_Scale(rc.bottom - rc.top + 10 + 108),
                          SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
             rc.right  = rc.right - rc.left - Ex_Scale(10);
@@ -3462,71 +2590,27 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
             HEXIMAGE hImg;
             _img_createfromfile(L"custommenu/btn1.png", &hImg);
 
-            Ex_ObjCreateEx(-1,
-                           L"button",
-                           L"消息",
-                           OBJECT_STYLE_VISIBLE,
-                           rc.left,
-                           rc.top,
-                           rc.right * 0.333,
-                           Ex_Scale(70),
-                           hExDUI,
-                           100,
-                           -1,
-                           hImg,
-                           0,
+            Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, rc.left, rc.top,
+                           rc.right * 0.333, Ex_Scale(70), hExDUI, 100, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
             _img_createfromfile(L"custommenu/btn2.png", &hImg);
-            Ex_ObjCreateEx(-1,
-                           L"button",
-                           L"收藏",
-                           OBJECT_STYLE_VISIBLE,
-                           rc.left + rc.right * 0.333,
-                           rc.top,
-                           rc.right * 0.333,
-                           Ex_Scale(70),
-                           hExDUI,
-                           101,
-                           -1,
-                           hImg,
-                           0,
+            Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, rc.left + rc.right * 0.333,
+                           rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 101, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
             _img_createfromfile(L"custommenu/btn3.png", &hImg);
-            Ex_ObjCreateEx(-1,
-                           L"button",
-                           L"文件",
-                           OBJECT_STYLE_VISIBLE,
-                           rc.left + rc.right * 0.666,
-                           rc.top,
-                           rc.right * 0.333,
-                           Ex_Scale(70),
-                           hExDUI,
-                           102,
-                           -1,
-                           hImg,
-                           0,
+            Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, rc.left + rc.right * 0.666,
+                           rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 102, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
-            HEXOBJ hObj = Ex_ObjCreateEx(OBJECT_STYLE_EX_TRANSPARENT | OBJECT_STYLE_EX_TOPMOST,
-                                         L"Static",
-                                         0,
-                                         OBJECT_STYLE_VISIBLE,
-                                         0,
-                                         0,
-                                         45,
-                                         38,
-                                         hExDUI,
-                                         0,
-                                         -1,
-                                         0,
-                                         0,
-                                         0);
+            HEXOBJ hObj =
+                Ex_ObjCreateEx(OBJECT_STYLE_EX_TRANSPARENT | OBJECT_STYLE_EX_TOPMOST, L"Static", 0,
+                               OBJECT_STYLE_VISIBLE, 0, 0, 45, 38, hExDUI, 0, -1, 0, 0, 0);
             std::vector<CHAR> data;
             Ex_ReadFile(L"custommenu/Icon.png", &data);
-            Ex_ObjSetBackgroundImage(
-                hObj, data.data(), data.size(), 0, 0, BACKGROUND_REPEAT_NO_REPEAT, 0, 0, 255, TRUE);
+            Ex_ObjSetBackgroundImage(hObj, data.data(), data.size(), 0, 0,
+                                     BACKGROUND_REPEAT_NO_REPEAT, 0, 0, 255, TRUE);
             rc.top    = rc.top + Ex_Scale(75);
             rc.bottom = rc.bottom - Ex_Scale(75);
         }
@@ -3535,11 +2619,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
             size_t value = 0;
             SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
             GetWindowRect(hWnd, &rc);
-            SetWindowPos(hWnd,
-                         0,
-                         0,
-                         0,
-                         Ex_Scale(rc.right - rc.left + 10),
+            SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(rc.right - rc.left + 10),
                          Ex_Scale(rc.bottom - rc.top + 10),
                          SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
             rc.right  = rc.right - rc.left - Ex_Scale(10);
@@ -3568,41 +2648,13 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
         HEXIMAGE hImg;
         if (GetPropW(hWnd, L"IsMainMenu") != 0) {
             _img_createfromfile(L"custommenu/Main.png", &hImg);
-            _canvas_drawimagefromgrid(wParam,
-                                      hImg,
-                                      0,
-                                      0,
-                                      LOWORD(lParam),
-                                      HIWORD(lParam),
-                                      0,
-                                      0,
-                                      68,
-                                      68,
-                                      46,
-                                      42,
-                                      13,
-                                      12,
-                                      0,
-                                      230);
+            _canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 68,
+                                      68, 46, 42, 13, 12, 0, 230);
         }
         else {
             _img_createfromfile(L"custommenu/Sub.png", &hImg);
-            _canvas_drawimagefromgrid(wParam,
-                                      hImg,
-                                      0,
-                                      0,
-                                      LOWORD(lParam),
-                                      HIWORD(lParam),
-                                      0,
-                                      0,
-                                      24,
-                                      24,
-                                      8,
-                                      9,
-                                      10,
-                                      10,
-                                      0,
-                                      230);
+            _canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 24,
+                                      24, 8, 9, 10, 10, 0, 230);
         }
         _img_destroy(hImg);
         *lpResult = 1;
@@ -3638,8 +2690,8 @@ LRESULT CALLBACK OnMenuItemRightMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
                     HEXIMAGE hImg      = 0;
                     HEXIMAGE hImgSmall = 0;
                     _img_createfromfile(L"res/rotateimgbox.jpg", &hImg);
-                    _img_scale(
-                        hImg, 20, 20, &hImgSmall);   // 注意菜单条目高度跟图像高度有关，因此缩放到24
+                    _img_scale(hImg, 20, 20,
+                               &hImgSmall);   // 注意菜单条目高度跟图像高度有关，因此缩放到24
 
                     _canvas_drawimage(ps.hCanvas, hImgSmall, 2, 2, 255);
                     _img_destroy(hImg);
@@ -3678,8 +2730,8 @@ LRESULT CALLBACK OnMenuButtonRightEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM 
     if (nCode == NM_CLICK) {
         POINT pt;
         GetCursorPos(&pt);
-        Ex_TrackPopupMenu(
-            m_hMenuRight, 0, pt.x, pt.y, 0, hObj, 0, OnMenuWndRightMsgProc, MENU_FLAG_NOSHADOW);
+        Ex_TrackPopupMenu(m_hMenuRight, 0, pt.x, pt.y, 0, hObj, 0, OnMenuWndRightMsgProc,
+                          MENU_FLAG_NOSHADOW);
     }
     return 0;
 }
@@ -3689,13 +2741,11 @@ void test_custommenu(HWND hWnd)
     HWND hWnd_custommenu =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试弹出菜单", 0, 0, 300, 200, 0, 0);
     HEXDUI hExDui_custommenu = Ex_DUIBindWindowEx(
-        hWnd_custommenu,
-        0,
+        hWnd_custommenu, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_custommenu, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     HEXOBJ hObj_button =
@@ -3718,8 +2768,8 @@ void test_custommenu(HWND hWnd)
 
 
     // 以下是通过item组件改变菜单项目=====================
-    HEXOBJ hObj_button2 = Ex_ObjCreateEx(
-        -1, L"BUTTON", L"弹出菜单2", -1, 170, 50, 100, 30, hExDui_custommenu, 0, -1, 0, 0, 0);
+    HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"BUTTON", L"弹出菜单2", -1, 170, 50, 100, 30,
+                                         hExDui_custommenu, 0, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj_button2, NM_CLICK, OnMenuButtonRightEvent);
     m_hMenuRight = CreatePopupMenu();
     AppendMenuW(m_hMenuRight, MF_STRING, 401, L"项目一");
@@ -3760,9 +2810,8 @@ LRESULT CALLBACK OnParentButtonMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM 
             EX_NMHDR ni{0};
             RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
             if (ni.nCode == NM_CLICK) {
-                if (Ex_MessageBox(
-                        hObj, L"按钮直接父控件收到了单击事件，是否拦截？", 0, MB_YESNO, 0) ==
-                    IDYES)   // 选择是
+                if (Ex_MessageBox(hObj, L"按钮直接父控件收到了单击事件，是否拦截？", 0, MB_YESNO,
+                                  0) == IDYES)   // 选择是
                 {
                     *lpResult = 1;   // 返回值置1(真)表示拦截
                     return 1;   // 函数返回值表示是否使用返回值,lpResult才是真正的返回值
@@ -3819,14 +2868,12 @@ LRESULT CALLBACK OnEventWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wP
 void test_event(HWND hWnd)
 {
     HWND hWnd_event = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试事件分发", 0, 0, 400, 300, 0, 0);
-    HEXDUI hExDui_event = Ex_DUIBindWindowEx(hWnd_event,
-                                             0,
+    HEXDUI hExDui_event = Ex_DUIBindWindowEx(hWnd_event, 0,
                                              WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE |
                                                  WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW |
                                                  WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
                                                  WINDOW_STYLE_HASICON,
-                                             0,
-                                             OnEventWndMsgProc);
+                                             0, OnEventWndMsgProc);
     Ex_DUISetLong(hExDui_event, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     /*消息(WM_/XXM_)分发的流程是：
@@ -3835,70 +2882,26 @@ void test_event(HWND hWnd)
     控件产生事件->JS回调函数->控件自身收到WM_NOTIFY->控件直接父控件收到WM_NOTIFY->控件间接父控件从内而外逐层收到WM_NOTIFY消息(需启用消息冒泡)->所属窗口收到WM_NOTIFY消息
     消息和事件在分发途中均可拦截,HandEvent*/
 
-    HEXOBJ hobj_button_outside = Ex_ObjCreateEx(-1,
-                                                L"Static",
-                                                L"按钮外间接父控件",
-                                                -1,
-                                                25,
-                                                35,
-                                                350,
-                                                250,
-                                                hExDui_event,
-                                                0,
-                                                DT_SINGLELINE,
-                                                0,
-                                                0,
-                                                OnSideButtonMsgProc);
+    HEXOBJ hobj_button_outside =
+        Ex_ObjCreateEx(-1, L"Static", L"按钮外间接父控件", -1, 25, 35, 350, 250, hExDui_event, 0,
+                       DT_SINGLELINE, 0, 0, OnSideButtonMsgProc);
     if (hobj_button_outside != 0) {
         Ex_ObjSetColor(hobj_button_outside, COLOR_EX_BACKGROUND, ExRGB2ARGB(65535, 100), TRUE);
-        HEXOBJ hobj_button_inside = Ex_ObjCreateEx(-1,
-                                                   L"Static",
-                                                   L"按钮内间接父控件",
-                                                   -1,
-                                                   10,
-                                                   20,
-                                                   330,
-                                                   200,
-                                                   hobj_button_outside,
-                                                   0,
-                                                   DT_SINGLELINE,
-                                                   0,
-                                                   0,
-                                                   OnSideButtonMsgProc);
+        HEXOBJ hobj_button_inside =
+            Ex_ObjCreateEx(-1, L"Static", L"按钮内间接父控件", -1, 10, 20, 330, 200,
+                           hobj_button_outside, 0, DT_SINGLELINE, 0, 0, OnSideButtonMsgProc);
         if (hobj_button_inside != 0) {
-            Ex_ObjSetColor(
-                hobj_button_inside, COLOR_EX_BACKGROUND, ExARGB(100, 100, 100, 100), TRUE);
-            HEXOBJ hobj_button_parent = Ex_ObjCreateEx(-1,
-                                                       L"Static",
-                                                       L"按钮直接父控件",
-                                                       -1,
-                                                       10,
-                                                       20,
-                                                       310,
-                                                       160,
-                                                       hobj_button_inside,
-                                                       0,
-                                                       DT_SINGLELINE,
-                                                       0,
-                                                       0,
-                                                       OnParentButtonMsgProc);
+            Ex_ObjSetColor(hobj_button_inside, COLOR_EX_BACKGROUND, ExARGB(100, 100, 100, 100),
+                           TRUE);
+            HEXOBJ hobj_button_parent =
+                Ex_ObjCreateEx(-1, L"Static", L"按钮直接父控件", -1, 10, 20, 310, 160,
+                               hobj_button_inside, 0, DT_SINGLELINE, 0, 0, OnParentButtonMsgProc);
             if (hobj_button_parent != 0) {
-                Ex_ObjSetColor(
-                    hobj_button_parent, COLOR_EX_BACKGROUND, ExARGB(26, 100, 129, 100), TRUE);
-                HEXOBJ hobj_button = Ex_ObjCreateEx(-1,
-                                                    L"button",
-                                                    L"按钮",
-                                                    -1,
-                                                    10,
-                                                    20,
-                                                    200,
-                                                    100,
-                                                    hobj_button_parent,
-                                                    1001,
-                                                    -1,
-                                                    0,
-                                                    0,
-                                                    OnEventButtonMsgProc);
+                Ex_ObjSetColor(hobj_button_parent, COLOR_EX_BACKGROUND, ExARGB(26, 100, 129, 100),
+                               TRUE);
+                HEXOBJ hobj_button =
+                    Ex_ObjCreateEx(-1, L"button", L"按钮", -1, 10, 20, 200, 100, hobj_button_parent,
+                                   1001, -1, 0, 0, OnEventButtonMsgProc);
                 if (hobj_button != 0) {
                     Ex_ObjHandleEvent(hobj_button, NM_CLICK, OnEventButtonEvent);
                     Ex_ObjEnableEventBubble(
@@ -3915,36 +2918,25 @@ void test_loading(HWND hWnd)
 {
     HWND hWnd_loading = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试加载动画", 0, 0, 300, 250, 0, 0);
     HEXDUI hExDui_loading = Ex_DUIBindWindowEx(
-        hWnd_loading,
-        0,
+        hWnd_loading, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_loading, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     // 马赛克加载动画
     HEXOBJ hObj_mosaicloading =
         Ex_ObjCreate(L"MosaicLoading", L"MosaicLoading", -1, 50, 50, 50, 50, hExDui_loading);
-    Ex_ObjSetColor(hObj_mosaicloading,
-                   COLOR_EX_BACKGROUND,
-                   ExRGB(255, 10, 10),
+    Ex_ObjSetColor(hObj_mosaicloading, COLOR_EX_BACKGROUND, ExRGB(255, 10, 10),
                    TRUE);   // 动画点颜色，只能提供RGB色
 
     // WIN10加载动画,默认风格为圆形转圈
     HEXOBJ hObj_win10loading1 =
         Ex_ObjCreate(L"Win10Loading", L"加载中，请稍后", -1, 150, 30, 100, 80, hExDui_loading);
-    HEXOBJ hObj_win10loading2 = Ex_ObjCreate(L"Win10Loading",
-                                             L"正在读取数据，请稍后",
-                                             OBJECT_STYLE_VISIBLE | LOADING_STYLE_LINE,
-                                             50,
-                                             150,
-                                             200,
-                                             60,
-                                             hExDui_loading);
-    Ex_ObjSetColor(hObj_win10loading2,
-                   COLOR_EX_BACKGROUND,
-                   ExRGB(100, 236, 255),
+    HEXOBJ hObj_win10loading2 =
+        Ex_ObjCreate(L"Win10Loading", L"正在读取数据，请稍后",
+                     OBJECT_STYLE_VISIBLE | LOADING_STYLE_LINE, 50, 150, 200, 60, hExDui_loading);
+    Ex_ObjSetColor(hObj_win10loading2, COLOR_EX_BACKGROUND, ExRGB(100, 236, 255),
                    TRUE);   // 动画点颜色，只能提供RGB色
     Ex_DUIShowWindow(hExDui_loading, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -3963,13 +2955,11 @@ void test_sliderbar(HWND hWnd)
 {
     HWND hWnd_sliderbar = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试滑块条", 0, 0, 400, 200, 0, 0);
     HEXDUI hExDui_sliderbar = Ex_DUIBindWindowEx(
-        hWnd_sliderbar,
-        0,
+        hWnd_sliderbar, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_sliderbar, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     WCHAR  ATOM_sliderbarEx[] = L"sliderbar"; /*滑块条*/
     HEXOBJ hObj_sliderbarex1 =
@@ -3977,33 +2967,21 @@ void test_sliderbar(HWND hWnd)
     Ex_ObjSetColor(hObj_sliderbarex1, COLOR_EX_BACKGROUND, ExARGB(100, 36, 255, 250), TRUE);
     Ex_ObjHandleEvent(hObj_sliderbarex1, SLIDERBAR_EVENT_VALUE, OnSliderBarPosChangeEvent);
 
-    HEXOBJ hObj_sliderbarex2 = Ex_ObjCreate(ATOM_sliderbarEx,
-                                            NULL,
-                                            OBJECT_STYLE_VISIBLE | SLIDERBAR_STYLE_VERTICAL,
-                                            50,
-                                            60,
-                                            20,
-                                            100,
-                                            hExDui_sliderbar);
+    HEXOBJ hObj_sliderbarex2 =
+        Ex_ObjCreate(ATOM_sliderbarEx, NULL, OBJECT_STYLE_VISIBLE | SLIDERBAR_STYLE_VERTICAL, 50,
+                     60, 20, 100, hExDui_sliderbar);
     Ex_ObjSetColor(hObj_sliderbarex2, COLOR_EX_BACKGROUND, ExARGB(100, 236, 255, 250), TRUE);
     Ex_ObjHandleEvent(hObj_sliderbarex2, SLIDERBAR_EVENT_VALUE, OnSliderBarPosChangeEvent);
     Ex_ObjSetLong(hObj_sliderbarex2, SLIDERBAR_LONG_BLOCK_DIRECTION, 1);
 
-    HEXOBJ hObj_sliderbarex3 = Ex_ObjCreate(ATOM_sliderbarEx,
-                                            NULL,
-                                            OBJECT_STYLE_VISIBLE | SLIDERBAR_STYLE_VERTICAL,
-                                            350,
-                                            60,
-                                            20,
-                                            100,
-                                            hExDui_sliderbar);
+    HEXOBJ hObj_sliderbarex3 =
+        Ex_ObjCreate(ATOM_sliderbarEx, NULL, OBJECT_STYLE_VISIBLE | SLIDERBAR_STYLE_VERTICAL, 350,
+                     60, 20, 100, hExDui_sliderbar);
     Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_BACKGROUND, ExARGB(100, 136, 255, 250), TRUE);
     Ex_ObjHandleEvent(hObj_sliderbarex3, SLIDERBAR_EVENT_VALUE, OnSliderBarPosChangeEvent);
-    Ex_ObjSetColor(
-        hObj_sliderbarex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 125), TRUE);   // 滑块条底色
-    Ex_ObjSetColor(hObj_sliderbarex3,
-                   COLOR_EX_TEXT_CHECKED,
-                   ExARGB(200, 16, 25, 250),
+    Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 125),
+                   TRUE);   // 滑块条底色
+    Ex_ObjSetColor(hObj_sliderbarex3, COLOR_EX_TEXT_CHECKED, ExARGB(200, 16, 25, 250),
                    TRUE);   // 滑块条走过的颜色
 
     HEXOBJ hObj_sliderbarex4 =
@@ -4021,41 +2999,20 @@ void test_rotateimgbox(HWND hWnd)
     HWND hWnd_rotateimgbox =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试旋转图片框", 0, 0, 200, 200, 0, 0);
     HEXDUI hExDui_rotateimgbox = Ex_DUIBindWindowEx(
-        hWnd_rotateimgbox,
-        0,
+        hWnd_rotateimgbox, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_rotateimgbox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    HEXOBJ hObj_imagebox = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                          L"RotateImageBox",
-                                          L"旋转背景但文字不变",
-                                          OBJECT_STYLE_VISIBLE,
-                                          50,
-                                          50,
-                                          100,
-                                          100,
-                                          hExDui_rotateimgbox,
-                                          0,
-                                          -1,
-                                          0,
-                                          0,
-                                          0);
+    HEXOBJ hObj_imagebox =
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"RotateImageBox", L"旋转背景但文字不变",
+                       OBJECT_STYLE_VISIBLE, 50, 50, 100, 100, hExDui_rotateimgbox, 0, -1, 0, 0, 0);
     Ex_ObjSetColor(hObj_imagebox, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(255, 255), TRUE);
     std::vector<CHAR> imgdata;
     Ex_ReadFile(L"res/rotateimgbox.jpg", &imgdata);
-    Ex_ObjSetBackgroundImage(hObj_imagebox,
-                             imgdata.data(),
-                             imgdata.size(),
-                             0,
-                             0,
-                             BACKGROUND_REPEAT_ZOOM,
-                             0,
-                             BACKGROUND_FLAG_PLAYIMAGE,
-                             255,
-                             TRUE);
+    Ex_ObjSetBackgroundImage(hObj_imagebox, imgdata.data(), imgdata.size(), 0, 0,
+                             BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_PLAYIMAGE, 255, TRUE);
     Ex_ObjSetRadius(hObj_imagebox, 50, 50, 50, 50, TRUE);
     Ex_DUIShowWindow(hExDui_rotateimgbox, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -4133,44 +3090,22 @@ void test_dragobj(HWND hWnd)
 {
     HWND hWnd_dragobj = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试拖动组件", 0, 0, 500, 500, 0, 0);
     HEXDUI hExDui_dragobj = Ex_DUIBindWindowEx(
-        hWnd_dragobj,
-        0,
+        hWnd_dragobj, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_dragobj, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    HEXOBJ hObj_label1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                        L"static",
-                                        L"可拖动组件1",
-                                        OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                                        25,
-                                        35,
-                                        250,
-                                        250,
-                                        hExDui_dragobj,
-                                        0,
-                                        DT_SINGLELINE | DT_LEFT | DT_TOP,
-                                        0,
-                                        0,
-                                        OnDragMsgProc);
+    HEXOBJ hObj_label1 =
+        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"可拖动组件1",
+                       OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 35, 250, 250, hExDui_dragobj,
+                       0, DT_SINGLELINE | DT_LEFT | DT_TOP, 0, 0, OnDragMsgProc);
     if (hObj_label1 != 0) {
         Ex_ObjSetColor(hObj_label1, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 100), TRUE);
-        HEXOBJ hObj_label2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                            L"static",
-                                            L"可拖动组件2",
-                                            OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                                            25,
-                                            35,
-                                            150,
-                                            150,
-                                            hObj_label1,
-                                            0,
-                                            DT_SINGLELINE | DT_LEFT | DT_TOP,
-                                            0,
-                                            0,
-                                            OnDragMsgProc);
+        HEXOBJ hObj_label2 =
+            Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"可拖动组件2",
+                           OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 35, 150, 150,
+                           hObj_label1, 0, DT_SINGLELINE | DT_LEFT | DT_TOP, 0, 0, OnDragMsgProc);
         if (hObj_label2 != 0) {
             Ex_ObjSetColor(hObj_label2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16722680, 100), TRUE);
         }
@@ -4224,27 +3159,15 @@ void test_dropobj(HWND hWnd)
     HWND hWnd_dropobj =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试接收拖曳信息", 0, 0, 300, 300, 0, 0);
     HEXDUI hExDui_dropobj = Ex_DUIBindWindowEx(
-        hWnd_dropobj,
-        0,
+        hWnd_dropobj, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_dropobj, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    Ex_ObjCreateEx(OBJECT_STYLE_EX_DRAGDROP | OBJECT_STYLE_EX_ACCEPTFILES,
-                   L"static",
-                   L"拖拽文本、文件到这里",
-                   OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                   25,
-                   25,
-                   250,
-                   250,
-                   hExDui_dropobj,
-                   0,
-                   DT_SINGLELINE | DT_VCENTER | DT_CENTER,
-                   0,
-                   0,
+    Ex_ObjCreateEx(OBJECT_STYLE_EX_DRAGDROP | OBJECT_STYLE_EX_ACCEPTFILES, L"static",
+                   L"拖拽文本、文件到这里", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 25, 250,
+                   250, hExDui_dropobj, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0,
                    OnDropObjDataMsgProc);
     Ex_DUIShowWindow(hExDui_dropobj, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -4270,13 +3193,11 @@ void test_progressbar(HWND hWnd)
 {
     HWND hWnd_progressbar = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试进度条", 0, 0, 400, 300, 0, 0);
     HEXDUI hExDui_progressbar = Ex_DUIBindWindowEx(
-        hWnd_progressbar,
-        0,
+        hWnd_progressbar, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_progressbar, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj_progressbar =
         Ex_ObjCreate(L"ProgressBar", NULL, -1, 50, 100, 300, 20, hExDui_progressbar);
@@ -4323,27 +3244,14 @@ void test_nchittest(HWND hWnd)
     HWND hWnd_nchittest =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试限制通知区域", 0, 0, 400, 200, 0, 0);
     HEXDUI hExDui_nchittest = Ex_DUIBindWindowEx(
-        hWnd_nchittest,
-        0,
+        hWnd_nchittest, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_nchittest, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                   L"static",
-                   L"鼠标只能在红色区域里响应",
-                   -1,
-                   50,
-                   50,
-                   300,
-                   100,
-                   hExDui_nchittest,
-                   0,
-                   DT_CENTER | DT_VCENTER | DT_SINGLELINE,
-                   0,
-                   0,
+    Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"鼠标只能在红色区域里响应", -1, 50, 50,
+                   300, 100, hExDui_nchittest, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0,
                    OnNchitTestMsgProc);
     Ex_DUIShowWindow(hExDui_nchittest, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -4355,17 +3263,14 @@ INT_PTR CALLBACK OnDialgWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if (uMsg == WM_INITDIALOG) {
         MoveWindow(hWnd, 0, 0, 300, 200, FALSE);
         SetWindowTextW(hWnd, L"我是模态对话框 我在的时候别的窗口不能动");
-        HEXDUI hExDui = Ex_DUIBindWindow(hWnd,
-                                         0,
+        HEXDUI hExDui = Ex_DUIBindWindow(hWnd, 0,
                                          WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE |
                                              WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_BUTTON_CLOSE |
                                              WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_CENTERWINDOW);
         if (hExDui) {
             HEXOBJ hEdit = Ex_ObjCreate(L"edit", 0, -1, 20, 50, 250, 30, hExDui);
             if (hEdit) {
-                Ex_ObjSendMessage(hEdit,
-                                  EDIT_MESSAGE_SETCUEBANNER,
-                                  ExRGB2ARGB(8421504, 200),
+                Ex_ObjSendMessage(hEdit, EDIT_MESSAGE_SETCUEBANNER, ExRGB2ARGB(8421504, 200),
                                   (LPARAM)L"编辑框输入文字正常");
             }
             Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExRGB2ARGB(16711680, 220));
@@ -4391,14 +3296,12 @@ LRESULT CALLBACK OnModalButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPar
 void test_modal(HWND hWnd)
 {
     m_hWndModal = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试模态窗口", 0, 0, 400, 200, 0, 0);
-    HEXDUI hExDui_modal = Ex_DUIBindWindowEx(m_hWndModal,
-                                             0,
+    HEXDUI hExDui_modal = Ex_DUIBindWindowEx(m_hWndModal, 0,
                                              WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE |
                                                  WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW |
                                                  WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
                                                  WINDOW_STYLE_HASICON,
-                                             0,
-                                             0);
+                                             0, 0);
     Ex_DUISetLong(hExDui_modal, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"button", L"弹出模态对话框", -1, 50, 50, 300, 100, hExDui_modal);
     Ex_ObjHandleEvent(hObj, NM_CLICK, OnModalButtonEvent);
@@ -4420,13 +3323,11 @@ void test_colorpicker(HWND hParent)
     HWND hWnd_colorpicker =
         Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试颜色选择器", 0, 0, 250, 300, 0, 0);
     HEXDUI hExDui_colorpicker = Ex_DUIBindWindowEx(
-        hWnd_colorpicker,
-        0,
+        hWnd_colorpicker, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_colorpicker, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"ColorPicker", 0, -1, 50, 40, 80, 30, hExDui_colorpicker);
     Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), TRUE);
@@ -4447,13 +3348,11 @@ void test_datebox(HWND hParent)
 {
     HWND hWnd_datebox = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试日期框", 0, 0, 250, 200, 0, 0);
     HEXDUI hExDui_datebox = Ex_DUIBindWindowEx(
-        hWnd_datebox,
-        0,
+        hWnd_datebox, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_datebox, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     HEXOBJ hObj = Ex_ObjCreate(L"DateBox", 0, -1, 50, 80, 150, 30, hExDui_datebox);
@@ -4468,14 +3367,12 @@ void test_datebox(HWND hParent)
 void test_titlebar(HWND hParent)
 {
     HWND   hWnd   = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试标题框", 0, 0, 400, 200, 0, 0);
-    HEXDUI hExDui = Ex_DUIBindWindowEx(hWnd,
-                                       0,
+    HEXDUI hExDui = Ex_DUIBindWindowEx(hWnd, 0,
                                        WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE |
                                            WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW |
                                            WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
                                            WINDOW_STYLE_HASICON,
-                                       0,
-                                       0);
+                                       0, 0);
     Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     HEXOBJ hObj = 0;
@@ -4511,29 +3408,16 @@ void test_calendar(HWND hParent)
 {
     HWND hWnd_calendar = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试月历", 0, 0, 400, 400, 0, 0);
     HEXDUI hExDui_calendar = Ex_DUIBindWindowEx(
-        hWnd_calendar,
-        0,
+        hWnd_calendar, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_calendar, ENGINE_LONG_CRBKG, ExARGB(200, 200, 200, 255));
 
-    HEXOBJ MonthCal = Ex_ObjCreateEx(-1,
-                                     L"Calendar",
-                                     NULL,
-                                     OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                                     50,
-                                     50,
-                                     336,
-                                     336,
-                                     hExDui_calendar,
-                                     100,
-                                     -1,
-                                     0,
-                                     0,
-                                     0);
+    HEXOBJ MonthCal =
+        Ex_ObjCreateEx(-1, L"Calendar", NULL, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 50, 50,
+                       336, 336, hExDui_calendar, 100, -1, 0, 0, 0);
     Ex_ObjHandleEvent(MonthCal, CALENDAR_EVENT_DATETIME, OnCalendarEvent);
     Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -4550,12 +3434,8 @@ LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
 {
     if (uMsg == WM_SIZE) {
         auto dpiy = Ex_DUIGetSystemDpi();
-        Ex_ObjMove(m_hObjChromium,
-                   50,
-                   50,
-                   (LOWORD(lParam) - 100) / dpiy,
-                   (HIWORD(lParam) - 100) / dpiy,
-                   FALSE);
+        Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100) / dpiy,
+                   (HIWORD(lParam) - 100) / dpiy, FALSE);
     }
     return 0;
 }
@@ -4683,18 +3563,16 @@ void test_chromium(HWND hParent)
     HWND hWnd_chromium =
         Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试Cef浏览框", 0, 0, 800, 600, 0, 0);
     HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(
-        hWnd_chromium,
-        0,
+        hWnd_chromium, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_BUTTON_CLOSE |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
-        0,
-        OnChromiumWndMsgProc);
+        0, OnChromiumWndMsgProc);
     Ex_DUISetLong(hExDui_chromium, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     Ex_ObjCefBrowserInitialize(0, 0, L"FTBrowser.dll", NULL, 0, 0, OnBeforeCommandLine);
-    m_hObjChromium = Ex_ObjCreateEx(
-        -1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium, 0, -1, 0, 0, 0);
-    Ex_ObjSendMessage(
-        m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"https://www.bing.com");
+    m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium,
+                                    0, -1, 0, 0, 0);
+    Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0,
+                      (LPARAM)L"https://www.bing.com");
     // Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"d:/test.mp4");
     // Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"res/cefjs.html");
     Ex_ObjHandleEvent(m_hObjChromium, CEFBROWSER_EVENT_LOADEND, OnChromiumEvent);
@@ -4716,13 +3594,11 @@ LRESULT CALLBACK OnScoreButtonCheckEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM
 void test_scorebtn(HWND hParent)
 {
     HWND hWnd_score = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试打分按钮", 0, 0, 300, 100, 0, 0);
-    HEXDUI hExDui_score = Ex_DUIBindWindowEx(hWnd_score,
-                                             0,
+    HEXDUI hExDui_score = Ex_DUIBindWindowEx(hWnd_score, 0,
                                              WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_CENTERWINDOW |
                                                  WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
                                                  WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
-                                             0,
-                                             0);
+                                             0, 0);
     Ex_DUISetLong(hExDui_score, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXIMAGE hImg1 = 0;
     HEXIMAGE hImg2 = 0;
@@ -4746,12 +3622,10 @@ void test_carousel(HWND hParent)
 {
     HWND hWnd_carousel = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试轮播", 0, 0, 800, 600, 0, 0);
     HEXDUI hExDui_carousel = Ex_DUIBindWindowEx(
-        hWnd_carousel,
-        0,
+        hWnd_carousel, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_BUTTON_CLOSE |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_carousel, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"Carousel", 0, -1, 20, 40, 760, 550, hExDui_carousel);
     // 添加图片前必须设置尺寸
@@ -4783,11 +3657,7 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
         INT    nIndex   = Ex_ObjGetLong(hObjItem, 0);   // 获得表项当前代表的索引
         if (nIndex > 0 && nIndex <= (m_tlistViewItemInfo.size())) {
             m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex - 1);
-            OUTPUTW(L"TList 按钮点击,删除本行",
-                    nIndex - 1,
-                    nID,
-                    wParam,
-                    lParam,
+            OUTPUTW(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam,
                     m_tlistViewItemInfo.size());
             Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), WM_PAINT, 0, 1);
         }
@@ -4842,11 +3712,11 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
     }
     else if (uMsg == TEMPLATELISTVIEW_MESSAGE_ITEM_CREATED) {
         // lParam: hObjItem
-        hObjTmp = Ex_ObjCreateEx(
-            -1, L"Static", 0, -1, 0, 6, 128, 28, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
+        hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 0, 6, 128, 28, lParam, 0,
+                                 DT_CENTER | DT_VCENTER, 0, 0, 0);
         Ex_ObjSetLong(hObjTmp, OBJECT_LONG_NODEID, 1);
-        hObjTmp = Ex_ObjCreateEx(
-            -1, L"Static", 0, -1, 130, 6, 358, 28, lParam, 0, DT_CENTER | DT_VCENTER, 0, 0, 0);
+        hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 130, 6, 358, 28, lParam, 0,
+                                 DT_CENTER | DT_VCENTER, 0, 0, 0);
         Ex_ObjSetLong(hObjTmp, OBJECT_LONG_NODEID, 2);
         hObjTmp =
             Ex_ObjCreateEx(-1, L"Switch", L"开|关", -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
@@ -4882,31 +3752,19 @@ void test_templatelistview(HWND hParent)
     HWND hWnd_listview =
         Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试模板列表", 0, 0, 800, 600, 0, 0);
     HEXDUI hExDui_listview = Ex_DUIBindWindowEx(
-        hWnd_listview,
-        0,
+        hWnd_listview, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_BUTTON_CLOSE |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_listview, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hobj_groupbox =
         Ex_ObjCreate(L"groupbox", L"分组框", -1, 10, 40, 780, 550, hExDui_listview);
     // LISTVIEW_STYLE_ITEMTRACKING风格需启用
-    HEXOBJ hobj_listview = Ex_ObjCreateEx(-1,
-                                          L"TListView",
-                                          NULL,
-                                          OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL |
-                                              OBJECT_STYLE_VSCROLL | LISTVIEW_STYLE_ITEMTRACKING,
-                                          20,
-                                          10,
-                                          650,
-                                          520,
-                                          hobj_groupbox,
-                                          0,
-                                          -1,
-                                          0,
-                                          0,
-                                          OnTemplateListViewProc);
+    HEXOBJ hobj_listview =
+        Ex_ObjCreateEx(-1, L"TListView", NULL,
+                       OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL |
+                           LISTVIEW_STYLE_ITEMTRACKING,
+                       20, 10, 650, 520, hobj_groupbox, 0, -1, 0, 0, OnTemplateListViewProc);
     if (m_tlistViewItemInfo.size() == 0) {
         for (int i = 0; i < 20; i++) {
             m_tlistViewItemInfo.push_back({L"标签一" + std::to_wstring(i),
@@ -4914,17 +3772,11 @@ void test_templatelistview(HWND hParent)
                                            L"按钮" + std::to_wstring(i)});
         }
     }
-    Ex_ObjSendMessage(hobj_listview,
-                      LISTVIEW_MESSAGE_SETITEMCOUNT,
-                      m_tlistViewItemInfo.size(),
+    Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, m_tlistViewItemInfo.size(),
                       m_tlistViewItemInfo.size());
-    Ex_ObjSendMessage(hobj_listview,
-                      TEMPLATELISTVIEW_MESSAGE_SET_ITEM_HOVERCOLOR,
-                      0,
+    Ex_ObjSendMessage(hobj_listview, TEMPLATELISTVIEW_MESSAGE_SET_ITEM_HOVERCOLOR, 0,
                       ExRGB2ARGB(15066083, 200));   // 表项悬浮色
-    Ex_ObjSendMessage(hobj_listview,
-                      TEMPLATELISTVIEW_MESSAGE_SET_ITEM_SELECTCOLOR,
-                      0,
+    Ex_ObjSendMessage(hobj_listview, TEMPLATELISTVIEW_MESSAGE_SET_ITEM_SELECTCOLOR, 0,
                       ExRGB2ARGB(124123, 250));   // 表项选中色
     Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -4956,8 +3808,8 @@ LRESULT CALLBACK OnDrawingBoardButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
             Ex_ObjSendMessage(m_hObjDrawingBoard, DRAWINGBOARD_MESSAGE_SETPENWIDTH, 0, 5);
         }
         else if (nID == 102) {
-            Ex_ObjSendMessage(
-                m_hObjDrawingBoard, DRAWINGBOARD_MESSAGE_SETPENCOLOR, 0, ExARGB(255, 0, 0, 255));
+            Ex_ObjSendMessage(m_hObjDrawingBoard, DRAWINGBOARD_MESSAGE_SETPENCOLOR, 0,
+                              ExARGB(255, 0, 0, 255));
         }
         else if (nID == 103) {
             HEXCANVAS canvas = Ex_ObjGetLong(m_hObjDrawingBoard, OBJECT_LONG_HCANVAS);
@@ -4975,12 +3827,10 @@ void test_drawingboard(HWND hParent)
     HWND hWnd_drawingboard =
         Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试鼠标绘制板", 0, 0, 680, 400, 0, 0);
     HEXDUI hExDui_drawingboard = Ex_DUIBindWindowEx(
-        hWnd_drawingboard,
-        0,
+        hWnd_drawingboard, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_drawingboard, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     m_hObjDrawingBoard =
         Ex_ObjCreate(L"drawingboard", 0, -1, 30, 30, 500, 350, hExDui_drawingboard);
@@ -4989,41 +3839,17 @@ void test_drawingboard(HWND hParent)
     Ex_ObjSendMessage(hObj_switch, BM_SETCHECK, 1, 0);   // 设置选中状态
     Ex_ObjHandleEvent(hObj_switch, NM_CHECK, OnDrawingBoardSwitchEvent);
 
-    auto hObj1 = Ex_ObjCreateEx(
-        -1, L"button", L"清空绘制板", -1, 550, 70, 100, 30, hExDui_drawingboard, 100, -1, 0, 0, 0);
+    auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"清空绘制板", -1, 550, 70, 100, 30,
+                                hExDui_drawingboard, 100, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj1, NM_CLICK, OnDrawingBoardButtonEvent);
-    auto hObj2 = Ex_ObjCreateEx(-1,
-                                L"button",
-                                L"改变画刷大小",
-                                -1,
-                                550,
-                                110,
-                                100,
-                                30,
-                                hExDui_drawingboard,
-                                101,
-                                -1,
-                                0,
-                                0,
-                                0);
+    auto hObj2 = Ex_ObjCreateEx(-1, L"button", L"改变画刷大小", -1, 550, 110, 100, 30,
+                                hExDui_drawingboard, 101, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj2, NM_CLICK, OnDrawingBoardButtonEvent);
-    auto hObj3 = Ex_ObjCreateEx(-1,
-                                L"button",
-                                L"改变画刷颜色",
-                                -1,
-                                550,
-                                150,
-                                100,
-                                30,
-                                hExDui_drawingboard,
-                                102,
-                                -1,
-                                0,
-                                0,
-                                0);
+    auto hObj3 = Ex_ObjCreateEx(-1, L"button", L"改变画刷颜色", -1, 550, 150, 100, 30,
+                                hExDui_drawingboard, 102, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj3, NM_CLICK, OnDrawingBoardButtonEvent);
-    auto hObj4 = Ex_ObjCreateEx(
-        -1, L"button", L"保存到图片", -1, 550, 190, 100, 30, hExDui_drawingboard, 103, -1, 0, 0, 0);
+    auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"保存到图片", -1, 550, 190, 100, 30,
+                                hExDui_drawingboard, 103, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj4, NM_CLICK, OnDrawingBoardButtonEvent);
     Ex_DUIShowWindow(hExDui_drawingboard, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -5041,14 +3867,12 @@ LRESULT CALLBACK OnPaletteEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, 
 void test_palette(HWND hParent)
 {
     HWND hWnd_palette = Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试调色板", 0, 0, 400, 250, 0, 0);
-    m_hExDuiPalette = Ex_DUIBindWindowEx(hWnd_palette,
-                                         0,
+    m_hExDuiPalette = Ex_DUIBindWindowEx(hWnd_palette, 0,
                                          WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE |
                                              WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW |
                                              WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
                                              WINDOW_STYLE_HASICON,
-                                         0,
-                                         0);
+                                         0, 0);
     Ex_DUISetLong(m_hExDuiPalette, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"Palette", 0, -1, 50, 50, 300, 150, m_hExDuiPalette);
     Ex_ObjHandleEvent(hObj, PALETTE_EVENT_MOUSEMOVE, OnPaletteEvent);
@@ -5067,10 +3891,9 @@ LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
             OUTPUTW(L"普通编辑框 对应值:", ret);
         }
         else if (nID == 101) {
-            LPCWSTR ret = (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid,
-                                                     PROPERTYGRID_MESSAGE_SETITEMVALUE,
-                                                     (WPARAM)L"新数值123",
-                                                     (LPARAM)L"普通编辑框");
+            LPCWSTR ret =
+                (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SETITEMVALUE,
+                                           (WPARAM)L"新数值123", (LPARAM)L"普通编辑框");
             OUTPUTW(L"置\"普通编辑框\"对应值");
         }
         else if (nID == 102) {
@@ -5084,11 +3907,7 @@ LRESULT CALLBACK OnPropertyGridEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 {
     EX_PROGRID_CHANGEITEMINFO itemInfo{0};
     RtlMoveMemory(&itemInfo, (void*)lParam, sizeof(EX_PROGRID_CHANGEITEMINFO));
-    OUTPUTW(L"属性框值改变, 对应行索引:",
-            wParam,
-            L", 改变后值:",
-            itemInfo.text,
-            L", 改变类型:",
+    OUTPUTW(L"属性框值改变, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:",
             itemInfo.type);
     return 0;
 }
@@ -5098,60 +3917,33 @@ void test_propertygrid(HWND hParent)
     HWND hWnd_propertygrid =
         Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试属性框", 0, 0, 500, 400, 0, 0);
     HEXDUI hExDui_propertygrid = Ex_DUIBindWindowEx(
-        hWnd_propertygrid,
-        0,
+        hWnd_propertygrid, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_propertygrid, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
-    m_hObjPropertyGrid = Ex_ObjCreateEx(-1,
-                                        L"PropertyGrid",
-                                        L"属性框",
-                                        OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
-                                        50,
-                                        50,
-                                        300,
-                                        300,
-                                        hExDui_propertygrid,
-                                        0,
-                                        0,
-                                        0,
-                                        0,
-                                        0);
+    m_hObjPropertyGrid =
+        Ex_ObjCreateEx(-1, L"PropertyGrid", L"属性框", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
+                       50, 50, 300, 300, hExDui_propertygrid, 0, 0, 0, 0, 0);
     Ex_ObjHandleEvent(m_hObjPropertyGrid, PROPERTYGRID_EVENT_ITEMVALUECHANGE, OnPropertyGridEvent);
 
     Ex_ObjSetColor(m_hObjPropertyGrid, COLOR_EX_BACKGROUND, ExRGB2ARGB(14737632, 255), TRUE);
 
-    auto hObj1 = Ex_ObjCreateEx(
-        -1, L"button", L"取表项内容", -1, 380, 70, 100, 30, hExDui_propertygrid, 100, -1, 0, 0, 0);
+    auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"取表项内容", -1, 380, 70, 100, 30,
+                                hExDui_propertygrid, 100, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
-    hObj1 = Ex_ObjCreateEx(
-        -1, L"button", L"置表项内容", -1, 380, 120, 100, 30, hExDui_propertygrid, 101, -1, 0, 0, 0);
+    hObj1 = Ex_ObjCreateEx(-1, L"button", L"置表项内容", -1, 380, 120, 100, 30, hExDui_propertygrid,
+                           101, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
-    hObj1 = Ex_ObjCreateEx(-1,
-                           L"button",
-                           L"修改组件大小",
-                           -1,
-                           380,
-                           170,
-                           100,
-                           30,
-                           hExDui_propertygrid,
-                           102,
-                           -1,
-                           0,
-                           0,
-                           0);
+    hObj1 = Ex_ObjCreateEx(-1, L"button", L"修改组件大小", -1, 380, 170, 100, 30,
+                           hExDui_propertygrid, 102, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
 
     EX_PROGRID_ITEMINFO item;
     item.title = L"小组A";
-    Ex_ObjSendMessage(m_hObjPropertyGrid,
-                      PROPERTYGRID_MESSAGE_ADDITEM,
-                      PROPERTYGRID_OBJTYPE_GROUP,
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_GROUP,
                       (LPARAM)&item);
     item.title = L"组合框一";
     EX_PROGRID_ITEMINFO_COMBOBOX a;
@@ -5164,26 +3956,20 @@ void test_propertygrid(HWND hParent)
     item.comboboxNum     = 2;
 
 
-    Ex_ObjSendMessage(m_hObjPropertyGrid,
-                      PROPERTYGRID_MESSAGE_ADDITEM,
-                      PROPERTYGRID_OBJTYPE_COMBOBOX,
-                      (LPARAM)&item);
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                      PROPERTYGRID_OBJTYPE_COMBOBOX, (LPARAM)&item);
     item.title = L"颜色";
     auto color = std::to_wstring(ExRGB2ARGB(167549, 255));
     item.text  = color.c_str();
-    Ex_ObjSendMessage(m_hObjPropertyGrid,
-                      PROPERTYGRID_MESSAGE_ADDITEM,
-                      PROPERTYGRID_OBJTYPE_COLORPICKER,
-                      (LPARAM)&item);
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                      PROPERTYGRID_OBJTYPE_COLORPICKER, (LPARAM)&item);
     item.title = L"日期";
     item.text  = L"2022-7-6";
-    Ex_ObjSendMessage(m_hObjPropertyGrid,
-                      PROPERTYGRID_MESSAGE_ADDITEM,
-                      PROPERTYGRID_OBJTYPE_DATEBOX,
-                      (LPARAM)&item);
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                      PROPERTYGRID_OBJTYPE_DATEBOX, (LPARAM)&item);
 
-    std::vector<std::wstring> titles = {
-        L"普通编辑框", L"数字输入编辑框", L"字母输入编辑框", L"字母数字编辑框", L"只读编辑框"};
+    std::vector<std::wstring> titles = {L"普通编辑框", L"数字输入编辑框", L"字母输入编辑框",
+                                        L"字母数字编辑框", L"只读编辑框"};
     std::vector<std::wstring> texts = {L"中文123abc", L"1234567890", L"aA", L"aA123", L"测试只读"};
     std::vector<int> editStyles = {0, 1, 2, 3, 4};
     for (int i = 0; i < 5; i++) {
@@ -5192,23 +3978,17 @@ void test_propertygrid(HWND hParent)
         auto text      = texts[i];
         item.text      = text.c_str();
         item.editStyle = editStyles[i];
-        Ex_ObjSendMessage(m_hObjPropertyGrid,
-                          PROPERTYGRID_MESSAGE_ADDITEM,
-                          PROPERTYGRID_OBJTYPE_EDIT,
-                          (LPARAM)&item);
+        Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                          PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&item);
     }
     item.title = L"小组B";
-    Ex_ObjSendMessage(m_hObjPropertyGrid,
-                      PROPERTYGRID_MESSAGE_ADDITEM,
-                      PROPERTYGRID_OBJTYPE_GROUP,
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_GROUP,
                       (LPARAM)&item);
     item.title = L"颜色二";
     color      = std::to_wstring(ExRGB2ARGB(3523123, 255));
     item.text  = color.c_str();
-    Ex_ObjSendMessage(m_hObjPropertyGrid,
-                      PROPERTYGRID_MESSAGE_ADDITEM,
-                      PROPERTYGRID_OBJTYPE_COLORPICKER,
-                      (LPARAM)&item);
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                      PROPERTYGRID_OBJTYPE_COLORPICKER, (LPARAM)&item);
     item.title = L"组合框二";
 
     EX_PROGRID_ITEMINFO_COMBOBOX c;
@@ -5220,19 +4000,15 @@ void test_propertygrid(HWND hParent)
     item.textComboBox[1] = d;
     item.comboboxNum     = 3;
 
-    Ex_ObjSendMessage(m_hObjPropertyGrid,
-                      PROPERTYGRID_MESSAGE_ADDITEM,
-                      PROPERTYGRID_OBJTYPE_COMBOBOX,
-                      (LPARAM)&item);
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                      PROPERTYGRID_OBJTYPE_COMBOBOX, (LPARAM)&item);
     for (int i = 0; i < 4; i++) {
         auto title     = L"项目" + std::to_wstring(i + 1);
         item.title     = title.c_str();
         item.text      = L"aA";
         item.editStyle = 0;
-        Ex_ObjSendMessage(m_hObjPropertyGrid,
-                          PROPERTYGRID_MESSAGE_ADDITEM,
-                          PROPERTYGRID_OBJTYPE_EDIT,
-                          (LPARAM)&item);
+        Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                          PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&item);
     }
 
     Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
@@ -5254,14 +4030,8 @@ LRESULT CALLBACK OnNativeParentWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
         MoveWindow(m_hWndChild, 0, 0, width - 30, 300 * dpiy, TRUE);
         MoveWindow(m_hWndChild2, 0, 310 * dpiy, width - 30, 300 * dpiy, TRUE);
         Ex_ObjMove(m_hObjPage, 0, 0, width / dpiy, height / dpiy - 30, TRUE);
-        Ex_ObjScrollSetInfo(m_hObjPage,
-                            SCROLLBAR_TYPE_VERT,
-                            SIF_ALL,
-                            0,
-                            (300 + 300 - height / dpiy + 30) * dpiy,
-                            100,
-                            0,
-                            TRUE);
+        Ex_ObjScrollSetInfo(m_hObjPage, SCROLLBAR_TYPE_VERT, SIF_ALL, 0,
+                            (300 + 300 - height / dpiy + 30) * dpiy, 100, 0, TRUE);
     }
     return 0;
 }
@@ -5335,8 +4105,8 @@ LRESULT CALLBACK OnNativeWndScrollMsg(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
         GetWindowRect(m_hWndChild, &rc);
         auto dpiy = Ex_DUIGetSystemDpi();
         MoveWindow(m_hWndChild, 0, 0 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
-        MoveWindow(
-            m_hWndChild2, 0, 310 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+        MoveWindow(m_hWndChild2, 0, 310 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top,
+                   TRUE);
     }
     return 0;
 }
@@ -5346,49 +4116,29 @@ void test_nativewindow(HWND hParent)
     HWND hWnd_nativewindow =
         Ex_WndCreate(hParent, L"Ex_DirectUI", L"测试原生子窗口", 0, 0, 400, 450, 0, 0);
     HEXDUI hExDui_nativewindow = Ex_DUIBindWindowEx(
-        hWnd_nativewindow,
-        0,
+        hWnd_nativewindow, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_MOVEABLE |
             WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE |
             WINDOW_STYLE_TITLE,
-        0,
-        OnNativeParentWndMsgProc);
+        0, OnNativeParentWndMsgProc);
     Ex_DUISetLong(hExDui_nativewindow, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
-    m_hWndNativeWindow2 = Ex_WndCreate(
-        hWnd_nativewindow, L"Ex_DirectUI", 0, 0, 30, 400, 420, WS_CHILD | WS_OVERLAPPEDWINDOW, 0);
+    m_hWndNativeWindow2 = Ex_WndCreate(hWnd_nativewindow, L"Ex_DirectUI", 0, 0, 30, 400, 420,
+                                       WS_CHILD | WS_OVERLAPPEDWINDOW, 0);
     HEXDUI hExDui_nativewindow2 =
         Ex_DUIBindWindowEx(m_hWndNativeWindow2, 0, WINDOW_STYLE_NOSHADOW, 0, OnNativeWndMsgProc);
     Ex_DUISetLong(hExDui_nativewindow2, ENGINE_LONG_CRBKG, ExARGB(100, 150, 150, 255));
 
-    m_hObjPage = Ex_ObjCreateEx(-1,
-                                L"static",
-                                0,
-                                OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
-                                0,
-                                0,
-                                400,
-                                420,
-                                hExDui_nativewindow2,
-                                0,
-                                -1,
-                                0,
-                                0,
-                                OnNativeWndScrollMsg);
+    m_hObjPage = Ex_ObjCreateEx(-1, L"static", 0, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL, 0, 0,
+                                400, 420, hExDui_nativewindow2, 0, -1, 0, 0, OnNativeWndScrollMsg);
 
-    Ex_ObjScrollSetInfo(m_hObjPage,
-                        SCROLLBAR_TYPE_VERT,
-                        SIF_ALL,
-                        0,
-                        (300 + 300 - 420 + 30) * 1,
-                        100,
-                        0,
+    Ex_ObjScrollSetInfo(m_hObjPage, SCROLLBAR_TYPE_VERT, SIF_ALL, 0, (300 + 300 - 420 + 30) * 1,
+                        100, 0,
                         TRUE);   // 1是文本缩放比例
     Ex_ObjScrollShow(m_hObjPage, SCROLLBAR_TYPE_VERT, TRUE);
 
     // 子窗口是原生窗口，父窗口需要删除这个WS_EX_LAYERED风格
-    SetWindowLongPtrW(hWnd_nativewindow,
-                      GWL_EXSTYLE,
+    SetWindowLongPtrW(hWnd_nativewindow, GWL_EXSTYLE,
                       GetWindowLongPtrW(hWnd_nativewindow, GWL_EXSTYLE) & ~WS_EX_LAYERED);
 
     m_hWndChild =
@@ -5430,23 +4180,15 @@ LRESULT CALLBACK OnFullScreenWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPAR
 
 void test_fullscreen(HWND hWnd)
 {
-    HWND   hWnd_fullscreen = Ex_WndCreate(hWnd,
-                                        L"Ex_DirectUI",
-                                        L"测试全屏,最大化,置顶,不可移动改变大小,只能右上角关闭",
-                                        0,
-                                        0,
-                                        200,
-                                        200,
-                                        0,
-                                        0);
+    HWND hWnd_fullscreen =
+        Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试全屏,最大化,置顶,不可移动改变大小,只能右上角关闭",
+                     0, 0, 200, 200, 0, 0);
     HEXDUI hExDui_fullscreen =
-        Ex_DUIBindWindowEx(hWnd_fullscreen,
-                           0,
+        Ex_DUIBindWindowEx(hWnd_fullscreen, 0,
                            WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_TITLE |
                                WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_FULLSCREEN |
                                WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE,
-                           0,
-                           OnFullScreenWndMsgProc);
+                           0, OnFullScreenWndMsgProc);
     Ex_DUISetLong(hExDui_fullscreen, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     // 最大化
@@ -5464,8 +4206,8 @@ LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
     {
         _canvas_clear(wParam, ExARGB(150, 150, 150, 255));
         HEXFONT hFont = _font_createfromfile(L"res/文道灵飞小楷.ttf", 64);
-        _canvas_drawtext(
-            wParam, hFont, ExARGB(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
+        _canvas_drawtext(wParam, hFont, ExARGB(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450,
+                         450, 530);
         _font_destroy(hFont);
 
         _canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 50, 50, 200, 200);
@@ -5485,26 +4227,16 @@ void test_svgAndfont(HWND hWnd)
     HWND hWnd_svgAndfont =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"自定义字体和SVG测试", 0, 0, 500, 600, 0, 0);
     HEXDUI hExDui_svgAndfont = Ex_DUIBindWindowEx(
-        hWnd_svgAndfont,
-        0,
+        hWnd_svgAndfont, 0,
         WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW |
             WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE,
-        0,
-        OnSvgAndFontProc);
+        0, OnSvgAndFontProc);
     Ex_DUISetLong(hExDui_svgAndfont, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     auto              obj = Ex_ObjCreate(L"static", NULL, -1, 50, 250, 150, 150, hExDui_svgAndfont);
     std::vector<CHAR> imgdata;
     Ex_ReadFile(L"res\\niu1.svg", &imgdata);
-    Ex_ObjSetBackgroundImageFromSvgBuf(obj,
-                                       imgdata.data(),
-                                       ExARGB(55, 0, 250, 255),
-                                       0,
-                                       0,
-                                       BACKGROUND_REPEAT_ZOOM,
-                                       0,
-                                       0,
-                                       255,
-                                       TRUE);
+    Ex_ObjSetBackgroundImageFromSvgBuf(obj, imgdata.data(), ExARGB(55, 0, 250, 255), 0, 0,
+                                       BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
     Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -5564,119 +4296,34 @@ void test_rollmenu(HWND hWnd)
 {
     HWND   hWndRM = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试卷帘菜单", 0, 0, 500, 500, 0, 0);
     HEXDUI hExDui_RM = Ex_DUIBindWindowEx(
-        hWndRM,
-        0,
+        hWndRM, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_SIZEABLE |
             WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE |
             WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
-        0,
-        OnRollMenuWndMsgProc);
+        0, OnRollMenuWndMsgProc);
     Ex_DUISetLong(hExDui_RM, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    m_hObjRM = Ex_ObjCreateEx(-1,
-                              L"RollMenu",
-                              NULL,
-                              -1,
-                              30,
-                              50,
-                              220,
-                              400,
-                              hExDui_RM,
-                              0,
-                              DT_VCENTER | DT_CENTER,
-                              0,
-                              0,
+    m_hObjRM = Ex_ObjCreateEx(-1, L"RollMenu", NULL, -1, 30, 50, 220, 400, hExDui_RM, 0,
+                              DT_VCENTER | DT_CENTER, 0, 0,
                               NULL);   // DT_LEFT
     Ex_ObjHandleEvent(m_hObjRM, ROLLMENU_EVENT_CLICK, OnRollMenuBtnEvent);
 
-    auto btn = Ex_ObjCreateEx(-1,
-                              L"button",
-                              L"删除分组",
-                              -1,
-                              280,
-                              150,
-                              100,
-                              30,
-                              hExDui_RM,
-                              101,
-                              DT_VCENTER | DT_CENTER,
-                              0,
-                              0,
-                              NULL);
+    auto btn = Ex_ObjCreateEx(-1, L"button", L"删除分组", -1, 280, 150, 100, 30, hExDui_RM, 101,
+                              DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(btn, NM_CLICK, OnRollMenuWndBtnEvent);
-    btn = Ex_ObjCreateEx(-1,
-                         L"button",
-                         L"删除子项",
-                         -1,
-                         280,
-                         200,
-                         100,
-                         30,
-                         hExDui_RM,
-                         102,
-                         DT_VCENTER | DT_CENTER,
-                         0,
-                         0,
-                         NULL);
+    btn = Ex_ObjCreateEx(-1, L"button", L"删除子项", -1, 280, 200, 100, 30, hExDui_RM, 102,
+                         DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(btn, NM_CLICK, OnRollMenuWndBtnEvent);
-    btn = Ex_ObjCreateEx(-1,
-                         L"button",
-                         L"展开分组",
-                         -1,
-                         280,
-                         250,
-                         100,
-                         30,
-                         hExDui_RM,
-                         103,
-                         DT_VCENTER | DT_CENTER,
-                         0,
-                         0,
-                         NULL);
+    btn = Ex_ObjCreateEx(-1, L"button", L"展开分组", -1, 280, 250, 100, 30, hExDui_RM, 103,
+                         DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(btn, NM_CLICK, OnRollMenuWndBtnEvent);
-    btn = Ex_ObjCreateEx(-1,
-                         L"button",
-                         L"收缩分组",
-                         -1,
-                         280,
-                         300,
-                         100,
-                         30,
-                         hExDui_RM,
-                         104,
-                         DT_VCENTER | DT_CENTER,
-                         0,
-                         0,
-                         NULL);
+    btn = Ex_ObjCreateEx(-1, L"button", L"收缩分组", -1, 280, 300, 100, 30, hExDui_RM, 104,
+                         DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(btn, NM_CLICK, OnRollMenuWndBtnEvent);
-    btn = Ex_ObjCreateEx(-1,
-                         L"button",
-                         L"取现行选中子项",
-                         -1,
-                         280,
-                         350,
-                         100,
-                         30,
-                         hExDui_RM,
-                         105,
-                         DT_VCENTER | DT_CENTER,
-                         0,
-                         0,
-                         NULL);
+    btn = Ex_ObjCreateEx(-1, L"button", L"取现行选中子项", -1, 280, 350, 100, 30, hExDui_RM, 105,
+                         DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(btn, NM_CLICK, OnRollMenuWndBtnEvent);
-    btn = Ex_ObjCreateEx(-1,
-                         L"button",
-                         L"置现行选中子项",
-                         -1,
-                         280,
-                         400,
-                         100,
-                         30,
-                         hExDui_RM,
-                         106,
-                         DT_VCENTER | DT_CENTER,
-                         0,
-                         0,
-                         NULL);
+    btn = Ex_ObjCreateEx(-1, L"button", L"置现行选中子项", -1, 280, 400, 100, 30, hExDui_RM, 106,
+                         DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(btn, NM_CLICK, OnRollMenuWndBtnEvent);
 
     m_hImageListRollMenu = _imglist_create(32, 32);
@@ -5790,43 +4437,17 @@ LRESULT CALLBACK OnTrayWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 void test_tray(HWND hWnd)
 {
     HWND hWnd_tray = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试托盘图标", 0, 0, 250, 150, 0, 0);
-    m_hExDui_tray = Ex_DUIBindWindowEx(hWnd_tray,
-                                       0,
+    m_hExDui_tray = Ex_DUIBindWindowEx(hWnd_tray, 0,
                                        WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
                                            WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE |
                                            WINDOW_STYLE_TITLE,
-                                       0,
-                                       OnTrayWndMsgProc);
+                                       0, OnTrayWndMsgProc);
     Ex_DUISetLong(m_hExDui_tray, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    auto button1 = Ex_ObjCreateEx(-1,
-                                  L"button",
-                                  L"设置托盘",
-                                  -1,
-                                  50,
-                                  30,
-                                  120,
-                                  30,
-                                  m_hExDui_tray,
-                                  0,
-                                  DT_VCENTER | DT_CENTER,
-                                  0,
-                                  0,
-                                  NULL);
+    auto button1 = Ex_ObjCreateEx(-1, L"button", L"设置托盘", -1, 50, 30, 120, 30, m_hExDui_tray, 0,
+                                  DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(button1, NM_CLICK, OnTrayButtonEvent);
-    Ex_ObjCreateEx(-1,
-                   L"static",
-                   L"右击托盘图标可以弹出托盘",
-                   -1,
-                   10,
-                   70,
-                   200,
-                   30,
-                   m_hExDui_tray,
-                   0,
-                   DT_VCENTER | DT_CENTER,
-                   0,
-                   0,
-                   NULL);
+    Ex_ObjCreateEx(-1, L"static", L"右击托盘图标可以弹出托盘", -1, 10, 70, 200, 30, m_hExDui_tray,
+                   0, DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_DUIShowWindow(m_hExDui_tray, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -5853,29 +4474,15 @@ LRESULT CALLBACK OnMaskObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 void test_mask(HWND hWnd)
 {
     HWND hWnd_mask   = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试蒙板", 0, 0, 300, 300, 0, 0);
-    auto hExDui_mask = Ex_DUIBindWindowEx(hWnd_mask,
-                                          0,
+    auto hExDui_mask = Ex_DUIBindWindowEx(hWnd_mask, 0,
                                           WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
                                               WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE |
                                               WINDOW_STYLE_TITLE,
-                                          0,
-                                          0);
+                                          0, 0);
     Ex_DUISetLong(hExDui_mask, ENGINE_LONG_CRBKG, ExRGB2ARGB(16711680, 255));
 
-    Ex_ObjCreateEx(-1,
-                   L"static",
-                   L"",
-                   -1,
-                   50,
-                   50,
-                   200,
-                   200,
-                   hExDui_mask,
-                   0,
-                   DT_VCENTER | DT_CENTER,
-                   0,
-                   0,
-                   OnMaskObjMsgProc);
+    Ex_ObjCreateEx(-1, L"static", L"", -1, 50, 50, 200, 200, hExDui_mask, 0, DT_VCENTER | DT_CENTER,
+                   0, 0, OnMaskObjMsgProc);
     Ex_DUIShowWindow(hExDui_mask, SW_SHOWNORMAL, 0, 0, 0);
 }
 
@@ -5900,12 +4507,12 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
         Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_BKG, 0, 0);
     }
     else if (nID == 1040) {
-        auto arr = (EX_POLYGON_ARRAY*)Ex_ObjSendMessage(
-            hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_DATA, 0, 0);
-        auto offsetLeft = (INT)Ex_ObjSendMessage(
-            hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_LEFT_OFFSET, 0, 0);
-        auto offsetTop = (INT)Ex_ObjSendMessage(
-            hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_TOP_OFFSET, 0, 0);
+        auto  arr        = (EX_POLYGON_ARRAY*)Ex_ObjSendMessage(hObj_taggingBoard,
+                                                                TAGGINGBOARD_MESSAGE_GET_DATA, 0, 0);
+        auto  offsetLeft = (INT)Ex_ObjSendMessage(hObj_taggingBoard,
+                                                  TAGGINGBOARD_MESSAGE_GET_IMG_LEFT_OFFSET, 0, 0);
+        auto  offsetTop  = (INT)Ex_ObjSendMessage(hObj_taggingBoard,
+                                                  TAGGINGBOARD_MESSAGE_GET_IMG_TOP_OFFSET, 0, 0);
         float scale;
         auto  scalePtr =
             (LPVOID)Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_SCALE, 0, 0);
@@ -5913,8 +4520,8 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
         // 最后一个是不闭合路径,不需要
         for (int i = 0; i < arr->count - 1; i++) {
             size_t ptrValue = 0;
-            RtlMoveMemory(
-                &ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+            RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
+                          sizeof(size_t));
             EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
             if (ptr->count > 0) {
                 for (int j = 0; j < ptr->count; j++) {
@@ -5922,13 +4529,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
                     RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
                     RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
                     // 缩放图坐标转原图坐标
-                    OUTPUTW(L"原图坐标 arr",
-                            i,
-                            L"index",
-                            j,
-                            L"x",
-                            (x - offsetLeft) * scale,
-                            L"y",
+                    OUTPUTW(L"原图坐标 arr", i, L"index", j, L"x", (x - offsetLeft) * scale, L"y",
                             (y - offsetTop) * scale);
                 }
             }
@@ -5942,10 +4543,10 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
         auto  scalePtr =
             (LPVOID)Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_SCALE, 0, 0);
         RtlMoveMemory(&scale, scalePtr, 4);
-        auto offsetLeft = (INT)Ex_ObjSendMessage(
-            hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_LEFT_OFFSET, 0, 0);
-        auto offsetTop = (INT)Ex_ObjSendMessage(
-            hObj_taggingBoard, TAGGINGBOARD_MESSAGE_GET_IMG_TOP_OFFSET, 0, 0);
+        auto offsetLeft = (INT)Ex_ObjSendMessage(hObj_taggingBoard,
+                                                 TAGGINGBOARD_MESSAGE_GET_IMG_LEFT_OFFSET, 0, 0);
+        auto offsetTop  = (INT)Ex_ObjSendMessage(hObj_taggingBoard,
+                                                 TAGGINGBOARD_MESSAGE_GET_IMG_TOP_OFFSET, 0, 0);
 
         auto      ptr       = (EX_POLYGON*)malloc(sizeof(EX_POLYGON));
         const int size      = 5;
@@ -5967,8 +4568,7 @@ LRESULT CALLBACK OnTaggingButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wP
         arr->polygons   = malloc(sizeof(size_t));
         arr->count      = 0;
         size_t ptrValue = (size_t)ptr;
-        RtlMoveMemory((LPVOID)((size_t)arr->polygons + arr->count * sizeof(size_t)),
-                      &ptrValue,
+        RtlMoveMemory((LPVOID)((size_t)arr->polygons + arr->count * sizeof(size_t)), &ptrValue,
                       sizeof(size_t));
         arr->count = arr->count + 1;
         Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_DATA, 0, (size_t)arr);
@@ -6011,49 +4611,34 @@ LRESULT CALLBACK OnTaggingBoradMouseMove(HEXOBJ hObj, INT nID, INT nCode, WPARAM
 void test_tagging(HWND hWnd)
 {
     HWND hWnd_tagging = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试标注画板", 0, 0, 1200, 900, 0, 0);
-    auto hExDui_tagging = Ex_DUIBindWindowEx(hWnd_tagging,
-                                             0,
+    auto hExDui_tagging = Ex_DUIBindWindowEx(hWnd_tagging, 0,
                                              WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_SIZEABLE |
                                                  WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW |
                                                  WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE,
-                                             0,
-                                             OnTaggingWndMsgProc);
+                                             0, OnTaggingWndMsgProc);
     Ex_DUISetLong(hExDui_tagging, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
-    hObj_taggingBoard = Ex_ObjCreateEx(-1,
-                                       L"TaggingBoard",
-                                       L"",
-                                       -1,
-                                       30,
-                                       30,
-                                       1000,
-                                       800,
-                                       hExDui_tagging,
-                                       0,
-                                       DT_VCENTER | DT_CENTER,
-                                       0,
-                                       0,
-                                       0);
-    auto hObj1        = Ex_ObjCreateEx(
-        -1, L"button", L"开始绘图", -1, 1050, 30, 100, 30, hExDui_tagging, 1010, -1, 0, 0, 0);
-    auto hObj2 = Ex_ObjCreateEx(
-        -1, L"button", L"结束绘图", -1, 1050, 70, 100, 30, hExDui_tagging, 1020, -1, 0, 0, 0);
-    auto hObj3 = Ex_ObjCreateEx(
-        -1, L"button", L"清空绘图", -1, 1050, 110, 100, 30, hExDui_tagging, 1030, -1, 0, 0, 0);
-    auto hObj4 = Ex_ObjCreateEx(
-        -1, L"button", L"取出数据", -1, 1050, 150, 100, 30, hExDui_tagging, 1040, -1, 0, 0, 0);
-    auto hObj5 = Ex_ObjCreateEx(
-        -1, L"button", L"设置数据", -1, 1050, 190, 100, 30, hExDui_tagging, 1050, -1, 0, 0, 0);
-    auto hObj6 = Ex_ObjCreateEx(
-        -1, L"button", L"删除选中路径", -1, 1050, 230, 100, 30, hExDui_tagging, 1060, -1, 0, 0, 0);
+    hObj_taggingBoard = Ex_ObjCreateEx(-1, L"TaggingBoard", L"", -1, 30, 30, 1000, 800,
+                                       hExDui_tagging, 0, DT_VCENTER | DT_CENTER, 0, 0, 0);
+    auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"开始绘图", -1, 1050, 30, 100, 30, hExDui_tagging,
+                                1010, -1, 0, 0, 0);
+    auto hObj2 = Ex_ObjCreateEx(-1, L"button", L"结束绘图", -1, 1050, 70, 100, 30, hExDui_tagging,
+                                1020, -1, 0, 0, 0);
+    auto hObj3 = Ex_ObjCreateEx(-1, L"button", L"清空绘图", -1, 1050, 110, 100, 30, hExDui_tagging,
+                                1030, -1, 0, 0, 0);
+    auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"取出数据", -1, 1050, 150, 100, 30, hExDui_tagging,
+                                1040, -1, 0, 0, 0);
+    auto hObj5 = Ex_ObjCreateEx(-1, L"button", L"设置数据", -1, 1050, 190, 100, 30, hExDui_tagging,
+                                1050, -1, 0, 0, 0);
+    auto hObj6 = Ex_ObjCreateEx(-1, L"button", L"删除选中路径", -1, 1050, 230, 100, 30,
+                                hExDui_tagging, 1060, -1, 0, 0, 0);
 
-    hObj_taggingLabel1 = Ex_ObjCreateEx(
-        -1, L"static", L"x:", -1, 1050, 270, 60, 30, hExDui_tagging, 1070, -1, 0, 0, 0);
-    hObj_taggingLabel2 = Ex_ObjCreateEx(
-        -1, L"static", L"y:", -1, 1120, 270, 60, 30, hExDui_tagging, 1080, -1, 0, 0, 0);
-    auto hObj7 = Ex_ObjCreateEx(
-        -1,
-        L"static",
+    hObj_taggingLabel1 = Ex_ObjCreateEx(-1, L"static", L"x:", -1, 1050, 270, 60, 30, hExDui_tagging,
+                                        1070, -1, 0, 0, 0);
+    hObj_taggingLabel2 = Ex_ObjCreateEx(-1, L"static", L"y:", -1, 1120, 270, 60, 30, hExDui_tagging,
+                                        1080, -1, 0, 0, 0);
+    auto hObj7         = Ex_ObjCreateEx(
+        -1, L"static",
         L"操作提示：\r\n1."
         L"点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以"
         L"闭合路径。 "
@@ -6061,17 +4646,7 @@ void test_tagging(HWND hWnd)
         L"绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3."
         L"点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4."
         L"点击【取出数据】演示打印原图点坐标。\r\n5.按住CTRL键+鼠标滚轮,可以放大缩小",
-        -1,
-        1050,
-        310,
-        130,
-        580,
-        hExDui_tagging,
-        1090,
-        DT_WORDBREAK,
-        0,
-        0,
-        0);
+        -1, 1050, 310, 130, 580, hExDui_tagging, 1090, DT_WORDBREAK, 0, 0, 0);
     Ex_ObjSetFontFromFamily(hObj7, L"微软雅黑", 15, FONT_STYLE_BOLD, FALSE);
     Ex_ObjSetColor(hObj7, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
@@ -6083,8 +4658,8 @@ void test_tagging(HWND hWnd)
     Ex_ObjHandleEvent(hObj6, NM_CLICK, OnTaggingButtonEvent);
 
     Ex_ObjHandleEvent(hObj_taggingBoard, TAGGINGBOARD_EVENT_HITPATH, OnTaggingBoardEvent);
-    Ex_ObjSendMessage(
-        hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_PEN_COLOR, 0, ExARGB(0, 255, 0, 255));
+    Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_PEN_COLOR, 0,
+                      ExARGB(0, 255, 0, 255));
 
     HEXIMAGE img;
     _img_createfromfile(L"res/3.jpeg", &img);
@@ -6108,13 +4683,10 @@ LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         EX_EFFECT_PROPERITY_INFO bindings[] = {
             D2D1_VALUE_TYPE_BINDING(L"Color", &MyEffect::SetColor, &MyEffect::GetColor),
             D2D1_VALUE_TYPE_BINDING(L"Time", &MyEffect::SetTime, &MyEffect::GetTime),
-            D2D1_VALUE_TYPE_BINDING(
-                L"Resolution", &MyEffect::SetResolution, &MyEffect::GetResolution)};
+            D2D1_VALUE_TYPE_BINDING(L"Resolution", &MyEffect::SetResolution,
+                                    &MyEffect::GetResolution)};
 
-        _effect_register(CLSID_MYEFFECT,
-                         pProperityXml.c_str(),
-                         bindings,
-                         ARRAYSIZE(bindings),
+        _effect_register(CLSID_MYEFFECT, pProperityXml.c_str(), bindings, ARRAYSIZE(bindings),
                          MyEffect::CreateEffect);
         HEXEFFECT pEffect = nullptr;
         auto      ret     = _effect_create(CLSID_MYEFFECT, &pEffect);
@@ -6168,28 +4740,14 @@ LRESULT CALLBACK OnEffectObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 void test_effect(HWND hWnd)
 {
     HWND hWnd_effect = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试效果器", 0, 0, 500, 360, 0, 0);
-    auto hExDui_effect = Ex_DUIBindWindowEx(hWnd_effect,
-                                            0,
+    auto hExDui_effect = Ex_DUIBindWindowEx(hWnd_effect, 0,
                                             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
                                                 WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE |
                                                 WINDOW_STYLE_TITLE,
-                                            0,
-                                            0);
+                                            0, 0);
     Ex_DUISetLong(hExDui_effect, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    auto hObj = Ex_ObjCreateEx(-1,
-                               L"static",
-                               L"",
-                               OBJECT_STYLE_VISIBLE,
-                               50,
-                               50,
-                               400,
-                               260,
-                               hExDui_effect,
-                               0,
-                               -1,
-                               0,
-                               0,
-                               OnEffectObjMsgProc);
+    auto hObj = Ex_ObjCreateEx(-1, L"static", L"", OBJECT_STYLE_VISIBLE, 50, 50, 400, 260,
+                               hExDui_effect, 0, -1, 0, 0, OnEffectObjMsgProc);
     Ex_ObjSetTimer(hObj, 1);
     Ex_DUIShowWindow(hExDui_effect, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -6284,14 +4842,8 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
 
                 for (int i = 0; i < pointsCount; i++) {
                     if (i != 0) {
-                        _canvas_drawline(ps.hCanvas,
-                                         hBrushRgn,
-                                         points[i].x,
-                                         points[i].y,
-                                         points[i - 1].x,
-                                         points[i - 1].y,
-                                         1,
-                                         0);
+                        _canvas_drawline(ps.hCanvas, hBrushRgn, points[i].x, points[i].y,
+                                         points[i - 1].x, points[i - 1].y, 1, 0);
                     }
                 }
                 free(points);
@@ -6329,28 +4881,14 @@ void test_pathandrgn(HWND hWnd)
 {
     HWND hWnd_pathandrgn =
         Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试路径与区域", 0, 0, 400, 300, 0, 0);
-    auto hExDui_pathandrgn = Ex_DUIBindWindowEx(hWnd_pathandrgn,
-                                                0,
+    auto hExDui_pathandrgn = Ex_DUIBindWindowEx(hWnd_pathandrgn, 0,
                                                 WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
                                                     WINDOW_STYLE_NOSHADOW |
                                                     WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE,
-                                                0,
-                                                0);
+                                                0, 0);
     Ex_DUISetLong(hExDui_pathandrgn, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    auto hObj = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                               L"static",
-                               L"",
-                               OBJECT_STYLE_VISIBLE,
-                               50,
-                               50,
-                               300,
-                               200,
-                               hExDui_pathandrgn,
-                               0,
-                               -1,
-                               0,
-                               0,
-                               OnPathAndRgnMsgProc);
+    auto hObj = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"", OBJECT_STYLE_VISIBLE, 50,
+                               50, 300, 200, hExDui_pathandrgn, 0, -1, 0, 0, OnPathAndRgnMsgProc);
 
     Ex_DUIShowWindow(hExDui_pathandrgn, SW_SHOWNORMAL, 0, 0, 0);
 }
@@ -6367,8 +4905,8 @@ HEXOBJ m_hObjMediaVLCButton7;
 LRESULT CALLBACK OnMediaVLCBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
     if (hObj == m_hObjMediaVLCButton1) {
-        Ex_ObjSendMessage(
-            m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_PLAY, 0, (LPARAM)L"./res/test.mp4");
+        Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_PLAY, 0,
+                          (LPARAM)L"./res/test.mp4");
         // Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_PLAYFROMURL, 0,
         // (LPARAM)L"https://media.w3.org/2010/05/sintel/trailer.mp4");
     }
@@ -6381,8 +4919,8 @@ LRESULT CALLBACK OnMediaVLCBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPar
         auto totalTime = Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_GET_DURATION, 0, 0);
         auto rate      = Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_GET_RATE, 0, 0);
         auto volume    = Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_GET_VOLUME, 0, 0);
-        OUTPUTW(
-            L"当前时间(ms):", curTime, L"总时间(ms):", totalTime, L"速率:", rate, L"音量:", volume);
+        OUTPUTW(L"当前时间(ms):", curTime, L"总时间(ms):", totalTime, L"速率:", rate, L"音量:",
+                volume);
     }
     else if (hObj == m_hObjMediaVLCButton4) {
         Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_STOP, 0, 0);
@@ -6405,13 +4943,11 @@ void test_vlcPlay(HWND hWnd)
     // 32位必须用cdecl编译才能使用vlc
     HWND hWndmediavlc = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试VLC播放器", 0, 0, 900, 600, 0, 0);
     HEXDUI hExDui_mediavlc = Ex_DUIBindWindowEx(
-        hWndmediavlc,
-        0,
+        hWndmediavlc, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
             WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
-        0,
-        0);
+        0, 0);
     Ex_DUISetLong(hExDui_mediavlc, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     m_hObjMediaVLC = Ex_ObjCreate(L"VLCPlayer", NULL, -1, 50, 50, 800, 500, hExDui_mediavlc);
     m_hObjMediaVLCButton1 = Ex_ObjCreate(L"button", L"播放", -1, 50, 560, 100, 30, hExDui_mediavlc);

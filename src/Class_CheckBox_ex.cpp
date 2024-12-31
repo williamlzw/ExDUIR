@@ -18,14 +18,9 @@ void _checkbox_register()
 
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"checkbox";
-    Ex_ObjRegister(newwzCls,
-                   pClsInfoCheckButton.dwStyle,
-                   pClsInfoCheckButton.dwStyleEx,
-                   pClsInfoCheckButton.dwTextFormat,
-                   NULL,
-                   pClsInfoCheckButton.hCursor,
-                   pClsInfoCheckButton.dwFlags,
-                   _checkbox_proc);
+    Ex_ObjRegister(newwzCls, pClsInfoCheckButton.dwStyle, pClsInfoCheckButton.dwStyleEx,
+                   pClsInfoCheckButton.dwTextFormat, NULL, pClsInfoCheckButton.hCursor,
+                   pClsInfoCheckButton.dwFlags, _checkbox_proc);
 }
 
 LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -79,16 +74,9 @@ void _checkbox_paint(HEXOBJ hObj)
         /* 计算文本尺寸 */
         FLOAT nTextWidth  = NULL;
         FLOAT nTextHeight = NULL;
-        _canvas_calctextsize(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             ps.dwTextFormat,
-                             0,
-                             (FLOAT)ps.uWidth,
-                             (FLOAT)ps.uHeight,
-                             &nTextWidth,
-                             &nTextHeight);
+        _canvas_calctextsize(
+            ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
+            -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
         /* 定义选择框矩形 */
         rcBlock.left   = ps.uWidth - ps.uHeight;
@@ -108,37 +96,18 @@ void _checkbox_paint(HEXOBJ hObj)
         }
         /* 填充矩形和绘制边框 */
         _canvas_fillrect(ps.hCanvas, hBrush, 0, 0, (FLOAT)rcBlock.left, (FLOAT)ps.uHeight);
-        _canvas_drawrect(ps.hCanvas,
-                         hBrush,
-                         0,
-                         0,
-                         (FLOAT)ps.uWidth,
-                         (FLOAT)ps.uHeight,
-                         Ex_Scale(1),
+        _canvas_drawrect(ps.hCanvas, hBrush, 0, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, Ex_Scale(1),
                          D2D1_DASH_STYLE_SOLID);
 
-        _canvas_drawtext(ps.hCanvas,
-                         Ex_ObjGetFont(hObj),
-                         crText,
-                         L"✔",
-                         -1,
-                         DT_CENTER | DT_VCENTER,
-                         (FLOAT)rcBlock.left,
-                         (FLOAT)rcBlock.top,
-                         (FLOAT)rcBlock.right,
+        _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), crText, L"✔", -1, DT_CENTER | DT_VCENTER,
+                         (FLOAT)rcBlock.left, (FLOAT)rcBlock.top, (FLOAT)rcBlock.right,
                          (FLOAT)rcBlock.bottom);
 
         /* 绘制组件文本 */
-        _canvas_drawtext(ps.hCanvas,
-                         Ex_ObjGetFont(hObj),
-                         Ex_ObjGetProp(hObj, CHECKBOX_PROP_TEXT),
-                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                         -1,
-                         DT_CENTER | DT_VCENTER | DT_SINGLELINE,
-                         (FLOAT)ps.rcText.left,
-                         (FLOAT)ps.rcText.top,
-                         (FLOAT)rcBlock.left,
-                         (FLOAT)ps.rcText.bottom);
+        _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetProp(hObj, CHECKBOX_PROP_TEXT),
+                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                         DT_CENTER | DT_VCENTER | DT_SINGLELINE, (FLOAT)ps.rcText.left,
+                         (FLOAT)ps.rcText.top, (FLOAT)rcBlock.left, (FLOAT)ps.rcText.bottom);
         _brush_destroy(hBrush);
         Ex_ObjEndPaint(hObj, &ps);
     }

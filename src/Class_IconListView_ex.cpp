@@ -21,8 +21,7 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         size_t ret = 0;
         if (lParam != 0) {
             ret = Array_AddMember((array_s*)Ex_ObjGetLong(hObj, ICONLISTVIEW_LONG_ITEMARRAY),
-                                  lParam,
-                                  ((EX_ICONLISTVIEW_ITEMINFO*)lParam)->nIndex);
+                                  lParam, ((EX_ICONLISTVIEW_ITEMINFO*)lParam)->nIndex);
         }
         if (ret != 0 && wParam != 0)   // 当插入成功且wParam不为0时重画控件
         {
@@ -108,12 +107,8 @@ void _iconlistview_register()
     m_pfnListView_icon = clsInfo.pfnClsProc;
     Ex_ObjRegister(L"IconListView",
                    OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VISIBLE,
-                   clsInfo.dwStyleEx,
-                   clsInfo.dwTextFormat,
-                   4 * sizeof(size_t),
-                   clsInfo.hCursor,
-                   clsInfo.dwFlags,
-                   _iconlistview_proc);
+                   clsInfo.dwStyleEx, clsInfo.dwTextFormat, 4 * sizeof(size_t), clsInfo.hCursor,
+                   clsInfo.dwFlags, _iconlistview_proc);
 }
 
 EX_ICONLISTVIEW_ITEMINFO* _iconlistview_onarrappend(array_s* pArray, INT nIndex,
@@ -189,16 +184,10 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
         FLOAT nWidthText  = 0;
         FLOAT nHeightText = 0;
         if (pItemInfo->pwzText != 0) {
-            _canvas_calctextsize(cdr->hCanvas,
-                                 Ex_ObjGetFont(hObj),
-                                 pItemInfo->pwzText,
-                                 -1,
-                                 Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT),
-                                 0,
+            _canvas_calctextsize(cdr->hCanvas, Ex_ObjGetFont(hObj), pItemInfo->pwzText, -1,
+                                 Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), 0,
                                  cdr->rcPaint.right - cdr->rcPaint.left,
-                                 cdr->rcPaint.bottom - cdr->rcPaint.top,
-                                 &nWidthText,
-                                 &nHeightText);
+                                 cdr->rcPaint.bottom - cdr->rcPaint.top, &nWidthText, &nHeightText);
         }
         FLOAT nHeightTotal = nHeightIcon + Ex_Scale(3) + nHeightText;
 
@@ -210,10 +199,7 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
         rcIconAndText.bottom = (cdr->rcPaint.top + cdr->rcPaint.bottom + nHeightTotal) / 2;
 
         // 设置剪辑区(防止图标过大、文本过长超出表项)
-        _canvas_cliprect(cdr->hCanvas,
-                         cdr->rcPaint.left,
-                         cdr->rcPaint.top,
-                         cdr->rcPaint.right,
+        _canvas_cliprect(cdr->hCanvas, cdr->rcPaint.left, cdr->rcPaint.top, cdr->rcPaint.right,
                          cdr->rcPaint.bottom);
         LPVOID hBrush = 0;
         if ((cdr->dwStyle & ICONLISTVIEW_STYLE_BUTTON) != 0)   // 如果是按钮状态,则处理背景
@@ -228,12 +214,8 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
                 hBrush = _brush_create(ExRGB2ARGB(16777215, 50));
             }
             if (hBrush != 0) {
-                _canvas_fillrect(cdr->hCanvas,
-                                 hBrush,
-                                 cdr->rcPaint.left,
-                                 cdr->rcPaint.top,
-                                 cdr->rcPaint.right,
-                                 cdr->rcPaint.bottom);
+                _canvas_fillrect(cdr->hCanvas, hBrush, cdr->rcPaint.left, cdr->rcPaint.top,
+                                 cdr->rcPaint.right, cdr->rcPaint.bottom);
                 _brush_destroy(hBrush);
             }
         }
@@ -242,26 +224,16 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
         if (hImageList != 0 &&
             pItemInfo->nImageIndex != 0)   // 列表设置了图片组且当前表象图标索引不为0
         {
-            _imglist_draw(hImageList,
-                          pItemInfo->nImageIndex,
-                          cdr->hCanvas,
-                          rcIconAndText.left,
-                          rcIconAndText.top,
-                          rcIconAndText.right,
-                          rcIconAndText.top + nHeightIcon,
+            _imglist_draw(hImageList, pItemInfo->nImageIndex, cdr->hCanvas, rcIconAndText.left,
+                          rcIconAndText.top, rcIconAndText.right, rcIconAndText.top + nHeightIcon,
                           255);
         }
         if (pItemInfo->pwzText != 0)   // 当前表项有文本
         {
-            _canvas_drawtext(cdr->hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                             pItemInfo->pwzText,
-                             -1,
-                             Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT),
-                             rcIconAndText.left,
-                             rcIconAndText.bottom - nHeightText,
-                             rcIconAndText.right,
+            _canvas_drawtext(cdr->hCanvas, Ex_ObjGetFont(hObj),
+                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pItemInfo->pwzText, -1,
+                             Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), rcIconAndText.left,
+                             rcIconAndText.bottom - nHeightText, rcIconAndText.right,
                              rcIconAndText.bottom);
         }
         _canvas_resetclip(cdr->hCanvas);   // 重置剪辑区

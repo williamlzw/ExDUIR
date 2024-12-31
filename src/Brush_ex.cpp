@@ -68,8 +68,8 @@ HEXBRUSH _brush_createfromcanvas2(HEXCANVAS hCanvas, DWORD alpha)
         bitmapBrushProperties.extendModeX                  = D2D1_EXTEND_MODE_WRAP;
         bitmapBrushProperties.extendModeY                  = D2D1_EXTEND_MODE_WRAP;
         bitmapBrushProperties.interpolationMode = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-        pContext->CreateBitmapBrush(
-            pCanvas->pBitmap_, bitmapBrushProperties, brushProperties, &hBrush);
+        pContext->CreateBitmapBrush(pCanvas->pBitmap_, bitmapBrushProperties, brushProperties,
+                                    &hBrush);
     }
     return (HEXBRUSH)hBrush;
 }
@@ -116,8 +116,8 @@ HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yE
         gradientProperties.endPoint.x   = xEnd;
         gradientProperties.endPoint.y   = yEnd;
         if (gradientStopCollection) {
-            g_Ri.pD2DDeviceContext->CreateLinearGradientBrush(
-                &gradientProperties, NULL, gradientStopCollection, &hBrush);
+            g_Ri.pD2DDeviceContext->CreateLinearGradientBrush(&gradientProperties, NULL,
+                                                              gradientStopCollection, &hBrush);
             gradientStopCollection->Release();
         }
         free(gradientStops);

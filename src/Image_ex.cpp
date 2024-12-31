@@ -54,15 +54,12 @@ IWICBitmap* _wic_convert(IWICBitmapSource* pBitmapSource, BOOL bFreeOld, INT* nE
     IWICFormatConverter* pConverter     = nullptr;
     *nError                             = g_Ri.pWICFactory->CreateFormatConverter(&pConverter);
     if (*nError == 0) {
-        *nError = pConverter->Initialize(pBitmapSource,
-                                         GUID_WICPixelFormat32bppPBGRA,
-                                         WICBitmapDitherTypeNone,
-                                         NULL,
-                                         0.0,
-                                         WICBitmapPaletteTypeCustom);
+        *nError =
+            pConverter->Initialize(pBitmapSource, GUID_WICPixelFormat32bppPBGRA,
+                                   WICBitmapDitherTypeNone, NULL, 0.0, WICBitmapPaletteTypeCustom);
         if (*nError == 0) {
-            *nError = g_Ri.pWICFactory->CreateBitmapFromSource(
-                pConverter, WICBitmapCacheOnDemand, &pBitmapConvert);
+            *nError = g_Ri.pWICFactory->CreateBitmapFromSource(pConverter, WICBitmapCacheOnDemand,
+                                                               &pBitmapConvert);
             if (*nError == 0 && bFreeOld) {
                 pBitmapSource->Release();
             }
@@ -243,10 +240,7 @@ BOOL _img_setpixel(HEXIMAGE hImg, INT x, INT y, EXARGB color)
         EX_BITMAPDATA* pBitmapData = (EX_BITMAPDATA*)Ex_MemAlloc(sizeof(EX_BITMAPDATA));
         if (pBitmapData != 0) {
             RECT rect1 = {x, y, 1, 1};
-            if (_img_lock(hImg,
-                          &rect1,
-                          WICBitmapLockRead | WICBitmapLockWrite,
-                          2498570,
+            if (_img_lock(hImg, &rect1, WICBitmapLockRead | WICBitmapLockWrite, 2498570,
                           pBitmapData))   // PixelFormat32bppARGB
             {
                 BYTE* pByte = new BYTE[4];
@@ -360,13 +354,9 @@ BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE* dstImg)
     INT         height      = __get_int(lpmem, 2 * sizeof(INT));
     INT         len         = width * height * 4;
     IWICBitmap* pBitmapData = nullptr;
-    nError                  = g_Ri.pWICFactory->CreateBitmapFromMemory(width,
-                                                      height,
-                                                      GUID_WICPixelFormat32bppPBGRA,
-                                                      width * 4,
-                                                      len,
-                                                      (BYTE*)((size_t)lpmem + 3 * sizeof(INT)),
-                                                      &pBitmapData);
+    nError                  = g_Ri.pWICFactory->CreateBitmapFromMemory(
+        width, height, GUID_WICPixelFormat32bppPBGRA, width * 4, len,
+        (BYTE*)((size_t)lpmem + 3 * sizeof(INT)), &pBitmapData);
     if (nError == 0) {
         hImg = _img_init(pBitmapData, 0, 1, NULL, &nError);
     }
@@ -444,8 +434,8 @@ BOOL _img_createfromstream(LPSTREAM lpStream, HEXIMAGE* phImg)
     INT                nError   = 0;
     IWICBitmapDecoder* pDecoder = nullptr;
     HEXIMAGE           hImg     = 0;
-    nError                      = g_Ri.pWICFactory->CreateDecoderFromStream(
-        lpStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
+    nError = g_Ri.pWICFactory->CreateDecoderFromStream(lpStream, NULL, WICDecodeMetadataCacheOnLoad,
+                                                       &pDecoder);
     if (nError == 0) {
         hImg = _wic_init_from_decoder(pDecoder, &nError);
     }
@@ -494,8 +484,8 @@ BOOL _img_createfromfile(LPCWSTR lpwzFilename, HEXIMAGE* phImg)
     IWICBitmapDecoder* pDecoder = nullptr;
     HEXIMAGE           hImg     = 0;
     INT                nError   = 0;
-    nError                      = g_Ri.pWICFactory->CreateDecoderFromFilename(
-        lpwzFilename, NULL, 2147483648, WICDecodeMetadataCacheOnLoad, &pDecoder);
+    nError = g_Ri.pWICFactory->CreateDecoderFromFilename(lpwzFilename, NULL, 2147483648,
+                                                         WICDecodeMetadataCacheOnLoad, &pDecoder);
     if (nError == 0) {
         hImg = _wic_init_from_decoder(pDecoder, &nError);
     }
@@ -514,8 +504,8 @@ BOOL _img_copyrect(HEXIMAGE hImg, INT x, INT y, INT width, INT height, HEXIMAGE*
     if (_handle_validate(hImg, HT_IMAGE, (LPVOID*)&pImage, &nError)) {
         IWICBitmapSource* pBitmapSource = pImage->pBitmapSource_;
         IWICBitmap*       pIBitmap      = nullptr;
-        nError                          = g_Ri.pWICFactory->CreateBitmapFromSourceRect(
-            pBitmapSource, x, y, width, height, &pIBitmap);
+        nError = g_Ri.pWICFactory->CreateBitmapFromSourceRect(pBitmapSource, x, y, width, height,
+                                                              &pIBitmap);
         if (nError == 0) {
             ret = _img_init(pIBitmap, 0, 1, NULL, &nError);
         }
@@ -550,8 +540,8 @@ BOOL _img_scale(HEXIMAGE hImg, INT width, INT height, HEXIMAGE* phImg)
         IWICBitmapScaler* pBitmapScaler = nullptr;
         g_Ri.pWICFactory->CreateBitmapScaler(&pBitmapScaler);
         if (pBitmapScaler) {
-            nError = pBitmapScaler->Initialize(
-                pBitmapSource, width, height, WICBitmapInterpolationModeLinear);
+            nError = pBitmapScaler->Initialize(pBitmapSource, width, height,
+                                               WICBitmapInterpolationModeLinear);
             if (nError == 0) {
                 IWICBitmap* pBitmapConvert = _wic_convert(pBitmapScaler, TRUE, &nError);
                 if (nError == 0) {
@@ -818,10 +808,8 @@ BOOL _img_createfromhbitmap(HBITMAP hBitmap, HPALETTE hPalette, BOOL fPreAlpha, 
     IWICBitmap* pBitmap = nullptr;
     HEXIMAGE    hImg    = 0;
     INT         nError  = g_Ri.pWICFactory->CreateBitmapFromHBITMAP(
-        (HBITMAP)hBitmap,
-        (HPALETTE)hPalette,
-        fPreAlpha ? WICBitmapUsePremultipliedAlpha : WICBitmapUseAlpha,
-        &pBitmap);
+        (HBITMAP)hBitmap, (HPALETTE)hPalette,
+        fPreAlpha ? WICBitmapUsePremultipliedAlpha : WICBitmapUseAlpha, &pBitmap);
     if (nError == 0) {
         hImg = _img_init(pBitmap, 0, 1, 0, &nError);
         if (phImg) {
@@ -910,8 +898,8 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
         ID2D1Bitmap1* pBitmap1   = NULL;
         IWICBitmap*   pWICBitmap = NULL;
         // 创建临时位图
-        if (SUCCEEDED(g_Ri.pD2DDeviceContext->CreateBitmap(
-                D2D1::SizeU(nWidth, nHeight), NULL, 0, bp1, &pBitmap1))) {
+        if (SUCCEEDED(g_Ri.pD2DDeviceContext->CreateBitmap(D2D1::SizeU(nWidth, nHeight), NULL, 0,
+                                                           bp1, &pBitmap1))) {
             pCanvas->pContext_->Flush();
             // 从画布位图拷贝
             if (SUCCEEDED(pBitmap1->CopyFromBitmap(NULL, pCanvas->pBitmap_, NULL))) {
@@ -919,11 +907,9 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
                 D2D1_MAPPED_RECT mrc;
                 if (SUCCEEDED(pBitmap1->Map(D2D1_MAP_OPTIONS_READ, &mrc))) {
                     // 创建一个空目标位图
-                    if (SUCCEEDED(g_Ri.pWICFactory->CreateBitmap(nWidth,
-                                                                 nHeight,
-                                                                 GUID_WICPixelFormat32bppPBGRA,
-                                                                 WICBitmapCacheOnDemand,
-                                                                 &pWICBitmap))) {
+                    if (SUCCEEDED(g_Ri.pWICFactory->CreateBitmap(
+                            nWidth, nHeight, GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand,
+                            &pWICBitmap))) {
                         // 锁定位图
                         WICRect         rect    = {0, 0, (INT)nWidth, (INT)nHeight};
                         IWICBitmapLock* pLocker = NULL;
@@ -939,8 +925,8 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
                                 // 拷贝点阵数据到WIC位图中
                                 cbStride = min(cbStride, mrc.pitch);
                                 for (UINT y = 0; y < nHeight; y++) {
-                                    RtlMoveMemory(
-                                        aBits + cbStride * y, mrc.bits + mrc.pitch * y, cbStride);
+                                    RtlMoveMemory(aBits + cbStride * y, mrc.bits + mrc.pitch * y,
+                                                  cbStride);
                                 }
 
                                 // 释放锁
@@ -978,18 +964,15 @@ BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMa
     EX_BITMAPDATA* bdDst = (EX_BITMAPDATA*)Ex_MemAlloc(sizeof(EX_BITMAPDATA));
     HEXIMAGE       hImg;
     _img_copy(hImgDst, &hImg);
-    if (_img_lock(hImg,
-                  NULL,
-                  WICBitmapLockRead | WICBitmapLockWrite,
-                  2498570,
+    if (_img_lock(hImg, NULL, WICBitmapLockRead | WICBitmapLockWrite, 2498570,
                   bdDst))   // PixelFormat32bppARGB
     {
         HEXIMAGE hImgTemp;
         if (_img_scale(hImgSrc, bdDst->width, bdDst->height, &hImgTemp)) {
             EX_BITMAPDATA* bdSrc = (EX_BITMAPDATA*)Ex_MemAlloc(sizeof(EX_BITMAPDATA));
 
-            if (_img_lock(
-                    hImgTemp, NULL, WICBitmapLockRead, 925707, bdSrc))   // PixelFormat32bppARGB
+            if (_img_lock(hImgTemp, NULL, WICBitmapLockRead, 925707,
+                          bdSrc))   // PixelFormat32bppARGB
             {
                 for (int y = 0; y < bdDst->height; y++) {
                     for (int x = 0; x < bdDst->width; x++) {

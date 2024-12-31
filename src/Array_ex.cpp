@@ -88,12 +88,8 @@ LONG_PTR Array_SetEvent(array_s* pArray, INT nEvent, LONG_PTR index1, size_t pvV
     }
     if (nEvent == ARRAY_EVENT_COMPAREMEMBER) {
         if (index2 <= 0 || index2 > nCount) return 0;
-        return ((ArrayComparePROC)lpfnCbk)(pArray,
-                                           index1,
-                                           pvValue,
-                                           index2,
-                                           __get(pData, (index2 - 1) * sizeof(LPVOID)),
-                                           nType,
+        return ((ArrayComparePROC)lpfnCbk)(pArray, index1, pvValue, index2,
+                                           __get(pData, (index2 - 1) * sizeof(LPVOID)), nType,
                                            reasen);
     }
     else {
@@ -336,8 +332,8 @@ void Array_SortProcess(array_s* pArray, BOOL fDesc)
 
 LONG_PTR Array_CompareResult(array_s* pArray, LONG_PTR nIndex, size_t mid)
 {
-    LONG_PTR reta = Array_SetEvent(
-        pArray, ARRAY_EVENT_COMPAREMEMBER, 0, mid, nIndex + 1, ARRAY_COMPARECAUSE_SORT);
+    LONG_PTR reta = Array_SetEvent(pArray, ARRAY_EVENT_COMPAREMEMBER, 0, mid, nIndex + 1,
+                                   ARRAY_COMPARECAUSE_SORT);
     return reta;
 }
 
@@ -357,10 +353,8 @@ size_t Array_Emum(array_s* pArray, LPVOID fun, size_t pvParam, BOOL reverse)
     LPVOID pData  = pArray->lpData_;
     if (reverse) {
         for (INT index = nCount; index >= 1; index--) {
-            if (((ArrayEnumPROC)fun)(pArray,
-                                     index,
-                                     (LPVOID)__get(pData, (index - 1) * sizeof(LPVOID)),
-                                     nType,
+            if (((ArrayEnumPROC)fun)(pArray, index,
+                                     (LPVOID)__get(pData, (index - 1) * sizeof(LPVOID)), nType,
                                      pvParam)) {
                 return index;
             }
@@ -368,10 +362,8 @@ size_t Array_Emum(array_s* pArray, LPVOID fun, size_t pvParam, BOOL reverse)
     }
     else {
         for (INT index = 1; index <= nCount; index++) {
-            if (((ArrayEnumPROC)fun)(pArray,
-                                     index,
-                                     (LPVOID)__get(pData, (index - 1) * sizeof(LPVOID)),
-                                     nType,
+            if (((ArrayEnumPROC)fun)(pArray, index,
+                                     (LPVOID)__get(pData, (index - 1) * sizeof(LPVOID)), nType,
                                      pvParam)) {
                 return index;
             }

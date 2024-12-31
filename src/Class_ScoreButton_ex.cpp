@@ -18,13 +18,8 @@ void _scorebtn_paint(HEXOBJ hObj)
     INT nImageWidth  = 0;
     INT nImageHeight = 0;
     if (hImage != 0) {
-        _canvas_drawimagerect(ps.hCanvas,
-                              hImage,
-                              (FLOAT)ps.rcPaint.left,
-                              (FLOAT)ps.rcPaint.top,
-                              (FLOAT)ps.rcPaint.right,
-                              (FLOAT)ps.rcPaint.bottom,
-                              255);
+        _canvas_drawimagerect(ps.hCanvas, hImage, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top,
+                              (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom, 255);
     }
     Ex_ObjEndPaint(hObj, &ps);
 }
@@ -44,8 +39,8 @@ void _scorebtn_notify_brother(HEXOBJ hObj)
                     Ex_ObjDispatchMessage(hObjTmp, BM_SETCHECK, 1, 0);   // 发送一个取消选中的消息
                 }
                 else {
-                    Ex_ObjSetUIState(
-                        hObjTmp, BM_SETCHECK, FALSE, 0, TRUE);   // 发送一个取消选中的消息
+                    Ex_ObjSetUIState(hObjTmp, BM_SETCHECK, FALSE, 0,
+                                     TRUE);   // 发送一个取消选中的消息
                 }
             }
         }
@@ -115,12 +110,7 @@ LRESULT CALLBACK _scorebtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 void _scorebtn_register()
 {
-    Ex_ObjRegister(L"ScoreButton",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_CENTER | DT_VCENTER | DT_SINGLELINE,
-                   2 * sizeof(size_t),
-                   0,
-                   0,
-                   _scorebtn_proc);
+    Ex_ObjRegister(
+        L"ScoreButton", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
+        DT_CENTER | DT_VCENTER | DT_SINGLELINE, 2 * sizeof(size_t), 0, 0, _scorebtn_proc);
 }

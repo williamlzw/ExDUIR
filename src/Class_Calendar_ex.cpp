@@ -3,14 +3,9 @@
 
 void _calendar_register()
 {
-    Ex_ObjRegister(L"Calendar",
-                   OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                   OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_CENTER | DT_VCENTER,
-                   sizeof(size_t),
-                   LoadCursor(0, IDC_HAND),
-                   CANVAS_FLAG_TEXTANTIALIAS,
-                   _calendar_proc);
+    Ex_ObjRegister(L"Calendar", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
+                   OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, sizeof(size_t),
+                   LoadCursor(0, IDC_HAND), CANVAS_FLAG_TEXTANTIALIAS, _calendar_proc);
 }
 
 time_t _calendar_gettimestamp()
@@ -199,82 +194,27 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         ptr->Items     = Ex_MemAlloc(42 * (20 + sizeof(size_t)));
         ptr->nSohwType = 0;
 
-        HEXOBJ hObj1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                      L"Static",
-                                      L"",
-                                      -1,
-                                      10,
-                                      8,
-                                      80,
-                                      22,
-                                      hObj,
-                                      77701,
-                                      -1,
-                                      (LPARAM)ptr,
-                                      0,
-                                      _calendar_onbuttonproc);
+        HEXOBJ hObj1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22,
+                                      hObj, 77701, -1, (LPARAM)ptr, 0, _calendar_onbuttonproc);
         Ex_ObjSetFontFromFamily(hObj1, 0, 14, -1, FALSE);
-        HEXOBJ hObj2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                      L"Static",
-                                      L"-",
-                                      -1,
-                                      240,
-                                      8,
-                                      30,
-                                      20,
-                                      hObj,
-                                      77702,
-                                      DT_CENTER | DT_VCENTER,
-                                      (LPARAM)ptr,
-                                      0,
-                                      _calendar_onbuttonproc);
+        HEXOBJ hObj2 =
+            Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj,
+                           77702, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
         Ex_ObjSetFontFromFamily(hObj2, 0, 24, -1, FALSE);
-        HEXOBJ hObj3 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                      L"Static",
-                                      L"+",
-                                      -1,
-                                      275,
-                                      8,
-                                      30,
-                                      20,
-                                      hObj,
-                                      77703,
-                                      DT_CENTER | DT_VCENTER,
-                                      (LPARAM)ptr,
-                                      0,
-                                      _calendar_onbuttonproc);
+        HEXOBJ hObj3 =
+            Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj,
+                           77703, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
         Ex_ObjSetFontFromFamily(hObj3, 0, 24, -1, FALSE);
 
-        HEXOBJ hObj4 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                      L"listview",
-                                      NULL,
-                                      OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST,
-                                      10,
-                                      45,
-                                      300,
-                                      267,
-                                      hObj,
-                                      77704,
-                                      -1,
-                                      (LPARAM)ptr,
-                                      0,
-                                      _calendar_onlistproc);
+        HEXOBJ hObj4 =
+            Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL,
+                           OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST, 10, 45, 300, 267,
+                           hObj, 77704, -1, (LPARAM)ptr, 0, _calendar_onlistproc);
         _calendar_init(hObj4, ptr->Year, ptr->Mon);
 
-        HEXOBJ hObj5 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                      L"listview",
-                                      NULL,
-                                      LISTVIEW_STYLE_VERTICALLIST,
-                                      10,
-                                      65,
-                                      300,
-                                      247,
-                                      hObj,
-                                      77705,
-                                      -1,
-                                      (LPARAM)ptr,
-                                      0,
-                                      _calendar_onlistproc);
+        HEXOBJ hObj5 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL,
+                                      LISTVIEW_STYLE_VERTICALLIST, 10, 65, 300, 247, hObj, 77705,
+                                      -1, (LPARAM)ptr, 0, _calendar_onlistproc);
         Ex_ObjShow(hObj5, FALSE);
         Ex_ObjSetFontFromFamily(hObj5, 0, 14, -1, FALSE);
         Ex_ObjSendMessage(hObj5, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
@@ -302,16 +242,10 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     else if (uMsg == WM_PAINT) {
         EX_PAINTSTRUCT ps{0};
         if (Ex_ObjBeginPaint(hObj, &ps)) {
-            _canvas_drawtext(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
+            _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
                              Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             ps.dwTextFormat,
-                             0,
-                             0,
-                             ps.uWidth,
-                             ps.uHeight);
+                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                             ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
             Ex_ObjEndPaint(hObj, &ps);
         }
     }
@@ -429,15 +363,8 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
                 case 6: wzText = L"六"; break;
                 case 7: wzText = L"日"; break;
                 }
-                _canvas_drawtext(ps.hCanvas,
-                                 Ex_ObjGetFont(hObj),
-                                 ExRGB2ARGB(0, 255),
-                                 wzText,
-                                 -1,
-                                 DT_LEFT | DT_VCENTER,
-                                 nLeft,
-                                 0,
-                                 nLeft + 30 * g_Li.DpiX,
+                _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 255), wzText, -1,
+                                 DT_LEFT | DT_VCENTER, nLeft, 0, nLeft + 30 * g_Li.DpiX,
                                  16 * g_Li.DpiX);
             }
         }
@@ -481,11 +408,8 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
                     HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(14120960, 255));
                     EXARGB   crText = -1;
                     if (year == pOwner->Year && mon == pOwner->Mon && Mday == pOwner->Mday) {
-                        _canvas_fillrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 3,
-                                         cd.rcPaint.top + 3,
-                                         cd.rcPaint.right - 3,
+                        _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
+                                         cd.rcPaint.top + 3, cd.rcPaint.right - 3,
                                          cd.rcPaint.bottom - 3);
                     }
                     else {
@@ -498,15 +422,10 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
                     }
                     if (cd.dwState & STATE_HOVER) {
                         //_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
-                        //cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
-                        _canvas_drawrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 1,
-                                         cd.rcPaint.top + 1,
-                                         cd.rcPaint.right - 1,
-                                         cd.rcPaint.bottom - 1,
-                                         1,
-                                         0);
+                        // cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
+                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1,
+                                         cd.rcPaint.top + 1, cd.rcPaint.right - 1,
+                                         cd.rcPaint.bottom - 1, 1, 0);
                     }
                     _brush_destroy(hBrush);
 
@@ -517,16 +436,9 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
                     else {
                         swprintf_s(lpwzText, L"%d\n%s", Mday, (LPCWSTR)Calendar);
                     }
-                    _canvas_drawtext(cd.hCanvas,
-                                     Ex_ObjGetFont(hObj),
-                                     crText,
-                                     lpwzText,
-                                     -1,
-                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK,
-                                     cd.rcPaint.left,
-                                     cd.rcPaint.top,
-                                     cd.rcPaint.right,
-                                     cd.rcPaint.bottom);
+                    _canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), crText, lpwzText, -1,
+                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK, cd.rcPaint.left,
+                                     cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
                 }
                 else if (ni.idFrom == 77705) {
                     LPVOID   lpItems = pOwner->Items;
@@ -539,11 +451,8 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
                     if (pOwner->nSohwType == 1 && cd.iItem == pOwner->Mon &&
                         pOwner->lpYear == pOwner->Year) {
                         crText = -1;
-                        _canvas_fillrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 3,
-                                         cd.rcPaint.top + 3,
-                                         cd.rcPaint.right - 3,
+                        _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
+                                         cd.rcPaint.top + 3, cd.rcPaint.right - 3,
                                          cd.rcPaint.bottom - 3);
                     }
                     if (pOwner->nSohwType == 2) {
@@ -556,31 +465,17 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
                         }
                         if (nYear == pOwner->Year) {
                             crText = -1;
-                            _canvas_fillrect(cd.hCanvas,
-                                             hBrush,
-                                             cd.rcPaint.left + 3,
-                                             cd.rcPaint.top + 3,
-                                             cd.rcPaint.right - 3,
+                            _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
+                                             cd.rcPaint.top + 3, cd.rcPaint.right - 3,
                                              cd.rcPaint.bottom - 3);
                         }
                     }
                     if (cd.dwState & STATE_HOVER) {
-                        _canvas_drawrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left,
-                                         cd.rcPaint.top,
-                                         cd.rcPaint.right,
-                                         cd.rcPaint.bottom,
-                                         1,
-                                         0);
-                        _canvas_drawrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 1,
-                                         cd.rcPaint.top + 1,
-                                         cd.rcPaint.right - 1,
-                                         cd.rcPaint.bottom - 1,
-                                         1,
-                                         0);
+                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
+                                         cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
+                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1,
+                                         cd.rcPaint.top + 1, cd.rcPaint.right - 1,
+                                         cd.rcPaint.bottom - 1, 1, 0);
                     }
                     _brush_destroy(hBrush);
 
@@ -598,16 +493,9 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
                         }
                         swprintf_s(lpwzText, L"%d年", nYear);
                     }
-                    _canvas_drawtext(cd.hCanvas,
-                                     pOwner->hFont,
-                                     crText,
-                                     lpwzText,
-                                     -1,
-                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK,
-                                     cd.rcPaint.left,
-                                     cd.rcPaint.top,
-                                     cd.rcPaint.right,
-                                     cd.rcPaint.bottom);
+                    _canvas_drawtext(cd.hCanvas, pOwner->hFont, crText, lpwzText, -1,
+                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK, cd.rcPaint.left,
+                                     cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
                 }
 
                 *lpResult = 1;

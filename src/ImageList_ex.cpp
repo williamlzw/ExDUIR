@@ -34,13 +34,10 @@ BOOL _imglist_draw(HEXIMAGELIST hImageList, size_t nIndex, HEXCANVAS hCanvas, IN
     if (hImg) {
         INT nWidth  = nRight - nLeft;
         INT nHeight = nBottom - nTop;
-        ret         = _canvas_drawimagerect(hCanvas,
-                                    hImg,
-                                    nLeft + (nWidth - LOWORD(nSize)) / 2,
-                                    nTop + (nHeight - HIWORD(nSize)) / 2,
-                                    nLeft + (nWidth - LOWORD(nSize)) / 2 + LOWORD(nSize),
-                                    nTop + (nHeight - HIWORD(nSize)) / 2 + HIWORD(nSize),
-                                    nAlpha);
+        ret         = _canvas_drawimagerect(hCanvas, hImg, nLeft + (nWidth - LOWORD(nSize)) / 2,
+                                            nTop + (nHeight - HIWORD(nSize)) / 2,
+                                            nLeft + (nWidth - LOWORD(nSize)) / 2 + LOWORD(nSize),
+                                            nTop + (nHeight - HIWORD(nSize)) / 2 + HIWORD(nSize), nAlpha);
     }
     return ret;
 }

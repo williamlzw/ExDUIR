@@ -54,8 +54,8 @@ EXATOM Ex_ObjRegister(LPCWSTR lptszClassName, INT dwStyle, INT dwStyleEx, INT dw
         return 0;
     }
     INT nError = 0;
-    _obj_register(
-        atom, dwStyle, dwStyleEx, dwTextFormat, cbObjExtra, hCursor, pfnObjProc, dwFlags, &nError);
+    _obj_register(atom, dwStyle, dwStyleEx, dwTextFormat, cbObjExtra, hCursor, pfnObjProc, dwFlags,
+                  &nError);
     Ex_SetLastError(nError);
     return atom;
 }
@@ -261,13 +261,8 @@ void _obj_z_set(HEXOBJ hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, UINT flags, 
                 {
                     pObj->dwStyleEx_ =
                         pObj->dwStyleEx_ - (pObj->dwStyleEx_ & OBJECT_STYLE_EX_TOPMOST);
-                    _obj_z_set_before_topmost(objChildFirst,
-                                              pObjChildFirst,
-                                              objChildLast,
-                                              pObjChildLast,
-                                              hObj,
-                                              pObj,
-                                              pParent);
+                    _obj_z_set_before_topmost(objChildFirst, pObjChildFirst, objChildLast,
+                                              pObjChildLast, hObj, pObj, pParent);
                 }
                 else if (hObjInsertAfter == (size_t)HWND_TOPMOST)   // 置顶
                 {
@@ -284,25 +279,15 @@ void _obj_z_set(HEXOBJ hObj, obj_s* pObj, EXHANDLE hObjInsertAfter, UINT flags, 
                         pParent->objChildLast_  = hObj;
                     }
                     else {
-                        _obj_z_set_before_topmost(objChildFirst,
-                                                  pObjChildFirst,
-                                                  objChildLast,
-                                                  pObjChildLast,
-                                                  hObj,
-                                                  pObj,
-                                                  pParent);
+                        _obj_z_set_before_topmost(objChildFirst, pObjChildFirst, objChildLast,
+                                                  pObjChildLast, hObj, pObj, pParent);
                     }
                 }
                 else {
                     // hObjInsertAfter ＝= HWND_BOTTOM  ' 底层
                     if (bTopmost) {
-                        _obj_z_set_before_topmost(objChildFirst,
-                                                  pObjChildFirst,
-                                                  objChildLast,
-                                                  pObjChildLast,
-                                                  hObj,
-                                                  pObj,
-                                                  pParent);
+                        _obj_z_set_before_topmost(objChildFirst, pObjChildFirst, objChildLast,
+                                                  pObjChildLast, hObj, pObj, pParent);
                     }
                     else {
                         pObjChildFirst->objPrev_ = hObj;
@@ -351,16 +336,8 @@ BOOL _obj_autosize(obj_s* pObj, HEXOBJ hObj, INT* width, INT* height)
         FLOAT   w      = 0;
         FLOAT   h      = 0;
         if (ptitle != 0) {
-            _canvas_calctextsize(pObj->canvas_obj_,
-                                 pObj->hFont_,
-                                 ptitle,
-                                 -1,
-                                 pObj->dwTextFormat_,
-                                 NULL,
-                                 iWidth,
-                                 iHeight,
-                                 &w,
-                                 &h);
+            _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, ptitle, -1, pObj->dwTextFormat_,
+                                 NULL, iWidth, iHeight, &w, &h);
         }
         *width  = pObj->t_left_ + pObj->t_right_ + w + Ex_Scale(2);
         *height = pObj->t_top_ + pObj->t_bottom_ + h + Ex_Scale(2);
@@ -579,15 +556,10 @@ void _obj_setchildrenpostion(obj_s* pObj, INT x, INT y)
         pchildObj->w_bottom_ = pchildObj->bottom_;
         OffsetRect((RECT*)((size_t)pchildObj + offsetof(obj_s, w_left_)), x, y);
         if (FLAGS_CHECK(pchildObj->dwFlags_, 32)) {
-            _obj_reset_path(pchildObj,
-                            pchildObj->w_left_,
-                            pchildObj->w_top_,
-                            pchildObj->w_right_,
-                            pchildObj->w_bottom_,
-                            offsetof(obj_s, hPath_Window_));
+            _obj_reset_path(pchildObj, pchildObj->w_left_, pchildObj->w_top_, pchildObj->w_right_,
+                            pchildObj->w_bottom_, offsetof(obj_s, hPath_Window_));
         }
-        _obj_setchildrenpostion(pchildObj,
-                                __get_int(pchildObj, offsetof(obj_s, w_left_)),
+        _obj_setchildrenpostion(pchildObj, __get_int(pchildObj, offsetof(obj_s, w_left_)),
                                 __get_int(pchildObj, offsetof(obj_s, w_top_)));
         objChild = __get_int(pchildObj, offsetof(obj_s, objNext_));
     }
@@ -680,19 +652,17 @@ BOOL _obj_z_compositedcheck(LPVOID prc, EXHANDLE objLast, EXHANDLE objStop, LPVO
         if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE)) {
 
             if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED)) {
-                if (IntersectRect((LPRECT)lpsrcInsert,
-                                  (RECT*)prc,
+                if (IntersectRect((LPRECT)lpsrcInsert, (RECT*)prc,
                                   (RECT*)((size_t)pObj + offsetof(obj_s, w_left_)))) {
                     pObj->dwFlags_  = pObj->dwFlags_ | EOF_BNEEDREDRAW;
                     pObj->d_left_   = pObj->left_;
                     pObj->d_top_    = pObj->top_;
                     pObj->d_right_  = pObj->right_;
                     pObj->d_bottom_ = pObj->bottom_;
-                    OffsetRect((LPRECT)((size_t)pObj + offsetof(obj_s, d_left_)),
-                               (-pObj->left_),
+                    OffsetRect((LPRECT)((size_t)pObj + offsetof(obj_s, d_left_)), (-pObj->left_),
                                (-pObj->top_));
-                    UnionRect(
-                        (LPRECT)prc, (RECT*)prc, (RECT*)((size_t)pObj + offsetof(obj_s, w_left_)));
+                    UnionRect((LPRECT)prc, (RECT*)prc,
+                              (RECT*)((size_t)pObj + offsetof(obj_s, w_left_)));
                 }
             }
         }
@@ -715,8 +685,7 @@ void _obj_compostied_all(HEXOBJ objEntry)
                 pObj->d_top_    = pObj->top_;
                 pObj->d_right_  = pObj->right_;
                 pObj->d_bottom_ = pObj->bottom_;
-                OffsetRect((LPRECT)((size_t)pObj + offsetof(obj_s, d_left_)),
-                           (-pObj->left_),
+                OffsetRect((LPRECT)((size_t)pObj + offsetof(obj_s, d_left_)), (-pObj->left_),
                            (-pObj->top_));
             }
         }
@@ -804,8 +773,8 @@ BOOL _obj_makeupinvalidaterect(wnd_s* pWnd, obj_s* pObj, LPVOID prc)
     INT      nError    = 0;
     obj_s*   ppObj     = nullptr;
     while (_handle_validate(objParent, HT_OBJECT, (LPVOID*)&ppObj, &nError)) {
-        if (!IntersectRect(
-                (LPRECT)prc, (RECT*)prc, (RECT*)((size_t)ppObj + offsetof(obj_s, w_left_)))) {
+        if (!IntersectRect((LPRECT)prc, (RECT*)prc,
+                           (RECT*)((size_t)ppObj + offsetof(obj_s, w_left_)))) {
             return FALSE;
         }
         objParent = ppObj->objParent_;
@@ -836,8 +805,8 @@ void _obj_invalidaterect(obj_s* pObj, RECT* lpRect, INT* nError)
             pObj->d_top_    = pObj->top_;
             pObj->d_right_  = pObj->right_;
             pObj->d_bottom_ = pObj->bottom_;
-            OffsetRect(
-                (LPRECT)((size_t)pObj + offsetof(obj_s, d_left_)), (-pObj->left_), (-pObj->top_));
+            OffsetRect((LPRECT)((size_t)pObj + offsetof(obj_s, d_left_)), (-pObj->left_),
+                       (-pObj->top_));
         }
         else {
             if (IsRectEmpty((RECT*)((size_t)pObj + offsetof(obj_s, d_left_)))) {
@@ -845,8 +814,7 @@ void _obj_invalidaterect(obj_s* pObj, RECT* lpRect, INT* nError)
             }
             else {
                 UnionRect((LPRECT)((size_t)pObj + offsetof(obj_s, d_left_)),
-                          (RECT*)((size_t)pObj + offsetof(obj_s, d_left_)),
-                          lpRect);
+                          (RECT*)((size_t)pObj + offsetof(obj_s, d_left_)), lpRect);
             }
         }
         RtlMoveMemory(pRC, (RECT*)((size_t)pObj + offsetof(obj_s, d_left_)), 16);
@@ -900,8 +868,8 @@ BOOL Ex_ObjSetPadding(HEXOBJ hObj, INT nPaddingType, INT left, INT top, INT righ
         if (FLAGS_CHECK(pObj->dwStyleEx_, OBJECT_STYLE_EX_AUTOSIZE)) {
             FLAGS_DEL(pObj->dwFlags_, EOF_BAUTOSIZED);
             INT nError = 0;
-            _obj_setpos_org(
-                pObj, pObj->hObj_, NULL, 0, 0, 1, 1, SWP_NOMOVE | SWP_NOZORDER, &nError);
+            _obj_setpos_org(pObj, pObj->hObj_, NULL, 0, 0, 1, 1, SWP_NOMOVE | SWP_NOZORDER,
+                            &nError);
         }
         if (fRedraw) {
             nError = 0;
@@ -1221,14 +1189,8 @@ void _obj_reset_path(obj_s* pObj, INT left, INT top, INT right, INT bottom, INT 
     if (_path_create(PATH_FLAG_DISABLESCALE, &path)) {
         if (_path_open(path)) {
             _path_beginfigure2(path, left, top);
-            _path_addroundedrect(path,
-                                 left,
-                                 top,
-                                 right,
-                                 bottom,
-                                 pObj->radius_topleft_,
-                                 pObj->radius_topright_,
-                                 pObj->radius_bottomleft_,
+            _path_addroundedrect(path, left, top, right, bottom, pObj->radius_topleft_,
+                                 pObj->radius_topright_, pObj->radius_bottomleft_,
                                  pObj->radius_bottomright_);
             _path_endfigure(path, TRUE);
             _path_close(path);
@@ -1294,19 +1256,19 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
                      INT height, INT flags, INT* nError)
 {
     //'
-    //SWP_ASNCWINDOWPOS：[异步请求]如果调用进程不拥有窗口，系统会向拥有窗口的线程发出需求。这就防止调用线程在其他线程处理需求的时候发生死锁。
+    // SWP_ASNCWINDOWPOS：[异步请求]如果调用进程不拥有窗口，系统会向拥有窗口的线程发出需求。这就防止调用线程在其他线程处理需求的时候发生死锁。
     //' SWP_DEFERERASE：防止产生WM_SYNCPAINT消息。
     //' SWP_DRAWFRAME：在窗口周围画一个边框（定义在窗口类描述中）。
     //'
-    //SWP_FRAMECHANGED：给窗口发送WM_NCCALCSIZE消息，即使窗口尺寸没有改变也会发送该消息。如果未指定这个标志，只有在改变了窗口尺寸时才发送WM_NCCALCSIZE。
+    // SWP_FRAMECHANGED：给窗口发送WM_NCCALCSIZE消息，即使窗口尺寸没有改变也会发送该消息。如果未指定这个标志，只有在改变了窗口尺寸时才发送WM_NCCALCSIZE。
     //' SWP_HIDEWINDOW;隐藏窗口。
     //'
-    //SWP_NOACTIVATE：不激活窗口。如果未设置标志，则窗口被激活，并被设置到其他最高级窗口或非最高级组的顶部（根据参数hWndlnsertAfter设置）。
+    // SWP_NOACTIVATE：不激活窗口。如果未设置标志，则窗口被激活，并被设置到其他最高级窗口或非最高级组的顶部（根据参数hWndlnsertAfter设置）。
     //'
-    //SWP_NOCOPYBITS：清除客户区的所有内容。如果未设置该标志，客户区的有效内容被保存并且在窗口尺寸更新和重定位后拷贝回客户区。
+    // SWP_NOCOPYBITS：清除客户区的所有内容。如果未设置该标志，客户区的有效内容被保存并且在窗口尺寸更新和重定位后拷贝回客户区。
     //' SWP_NOMOVE：维持当前位置（忽略X和Y参数）。
     //'
-    //SWP_NOREDRAW:不重画改变的内容。适用于客户区和非客户区（包括标题栏和滚动条）和任何由于窗回移动而露出的父窗口的所有部分。如果设置了这个标志，应用程序必须明确地使窗口无效并重画窗口的任何部分和父窗口需要重画的部分。
+    // SWP_NOREDRAW:不重画改变的内容。适用于客户区和非客户区（包括标题栏和滚动条）和任何由于窗回移动而露出的父窗口的所有部分。如果设置了这个标志，应用程序必须明确地使窗口无效并重画窗口的任何部分和父窗口需要重画的部分。
     //' SWP_NOSENDCHANGING：防止窗口接收WM_WINDOWPOSCHANGING消息。
     //' SWP_NOSIZE：维持当前尺寸（忽略cx和Cy参数）。
     //' SWP_NOZORDER：维持当前Z序（忽略hWndlnsertAfter参数）。
@@ -1314,7 +1276,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
     //' SWP_NOREPOSITION；与SWP_NOOWNERZORDER标志相同。
     //' SWP_NOOWNERZORDER：不改变z序中的所有者窗口的位置。
     //'
-    //注意事项：使用SetWindowPos()如果设置了SWP_SHOWWINDOWS或者SWP_HIDEWINDOW，那么窗口将不能被移动和改变大小，我使用时就是设置了SWP_SHOWWINDOW,从而导致不能重绘背景。
+    // 注意事项：使用SetWindowPos()如果设置了SWP_SHOWWINDOWS或者SWP_HIDEWINDOW，那么窗口将不能被移动和改变大小，我使用时就是设置了SWP_SHOWWINDOW,从而导致不能重绘背景。
 
     if (width < 0 && width != OBJECT_POSITION_DEFAULT) {
         width = 0;
@@ -1401,20 +1363,11 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
         // WM_GETMINMAXINFO
         if (fNotify) {
             if (fAsyn) {
-                _obj_sendmessage(hWnd,
-                                 hObj,
-                                 pObj,
-                                 WM_GETMINMAXINFO,
-                                 0,
-                                 (size_t)pObj + offsetof(obj_s, minmax_reserved_1_),
-                                 0);
+                _obj_sendmessage(hWnd, hObj, pObj, WM_GETMINMAXINFO, 0,
+                                 (size_t)pObj + offsetof(obj_s, minmax_reserved_1_), 0);
             }
             else {
-                _obj_baseproc(hWnd,
-                              hObj,
-                              pObj,
-                              WM_GETMINMAXINFO,
-                              0,
+                _obj_baseproc(hWnd, hObj, pObj, WM_GETMINMAXINFO, 0,
                               (size_t)pObj + offsetof(obj_s, minmax_reserved_1_));
             }
         }
@@ -1492,8 +1445,8 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
         rcOld.right  = pObj->w_right_;
         rcOld.bottom = pObj->w_bottom_;
 
-        _obj_updatewindowpostion(
-            pObj, (LPVOID)((size_t)pObj + offsetof(obj_s, w_left_)), (flags & SWP_NOMOVE) == 0);
+        _obj_updatewindowpostion(pObj, (LPVOID)((size_t)pObj + offsetof(obj_s, w_left_)),
+                                 (flags & SWP_NOMOVE) == 0);
         // 更新被修改后的位置信息
         if ((flags & SWP_NOMOVE) == 0) {
             x = np.rgrc[0].left;
@@ -1505,17 +1458,9 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
         }
 
         if (((pObj->dwFlags_ & EOF_BPATHBYROUNDEDRECT) == EOF_BPATHBYROUNDEDRECT)) {
-            _obj_reset_path(pObj,
-                            np.rgrc[2].left,
-                            np.rgrc[2].top,
-                            np.rgrc[2].right,
-                            np.rgrc[2].bottom,
-                            offsetof(obj_s, hPath_Client_));
-            _obj_reset_path(pObj,
-                            pObj->w_left_,
-                            pObj->w_top_,
-                            pObj->w_right_,
-                            pObj->w_bottom_,
+            _obj_reset_path(pObj, np.rgrc[2].left, np.rgrc[2].top, np.rgrc[2].right,
+                            np.rgrc[2].bottom, offsetof(obj_s, hPath_Client_));
+            _obj_reset_path(pObj, pObj->w_left_, pObj->w_top_, pObj->w_right_, pObj->w_bottom_,
                             offsetof(obj_s, hPath_Window_));
         }
 
@@ -1656,24 +1601,12 @@ void _obj_scroll_repostion(HWND hWnd, HEXOBJ hObj, BOOL fDispatch)
         }
 
         if (pVSB != 0) {
-            _obj_scroll_updatepostion(hVSB,
-                                      pVSB,
-                                      TRUE,
-                                      rcClient.left,
-                                      rcClient.top,
-                                      rcClient.right,
-                                      rcClient.bottom,
-                                      fDispatch);
+            _obj_scroll_updatepostion(hVSB, pVSB, TRUE, rcClient.left, rcClient.top, rcClient.right,
+                                      rcClient.bottom, fDispatch);
         }
         if (pHSB != 0) {
-            _obj_scroll_updatepostion(hHSB,
-                                      pHSB,
-                                      FALSE,
-                                      rcClient.left,
-                                      rcClient.top,
-                                      rcClient.right,
-                                      rcClient.bottom,
-                                      fDispatch);
+            _obj_scroll_updatepostion(hHSB, pHSB, FALSE, rcClient.left, rcClient.top,
+                                      rcClient.right, rcClient.bottom, fDispatch);
         }
     }
 }
@@ -1688,8 +1621,8 @@ size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam
             if (!((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED)) {
                 tmp = tmp | SWP_NOREDRAW;
             }
-            _obj_setpos_org(
-                pObj, hObj, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, 0, tmp, &nError);
+            _obj_setpos_org(pObj, hObj, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, 0, tmp,
+                            &nError);
             return 0;
         }
     }
@@ -1697,8 +1630,8 @@ size_t _obj_msgproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam
 
         if (((pObj->dwFlags_ & EOF_BSENDSIZEMOVEMSGS) == EOF_BSENDSIZEMOVEMSGS)) {
             INT tmp = SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE;
-            _obj_setpos_org(
-                pObj, hObj, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, 0, tmp, &nError);
+            _obj_setpos_org(pObj, hObj, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, 0, tmp,
+                            &nError);
             return 0;
         }
     }
@@ -1793,8 +1726,8 @@ LRESULT _obj_dispatchnotify(HWND hWnd, obj_s* pObj, HEXOBJ hObj, INT nID, INT nC
     if (ret == 0) {
         hParent = pObj->objParent_;
         while (_handle_validate(hParent, HT_OBJECT, (LPVOID*)&pParent, &nError)) {
-            ret = _obj_baseproc(
-                hWnd, hParent, pParent, WM_NOTIFY, nID, (size_t)&nmhdr);   // 逐层通知父控件
+            ret = _obj_baseproc(hWnd, hParent, pParent, WM_NOTIFY, nID,
+                                (size_t)&nmhdr);   // 逐层通知父控件
             if (ret != 0) {
                 break;
             }
@@ -2039,8 +1972,8 @@ void _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, IN
     }
     else {
 
-        pObj->canvas_obj_ = _canvas_createfrompwnd(
-            pWnd, rcObj.right - rcObj.left, rcObj.bottom - rcObj.top, flags, nError);
+        pObj->canvas_obj_ = _canvas_createfrompwnd(pWnd, rcObj.right - rcObj.left,
+                                                   rcObj.bottom - rcObj.top, flags, nError);
     }
     // 初始化其它数据
 
@@ -2127,15 +2060,8 @@ void _obj_create_done(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj)
 
     flags      = flags | SWP_EX_NODPISCALE;
     INT nError = 0;
-    _obj_setpos_org(pObj,
-                    hObj,
-                    (size_t)HWND_TOP,
-                    pObj->left_,
-                    pObj->top_,
-                    pObj->right_ - pObj->left_,
-                    pObj->bottom_ - pObj->top_,
-                    flags,
-                    &nError);
+    _obj_setpos_org(pObj, hObj, (size_t)HWND_TOP, pObj->left_, pObj->top_,
+                    pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_, flags, &nError);
     pObj->dwFlags_ = pObj->dwFlags_ | EOF_INITED;
     _obj_invalidaterect(pObj, 0, &nError);
     _obj_baseproc(hWnd, hObj, pObj, WM_SETTEXT, 0, (size_t)(pObj->pstrTitle_));
@@ -2157,23 +2083,8 @@ void _obj_create_scrollbar(HWND hWnd, wnd_s* pWnd, obj_s* pObj, HEXOBJ hObj, HEX
             if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLENOSCROLL) == OBJECT_STYLE_DISABLENOSCROLL)) {
                 style = style | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_DISABLENOSCROLL;
             }
-            _obj_create_proc(&nError,
-                             TRUE,
-                             hTheme,
-                             pSB,
-                             OBJECT_STYLE_EX_TOPMOST,
-                             ATOM_SCROLLBAR,
-                             0,
-                             style,
-                             0,
-                             0,
-                             0,
-                             0,
-                             hObj,
-                             0,
-                             0,
-                             0,
-                             0);
+            _obj_create_proc(&nError, TRUE, hTheme, pSB, OBJECT_STYLE_EX_TOPMOST, ATOM_SCROLLBAR, 0,
+                             style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
             _obj_create_done(hWnd, pWnd, hSb, pSB);
         }
     }
@@ -2189,23 +2100,8 @@ void _obj_create_scrollbar(HWND hWnd, wnd_s* pWnd, obj_s* pObj, HEXOBJ hObj, HEX
             if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLENOSCROLL) == OBJECT_STYLE_DISABLENOSCROLL)) {
                 style = style | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_DISABLENOSCROLL;
             }
-            _obj_create_proc(&nError,
-                             TRUE,
-                             hTheme,
-                             pSB,
-                             OBJECT_STYLE_EX_TOPMOST,
-                             ATOM_SCROLLBAR,
-                             0,
-                             style,
-                             0,
-                             0,
-                             0,
-                             0,
-                             hObj,
-                             0,
-                             0,
-                             0,
-                             0);
+            _obj_create_proc(&nError, TRUE, hTheme, pSB, OBJECT_STYLE_EX_TOPMOST, ATOM_SCROLLBAR, 0,
+                             style, 0, 0, 0, 0, hObj, 0, 0, 0, 0);
             _obj_create_done(hWnd, pWnd, hSb, pSB);
         }
     }
@@ -2225,8 +2121,8 @@ void _obj_theme_load_color_font(wnd_s* pWnd, obj_s* pObj, HEXTHEME hTheme)
     }
     if (pColors != 0)   // 复制颜色信息到本组件
     {
-        RtlMoveMemory(
-            (LPVOID)((size_t)pObj + offsetof(obj_s, crBackground_)), pColors, sizeof(colors_s));
+        RtlMoveMemory((LPVOID)((size_t)pObj + offsetof(obj_s, crBackground_)), pColors,
+                      sizeof(colors_s));
     }
 
     if (hTheme != 0) {
@@ -2246,8 +2142,7 @@ void _obj_theme_load_color_font(wnd_s* pWnd, obj_s* pObj, HEXTHEME hTheme)
                         }
                         if (HashTable_Get(pProp, ATOM_PADDING_TEXT, &dwTmp)) {
                             RtlMoveMemory((LPVOID)((size_t)pObj + offsetof(obj_s, t_left_)),
-                                          (LPVOID)dwTmp,
-                                          16);
+                                          (LPVOID)dwTmp, 16);
                             if (g_Li.DpiX > 1) {
                                 pObj->t_left_   = pObj->t_left_ * g_Li.DpiX;
                                 pObj->t_top_    = pObj->t_top_ * g_Li.DpiX;
@@ -2314,22 +2209,8 @@ HEXOBJ Ex_ObjCreateEx(INT dwStyleEx, LPCWSTR lptszClassName, LPCWSTR lptszObjTit
             hWnd = pWnd->hWnd_;
             hObj = _obj_create_init(hWnd, pWnd, atom, lpfnMsgProc, &pObj, &nError);
             if (hObj != 0) {
-                _obj_create_proc(&nError,
-                                 TRUE,
-                                 hTheme,
-                                 pObj,
-                                 dwStyleEx,
-                                 atom,
-                                 lptszObjTitle,
-                                 dwStyle,
-                                 x,
-                                 y,
-                                 width,
-                                 height,
-                                 hParent,
-                                 nID,
-                                 0,
-                                 lParam,
+                _obj_create_proc(&nError, TRUE, hTheme, pObj, dwStyleEx, atom, lptszObjTitle,
+                                 dwStyle, x, y, width, height, hParent, nID, 0, lParam,
                                  dwTextFormat);
 
                 _obj_create_done(hWnd, pWnd, hObj, pObj);
@@ -2343,8 +2224,8 @@ HEXOBJ Ex_ObjCreateEx(INT dwStyleEx, LPCWSTR lptszClassName, LPCWSTR lptszObjTit
 HEXOBJ Ex_ObjCreate(LPCWSTR lptszClassName, LPCWSTR lptszObjTitle, INT dwStyle, INT x, INT y,
                     INT width, INT height, EXHANDLE hParent)
 {
-    return Ex_ObjCreateEx(
-        -1, lptszClassName, lptszObjTitle, dwStyle, x, y, width, height, hParent, 0, -1, 0, 0, 0);
+    return Ex_ObjCreateEx(-1, lptszClassName, lptszObjTitle, dwStyle, x, y, width, height, hParent,
+                          0, -1, 0, 0, 0);
 }
 
 void _obj_visable(HWND hWnd, HEXOBJ hObj, obj_s* pObj, BOOL fVisable)
@@ -2448,8 +2329,8 @@ BOOL _obj_setfont(obj_s* pObj, HEXFONT hFont, BOOL fredraw)
             if (FLAGS_CHECK(pObj->dwStyleEx_, OBJECT_STYLE_EX_AUTOSIZE)) {
                 FLAGS_DEL(pObj->dwFlags_, EOF_BAUTOSIZED);
                 INT nError = 0;
-                _obj_setpos_org(
-                    pObj, pObj->hObj_, NULL, 0, 0, 1, 1, SWP_NOMOVE | SWP_NOZORDER, &nError);
+                _obj_setpos_org(pObj, pObj->hObj_, NULL, 0, 0, 1, 1, SWP_NOMOVE | SWP_NOZORDER,
+                                &nError);
             }
             result = TRUE;
         }
@@ -2467,9 +2348,9 @@ BOOL Ex_ObjSetFont(HEXOBJ hObj, HEXFONT hFont, BOOL fRedraw)
     INT    nError = 0;
     BOOL   ret    = FALSE;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-        ret = Ex_ObjSendMessage(
-            hObj, WM_SETFONT, hFont, fRedraw);   // 发送消息编辑框才能接收
-                                                 // ret = _obj_setfont(pObj, hFont, fRedraw);
+        ret = Ex_ObjSendMessage(hObj, WM_SETFONT, hFont,
+                                fRedraw);   // 发送消息编辑框才能接收
+                                            // ret = _obj_setfont(pObj, hFont, fRedraw);
     }
     Ex_SetLastError(nError);
     return ret;
@@ -2499,14 +2380,8 @@ void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint)
     if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED)) {
         wnd_s*    pWnd = pObj->pWnd_;
         HEXCANVAS lpdd = pWnd->canvas_display_;
-        _canvas_bitblt(hCanvas,
-                       lpdd,
-                       rcPaint.left,
-                       rcPaint.top,
-                       rcPaint.right,
-                       rcPaint.bottom,
-                       pObj->w_left_ + rcPaint.left,
-                       pObj->w_top_ + rcPaint.top);
+        _canvas_bitblt(hCanvas, lpdd, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom,
+                       pObj->w_left_ + rcPaint.left, pObj->w_top_ + rcPaint.top);
 
         if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_BLUR) == OBJECT_STYLE_EX_BLUR)) {
             fBlur = pObj->fBlur_;
@@ -2515,8 +2390,8 @@ void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint)
         if (crBkg != 0) {
             hBrush = _brush_create(crBkg);
             if (hBrush != 0) {
-                _canvas_fillrect(
-                    hCanvas, hBrush, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom);
+                _canvas_fillrect(hCanvas, hBrush, rcPaint.left, rcPaint.top, rcPaint.right,
+                                 rcPaint.bottom);
                 _brush_destroy(hBrush);
             }
         }
@@ -2543,8 +2418,8 @@ void _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint)
     ps.dwTextFormat   = pObj->dwTextFormat_;
     ps.dwOwnerData    = pObj->dwOwnerData_;
 
-    if (!_obj_baseproc(
-            _obj_gethwnd(pObj), pObj->hObj_, pObj, WM_ERASEBKGND, hCanvas, (size_t)&ps)) {
+    if (!_obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_ERASEBKGND, hCanvas,
+                       (size_t)&ps)) {
         EX_BACKGROUNDIMAGEINFO* bkgimage = pObj->lpBackgroundImage_;
         if (bkgimage != 0) {
             _canvas_drawimagefrombkgimg(hCanvas, bkgimage);
@@ -2610,27 +2485,16 @@ BOOL Ex_ObjBeginPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS)
             lpPS->dwState        = pObj->dwState_;
             lpPS->dwOwnerData    = pObj->dwOwnerData_;
             if (_canvas_begindraw(hCanvas)) {
-                _canvas_cliprect(hCanvas,
-                                 rcPaint.left,
-                                 rcPaint.top,
-                                 rcPaint.right,
+                _canvas_cliprect(hCanvas, rcPaint.left, rcPaint.top, rcPaint.right,
                                  rcPaint.bottom);   // 必须CLIP
                 if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG)) {
-                    _obj_baseproc(pObj->pWnd_->hWnd_,
-                                  hObj,
-                                  pObj,
-                                  WM_EX_PAINTING,
-                                  PAINT_PROGRESS_BEGIN,
-                                  (size_t)lpPS);
+                    _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING,
+                                  PAINT_PROGRESS_BEGIN, (size_t)lpPS);
                 }
                 _obj_drawbackground(pObj, hCanvas, rcPaint);
                 if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG)) {
-                    _obj_baseproc(pObj->pWnd_->hWnd_,
-                                  hObj,
-                                  pObj,
-                                  WM_EX_PAINTING,
-                                  PAINT_PROGRESS_BKG,
-                                  (size_t)lpPS);
+                    _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING,
+                                  PAINT_PROGRESS_BKG, (size_t)lpPS);
                 }
                 ret = TRUE;
             }
@@ -2654,12 +2518,8 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS)
         if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_CUSTOMDRAW) == OBJECT_STYLE_EX_CUSTOMDRAW)) {
             _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, hObj, 0, NM_CUSTOMDRAW, 0, (size_t)lpPS);
             if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG)) {
-                _obj_baseproc(pObj->pWnd_->hWnd_,
-                              hObj,
-                              pObj,
-                              WM_EX_PAINTING,
-                              PAINT_PROGRESS_CUSTOMDRAW,
-                              (size_t)lpPS);
+                _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING,
+                              PAINT_PROGRESS_CUSTOMDRAW, (size_t)lpPS);
             }
         }
         if ((pObj->dwStyle_ & OBJECT_STYLE_BORDER) == OBJECT_STYLE_BORDER) {
@@ -2669,15 +2529,9 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS)
                 _path_create(PATH_FLAG_DISABLESCALE, &hPath);
                 _path_open(hPath);
                 _path_beginfigure2(hPath, pObj->c_left_, pObj->c_top_ + pObj->radius_topleft_);
-                _path_addroundedrect(hPath,
-                                     pObj->c_left_,
-                                     pObj->c_top_,
-                                     pObj->c_right_,
-                                     pObj->c_bottom_,
-                                     pObj->radius_topleft_,
-                                     pObj->radius_topright_,
-                                     pObj->radius_bottomleft_,
-                                     pObj->radius_bottomright_);
+                _path_addroundedrect(hPath, pObj->c_left_, pObj->c_top_, pObj->c_right_,
+                                     pObj->c_bottom_, pObj->radius_topleft_, pObj->radius_topright_,
+                                     pObj->radius_bottomleft_, pObj->radius_bottomright_);
                 _path_endfigure(hPath, TRUE);
                 _path_close(hPath);
                 _canvas_drawpath(hCanvas, hPath, hBrush, Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
@@ -2685,11 +2539,7 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS)
                 _brush_destroy(hBrush);
             }
             if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG)) {
-                _obj_baseproc(pObj->pWnd_->hWnd_,
-                              hObj,
-                              pObj,
-                              WM_EX_PAINTING,
-                              PAINT_PROGRESS_BORDER,
+                _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_BORDER,
                               (size_t)lpPS);
             }
         }
@@ -2711,21 +2561,13 @@ BOOL Ex_ObjEndPaint(HEXOBJ hObj, EX_PAINTSTRUCT* lpPS)
             wcscat_s(wzPostion, L",");
             wcscat_s(wzPostion, wstrBottom);
             HEXFONT F = _font_create();
-            _canvas_drawtext(hCanvas,
-                             F /*pObj->hFont*/,
-                             ExARGB(0, 0, 0, 128),
-                             wzPostion,
-                             -1,
-                             DT_LEFT | DT_TOP | DT_SINGLELINE,
-                             0,
-                             0,
-                             pObj->right_,
-                             pObj->bottom_);
+            _canvas_drawtext(hCanvas, F /*pObj->hFont*/, ExARGB(0, 0, 0, 128), wzPostion, -1,
+                             DT_LEFT | DT_TOP | DT_SINGLELINE, 0, 0, pObj->right_, pObj->bottom_);
             _font_destroy(F);
         }
         if (FLAGS_CHECK(pObj->dwFlags_, EOF_BPAINTINGMSG)) {
-            _obj_baseproc(
-                pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_END, (size_t)lpPS);
+            _obj_baseproc(pObj->pWnd_->hWnd_, hObj, pObj, WM_EX_PAINTING, PAINT_PROGRESS_END,
+                          (size_t)lpPS);
         }
         _canvas_resetclip(hCanvas);
         FLOAT fHue = pObj->fHUE_;
@@ -2930,8 +2772,8 @@ BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO* lpBackgro
         }
         else {
             if (!IsBadReadPtr(pObj->lpBackgroundImage_, sizeof(EX_BACKGROUNDIMAGEINFO))) {
-                RtlMoveMemory(
-                    lpBackgroundImage, pObj->lpBackgroundImage_, sizeof(EX_BACKGROUNDIMAGEINFO));
+                RtlMoveMemory(lpBackgroundImage, pObj->lpBackgroundImage_,
+                              sizeof(EX_BACKGROUNDIMAGEINFO));
             }
             else {
                 nError = ERROR_EX_MEMORY_BADPTR;
@@ -2984,10 +2826,8 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, LPVOID lpImage, INT dwImag
         HEXIMAGE hImg = 0;
         _img_createfrommemory(lpImage, dwImageLen, &hImg);
         if (hImg != 0) {
-            LPVOID lpBI = _struct_createfromaddr(pObj,
-                                                 offsetof(obj_base, lpBackgroundImage_),
-                                                 sizeof(EX_BACKGROUNDIMAGEINFO),
-                                                 nError);
+            LPVOID lpBI = _struct_createfromaddr(pObj, offsetof(obj_base, lpBackgroundImage_),
+                                                 sizeof(EX_BACKGROUNDIMAGEINFO), nError);
             if (lpBI != 0) {
                 ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwFlags  = dwFlags;
                 ((EX_BACKGROUNDIMAGEINFO*)lpBI)->hImage   = hImg;
@@ -3012,9 +2852,7 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, LPVOID lpImage, INT dwImag
                         ((EX_BACKGROUNDIMAGEINFO*)lpBI)->lpDelay  = lpDelay2;
                         ((EX_BACKGROUNDIMAGEINFO*)lpBI)->maxFrame = nFrames;
                         if ((dwFlags & BACKGROUND_FLAG_PLAYIMAGE) == BACKGROUND_FLAG_PLAYIMAGE) {
-                            SetTimer(hWnd,
-                                     ((size_t)pObj + TIMER_BKG),
-                                     lpDelay2[0] * 10,
+                            SetTimer(hWnd, ((size_t)pObj + TIMER_BKG), lpDelay2[0] * 10,
                                      _obj_backgroundimage_timer);
                         }
                     }
@@ -3052,17 +2890,8 @@ BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen
     BOOL   bObj   = FALSE;
     INT    nError = 0;
     if (_wnd_getfromhandle(handle, &hWnd, NULL, &pObj, &bObj, &nError)) {
-        if (_obj_backgroundimage_set(hWnd,
-                                     pObj,
-                                     lpImage,
-                                     dwImageLen,
-                                     x,
-                                     y,
-                                     dwRepeat,
-                                     lpGrid,
-                                     dwFlags,
-                                     dwAlpha,
-                                     &nError)) {
+        if (_obj_backgroundimage_set(hWnd, pObj, lpImage, dwImageLen, x, y, dwRepeat, lpGrid,
+                                     dwFlags, dwAlpha, &nError)) {
             if (bObj) {
                 nError = 0;
                 _obj_invalidaterect(pObj, 0, &nError);
@@ -3187,15 +3016,8 @@ void _obj_setradius(HEXOBJ hObj, obj_s* pObj, FLOAT topleft, FLOAT topright, FLO
         if (fUpdate) {
             flags |= SWP_EX_UPDATEOBJECT;
         }
-        _obj_setpos_org(pObj,
-                        hObj,
-                        0,
-                        OBJECT_POSITION_DEFAULT,
-                        OBJECT_POSITION_DEFAULT,
-                        OBJECT_POSITION_DEFAULT,
-                        OBJECT_POSITION_DEFAULT,
-                        flags,
-                        nError);
+        _obj_setpos_org(pObj, hObj, 0, OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT,
+                        OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT, flags, nError);
     }
 }
 
@@ -3330,9 +3152,7 @@ void _obj_tooltips_popup(wnd_s* pWnd, LPCWSTR lpTitle, LPCWSTR lpText, INT x, IN
             _obj_tooltips_popup_func(hWnd, 0, (size_t)pWnd + TIMER_TOOLTIPS_POPUP, 0);
         }
         else {
-            SetTimer(hWnd,
-                     (size_t)pWnd + TIMER_TOOLTIPS_POPUP,
-                     g_Li.dwClickTime / 2,
+            SetTimer(hWnd, (size_t)pWnd + TIMER_TOOLTIPS_POPUP, g_Li.dwClickTime / 2,
                      _obj_tooltips_popup_func);
         }
     }
@@ -3694,18 +3514,18 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
             EX_CLASSINFO* pCls   = pObj->pCls_;
             SHORT         zDelta = (SHORT)HIWORD(wParam);
             if (pCls->atomName == ATOM_SCROLLBAR) {
-                _scrollbar_parentnotify(
-                    hWnd, pObj, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, hObj, 0, TRUE);
+                _scrollbar_parentnotify(hWnd, pObj, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, hObj, 0,
+                                        TRUE);
                 return 1;
             }
             else if (((pObj->dwStyle_ & OBJECT_STYLE_VSCROLL) == OBJECT_STYLE_VSCROLL)) {
-                _obj_baseproc(
-                    hWnd, hObj, pObj, WM_VSCROLL, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, 0);
+                _obj_baseproc(hWnd, hObj, pObj, WM_VSCROLL, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN,
+                              0);
                 return 1;
             }
             else if (((pObj->dwStyle_ & OBJECT_STYLE_HSCROLL) == OBJECT_STYLE_HSCROLL)) {
-                _obj_baseproc(
-                    hWnd, hObj, pObj, WM_HSCROLL, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN, 0);
+                _obj_baseproc(hWnd, hObj, pObj, WM_HSCROLL, zDelta > 0 ? SB_LINEUP : SB_LINEDOWN,
+                              0);
                 return 1;
             }
         }
@@ -3765,8 +3585,8 @@ INT Ex_ObjScrollSetPos(HEXOBJ hObj, INT nBar, INT nPos, BOOL bRedraw)
         HEXOBJ hSB = _scrollbar_getscroll(pObj, nBar);
         obj_s* pSB = nullptr;
         if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError)) {
-            ret = _scrollbar_realsetinfo(
-                _obj_gethwnd(pSB), hSB, pSB, SIF_POS, 0, 0, 0, nPos, bRedraw);
+            ret = _scrollbar_realsetinfo(_obj_gethwnd(pSB), hSB, pSB, SIF_POS, 0, 0, 0, nPos,
+                                         bRedraw);
         }
     }
     Ex_SetLastError(nError);
@@ -3783,8 +3603,8 @@ INT Ex_ObjScrollSetInfo(HEXOBJ hObj, INT nBar, INT Mask, INT nMin, INT nMax, INT
         HEXOBJ hSB = _scrollbar_getscroll(pObj, nBar);
         obj_s* pSB = nullptr;
         if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError)) {
-            ret = _scrollbar_realsetinfo(
-                _obj_gethwnd(pSB), hSB, pSB, Mask, nMin, nMax, nPage, nPos, bRedraw);
+            ret = _scrollbar_realsetinfo(_obj_gethwnd(pSB), hSB, pSB, Mask, nMin, nMax, nPage, nPos,
+                                         bRedraw);
         }
     }
     Ex_SetLastError(nError);
@@ -3800,8 +3620,8 @@ INT Ex_ObjScrollSetRange(HEXOBJ hObj, INT nBar, INT nMin, INT nMax, BOOL bRedraw
         HEXOBJ hSB = _scrollbar_getscroll(pObj, nBar);
         obj_s* pSB = nullptr;
         if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError)) {
-            ret = _scrollbar_realsetinfo(
-                _obj_gethwnd(pSB), hSB, pSB, SIF_RANGE, nMin, nMax, 0, 0, bRedraw);
+            ret = _scrollbar_realsetinfo(_obj_gethwnd(pSB), hSB, pSB, SIF_RANGE, nMin, nMax, 0, 0,
+                                         bRedraw);
         }
     }
     Ex_SetLastError(nError);
@@ -4127,8 +3947,7 @@ LONG_PTR _obj_setextralong(obj_s* pObj, INT nIndex, LONG_PTR dwNewLong)
 {
     EX_ASSERT(pObj, L"_obj_getextralong: error pObj: %ld", pObj);
     EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra,
-              L"_obj_getextralong: error index: %ld",
-              nIndex);
+              L"_obj_getextralong: error index: %ld", nIndex);
 
     LONG_PTR origin;
     origin                   = pObj->extraData_[nIndex];
@@ -4141,9 +3960,7 @@ LONG_PTR _obj_getextralong(obj_s* pObj, INT nIndex)
 {
     EX_ASSERT(pObj, L"_obj_getextralong: error pObj: %ld", pObj);
     EX_ASSERT(nIndex >= 0 && nIndex * sizeof(LPVOID) < pObj->pCls_->cbObjExtra,
-              L"_obj_getextralong: error index: %ld,%d,%d",
-              nIndex,
-              pObj->pCls_->cbObjExtra,
+              L"_obj_getextralong: error index: %ld,%d,%d", nIndex, pObj->pCls_->cbObjExtra,
               pObj->pCls_->atomName);
     return pObj->extraData_[nIndex];
 }
@@ -4228,13 +4045,8 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                     else {
                         pObj->objParent_ = 0;
                     }
-                    _obj_setpos_org(pObj,
-                                    pObj->hObj_,
-                                    0,
-                                    pObj->left_,
-                                    pObj->top_,
-                                    pObj->right_ - pObj->left_,
-                                    pObj->bottom_ - pObj->top_,
+                    _obj_setpos_org(pObj, pObj->hObj_, 0, pObj->left_, pObj->top_,
+                                    pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_,
                                     SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS |
                                         SWP_FRAMECHANGED | OBJECT_POSITION_DEFAULT,
                                     &nError);
@@ -4245,8 +4057,8 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
             {
                 EXHANDLE  Parent  = 0;
                 obj_base* pParnet = nullptr;
-                Ex_ObjSendMessage(
-                    hObj, WM_SETPARENTBEFORE, 0, SendhParent);   // 通知组件父句柄即将改变
+                Ex_ObjSendMessage(hObj, WM_SETPARENTBEFORE, 0,
+                                  SendhParent);   // 通知组件父句柄即将改变
                 {
                     // Clean EventHandler
                     EX_HASHTABLE*       hTableEvent = pWnd->hTableEvent_;
@@ -4296,11 +4108,9 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                     pObj->canvas_obj_ = _canvas_createfrompwnd(pWnd2, 1, 1, flags, &nError);
                 }
                 else {
-                    pObj->canvas_obj_ = _canvas_createfrompwnd(pWnd2,
-                                                               pObj->right_ - pObj->left_,
-                                                               pObj->bottom_ - pObj->top_,
-                                                               flags,
-                                                               &nError);
+                    pObj->canvas_obj_ =
+                        _canvas_createfrompwnd(pWnd2, pObj->right_ - pObj->left_,
+                                               pObj->bottom_ - pObj->top_, flags, &nError);
                 }
                 if (isObj == FALSE)   // 不是obj组件,则为窗口,则置父句柄为0
                 {
@@ -4334,9 +4144,7 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                 }
                 _obj_create_scrollbar(pWnd2->hWnd_, pWnd2, pObj, hObj, pObj->hTheme_);   //-------
                 Ex_ObjSendMessage(
-                    hObj,
-                    WM_SETPARENTAFTER,
-                    0,
+                    hObj, WM_SETPARENTAFTER, 0,
                     SendhParent);   // 通知组件父句柄改变了,如果组件有(存储)子组件也需要修改
                 if (isObj) {
                     _obj_z_clear(hObj, pObj, &Parent, &pParnet);
@@ -4347,10 +4155,8 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                 if (dwTmp != 0) {
                     if (dwTmp->lpDelay && dwTmp->maxFrame > 1)   // 恢复动图
                     {
-                        SetTimer(pWnd2->hWnd_,
-                                 ((size_t)pObj + TIMER_BKG),
-                                 ((INT*)dwTmp->lpDelay)[0] * 10,
-                                 _obj_backgroundimage_timer);
+                        SetTimer(pWnd2->hWnd_, ((size_t)pObj + TIMER_BKG),
+                                 ((INT*)dwTmp->lpDelay)[0] * 10, _obj_backgroundimage_timer);
                     }
                 }
                 InvalidateRect(pWnd2->hWnd_, 0, 1);
@@ -4541,10 +4347,8 @@ BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, CHAR* svgBuf, EXARGB co
         HEXIMAGE hImg = 0;
         _img_createfromsvgbuf(svgBuf, color, &hImg);
         if (hImg != 0) {
-            LPVOID lpBI = _struct_createfromaddr(pObj,
-                                                 offsetof(obj_base, lpBackgroundImage_),
-                                                 sizeof(EX_BACKGROUNDIMAGEINFO),
-                                                 nError);
+            LPVOID lpBI = _struct_createfromaddr(pObj, offsetof(obj_base, lpBackgroundImage_),
+                                                 sizeof(EX_BACKGROUNDIMAGEINFO), nError);
             if (lpBI != 0) {
                 ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwFlags  = dwFlags;
                 ((EX_BACKGROUNDIMAGEINFO*)lpBI)->hImage   = hImg;
@@ -4569,9 +4373,7 @@ BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, CHAR* svgBuf, EXARGB co
                         ((EX_BACKGROUNDIMAGEINFO*)lpBI)->lpDelay  = lpDelay2;
                         ((EX_BACKGROUNDIMAGEINFO*)lpBI)->maxFrame = nFrames;
                         if ((dwFlags & BACKGROUND_FLAG_PLAYIMAGE) == BACKGROUND_FLAG_PLAYIMAGE) {
-                            SetTimer(hWnd,
-                                     ((size_t)pObj + TIMER_BKG),
-                                     lpDelay2[0] * 10,
+                            SetTimer(hWnd, ((size_t)pObj + TIMER_BKG), lpDelay2[0] * 10,
                                      _obj_backgroundimage_timer);
                         }
                     }
@@ -4596,8 +4398,8 @@ BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf, EXARGB co
     BOOL   bObj   = FALSE;
     INT    nError = 0;
     if (_wnd_getfromhandle(handle, &hWnd, NULL, &pObj, &bObj, &nError)) {
-        if (_obj_backgroundimage_setsvg(
-                hWnd, pObj, svgBuf, color, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, &nError)) {
+        if (_obj_backgroundimage_setsvg(hWnd, pObj, svgBuf, color, x, y, dwRepeat, lpGrid, dwFlags,
+                                        dwAlpha, &nError)) {
             if (bObj) {
                 nError = 0;
                 _obj_invalidaterect(pObj, 0, &nError);

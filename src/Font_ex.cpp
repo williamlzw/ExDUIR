@@ -92,14 +92,10 @@ HEXFONT _font_createfromlogfont_ex(LOGFONTW* lpLogfont, INT flags)
             if (lfItalic != 0) {
                 lfItalic = 2;
             }
-            g_Ri.pDWriteFactory->CreateTextFormat(pFont->font_.lfFaceName,
-                                                  NULL,
-                                                  (DWRITE_FONT_WEIGHT)pFont->font_.lfWeight,
-                                                  (DWRITE_FONT_STYLE)lfItalic,
-                                                  DWRITE_FONT_STRETCH_NORMAL,
-                                                  (FLOAT)(-pFont->font_.lfHeight),
-                                                  (WCHAR*)g_Ri.pLocaleName,
-                                                  &pFont->pObj_);
+            g_Ri.pDWriteFactory->CreateTextFormat(
+                pFont->font_.lfFaceName, NULL, (DWRITE_FONT_WEIGHT)pFont->font_.lfWeight,
+                (DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
+                (FLOAT)(-pFont->font_.lfHeight), (WCHAR*)g_Ri.pLocaleName, &pFont->pObj_);
         }
         else {
             hFont = 0;
@@ -176,14 +172,10 @@ HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFont
                 WCHAR* fontName = new WCHAR[len]();
                 names->GetString(0, fontName, len);
                 g_Ri.pDWriteFactory->CreateTextFormat(
-                    fontName,
-                    pFont->m_fontCollection,
-                    DWRITE_FONT_WEIGHT_NORMAL,
-                    DWRITE_FONT_STYLE_NORMAL,
-                    DWRITE_FONT_STRETCH_NORMAL,
+                    fontName, pFont->m_fontCollection, DWRITE_FONT_WEIGHT_NORMAL,
+                    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
                     dwFontSize == -1 ? abs(g_Li.lpLogFontDefault->lfHeight) : dwFontSize,
-                    (WCHAR*)g_Ri.pLocaleName,
-                    &pFont->pObj_);
+                    (WCHAR*)g_Ri.pLocaleName, &pFont->pObj_);
                 fontFamily->Release();
                 names->Release();
             }

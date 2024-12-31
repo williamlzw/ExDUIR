@@ -25,8 +25,8 @@ void _bin_uncompress(LPVOID lpData, size_t dwSize, LPVOID lpKey, size_t dwLen, L
                 g_Ri.pWICFactory->CreateStream(&pIWICStream);
                 pIWICStream->InitializeFromIStream(lpStream);
                 IWICBitmapDecoder* pDecoder = nullptr;
-                g_Ri.pWICFactory->CreateDecoderFromStream(
-                    pIWICStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
+                g_Ri.pWICFactory->CreateDecoderFromStream(pIWICStream, NULL,
+                                                          WICDecodeMetadataCacheOnLoad, &pDecoder);
                 IWICBitmapFrameDecode* pFrame = nullptr;
                 pDecoder->GetFrame(0, &pFrame);
                 UINT w, h;

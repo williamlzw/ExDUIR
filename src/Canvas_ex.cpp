@@ -35,26 +35,21 @@ public:
             ID2D1GeometrySink* pSink = nullptr;
             hr                       = pPathGeometry->Open(&pSink);
             if (pSink) {
-                hr = glyphRun->fontFace->GetGlyphRunOutline(glyphRun->fontEmSize,
-                                                            glyphRun->glyphIndices,
-                                                            glyphRun->glyphAdvances,
-                                                            glyphRun->glyphOffsets,
-                                                            glyphRun->glyphCount,
-                                                            glyphRun->isSideways,
-                                                            glyphRun->bidiLevel % 2,
-                                                            pSink);
+                hr = glyphRun->fontFace->GetGlyphRunOutline(
+                    glyphRun->fontEmSize, glyphRun->glyphIndices, glyphRun->glyphAdvances,
+                    glyphRun->glyphOffsets, glyphRun->glyphCount, glyphRun->isSideways,
+                    glyphRun->bidiLevel % 2, pSink);
                 hr = pSink->Close();
 
                 ID2D1TransformedGeometry* pTransformedGeometry = nullptr;
                 hr = g_Ri.pD2Dfactory->CreateTransformedGeometry(
-                    pPathGeometry,
-                    D2D1::Matrix3x2F::Translation(baselineOriginX, baselineOriginY),
+                    pPathGeometry, D2D1::Matrix3x2F::Translation(baselineOriginX, baselineOriginY),
                     &pTransformedGeometry);
                 if (pTransformedGeometry) {
                     // 绘制文字描边部分
                     if (m_pTextOutlineBrush)
-                        m_pRenderTarget->DrawGeometry(
-                            pTransformedGeometry, m_pTextOutlineBrush, m_fStrokeWidth);
+                        m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush,
+                                                      m_fStrokeWidth);
                     // 绘制文字填充部分
                     if (m_pTextBodyBrush)
                         m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
@@ -71,9 +66,9 @@ public:
     (void* clientDrawingContext, FLOAT baselineOriginX, FLOAT baselineOriginY,
      DWRITE_UNDERLINE const* underline, IUnknown* clientDrawingEffect)
     {
-        HRESULT     hr   = S_OK;
-        D2D1_RECT_F rect = D2D1::RectF(
-            0, underline->offset, underline->width, underline->offset + underline->thickness);
+        HRESULT                 hr   = S_OK;
+        D2D1_RECT_F             rect = D2D1::RectF(0, underline->offset, underline->width,
+                                                   underline->offset + underline->thickness);
         ID2D1RectangleGeometry* pRectangleGeometry = nullptr;
         hr = g_Ri.pD2Dfactory->CreateRectangleGeometry(&rect, &pRectangleGeometry);
         if (pRectangleGeometry) {
@@ -87,8 +82,8 @@ public:
             if (pTransformedGeometry) {
                 // 绘制文字下划线描边部分
                 if (m_pTextOutlineBrush)
-                    m_pRenderTarget->DrawGeometry(
-                        pTransformedGeometry, m_pTextOutlineBrush, m_fStrokeWidth);
+                    m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush,
+                                                  m_fStrokeWidth);
                 // 绘制文字下划线填充部分
                 if (m_pTextBodyBrush)
                     m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
@@ -104,11 +99,9 @@ public:
     (void* clientDrawingContext, FLOAT baselineOriginX, FLOAT baselineOriginY,
      DWRITE_STRIKETHROUGH const* strikethrough, IUnknown* clientDrawingEffect)
     {
-        HRESULT                 hr                 = S_OK;
-        D2D1_RECT_F             rect               = D2D1::RectF(0,
-                                       strikethrough->offset,
-                                       strikethrough->width,
-                                       strikethrough->offset + strikethrough->thickness);
+        HRESULT                 hr   = S_OK;
+        D2D1_RECT_F             rect = D2D1::RectF(0, strikethrough->offset, strikethrough->width,
+                                                   strikethrough->offset + strikethrough->thickness);
         ID2D1RectangleGeometry* pRectangleGeometry = nullptr;
         hr = g_Ri.pD2Dfactory->CreateRectangleGeometry(&rect, &pRectangleGeometry);
         if (pRectangleGeometry) {
@@ -122,8 +115,8 @@ public:
             if (pTransformedGeometry) {
                 // 绘制文字删除线描边部分
                 if (m_pTextOutlineBrush)
-                    m_pRenderTarget->DrawGeometry(
-                        pTransformedGeometry, m_pTextOutlineBrush, m_fStrokeWidth);
+                    m_pRenderTarget->DrawGeometry(pTransformedGeometry, m_pTextOutlineBrush,
+                                                  m_fStrokeWidth);
                 // 绘制文字删除线填充部分
                 if (m_pTextBodyBrush)
                     m_pRenderTarget->FillGeometry(pTransformedGeometry, m_pTextBodyBrush);
@@ -203,23 +196,12 @@ BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrTex
                 if (bottom > top && right > left) {
                     FLOAT              iWidth, iHeight;
                     IDWriteTextLayout* pLayout = nullptr;
-                    if (_canvas_calctextsize_ex(pCanvas,
-                                                pFont,
-                                                lpwzText,
-                                                dwLen,
-                                                dwDTFormat,
-                                                lParam,
-                                                right - left,
-                                                bottom - top,
-                                                &iWidth,
-                                                &iHeight,
-                                                &pLayout,
-                                                &nError)) {
+                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                                                right - left, bottom - top, &iWidth, &iHeight,
+                                                &pLayout, &nError)) {
                         CustomTextRenderer* m_pTextRenderer =
-                            new CustomTextRenderer(pCanvas->pContext_,
-                                                   (ID2D1Brush*)hrText,
-                                                   (ID2D1Brush*)hrShadom,
-                                                   iGlowsize);
+                            new CustomTextRenderer(pCanvas->pContext_, (ID2D1Brush*)hrText,
+                                                   (ID2D1Brush*)hrShadom, iGlowsize);
                         ((IDWriteTextLayout*)pLayout)->Draw(nullptr, m_pTextRenderer, left, top);
                         delete m_pTextRenderer;
                         nError = 0;
@@ -352,11 +334,8 @@ BOOL _canvas_resize(HEXCANVAS hCanvas, INT width, INT height)
 void _canvas_init(INT* nError)
 {
     BOOL bDX = FALSE;
-    *nError  = CoCreateInstance(CLSID_WICImagingFactory1,
-                               NULL,
-                               CLSCTX_INPROC_SERVER,
-                               IID_IWICImagingFactory,
-                               (LPVOID*)&g_Ri.pWICFactory);
+    *nError  = CoCreateInstance(CLSID_WICImagingFactory1, NULL, CLSCTX_INPROC_SERVER,
+                                IID_IWICImagingFactory, (LPVOID*)&g_Ri.pWICFactory);
     if (*nError == 0) {
         bDX = _dx_init(nError);
     }
@@ -457,13 +436,9 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
     canvas_s* pCanvas = nullptr;
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
-        ID2D1StrokeStyle* stroke = _strokestyle_create(D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_LINE_JOIN_MITER,
-                                                       Ex_Scale(strokeWidth) / 2,
-                                                       (D2D1_DASH_STYLE)strokeStyle,
-                                                       0);
+        ID2D1StrokeStyle* stroke = _strokestyle_create(
+            D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE,
+            D2D1_LINE_JOIN_MITER, Ex_Scale(strokeWidth) / 2, (D2D1_DASH_STYLE)strokeStyle, 0);
 
         ID2D1DeviceContext* pContext = pCanvas->pContext_;
         D2D1_POINT_2F       point1   = {X1 + 0.5f, Y1 + 0.5f};
@@ -481,13 +456,9 @@ BOOL _canvas_drawrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top,
     canvas_s* pCanvas = nullptr;
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
-        ID2D1StrokeStyle*   stroke   = _strokestyle_create(D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_LINE_JOIN_MITER,
-                                                       Ex_Scale(strokeWidth) / 2,
-                                                       (D2D1_DASH_STYLE)strokeStyle,
-                                                       0);
+        ID2D1StrokeStyle* stroke = _strokestyle_create(
+            D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE,
+            D2D1_LINE_JOIN_MITER, Ex_Scale(strokeWidth) / 2, (D2D1_DASH_STYLE)strokeStyle, 0);
         ID2D1DeviceContext* pContext = pCanvas->pContext_;
         D2D1_RECT_F         rect     = {left + 0.5f, top + 0.5f, right - 0.5f, bottom - 0.5f};
         pContext->DrawRectangle(rect, (ID2D1Brush*)hBrush, Ex_Scale(strokeWidth), stroke);
@@ -518,13 +489,9 @@ BOOL _canvas_drawroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
     canvas_s* pCanvas = nullptr;
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
-        ID2D1StrokeStyle*   stroke   = _strokestyle_create(D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_LINE_JOIN_MITER,
-                                                       Ex_Scale(strokeWidth) / 2,
-                                                       (D2D1_DASH_STYLE)strokeStyle,
-                                                       0);
+        ID2D1StrokeStyle* stroke = _strokestyle_create(
+            D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE,
+            D2D1_LINE_JOIN_MITER, Ex_Scale(strokeWidth) / 2, (D2D1_DASH_STYLE)strokeStyle, 0);
         ID2D1DeviceContext* pContext = pCanvas->pContext_;
         D2D1_ROUNDED_RECT   rect     = {};
         rect.rect                    = {left + 0.5f, top + 0.5f, right - 0.5f, bottom - 0.5f};
@@ -563,16 +530,12 @@ BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT s
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
         if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError)) {
-            ID2D1StrokeStyle*   stroke   = _strokestyle_create(D2D1_CAP_STYLE_SQUARE,
-                                                           D2D1_CAP_STYLE_SQUARE,
-                                                           D2D1_CAP_STYLE_SQUARE,
-                                                           D2D1_LINE_JOIN_BEVEL,
-                                                           1.0,
-                                                           (D2D1_DASH_STYLE)strokeStyle,
-                                                           0);
+            ID2D1StrokeStyle* stroke = _strokestyle_create(
+                D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE,
+                D2D1_LINE_JOIN_BEVEL, 1.0, (D2D1_DASH_STYLE)strokeStyle, 0);
             ID2D1DeviceContext* pContext = pCanvas->pContext_;
-            pContext->DrawGeometry(
-                (ID2D1Geometry*)pPath->pGeometry_, (ID2D1Brush*)hBrush, strokeWidth, stroke);
+            pContext->DrawGeometry((ID2D1Geometry*)pPath->pGeometry_, (ID2D1Brush*)hBrush,
+                                   strokeWidth, stroke);
             _strokestyle_destroy(stroke);
         }
     }
@@ -601,13 +564,9 @@ BOOL _canvas_drawellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, F
     canvas_s* pCanvas = nullptr;
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
-        ID2D1StrokeStyle*   stroke   = _strokestyle_create(D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_CAP_STYLE_SQUARE,
-                                                       D2D1_LINE_JOIN_BEVEL,
-                                                       1.0f,
-                                                       (D2D1_DASH_STYLE)strokeStyle,
-                                                       0);
+        ID2D1StrokeStyle* stroke =
+            _strokestyle_create(D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE,
+                                D2D1_LINE_JOIN_BEVEL, 1.0f, (D2D1_DASH_STYLE)strokeStyle, 0);
         ID2D1DeviceContext* pContext = pCanvas->pContext_;
         D2D1_ELLIPSE        ELLIPSE  = {};
         ELLIPSE.point                = {x + 0.5f, y + 0.5f};
@@ -665,11 +624,8 @@ BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
             if (nError == 0) {
                 D2D1_RECT_F rect  = {dstLeft, dstTop, dstRight, dstBottom};
                 D2D1_RECT_F srect = {srcLeft, srcTop, srcRight, srcBottom};
-                pContext->DrawBitmap(pBitmap,
-                                     &rect,
-                                     (float)alpha / 255.0f,
-                                     D2D1_BITMAP_INTERPOLATION_MODE_LINEAR,
-                                     &srect);
+                pContext->DrawBitmap(pBitmap, &rect, (float)alpha / 255.0f,
+                                     D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &srect);
                 pBitmap->Release();
             }
         }
@@ -695,8 +651,8 @@ BOOL _canvas_drawimage(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT Left, FLOAT Top
     INT  w, h;
     BOOL ret = FALSE;
     if (_img_getsize(hImage, &w, &h)) {
-        ret = _canvas_drawimagerectrect(
-            hCanvas, hImage, Left, Top, Left + w, Top + h, 0, 0, w, h, alpha);
+        ret = _canvas_drawimagerectrect(hCanvas, hImage, Left, Top, Left + w, Top + h, 0, 0, w, h,
+                                        alpha);
     }
     return ret;
 }
@@ -720,115 +676,46 @@ BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
     }
     BOOL ret = FALSE;
     // 右-中间
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstRight - pr,
-                                    dstTop + pt,
-                                    dstRight,
-                                    dstBottom - pb,
-                                    srcRight - gridPaddingRight,
-                                    srcTop + gridPaddingTop,
-                                    srcRight,
-                                    srcBottom - gridPaddingBottom,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(hCanvas, hImage, dstRight - pr, dstTop + pt, dstRight,
+                                    dstBottom - pb, srcRight - gridPaddingRight,
+                                    srcTop + gridPaddingTop, srcRight,
+                                    srcBottom - gridPaddingBottom, dwAlpha);
     // 右下
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstRight - pr,
-                                    dstBottom - pb,
-                                    dstRight,
-                                    dstBottom,
-                                    srcRight - gridPaddingRight,
-                                    srcBottom - gridPaddingBottom,
-                                    srcRight,
-                                    srcBottom,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(hCanvas, hImage, dstRight - pr, dstBottom - pb, dstRight,
+                                    dstBottom, srcRight - gridPaddingRight,
+                                    srcBottom - gridPaddingBottom, srcRight, srcBottom, dwAlpha);
     // 底-中间
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstLeft + pl,
-                                    dstBottom - pb,
-                                    dstRight - pr,
-                                    dstBottom,
-                                    srcLeft + gridPaddingLeft,
-                                    srcBottom - gridPaddingBottom,
-                                    srcRight - gridPaddingRight,
-                                    srcBottom,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft + pl, dstBottom - pb, dstRight - pr,
+                                    dstBottom, srcLeft + gridPaddingLeft,
+                                    srcBottom - gridPaddingBottom, srcRight - gridPaddingRight,
+                                    srcBottom, dwAlpha);
     // 左下
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstLeft,
-                                    dstBottom - pb,
-                                    dstLeft + pl,
-                                    dstBottom,
-                                    srcLeft,
-                                    srcBottom - gridPaddingBottom,
-                                    srcLeft + gridPaddingLeft,
-                                    srcBottom,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft, dstBottom - pb, dstLeft + pl,
+                                    dstBottom, srcLeft, srcBottom - gridPaddingBottom,
+                                    srcLeft + gridPaddingLeft, srcBottom, dwAlpha);
     // 左-中间
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstLeft,
-                                    dstTop + pt,
-                                    dstLeft + pl,
-                                    dstBottom - pb,
-                                    srcLeft,
-                                    srcTop + gridPaddingTop,
-                                    srcLeft + gridPaddingLeft,
-                                    srcBottom - gridPaddingBottom,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(
+        hCanvas, hImage, dstLeft, dstTop + pt, dstLeft + pl, dstBottom - pb, srcLeft,
+        srcTop + gridPaddingTop, srcLeft + gridPaddingLeft, srcBottom - gridPaddingBottom, dwAlpha);
     if ((dwFlags & BACKGROUND_FLAG_GRID_EXCLUSION_CENTER) == 0)   // 中间
     {
-        ret = _canvas_drawimagerectrect(hCanvas,
-                                        hImage,
-                                        dstLeft + pl,
-                                        dstTop + pt,
-                                        dstRight - pr,
-                                        dstBottom - pb,
-                                        srcLeft + gridPaddingLeft,
-                                        srcTop + gridPaddingTop,
-                                        srcRight - gridPaddingRight,
-                                        srcBottom - gridPaddingBottom,
-                                        dwAlpha);
+        ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft + pl, dstTop + pt, dstRight - pr,
+                                        dstBottom - pb, srcLeft + gridPaddingLeft,
+                                        srcTop + gridPaddingTop, srcRight - gridPaddingRight,
+                                        srcBottom - gridPaddingBottom, dwAlpha);
     }
     // 左上
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstLeft,
-                                    dstTop,
-                                    dstLeft + pl,
-                                    dstTop + pt,
-                                    srcLeft,
-                                    srcTop,
-                                    srcLeft + gridPaddingLeft,
-                                    srcTop + gridPaddingTop,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft, dstTop, dstLeft + pl, dstTop + pt,
+                                    srcLeft, srcTop, srcLeft + gridPaddingLeft,
+                                    srcTop + gridPaddingTop, dwAlpha);
     // 右上
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstRight - pr,
-                                    dstTop,
-                                    dstRight,
-                                    dstTop + pt,
-                                    srcRight - gridPaddingRight,
-                                    srcTop,
-                                    srcRight,
-                                    srcTop + gridPaddingTop,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(hCanvas, hImage, dstRight - pr, dstTop, dstRight, dstTop + pt,
+                                    srcRight - gridPaddingRight, srcTop, srcRight,
+                                    srcTop + gridPaddingTop, dwAlpha);
     // 顶-中间
-    ret = _canvas_drawimagerectrect(hCanvas,
-                                    hImage,
-                                    dstLeft + pl,
-                                    dstTop,
-                                    dstRight - pr,
-                                    dstTop + pt,
-                                    srcLeft + gridPaddingLeft,
-                                    srcTop,
-                                    srcRight - gridPaddingRight,
-                                    srcTop + gridPaddingTop,
-                                    dwAlpha);
+    ret = _canvas_drawimagerectrect(hCanvas, hImage, dstLeft + pl, dstTop, dstRight - pr,
+                                    dstTop + pt, srcLeft + gridPaddingLeft, srcTop,
+                                    srcRight - gridPaddingRight, srcTop + gridPaddingTop, dwAlpha);
     return ret;
 }
 
@@ -867,36 +754,16 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
             if (lpGrid != 0) {
 
                 RtlMoveMemory(&rcGrid, lpGrid, sizeof(RECT));
-                _canvas_drawimagefromgrid(hCanvas,
-                                          hImage,
-                                          rcfDst.left,
-                                          rcfDst.top,
-                                          rcfDst.right,
-                                          rcfDst.bottom,
-                                          rcSrc.left,
-                                          rcSrc.top,
-                                          rcSrc.right,
-                                          rcSrc.bottom,
-                                          rcGrid.left,
-                                          rcGrid.top,
-                                          rcGrid.right,
-                                          rcGrid.bottom,
-                                          dwFlags,
-                                          dwAlpha);
+                _canvas_drawimagefromgrid(hCanvas, hImage, rcfDst.left, rcfDst.top, rcfDst.right,
+                                          rcfDst.bottom, rcSrc.left, rcSrc.top, rcSrc.right,
+                                          rcSrc.bottom, rcGrid.left, rcGrid.top, rcGrid.right,
+                                          rcGrid.bottom, dwFlags, dwAlpha);
             }
             else {
                 if (dwRepeat == BACKGROUND_REPEAT_ZOOM) {
-                    _canvas_drawimagerectrect(hCanvas,
-                                              hImage,
-                                              rcfDst.left,
-                                              rcfDst.top,
-                                              rcfDst.right,
-                                              rcfDst.bottom,
-                                              rcSrc.left,
-                                              rcSrc.top,
-                                              rcSrc.right,
-                                              rcSrc.bottom,
-                                              dwAlpha);
+                    _canvas_drawimagerectrect(hCanvas, hImage, rcfDst.left, rcfDst.top,
+                                              rcfDst.right, rcfDst.bottom, rcSrc.left, rcSrc.top,
+                                              rcSrc.right, rcSrc.bottom, dwAlpha);
                 }
                 else if (dwRepeat == BACKGROUND_REPEAT_NO_REPEAT) {
                     w = rcSrc.right - rcSrc.left;
@@ -923,17 +790,9 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
                     else {
                         rcfDst.top = rcfDst.top + (rcfDst.bottom - rcfDst.top - h) / 2;
                     }
-                    _canvas_drawimagerectrect(hCanvas,
-                                              hImage,
-                                              rcfDst.left,
-                                              rcfDst.top,
-                                              rcfDst.left + w,
-                                              rcfDst.top + h,
-                                              rcSrc.left,
-                                              rcSrc.top,
-                                              rcSrc.right,
-                                              rcSrc.bottom,
-                                              dwAlpha);
+                    _canvas_drawimagerectrect(hCanvas, hImage, rcfDst.left, rcfDst.top,
+                                              rcfDst.left + w, rcfDst.top + h, rcSrc.left,
+                                              rcSrc.top, rcSrc.right, rcSrc.bottom, dwAlpha);
                 }
                 else {
                     w               = rcSrc.right - rcSrc.left;
@@ -956,11 +815,7 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
                             rcfDst.right = rcfDst.left + w;
                         }
                         if (hBrush != 0) {
-                            _canvas_fillrect(hCanvas,
-                                             hBrush,
-                                             rcfDst.left,
-                                             rcfDst.top,
-                                             rcfDst.right,
+                            _canvas_fillrect(hCanvas, hBrush, rcfDst.left, rcfDst.top, rcfDst.right,
                                              rcfDst.bottom);
                             _brush_destroy(hBrush);
                         }
@@ -977,16 +832,9 @@ BOOL _canvas_drawimagefrombkgimg(HEXCANVAS hCanvas, EX_BACKGROUNDIMAGEINFO* lpBk
 {
     BOOL ret = FALSE;
     if (lpBkgImg != 0) {
-        ret = _canvas_drawimagefrombkgimg_ex(hCanvas,
-                                             lpBkgImg->hImage,
-                                             lpBkgImg->x,
-                                             lpBkgImg->y,
-                                             lpBkgImg->dwRepeat,
-                                             lpBkgImg->lpGrid,
-                                             lpBkgImg->dwFlags,
-                                             lpBkgImg->dwAlpha,
-                                             NULL,
-                                             NULL);
+        ret = _canvas_drawimagefrombkgimg_ex(hCanvas, lpBkgImg->hImage, lpBkgImg->x, lpBkgImg->y,
+                                             lpBkgImg->dwRepeat, lpBkgImg->lpGrid,
+                                             lpBkgImg->dwFlags, lpBkgImg->dwAlpha, NULL, NULL);
     }
     return ret;
 }
@@ -1006,10 +854,7 @@ BOOL _canvas_cliprect(HEXCANVAS hCanvas, INT left, INT top, INT right, INT botto
         pCanvas->c_top_    = top;
         pCanvas->c_right_  = right;
         pCanvas->c_bottom_ = bottom;
-        _dx_cliprect(pCanvas->pContext_,
-                     pCanvas->c_left_,
-                     pCanvas->c_top_,
-                     pCanvas->c_right_,
+        _dx_cliprect(pCanvas->pContext_, pCanvas->c_left_, pCanvas->c_top_, pCanvas->c_right_,
                      pCanvas->c_bottom_);
     }
     Ex_SetLastError(nError);
@@ -1046,20 +891,12 @@ BOOL _canvas_drawcanvas(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT d
                         DWORD dwCompositeMode)
 {
     if (dwCompositeMode == CANVAS_COMPOSITE_MODE_SRCCOPY) {
-        return _canvas_bitblt(
-            hCanvas, sCanvas, dstLeft, dstTop, dstRight, dstBottom, srcLeft, srcTop);
+        return _canvas_bitblt(hCanvas, sCanvas, dstLeft, dstTop, dstRight, dstBottom, srcLeft,
+                              srcTop);
     }
     else {
-        return _canvas_alphablend(hCanvas,
-                                  sCanvas,
-                                  dstLeft,
-                                  dstTop,
-                                  dstRight,
-                                  dstBottom,
-                                  srcLeft,
-                                  srcTop,
-                                  srcLeft + dstRight - dstLeft,
-                                  srcTop + dstBottom - dstTop,
+        return _canvas_alphablend(hCanvas, sCanvas, dstLeft, dstTop, dstRight, dstBottom, srcLeft,
+                                  srcTop, srcLeft + dstRight - dstLeft, srcTop + dstBottom - dstTop,
                                   dwAlpha);
     }
 }
@@ -1073,14 +910,8 @@ BOOL _canvas_bitblt(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTo
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&phCanvas, &nError)) {
         if (_handle_validate(sCanvas, HT_CANVAS, (LPVOID*)&psCanvas, &nError)) {
             _dx_flush(phCanvas->pContext_);
-            _dx_bmp_copyfrom(&phCanvas->pBitmap_,
-                             psCanvas->pBitmap_,
-                             dstLeft,
-                             dstTop,
-                             srcLeft,
-                             srcTop,
-                             srcLeft + dstRight - dstLeft,
-                             srcTop + dstBottom - dstTop);
+            _dx_bmp_copyfrom(&phCanvas->pBitmap_, psCanvas->pBitmap_, dstLeft, dstTop, srcLeft,
+                             srcTop, srcLeft + dstRight - dstLeft, srcTop + dstBottom - dstTop);
         }
     }
     Ex_SetLastError(nError);
@@ -1096,16 +927,8 @@ BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLO
     INT       nError   = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&phCanvas, &nError)) {
         if (_handle_validate(sCanvas, HT_CANVAS, (LPVOID*)&psCanvas, &nError)) {
-            _dx_drawbitmaprectrect(phCanvas->pContext_,
-                                   psCanvas->pBitmap_,
-                                   dstLeft,
-                                   dstTop,
-                                   dstRight,
-                                   dstBottom,
-                                   srcLeft,
-                                   srcTop,
-                                   srcRight,
-                                   srcBottom,
+            _dx_drawbitmaprectrect(phCanvas->pContext_, psCanvas->pBitmap_, dstLeft, dstTop,
+                                   dstRight, dstBottom, srcLeft, srcTop, srcRight, srcBottom,
                                    alpha);
         }
     }
@@ -1136,13 +959,9 @@ BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText,
     INT    nPreFix     = 0;
     LPVOID lpwzTextFix = prefixstring(lpwzText, dwDTFormat, &nPreFix);
     FLOAT  iWidth = 0, iHeight = 0;
-    *nError =
-        g_Ri.pDWriteFactory->CreateTextLayout((WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix),
-                                              dwLen,
-                                              pObj,
-                                              layoutWidth,
-                                              layoutHeight,
-                                              (IDWriteTextLayout**)ppLayout);
+    *nError = g_Ri.pDWriteFactory->CreateTextLayout(
+        (WCHAR*)(lpwzTextFix == 0 ? lpwzText : lpwzTextFix), dwLen, pObj, layoutWidth, layoutHeight,
+        (IDWriteTextLayout**)ppLayout);
     IDWriteTextLayout* pLayout = *ppLayout;
     if (*nError == 0) {
         BYTE byte = pFont->font_.lfUnderline;
@@ -1226,17 +1045,8 @@ BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, IN
             HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t*)&pFont);
             if (pFont) {
                 IDWriteTextLayout* pLayout = nullptr;
-                _canvas_calctextsize_ex(pCanvas,
-                                        pFont,
-                                        lpwzText,
-                                        dwLen,
-                                        dwDTFormat,
-                                        lParam,
-                                        layoutWidth,
-                                        layoutHeight,
-                                        lpWidth,
-                                        lpHeight,
-                                        &pLayout,
+                _canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                                        layoutWidth, layoutHeight, lpWidth, lpHeight, &pLayout,
                                         &nError);
                 if (pLayout) {
                     pLayout->Release();
@@ -1265,25 +1075,14 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
                 if (bottom > top && right > left) {
                     FLOAT              iWidth, iHeight;
                     IDWriteTextLayout* pLayout = nullptr;
-                    if (_canvas_calctextsize_ex(pCanvas,
-                                                pFont,
-                                                lpwzText,
-                                                dwLen,
-                                                dwDTFormat,
-                                                lParam,
-                                                right - left,
-                                                bottom - top,
-                                                &iWidth,
-                                                &iHeight,
-                                                &pLayout,
-                                                &nError)) {
+                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                                                right - left, bottom - top, &iWidth, &iHeight,
+                                                &pLayout, &nError)) {
                         HEXBRUSH hBrush = _brush_create(crText);
                         if (hBrush) {
                             ID2D1DeviceContext* pContext = pCanvas->pContext_;
                             D2D1_POINT_2F       point    = {left, top};
-                            pContext->DrawTextLayout(point,
-                                                     pLayout,
-                                                     (ID2D1Brush*)hBrush,
+                            pContext->DrawTextLayout(point, pLayout, (ID2D1Brush*)hBrush,
                                                      D2D1_DRAW_TEXT_OPTIONS_CLIP |
                                                          D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
                             _brush_destroy(hBrush);
@@ -1317,24 +1116,13 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCW
                 if (bottom > top && right > left) {
                     FLOAT              iWidth, iHeight;
                     IDWriteTextLayout* pLayout = nullptr;
-                    if (_canvas_calctextsize_ex(pCanvas,
-                                                pFont,
-                                                lpwzText,
-                                                dwLen,
-                                                dwDTFormat,
-                                                lParam,
-                                                right - left,
-                                                bottom - top,
-                                                &iWidth,
-                                                &iHeight,
-                                                &pLayout,
-                                                &nError)) {
+                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                                                right - left, bottom - top, &iWidth, &iHeight,
+                                                &pLayout, &nError)) {
                         ID2D1DeviceContext* pContext = pCanvas->pContext_;
                         D2D1_POINT_2F       point    = {left, top};
                         pContext->DrawTextLayout(
-                            point,
-                            (IDWriteTextLayout*)pLayout,
-                            (ID2D1Brush*)hBrush,
+                            point, (IDWriteTextLayout*)pLayout, (ID2D1Brush*)hBrush,
                             D2D1_DRAW_TEXT_OPTIONS_CLIP | D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
                     }
                     if (pLayout) {
@@ -1351,15 +1139,15 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCW
 BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText, INT dwLen,
                       INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
-    return _canvas_drawtextex(
-        hCanvas, hFont, crText, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, 0, 0, NULL);
+    return _canvas_drawtextex(hCanvas, hFont, crText, lpwzText, dwLen, dwDTFormat, left, top, right,
+                              bottom, 0, 0, NULL);
 }
 
 BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText,
                        INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
-    return _canvas_drawtextex2(
-        hCanvas, hFont, hBrush, lpwzText, dwLen, dwDTFormat, left, top, right, bottom, 0, 0, NULL);
+    return _canvas_drawtextex2(hCanvas, hFont, hBrush, lpwzText, dwLen, dwDTFormat, left, top,
+                               right, bottom, 0, 0, NULL);
 }
 
 BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc)
@@ -1623,21 +1411,12 @@ BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOA
                 HEXBRUSH hBrush = _brush_create(crShadow);
                 if (shadowNum) {
                     for (INT tmp = 0; tmp < number; tmp++) {
-                        _brush_setcolor(hBrush,
-                                        ExARGB(ExGetR(crShadow),
-                                               ExGetG(crShadow),
-                                               ExGetB(crShadow),
-                                               shadowNum[tmp]));
-                        _canvas_drawroundedrect(hCanvas,
-                                                hBrush,
-                                                0 - FLOAT(tmp),
-                                                0 - FLOAT(tmp),
-                                                width + tmp,
-                                                height + tmp,
-                                                radiusX + (FLOAT(tmp) / 2),
-                                                radiusY + (FLOAT(tmp) / 2),
-                                                1,
-                                                D2D1_DASH_STYLE_SOLID);
+                        _brush_setcolor(hBrush, ExARGB(ExGetR(crShadow), ExGetG(crShadow),
+                                                       ExGetB(crShadow), shadowNum[tmp]));
+                        _canvas_drawroundedrect(
+                            hCanvas, hBrush, 0 - FLOAT(tmp), 0 - FLOAT(tmp), width + tmp,
+                            height + tmp, radiusX + (FLOAT(tmp) / 2), radiusY + (FLOAT(tmp) / 2), 1,
+                            D2D1_DASH_STYLE_SOLID);
                     }
                 }
                 _brush_destroy(hBrush);
@@ -1671,15 +1450,8 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas, FLOAT fLeft, FLOAT fTop, FLOAT fRight
         _path_create(1, &hPath);
         _path_open(hPath);
         _path_beginfigure(hPath);
-        _path_addroundedrect(hPath,
-                             fLeft,
-                             fTop,
-                             fRight,
-                             fBottom,
-                             radiusTopLeft,
-                             radiusTopRight,
-                             radiusBottomLeft,
-                             radiusBottomRight);
+        _path_addroundedrect(hPath, fLeft, fTop, fRight, fBottom, radiusTopLeft, radiusTopRight,
+                             radiusBottomLeft, radiusBottomRight);
         _path_endfigure(hPath, true);
         _path_close(hPath);
 
@@ -1712,11 +1484,9 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas, FLOAT fLeft, FLOAT fTop, FLOAT fRight
                         ID2D1GeometrySink* pSink = NULL;
                         if (SUCCEEDED(pGeometry->Open(&pSink))) {
                             // 用大区域排除中心圆角区域,得到剪辑区
-                            if (SUCCEEDED(
-                                    pRectGeometry->CombineWithGeometry(pPath->pGeometry_,
-                                                                       D2D1_COMBINE_MODE_EXCLUDE,
-                                                                       D2D1::Matrix3x2F::Identity(),
-                                                                       pSink))) {
+                            if (SUCCEEDED(pRectGeometry->CombineWithGeometry(
+                                    pPath->pGeometry_, D2D1_COMBINE_MODE_EXCLUDE,
+                                    D2D1::Matrix3x2F::Identity(), pSink))) {
                                 pSink->Close();
 
                                 // 获取阴影位图
@@ -1735,8 +1505,7 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas, FLOAT fLeft, FLOAT fTop, FLOAT fRight
                                     ID2D1Layer* layer;
                                     if (SUCCEEDED(pContext->CreateLayer(&layer))) {
                                         pContext->PushLayer(D2D1::LayerParameters(
-                                                                D2D1::InfiniteRect(),
-                                                                pGeometry,
+                                                                D2D1::InfiniteRect(), pGeometry,
                                                                 D2D1_ANTIALIAS_MODE_PER_PRIMITIVE),
                                                             layer);
                                         // 将模糊后的阴影图绘制到画布上

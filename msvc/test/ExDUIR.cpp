@@ -1,4 +1,4 @@
-#include "test_obj.h"
+﻿#include "test_obj.h"
 #include <iostream>
 
 HWND m_hWnd;
@@ -67,7 +67,6 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
     return 0;
 }
 
-
 void test_exdui()
 {
     std::vector<CHAR> data;
@@ -78,33 +77,20 @@ void test_exdui()
     // Ex_ReadFile(L"res/Default.ext", &data);
     // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
-            ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,
-            hCursor,
-            0,
-            data.data(),
-            data.size(),
-            0,
-            0);
+            ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL, hCursor,
+            0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
-    m_hWnd = Ex_WndCreate(0,
-                          L"Ex_DUIR",
-                          L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR",
-                          0,
-                          0,
-                          600,
-                          600,
-                          0,
-                          0);
+    m_hWnd =
+        Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0,
+                     0, 600, 600, 0, 0);
     if (m_hWnd != 0) {
-        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd,
-                                           0,
+        HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0,
                                            WINDOW_STYLE_MAINWINDOW | WINDOW_STYLE_BUTTON_CLOSE |
                                                WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_BUTTON_MAX |
                                                WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
                                                WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE |
                                                WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON,
-                                           0,
-                                           0);
+                                           0, 0);
         // 改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
         HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, ENGINE_LONG_OBJCAPTION);
         // 标题栏窗口风格就是标题栏子组件的ID
@@ -117,8 +103,8 @@ void test_exdui()
         std::vector<CHAR> imgdata;
         Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(255, 255, 255, 240));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
-        Ex_ObjSetBackgroundImage(
-            hExDui, imgdata.data(), imgdata.size(), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
+        Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0,
+                                 BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
         // 设置圆角，另一种方案是重画窗口背景参照异形窗口例子
         Ex_DUISetLong(hExDui, ENGINE_LONG_RADIUS, 30);
         std::vector<HEXOBJ>                       buttons;
@@ -158,20 +144,9 @@ void test_exdui()
             int          y    = buttonData[i].first;
             std::wstring text = buttonData[i].second;
             int x = (i < 14) ? column1X : (i < 28) ? column2X : (i < 42) ? column3X : column4X;
-            buttons.push_back(Ex_ObjCreateEx(-1,
-                                             L"button",
-                                             text.c_str(),
-                                             -1,
-                                             x,
-                                             y,
-                                             buttonWidth,
-                                             buttonHeight,
-                                             hExDui,
-                                             101 + i,
-                                             DT_VCENTER | DT_CENTER,
-                                             0,
-                                             0,
-                                             NULL));
+            buttons.push_back(Ex_ObjCreateEx(-1, L"button", text.c_str(), -1, x, y, buttonWidth,
+                                             buttonHeight, hExDui, 101 + i, DT_VCENTER | DT_CENTER,
+                                             0, 0, NULL));
         }
 
         for (auto button : buttons) {

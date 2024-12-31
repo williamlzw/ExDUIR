@@ -1815,9 +1815,9 @@ struct EX_REPORTLIST_CELLINFO
     DWORD   cellStyle;   // 单元格风格
     EXARGB cellBkgCr;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR"风格时,单元格的背景色
     EXARGB
-        cellTextCr;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR"风格时,单元格的文本色
+    cellTextCr;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR"风格时,单元格的文本色
     HEXFONT
-        cellFont;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLFONT"风格时,单元格的字体,该字体(修改时)无需手动释放
+    cellFont;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLFONT"风格时,单元格的字体,该字体(修改时)无需手动释放
     LPARAM lParam;   // 单元格参数
 };
 
@@ -1837,9 +1837,9 @@ struct EX_REPORTLIST_SORTINFO
     UINT iCol;    // 0为按row.lParam排序
     UINT nType;   // 0:文本,1:整数
     ReportListViewOrderPROC
-        lpfnCmp;   // LRESULT orderProc(HEXOBJ hObj,UINT nIndex1,LPVOID pvData1,UINT nIndex2,LPVOID
-                   // pvData2,UINT nIndexCol,UINT nType,size_t lParam)
-    BOOL   fDesc;    // 是否倒序
+        lpfnCmp;    // LRESULT orderProc(HEXOBJ hObj,UINT nIndex1,LPVOID pvData1,UINT nIndex2,LPVOID
+                    // pvData2,UINT nIndexCol,UINT nType,size_t lParam)
+    BOOL   fDesc;   // 是否倒序
     LPARAM lParam;   // 排序附加参数
 };
 

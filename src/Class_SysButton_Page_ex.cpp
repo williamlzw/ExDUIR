@@ -1,15 +1,15 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _sysbutton_register()
 {
-    Ex_ObjRegister(
-        L"SysButton", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TOPMOST, 0, 0, 0, 0, _sysbutton_proc);
+    Ex_ObjRegister(L"SysButton", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TOPMOST, 0, 0, 0, 0,
+                   _sysbutton_proc);
 }
 
 void _page_register()
 {
-    Ex_ObjRegister(
-        L"Page", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TRANSPARENT, 0, 0, 0, 0, _page_proc);
+    Ex_ObjRegister(L"Page", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TRANSPARENT, 0, 0, 0, 0,
+                   _page_proc);
 }
 
 size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
@@ -61,8 +61,8 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
         }
 
         INT left;
-        Ex_ThemeDrawControl(
-            ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomState, 255);
+        Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass,
+                            atomState, 255);
         if ((ps.dwStyle & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE) {
             left = ps.rcText.left;
             if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_HASICON) == WINDOW_STYLE_HASICON)) {
@@ -72,13 +72,9 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                     HEXIMAGE hImg = 0;
                     _img_createfromhicon(hicon, &hImg);
                     if (hImg != 0) {
-                        _canvas_drawimagerect(ps.hCanvas,
-                                              hImg,
-                                              left,
-                                              (ps.rcText.bottom - ps.rcText.top - 16) / 2,
-                                              left + 16,
-                                              (ps.rcText.bottom - ps.rcText.top - 16) / 2 + 16,
-                                              255);
+                        _canvas_drawimagerect(
+                            ps.hCanvas, hImg, left, (ps.rcText.bottom - ps.rcText.top - 16) / 2,
+                            left + 16, (ps.rcText.bottom - ps.rcText.top - 16) / 2 + 16, 255);
                         _img_destroy(hImg);
                         left = left + 20;
                     }
@@ -86,19 +82,10 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
             }
 
             if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE)) {
-                _canvas_drawtextex(ps.hCanvas,
-                                   pObj->hFont_,
-                                   _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL),
-                                   pObj->pstrTitle_,
-                                   -1,
-                                   pObj->dwTextFormat_,
-                                   left,
-                                   ps.rcText.top,
-                                   ps.rcText.right,
-                                   ps.rcText.bottom,
-                                   pObj->dwShadowSize_,
-                                   0,
-                                   0);
+                _canvas_drawtextex(ps.hCanvas, pObj->hFont_,
+                                   _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1,
+                                   pObj->dwTextFormat_, left, ps.rcText.top, ps.rcText.right,
+                                   ps.rcText.bottom, pObj->dwShadowSize_, 0, 0);
             }
         }
         Ex_ObjEndPaint(hObj, &ps);
@@ -118,12 +105,7 @@ void _sysbutton_remove_proc(obj_s* pObj, INT width, INT height)
             bReCalced = TRUE;
             nOffset   = width - psobj->right_;
         }
-        Ex_ObjSetPos(sObj,
-                     0,
-                     psobj->left_ + nOffset,
-                     OBJECT_POSITION_DEFAULT,
-                     0,
-                     0,
+        Ex_ObjSetPos(sObj, 0, psobj->left_ + nOffset, OBJECT_POSITION_DEFAULT, 0, 0,
                      SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
         sObj = psobj->objNext_;
     }
@@ -290,12 +272,7 @@ void _page_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wP
         return;
     }
     nPos = Ex_ObjScrollSetPos(hObj, SCROLLBAR_TYPE_VERT, nPos, TRUE);
-    Ex_ObjSetPos(pObj->objChildFirst_,
-                 0,
-                 OBJECT_POSITION_DEFAULT,
-                 (-nPos),
-                 0,
-                 0,
+    Ex_ObjSetPos(pObj->objChildFirst_, 0, OBJECT_POSITION_DEFAULT, (-nPos), 0, 0,
                  SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
 }
 

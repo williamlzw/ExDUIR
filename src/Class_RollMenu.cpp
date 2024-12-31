@@ -2,27 +2,23 @@
 
 void _rollmenu_register()
 {
-    Ex_ObjRegister(L"RollMenu",
-                   OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
+    Ex_ObjRegister(L"RollMenu", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
                    OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER,
-                   15 * sizeof(size_t),
-                   NULL,
-                   0,
-                   _rollmenu_proc);
+                   DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 15 * sizeof(size_t), NULL,
+                   0, _rollmenu_proc);
 }
 
 LRESULT CALLBACK _rollmenu_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (uMsg == WM_CREATE) {
-        Ex_ObjSetLong(
-            hObj, ROLLMENU_LONG_GTC, (LONG_PTR)ExRGB2ARGB(16777215, 255));   // 分组标题颜色
+        Ex_ObjSetLong(hObj, ROLLMENU_LONG_GTC,
+                      (LONG_PTR)ExRGB2ARGB(16777215, 255));   // 分组标题颜色
         Ex_ObjSetLong(hObj, ROLLMENU_LONG_MLBC, (LONG_PTR)ExRGB2ARGB(255, 100));   // 鼠标点燃色
         Ex_ObjSetLong(hObj, ROLLMENU_LONG_ISBC, (LONG_PTR)ExRGB2ARGB(255, 200));   // 子项选中背景色
-        Ex_ObjSetLong(
-            hObj, ROLLMENU_LONG_ISTC, (LONG_PTR)ExRGB2ARGB(16777215, 200));   // 子项选中标题色
-        Ex_ObjSetColor(
-            hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);   // 子项正常标题颜色
+        Ex_ObjSetLong(hObj, ROLLMENU_LONG_ISTC,
+                      (LONG_PTR)ExRGB2ARGB(16777215, 200));   // 子项选中标题色
+        Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255),
+                       FALSE);   // 子项正常标题颜色
         Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(29, 27, 43, 205), FALSE);   // 组件背景色
         Ex_ObjSetLong(hObj, ROLLMENU_LONG_GH, 40);
         Ex_ObjSetLong(hObj, ROLLMENU_LONG_IH, 32);
@@ -336,44 +332,31 @@ void _rollmenu_paint(HEXOBJ hObj)
                 EX_ROLLMENU_DATA* data = (EX_ROLLMENU_DATA*)Array_GetMember(arr, i);
                 if (CFG == i) {
                     _brush_setcolor(brush, MLBC);   // 鼠标点燃色
-                    _canvas_fillrect(
-                        ps.hCanvas, brush, 0, endhight - offset - GH, ps.uWidth, endhight - offset);
+                    _canvas_fillrect(ps.hCanvas, brush, 0, endhight - offset - GH, ps.uWidth,
+                                     endhight - offset);
                 }
                 if (data->title)   // 画分组标题
                 {
-                    _canvas_drawtext(ps.hCanvas,
-                                     font,
-                                     GTCcolor,
-                                     data->title,
-                                     -1,
-                                     -1,
-                                     data->left * g_Li.DpiX,
-                                     endhight - offset - GH,
-                                     ps.uWidth,
+                    _canvas_drawtext(ps.hCanvas, font, GTCcolor, data->title, -1, -1,
+                                     data->left * g_Li.DpiX, endhight - offset - GH, ps.uWidth,
                                      endhight - offset);
                 }
                 if (data->extraico.icon)   // 画分组的附加图标
                 {
                     _canvas_drawimagerect(
-                        ps.hCanvas,
-                        data->extraico.icon,
-                        data->extraico.rc.left * g_Li.DpiX,
+                        ps.hCanvas, data->extraico.icon, data->extraico.rc.left * g_Li.DpiX,
                         endhight - offset - GH + data->extraico.rc.top * g_Li.DpiY,
                         data->extraico.rc.right * g_Li.DpiX,
-                        endhight - offset - GH + data->extraico.rc.bottom * g_Li.DpiY,
-                        255);
+                        endhight - offset - GH + data->extraico.rc.bottom * g_Li.DpiY, 255);
                 }
                 if (!data->expand) {
                     if (data->stateico.eicon)   // 画展开图标
                     {
                         _canvas_drawimagerect(
-                            ps.hCanvas,
-                            data->stateico.eicon,
-                            data->stateico.rc.left * g_Li.DpiX,
+                            ps.hCanvas, data->stateico.eicon, data->stateico.rc.left * g_Li.DpiX,
                             endhight - offset - GH + data->stateico.rc.top * g_Li.DpiY,
                             data->stateico.rc.right * g_Li.DpiX,
-                            endhight - offset - GH + data->stateico.rc.bottom * g_Li.DpiY,
-                            255);
+                            endhight - offset - GH + data->stateico.rc.bottom * g_Li.DpiY, 255);
                     }
 
                     array_s* itemarr = (array_s*)*(
@@ -397,8 +380,8 @@ void _rollmenu_paint(HEXOBJ hObj)
                                 page++;
                                 if (CLI == n && CLG == i) {
                                     _brush_setcolor(brush, MLBC);   // 子项点燃色  MLBC
-                                    _canvas_fillrect(
-                                        ps.hCanvas, brush, 0, iDvalue - IH, ps.uWidth, iDvalue);
+                                    _canvas_fillrect(ps.hCanvas, brush, 0, iDvalue - IH, ps.uWidth,
+                                                     iDvalue);
                                 }
                                 EX_ROLLMENU_ITEM* itemdata =
                                     (EX_ROLLMENU_ITEM*)Array_GetMember(itemarr, n);
@@ -409,8 +392,8 @@ void _rollmenu_paint(HEXOBJ hObj)
                                 else if (CSI == n && CSG == i)   // 选中子项
                                 {
                                     _brush_setcolor(brush, ISBC);   // 填充选中子项背景色
-                                    _canvas_fillrect(
-                                        ps.hCanvas, brush, 0, iDvalue - IH, ps.uWidth, iDvalue);
+                                    _canvas_fillrect(ps.hCanvas, brush, 0, iDvalue - IH, ps.uWidth,
+                                                     iDvalue);
                                     tempcolor = ISTC;   // 子项选中标题色
                                 }
                                 else {
@@ -418,16 +401,9 @@ void _rollmenu_paint(HEXOBJ hObj)
                                 }
                                 if (itemdata->title)   // 子项标题
                                 {
-                                    _canvas_drawtext(ps.hCanvas,
-                                                     font,
-                                                     tempcolor,
-                                                     itemdata->title,
-                                                     -1,
-                                                     -1,
-                                                     itemdata->left * g_Li.DpiX,
-                                                     iDvalue - IH,
-                                                     ps.uWidth,
-                                                     iDvalue);
+                                    _canvas_drawtext(ps.hCanvas, font, tempcolor, itemdata->title,
+                                                     -1, -1, itemdata->left * g_Li.DpiX,
+                                                     iDvalue - IH, ps.uWidth, iDvalue);
                                 }
                                 //--画子项状态(是否选中)图标
                                 if (CSI == n && CSG == i)   // 选中子项
@@ -435,8 +411,7 @@ void _rollmenu_paint(HEXOBJ hObj)
                                     if (itemdata->stateico.sicon)   // 画子项图标
                                     {
                                         _canvas_drawimagerect(
-                                            ps.hCanvas,
-                                            itemdata->stateico.sicon,
+                                            ps.hCanvas, itemdata->stateico.sicon,
                                             itemdata->stateico.rc.left * g_Li.DpiX,
                                             iDvalue - IH + itemdata->stateico.rc.top * g_Li.DpiY,
                                             itemdata->stateico.rc.right * g_Li.DpiX,
@@ -448,8 +423,7 @@ void _rollmenu_paint(HEXOBJ hObj)
                                     if (itemdata->stateico.eicon)   // 画子项图标
                                     {
                                         _canvas_drawimagerect(
-                                            ps.hCanvas,
-                                            itemdata->stateico.eicon,
+                                            ps.hCanvas, itemdata->stateico.eicon,
                                             itemdata->stateico.rc.left * g_Li.DpiX,
                                             iDvalue - IH + itemdata->stateico.rc.top * g_Li.DpiY,
                                             itemdata->stateico.rc.right * g_Li.DpiX,
@@ -460,8 +434,7 @@ void _rollmenu_paint(HEXOBJ hObj)
                                 if (itemdata->extraico.icon)   // 画子项的附加图标
                                 {
                                     _canvas_drawimagerect(
-                                        ps.hCanvas,
-                                        itemdata->extraico.icon,
+                                        ps.hCanvas, itemdata->extraico.icon,
                                         itemdata->extraico.rc.left * g_Li.DpiX,
                                         iDvalue - IH + itemdata->extraico.rc.top * g_Li.DpiY,
                                         itemdata->extraico.rc.right * g_Li.DpiX,
@@ -476,13 +449,10 @@ void _rollmenu_paint(HEXOBJ hObj)
                     if (data->stateico.sicon)   // 画收缩图标
                     {
                         _canvas_drawimagerect(
-                            ps.hCanvas,
-                            data->stateico.sicon,
-                            data->stateico.rc.left * g_Li.DpiX,
+                            ps.hCanvas, data->stateico.sicon, data->stateico.rc.left * g_Li.DpiX,
                             endhight - offset - GH + data->stateico.rc.top * g_Li.DpiY,
                             data->stateico.rc.right * g_Li.DpiX,
-                            endhight - offset - GH + data->stateico.rc.bottom * g_Li.DpiY,
-                            255);
+                            endhight - offset - GH + data->stateico.rc.bottom * g_Li.DpiY, 255);
                     }
                 }
             }
@@ -492,8 +462,8 @@ void _rollmenu_paint(HEXOBJ hObj)
             else {
                 Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, FALSE);
             }
-            Ex_ObjScrollSetInfo(
-                hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE, 0, vmax, page, 0, 1);
+            Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE, 0, vmax, page, 0,
+                                1);
         }
         _brush_destroy(brush);
         Ex_ObjEndPaint(hObj, &ps);

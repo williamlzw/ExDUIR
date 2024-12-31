@@ -63,24 +63,16 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
                             ATOM_COLOR_HOT,
                             ATOM_COLOR_VISTED,
                             ATOM_COLOR_SHADOW};
-    g_Li.aryColorsOffset = {offsetof(obj_s, crBackground_),
-                            offsetof(obj_s, crBackground_),
-                            offsetof(obj_s, crBorder_),
-                            offsetof(obj_s, crBorder_),
-                            offsetof(obj_s, crNormal_),
-                            offsetof(obj_s, crNormal_),
-                            offsetof(obj_s, crHover_),
-                            offsetof(obj_s, crDown_),
-                            offsetof(obj_s, crFocus_),
-                            offsetof(obj_s, crChecked_),
-                            offsetof(obj_s, crSelected_),
-                            offsetof(obj_s, crHot_),
-                            offsetof(obj_s, crVisted_),
-                            offsetof(obj_s, crShadow_)};
-    g_Li.hModuleUser     = GetModuleHandleW(L"user32.dll");
-    g_Ri.hRiched20 = LoadLibraryW(L"Msftedit.dll");
-   // g_Ri.hRiched20 = LoadLibraryW(L"Riched20.dll");
-    LPVOID i       = Ex_MemAlloc(64);
+    g_Li.aryColorsOffset = {
+        offsetof(obj_s, crBackground_), offsetof(obj_s, crBackground_), offsetof(obj_s, crBorder_),
+        offsetof(obj_s, crBorder_),     offsetof(obj_s, crNormal_),     offsetof(obj_s, crNormal_),
+        offsetof(obj_s, crHover_),      offsetof(obj_s, crDown_),       offsetof(obj_s, crFocus_),
+        offsetof(obj_s, crChecked_),    offsetof(obj_s, crSelected_),   offsetof(obj_s, crHot_),
+        offsetof(obj_s, crVisted_),     offsetof(obj_s, crShadow_)};
+    g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
+    g_Ri.hRiched20   = LoadLibraryW(L"Msftedit.dll");
+    // g_Ri.hRiched20 = LoadLibraryW(L"Riched20.dll");
+    LPVOID i = Ex_MemAlloc(64);
     INT    len;
     len           = LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);
     g_Li.lpStrMin = StrDupW((LPWSTR)i);
@@ -236,19 +228,13 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
                             tmp = (LPVOID)((size_t)tmp + 4);
                         }
                         RtlMoveMemory(
-                            tmp,
-                            (LPVOID)((size_t)lpData + ((ICONDIRENTRY*)offset)->dwImageOffset),
+                            tmp, (LPVOID)((size_t)lpData + ((ICONDIRENTRY*)offset)->dwImageOffset),
                             ((ICONDIRENTRY*)offset)->dwBytesInRes);
-                        CHAR  b1 = ((ICONDIRENTRY*)offset)->bWidth;
-                        CHAR  b2 = ((ICONDIRENTRY*)offset)->bHeight;
-                        HICON hicon =
-                            CreateIconFromResourceEx((PBYTE)lpMem,
-                                                     ((ICONDIRENTRY*)offset)->dwBytesInRes,
-                                                     bIcon,
-                                                     196608,
-                                                     b1,
-                                                     b2,
-                                                     0);
+                        CHAR  b1    = ((ICONDIRENTRY*)offset)->bWidth;
+                        CHAR  b2    = ((ICONDIRENTRY*)offset)->bHeight;
+                        HICON hicon = CreateIconFromResourceEx(
+                            (PBYTE)lpMem, ((ICONDIRENTRY*)offset)->dwBytesInRes, bIcon, 196608, b1,
+                            b2, 0);
                         ret = CopyImage(hicon, uType, 0, 0, 4);
                     }
                 }
@@ -286,18 +272,15 @@ BOOL Ex_LoadBitMapFromMemory(LPVOID lpData, size_t dwLen, HBITMAP* retBitMap)
         hr = pIWICStream->InitializeFromMemory((WICInProcPointer)lpData, dwLen);
         if (hr == 0) {
             IWICBitmapDecoder* pDecoder = NULL;
-            hr                          = g_Ri.pWICFactory->CreateDecoderFromStream(
-                pIWICStream, NULL, WICDecodeMetadataCacheOnLoad, &pDecoder);
+            hr = g_Ri.pWICFactory->CreateDecoderFromStream(pIWICStream, NULL,
+                                                           WICDecodeMetadataCacheOnLoad, &pDecoder);
             if (hr == 0) {
                 IWICBitmapFrameDecode* pSource  = NULL;
                 hr                              = pDecoder->GetFrame(0, &pSource);
                 IWICFormatConverter* pConverter = NULL;
                 hr = g_Ri.pWICFactory->CreateFormatConverter(&pConverter);
-                pConverter->Initialize((IWICBitmap*)pSource,
-                                       GUID_WICPixelFormat32bppPBGRA,
-                                       WICBitmapDitherTypeNone,
-                                       NULL,
-                                       0.0,
+                pConverter->Initialize((IWICBitmap*)pSource, GUID_WICPixelFormat32bppPBGRA,
+                                       WICBitmapDitherTypeNone, NULL, 0.0,
                                        WICBitmapPaletteTypeCustom);
                 UINT width = 0, height = 0;
                 pConverter->GetSize(&width, &height);
@@ -339,13 +322,8 @@ BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR>* retData)
 {
     BOOL fOK = FALSE;
     if (filePath != L"") {
-        HANDLE hFile = CreateFileW(filePath,
-                                   GENERIC_READ,
-                                   FILE_SHARE_READ,
-                                   NULL,
-                                   OPEN_EXISTING,
-                                   FILE_ATTRIBUTE_NORMAL,
-                                   NULL);
+        HANDLE hFile = CreateFileW(filePath, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING,
+                                   FILE_ATTRIBUTE_NORMAL, NULL);
         if (hFile != INVALID_HANDLE_VALUE) {
             DWORD nSize = GetFileSize(hFile, NULL);
             if (nSize != INVALID_FILE_SIZE) {

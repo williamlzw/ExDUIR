@@ -212,8 +212,8 @@ LPVOID __ptr_ins(LPVOID* ptr, INT nCount, INT* nIndexInsert, INT cbBlock, LPVOID
             Ex_MemFree(*ptr);
         }
         if (pNewItem != 0) {
-            RtlMoveMemory(
-                (LPVOID)((size_t)pNew + (*nIndexInsert - 1) * cbBlock), pNewItem, cbBlock);
+            RtlMoveMemory((LPVOID)((size_t)pNew + (*nIndexInsert - 1) * cbBlock), pNewItem,
+                          cbBlock);
         }
     }
     *ptr = pNew;
@@ -239,8 +239,7 @@ LPVOID __ptr_del(LPVOID* ptr, INT nCount, INT nIndex, INT cbBlock)
                 (EX_REPORTLIST_COLUMNINFO*)((size_t)*ptr +
                                             (nIndex - 1) * sizeof(EX_REPORTLIST_COLUMNINFO));
             RtlMoveMemory((LPVOID)((size_t)pNew + (nIndex - 1) * cbBlock),
-                          (LPVOID)((size_t)*ptr + nIndex * cbBlock),
-                          (nCount - nIndex) * cbBlock);
+                          (LPVOID)((size_t)*ptr + nIndex * cbBlock), (nCount - nIndex) * cbBlock);
             Ex_MemFree(*ptr);
         }
     }
@@ -407,8 +406,7 @@ LPVOID prefixstring(LPCWSTR lpString, INT dwFmt, INT* nOffset)
             if (ret != 0) {
                 RtlMoveMemory(ret, lpString, *nOffset);
                 RtlMoveMemory((LPVOID)((size_t)ret + *nOffset),
-                              (LPVOID)((size_t)lpString + *nOffset + 2),
-                              len - *nOffset - 2);
+                              (LPVOID)((size_t)lpString + *nOffset + 2), len - *nOffset - 2);
             }
         }
     }
@@ -993,12 +991,7 @@ LPCWSTR GetErrorMessage(DWORD error)
     WCHAR szBuf[1024];
     FormatMessageW(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
-        error,
-        0,
-        (LPWSTR)&szBuf,
-        1024,
-        NULL);
+        NULL, error, 0, (LPWSTR)&szBuf, 1024, NULL);
     wcscpy_s(szBuf, szBuf);
     return (LPCWSTR)szBuf;
 }

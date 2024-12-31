@@ -2,14 +2,9 @@
 
 void _drawingboard_register()
 {
-    Ex_ObjRegister(L"DrawingBoard",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_LEFT,
-                   10 * sizeof(size_t),
-                   NULL,
-                   0,
-                   _drawingboard_proc);
+    Ex_ObjRegister(L"DrawingBoard", OBJECT_STYLE_VISIBLE,
+                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_LEFT,
+                   10 * sizeof(size_t), NULL, 0, _drawingboard_proc);
 }
 
 LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -133,15 +128,7 @@ void _drawingboard_paint(HEXOBJ hObj)
     EX_PAINTSTRUCT ps{0};
     if (Ex_ObjBeginPaint(hObj, &ps)) {
         HEXCANVAS canvas = (HEXCANVAS)Ex_ObjGetLong(hObj, DRAWINGBOARD_LONG_CANVAS);
-        _canvas_drawcanvas(ps.hCanvas,
-                           canvas,
-                           0,
-                           0,
-                           ps.uWidth,
-                           ps.uHeight,
-                           0,
-                           0,
-                           155,
+        _canvas_drawcanvas(ps.hCanvas, canvas, 0, 0, ps.uWidth, ps.uHeight, 0, 0, 155,
                            CANVAS_COMPOSITE_MODE_SRCOVER);
         Ex_ObjEndPaint(hObj, &ps);
     }

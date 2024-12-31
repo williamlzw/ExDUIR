@@ -2,42 +2,22 @@
 
 void _button_regsiter()
 {
-    Ex_ObjRegister(L"Button",
-                   OBJECT_STYLE_VISIBLE | BUTTON_STYLE_TEXTOFFSET,
+    Ex_ObjRegister(L"Button", OBJECT_STYLE_VISIBLE | BUTTON_STYLE_TEXTOFFSET,
                    OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_VCENTER | DT_CENTER | DT_SINGLELINE,
-                   0,
-                   0,
-                   0,
-                   _button_proc);
-    Ex_ObjRegister(L"CheckButton",
-                   OBJECT_STYLE_VISIBLE | BUTTON_STYLE_CHECKBUTTON,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_VCENTER | DT_SINGLELINE,
-                   0,
-                   0,
-                   0,
-                   _button_proc);
-    Ex_ObjRegister(L"RadioButton",
-                   OBJECT_STYLE_VISIBLE | BUTTON_STYLE_RADIOBUTTON,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_VCENTER | DT_SINGLELINE,
-                   0,
-                   0,
-                   0,
-                   _button_proc);
+                   DT_VCENTER | DT_CENTER | DT_SINGLELINE, 0, 0, 0, _button_proc);
+    Ex_ObjRegister(L"CheckButton", OBJECT_STYLE_VISIBLE | BUTTON_STYLE_CHECKBUTTON,
+                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE,
+                   0, 0, 0, _button_proc);
+    Ex_ObjRegister(L"RadioButton", OBJECT_STYLE_VISIBLE | BUTTON_STYLE_RADIOBUTTON,
+                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE,
+                   0, 0, 0, _button_proc);
 }
 
 void _item_regsiter()
 {
-    Ex_ObjRegister(L"Item",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_VCENTER | DT_SINGLELINE,
-                   0,
-                   0,
-                   0,
-                   _item_proc);
+    Ex_ObjRegister(L"Item", OBJECT_STYLE_VISIBLE,
+                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE,
+                   0, 0, 0, _item_proc);
 }
 
 LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -58,12 +38,8 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
                 }
                 if ((pObj->dwStyle_ & (BUTTON_STYLE_CHECKBUTTON | BUTTON_STYLE_RADIOBUTTON)) != 0) {
                     if ((pObj->dwStyle_ & BUTTON_STYLE_CHECKBUTTON) == BUTTON_STYLE_CHECKBUTTON) {
-                        _obj_baseproc(hWnd,
-                                      hObj,
-                                      pObj,
-                                      BM_SETCHECK,
-                                      !((pObj->dwState_ & STATE_CHECKED) == STATE_CHECKED),
-                                      0);
+                        _obj_baseproc(hWnd, hObj, pObj, BM_SETCHECK,
+                                      !((pObj->dwState_ & STATE_CHECKED) == STATE_CHECKED), 0);
                     }
                     else {
                         if (!((pObj->dwState_ & STATE_CHECKED) == STATE_CHECKED)) {
@@ -161,18 +137,11 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
             }
 
             if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0) {
-                Ex_ThemeDrawControl(
-                    ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomProp, 255);
+                Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass,
+                                    atomProp, 255);
                 if ((ps.dwState & STATE_FOCUS) != 0) {
-                    Ex_ThemeDrawControl(ps.hTheme,
-                                        ps.hCanvas,
-                                        0,
-                                        0,
-                                        ps.uWidth,
-                                        ps.uHeight,
-                                        atomClass,
-                                        ATOM_FOCUS,
-                                        255);
+                    Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight,
+                                        atomClass, ATOM_FOCUS, 255);
                 }
             }
         }
@@ -180,24 +149,24 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
             fButton   = (ps.dwStyle & BUTTON_STYLE_RADIOBUTTON) != 0;
             atomClass = fButton ? ATOM_RADIOBUTTON : ATOM_CHECKBUTTON;
             if ((ps.dwState & STATE_DOWN) != 0) {
-                atomProp = _button_getprop(
-                    ps.dwState, fButton, ATOM_DOWN, ATOM_CHECK_DOWN, ATOM_HALF_DOWN);
-                nIndex = COLOR_EX_TEXT_DOWN;
+                atomProp = _button_getprop(ps.dwState, fButton, ATOM_DOWN, ATOM_CHECK_DOWN,
+                                           ATOM_HALF_DOWN);
+                nIndex   = COLOR_EX_TEXT_DOWN;
             }
             else if ((ps.dwState & STATE_HOVER) != 0) {
-                atomProp = _button_getprop(
-                    ps.dwState, fButton, ATOM_HOVER, ATOM_CHECK_HOVER, ATOM_HALF_HOVER);
-                nIndex = COLOR_EX_TEXT_HOVER;
+                atomProp = _button_getprop(ps.dwState, fButton, ATOM_HOVER, ATOM_CHECK_HOVER,
+                                           ATOM_HALF_HOVER);
+                nIndex   = COLOR_EX_TEXT_HOVER;
             }
             else if ((ps.dwState & STATE_FOCUS) != 0) {
-                atomProp = _button_getprop(
-                    ps.dwState, fButton, ATOM_FOCUS, ATOM_CHECK_FOCUS, ATOM_HALF_FOCUS);
-                nIndex = COLOR_EX_TEXT_NORMAL;
+                atomProp = _button_getprop(ps.dwState, fButton, ATOM_FOCUS, ATOM_CHECK_FOCUS,
+                                           ATOM_HALF_FOCUS);
+                nIndex   = COLOR_EX_TEXT_NORMAL;
             }
             else {
-                atomProp = _button_getprop(
-                    ps.dwState, fButton, ATOM_NORMAL, ATOM_CHECK_NORMAL, ATOM_HALF_NORMAL);
-                nIndex = COLOR_EX_TEXT_NORMAL;
+                atomProp = _button_getprop(ps.dwState, fButton, ATOM_NORMAL, ATOM_CHECK_NORMAL,
+                                           ATOM_HALF_NORMAL);
+                nIndex   = COLOR_EX_TEXT_NORMAL;
             }
 
             if ((ps.dwState & STATE_CHECKED) != 0) {
@@ -205,8 +174,8 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
             }
 
             if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0) {
-                Ex_ThemeDrawControl(
-                    ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass, atomProp, 255);
+                Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass,
+                                    atomProp, 255);
             }
         }
         LPCWSTR lptext = pObj->pstrTitle_;
@@ -215,19 +184,10 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
                 OffsetRect((LPRECT)&ps.rcText.left, Ex_Scale(1), Ex_Scale(1));
             }
 
-            _canvas_drawtextex(ps.hCanvas,
-                               pObj->hFont_,
-                               _obj_getcolor(pObj, nIndex),
-                               lptext,
-                               -1,
-                               ps.dwTextFormat,
-                               ps.rcText.left,
-                               ps.rcText.top,
-                               ps.rcText.right,
-                               ps.rcText.bottom,
-                               pObj->dwShadowSize_,
-                               _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW),
-                               0);
+            _canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, nIndex), lptext, -1,
+                               ps.dwTextFormat, ps.rcText.left, ps.rcText.top, ps.rcText.right,
+                               ps.rcText.bottom, pObj->dwShadowSize_,
+                               _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
         }
         Ex_ObjEndPaint(hObj, &ps);
     }
@@ -302,19 +262,8 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
             rcItem.top    = (rcItem.bottom - tmp) / 2;
             rcItem.right  = rcItem.right - Ex_Scale(rcPadding.right);
             rcItem.bottom = rcItem.top + tmp;
-            Ex_ThemeDrawControlEx(ps.hTheme,
-                                  ps.hCanvas,
-                                  rcItem.left,
-                                  rcItem.top,
-                                  rcItem.right,
-                                  rcItem.bottom,
-                                  ATOM_ITEM,
-                                  ATOM_SEPARATOR,
-                                  0,
-                                  0,
-                                  0,
-                                  0,
-                                  255);
+            Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcItem.left, rcItem.top, rcItem.right,
+                                  rcItem.bottom, ATOM_ITEM, ATOM_SEPARATOR, 0, 0, 0, 0, 255);
         }
         else {
             BOOL fHover = ((ps.dwState & STATE_HOVER) != 0 && (mii.fState & MFS_GRAYED) == 0) ||
@@ -325,15 +274,8 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
             }
             if ((mii.fState & MFS_GRAYED) == 0) {
                 if (fHover) {
-                    Ex_ThemeDrawControl(ps.hTheme,
-                                        ps.hCanvas,
-                                        rcItem.left,
-                                        rcItem.top,
-                                        rcItem.right,
-                                        rcItem.bottom,
-                                        ATOM_ITEM,
-                                        ATOM_SELECT,
-                                        alpha);
+                    Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, rcItem.left, rcItem.top,
+                                        rcItem.right, rcItem.bottom, ATOM_ITEM, ATOM_SELECT, alpha);
                 }
             }
             else {
@@ -352,19 +294,8 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
                 rcSub.top        = rcItem.top + (rcItem.bottom - rcItem.top - rcPadding.bottom) / 2;
                 rcSub.right      = rcSub.left + rcPadding.right;
                 rcSub.bottom     = rcSub.top + rcPadding.bottom;
-                Ex_ThemeDrawControlEx(ps.hTheme,
-                                      ps.hCanvas,
-                                      rcSub.left,
-                                      rcSub.top,
-                                      rcSub.right,
-                                      rcSub.bottom,
-                                      ATOM_ITEM,
-                                      ATOM_EXPAND,
-                                      0,
-                                      0,
-                                      0,
-                                      0,
-                                      alpha);
+                Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcSub.left, rcSub.top, rcSub.right,
+                                      rcSub.bottom, ATOM_ITEM, ATOM_EXPAND, 0, 0, 0, 0, alpha);
             }
             if ((mii.fState & MFS_CHECKED) != 0) {
                 atomProp = ATOM_CHECK;
@@ -382,19 +313,8 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
             rcSub.top =
                 rcItem.top + (rcItem.bottom - rcItem.top - (rcPadding.bottom - rcPadding.top)) / 2;
             rcSub.bottom = rcSub.top + rcPadding.bottom - rcPadding.top;
-            Ex_ThemeDrawControlEx(ps.hTheme,
-                                  ps.hCanvas,
-                                  rcSub.left,
-                                  rcSub.top,
-                                  rcSub.right,
-                                  rcSub.bottom,
-                                  ATOM_ITEM,
-                                  atomProp,
-                                  0,
-                                  0,
-                                  0,
-                                  0,
-                                  alpha);
+            Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcSub.left, rcSub.top, rcSub.right,
+                                  rcSub.bottom, ATOM_ITEM, atomProp, 0, 0, 0, 0, alpha);
             if (lpText != 0) {
                 HEXFONT hFont = pObj->hFont_;
                 if ((mii.fState & MFS_DEFAULT) != 0) {
@@ -410,17 +330,9 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
                     if (img != 0) {
                         INT imgWidth, imgHeight;
                         _img_getsize(img, &imgWidth, &imgHeight);
-                        _canvas_drawimagerectrect(ps.hCanvas,
-                                                  img,
-                                                  5,
-                                                  3,
-                                                  ps.rcPaint.left + 5 + ps.rcPaint.bottom - 6,
-                                                  ps.rcPaint.bottom - 3,
-                                                  0,
-                                                  0,
-                                                  imgWidth,
-                                                  imgHeight,
-                                                  255);
+                        _canvas_drawimagerectrect(
+                            ps.hCanvas, img, 5, 3, ps.rcPaint.left + 5 + ps.rcPaint.bottom - 6,
+                            ps.rcPaint.bottom - 3, 0, 0, imgWidth, imgHeight, 255);
                         _img_destroy(img);
                     }
                 }
@@ -428,37 +340,17 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
                 if (tmp1) {
                     *tmp1 = 0;
                 }
-                _canvas_drawtextex(ps.hCanvas,
-                                   hFont,
-                                   crColor,
-                                   lpText,
-                                   -1,
-                                   ps.dwTextFormat,
-                                   ps.rcText.left,
-                                   ps.rcText.top,
-                                   ps.rcText.right,
-                                   ps.rcText.bottom,
-                                   0,
-                                   0,
-                                   0);
+                _canvas_drawtextex(ps.hCanvas, hFont, crColor, lpText, -1, ps.dwTextFormat,
+                                   ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom,
+                                   0, 0, 0);
                 if (tmp1) {
                     *tmp1 = 9;
                     if (!fHover) {
                         *(((CHAR*)&crColor) + 3) = (CHAR)128;
                     }
-                    _canvas_drawtextex(ps.hCanvas,
-                                       hFont,
-                                       crColor,
-                                       (LPCWSTR)(tmp1 + 1),
-                                       -1,
-                                       ps.dwTextFormat | DT_RIGHT,
-                                       ps.rcText.left,
-                                       ps.rcText.top,
-                                       ps.rcText.right,
-                                       ps.rcText.bottom,
-                                       0,
-                                       0,
-                                       0);
+                    _canvas_drawtextex(ps.hCanvas, hFont, crColor, (LPCWSTR)(tmp1 + 1), -1,
+                                       ps.dwTextFormat | DT_RIGHT, ps.rcText.left, ps.rcText.top,
+                                       ps.rcText.right, ps.rcText.bottom, 0, 0, 0);
                 }
                 if ((mii.fState & MFS_DEFAULT) != 0) {
                     _font_destroy(hFont);
@@ -497,30 +389,14 @@ void _item_paint(HEXOBJ hObj, obj_s* pObj)
         else {
             if (atomProp != 0) {
                 if ((ps.dwStyleEx & OBJECT_STYLE_EX_CUSTOMDRAW) == 0) {
-                    Ex_ThemeDrawControl(ps.hTheme,
-                                        ps.hCanvas,
-                                        0,
-                                        0,
-                                        ps.uWidth,
-                                        ps.uHeight,
-                                        ATOM_ITEM,
-                                        atomProp,
-                                        255);
+                    Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight,
+                                        ATOM_ITEM, atomProp, 255);
                 }
             }
             if (lptext != 0) {
-                _canvas_drawtextex(ps.hCanvas,
-                                   pObj->hFont_,
-                                   crColor,
-                                   lptext,
-                                   -1,
-                                   ps.dwTextFormat,
-                                   ps.rcText.left,
-                                   ps.rcText.top,
-                                   ps.rcText.right,
-                                   ps.rcText.bottom,
-                                   pObj->dwShadowSize_,
-                                   _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW),
+                _canvas_drawtextex(ps.hCanvas, pObj->hFont_, crColor, lptext, -1, ps.dwTextFormat,
+                                   ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom,
+                                   pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW),
                                    0);
             }
         }

@@ -47,10 +47,7 @@ public:
     }
 
     STDMETHOD(GetInPlaceContext)
-    (LPOLEINPLACEFRAME FAR*, LPOLEINPLACEUIWINDOW FAR*, LPOLEINPLACEFRAMEINFO)
-    {
-        return S_OK;
-    }
+    (LPOLEINPLACEFRAME FAR*, LPOLEINPLACEUIWINDOW FAR*, LPOLEINPLACEFRAMEINFO) { return S_OK; }
     STDMETHOD(ShowContainerUI)(BOOL) { return S_OK; }
     STDMETHOD(QueryInsertObject)(LPCLSID, LPSTORAGE, LONG) { return S_OK; }
     STDMETHOD(DeleteObject)(LPOLEOBJECT) { return S_OK; }

@@ -4,16 +4,9 @@ BOOL _dx_init(INT* nError)
 {
     BOOL          ret        = FALSE;
     ID3D11Device* pD3DDevice = nullptr;
-    *nError                  = D3D11CreateDevice(NULL,
-                                D3D_DRIVER_TYPE_HARDWARE,
-                                NULL,
-                                D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-                                NULL,
-                                0,
-                                D3D11_SDK_VERSION,
-                                &pD3DDevice,
-                                NULL,
-                                NULL);
+    *nError =
+        D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+                          NULL, 0, D3D11_SDK_VERSION, &pD3DDevice, NULL, NULL);
     if (*nError == 0 && pD3DDevice != nullptr) {
         /* *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1),
          * (LPVOID *)&(g_Ri.pD2Dfactory));*/
@@ -24,7 +17,7 @@ BOOL _dx_init(INT* nError)
         options.debugLevel = D2D1_DEBUG_LEVEL_ERROR;
         // 创建工厂
         //*nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, options, &
-        //g_Ri.pD2Dfactory);
+        // g_Ri.pD2Dfactory);
         *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &g_Ri.pD2Dfactory);
 #else
         *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &g_Ri.pD2Dfactory);
@@ -41,8 +34,8 @@ BOOL _dx_init(INT* nError)
                         g_Ri.pD2DDeviceContext->SetUnitMode(D2D1_UNIT_MODE_PIXELS);
                         g_Ri.pGDIInterop = _dx_get_gdiInterop(g_Ri.pD2DDeviceContext);
                         *nError          = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-                                                      __uuidof(IDWriteFactory),
-                                                      (IUnknown**)&g_Ri.pDWriteFactory);
+                                                               __uuidof(IDWriteFactory),
+                                                               (IUnknown**)&g_Ri.pDWriteFactory);
                         if (*nError == 0) {
                             WCHAR LocaleName[260];
                             INT   reta = GetUserDefaultLocaleName(LocaleName, 260) * 2;
@@ -187,7 +180,7 @@ void _dx_blur(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap, FLOAT fD
         INT    hard     = 1;
         UINT32 datasize = 4;
         *nError         = g_Ri.pEffectGaussianBlur->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE,
-                                                     D2D1_BORDER_MODE_SOFT);
+                                                             D2D1_BORDER_MODE_SOFT);
     }
     if (*nError == 0) {
         D2D1_SIZE_F   size     = {};
@@ -209,15 +202,13 @@ void _dx_blur(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap, FLOAT fD
             g_Ri.pEffectGaussianBlur->SetInput(0, pCopyBitmap, TRUE);
 
             FLOAT fScale = fDeviation / 2;
-            *nError      = g_Ri.pEffectGaussianBlur->SetValue(
-                D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, (BYTE*)&fScale, 4);
+            *nError = g_Ri.pEffectGaussianBlur->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION,
+                                                         (BYTE*)&fScale, 4);
             if (*nError == 0) {
                 ID2D1Image* output = nullptr;
                 g_Ri.pEffectGaussianBlur->GetOutput(&output);
                 if (output != 0) {
-                    pDeviceContext->DrawImage(output,
-                                              ptOffset,
-                                              D2D1_INTERPOLATION_MODE_LINEAR,
+                    pDeviceContext->DrawImage(output, ptOffset, D2D1_INTERPOLATION_MODE_LINEAR,
                                               D2D1_COMPOSITE_MODE_SOURCE_OVER);
                     output->Release();
                 }
@@ -268,8 +259,8 @@ void _dx_drawbitmaprect(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap
     rect.top         = dstTop;
     rect.right       = dstRight;
     rect.bottom      = dstBottom;
-    pDeviceContext->DrawBitmap(
-        pBitmap, rect, (FLOAT)(dwAlpha / 255.0), D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
+    pDeviceContext->DrawBitmap(pBitmap, rect, (FLOAT)(dwAlpha / 255.0),
+                               D2D1_BITMAP_INTERPOLATION_MODE_LINEAR);
 }
 
 void _dx_drawbitmaprectrect(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap, FLOAT dstLeft,
@@ -286,8 +277,8 @@ void _dx_drawbitmaprectrect(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBi
     rect2.top         = srcTop;
     rect2.right       = srcRight;
     rect2.bottom      = srcBottom;
-    pDeviceContext->DrawBitmap(
-        pBitmap, rect, (FLOAT)(dwAlpha / 255.0), D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rect2);
+    pDeviceContext->DrawBitmap(pBitmap, rect, (FLOAT)(dwAlpha / 255.0),
+                               D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, rect2);
 }
 
 void _dx_drawimage(ID2D1DeviceContext* pDeviceContext, img_s* pImage, FLOAT left, FLOAT top,
@@ -296,9 +287,7 @@ void _dx_drawimage(ID2D1DeviceContext* pDeviceContext, img_s* pImage, FLOAT left
     D2D1_POINT_2F point = {};
     point.x             = left;
     point.y             = top;
-    pDeviceContext->DrawImage((ID2D1Image*)pImage,
-                              point,
-                              D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR,
+    pDeviceContext->DrawImage((ID2D1Image*)pImage, point, D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR,
                               (D2D1_COMPOSITE_MODE)mode);
 }
 
@@ -314,10 +303,7 @@ void _dx_drawimage_ex(ID2D1DeviceContext* pDeviceContext, img_s* pImage, FLOAT d
     rect.top            = srcTop;
     rect.right          = srcRight;
     rect.bottom         = srcBottom;
-    pDeviceContext->DrawImage((ID2D1Image*)pImage,
-                              point,
-                              rect,
-                              D2D1_INTERPOLATION_MODE_LINEAR,
+    pDeviceContext->DrawImage((ID2D1Image*)pImage, point, rect, D2D1_INTERPOLATION_MODE_LINEAR,
                               (D2D1_COMPOSITE_MODE)mode);
 }
 
@@ -354,9 +340,7 @@ void _dx_rotate_hue(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap, FL
                 ID2D1Image* output = nullptr;
                 g_Ri.pEffectHueRotation->GetOutput(&output);
                 if (output != 0) {
-                    pDeviceContext->DrawImage(output,
-                                              NULL,
-                                              NULL,
+                    pDeviceContext->DrawImage(output, NULL, NULL,
                                               D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR,
                                               D2D1_COMPOSITE_MODE_SOURCE_COPY);
                     output->Release();

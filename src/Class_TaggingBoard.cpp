@@ -3,14 +3,9 @@
 void _taggingboard_register()
 {
     WCHAR wzCls[] = L"TaggingBoard";
-    Ex_ObjRegister(wzCls,
-                   OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-                   0,
-                   20 * sizeof(size_t),
-                   0,
-                   0,
-                   _taggingboard_proc);
+    Ex_ObjRegister(wzCls, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL,
+                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, 0, 20 * sizeof(size_t),
+                   0, 0, _taggingboard_proc);
 }
 
 LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
@@ -26,12 +21,8 @@ LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
             BOOL   bVScroll  = (ps.dwStyle & SCROLLBAR_STYLE_VERTICALSCROLL) != 0;
             EXATOM atomClass = bVScroll ? ATOM_VSCROLL : ATOM_HSCROLL;
             auto   brush     = _brush_create(ExARGB(255, 255, 255, 100));
-            _canvas_fillrect(ps.hCanvas,
-                             brush,
-                             ps.rcPaint.left,
-                             ps.rcPaint.top + 1,
-                             ps.rcPaint.right - 1,
-                             ps.rcPaint.bottom - 1);
+            _canvas_fillrect(ps.hCanvas, brush, ps.rcPaint.left, ps.rcPaint.top + 1,
+                             ps.rcPaint.right - 1, ps.rcPaint.bottom - 1);
             _brush_setcolor(brush, ExARGB(120, 120, 120, 255));
             INT atomBtn1 = ATOM_ARROW1_NORMAL;
             INT atomBtn2 = ATOM_ARROW2_NORMAL;
@@ -51,51 +42,23 @@ LRESULT CALLBACK _taggingboard_OnScrollBarMsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
                     }
                 }
             }
-            Ex_ThemeDrawControlEx(ps.hTheme,
-                                  ps.hCanvas,
-                                  si->rcArrow1_left_,
-                                  si->rcArrow1_top_,
-                                  si->rcArrow1_right_,
-                                  si->rcArrow1_bottom_,
-                                  atomClass,
-                                  atomBtn1,
-                                  0,
-                                  0,
-                                  0,
-                                  0,
-                                  255);
-            Ex_ThemeDrawControlEx(ps.hTheme,
-                                  ps.hCanvas,
-                                  si->rcArrow2_left_,
-                                  si->rcArrow2_top_,
-                                  si->rcArrow2_right_,
-                                  si->rcArrow2_bottom_,
-                                  atomClass,
-                                  atomBtn2,
-                                  0,
-                                  0,
-                                  0,
-                                  0,
-                                  255);
+            Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, si->rcArrow1_left_, si->rcArrow1_top_,
+                                  si->rcArrow1_right_, si->rcArrow1_bottom_, atomClass, atomBtn1, 0,
+                                  0, 0, 0, 255);
+            Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, si->rcArrow2_left_, si->rcArrow2_top_,
+                                  si->rcArrow2_right_, si->rcArrow2_bottom_, atomClass, atomBtn2, 0,
+                                  0, 0, 0, 255);
 
             _brush_setcolor(brush, crBar);
             if (bVScroll) {
-                _canvas_fillroundedrect(ps.hCanvas,
-                                        brush,
-                                        si->rcThumb_left_,
-                                        si->rcThumb_top_,
-                                        si->rcThumb_right_,
-                                        si->rcThumb_bottom_,
+                _canvas_fillroundedrect(ps.hCanvas, brush, si->rcThumb_left_, si->rcThumb_top_,
+                                        si->rcThumb_right_, si->rcThumb_bottom_,
                                         (si->rcThumb_right_ - si->rcThumb_left_) / 2,
                                         (si->rcThumb_right_ - si->rcThumb_left_) / 2);
             }
             else {
-                _canvas_fillroundedrect(ps.hCanvas,
-                                        brush,
-                                        si->rcThumb_left_,
-                                        si->rcThumb_top_,
-                                        si->rcThumb_right_,
-                                        si->rcThumb_bottom_,
+                _canvas_fillroundedrect(ps.hCanvas, brush, si->rcThumb_left_, si->rcThumb_top_,
+                                        si->rcThumb_right_, si->rcThumb_bottom_,
                                         (si->rcThumb_bottom_ - si->rcThumb_top_) / 2,
                                         (si->rcThumb_bottom_ - si->rcThumb_top_) / 2);
             }
@@ -246,17 +209,15 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_SCALE, (LONG_PTR)scalePtr);
 
         Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_BOTH, TRUE);
-        Ex_ObjScrollSetInfo(
-            hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
-        Ex_ObjScrollSetInfo(
-            hObj, SCROLLBAR_TYPE_HORZ, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
+        Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000,
+                            0, TRUE);
+        Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_HORZ, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000,
+                            0, TRUE);
         HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hObj, SCROLLBAR_TYPE_VERT);
-        Ex_ObjSetLong(hObj_scroll,
-                      OBJECT_LONG_OBJPROC,
+        Ex_ObjSetLong(hObj_scroll, OBJECT_LONG_OBJPROC,
                       (size_t)_taggingboard_OnScrollBarMsg);   // 改变滚动条回调
         hObj_scroll = Ex_ObjScrollGetControl(hObj, SCROLLBAR_TYPE_HORZ);
-        Ex_ObjSetLong(hObj_scroll,
-                      OBJECT_LONG_OBJPROC,
+        Ex_ObjSetLong(hObj_scroll, OBJECT_LONG_OBJPROC,
                       (size_t)_taggingboard_OnScrollBarMsg);   // 改变滚动条回调
     }
     else if (uMsg == WM_SIZE) {
@@ -318,8 +279,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         if (arr->count > 0) {
             for (int i = 0; i < arr->count; i++) {
                 size_t ptrValue = 0;
-                RtlMoveMemory(&ptrValue,
-                              (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
+                RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
                               sizeof(size_t));
                 auto ptr = (EX_POLYGON*)ptrValue;
                 free(ptr->points);
@@ -468,8 +428,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             if (arr->count > 0) {
                 for (int i = 0; i < arr->count; i++) {
                     size_t ptrValue = 0;
-                    RtlMoveMemory(&ptrValue,
-                                  (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
+                    RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
                                   sizeof(size_t));
                     auto ptr = (EX_POLYGON*)ptrValue;
                     free(ptr->points);
@@ -490,8 +449,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             newArr->polygons   = realloc(newArr->polygons, (newArr->count + 1) * sizeof(size_t));
             size_t newPtrValue = (size_t)newPtr;
             RtlMoveMemory((LPVOID)((size_t)newArr->polygons + newArr->count * sizeof(size_t)),
-                          &newPtrValue,
-                          sizeof(size_t));
+                          &newPtrValue, sizeof(size_t));
             newArr->count = newArr->count + 1;
 
             Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ARRAY, lParam);
@@ -524,8 +482,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             // 拷贝index前面数据
             for (int i = 0; i < index; i++) {
                 size_t ptrValue = 0;
-                RtlMoveMemory(&ptrValue,
-                              (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
+                RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
                               sizeof(size_t));
                 auto ptr       = (EX_POLYGON*)ptrValue;
                 auto newPtr    = (EX_POLYGON*)malloc(sizeof(EX_POLYGON));
@@ -539,8 +496,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                     RtlMoveMemory((LPVOID)((size_t)newPtr->points + j * 8 + 4), &y, 4);
                 }
                 size_t newPtrValue = (size_t)newPtr;
-                RtlMoveMemory((LPVOID)((size_t)newArr->polygons + i * sizeof(size_t)),
-                              &newPtrValue,
+                RtlMoveMemory((LPVOID)((size_t)newArr->polygons + i * sizeof(size_t)), &newPtrValue,
                               sizeof(size_t));
                 free(ptr->points);
                 free(ptr);
@@ -548,8 +504,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             // 拷贝index后面数据
             for (int i = index + 1; i < arr->count; i++) {
                 size_t ptrValue = 0;
-                RtlMoveMemory(&ptrValue,
-                              (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
+                RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
                               sizeof(size_t));
                 auto ptr    = (EX_POLYGON*)ptrValue;
                 auto newPtr = (EX_POLYGON*)malloc(sizeof(EX_POLYGON));
@@ -573,8 +528,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 }
                 size_t newPtrValue = (size_t)newPtr;
                 RtlMoveMemory((LPVOID)((size_t)newArr->polygons + (i - 1) * sizeof(size_t)),
-                              &newPtrValue,
-                              sizeof(size_t));
+                              &newPtrValue, sizeof(size_t));
                 free(ptr->points);
                 free(ptr);
             }
@@ -764,10 +718,10 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                             else {
                                 // add point
                                 ptr->points = realloc(ptr->points, (ptr->count + 1) * 8);
-                                RtlMoveMemory(
-                                    (LPVOID)((size_t)ptr->points + ptr->count * 8), &x, 4);
-                                RtlMoveMemory(
-                                    (LPVOID)((size_t)ptr->points + ptr->count * 8 + 4), &y, 4);
+                                RtlMoveMemory((LPVOID)((size_t)ptr->points + ptr->count * 8), &x,
+                                              4);
+                                RtlMoveMemory((LPVOID)((size_t)ptr->points + ptr->count * 8 + 4),
+                                              &y, 4);
                                 ptr->count = ptr->count + 1;
                             }
 
@@ -798,8 +752,7 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                             size_t ptrValue = (size_t)newPtr;
                             RtlMoveMemory(
                                 (LPVOID)((size_t)arr->polygons + arr->count * sizeof(size_t)),
-                                &ptrValue,
-                                sizeof(size_t));
+                                &ptrValue, sizeof(size_t));
                             arr->count = arr->count + 1;
                         }
                     }
@@ -855,8 +808,8 @@ BOOL _taggingboard_ptinregion(HEXOBJ hObj, FLOAT ptx, FLOAT pty, INT* index)
     if (arr->count > 1) {
         for (int i = 0; i < arr->count - 1; i++) {
             size_t ptrValue = 0;
-            RtlMoveMemory(
-                &ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)), sizeof(size_t));
+            RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
+                          sizeof(size_t));
             EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
             HEXPATH     path;
             _path_create(1, &path);
@@ -870,22 +823,16 @@ BOOL _taggingboard_ptinregion(HEXOBJ hObj, FLOAT ptx, FLOAT pty, INT* index)
                     RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
                     RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
                     if (j != 0) {
-                        _path_addline(path,
-                                      startX - sbOffsetLeft,
-                                      startY - sbOffsetTop,
-                                      x - sbOffsetLeft,
-                                      y - sbOffsetTop);
+                        _path_addline(path, startX - sbOffsetLeft, startY - sbOffsetTop,
+                                      x - sbOffsetLeft, y - sbOffsetTop);
                     }
                     if (j == 0) {
                         firstX = x;
                         firstY = y;
                     }
                     if (j == ptr->count - 1) {
-                        _path_addline(path,
-                                      x - sbOffsetLeft,
-                                      y - sbOffsetTop,
-                                      firstX - sbOffsetLeft,
-                                      firstY - sbOffsetTop);
+                        _path_addline(path, x - sbOffsetLeft, y - sbOffsetTop,
+                                      firstX - sbOffsetLeft, firstY - sbOffsetTop);
                     }
                     startX = x;
                     startY = y;
@@ -922,14 +869,8 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
         int      endY   = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ENDY);
         HEXBRUSH brush  = (HEXBRUSH)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_PEN);
 
-        _canvas_drawline(canvas,
-                         brush,
-                         beginX - sbOffsetLeft,
-                         beginY - sbOffsetTop,
-                         endX - sbOffsetLeft,
-                         endY - sbOffsetTop,
-                         Ex_Scale(2),
-                         0);
+        _canvas_drawline(canvas, brush, beginX - sbOffsetLeft, beginY - sbOffsetTop,
+                         endX - sbOffsetLeft, endY - sbOffsetTop, Ex_Scale(2), 0);
     }
     _canvas_enddraw(canvas);
     Ex_ObjInvalidateRect(hObj, 0);
@@ -959,13 +900,9 @@ void _taggingboard_paint(HEXOBJ hObj)
             int newLeft   = (canvasWidth - newWidth) / 2;
             int newTop    = (canvasHeight - newHeight) / 2;
 
-            _canvas_drawimagerect(ps.hCanvas,
-                                  bkg,
-                                  newLeft - sbOffsetLeft,
-                                  newTop - sbOffsetTop,
+            _canvas_drawimagerect(ps.hCanvas, bkg, newLeft - sbOffsetLeft, newTop - sbOffsetTop,
                                   newLeft + newWidth - sbOffsetLeft,
-                                  newTop + newHeight - sbOffsetTop,
-                                  255);
+                                  newTop + newHeight - sbOffsetTop, 255);
         }
 
         HEXBRUSH brush   = (HEXBRUSH)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_PEN);
@@ -975,15 +912,7 @@ void _taggingboard_paint(HEXOBJ hObj)
             auto pointNull = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_POINT_NULL);
             // 点不为空画临时线
             if (!pointNull) {
-                _canvas_drawcanvas(ps.hCanvas,
-                                   canvas,
-                                   0,
-                                   0,
-                                   ps.uWidth,
-                                   ps.uHeight,
-                                   0,
-                                   0,
-                                   255,
+                _canvas_drawcanvas(ps.hCanvas, canvas, 0, 0, ps.uWidth, ps.uHeight, 0, 0, 255,
                                    CANVAS_COMPOSITE_MODE_SRCOVER);
             }
         }
@@ -995,8 +924,7 @@ void _taggingboard_paint(HEXOBJ hObj)
         if (arr->count > 0) {
             for (int i = 0; i < arr->count; i++) {
                 size_t ptrValue = 0;
-                RtlMoveMemory(&ptrValue,
-                              (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
+                RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
                               sizeof(size_t));
                 EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
                 HEXPATH     path;
@@ -1014,19 +942,11 @@ void _taggingboard_paint(HEXOBJ hObj)
 
                         // 第二个点开始画线
                         if (j != 0) {
-                            _canvas_drawline(ps.hCanvas,
-                                             brush,
-                                             startX - sbOffsetLeft,
-                                             startY - sbOffsetTop,
-                                             x - sbOffsetLeft,
-                                             y - sbOffsetTop,
-                                             Ex_Scale(2),
-                                             0);
-                            _path_addline(path,
-                                          startX - sbOffsetLeft,
-                                          startY - sbOffsetTop,
-                                          x - sbOffsetLeft,
-                                          y - sbOffsetTop);
+                            _canvas_drawline(ps.hCanvas, brush, startX - sbOffsetLeft,
+                                             startY - sbOffsetTop, x - sbOffsetLeft,
+                                             y - sbOffsetTop, Ex_Scale(2), 0);
+                            _path_addline(path, startX - sbOffsetLeft, startY - sbOffsetTop,
+                                          x - sbOffsetLeft, y - sbOffsetTop);
                         }
                         if (j == 0) {
                             firstX = x;
@@ -1034,11 +954,8 @@ void _taggingboard_paint(HEXOBJ hObj)
                         }
                         if (j == ptr->count - 1) {
                             // 最后一条线
-                            _path_addline(path,
-                                          x - sbOffsetLeft,
-                                          y - sbOffsetTop,
-                                          firstX - sbOffsetLeft,
-                                          firstY - sbOffsetTop);
+                            _path_addline(path, x - sbOffsetLeft, y - sbOffsetTop,
+                                          firstX - sbOffsetLeft, firstY - sbOffsetTop);
                         }
                         startX = x;
                         startY = y;
@@ -1046,61 +963,36 @@ void _taggingboard_paint(HEXOBJ hObj)
                         // 非最后一个路径的最后一条线
                         if (i != arr->count - 1 && j == ptr->count - 1) {
                             // 最后一条线
-                            _canvas_drawline(ps.hCanvas,
-                                             brush,
-                                             firstX - sbOffsetLeft,
-                                             firstY - sbOffsetTop,
-                                             x - sbOffsetLeft,
-                                             y - sbOffsetTop,
-                                             Ex_Scale(2),
-                                             0);
+                            _canvas_drawline(ps.hCanvas, brush, firstX - sbOffsetLeft,
+                                             firstY - sbOffsetTop, x - sbOffsetLeft,
+                                             y - sbOffsetTop, Ex_Scale(2), 0);
                         }
                         // 命中临时第一个点
                         if (hitPoint - 1 == j) {
                             if (arr->count == 1) {
                                 // 如果只有一个路径
-                                _canvas_drawellipse(ps.hCanvas,
-                                                    brush,
-                                                    x - sbOffsetLeft,
-                                                    y - sbOffsetTop,
-                                                    Ex_Scale(8),
-                                                    Ex_Scale(8),
-                                                    Ex_Scale(2),
-                                                    0);
+                                _canvas_drawellipse(ps.hCanvas, brush, x - sbOffsetLeft,
+                                                    y - sbOffsetTop, Ex_Scale(8), Ex_Scale(8),
+                                                    Ex_Scale(2), 0);
                             }
                             else if (i == arr->count - 1) {
                                 // 是最后一个路径
-                                _canvas_drawellipse(ps.hCanvas,
-                                                    brush,
-                                                    x - sbOffsetLeft,
-                                                    y - sbOffsetTop,
-                                                    Ex_Scale(8),
-                                                    Ex_Scale(8),
-                                                    Ex_Scale(2),
-                                                    0);
+                                _canvas_drawellipse(ps.hCanvas, brush, x - sbOffsetLeft,
+                                                    y - sbOffsetTop, Ex_Scale(8), Ex_Scale(8),
+                                                    Ex_Scale(2), 0);
                             }
                             else {
                                 // 不是最后一个路径
-                                _canvas_drawellipse(ps.hCanvas,
-                                                    brush,
-                                                    x - sbOffsetLeft,
-                                                    y - sbOffsetTop,
-                                                    Ex_Scale(2),
-                                                    Ex_Scale(2),
-                                                    Ex_Scale(2),
-                                                    0);
+                                _canvas_drawellipse(ps.hCanvas, brush, x - sbOffsetLeft,
+                                                    y - sbOffsetTop, Ex_Scale(2), Ex_Scale(2),
+                                                    Ex_Scale(2), 0);
                             }
                         }
                         else {
                             // 普通点
-                            _canvas_drawellipse(ps.hCanvas,
-                                                brush,
-                                                x - sbOffsetLeft,
-                                                y - sbOffsetTop,
-                                                Ex_Scale(2),
-                                                Ex_Scale(2),
-                                                Ex_Scale(2),
-                                                0);
+                            _canvas_drawellipse(ps.hCanvas, brush, x - sbOffsetLeft,
+                                                y - sbOffsetTop, Ex_Scale(2), Ex_Scale(2),
+                                                Ex_Scale(2), 0);
                         }
                     }
                 }

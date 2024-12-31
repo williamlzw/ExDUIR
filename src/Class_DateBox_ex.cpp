@@ -3,14 +3,9 @@
 void _datebox_register()
 {
     DWORD cbObjExtra = 2 * sizeof(size_t);
-    Ex_ObjRegister(L"DateBox",
-                   OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                   OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_CENTER | DT_VCENTER,
-                   cbObjExtra,
-                   LoadCursor(0, IDC_HAND),
-                   CANVAS_FLAG_TEXTANTIALIAS,
-                   _datebox_proc);
+    Ex_ObjRegister(L"DateBox", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
+                   OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, cbObjExtra,
+                   LoadCursor(0, IDC_HAND), CANVAS_FLAG_TEXTANTIALIAS, _datebox_proc);
 }
 
 time_t _datebox_gettimestamp()
@@ -24,8 +19,8 @@ void _datebox_settitle(HEXOBJ hObj, datebox_s* pOwner, int type)
 {
     TCHAR str[][4] = {L"", L"一", L"二", L"三", L"四", L"五", L"六", L"日"};
     WCHAR lpTitle[50];
-    swprintf_s(
-        lpTitle, L"%d-%d-%d 星期%s", pOwner->Year, pOwner->Mon, pOwner->Mday, str[pOwner->Wday]);
+    swprintf_s(lpTitle, L"%d-%d-%d 星期%s", pOwner->Year, pOwner->Mon, pOwner->Mday,
+               str[pOwner->Wday]);
 
     Ex_ObjSetText(hObj, (LPCWSTR)lpTitle, type == 2);
 }
@@ -234,16 +229,10 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         else if (uMsg == WM_PAINT) {
             EX_PAINTSTRUCT ps{0};
             if (Ex_ObjBeginPaint(hObj, &ps)) {
-                _canvas_drawtext(ps.hCanvas,
-                                 Ex_ObjGetFont(hObj),
+                _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
                                  Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                                 (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                                 -1,
-                                 ps.dwTextFormat,
-                                 0,
-                                 0,
-                                 ps.uWidth,
-                                 ps.uHeight);
+                                 (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                                 ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
                 Ex_ObjEndPaint(hObj, &ps);
             }
         }
@@ -264,124 +253,44 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 lpRect.left += Ex_Scale(objRect.left);        // 修复弹出定位
                 lpRect.top += Ex_Scale(objRect.bottom + 2);   // 修复弹出定位
 
-                HWND   hWndBox = Ex_WndCreate(hWnd,
-                                            NULL,
-                                            NULL,
-                                            0,
-                                            0,
-                                            300,
-                                            200,
-                                            WS_POPUP,
-                                            WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+                HWND   hWndBox = Ex_WndCreate(hWnd, NULL, NULL, 0, 0, 300, 200, WS_POPUP,
+                                              WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
                 HEXDUI hExBox =
-                    Ex_DUIBindWindowEx(hWndBox,
-                                       0,
+                    Ex_DUIBindWindowEx(hWndBox, 0,
                                        WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_NOINHERITBKG |
                                            WINDOW_STYLE_NOCAPTIONTOPMOST | WINDOW_STYLE_POPUPWINDOW,
-                                       (size_t)ptr,
-                                       _datebox_onwndmsgproc);
+                                       (size_t)ptr, _datebox_onwndmsgproc);
                 if (hExBox) {
                     // 创建一个底部标签，防止点击空白标题处，窗口会关闭。
-                    HEXOBJ hObj_Static = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                                        L"Static",
-                                                        L"",
-                                                        -1,
-                                                        0,
-                                                        0,
-                                                        400,
-                                                        400,
-                                                        hExBox,
-                                                        0,
-                                                        -1,
-                                                        0,
-                                                        0,
-                                                        0);
+                    HEXOBJ hObj_Static = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"",
+                                                        -1, 0, 0, 400, 400, hExBox, 0, -1, 0, 0, 0);
                     ptr->nSohwType     = 0;
-                    SetWindowPos(hWndBox,
-                                 0,
-                                 (lpRect.left),
-                                 (lpRect.top),
-                                 Ex_Scale(310),
-                                 Ex_Scale(342),
-                                 SWP_NOZORDER | SWP_NOACTIVATE);
+                    SetWindowPos(hWndBox, 0, (lpRect.left), (lpRect.top), Ex_Scale(310),
+                                 Ex_Scale(342), SWP_NOZORDER | SWP_NOACTIVATE);
 
-                    HEXOBJ hObj1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                                  L"Static",
-                                                  L"",
-                                                  -1,
-                                                  10,
-                                                  8,
-                                                  80,
-                                                  22,
-                                                  hObj_Static,
-                                                  77701,
-                                                  -1,
-                                                  (LPARAM)ptr,
-                                                  0,
+                    HEXOBJ hObj1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"", -1, 10,
+                                                  8, 80, 22, hObj_Static, 77701, -1, (LPARAM)ptr, 0,
                                                   _datebox_onbuttonproc);
                     Ex_ObjSetFontFromFamily(hObj1, 0, 14, -1, FALSE);
-                    HEXOBJ hObj2 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                                  L"Static",
-                                                  L"-",
-                                                  -1,
-                                                  240,
-                                                  8,
-                                                  30,
-                                                  20,
-                                                  hObj_Static,
-                                                  77702,
-                                                  DT_CENTER | DT_VCENTER,
-                                                  (LPARAM)ptr,
-                                                  0,
-                                                  _datebox_onbuttonproc);
+                    HEXOBJ hObj2 = Ex_ObjCreateEx(
+                        OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj_Static,
+                        77702, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _datebox_onbuttonproc);
                     Ex_ObjSetFontFromFamily(hObj2, 0, 24, -1, FALSE);
-                    HEXOBJ hObj3 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                                  L"Static",
-                                                  L"+",
-                                                  -1,
-                                                  275,
-                                                  8,
-                                                  30,
-                                                  20,
-                                                  hObj_Static,
-                                                  77703,
-                                                  DT_CENTER | DT_VCENTER,
-                                                  (LPARAM)ptr,
-                                                  0,
-                                                  _datebox_onbuttonproc);
+                    HEXOBJ hObj3 = Ex_ObjCreateEx(
+                        OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj_Static,
+                        77703, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _datebox_onbuttonproc);
                     Ex_ObjSetFontFromFamily(hObj3, 0, 24, -1, FALSE);
 
-                    HEXOBJ hObj4 =
-                        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                       L"listview",
-                                       NULL,
-                                       OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST,
-                                       10,
-                                       45,
-                                       300,
-                                       267,
-                                       hObj_Static,
-                                       77704,
-                                       -1,
-                                       (LPARAM)ptr,
-                                       0,
-                                       _datebox_onlistproc);
+                    HEXOBJ hObj4 = Ex_ObjCreateEx(
+                        OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL,
+                        OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST, 10, 45, 300, 267,
+                        hObj_Static, 77704, -1, (LPARAM)ptr, 0, _datebox_onlistproc);
                     _datebox_init(hObj4, ptr->Year, ptr->Mon);
 
-                    HEXOBJ hObj5 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                                  L"listview",
-                                                  NULL,
-                                                  LISTVIEW_STYLE_VERTICALLIST,
-                                                  10,
-                                                  65,
-                                                  300,
-                                                  247,
-                                                  hObj_Static,
-                                                  77705,
-                                                  -1,
-                                                  (LPARAM)ptr,
-                                                  0,
-                                                  _datebox_onlistproc);
+                    HEXOBJ hObj5 =
+                        Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL,
+                                       LISTVIEW_STYLE_VERTICALLIST, 10, 65, 300, 247, hObj_Static,
+                                       77705, -1, (LPARAM)ptr, 0, _datebox_onlistproc);
                     Ex_ObjShow(hObj5, FALSE);
                     Ex_ObjSetFontFromFamily(hObj5, 0, 14, -1, FALSE);
                     Ex_ObjSendMessage(hObj5, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
@@ -430,15 +339,9 @@ LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARA
         datebox_s* pOwner = (datebox_s*)Ex_DUIGetLong(hExDUI, ENGINE_LONG_LPARAM);
         _canvas_clear(wParam, -1);
         int offset = Ex_Scale(26);
-        _canvas_drawtext(wParam,
-                         pOwner->hFont,
-                         ExRGB2ARGB(16711680, 255),
-                         (LPCWSTR)Ex_ObjGetLong(pOwner->hObj, OBJECT_LONG_LPWZTITLE),
-                         -1,
-                         DT_LEFT | DT_VCENTER,
-                         Ex_Scale(18),
-                         HIWORD(lParam) - offset,
-                         Ex_Scale(220),
+        _canvas_drawtext(wParam, pOwner->hFont, ExRGB2ARGB(16711680, 255),
+                         (LPCWSTR)Ex_ObjGetLong(pOwner->hObj, OBJECT_LONG_LPWZTITLE), -1,
+                         DT_LEFT | DT_VCENTER, Ex_Scale(18), HIWORD(lParam) - offset, Ex_Scale(220),
                          HIWORD(lParam) - offset + Ex_Scale(22));
         *lpResult = 1;
         return 1;
@@ -577,15 +480,8 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                 case 6: wzText = L"六"; break;
                 case 7: wzText = L"日"; break;
                 }
-                _canvas_drawtext(ps.hCanvas,
-                                 Ex_ObjGetFont(hObj),
-                                 ExRGB2ARGB(0, 255),
-                                 wzText,
-                                 -1,
-                                 DT_LEFT | DT_VCENTER,
-                                 nLeft,
-                                 0,
-                                 nLeft + 30 * g_Li.DpiX,
+                _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 255), wzText, -1,
+                                 DT_LEFT | DT_VCENTER, nLeft, 0, nLeft + 30 * g_Li.DpiX,
                                  16 * g_Li.DpiX);
             }
         }
@@ -629,11 +525,8 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                     HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(14120960, 255));
                     EXARGB   crText = -1;
                     if (year == pOwner->Year && mon == pOwner->Mon && Mday == pOwner->Mday) {
-                        _canvas_fillrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 3,
-                                         cd.rcPaint.top + 3,
-                                         cd.rcPaint.right - 3,
+                        _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
+                                         cd.rcPaint.top + 3, cd.rcPaint.right - 3,
                                          cd.rcPaint.bottom - 3);
                     }
                     else {
@@ -646,15 +539,10 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                     }
                     if (cd.dwState & STATE_HOVER) {
                         //_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
-                        //cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
-                        _canvas_drawrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 1,
-                                         cd.rcPaint.top + 1,
-                                         cd.rcPaint.right - 1,
-                                         cd.rcPaint.bottom - 1,
-                                         1,
-                                         0);
+                        // cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
+                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1,
+                                         cd.rcPaint.top + 1, cd.rcPaint.right - 1,
+                                         cd.rcPaint.bottom - 1, 1, 0);
                     }
                     _brush_destroy(hBrush);
 
@@ -665,16 +553,9 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                     else {
                         swprintf_s(lpwzText, L"%d\n%s", Mday, (LPCWSTR)Calendar);
                     }
-                    _canvas_drawtext(cd.hCanvas,
-                                     Ex_ObjGetFont(hObj),
-                                     crText,
-                                     lpwzText,
-                                     -1,
-                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK,
-                                     cd.rcPaint.left,
-                                     cd.rcPaint.top,
-                                     cd.rcPaint.right,
-                                     cd.rcPaint.bottom);
+                    _canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), crText, lpwzText, -1,
+                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK, cd.rcPaint.left,
+                                     cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
                 }
                 else if (ni.idFrom == 77705) {
                     LPVOID   lpItems = pOwner->Items;
@@ -687,11 +568,8 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                     if (pOwner->nSohwType == 1 && cd.iItem == pOwner->Mon &&
                         pOwner->lpYear == pOwner->Year) {
                         crText = -1;
-                        _canvas_fillrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 3,
-                                         cd.rcPaint.top + 3,
-                                         cd.rcPaint.right - 3,
+                        _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
+                                         cd.rcPaint.top + 3, cd.rcPaint.right - 3,
                                          cd.rcPaint.bottom - 3);
                     }
                     if (pOwner->nSohwType == 2) {
@@ -704,31 +582,17 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                         }
                         if (nYear == pOwner->Year) {
                             crText = -1;
-                            _canvas_fillrect(cd.hCanvas,
-                                             hBrush,
-                                             cd.rcPaint.left + 3,
-                                             cd.rcPaint.top + 3,
-                                             cd.rcPaint.right - 3,
+                            _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
+                                             cd.rcPaint.top + 3, cd.rcPaint.right - 3,
                                              cd.rcPaint.bottom - 3);
                         }
                     }
                     if (cd.dwState & STATE_HOVER) {
-                        _canvas_drawrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left,
-                                         cd.rcPaint.top,
-                                         cd.rcPaint.right,
-                                         cd.rcPaint.bottom,
-                                         1,
-                                         0);
-                        _canvas_drawrect(cd.hCanvas,
-                                         hBrush,
-                                         cd.rcPaint.left + 1,
-                                         cd.rcPaint.top + 1,
-                                         cd.rcPaint.right - 1,
-                                         cd.rcPaint.bottom - 1,
-                                         1,
-                                         0);
+                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
+                                         cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
+                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1,
+                                         cd.rcPaint.top + 1, cd.rcPaint.right - 1,
+                                         cd.rcPaint.bottom - 1, 1, 0);
                     }
                     _brush_destroy(hBrush);
 
@@ -746,16 +610,9 @@ LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                         }
                         swprintf_s(lpwzText, L"%d年", nYear);
                     }
-                    _canvas_drawtext(cd.hCanvas,
-                                     pOwner->hFont,
-                                     crText,
-                                     lpwzText,
-                                     -1,
-                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK,
-                                     cd.rcPaint.left,
-                                     cd.rcPaint.top,
-                                     cd.rcPaint.right,
-                                     cd.rcPaint.bottom);
+                    _canvas_drawtext(cd.hCanvas, pOwner->hFont, crText, lpwzText, -1,
+                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK, cd.rcPaint.left,
+                                     cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
                 }
 
                 *lpResult = 1;

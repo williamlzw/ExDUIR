@@ -3,14 +3,8 @@
 void _sliderbar_register()
 {
     WCHAR wzCls[] = L"SliderBar";
-    Ex_ObjRegister(wzCls,
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   NULL,
-                   5 * sizeof(size_t),
-                   NULL,
-                   NULL,
-                   _sliderbar_proc);
+    Ex_ObjRegister(wzCls, OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
+                   NULL, 5 * sizeof(size_t), NULL, NULL, _sliderbar_proc);
 }
 
 LRESULT CALLBACK _sliderbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -120,14 +114,10 @@ void _sliderbar_paint(HEXOBJ hObj)
         if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & SLIDERBAR_STYLE_VERTICAL) ==
             SLIDERBAR_STYLE_VERTICAL) {
             _canvas_drawline(
-                ps.hCanvas,
-                hBrush,
-                Ex_Scale((FLOAT)RC.right / 2),
-                Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
-                Ex_Scale((FLOAT)RC.right / 2),
+                ps.hCanvas, hBrush, Ex_Scale((FLOAT)RC.right / 2),
+                Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE), Ex_Scale((FLOAT)RC.right / 2),
                 Ex_Scale((FLOAT)(RC.bottom)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
-                Ex_Scale(2),
-                D2D1_DASH_STYLE_SOLID);
+                Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
             x = Ex_Scale((FLOAT)RC.right / 2);
             if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1) {
                 y = Ex_Scale((FLOAT)RC.bottom);
@@ -138,14 +128,10 @@ void _sliderbar_paint(HEXOBJ hObj)
         }
         else {
             _canvas_drawline(
-                ps.hCanvas,
-                hBrush,
-                Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
+                ps.hCanvas, hBrush, Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
                 Ex_Scale((FLOAT)RC.bottom / 2),
                 Ex_Scale((FLOAT)(RC.right)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
-                Ex_Scale((FLOAT)RC.bottom / 2),
-                Ex_Scale(2),
-                D2D1_DASH_STYLE_SOLID);
+                Ex_Scale((FLOAT)RC.bottom / 2), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
             if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1) {
                 x = Ex_Scale((FLOAT)RC.right);
             }
@@ -156,19 +142,12 @@ void _sliderbar_paint(HEXOBJ hObj)
         }
         _brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED));
         _sliderbar_getrect(hObj, &RC);
-        _canvas_fillellipse(ps.hCanvas,
-                            hBrush,
-                            Ex_Scale((FLOAT)(RC.left + RC.right)) / 2,
+        _canvas_fillellipse(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2,
                             Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2,
                             Ex_Scale(Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)),
                             Ex_Scale(Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)));
-        _canvas_drawline(ps.hCanvas,
-                         hBrush,
-                         Ex_Scale((FLOAT)(RC.left + RC.right)) / 2,
-                         Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2,
-                         x,
-                         y,
-                         Ex_Scale(2),
+        _canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2,
+                         Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, x, y, Ex_Scale(2),
                          D2D1_DASH_STYLE_SOLID);
         _brush_destroy(hBrush);
         Ex_ObjEndPaint(hObj, &ps);

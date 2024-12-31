@@ -20,8 +20,7 @@ void CALLBACK _easing_calc_curve(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE
         nodes[nCount + 3][0] = 100;
         nodes[nCount + 2][1] = ((easinghead_s*)param)->dv_;
         nodes[nCount + 3][1] = ((easinghead_s*)param)->dv_;
-        RtlMoveMemory(nodes.data() + 16,
-                      (LPVOID)(param + offsetof(easinghead_s, node_start_)),
+        RtlMoveMemory(nodes.data() + 16, (LPVOID)(param + offsetof(easinghead_s, node_start_)),
                       nCount * sizeof(easinghead_s));
     }
     else {
@@ -31,8 +30,7 @@ void CALLBACK _easing_calc_curve(DOUBLE nProgress, INT nStart, INT nStop, DOUBLE
         }
         nodes[nCount + 1][0] = 100;
         nodes[nCount + 1][1] = ((easinghead_s*)param)->dv_;
-        RtlMoveMemory(nodes.data() + 8,
-                      (LPVOID)(param + offsetof(easinghead_s, node_start_)),
+        RtlMoveMemory(nodes.data() + 8, (LPVOID)(param + offsetof(easinghead_s, node_start_)),
                       nCount * sizeof(easinghead_s));
     }
     DOUBLE nPst = 0;
@@ -127,13 +125,8 @@ void _easing_progress(HEXEASING pEasing)
                 continue;
             }
             nProcess = nFrameStep * i;
-            if (!_easing_calc(lpCalcProc,
-                              uType,
-                              pEasingContext,
-                              fDesc ? nStop : nStart,
-                              fDesc ? nStart : nStop,
-                              nProcess,
-                              &nCurrent)) {
+            if (!_easing_calc(lpCalcProc, uType, pEasingContext, fDesc ? nStop : nStart,
+                              fDesc ? nStart : nStop, nProcess, &nCurrent)) {
                 nProcess                      = 1;
                 ((EX_EASING*)pEasing)->nState = 1;
             }
@@ -144,28 +137,17 @@ void _easing_progress(HEXEASING pEasing)
                 LPVOID ptr               = 0;
                 INT    nError            = 0;
                 if (_handle_validate((EXHANDLE)pContext, HT_DUI, (LPVOID*)&ptr, &nError)) {
-                    fStop = SendMessageW(((wnd_s*)ptr)->hWnd_,
-                                         g_Li.dwMessage,
-                                         (WPARAM)&EasingInfo,
+                    fStop = SendMessageW(((wnd_s*)ptr)->hWnd_, g_Li.dwMessage, (WPARAM)&EasingInfo,
                                          MAKELONG(EMT_EASING, 0)) != 0;
                 }
                 if (_handle_validate((EXHANDLE)pContext, HT_OBJECT, (LPVOID*)&ptr, &nError)) {
-                    fStop = Ex_ObjSendMessage((EXHANDLE)pContext,
-                                              WM_EX_EASING,
-                                              (WPARAM)pEasing,
+                    fStop = Ex_ObjSendMessage((EXHANDLE)pContext, WM_EX_EASING, (WPARAM)pEasing,
                                               (size_t)&EasingInfo) != 0;
                 }
             }
             else {
-                fStop = ((EasingPROC2)pContext)(pEasing,
-                                                nProcess,
-                                                nCurrent,
-                                                pEasingContext,
-                                                nTimes - 1,
-                                                param1,
-                                                param2,
-                                                param3,
-                                                param4) != 0;
+                fStop = ((EasingPROC2)pContext)(pEasing, nProcess, nCurrent, pEasingContext,
+                                                nTimes - 1, param1, param2, param3, param4) != 0;
             }
             if (fStop || ((EX_EASING*)pEasing)->nState == EASING_STATE_STOP) {
                 nTimes = 0;

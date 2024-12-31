@@ -4,14 +4,10 @@
 
 void _vlcplayer_register()
 {
-    Ex_ObjRegister(L"VLCPlayer",
-                   OBJECT_STYLE_VISIBLE,
+    Ex_ObjRegister(L"VLCPlayer", OBJECT_STYLE_VISIBLE,
                    OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER,
-                   2 * sizeof(size_t),
-                   NULL,
-                   0,
-                   _vlcplayer_proc);
+                   DT_NOPREFIX | DT_SINGLELINE | DT_CENTER | DT_VCENTER, 2 * sizeof(size_t), NULL,
+                   0, _vlcplayer_proc);
 }
 
 LRESULT CALLBACK _vlcplayer_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -37,13 +33,8 @@ LRESULT CALLBACK _vlcplayer_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
             HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, VLCPLAYER_LONG_IMG);
 
             if (img > 0) {
-                _canvas_drawimagerect(ps.hCanvas,
-                                      img,
-                                      ps.rcPaint.left,
-                                      ps.rcPaint.top,
-                                      ps.rcPaint.right,
-                                      ps.rcPaint.bottom,
-                                      255);
+                _canvas_drawimagerect(ps.hCanvas, img, ps.rcPaint.left, ps.rcPaint.top,
+                                      ps.rcPaint.right, ps.rcPaint.bottom, 255);
                 _img_destroy(img);
             }
             else {}
@@ -320,28 +311,18 @@ void VLCPlayer::SetFileName(const WCHAR* pwszFileName, int type)
 
     libvlc_media_release(m);
     libvlc_video_set_format_callbacks(m_mediaPlayer, vlcVideoFormatCallback, NULL);
-    libvlc_video_set_callbacks(
-        m_mediaPlayer, vlcVideoLockCallBack, vlcVideoUnlockCallback, vlcVideoDisplayCallback, this);
+    libvlc_video_set_callbacks(m_mediaPlayer, vlcVideoLockCallBack, vlcVideoUnlockCallback,
+                               vlcVideoDisplayCallback, this);
+    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer), libvlc_MediaPlayerOpening,
+                        vlcVideoEventCallback, this);
+    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer), libvlc_MediaPlayerPlaying,
+                        vlcVideoEventCallback, this);
+    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer), libvlc_MediaPlayerPaused,
+                        vlcVideoEventCallback, this);
+    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer), libvlc_MediaPlayerStopped,
+                        vlcVideoEventCallback, this);
     libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer),
-                        libvlc_MediaPlayerOpening,
-                        vlcVideoEventCallback,
-                        this);
-    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer),
-                        libvlc_MediaPlayerPlaying,
-                        vlcVideoEventCallback,
-                        this);
-    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer),
-                        libvlc_MediaPlayerPaused,
-                        vlcVideoEventCallback,
-                        this);
-    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer),
-                        libvlc_MediaPlayerStopped,
-                        vlcVideoEventCallback,
-                        this);
-    libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer),
-                        libvlc_MediaPlayerEndReached,
-                        vlcVideoEventCallback,
-                        this);
+                        libvlc_MediaPlayerEndReached, vlcVideoEventCallback, this);
     // libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer),
     // libvlc_MediaPlayerEncounteredError, vlcVideoEventCallback, this);
     // libvlc_event_attach(libvlc_media_player_event_manager(m_mediaPlayer),

@@ -3,13 +3,8 @@
 void _buttonex_register()
 {
     WCHAR wzCls[] = L"ButtonEx";
-    Ex_ObjRegister(wzCls,
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_SINGLELINE | DT_CENTER | DT_VCENTER,
-                   5 * sizeof(size_t),
-                   NULL,
-                   NULL,
+    Ex_ObjRegister(wzCls, OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
+                   DT_SINGLELINE | DT_CENTER | DT_VCENTER, 5 * sizeof(size_t), NULL, NULL,
                    _buttonex_proc);
 }
 
@@ -101,8 +96,8 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRBKGDOWNORCHECKED, ButtonExprops->crBkgDownOrChecked);
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRBORDERNORMAL, ButtonExprops->crBorderNormal);
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRBORDERHOVER, ButtonExprops->crBorderHover);
-        Ex_ObjSetProp(
-            hObj, BUTTONEX_PROP_CRBORDERDOWNORCHECKED, ButtonExprops->crBorderDownOrChecked);
+        Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRBORDERDOWNORCHECKED,
+                      ButtonExprops->crBorderDownOrChecked);
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRICONNORMAL, ButtonExprops->crIconNormal);
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRICONDOWNORFOCUR, ButtonExprops->crIconDownOrFocus);
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_RADIUS, ButtonExprops->radius);
@@ -151,49 +146,29 @@ void _buttonex_paint(HEXOBJ hObj)
         HEXBRUSH hBrush = _brush_create(crBkg);
         /*填充背景*/
         if (Radius == 0) {
-            _canvas_fillrect(ps.hCanvas,
-                             hBrush,
-                             (FLOAT)ps.rcPaint.left,
-                             (FLOAT)ps.rcPaint.top,
-                             (FLOAT)ps.rcPaint.right,
-                             (FLOAT)ps.rcPaint.bottom);
+            _canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top,
+                             (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom);
         }
         else {
-            _canvas_fillroundedrect(ps.hCanvas,
-                                    hBrush,
-                                    (FLOAT)ps.rcPaint.left,
-                                    (FLOAT)ps.rcPaint.top,
-                                    (FLOAT)ps.rcPaint.right,
-                                    (FLOAT)ps.rcPaint.bottom,
-                                    Ex_Scale(Radius),
-                                    Ex_Scale(Radius));
+            _canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left,
+                                    (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right,
+                                    (FLOAT)ps.rcPaint.bottom, Ex_Scale(Radius), Ex_Scale(Radius));
         }
 
         /*没有普通底色就填充渐变底色*/
         if (crBkg == 0) {
-            HEXBRUSH linearhBrush =
-                _brush_createlinear(0,
-                                    0,
-                                    (FLOAT)ps.rcPaint.right,
-                                    0,
-                                    Ex_ObjGetProp(hObj, BUTTONEX_PROP_CRBKGBEGIN),
-                                    Ex_ObjGetProp(hObj, BUTTONEX_PROP_CRBKGEND));
+            HEXBRUSH linearhBrush = _brush_createlinear(
+                0, 0, (FLOAT)ps.rcPaint.right, 0, Ex_ObjGetProp(hObj, BUTTONEX_PROP_CRBKGBEGIN),
+                Ex_ObjGetProp(hObj, BUTTONEX_PROP_CRBKGEND));
             if (Radius == 0) {
-                _canvas_fillrect(ps.hCanvas,
-                                 linearhBrush,
-                                 (FLOAT)ps.rcPaint.left,
-                                 (FLOAT)ps.rcPaint.top,
-                                 (FLOAT)ps.rcPaint.right,
+                _canvas_fillrect(ps.hCanvas, linearhBrush, (FLOAT)ps.rcPaint.left,
+                                 (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right,
                                  (FLOAT)ps.rcPaint.bottom);
             }
             else {
-                _canvas_fillroundedrect(ps.hCanvas,
-                                        linearhBrush,
-                                        (FLOAT)ps.rcPaint.left,
-                                        (FLOAT)ps.rcPaint.top,
-                                        (FLOAT)ps.rcPaint.right,
-                                        (FLOAT)ps.rcPaint.bottom,
-                                        Ex_Scale(Radius),
+                _canvas_fillroundedrect(ps.hCanvas, linearhBrush, (FLOAT)ps.rcPaint.left,
+                                        (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right,
+                                        (FLOAT)ps.rcPaint.bottom, Ex_Scale(Radius),
                                         Ex_Scale(Radius));
             }
             _brush_destroy(linearhBrush);
@@ -202,21 +177,14 @@ void _buttonex_paint(HEXOBJ hObj)
                 Ex_ObjGetProp(hObj, BUTTONEX_PROP_CRBKGEND) != 0) { /*覆盖一层半透明色作为悬浮色*/
                 _brush_setcolor(hBrush, ExARGB(255, 255, 255, 50));
                 if (Radius == 0) {
-                    _canvas_fillrect(ps.hCanvas,
-                                     hBrush,
-                                     (FLOAT)ps.rcPaint.left,
-                                     (FLOAT)ps.rcPaint.top,
-                                     (FLOAT)ps.rcPaint.right,
+                    _canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left,
+                                     (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right,
                                      (FLOAT)ps.rcPaint.bottom);
                 }
                 else {
-                    _canvas_fillroundedrect(ps.hCanvas,
-                                            hBrush,
-                                            (FLOAT)ps.rcPaint.left,
-                                            (FLOAT)ps.rcPaint.top,
-                                            (FLOAT)ps.rcPaint.right,
-                                            (FLOAT)ps.rcPaint.bottom,
-                                            Ex_Scale(Radius),
+                    _canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left,
+                                            (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right,
+                                            (FLOAT)ps.rcPaint.bottom, Ex_Scale(Radius),
                                             Ex_Scale(Radius));
                 }
             }
@@ -225,10 +193,7 @@ void _buttonex_paint(HEXOBJ hObj)
         /*没有普通边框色就填充渐变边框色*/
         if (crBorder == 0) {
             _brush_destroy(hBrush);
-            hBrush = _brush_createlinear(0,
-                                         0,
-                                         (FLOAT)ps.rcPaint.right,
-                                         0,
+            hBrush = _brush_createlinear(0, 0, (FLOAT)ps.rcPaint.right, 0,
                                          Ex_ObjGetProp(hObj, BUTTONEX_PROP_CRBORDERBEGIN),
                                          Ex_ObjGetProp(hObj, BUTTONEX_PROP_CRBORDEREND));
         }
@@ -237,26 +202,18 @@ void _buttonex_paint(HEXOBJ hObj)
         }
         /* 描绘边框 */
         if (Radius == 0) {
-            _canvas_drawrect(ps.hCanvas,
-                             hBrush,
-                             (FLOAT)ps.rcPaint.left,
-                             (FLOAT)ps.rcPaint.top,
-                             (FLOAT)ps.rcPaint.right,
-                             (FLOAT)ps.rcPaint.bottom,
-                             Ex_Scale(strokeWidth),
-                             D2D1_DASH_STYLE_SOLID);
+            _canvas_drawrect(ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top,
+                             (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom,
+                             Ex_Scale(strokeWidth), D2D1_DASH_STYLE_SOLID);
         }
         else {
-            _canvas_drawroundedrect(ps.hCanvas,
-                                    hBrush,
-                                    (FLOAT)ps.rcPaint.left + Ex_Scale(strokeWidth),
-                                    (FLOAT)ps.rcPaint.top + Ex_Scale(strokeWidth),
-                                    (FLOAT)ps.rcPaint.right - Ex_Scale(strokeWidth),
-                                    (FLOAT)ps.rcPaint.bottom - Ex_Scale(strokeWidth),
-                                    Ex_Scale(Radius) - Ex_Scale(strokeWidth),
-                                    Ex_Scale(Radius) - Ex_Scale(strokeWidth),
-                                    Ex_Scale(strokeWidth),
-                                    D2D1_DASH_STYLE_SOLID);
+            _canvas_drawroundedrect(
+                ps.hCanvas, hBrush, (FLOAT)ps.rcPaint.left + Ex_Scale(strokeWidth),
+                (FLOAT)ps.rcPaint.top + Ex_Scale(strokeWidth),
+                (FLOAT)ps.rcPaint.right - Ex_Scale(strokeWidth),
+                (FLOAT)ps.rcPaint.bottom - Ex_Scale(strokeWidth),
+                Ex_Scale(Radius) - Ex_Scale(strokeWidth), Ex_Scale(Radius) - Ex_Scale(strokeWidth),
+                Ex_Scale(strokeWidth), D2D1_DASH_STYLE_SOLID);
         }
 
         /* 存在位图 */
@@ -266,51 +223,29 @@ void _buttonex_paint(HEXOBJ hObj)
             /* 不是九宫图片 */
             if (pRect == 0) {
                 /* 拉伸绘制 */
-                _canvas_drawimagerect(ps.hCanvas,
-                                      hImage,
-                                      (FLOAT)ps.rcPaint.left,
-                                      (FLOAT)ps.rcPaint.top,
-                                      (FLOAT)ps.rcPaint.right,
-                                      (FLOAT)ps.rcPaint.bottom,
-                                      255);
+                _canvas_drawimagerect(ps.hCanvas, hImage, (FLOAT)ps.rcPaint.left,
+                                      (FLOAT)ps.rcPaint.top, (FLOAT)ps.rcPaint.right,
+                                      (FLOAT)ps.rcPaint.bottom, 255);
             }
             else {
                 INT nImageWidth  = NULL;
                 INT nImageHeight = NULL;
                 _img_getsize(hImage, &nImageWidth, &nImageHeight);
                 /* 九宫绘制 */
-                _canvas_drawimagefromgrid(ps.hCanvas,
-                                          hImage,
-                                          (FLOAT)ps.rcPaint.left,
-                                          (FLOAT)ps.rcPaint.top,
-                                          (FLOAT)ps.rcPaint.right,
-                                          (FLOAT)ps.rcPaint.bottom,
-                                          0,
-                                          0,
-                                          (FLOAT)nImageWidth,
-                                          (FLOAT)nImageHeight,
-                                          (FLOAT)pRect->left,
-                                          (FLOAT)pRect->top,
-                                          (FLOAT)pRect->right,
-                                          (FLOAT)pRect->bottom,
-                                          0,
-                                          255);
+                _canvas_drawimagefromgrid(
+                    ps.hCanvas, hImage, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top,
+                    (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom, 0, 0, (FLOAT)nImageWidth,
+                    (FLOAT)nImageHeight, (FLOAT)pRect->left, (FLOAT)pRect->top, (FLOAT)pRect->right,
+                    (FLOAT)pRect->bottom, 0, 255);
             }
         }
 
         /* 计算文本尺寸 */
         FLOAT nTextWidth  = NULL;
         FLOAT nTextHeight = NULL;
-        _canvas_calctextsize(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             ps.dwTextFormat,
-                             0,
-                             (FLOAT)ps.uWidth,
-                             (FLOAT)ps.uHeight,
-                             &nTextWidth,
-                             &nTextHeight);
+        _canvas_calctextsize(
+            ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
+            -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
         /* 图标 */
         hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, BUTTONEX_LONG_ICON);
@@ -358,28 +293,16 @@ void _buttonex_paint(HEXOBJ hObj)
             /* 绘制图标 */
             _canvas_drawimage(ps.hCanvas, hImage, (FLOAT)rcimg.left, (FLOAT)rcimg.top, 255);
             /* 绘制文字 */
-            _canvas_drawtext(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             crText,
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT),
-                             (FLOAT)rctext.left,
-                             (FLOAT)rctext.top,
-                             (FLOAT)rctext.right,
-                             (FLOAT)rctext.bottom);
+            _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), crText,
+                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                             Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), (FLOAT)rctext.left,
+                             (FLOAT)rctext.top, (FLOAT)rctext.right, (FLOAT)rctext.bottom);
         }
         else {
-            _canvas_drawtext(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             crText,
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT),
-                             (FLOAT)ps.rcText.left,
-                             (FLOAT)ps.rcText.top,
-                             (FLOAT)ps.rcText.right,
-                             (FLOAT)ps.rcText.bottom);
+            _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), crText,
+                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                             Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), (FLOAT)ps.rcText.left,
+                             (FLOAT)ps.rcText.top, (FLOAT)ps.rcText.right, (FLOAT)ps.rcText.bottom);
         }
         _brush_destroy(hBrush);
         Ex_ObjEndPaint(hObj, &ps);

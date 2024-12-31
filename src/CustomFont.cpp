@@ -324,8 +324,7 @@ HRESULT MFFontFileEnumerator::Initialize(UINT const* collectionKey,   // [resour
         // MFFontGlobals::fontCollections vector
         UINT cPos = *collectionKey;
         for (MFCollection::iterator it = MFFontGlobals::collections()[cPos].begin();
-             it != MFFontGlobals::collections()[cPos].end();
-             ++it) {
+             it != MFFontGlobals::collections()[cPos].end(); ++it) {
             filePaths_.push_back(it->c_str());
         }
     }
@@ -472,8 +471,8 @@ HRESULT MFFontContext::CreateFontCollection(MFCollection&               newColle
     hr = Initialize();
     if (FAILED(hr)) return hr;
 
-    hr = g_dwriteFactory->CreateCustomFontCollection(
-        MFFontCollectionLoader::GetLoader(), fontCollectionKey, keySize, result);
+    hr = g_dwriteFactory->CreateCustomFontCollection(MFFontCollectionLoader::GetLoader(),
+                                                     fontCollectionKey, keySize, result);
 
     return hr;
 }
@@ -489,8 +488,8 @@ HRESULT MFFontContext::CreateFontCollectionFromMem(
     hr = Initialize2();
     if (FAILED(hr)) return hr;
 
-    hr = g_dwriteFactory->CreateCustomFontCollection(
-        Resource_FontCollectionLoader::GetLoader(), collectionKey, collectionKeySize, result);
+    hr = g_dwriteFactory->CreateCustomFontCollection(Resource_FontCollectionLoader::GetLoader(),
+                                                     collectionKey, collectionKeySize, result);
 
     return hr;
 }

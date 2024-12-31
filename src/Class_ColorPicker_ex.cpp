@@ -3,14 +3,9 @@
 void _color_picker_register()
 {
     DWORD cbObjExtra = 2 * sizeof(size_t);
-    Ex_ObjRegister(L"ColorPicker",
-                   OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                   OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_LEFT,
-                   cbObjExtra,
-                   LoadCursor(0, IDC_HAND),
-                   CANVAS_FLAG_CANVASANTIALIAS,
-                   _color_picker_proc);
+    Ex_ObjRegister(L"ColorPicker", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
+                   OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT, cbObjExtra, LoadCursor(0, IDC_HAND),
+                   CANVAS_FLAG_CANVASANTIALIAS, _color_picker_proc);
 }
 
 LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -52,62 +47,26 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             lpRect.left += Ex_Scale(objRect.left);        // 修复弹出定位
             lpRect.top += Ex_Scale(objRect.bottom + 2);   // 修复弹出定位
 
-            HWND   hWndBox = Ex_WndCreate(hWnd,
-                                        NULL,
-                                        NULL,
-                                        0,
-                                        0,
-                                        300,
-                                        200,
-                                        WS_BORDER | WS_SYSMENU | WS_POPUP,
-                                        WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
+            HWND hWndBox =
+                Ex_WndCreate(hWnd, NULL, NULL, 0, 0, 300, 200, WS_BORDER | WS_SYSMENU | WS_POPUP,
+                             WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
             HEXDUI hExBox =
-                Ex_DUIBindWindowEx(hWndBox,
-                                   0,
+                Ex_DUIBindWindowEx(hWndBox, 0,
                                    WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_NOINHERITBKG |
                                        WINDOW_STYLE_NOCAPTIONTOPMOST | WINDOW_STYLE_POPUPWINDOW,
-                                   (size_t)ptr,
-                                   _color_picker_onwndmsgproc);
+                                   (size_t)ptr, _color_picker_onwndmsgproc);
             if (hExBox) {
                 // 创建一个底部标签，防止点击空白标题处，窗口会关闭。
-                HEXOBJ hObj_Static = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                                    L"Static",
-                                                    L"",
-                                                    -1,
-                                                    0,
-                                                    0,
-                                                    400,
-                                                    400,
-                                                    hExBox,
-                                                    0,
-                                                    -1,
-                                                    0,
-                                                    0,
-                                                    0);
+                HEXOBJ hObj_Static = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"", -1,
+                                                    0, 0, 400, 400, hExBox, 0, -1, 0, 0, 0);
 
-                SetWindowPos(hWndBox,
-                             0,
-                             lpRect.left,
-                             lpRect.top,
-                             Ex_Scale(180),
-                             Ex_Scale(180),
+                SetWindowPos(hWndBox, 0, lpRect.left, lpRect.top, Ex_Scale(180), Ex_Scale(180),
                              SWP_NOZORDER | SWP_NOACTIVATE);
 
                 HEXOBJ hObjListView =
-                    Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE,
-                                   L"listview",
-                                   NULL,
-                                   OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST,
-                                   15,
-                                   15,
-                                   160,
-                                   120,
-                                   hObj_Static,
-                                   76601,
-                                   -1,
-                                   0,
-                                   0,
-                                   _color_picker_onlistproc);
+                    Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL,
+                                   OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST, 15, 15, 160,
+                                   120, hObj_Static, 76601, -1, 0, 0, _color_picker_onlistproc);
                 Ex_ObjSendMessage(hObjListView, LISTVIEW_MESSAGE_SETITEMCOUNT, 32, 0);
 
                 WCHAR  lpTitle[12];
@@ -116,20 +75,9 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 INT    G      = ExGetG(nColor);
                 INT    B      = ExGetB(nColor);
                 swprintf_s(lpTitle, L"%X %X %X", R, G, B);
-                Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-                               L"edit",
-                               lpTitle,
-                               OBJECT_STYLE_VISIBLE,
-                               15,
-                               150,
-                               150,
-                               25,
-                               hObj_Static,
-                               76602,
-                               DT_SINGLELINE,
-                               0,
-                               0,
-                               _color_picker_oneditproc);
+                Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
+                               lpTitle, OBJECT_STYLE_VISIBLE, 15, 150, 150, 25, hObj_Static, 76602,
+                               DT_SINGLELINE, 0, 0, _color_picker_oneditproc);
                 Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
                 Ex_ObjSetLong(hObj, COLORPICKER_LONG_STATE, 1);
             }
@@ -213,21 +161,11 @@ LRESULT CALLBACK _color_picker_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPAR
                 EX_CUSTOMDRAW cd{0};
                 RtlMoveMemory(&cd, (LPVOID)ni.lParam, sizeof(EX_CUSTOMDRAW));
                 HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(cd.dwState == 0 ? 13288895 : 0, 255));
-                _canvas_drawrect(cd.hCanvas,
-                                 hBrush,
-                                 cd.rcPaint.left,
-                                 cd.rcPaint.top,
-                                 cd.rcPaint.right,
-                                 cd.rcPaint.bottom,
-                                 1,
-                                 0);
+                _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
+                                 cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
                 _brush_setcolor(hBrush, ExRGB2ARGB(_color_picker_getcolor(cd.iItem), 255));
-                _canvas_fillrect(cd.hCanvas,
-                                 hBrush,
-                                 cd.rcPaint.left + 2,
-                                 cd.rcPaint.top + 2,
-                                 cd.rcPaint.right - 2,
-                                 cd.rcPaint.bottom - 2);
+                _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 2, cd.rcPaint.top + 2,
+                                 cd.rcPaint.right - 2, cd.rcPaint.bottom - 2);
                 _brush_destroy(hBrush);
                 *lpResult = 1;
                 return 1;

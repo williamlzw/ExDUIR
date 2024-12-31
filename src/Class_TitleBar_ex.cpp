@@ -17,28 +17,13 @@ LRESULT CALLBACK _titlebar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             FLOAT   nWidthText  = 0;
             FLOAT   nHeightText = 0;
             FLOAT   nTop        = 0;
-            _canvas_calctextsize(ps.hCanvas,
-                                 Ex_ObjGetFont(hObj),
-                                 lpwzText,
-                                 -1,
-                                 -1,
-                                 0,
-                                 ps.uWidth,
-                                 ps.uHeight,
-                                 &nWidthText,
-                                 &nHeightText);
+            _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), lpwzText, -1, -1, 0, ps.uWidth,
+                                 ps.uHeight, &nWidthText, &nHeightText);
             nTop = ps.uHeight / 2;
 
-            _canvas_drawtext(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                             lpwzText,
-                             -1,
-                             DT_LEFT | DT_VCENTER,
-                             30,
-                             0,
-                             nWidthText + 30,
-                             ps.uHeight);
+            _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
+                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), lpwzText, -1,
+                             DT_LEFT | DT_VCENTER, 30, 0, nWidthText + 30, ps.uHeight);
 
             HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
             _canvas_drawline(ps.hCanvas, hBrush, 0, nTop, 25, nTop, 1, 0);

@@ -18,14 +18,9 @@ void _radiobuttonex_register()
 
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"RadioButtonEx";
-    Ex_ObjRegister(newwzCls,
-                   pClsInfoRadioButton.dwStyle,
-                   pClsInfoRadioButton.dwStyleEx,
-                   pClsInfoRadioButton.dwTextFormat,
-                   0,
-                   pClsInfoRadioButton.hCursor,
-                   pClsInfoRadioButton.dwFlags,
-                   _radiobuttonex_proc);
+    Ex_ObjRegister(newwzCls, pClsInfoRadioButton.dwStyle, pClsInfoRadioButton.dwStyleEx,
+                   pClsInfoRadioButton.dwTextFormat, 0, pClsInfoRadioButton.hCursor,
+                   pClsInfoRadioButton.dwFlags, _radiobuttonex_proc);
 }
 
 LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -57,12 +52,11 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
     else if (uMsg == WM_EX_PROPS) {
         EX_OBJ_PROPS* RadioButtonExprops = (EX_OBJ_PROPS*)lParam;
 
-        Ex_ObjSetProp(
-            hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED, RadioButtonExprops->crBkgDownOrChecked);
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED,
+                      RadioButtonExprops->crBkgDownOrChecked);
         Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERNORMAL, RadioButtonExprops->crBorderNormal);
         Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER, RadioButtonExprops->crBorderHover);
-        Ex_ObjSetProp(hObj,
-                      RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED,
+        Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED,
                       RadioButtonExprops->crBorderDownOrChecked);
     }
     return Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam);
@@ -86,16 +80,9 @@ void _radiobuttonex_paint(HEXOBJ hObj)
         /* 计算文本尺寸 */
         FLOAT nTextWidth  = NULL;
         FLOAT nTextHeight = NULL;
-        _canvas_calctextsize(ps.hCanvas,
-                             Ex_ObjGetFont(hObj),
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                             -1,
-                             ps.dwTextFormat,
-                             0,
-                             (FLOAT)ps.uWidth,
-                             (FLOAT)ps.uHeight,
-                             &nTextWidth,
-                             &nTextHeight);
+        _canvas_calctextsize(
+            ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
+            -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
         /* 定义单选框圆角矩形 */
         rcBlock.left   = ps.rcPaint.left + (long)Ex_Scale(2);
@@ -103,16 +90,9 @@ void _radiobuttonex_paint(HEXOBJ hObj)
         rcBlock.right  = rcBlock.left + (long)nTextHeight;
         rcBlock.bottom = (ps.uHeight + (long)nTextHeight) / 2;
         /* 绘制边框[GDI模式下，圆角度需要缩减一像素] */
-        _canvas_drawroundedrect(ps.hCanvas,
-                                hBrush,
-                                (FLOAT)rcBlock.left,
-                                (FLOAT)rcBlock.top,
-                                (FLOAT)rcBlock.right,
-                                (FLOAT)rcBlock.bottom,
-                                nTextHeight / 2 - 1,
-                                nTextHeight / 2 - 1,
-                                1,
-                                D2D1_DASH_STYLE_SOLID);
+        _canvas_drawroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top,
+                                (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, nTextHeight / 2 - 1,
+                                nTextHeight / 2 - 1, 1, D2D1_DASH_STYLE_SOLID);
 
         /* 定义选中色 */
         _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED));
@@ -125,27 +105,15 @@ void _radiobuttonex_paint(HEXOBJ hObj)
             rcBlock.right  = rcBlock.right - (long)Ex_Scale(3);
             rcBlock.bottom = rcBlock.bottom - (long)Ex_Scale(3);
             FLOAT nRadius  = nTextHeight / 2 - Ex_Scale(3);
-            _canvas_fillroundedrect(ps.hCanvas,
-                                    hBrush,
-                                    (FLOAT)rcBlock.left,
-                                    (FLOAT)rcBlock.top,
-                                    (FLOAT)rcBlock.right,
-                                    (FLOAT)rcBlock.bottom,
-                                    nRadius,
-                                    nRadius);
+            _canvas_fillroundedrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top,
+                                    (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom, nRadius, nRadius);
         }
 
         /* 绘制组件文本 */
-        _canvas_drawtext(ps.hCanvas,
-                         Ex_ObjGetFont(hObj),
-                         crText,
-                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                         -1,
-                         DT_LEFT | DT_VCENTER,
-                         (FLOAT)ps.rcText.left + nTextHeight + Ex_Scale(7),
-                         (FLOAT)ps.rcText.top,
-                         (FLOAT)ps.rcText.right,
-                         (FLOAT)ps.rcText.bottom);
+        _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), crText,
+                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
+                         DT_LEFT | DT_VCENTER, (FLOAT)ps.rcText.left + nTextHeight + Ex_Scale(7),
+                         (FLOAT)ps.rcText.top, (FLOAT)ps.rcText.right, (FLOAT)ps.rcText.bottom);
         _brush_destroy(hBrush);
         Ex_ObjEndPaint(hObj, &ps);
     }

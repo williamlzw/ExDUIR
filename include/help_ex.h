@@ -376,27 +376,16 @@ const TCHAR ChDay[][4] = {L"",     L"初一", L"初二", L"初三", L"初四", L
                           L"初八", L"初九", L"初十", L"十一", L"十二", L"十三", L"十四", L"十五",
                           L"十六", L"十七", L"十八", L"十九", L"二十", L"廿一", L"廿二", L"廿三",
                           L"廿四", L"廿五", L"廿六", L"廿七", L"廿八", L"廿九", L"三十"};
-const TCHAR ChMonth[][4] = {L"",
-                            L"正月",
-                            L"二月",
-                            L"三月",
-                            L"四月",
-                            L"五月",
-                            L"六月",
-                            L"七月",
-                            L"八月",
-                            L"九月",
-                            L"十月",
-                            L"冬月",
-                            L"腊月"};
-INT         GetLunarCalendar(INT nYear, INT nMonth, INT nDay, INT* jr, INT* jq);
-INT         GetMdayCount(INT year, INT mon);
-INT         GetWeekOfDate(INT year, INT month, INT day);
-BOOL        Flag_Query(INT dwFlag);
-void        Flag_Add(INT dwFlag);
-void        Flag_Del(INT dwFlag);
-LPCWSTR     GetErrorMessage(DWORD error);
-void        IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable);
+const TCHAR ChMonth[][4] = {L"",     L"正月", L"二月", L"三月", L"四月", L"五月", L"六月",
+                            L"七月", L"八月", L"九月", L"十月", L"冬月", L"腊月"};
+INT     GetLunarCalendar(INT nYear, INT nMonth, INT nDay, INT* jr, INT* jq);
+INT     GetMdayCount(INT year, INT mon);
+INT     GetWeekOfDate(INT year, INT month, INT day);
+BOOL    Flag_Query(INT dwFlag);
+void    Flag_Add(INT dwFlag);
+void    Flag_Del(INT dwFlag);
+LPCWSTR GetErrorMessage(DWORD error);
+void    IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable);
 
 /// <summary>
 /// url编码

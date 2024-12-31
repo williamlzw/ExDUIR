@@ -18,14 +18,9 @@ void _rotateimagebox_register()
 
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"RotateImageBox";
-    Ex_ObjRegister(newwzCls,
-                   pClsInfoStatic.dwStyle,
-                   pClsInfoStatic.dwStyleEx,
-                   pClsInfoStatic.dwTextFormat,
-                   NULL,
-                   pClsInfoStatic.hCursor,
-                   pClsInfoStatic.dwFlags,
-                   _rotateimagebox_proc);
+    Ex_ObjRegister(newwzCls, pClsInfoStatic.dwStyle, pClsInfoStatic.dwStyleEx,
+                   pClsInfoStatic.dwTextFormat, NULL, pClsInfoStatic.hCursor,
+                   pClsInfoStatic.dwFlags, _rotateimagebox_proc);
 }
 
 LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
@@ -65,8 +60,7 @@ LRESULT CALLBACK _rotateimagebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
         }
     }
     else if (uMsg == WM_TIMER) {
-        Ex_ObjSetLong(hObj,
-                      OBJECT_LONG_USERDATA,
+        Ex_ObjSetLong(hObj, OBJECT_LONG_USERDATA,
                       (Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA) + 1) % 360); /* 每50ms增加1°*/
         Ex_ObjInvalidateRect(hObj, 0);
     }

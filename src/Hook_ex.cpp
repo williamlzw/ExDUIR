@@ -36,8 +36,8 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
                      MESSAGEBOX_FLAG_NOINHERITBKG)) {
                     style = style | WINDOW_STYLE_NOINHERITBKG;
                 }
-                Ex_DUIBindWindowEx(
-                    hWnd, pWnd->hTheme_, style, (size_t)pMsg, pMsg->lpfnNotifyCallback_);
+                Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, style, (size_t)pMsg,
+                                   pMsg->lpfnNotifyCallback_);
             }
         }
     }
@@ -122,8 +122,8 @@ void _msgbox_drawinfo(wnd_s* pWnd, HEXCANVAS cvBkg)
             if (pValue != 0) {
                 r = l + Ex_Scale(__get_int(pValue, 8) - __get_int(pValue, 0));
                 b = t + Ex_Scale(__get_int(pValue, 12) - __get_int(pValue, 4));
-                Ex_ThemeDrawControlEx(
-                    hTheme, cvBkg, l, t, r, b, ATOM_MESSAGEBOX, Ex_Atom(value), 0, 0, 0, 0, 255);
+                Ex_ThemeDrawControlEx(hTheme, cvBkg, l, t, r, b, ATOM_MESSAGEBOX, Ex_Atom(value), 0,
+                                      0, 0, 0, 255);
             }
             l = r + Ex_Scale(15);
         }
@@ -131,16 +131,9 @@ void _msgbox_drawinfo(wnd_s* pWnd, HEXCANVAS cvBkg)
         if (pText != 0) {
             HEXFONT hFont = _font_create();
             if (hFont != 0) {
-                _canvas_drawtext(cvBkg,
-                                 hFont,
-                                 -16777216,
-                                 pText,
-                                 -1,
-                                 DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL,
-                                 l,
-                                 t,
-                                 w - Ex_Scale(15),
-                                 h);
+                _canvas_drawtext(cvBkg, hFont, -16777216, pText, -1,
+                                 DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, l, t,
+                                 w - Ex_Scale(15), h);
                 _font_destroy(hFont);
             }
         }
@@ -191,16 +184,8 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
     if (hFont != 0 && hCanvas != 0) {
         if (lpwzCheckbox != 0) {
             if (_canvas_begindraw(hCanvas)) {
-                _canvas_calctextsize(hCanvas,
-                                     hFont,
-                                     lpwzCheckbox,
-                                     -1,
-                                     DT_LEFT | DT_SINGLELINE,
-                                     0,
-                                     0,
-                                     0,
-                                     &widthCheckbox,
-                                     &heightCheckbox);
+                _canvas_calctextsize(hCanvas, hFont, lpwzCheckbox, -1, DT_LEFT | DT_SINGLELINE, 0,
+                                     0, 0, &widthCheckbox, &heightCheckbox);
                 _canvas_enddraw(hCanvas);
             }
             widthCheckbox = widthCheckbox + 16 + 8;
@@ -208,16 +193,9 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
         }
 
         if (_canvas_begindraw(hCanvas)) {
-            _canvas_calctextsize(hCanvas,
-                                 hFont,
-                                 pMsg->lpText_,
-                                 -1,
-                                 DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL,
-                                 0,
-                                 width,
-                                 rcText.bottom - rcText.top,
-                                 &w,
-                                 &h);
+            _canvas_calctextsize(hCanvas, hFont, pMsg->lpText_, -1,
+                                 DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, 0, width,
+                                 rcText.bottom - rcText.top, &w, &h);
             _canvas_enddraw(hCanvas);
         }
         _font_destroy(hFont);
@@ -247,12 +225,8 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
     GetWindowRect(hWnd, &rcWindow);
     INT left = rcWindow.right - rcWindow.left;
     INT top  = rcWindow.bottom - rcWindow.top;
-    MoveWindow(hWnd,
-               rcWindow.left - (maxWidth - left) / 2,
-               rcWindow.top - (maxHeight - top) / 2,
-               maxWidth,
-               maxHeight,
-               0);
+    MoveWindow(hWnd, rcWindow.left - (maxWidth - left) / 2, rcWindow.top - (maxHeight - top) / 2,
+               maxWidth, maxHeight, 0);
     if (pfnCallback != 0) {
         _wnd_dispatch_notify(hWnd, pWnd, pWnd->hexdui_, -1, NM_INTDLG, 0, 0, 0);
     }
@@ -270,23 +244,8 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
         INT    nError = 0;
         HEXOBJ hObj   = _obj_create_init(hWnd, pWnd, ATOM_BUTTON, 0, &pObj, &nError);
         if (hObj != 0) {
-            _obj_create_proc(&nError,
-                             TRUE,
-                             hTheme,
-                             pObj,
-                             -1,
-                             ATOM_BUTTON,
-                             aryText[i].c_str(),
-                             -1,
-                             left,
-                             top,
-                             80,
-                             24,
-                             0,
-                             ~aryID[i],
-                             0,
-                             aryID[i],
-                             -1);
+            _obj_create_proc(&nError, TRUE, hTheme, pObj, -1, ATOM_BUTTON, aryText[i].c_str(), -1,
+                             left, top, 80, 24, 0, ~aryID[i], 0, aryID[i], -1);
             pObj->dwFlags_ = pObj->dwFlags_ | EOF_BMSGBOXCONTROL;
             _obj_create_done(hWnd, pWnd, hObj, pObj);
             if (aryID[i] == iDef) _obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE);
@@ -297,23 +256,9 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
         INT    nError = 0;
         HEXOBJ hObj   = _obj_create_init(hWnd, pWnd, ATOM_CHECKBUTTON, 0, &pObj, &nError);
         if (hObj != 0) {
-            _obj_create_proc(&nError,
-                             TRUE,
-                             hTheme,
-                             pObj,
-                             -1,
-                             ATOM_CHECKBUTTON,
-                             lpwzCheckbox,
-                             -1,
-                             4,
-                             top,
-                             widthCheckbox,
-                             24,
-                             0,
-                             (size_t)lpCheckboxChecked,
-                             0,
-                             (size_t)lpCheckboxChecked,
-                             -1);
+            _obj_create_proc(&nError, TRUE, hTheme, pObj, -1, ATOM_CHECKBUTTON, lpwzCheckbox, -1, 4,
+                             top, widthCheckbox, 24, 0, (size_t)lpCheckboxChecked, 0,
+                             (size_t)lpCheckboxChecked, -1);
             _obj_create_done(hWnd, pWnd, hObj, pObj);
             pMsg->CheckBoxhObj_ = hObj;
             if (__get_int(lpCheckboxChecked, 0) != 0) {

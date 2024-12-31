@@ -3,14 +3,8 @@
 void _palette_register()
 {
     DWORD cbObjExtra = 5 * sizeof(size_t);
-    Ex_ObjRegister(L"Palette",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_LEFT,
-                   cbObjExtra,
-                   LoadCursor(0, IDC_HAND),
-                   CANVAS_FLAG_CANVASANTIALIAS,
-                   _palette_proc);
+    Ex_ObjRegister(L"Palette", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT, cbObjExtra,
+                   LoadCursor(0, IDC_HAND), CANVAS_FLAG_CANVASANTIALIAS, _palette_proc);
 }
 
 LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -78,32 +72,14 @@ void _palette_genimage(HEXOBJ hObj)
     auto GridWidth  = Ex_Scale(rc.right - rc.left) / 7 + 1;
     auto GridHeight = Ex_Scale(rc.bottom - rc.top) / 2;
     for (int i = 0; i < 7; i++) {
-        _palette_drawgradientrect(dc,
-                                  GridWidth * i,
-                                  GridHeight,
-                                  GridWidth * i + GridWidth,
-                                  GridHeight + 1,
-                                  color[i],
-                                  color[i + 1],
-                                  TRUE);
+        _palette_drawgradientrect(dc, GridWidth * i, GridHeight, GridWidth * i + GridWidth,
+                                  GridHeight + 1, color[i], color[i + 1], TRUE);
     }
     for (int i = 0; i < Ex_Scale(rc.right - rc.left); i++) {
-        _palette_drawgradientrect(dc,
-                                  i,
-                                  0,
-                                  i + 1,
-                                  GridHeight,
-                                  ExRGB2ARGB(16777125, 0),
-                                  GetPixel(dc, i, GridHeight),
-                                  FALSE);
-        _palette_drawgradientrect(dc,
-                                  i,
-                                  GridHeight,
-                                  i + 1,
-                                  GridHeight * 2,
-                                  GetPixel(dc, i, GridHeight),
-                                  ExRGB2ARGB(0, 0),
-                                  FALSE);
+        _palette_drawgradientrect(dc, i, 0, i + 1, GridHeight, ExRGB2ARGB(16777125, 0),
+                                  GetPixel(dc, i, GridHeight), FALSE);
+        _palette_drawgradientrect(dc, i, GridHeight, i + 1, GridHeight * 2,
+                                  GetPixel(dc, i, GridHeight), ExRGB2ARGB(0, 0), FALSE);
     }
     _canvas_releasedc(canvas);
     _canvas_enddraw(canvas);
@@ -150,19 +126,13 @@ void _palette_paint(HEXOBJ hObj)
     if (Ex_ObjBeginPaint(hObj, &ps)) {
         HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PALETTE_LONG_IMAGE);
         _canvas_clear(ps.hCanvas, ExRGB2ARGB(0, 255));
-        _canvas_drawimagerectrect(
-            ps.hCanvas, img, 0, 0, ps.uWidth, ps.uHeight, 0, 0, ps.uWidth, ps.uHeight, 255);
+        _canvas_drawimagerectrect(ps.hCanvas, img, 0, 0, ps.uWidth, ps.uHeight, 0, 0, ps.uWidth,
+                                  ps.uHeight, 255);
         HEXBRUSH brush  = (HEXBRUSH)Ex_ObjGetLong(hObj, PALETTE_LONG_PEN);
         INT      beginX = Ex_ObjGetLong(hObj, PALETTE_LONG_BEGINX);
         INT      beginY = Ex_ObjGetLong(hObj, PALETTE_LONG_BEGINY);
-        _canvas_drawellipse(ps.hCanvas,
-                            brush,
-                            beginX - Ex_Scale(5 / 2),
-                            beginY - Ex_Scale(5 / 2),
-                            Ex_Scale(5),
-                            Ex_Scale(5),
-                            Ex_Scale(2),
-                            0);
+        _canvas_drawellipse(ps.hCanvas, brush, beginX - Ex_Scale(5 / 2), beginY - Ex_Scale(5 / 2),
+                            Ex_Scale(5), Ex_Scale(5), Ex_Scale(2), 0);
         Ex_ObjEndPaint(hObj, &ps);
     }
 }

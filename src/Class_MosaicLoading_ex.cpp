@@ -3,14 +3,8 @@
 void _mosaic_loading_register()
 {
     WCHAR wzCls[] = L"MosaicLoading";
-    Ex_ObjRegister(wzCls,
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-                   0,
-                   2 * sizeof(size_t),
-                   0,
-                   0,
-                   _mosaic_loading_proc);
+    Ex_ObjRegister(wzCls, OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
+                   0, 2 * sizeof(size_t), 0, 0, _mosaic_loading_proc);
 }
 
 LRESULT CALLBACK _mosaic_loading_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
@@ -92,11 +86,7 @@ void _mosaic_loading_paint(HEXOBJ hObj)
                 ThemeColor = RGB(58, 144, 210);
             }
             HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(ThemeColor, iAlphaValue));
-            _canvas_fillrect(ps.hCanvas,
-                             hBrush,
-                             ptr[i].rc.left,
-                             ptr[i].rc.top,
-                             ptr[i].rc.right,
+            _canvas_fillrect(ps.hCanvas, hBrush, ptr[i].rc.left, ptr[i].rc.top, ptr[i].rc.right,
                              ptr[i].rc.bottom);
             _brush_destroy(hBrush);
         }

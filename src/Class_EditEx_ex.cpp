@@ -18,16 +18,11 @@ void _editex_register()
 
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"EditEx";
-    Ex_ObjRegister(newwzCls,
-                   pClsInfoEdit.dwStyle,
-                   OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_TABSTOP |
-                       OBJECT_STYLE_EX_CUSTOMDRAW |
-                       OBJECT_STYLE_EX_FOCUSABLE /*pClsInfoEdit.dwStyleEx*/,
-                   pClsInfoEdit.dwTextFormat,
-                   NULL,
-                   pClsInfoEdit.hCursor,
-                   pClsInfoEdit.dwFlags,
-                   _editex_proc);
+    Ex_ObjRegister(
+        newwzCls, pClsInfoEdit.dwStyle,
+        OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW |
+            OBJECT_STYLE_EX_FOCUSABLE /*pClsInfoEdit.dwStyleEx*/,
+        pClsInfoEdit.dwTextFormat, NULL, pClsInfoEdit.hCursor, pClsInfoEdit.dwFlags, _editex_proc);
 }
 
 LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -94,18 +89,12 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
         Ex_ObjGetClientRect(hObj, &rc);
         /*填充背景*/
         if (Radius == NULL) {
-            _canvas_fillrect(
-                hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right), Ex_Scale((FLOAT)rc.bottom));
+            _canvas_fillrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right),
+                             Ex_Scale((FLOAT)rc.bottom));
         }
         else {
-            _canvas_fillroundedrect(hCanvas,
-                                    hbrush,
-                                    0,
-                                    0,
-                                    Ex_Scale((FLOAT)rc.right),
-                                    Ex_Scale((FLOAT)rc.bottom),
-                                    Ex_Scale(Radius),
-                                    Ex_Scale(Radius));
+            _canvas_fillroundedrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right),
+                                    Ex_Scale((FLOAT)rc.bottom), Ex_Scale(Radius), Ex_Scale(Radius));
         }
         /*计算编辑框宽高*/
         FLOAT Width  = Ex_Scale((FLOAT)(rc.right - rc.left));
@@ -133,37 +122,22 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
         /*绘制线框*/
         if (m_IsDraw) {
-            _canvas_drawline(hCanvas,
-                             hbrush,
-                             Ex_Scale((FLOAT)rc.left),
-                             Ex_Scale((FLOAT)rc.bottom),
-                             Ex_Scale((FLOAT)rc.right),
-                             Ex_Scale((FLOAT)rc.bottom),
-                             Ex_Scale(StrokeWidth),
-                             D2D1_DASH_STYLE_SOLID);
+            _canvas_drawline(hCanvas, hbrush, Ex_Scale((FLOAT)rc.left), Ex_Scale((FLOAT)rc.bottom),
+                             Ex_Scale((FLOAT)rc.right), Ex_Scale((FLOAT)rc.bottom),
+                             Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
         }
         else {
             if (Radius == NULL) {
-                _canvas_drawrect(hCanvas,
-                                 hbrush,
-                                 0,
-                                 0,
-                                 Ex_Scale((FLOAT)rc.right),
-                                 Ex_Scale((FLOAT)rc.bottom),
-                                 Ex_Scale(StrokeWidth),
+                _canvas_drawrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right),
+                                 Ex_Scale((FLOAT)rc.bottom), Ex_Scale(StrokeWidth),
                                  D2D1_DASH_STYLE_SOLID);
             }
             else {
-                _canvas_drawroundedrect(hCanvas,
-                                        hbrush,
-                                        Ex_Scale((FLOAT)rc.left + StrokeWidth),
-                                        Ex_Scale((FLOAT)rc.top + StrokeWidth),
-                                        Ex_Scale((FLOAT)rc.right - StrokeWidth),
-                                        Ex_Scale((FLOAT)rc.bottom - StrokeWidth),
-                                        Ex_Scale(Radius - StrokeWidth),
-                                        Ex_Scale(Radius - StrokeWidth),
-                                        Ex_Scale(StrokeWidth),
-                                        D2D1_DASH_STYLE_SOLID);
+                _canvas_drawroundedrect(
+                    hCanvas, hbrush, Ex_Scale((FLOAT)rc.left + StrokeWidth),
+                    Ex_Scale((FLOAT)rc.top + StrokeWidth), Ex_Scale((FLOAT)rc.right - StrokeWidth),
+                    Ex_Scale((FLOAT)rc.bottom - StrokeWidth), Ex_Scale(Radius - StrokeWidth),
+                    Ex_Scale(Radius - StrokeWidth), Ex_Scale(StrokeWidth), D2D1_DASH_STYLE_SOLID);
             }
         }
 
@@ -178,23 +152,14 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
             if (nIconPosition == 0) {
                 P->left  = (INT)Height;
                 P->right = (INT)(Width - Ex_Scale(10));
-                _canvas_drawimagerect(hCanvas,
-                                      hImage,
-                                      Height / 4,
-                                      Height / 4,
-                                      Height - Height / 4,
-                                      Height - Height / 4,
-                                      255);
+                _canvas_drawimagerect(hCanvas, hImage, Height / 4, Height / 4, Height - Height / 4,
+                                      Height - Height / 4, 255);
             }
             else if (nIconPosition >= 1) {
                 P->left  = (INT)Ex_Scale(10);
                 P->right = (INT)(Width - Height);
-                _canvas_drawimagerect(hCanvas,
-                                      hImage,
-                                      Width - Height + Height / 4,
-                                      Height / 4,
-                                      Width - Height + Height - Height / 4,
-                                      Height - Height / 4,
+                _canvas_drawimagerect(hCanvas, hImage, Width - Height + Height / 4, Height / 4,
+                                      Width - Height + Height - Height / 4, Height - Height / 4,
                                       255);
             }
         }

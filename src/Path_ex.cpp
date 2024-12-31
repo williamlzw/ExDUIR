@@ -341,14 +341,8 @@ BOOL _path_addroundedrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLO
             _path_addline(hPath, left, top, right - radiusTopRight, top);
         }
         else {
-            _path_addarc(hPath,
-                         left,
-                         top + radiusTopLeft,
-                         left + radiusTopLeft,
-                         top,
-                         radiusTopLeft,
-                         radiusTopLeft,
-                         TRUE);
+            _path_addarc(hPath, left, top + radiusTopLeft, left + radiusTopLeft, top, radiusTopLeft,
+                         radiusTopLeft, TRUE);
         }
 
         if (radiusTopRight == 0)   // 右上-右下
@@ -356,14 +350,8 @@ BOOL _path_addroundedrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLO
             _path_addline(hPath, right, top, right, bottom - radiusBottomRight);
         }
         else {
-            _path_addarc(hPath,
-                         right - radiusTopRight,
-                         top,
-                         right,
-                         top + radiusTopRight,
-                         radiusTopRight,
-                         radiusTopRight,
-                         TRUE);
+            _path_addarc(hPath, right - radiusTopRight, top, right, top + radiusTopRight,
+                         radiusTopRight, radiusTopRight, TRUE);
         }
 
         if (radiusBottomRight == 0)   // 右下-左下
@@ -371,14 +359,8 @@ BOOL _path_addroundedrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLO
             _path_addline(hPath, right, bottom, left + radiusBottomLeft, bottom);
         }
         else {
-            _path_addarc(hPath,
-                         right,
-                         bottom - radiusBottomRight,
-                         right - radiusBottomRight,
-                         bottom,
-                         radiusBottomRight,
-                         radiusBottomRight,
-                         TRUE);
+            _path_addarc(hPath, right, bottom - radiusBottomRight, right - radiusBottomRight,
+                         bottom, radiusBottomRight, radiusBottomRight, TRUE);
         }
 
         if (radiusBottomLeft == 0)   // 左下-左上
@@ -386,14 +368,8 @@ BOOL _path_addroundedrect(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLO
             _path_addline(hPath, left, bottom, left, top + radiusTopLeft);
         }
         else {
-            _path_addarc(hPath,
-                         left + radiusBottomLeft,
-                         bottom,
-                         left,
-                         bottom - radiusBottomLeft,
-                         radiusBottomLeft,
-                         radiusBottomLeft,
-                         TRUE);
+            _path_addarc(hPath, left + radiusBottomLeft, bottom, left, bottom - radiusBottomLeft,
+                         radiusBottomLeft, radiusBottomLeft, TRUE);
             _path_addline(hPath, left, bottom - radiusBottomLeft, left, top + radiusTopLeft);
         }
     }

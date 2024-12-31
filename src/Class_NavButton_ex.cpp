@@ -15,26 +15,14 @@ void _navbtn_paint(HEXOBJ hObj)
     INT nImageWidth  = 0;
     INT nImageHeight = 0;
     if (hImage != 0) {
-        _canvas_drawimagerect(ps.hCanvas,
-                              hImage,
-                              (FLOAT)ps.rcPaint.left,
-                              (FLOAT)ps.rcPaint.top,
-                              (FLOAT)ps.rcPaint.right,
-                              (FLOAT)ps.rcPaint.bottom,
-                              255);
+        _canvas_drawimagerect(ps.hCanvas, hImage, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top,
+                              (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom, 255);
     }
     FLOAT nTextWidth  = 0;
     FLOAT nTextHeight = 0;
-    _canvas_calctextsize(ps.hCanvas,
-                         Ex_ObjGetFont(hObj),
-                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                         -1,
-                         ps.dwTextFormat,
-                         0,
-                         ps.uWidth,
-                         ps.uHeight,
-                         &nTextWidth,
-                         &nTextHeight);
+    _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj),
+                         (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat,
+                         0, ps.uWidth, ps.uHeight, &nTextWidth, &nTextHeight);
     HEXIMAGE hImage2 = (HEXIMAGE)Ex_ObjGetLong(hObj, 0);
     if (hImage2 != 0) {
         _img_getsize(hImage2, &nImageWidth, &nImageHeight);
@@ -47,19 +35,13 @@ void _navbtn_paint(HEXOBJ hObj)
     rc.top    = (ps.uHeight - (nTextHeight + nImageHeight)) / 2;
     rc.bottom = (ps.uHeight + nTextHeight + nImageHeight) / 2;
     if (hImage2 != 0) {
-        _canvas_drawimage(
-            ps.hCanvas, hImage2, (FLOAT)(ps.uWidth - nImageWidth) / 2, (FLOAT)rc.top, 255);
+        _canvas_drawimage(ps.hCanvas, hImage2, (FLOAT)(ps.uWidth - nImageWidth) / 2, (FLOAT)rc.top,
+                          255);
     }
-    _canvas_drawtext(ps.hCanvas,
-                     Ex_ObjGetFont(hObj),
-                     Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                     (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-                     -1,
-                     ps.dwTextFormat,
-                     (ps.uWidth - nTextWidth) / 2,
-                     rc.bottom - nTextHeight,
-                     (ps.uWidth + nTextWidth) / 2,
-                     rc.bottom);
+    _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+                     (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat,
+                     (ps.uWidth - nTextWidth) / 2, rc.bottom - nTextHeight,
+                     (ps.uWidth + nTextWidth) / 2, rc.bottom);
     Ex_ObjEndPaint(hObj, &ps);
 }
 
@@ -154,12 +136,7 @@ LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
 
 void _navbtn_register()
 {
-    Ex_ObjRegister(L"NavButton",
-                   OBJECT_STYLE_VISIBLE,
+    Ex_ObjRegister(L"NavButton", OBJECT_STYLE_VISIBLE,
                    OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_CENTER | DT_VCENTER | DT_SINGLELINE,
-                   3 * sizeof(size_t),
-                   0,
-                   0,
-                   _navbtn_proc);
+                   DT_CENTER | DT_VCENTER | DT_SINGLELINE, 3 * sizeof(size_t), 0, 0, _navbtn_proc);
 }

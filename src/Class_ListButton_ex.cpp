@@ -3,30 +3,12 @@
 void _listbuttonex_register()
 {
     DWORD cbObjExtra = 5 * sizeof(size_t);
-    Ex_ObjRegister(L"Menubar",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_LEFT,
-                   cbObjExtra,
-                   NULL,
-                   1,
-                   _listbuttonex_proc);
-    Ex_ObjRegister(L"Toolbar",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_LEFT,
-                   7 * sizeof(size_t),
-                   NULL,
-                   2,
-                   _listbuttonex_proc);
-    Ex_ObjRegister(L"Statusbar",
-                   OBJECT_STYLE_VISIBLE,
-                   OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_LEFT,
-                   7 * sizeof(size_t),
-                   NULL,
-                   3,
-                   _listbuttonex_proc);
+    Ex_ObjRegister(L"Menubar", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT, cbObjExtra,
+                   NULL, 1, _listbuttonex_proc);
+    Ex_ObjRegister(L"Toolbar", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT,
+                   7 * sizeof(size_t), NULL, 2, _listbuttonex_proc);
+    Ex_ObjRegister(L"Statusbar", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT,
+                   7 * sizeof(size_t), NULL, 3, _listbuttonex_proc);
 }
 
 LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -254,15 +236,9 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
                 RECT lpRect = {0};
                 GetWindowRect(hWnd, &lpRect);
-                Ex_TrackPopupMenu((HMENU)lParam,
-                                  0,
-                                  lpRect.left + pObj->w_left_ + wParam,
-                                  lpRect.top + pObj->w_bottom_ + 2,
-                                  (size_t)hWnd,
-                                  hObj,
-                                  NULL,
-                                  _listbuttonex_menu_proc,
-                                  0);
+                Ex_TrackPopupMenu((HMENU)lParam, 0, lpRect.left + pObj->w_left_ + wParam,
+                                  lpRect.top + pObj->w_bottom_ + 2, (size_t)hWnd, hObj, NULL,
+                                  _listbuttonex_menu_proc, 0);
             }
         }
     }
@@ -286,8 +262,8 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 Ex_ObjSetLong(hObj, LISTBUTTON_LONG_INDEX, Heatindex);
                 Ex_ObjInvalidateRect(hObj, 0);
                 EndMenu();
-                Ex_ObjPostMessage(
-                    hObj, LISTBUTTON_MESSAGE_DOWNITEM, pTR->nLeft, (LPARAM)pTR->nMenu);
+                Ex_ObjPostMessage(hObj, LISTBUTTON_MESSAGE_DOWNITEM, pTR->nLeft,
+                                  (LPARAM)pTR->nMenu);
             }
         }
     }
@@ -325,16 +301,8 @@ INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText)
 
     if (nType == 1) {
         if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-            _canvas_calctextsize(pObj->canvas_obj_,
-                                 pObj->hFont_,
-                                 wzText,
-                                 -1,
-                                 0,
-                                 0,
-                                 pObj->c_right_,
-                                 pObj->c_bottom_,
-                                 &iWidth,
-                                 &iHeight);
+            _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, wzText, -1, 0, 0, pObj->c_right_,
+                                 pObj->c_bottom_, &iWidth, &iHeight);
             nWidth = (UINT)iWidth + 15;
         }
     }
@@ -344,16 +312,8 @@ INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText)
         }
         if (wzText != NULL) {
             if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-                _canvas_calctextsize(pObj->canvas_obj_,
-                                     pObj->hFont_,
-                                     wzText,
-                                     -1,
-                                     0,
-                                     0,
-                                     pObj->c_right_,
-                                     pObj->c_bottom_,
-                                     &iWidth,
-                                     &iHeight);
+                _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, wzText, -1, 0, 0,
+                                     pObj->c_right_, pObj->c_bottom_, &iWidth, &iHeight);
                 nWidth += (UINT)iWidth + 10;
             }
         }
@@ -380,24 +340,14 @@ void _listbuttonex_paint(HEXOBJ hObj)
                         else {
                             _brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_DOWN));
                         }
-                        _canvas_fillrect(ps.hCanvas,
-                                         hBrush,
-                                         pTR->nLeft,
-                                         0,
-                                         pTR->nLeft + pTR->nWidth,
-                                         ps.uHeight);
+                        _canvas_fillrect(ps.hCanvas, hBrush, pTR->nLeft, 0,
+                                         pTR->nLeft + pTR->nWidth, ps.uHeight);
                     }
 
-                    _canvas_drawtext(ps.hCanvas,
-                                     Ex_ObjGetFont(hObj),
-                                     Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                                     pTR->wzText,
-                                     -1,
-                                     DT_CENTER | DT_VCENTER,
-                                     pTR->nLeft,
-                                     0,
-                                     pTR->nLeft + pTR->nWidth,
-                                     ps.uHeight);
+                    _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
+                                     Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pTR->wzText, -1,
+                                     DT_CENTER | DT_VCENTER, pTR->nLeft, 0,
+                                     pTR->nLeft + pTR->nWidth, ps.uHeight);
                 }
                 _brush_destroy(hBrush);
             }
@@ -413,50 +363,29 @@ void _listbuttonex_paint(HEXOBJ hObj)
                         (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO), i);
                     if (pTR->nType == 0) {
                         _brush_setcolor(hBrush, ExRGB2ARGB(8421504, 255));
-                        _canvas_drawrect(ps.hCanvas,
-                                         hBrush,
-                                         pTR->nLeft + 6,
-                                         2,
-                                         pTR->nLeft + 6,
-                                         ps.uHeight - 4,
-                                         1,
-                                         D2D1_DASH_STYLE_SOLID);
+                        _canvas_drawrect(ps.hCanvas, hBrush, pTR->nLeft + 6, 2, pTR->nLeft + 6,
+                                         ps.uHeight - 4, 1, D2D1_DASH_STYLE_SOLID);
                     }
                     else {
                         if (pTR->dwState == STATE_FOCUS) {
                             _brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_HOVER));
-                            _canvas_fillrect(ps.hCanvas,
-                                             hBrush,
-                                             pTR->nLeft,
-                                             0,
-                                             pTR->nLeft + pTR->nWidth,
-                                             ps.uHeight);
+                            _canvas_fillrect(ps.hCanvas, hBrush, pTR->nLeft, 0,
+                                             pTR->nLeft + pTR->nWidth, ps.uHeight);
                         }
                         else if (pTR->dwState == STATE_DOWN) {
                             _brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_DOWN));
-                            _canvas_fillrect(ps.hCanvas,
-                                             hBrush,
-                                             pTR->nLeft,
-                                             0,
-                                             pTR->nLeft + pTR->nWidth,
-                                             ps.uHeight);
+                            _canvas_fillrect(ps.hCanvas, hBrush, pTR->nLeft, 0,
+                                             pTR->nLeft + pTR->nWidth, ps.uHeight);
                         }
                         UINT nLeft  = pTR->nLeft;
                         UINT nWidth = pTR->nWidth;
                         if (pTR->nImage > 0) {
                             HEXIMAGE hImage = _imglist_get(hImageList, pTR->nImage);
                             if (hImage != 0) {
-                                _canvas_drawimagerectrect(ps.hCanvas,
-                                                          hImage,
-                                                          nLeft + 5,
-                                                          hImageTop,
+                                _canvas_drawimagerectrect(ps.hCanvas, hImage, nLeft + 5, hImageTop,
                                                           nLeft + 5 + hImageWidth,
-                                                          hImageTop + hImageHeight,
-                                                          0,
-                                                          0,
-                                                          hImageWidth,
-                                                          hImageHeight,
-                                                          255);
+                                                          hImageTop + hImageHeight, 0, 0,
+                                                          hImageWidth, hImageHeight, 255);
                                 nLeft += 5 + hImageWidth;
                                 nWidth -= hImageWidth;
                             }
@@ -470,16 +399,9 @@ void _listbuttonex_paint(HEXOBJ hObj)
                             if (pTR->dwState == STATE_DISABLE) {   // 禁止
                                 crText = ExRGB2ARGB(crText, 128);
                             }
-                            _canvas_drawtext(ps.hCanvas,
-                                             Ex_ObjGetFont(hObj),
-                                             crText,
-                                             pTR->wzText,
-                                             -1,
-                                             DT_VCENTER | DT_SINGLELINE,
-                                             nLeft,
-                                             0,
-                                             nLeft + nWidth,
-                                             ps.uHeight);
+                            _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), crText, pTR->wzText,
+                                             -1, DT_VCENTER | DT_SINGLELINE, nLeft, 0,
+                                             nLeft + nWidth, ps.uHeight);
                         }
                     }
                 }
@@ -490,24 +412,13 @@ void _listbuttonex_paint(HEXOBJ hObj)
                 for (INT i = 1; i <= nCount; i++) {
                     EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember(
                         (array_s*)Ex_ObjGetLong(hObj, LISTBUTTON_LONG_ITEMINFO), i);
-                    _canvas_drawtext(ps.hCanvas,
-                                     Ex_ObjGetFont(hObj),
-                                     Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                                     pTR->wzText,
-                                     -1,
-                                     DT_VCENTER | DT_SINGLELINE | pTR->TextFormat,
-                                     pTR->nLeft + 5,
-                                     0,
-                                     pTR->nLeft + pTR->nWidth - 10,
-                                     ps.uHeight);
+                    _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
+                                     Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), pTR->wzText, -1,
+                                     DT_VCENTER | DT_SINGLELINE | pTR->TextFormat, pTR->nLeft + 5,
+                                     0, pTR->nLeft + pTR->nWidth - 10, ps.uHeight);
                     if (i < nCount) {
-                        _canvas_drawline(ps.hCanvas,
-                                         hBrush,
-                                         pTR->nLeft + pTR->nWidth,
-                                         0,
-                                         pTR->nLeft + pTR->nWidth,
-                                         ps.uHeight,
-                                         1,
+                        _canvas_drawline(ps.hCanvas, hBrush, pTR->nLeft + pTR->nWidth, 0,
+                                         pTR->nLeft + pTR->nWidth, ps.uHeight, 1,
                                          D2D1_DASH_STYLE_SOLID);
                     }
                 }
@@ -657,8 +568,8 @@ void _listbuttonex_mousedown(HEXOBJ hObj, INT nType, LPARAM lParam)
                         pTR->dwState = STATE_FOCUS;
                     }
                     Ex_ObjInvalidateRect(hObj, 0);
-                    Ex_ObjDispatchNotify(
-                        hObj, LISTBUTTON_EVENT_CHECK, (WPARAM)Heatindex, pTR->dwState);
+                    Ex_ObjDispatchNotify(hObj, LISTBUTTON_EVENT_CHECK, (WPARAM)Heatindex,
+                                         pTR->dwState);
                 }
             }
         }
