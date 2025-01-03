@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 LOCALINFO  g_Li;
 RENDERINFO g_Ri;
@@ -1115,4 +1115,82 @@ HRESULT IsEffectRegistered(ID2D1Factory1* d2dFactory, const CLSID& effectID, boo
     result  = it != effects.end();
 
     return S_OK;
+}
+
+void printVector(const std::vector<BYTE>& vec)
+{
+    // 使用 wstringstream 来构建宽字符字符串
+    std::wostringstream wss;
+    wss << L"{";
+
+    if (!vec.empty()) {
+        // 输出第一个元素
+        wss << static_cast<int>(vec[0]);
+
+        // 输出剩余的元素
+        for (size_t i = 1; i < vec.size(); ++i) {
+            wss << L"," << static_cast<int>(vec[i]);
+        }
+    }
+
+    wss << L"}";
+
+    // 将 wstringstream 的内容转换为宽字符 C 字符串
+    std::wstring ws = wss.str();
+    OutputDebugStringW(ws.c_str());
+}
+
+bool IsDotSubDirName(const TCHAR* szFileName)
+{
+    if (szFileName == NULL) return FALSE;
+
+    return ((szFileName[0] == '.' && szFileName[1] == '\0') ||
+            (szFileName[0] == '.' && szFileName[1] == '.' && szFileName[2] == '\0'));
+}
+
+std::wstring FindFile(HANDLE& hFileFind, std::wstring prefindfile, INT prefindfileattribute,
+                      INT preskipfileattribute)
+{
+    bool            blpIsFindNext = prefindfile.empty();
+    WIN32_FIND_DATA infFindData;
+    bool            blpSucceeded = false;
+    while (TRUE) {
+        if (blpIsFindNext)
+            blpSucceeded = (hFileFind == NULL ? FALSE : ::FindNextFile(hFileFind, &infFindData));
+        else {
+            if (hFileFind != NULL) ::FindClose(hFileFind);
+            hFileFind    = ::FindFirstFile(prefindfile.data(), &infFindData);
+            blpSucceeded = (hFileFind != INVALID_HANDLE_VALUE);
+            if (blpSucceeded == FALSE) hFileFind = NULL;
+            blpIsFindNext = TRUE;
+        }
+        if (blpSucceeded == FALSE) {
+            if (hFileFind != NULL) {
+                ::FindClose(hFileFind);
+                hFileFind = NULL;
+            }
+            break;
+        }
+        if (((infFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0 &&
+             IsDotSubDirName(infFindData.cFileName)) ||                   // 为"."或".."目录?
+            (infFindData.dwFileAttributes & preskipfileattribute) != 0)   // 需要被跳过?
+            continue;
+        if ((prefindfileattribute == 0 && infFindData.dwFileAttributes == 0) ||
+            (prefindfileattribute == -1
+                 ? (infFindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0
+                 : (infFindData.dwFileAttributes & prefindfileattribute) != 0)) {
+            break;
+        }
+    }
+    return std::wstring(blpSucceeded ? infFindData.cFileName : _T(""));
+}
+
+bool WriteDataIntoFile(const std::wstring szFileName, const void* pData, const size_t npDataSize)
+{
+    if (szFileName[0] == L'\0' || npDataSize < 0) return false;
+    FILE* out = _tfopen(szFileName.c_str(), _T("wb"));
+    if (out == NULL) return false;
+    const bool blpSucceeded = (fwrite(pData, 1, npDataSize, out) == npDataSize);
+    fclose(out);
+    return blpSucceeded;
 }

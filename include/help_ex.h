@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 struct wnd_s;
 struct obj_s;
@@ -402,3 +402,9 @@ std::wstring UrlEncodeW(std::wstring url, BOOL notEncodeAlphanumeric = TRUE, BOO
 std::wstring UrlDecode(const std::wstring& url, BOOL utf8 = TRUE);
 
 HRESULT IsEffectRegistered(ID2D1Factory1* d2dFactory, const CLSID& effectID, bool& result);
+void    printVector(const std::vector<BYTE>& vec);
+
+bool         IsDotSubDirName(const TCHAR* szFileName);
+std::wstring FindFile(HANDLE& hFileFind, std::wstring prefindfile, INT prefindfileattribute,
+                      INT preskipfileattribute);
+bool WriteDataIntoFile(const std::wstring szFileName, const void* pData, const size_t npDataSize);

@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#define EPDF_PNGBITS 1
 
 struct colors_s
 {

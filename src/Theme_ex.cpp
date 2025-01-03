@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen,
                    std::vector<INT>* atomFiles, std::vector<LPVOID>* lpFiles,
@@ -148,7 +148,8 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
                                                     Crc32_Addr((LPVOID)arylpValue[i], dwLen);
                                                 for (size_t ii = 0; ii < atomFiles.size(); ii++) {
                                                     if (atomProp == atomFiles[ii]) {
-                                                        if (dwFileProps[ii] == EPDF_PNGBITS) {
+                                                        if (dwFileProps[ii] ==
+                                                            PACKAGEHEADER_PNGBITS) {
                                                             _img_createfrompngbits(
                                                                 lpFiles[ii], &pClass->hImage_);
                                                         }

@@ -1882,7 +1882,8 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
         ID2D1Bitmap*        pBitmapDisplay = nullptr;
         if (fDX) {
             pContext = pWnd->dx_context_;
-            if (pWnd->Radius_ == 0) {
+            pBitmapDisplay = (ID2D1Bitmap*)_canvas_getcontext(cvDisplay, CANVAS_DX_D2DBITMAP);
+            if (pWnd->Radius_ == 0 || !_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE)) {  
                 _dx_bmp_copyfrom(
                     &pBitmapDisplay,
                     (ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_, CANVAS_DX_D2DBITMAP),
@@ -1890,7 +1891,6 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
                     rcPaint.bottom);
             }
             else {
-                pBitmapDisplay   = (ID2D1Bitmap*)_canvas_getcontext(cvDisplay, CANVAS_DX_D2DBITMAP);
                 int       nError = 0;
                 canvas_s* pCanvas = nullptr;
                 if (_handle_validate(pWnd->canvas_bkg_, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {

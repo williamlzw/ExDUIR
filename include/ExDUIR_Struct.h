@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
 #include <ocidl.h>
 #include <sstream>
@@ -1327,6 +1327,8 @@
 #define PROGRESSBAR_LONG_FOREGROUNDCOLOR 4
 #pragma endregion progressbar long constant
 
+// png数据头
+#define PACKAGEHEADER_PNGBITS 1
 // 主题包头
 #define PACKAGEHEADER_THEME 254
 // 资源包头
@@ -2199,7 +2201,15 @@ static void output(const wchar_t* file, const wchar_t* func, int lineno, T... ar
     OutputDebugStringW(str.c_str());
 }
 
-#define OUTPUTW(...) output(_T(__FILE__), _T(__FUNCTION__), __LINE__, __VA_ARGS__)
+
+
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define EXPAND_AND_STRINGIFY(x) TOSTRING(x)
+#define OUTPUTW(...) \
+    output(_T("[文件名:") _T(__FILE__) _T("]"),                          \
+           _T("[方法名:") _T(__FUNCTION__) _T("]"), \
+           _T("[行索引:" EXPAND_AND_STRINGIFY(__LINE__) "]"), __VA_ARGS__)
 
 //==================================以下是cef浏览框声明，不用可以去掉
 struct CkSettings

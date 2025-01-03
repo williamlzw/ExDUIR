@@ -4121,6 +4121,7 @@ void test_nativewindow(HWND hParent)
             WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE |
             WINDOW_STYLE_TITLE,
         0, OnNativeParentWndMsgProc);
+    Ex_DUISetLong(hExDui_nativewindow, ENGINE_LONG_RADIUS, 10);
     Ex_DUISetLong(hExDui_nativewindow, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     m_hWndNativeWindow2 = Ex_WndCreate(hWnd_nativewindow, L"Ex_DirectUI", 0, 0, 30, 400, 420,
