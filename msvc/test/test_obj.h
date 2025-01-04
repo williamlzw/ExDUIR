@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -418,3 +418,5 @@ void             test_pathandrgn(HWND hWnd);
 
 LRESULT CALLBACK OnMediaVLCBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void             test_vlcPlay(HWND hWnd);
+
+void test_respack(HWND hWnd);

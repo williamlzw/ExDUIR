@@ -1,7 +1,6 @@
 ﻿#pragma once
 // clang-format off
 #include <Windows.h>
-#include <Windowsx.h>
 #include <algorithm>
 #include <fstream>
 #include <iostream>
@@ -10,9 +9,11 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "richedit.h"
-#include "richole.h"
-#include "textserv.h"
+#include <bcrypt.h>
+#include <ocidl.h>
+#include <richedit.h>
+#include <richole.h>
+#include <textserv.h>
 
 #pragma comment(lib, "OleAut32.lib")
 #include <shlwapi.h>
@@ -27,6 +28,8 @@
 #include <Initguid.h>
 #include <d2d1effectauthor.h>
 #include <d2d1effecthelpers.h>
+
+#pragma comment(lib, "bcrypt.lib")
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d11.lib")

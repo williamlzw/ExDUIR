@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include "ButtonWindow.hpp"
 #include "LabelWindow.hpp"
 #include "CheckButtonWindow.hpp"
@@ -55,6 +55,7 @@
 #include "MaskWindow.hpp"
 #include "TaggingBoardWindow.hpp"
 #include "EffectWindow.hpp"
+#include "ResPackWindow.hpp"
 
 using namespace ExDUIR::FrameWorks;
 
@@ -91,6 +92,7 @@ public:
 		const int column2X = 120;
 		const int column3X = 230;
 		const int column4X = 340;
+        const int column5X = 450;
 		const int rowYOffset = 40;
 
 		std::vector<std::pair<int, std::wstring>> buttonData = {
@@ -152,13 +154,19 @@ public:
 			{ 430, L"测试托盘图标" },
 			{ 470, L"测试蒙板" },
 			{ 510, L"测试标注画板" },
-			{ 550, L"测试效果器" }
+			{ 550, L"测试效果器" },
+
+            {30, L"测试打包"},
 		};
 
 		for (size_t i = 0; i < buttonData.size(); ++i) {
 			int y = buttonData[i].first;
 			std::wstring text = buttonData[i].second;
-			int x = (i < 14) ? column1X : (i < 28) ? column2X : (i < 42) ? column3X : column4X;
+            int          x    = (i < 14)   ? column1X
+                                : (i < 28) ? column2X
+                                : (i < 42) ? column3X
+                                : (i < 56) ? column4X
+                                           : column5X;
 			m_buttons.push_back(ExButton(m_skin, x, y, buttonWidth, buttonHeight, text, -1, -1, DT_VCENTER | DT_CENTER, 101 + i));
 		}
 		
@@ -456,6 +464,12 @@ public:
 				EffectWindow::GetInstance().CreateEffectWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
+            case 157:
+            {
+                ResPackWindow::GetInstance().CreateResPackWindow(
+                    MainWindow::GetInstance().m_skin.m_hWnd);
+                break;
+            }
 			default:
 				break;
 		}

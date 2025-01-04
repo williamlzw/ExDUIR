@@ -407,4 +407,6 @@ void    printVector(const std::vector<BYTE>& vec);
 bool         IsDotSubDirName(const TCHAR* szFileName);
 std::wstring FindFile(HANDLE& hFileFind, std::wstring prefindfile, INT prefindfileattribute,
                       INT preskipfileattribute);
-bool WriteDataIntoFile(const std::wstring szFileName, const void* pData, const size_t npDataSize);
+
+wchar_t LTOUCHAR(BYTE value);
+std::wstring Md5Encrypt(const std::vector<BYTE>& data);

@@ -336,6 +336,16 @@ BOOL Ex_ReadFile(LPCWSTR filePath, std::vector<CHAR>* retData)
     return fOK;
 }
 
+BOOL Ex_WriteFile(LPCWSTR szFileName, LPVOID pData, size_t npDataSize)
+{
+    if (szFileName[0] == L'\0' || npDataSize < 0) return false;
+    FILE* out = _tfopen(szFileName, _T("wb"));
+    if (out == NULL) return false;
+    const bool blpSucceeded = (fwrite(pData, 1, npDataSize, out) == npDataSize);
+    fclose(out);
+    return blpSucceeded;
+}
+
 /* 读取RC资源 */
 BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<CHAR>* retData)
 {

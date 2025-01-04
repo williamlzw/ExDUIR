@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 BOOL _img_destroy(HEXIMAGE hImg)
 {
@@ -624,7 +624,7 @@ BOOL _img_rotateflip(HEXIMAGE hImg, INT rfType, HEXIMAGE* phImg)
 void _wic_savetobin(IWICBitmapSource* pBitmapSource, LPVOID* lpBin, size_t* len, INT* nError)
 {
     LPSTREAM pStream = nullptr;
-    *nError          = CreateStreamOnHGlobal(NULL, FALSE, &pStream);
+    *nError          = CreateStreamOnHGlobal(nullptr, FALSE, &pStream);
     if (*nError == 0) {
         UINT width, height;
         *nError = pBitmapSource->GetSize(&width, &height);
@@ -648,8 +648,8 @@ void _wic_savetobin(IWICBitmapSource* pBitmapSource, LPVOID* lpBin, size_t* len,
                                     *nError = pFrame->SetSize(width, height);
                                     if (*nError == 0) {
                                         // SetPixelFormat,如果为PBGRA,导致d2d绘图alpha通道丢失
-                                        WICPixelFormatGUID aa = GUID_WICPixelFormatDontCare;
-                                        *nError               = pFrame->SetPixelFormat(&aa);
+                                        WICPixelFormatGUID guid = GUID_WICPixelFormatDontCare;
+                                        *nError               = pFrame->SetPixelFormat(&guid);
                                         if (*nError == 0) {
                                             *nError = pFrame->WriteSource(pBitmapSource, NULL);
                                             if (*nError == 0) {

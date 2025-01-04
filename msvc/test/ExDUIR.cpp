@@ -61,7 +61,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_tray,               // 153 测试托盘
         test_mask,               // 154测试蒙板
         test_tagging,            // 155测试标注画板
-        test_effect              // 156测试效果器
+        test_effect,             // 156测试效果器
+        test_respack             // 157测试打包
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -72,9 +73,10 @@ void test_exdui()
     std::vector<CHAR> data;
     Ex_ReadFile(L"res/cursor.cur", &data);
     HCURSOR hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
-    data.resize(Default_ext_size);
-    RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
-    // Ex_ReadFile(L"res/Default.ext", &data);
+    //data.resize(Default_ext_size);
+    //RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
+    //Ex_ReadFile(L"res/Default.ext", &data);
+    Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
     // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
             ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL, hCursor,
@@ -105,8 +107,10 @@ void test_exdui()
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0,
                                  BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
+        
         // 设置圆角，另一种方案是重画窗口背景参照异形窗口例子
         Ex_DUISetLong(hExDui, ENGINE_LONG_RADIUS, 30);
+
         std::vector<HEXOBJ>                       buttons;
         const int                                 buttonWidth  = 100;
         const int                                 buttonHeight = 30;
@@ -114,6 +118,7 @@ void test_exdui()
         const int                                 column2X     = 120;
         const int                                 column3X     = 230;
         const int                                 column4X     = 340;
+        const int                                 column5X     = 450;
         const int                                 rowYOffset   = 40;
         std::vector<std::pair<int, std::wstring>> buttonData   = {
             {30, L"🐸测试按钮开关"},  {70, L"🐓测试标签"},      {110, L"测试单选复选框"},
@@ -138,12 +143,14 @@ void test_exdui()
             {150, L"测试属性框"},     {190, L"测试原生子窗口"}, {230, L"测试全屏置顶"},
             {270, L"测试路径与区域"}, {310, L"测试VLC播放器"},  {350, L"自定字体和SVG"},
             {390, L"测试卷帘菜单"},   {430, L"测试托盘图标"},   {470, L"测试蒙板"},
-            {510, L"测试标注画板"},   {550, L"测试效果器"}};
+            {510, L"测试标注画板"},   {550, L"测试效果器"},
+
+            {30, L"测试打包"}};
 
         for (size_t i = 0; i < buttonData.size(); ++i) {
             int          y    = buttonData[i].first;
             std::wstring text = buttonData[i].second;
-            int x = (i < 14) ? column1X : (i < 28) ? column2X : (i < 42) ? column3X : column4X;
+            int x = (i < 14) ? column1X : (i < 28) ? column2X : (i < 42) ? column3X : (i < 56) ? column4X :column5X;
             buttons.push_back(Ex_ObjCreateEx(-1, L"button", text.c_str(), -1, x, y, buttonWidth,
                                              buttonHeight, hExDui, 101 + i, DT_VCENTER | DT_CENTER,
                                              0, 0, NULL));

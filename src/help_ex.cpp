@@ -1185,12 +1185,67 @@ std::wstring FindFile(HANDLE& hFileFind, std::wstring prefindfile, INT prefindfi
     return std::wstring(blpSucceeded ? infFindData.cFileName : _T(""));
 }
 
-bool WriteDataIntoFile(const std::wstring szFileName, const void* pData, const size_t npDataSize)
+
+// 辅助函数：将数字0-15转换为对应的十六进制字符
+wchar_t LTOUCHAR(BYTE value)
 {
-    if (szFileName[0] == L'\0' || npDataSize < 0) return false;
-    FILE* out = _tfopen(szFileName.c_str(), _T("wb"));
-    if (out == NULL) return false;
-    const bool blpSucceeded = (fwrite(pData, 1, npDataSize, out) == npDataSize);
-    fclose(out);
-    return blpSucceeded;
+    if (value < 10)
+        return L'0' + value;
+    else
+        return L'A' + (value - 10);
+}
+
+std::wstring Md5Encrypt(const std::vector<BYTE>& data)
+{
+    // MD5 哈希长度为 16 字节
+    const DWORD MD5_HASH_LENGTH = 16;
+    // 十六进制表示每个字节需要 2 个字符
+    const size_t HEX_LENGTH = MD5_HASH_LENGTH * 2;
+
+    std::wstring hashString;
+    hashString.resize(HEX_LENGTH, L'0');
+
+    // 打开 MD5 算法提供者
+    BCRYPT_ALG_HANDLE hAlgorithm = NULL;
+    NTSTATUS          status = BCryptOpenAlgorithmProvider(&hAlgorithm, BCRYPT_MD5_ALGORITHM, NULL,
+                                                           BCRYPT_HASH_REUSABLE_FLAG);
+    if (status < 0) {
+        // 处理错误
+        return L"";
+    }
+
+    // 创建哈希对象
+    BCRYPT_HASH_HANDLE hHash = NULL;
+    status                   = BCryptCreateHash(hAlgorithm, &hHash, NULL, 0, NULL, 0, 0);
+    if (status < 0) {
+        BCryptCloseAlgorithmProvider(hAlgorithm, 0);
+        return L"";
+    }
+
+    // 更新哈希数据
+    status = BCryptHashData(hHash, (PUCHAR)data.data(), data.size(), 0);
+    if (status < 0) {
+        BCryptDestroyHash(hHash);
+        BCryptCloseAlgorithmProvider(hAlgorithm, 0);
+        return L"";
+    }
+
+    // 完成哈希计算
+    BYTE hash[MD5_HASH_LENGTH];
+    status = BCryptFinishHash(hHash, hash, MD5_HASH_LENGTH, 0);
+    if (status < 0) {
+        BCryptDestroyHash(hHash);
+        BCryptCloseAlgorithmProvider(hAlgorithm, 0);
+        return L"";
+    }
+
+    for (DWORD i = 0; i < MD5_HASH_LENGTH; ++i) {
+        hashString[i * 2]     = LTOUCHAR((hash[i] >> 4) & 0xF);
+        hashString[i * 2 + 1] = LTOUCHAR(hash[i] & 0xF);
+    }
+    // 释放资源
+    BCryptDestroyHash(hHash);
+    BCryptCloseAlgorithmProvider(hAlgorithm, 0);
+
+    return hashString;
 }

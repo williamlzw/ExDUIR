@@ -1,8 +1,4 @@
-#pragma once
-#include <dwrite.h>
-#include <string>
-#include <vector>
-
+﻿#pragma once
 
 #define SafeRelease(lpx) \
     if (lpx != NULL) {   \

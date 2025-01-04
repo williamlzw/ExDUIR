@@ -1,7 +1,8 @@
-LIBRARY
+﻿LIBRARY
 
 EXPORTS
 Ex_ReadFile
+Ex_WriteFile
 
 ;----------------------------------------
 ;global
@@ -171,7 +172,7 @@ Ex_ResLoadFromMemory
 Ex_ResFree
 Ex_ResGetFileFromAtom
 Ex_ResGetFile
-;_res_pack
+_res_pack
 
 
 ;Ex_XmlRegisterCallback

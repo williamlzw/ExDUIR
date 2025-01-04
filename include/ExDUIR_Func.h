@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ExDUIR_Struct.h"
 
 /// <summary>
@@ -1645,6 +1645,15 @@ BOOL _path_open(HEXPATH hPath);
 BOOL _path_reset(HEXPATH hPath);
 
 /// <summary>
+/// 打包主题包
+/// </summary>
+/// <param name="root">主题包文件夹，绝对路径</param>
+/// <param name="file">打包后主题包文件保存路径如test_theme.ext</param>
+/// <param
+/// name="byteHeader">打包类型，可选PACKAGEHEADER_THEME主题包或者PACKAGEHEADER_FILES资源包。资源包可用Ex_ResLoadFromMemory加载，并用Ex_ResGetFile读取资源或者_img_createfromres创建图像</param>
+void _res_pack(LPCWSTR root, LPCWSTR file, UCHAR byteHeader);
+
+/// <summary>
 /// 区域合并,注意路径必须创建自PATH_BEGIN_FLAG_FILLED才有效果
 /// </summary>
 /// <param name="hRgnSrc"></param>
@@ -3048,7 +3057,7 @@ BOOL Ex_ResGetFileFromAtom(HEXRES hRes, EXATOM atomPath, LPVOID* lpFile, size_t*
 HEXRES Ex_ResLoadFromFile(LPCWSTR lptszFile);
 
 /// <summary>
-/// 从内存加载资源
+/// 从内存加载资源，可加载从_res_pack打包的资源包
 /// </summary>
 /// <param name="lpData"></param>
 /// <param name="dwDataLen"></param>
@@ -3210,6 +3219,15 @@ HWND Ex_WndCreate(HWND hWndParent, LPCWSTR lpwzClassName, LPCWSTR lpwzWindowName
 /// </summary>
 /// <returns>返回msg.wParam</returns>
 WPARAM Ex_WndMsgLoop();
+
+/// <summary>
+/// 从缓冲区写文件
+/// </summary>
+/// <param name="szFileName">保存路径</param>
+/// <param name="pData">数据指针</param>
+/// <param name="dataSize">数据长度</param>
+/// <returns>返回是否成功</returns>
+BOOL Ex_WriteFile(LPCWSTR szFileName, LPVOID pData, size_t dataSize);
 
 /// <summary>
 /// 注册窗口类

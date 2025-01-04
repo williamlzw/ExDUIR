@@ -245,6 +245,9 @@
     <ClInclude Include="CustomButtonWindow.hpp">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="ResPackWindow.hpp">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
