@@ -326,13 +326,10 @@ void _wnd_recalcclient(wnd_s* pWnd, HWND hWnd, INT width, INT height)
     }
     auto rectround = pWnd->Radius_;
 
-    if (rectround != 0) {
-        // 外缩1px防止锯齿
-        auto hRgn =
-            CreateRoundRectRgn(-1, -1, width + 1, height + 1, rectround * 2 + 1, rectround * 2 + 1);
-        SetWindowRgn(hWnd, hRgn, TRUE);
-        DeleteObject(hRgn);
-    }
+    // 外缩1px防止锯齿
+    auto hRgn = CreateRoundRectRgn(-1, -1, width + 1, height + 1, rectround * 2 + 1, rectround * 2 + 1);
+    SetWindowRgn(hWnd, hRgn, TRUE);
+    DeleteObject(hRgn);
 }
 
 BOOL _wnd_wm_stylechanging(wnd_s* pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
@@ -1883,7 +1880,8 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
         if (fDX) {
             pContext = pWnd->dx_context_;
             pBitmapDisplay = (ID2D1Bitmap*)_canvas_getcontext(cvDisplay, CANVAS_DX_D2DBITMAP);
-            if (pWnd->Radius_ == 0 || !_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE)) {  
+            
+            if (pWnd->Radius_ == 0  || !_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE)) {  
                 _dx_bmp_copyfrom(
                     &pBitmapDisplay,
                     (ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_, CANVAS_DX_D2DBITMAP),
@@ -1915,8 +1913,8 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
                         br->Release();
                         hr = bmpRenderTarget->EndDraw();
                     }
+                    
                     if (SUCCEEDED(hr)) {
-
                         ID2D1Bitmap* bitmap;
                         bmpRenderTarget->GetBitmap(&bitmap);
                         _dx_bmp_copyfrom(&pBitmapDisplay, bitmap, rcPaint.left, rcPaint.top,

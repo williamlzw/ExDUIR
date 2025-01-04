@@ -75,8 +75,8 @@ void test_exdui()
     HCURSOR hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
     //data.resize(Default_ext_size);
     //RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
-    //Ex_ReadFile(L"res/Default.ext", &data);
-    Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
+    Ex_ReadFile(L"res/Default.ext", &data);
+    //Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
     // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
             ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL, hCursor,
@@ -110,7 +110,7 @@ void test_exdui()
         
         // 设置圆角，另一种方案是重画窗口背景参照异形窗口例子
         Ex_DUISetLong(hExDui, ENGINE_LONG_RADIUS, 30);
-
+      
         std::vector<HEXOBJ>                       buttons;
         const int                                 buttonWidth  = 100;
         const int                                 buttonHeight = 30;
