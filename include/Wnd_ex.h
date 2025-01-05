@@ -220,10 +220,6 @@ BOOL   _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam);
 void   _wnd_menu_updatecurrent(wnd_s* pWnd);
 LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL             _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LONG_PTR* iItem);
-BOOL _wnd_menu_item_callback(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
-                             LPVOID* lpResult);
-BOOL _wnd_menu_callback_test(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
-                             LPVOID* lpResult);
 void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu);
 BOOL Ex_DUIGetBackgroundImage(HEXDUI hExDui, LPVOID lpBackgroundImage);
 void _wnd_getclientrect(wnd_s* pWnd, RECT* lpRect, INT* nError);

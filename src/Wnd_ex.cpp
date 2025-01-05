@@ -1495,12 +1495,9 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext, HEXCA
                     OffsetRect(&rcObj, offsetX, offsetY);
                     RECT rcClip{0};
                     if (IntersectRect(&rcClip, &rcPaint, &rcObj)) {
-
                         auto fPage = (pObj->dwFlags_ & EOF_BPAGE) != EOF_BPAGE;
                         if (fPage) {
-
                             if (((pObj->dwFlags_ & EOF_BCANREDRAW) == EOF_BCANREDRAW)) {
-
                                 if (((pObj->dwFlags_ & EOF_BNEEDREDRAW) == EOF_BNEEDREDRAW)) {
                                     pObj->dwFlags_ =
                                         pObj->dwFlags_ - (pObj->dwFlags_ & EOF_BNEEDREDRAW);
@@ -2079,7 +2076,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
         INT width  = pWnd->width_ - (rcPaddingClient.left + rcPaddingClient.right);
         INT height = pWnd->height_ - (rcPaddingClient.top + rcPaddingClient.bottom);
         _obj_create_proc(&nError, FALSE, hTheme, pParnet, OBJECT_STYLE_EX_FOCUSABLE, ATOM_PAGE, 0,
-                         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | EMIS_SUBMENU,
+            OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_MENUITEM_SUBMENU,
                          rcPaddingClient.left, rcPaddingClient.top, width, height, 0, 0, 0, 0, 0);
         _obj_create_done(hWnd, pWnd, objParent, pParnet);
         HEXOBJ    objPP   = objParent;
@@ -2121,11 +2118,11 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
                     if (GetMenuItemInfoW((HMENU)hMenu, i, TRUE, &mii)) {
                         if ((mii.fType & MFT_SEPARATOR) != 0)   // 分隔符
                         {
-                            eos = eos | EMIS_SEPARATOR;
+                            eos = eos | OBJECT_STYLE_MENUITEM_SEPARATOR;
                         }
                         else {
                             if (mii.hSubMenu != 0) {
-                                eos = eos | EMIS_SUBMENU;
+                                eos = eos | OBJECT_STYLE_MENUITEM_SUBMENU;
                             }
                         }
                     }
@@ -2845,76 +2842,6 @@ BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LONG_PTR* 
     }
     _wnd_menu_updatecurrent(pWnd);
     return ret;
-}
-
-BOOL _wnd_menu_item_callback(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
-                             LPVOID* lpResult)
-{
-    return FALSE;
-}
-
-BOOL _wnd_menu_callback_test(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
-                             LPVOID* lpResult)
-{
-    if (uMsg == WM_INITMENUPOPUP) {
-        RECT rc{0};
-        GetWindowRect(hWnd, &rc);
-        MoveWindow(hWnd, rc.left, rc.top, 300, 300, FALSE);
-        MENUITEMINFOW mii;
-        mii.cbSize                 = sizeof(MENUITEMINFOW);
-        mii.fMask                  = MIIM_FTYPE | MIIM_SUBMENU | MIIM_ID;
-        INT                 nCount = GetMenuItemCount((HMENU)wParam) - 1;
-        std::vector<HEXOBJ> aryItems;
-        aryItems.resize(nCount);
-        INT index = 0;
-        for (INT i = 0; i < nCount; i++) {
-            if (GetMenuItemInfoW((HMENU)wParam, i, TRUE, &mii)) {
-                if ((mii.fType & MFT_SEPARATOR) == 0)   // 分隔符
-                {
-                    aryItems[index] = Ex_ObjGetFromID(hExDui, mii.wID);
-                    index           = index + 1;
-                }
-            }
-        }
-        if (index > 0) {
-            HEXOBJ objEntry = Ex_ObjGetObj(aryItems[0], GW_HWNDFIRST);
-        }
-        aryItems.resize(index);
-        INT radian = 2 * 3.1415926 / index;
-        INT radius = 70;
-        for (INT j = 0; j < index; j++) {
-            Ex_ObjMove(aryItems[j], radius + floor(radius * std::cos(j * radian)),
-                       radius + floor(radius * std::cos(j * radian)), 44, 44, FALSE);
-            Ex_ObjSetLong(aryItems[j], OBJECT_LONG_OBJPROC, (size_t)&_wnd_menu_item_callback);
-            Ex_ObjSetColor(aryItems[j], COLOR_EX_BACKGROUND, -872380161, FALSE);
-            Ex_ObjSetRadius(aryItems[j], 0, 0, 0, 15, TRUE);
-        }
-    }
-    else if (uMsg ==
-             MENU_MESSAGE_SELECTITEM)   // MENU_MESSAGE_SELECTITEM 测试一下MenuBar切换菜单项的可行性
-    {
-        POINT pt;
-        GetCursorPos(&pt);
-        HEXDUI hdui   = Ex_DUIFromWindow(WindowFromPoint(pt));
-        wnd_s* pdui   = nullptr;
-        INT    nError = 0;
-        if (_handle_validate(hdui, HT_DUI, (LPVOID*)&pdui, &nError)) {
-            ScreenToClient(pdui->hWnd_, &pt);
-            HEXOBJ hObj = _wnd_wm_nchittest_obj((HWND)pdui->hWnd_, pdui, pdui->objChildLast_, pt.x,
-                                                pt.y, 0, 0);   // 有改动
-            obj_s* pObj = nullptr;
-            if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-                if (pObj->id_ == 1007) {
-                    // 先判断控件类型为菜单栏
-                    //  分发一条消息给控件,判断鼠标命中的位置是不是还是当前的菜单
-                    // 如果不是了,则EndMenu并弹出新菜单
-                    // PostMessageW (__get (nCount, #_wnd_hWnd), 31, 0, 0)  ' WM_CANCELMODE 关闭菜单
-                    EndMenu();
-                }
-            }
-        }
-    }
-    return FALSE;
 }
 
 void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu)

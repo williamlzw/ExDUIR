@@ -1,7 +1,7 @@
 ﻿#pragma once
 #ifdef VCL_PLAYER
 
-#    include "vlc/vlc.h"
+#include "vlc/vlc.h"
 
 void             _vlcplayer_register();
 LRESULT CALLBACK _vlcplayer_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

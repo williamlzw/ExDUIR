@@ -245,9 +245,9 @@ struct obj_base
 #define ERROR_EX_LAYOUT_NOT_CHILD 16052          // 未找到布局子组件或组件不是子组件
 
 // 条目风格_子菜单
-#define EMIS_SUBMENU 1
+#define OBJECT_STYLE_MENUITEM_SUBMENU 1
 // 条目风格_分隔符
-#define EMIS_SEPARATOR 2
+#define OBJECT_STYLE_MENUITEM_SEPARATOR 2
 
 struct LOCALINFO
 {

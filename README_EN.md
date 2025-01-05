@@ -23,17 +23,14 @@ win7 need install KB2670838 patch
 
 VMware win7 run ExDUIR, install kb2670838 and kb4474419 patches, and then install VMware Tools.
 
-The media component needs to install Microsoft.HEVCVideoExtension.Appx to play H265 format mp4 video.
-
 ## Compiler
-Currently,the following two compiling methods are supported:
-* Visual Studio 2019(recommended)
+* Visual Studio 2022(recommended)
   ExDUIR.sln。Includes the following items:
   * dll: Compile to a dynamic library. -> libexdui.dll
   * libexdui: Compile to a static library.  -> libexdui.lib
   * libexduiCPP: C++ class encapsulation and call demonstration.
   * test: Test project.
-* CMake Only MSVC compilers are supported.
+
 
 ## Characteristics
 * Rendering function is DirectX11, Direct2D, efficiency is hundreds of times higher than GDI.

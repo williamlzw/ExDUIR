@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _button_regsiter()
 {
@@ -216,8 +216,10 @@ INT _button_getprop(INT state, BOOL fRadio, EXATOM atom_src, EXATOM atom_check, 
 void _item_click(HWND hWnd, obj_s* pObj)
 {
     if ((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM) {
-        if ((pObj->dwStyle_ & EMIS_SEPARATOR) == EMIS_SEPARATOR) {}
-        else if ((pObj->dwStyle_ & EMIS_SUBMENU) == EMIS_SUBMENU) {}
+        if ((pObj->dwStyle_ & OBJECT_STYLE_MENUITEM_SEPARATOR) == OBJECT_STYLE_MENUITEM_SEPARATOR) {
+        }
+        else if ((pObj->dwStyle_ & OBJECT_STYLE_MENUITEM_SUBMENU) ==
+                 OBJECT_STYLE_MENUITEM_SUBMENU) {}
         else {
             wnd_s*        pWnd = pObj->pWnd_;
             MENUITEMINFOW mii;

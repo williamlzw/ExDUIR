@@ -23,17 +23,14 @@ win7需要安装KB2670838补丁
 
 虚拟机VMware win7运行ExDUIR，先安装kb2670838和kb4474419补丁，然后安装VMware Tools。
 
-媒体组件播放H265格式mp4需要安装Microsoft.HEVCVideoExtension.Appx。
 
 ## 编译
-目前支持以下两种方式编译：
-* Visual Studio 2019或2022。
+* Visual Studio 2022。
   工程文件ExDUIR.sln。包含以下项目：
   * dll: 可编译兼容原版ExDirectUI的动态库。 -> libexdui.dll
   * libexdui: 编译为静态库。 -> libexdui.lib
   * libexduiCPP: c++类封装和调用演示
   * test: 测试工程。
-* CMake。只支持MSVC编译器。
 
 ## 特点
 * 使用DirectX进行硬件加速的2D绘制,比GDI绘制效率更高。

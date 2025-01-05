@@ -141,6 +141,7 @@ void Ex_UnInit()
     Ex_MemFree((LPVOID)g_Li.lpStrHelp);
     Ex_ThemeFree(g_Li.hThemeDefault);
     Ex_MemFree(g_Li.lpLogFontDefault);
+    delete g_Li.fContext;
     _canvas_uninit();
     _handle_uninit(g_Li.hHandles);
     HashTable_Destroy(g_Li.hTableClass);
@@ -149,7 +150,6 @@ void Ex_UnInit()
     MemPool_Destroy(g_Li.hMemPoolMsg);
     Thread_DeleteCriticalSection(g_Li.csError);
     FreeLibrary(g_Ri.hRiched20);
-    delete g_Li.fContext;
     CoUninitialize();
 }
 
