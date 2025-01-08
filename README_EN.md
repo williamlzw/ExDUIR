@@ -23,6 +23,9 @@ win7 need install KB2670838 patch
 
 VMware win7 run ExDUIR, install kb2670838 and kb4474419 patches, and then install VMware Tools.
 
+## Document
+* [Document](doc/SUMMARY.md)
+
 ## Compiler
 * Visual Studio 2022(recommended)
   ExDUIR.sln。Includes the following items:

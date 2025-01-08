@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 LPVOID Array_MoveMember(LPVOID pData, INT nCount, INT nSize, INT nNewCount)
 {
@@ -200,13 +200,13 @@ LPVOID Array_BindEvent(array_s* pArray, INT event, LPVOID fun)
 {
     if (Array_IsLegal(pArray) == FALSE) return 0;
     if (event <= 0 || event > 5) return 0;
-    size_t lpfnOld =
-        __get(pArray, offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(LPVOID));
+    size_t offset = offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(LPVOID);
+    size_t lpfnOld = __get(pArray, offset);
     if (fun == nullptr && event == ARRAY_EVENT_COMPAREMEMBER) {
         fun = &Array_Compare;
     }
 
-    __set(pArray, offsetof(array_s, event_onAppend_) + (event - 1) * sizeof(LPVOID), (size_t)fun);
+    __set(pArray, offset, (size_t)fun);
     return (LPVOID)lpfnOld;
 }
 
@@ -249,10 +249,8 @@ void Array_Swap(array_s* pArray, LONG_PTR nIndex1, LONG_PTR nIndex2)
 void Array_SortProcess(array_s* pArray, BOOL fDesc)
 {
     INT              count = pArray->nCount_;
-    std::vector<INT> startStack;
-    startStack.resize(count);
-    std::vector<INT> stopStack;
-    stopStack.resize(count);
+    int* startStack = (int*)malloc(count * sizeof(int));
+    int* stopStack  = (int*)malloc(count * sizeof(int));
     INT posStack  = 0;
     INT startPos  = 0;
     INT stopPos   = count - 1;
@@ -328,6 +326,8 @@ void Array_SortProcess(array_s* pArray, BOOL fDesc)
             stopStack[posStack]  = stopPos;
         }
     }
+    free(startStack);
+    free(stopStack);
 }
 
 LONG_PTR Array_CompareResult(array_s* pArray, LONG_PTR nIndex, size_t mid)

@@ -23,6 +23,8 @@ win7需要安装KB2670838补丁
 
 虚拟机VMware win7运行ExDUIR，先安装kb2670838和kb4474419补丁，然后安装VMware Tools。
 
+## 帮助文档
+* [帮助文档](doc/SUMMARY.md)
 
 ## 编译
 * Visual Studio 2022。

@@ -284,12 +284,13 @@ BOOL Ex_LoadBitMapFromMemory(LPVOID lpData, size_t dwLen, HBITMAP* retBitMap)
                                        WICBitmapPaletteTypeCustom);
                 UINT width = 0, height = 0;
                 pConverter->GetSize(&width, &height);
-                std::vector<BYTE> buffer(width * height * 4);
-                pConverter->CopyPixels(0, width * 4, buffer.size(), buffer.data());
+                BYTE* buffer = new BYTE[width * height * 4];
+                pConverter->CopyPixels(0, width * 4, width * height * 4, buffer);
                 if (retBitMap) {
-                    *retBitMap = CreateBitmap(width, height, 1, 32, buffer.data());
+                    *retBitMap = CreateBitmap(width, height, 1, 32, buffer);
                     ret        = TRUE;
                 }
+                delete[] buffer;
                 pSource->Release();
                 pConverter->Release();
             }

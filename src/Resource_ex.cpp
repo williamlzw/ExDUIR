@@ -235,7 +235,7 @@ void _bin_uncompress(LPVOID lpData, size_t dwSize, LPVOID lpKey, size_t dwLen, L
                 pDecoder->GetFrame(0, &pFrame);
                 UINT w, h;
                 pFrame->GetSize(&w, &h);
-                unsigned char* pixels = new unsigned char[w * h * 4];
+                BYTE* pixels = new BYTE[w * h * 4];
                 pFrame->CopyPixels(0, w * 4, w * h * 4, pixels);
 
                 INT srcLen = __get_int(pixels, 0);
