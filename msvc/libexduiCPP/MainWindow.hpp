@@ -77,15 +77,16 @@ public:
 		m_theApp = ExApp(data, dwGlobalFlags, L"../test/res/cursor.cur");
 
 		DWORD dwStyleDUI = WINDOW_STYLE_MAINWINDOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_BUTTON_MAX |
-			WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW;
+			WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON;
 		std::wstring windowName = L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR";
 		m_skin = ExSkin((HWND)NULL, 0, 0, 600, 600, windowName, dwStyleDUI);
 
-		m_skin.SetBackgroundColor(ExARGB(120, 120, 120, 255));
-
+		m_skin.SetBackgroundColor(ExARGB(0, 0, 0, 255));
+        m_skin.SetShadowColor(ExARGB(250, 50, 50, 240));
 		m_skin.SetBackgroundImageFromFile(L"../test/res/bkg.png");
 		//设置圆角，另一种方案是重画窗口背景参照异形窗口例子
 		m_skin.SetRadius(30);
+        
 		const int buttonWidth = 100;
 		const int buttonHeight = 30;
 		const int column1X = 10;

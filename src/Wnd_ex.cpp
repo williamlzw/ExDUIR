@@ -427,8 +427,13 @@ void _wnd_loadtheme(wnd_s* pWnd, HWND hWnd, HEXTHEME hTheme)
     LPVOID pBACKGROUND_COLOR = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_BACKGROUND_COLOR);
 
     if (pBACKGROUND_COLOR != 0) {
-
         pWnd->crBkg_ = __get_int(pBACKGROUND_COLOR, 0);
+    }
+
+    LPVOID pSHADOW_COLOR = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_SHADOW_COLOR);
+
+    if (pSHADOW_COLOR != 0) {
+        pWnd->crSD_ = __get_int(pSHADOW_COLOR, 0);
     }
     // 菜单
     LPVOID pPADDING_CLIENT = Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_PADDING_CLIENT);
@@ -3091,6 +3096,9 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex)
         }
         else if (nIndex == ENGINE_LONG_CRBORDER) {
             ret = (size_t)pWnd->crBorder_;
+        }
+        else if (nIndex == ENGINE_LONG_CRSD) {
+            ret = (size_t)pWnd->crSD_;
         }
         else if (nIndex == ENGINE_LONG_HTHEME) {
             ret = (size_t)pWnd->hTheme_;

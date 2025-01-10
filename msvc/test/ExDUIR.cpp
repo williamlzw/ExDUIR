@@ -73,9 +73,9 @@ void test_exdui()
     std::vector<CHAR> data;
     Ex_ReadFile(L"res/cursor.cur", &data);
     HCURSOR hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
-    //data.resize(Default_ext_size);
-    //RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
-    Ex_ReadFile(L"res/Default.ext", &data);
+    data.resize(Default_ext_size);
+    RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
+    //Ex_ReadFile(L"res/Default.ext", &data);//从文件加载主题包
     //Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
     // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
@@ -83,7 +83,7 @@ void test_exdui()
             0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
     m_hWnd =
-        Ex_WndCreate(0, L"Ex_DUIR", L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0,
+        Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0,
                      0, 600, 600, 0, 0);
     if (m_hWnd != 0) {
         HEXDUI hExDui = Ex_DUIBindWindowEx(m_hWnd, 0,
@@ -101,9 +101,9 @@ void test_exdui()
         // 设置标题栏文本居中，单行显示，不自动换行
         Ex_ObjSetTextFormat(hObjTitle, DT_VCENTER | DT_CENTER | DT_SINGLELINE, TRUE);
         // 改变阴影颜色
-        Ex_DUISetLong(hExDui, ENGINE_LONG_CRSD, ExARGB(0, 0, 0, 240));
+        Ex_DUISetLong(hExDui, ENGINE_LONG_CRSD, ExARGB(250, 50, 50, 255));
         std::vector<CHAR> imgdata;
-        Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(255, 255, 255, 240));
+        Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExARGB(255, 255, 255, 255));
         Ex_ReadFile(L"res/bkg.png", &imgdata);
         Ex_ObjSetBackgroundImage(hExDui, imgdata.data(), imgdata.size(), 0, 0,
                                  BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);

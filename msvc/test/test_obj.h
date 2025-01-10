@@ -7,7 +7,6 @@
 #include <vector>
 #pragma comment(lib, "shlwapi.lib")
 
-
 #include "ExDUIR_Func.h"
 #include "ExDUIR_Interface.h"
 

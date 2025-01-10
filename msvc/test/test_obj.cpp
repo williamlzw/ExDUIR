@@ -4119,7 +4119,7 @@ void test_nativewindow(HWND hParent)
         hWnd_nativewindow, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_MOVEABLE |
             WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE |
-            WINDOW_STYLE_TITLE,
+            WINDOW_STYLE_TITLE, 
         0, OnNativeParentWndMsgProc);
     Ex_DUISetLong(hExDui_nativewindow, ENGINE_LONG_RADIUS, 10);
     Ex_DUISetLong(hExDui_nativewindow, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
@@ -4987,6 +4987,10 @@ void test_respack(HWND hWnd)
     Ex_DUISetLong(hExDui_respack, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     // 打包主题包
+    // Default文件夹里面的theme.ini文件是配置说明
+    // 节点名用Ex_Atom获取原子，如(UINT)Ex_Atom(L"background-color")值与ATOM_BACKGROUND_COLOR常量一致，
+    // 用Ex_ThemeGetValuePtr(hTheme, atom, ATOM_BACKGROUND_COLOR)获取节点值指针，再获取对应的值参考_wnd_loadtheme方法
+    
     //_res_pack(L"E:\\ExDUIR\\msvc\\test\\Default\\", L"res/test_theme.ext", PACKAGEHEADER_THEME);
 
     // 打包成资源包

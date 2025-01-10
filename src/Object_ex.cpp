@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _object_init()
 {
@@ -1905,7 +1905,7 @@ HEXOBJ _obj_create_init(HWND hWnd, wnd_s* pWnd, EXATOM atomClass, MsgPROC pfnMsg
     (*pObj)->lpBackgroundImage_ = 0;
 
     if (atomClass == ATOM_PAGE) {
-        (*pObj)->dwFlags_ = (*pObj)->dwFlags_ | EOF_BPAGE;
+       (*pObj)->dwFlags_ = (*pObj)->dwFlags_ | EOF_BPAGE;
     }
     return hObj;
 }

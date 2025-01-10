@@ -233,7 +233,7 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 size_t _page_paint(HEXOBJ hObj)
 {
     EX_PAINTSTRUCT ps;
-    if (Ex_ObjBeginPaint(hObj, &ps)) {
+    if (Ex_ObjBeginPaint(hObj, &ps)) {    
         Ex_ObjEndPaint(hObj, &ps);
     }
     return 0;

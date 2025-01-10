@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ExUIbase.hpp"
 #include "ExControl.hpp"
 #include "ExWindow.hpp"
@@ -159,6 +159,13 @@ namespace ExDUIR
 			{
 				return (EXARGB)SetLong(ENGINE_LONG_CRBORDER, color);
 			}
+
+            inline EXARGB GetShadowColor() { return GetLong(ENGINE_LONG_CRSD); }
+
+            inline EXARGB SetShadowColor(EXARGB color)
+            {
+                return (EXARGB)SetLong(ENGINE_LONG_CRSD, color);
+            }
 
 			inline HWND GetHwnd()
 			{
