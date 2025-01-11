@@ -434,6 +434,14 @@ BOOL _path_addellipse(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT b
     INT     nError = 0;
     path_s* pPath  = nullptr;
     if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError)) {
+        if (!((pPath->dwFlags_ & PATH_FLAG_DISABLESCALE) == PATH_FLAG_DISABLESCALE)) {
+            if (g_Li.DpiX > 1) {
+                left = left * g_Li.DpiX;
+                top  = top * g_Li.DpiX;
+                right = right * g_Li.DpiX;
+                bottom = bottom * g_Li.DpiX;
+            }
+        }
         // 计算椭圆的中心点和半径
         FLOAT centerX = (left + right) / 2;
         FLOAT centerY = (top + bottom) / 2;

@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #define epf_bOpened 2147483648
-#define PATH_FLAG_DISABLESCALE 1
 
 struct path_s
 {

@@ -593,9 +593,9 @@
 #pragma endregion background Repetitive constant
 
 #pragma region path flag constant
-// 路径标识_缩放
+// 路径标识_缩放，路径坐标经过Ex_scale计算设置
 #define PATH_FLAG_NORMAL 0
-// 路径标识_禁止缩放
+// 路径标识_禁止缩放,路径坐标没有经过Ex_scale计算设置，在dpi不为1情况下
 #define PATH_FLAG_DISABLESCALE 1
 #pragma endregion path flag constant
 

@@ -53,10 +53,10 @@ void _circleprogressbar_paint(HEXOBJ hObj)
         UINT lineCap       = Ex_ObjGetLong(hObj, CIRCLEPROGRESSBAR_LONG_LINECAP);
         UINT halfLineWidth = ceil(lineHeight / 2);
         UINT circleRadius  = floor(min(ps.uWidth, ps.uHeight) / 2);
-        
+
         //画背景圆环
         HEXPATH path;
-        _path_create(PATH_FLAG_NORMAL, &path);
+        _path_create(PATH_FLAG_DISABLESCALE, &path);
         _path_open(path);
         float left     = halfLineWidth;
         float top      = halfLineWidth;
@@ -73,7 +73,7 @@ void _circleprogressbar_paint(HEXOBJ hObj)
         //画前景进度
         _brush_setcolor(hBrush, Ex_ObjGetLong(hObj, CIRCLEPROGRESSBAR_LONG_FOREGROUNDCOLOR));
         HEXPATH path2;
-        _path_create(PATH_FLAG_NORMAL, &path2);
+        _path_create(PATH_FLAG_DISABLESCALE, &path2);
         _path_open(path2);
         FLOAT angle      = 360 * (FLOAT)nPos / nRange;   // 角度制
         FLOAT startAngle = -90;                          // 起始角度从 12 点钟方向开始,D2D默认0角度从3点钟方向
@@ -85,7 +85,8 @@ void _circleprogressbar_paint(HEXOBJ hObj)
         FLOAT startY = circleRadius + (circleRadius - halfLineWidth) * sin(startAngle * PI / 180);
         FLOAT endX   = circleRadius + (circleRadius - halfLineWidth) * cos(endAngle * PI / 180);
         FLOAT endY   = circleRadius + (circleRadius - halfLineWidth) * sin(endAngle * PI / 180);
-        _path_beginfigure2(path2, startX, startY);
+        auto  dpi    = Ex_DUIGetSystemDpi();
+        _path_beginfigure2(path2, startX , startY );
         _path_addarc3(path2, endX, endY, circleRadius - halfLineWidth, circleRadius - halfLineWidth,
                       startAngle,
                       endAngle, TRUE,
