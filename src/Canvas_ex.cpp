@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 class CustomTextRenderer : public IDWriteTextRenderer
 {
@@ -1389,6 +1389,24 @@ BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
         else {
             D2D1_MATRIX_3X2_F matrix = D2D1::Matrix3x2F::Identity();
             pContext->SetTransform(&matrix);
+        }
+    }
+    return nError == 0;
+}
+
+BOOL _canvas_gettransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix)
+{
+    INT       nError  = -1;
+    canvas_s* pCanvas = NULL;
+    if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
+        ID2D1DeviceContext* pContext = pCanvas->pContext_;
+        if (pMatrix) {
+            D2D1::Matrix3x2F mx;
+            pContext->GetTransform(&mx);
+            _matrix_update(mx, pMatrix);
+        }
+        else {
+            nError = ERROR_EX_MEMORY_BADPTR;
         }
     }
     return nError == 0;

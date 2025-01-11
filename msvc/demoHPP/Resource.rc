@@ -1,0 +1,128 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+/////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon.ico"
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENU
+BEGIN
+    POPUP "文件(&F)"
+    BEGIN
+        MENUITEM "新建(&N)",                      ID_TEST_FFF
+        MENUITEM "打开(&O)",                      ID_40010
+        MENUITEM "保存(&S)",                      ID_40011
+        MENUITEM SEPARATOR
+        MENUITEM "退出(&E)",                      ID_40012
+    END
+    POPUP "编辑(&E)"
+    BEGIN
+        MENUITEM "剪切(&T)",                      ID_40013
+        MENUITEM "复制(&C)",                      ID_40014
+        MENUITEM "粘贴(&P)",                      ID_40015, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "撤销(&U)",                      ID_40016, GRAYED
+        MENUITEM "重做(&R)",                      ID_40017, GRAYED
+    END
+    POPUP "选项(&O)"
+    BEGIN
+        MENUITEM "设置(&S)\tCtrl+S",              ID_40018
+    END
+    POPUP "帮助(&H)"
+    BEGIN
+        MENUITEM "关于(&A)\tCtrl+A",              ID_40019
+        MENUITEM SEPARATOR
+        MENUITEM "文档(&D)\tCtrl+D",              ID_40020
+        MENUITEM "帮助(&H)\tCtrl+H",              ID_40021
+        POPUP "Git\tCtrl+G"
+        BEGIN
+            MENUITEM "https://gitee.com/william_lzw/ExduiR", ID_GIT_HTTPS
+            MENUITEM "https://github.com/williamlzw/ExduiR", ID_GIT_HTTPS40024
+        END
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROPPAGE_SMALL DIALOGEX 0, 0, 195, 127
+CAPTION "属性页"
+FONT 9, "宋体", 400, 0, 0x0
+BEGIN
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_PROPPAGE_SMALL, DIALOG
+    BEGIN
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

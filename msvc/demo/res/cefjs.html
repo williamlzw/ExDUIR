@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>CEF浏览器-->c++和js相互调用方法测试</title>
+		<script type="text/javascript" >
+			function showValue()
+			{
+                alert("value:" + window.say_yes);//1. window bing变量say_yes
+            }
+            function v8Accessor() {//2. window bing变量myval
+                alert("myval: " + window.MyValObj.myval);
+                window.MyValObj.myval = "我是js 设置的值";
+            }    
+			function sayHellow()
+			{
+				alert(g_value);
+			}
+            function add()//3. window bing函数
+            {
+                // add 函数名不能与window对象挂接addFunction相同
+                try {
+                    var result = window.add_Function(10, 20);// C++提供的接口，bind到window对象上
+                    alert("10 + 20 = " + result);
+                } catch (err) {
+                    alert("add error message is: " + err.message);
+                }
+			}
+			function jsExt()
+			{
+				alert(test.myfunc());
+            }
+            function registerfunction( a, b) {
+ 
+                return a + b + 1;
+            }
+            function registerCallBack()
+            {
+                alert("registerCallBack:" + window.register(registerfunction) );
+            }
+		</script>
+	</head>
+	<body style="width:100%;height:100%;background-color:green;">
+		<p>这是c++与JS交互测试脚本</p>
+        <div>
+            <p>
+                <button onclick="showValue();">window bind 变量say_yes</button>
+            </p>
+ 
+            <p>
+                <button onclick="sayHellow();">拓展 g_value</button>
+            </p>
+            <p>
+                <button onclick="v8Accessor();">window bind v8Accessor</button>
+            </p>
+            <p>
+                <button onclick="add();">两个数相加</button>
+            </p>
+            <p>
+                <button onclick="jsExt();">JS扩展</button>
+            </p>
+            <p>
+                <button onclick="registerCallBack();">回调</button>
+            </p>
+        </div>
+	</body>
+</html>

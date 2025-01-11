@@ -430,6 +430,34 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
                         INT iGlowsize, EXARGB crShadom, LPARAM lParam);
 
 /// <summary>
+/// 画布画SVG从数据
+/// </summary>
+/// <param name="hCanvas"></param>
+/// <param name="input"></param>
+/// <param name="color"></param>
+/// <param name="left"></param>
+/// <param name="top"></param>
+/// <param name="right"></param>
+/// <param name="bottom"></param>
+/// <returns></returns>
+BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top,
+                     FLOAT right, FLOAT bottom);
+
+/// <summary>
+/// 画布画SVG从文件
+/// </summary>
+/// <param name="hCanvas"></param>
+/// <param name="svgName"></param>
+/// <param name="color"></param>
+/// <param name="left"></param>
+/// <param name="top"></param>
+/// <param name="right"></param>
+/// <param name="bottom"></param>
+/// <returns></returns>
+BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, FLOAT left,
+                             FLOAT top, FLOAT right, FLOAT bottom);
+
+/// <summary>
 /// 画布结束绘制
 /// </summary>
 /// <param name="hCanvas"></param>
@@ -561,32 +589,13 @@ HDC _canvas_getdc(HEXCANVAS hCanvas);
 BOOL _canvas_getsize(HEXCANVAS hCanvas, INT* width, INT* height);
 
 /// <summary>
-/// 画布画SVG从数据
+/// 画布取矩阵
 /// </summary>
 /// <param name="hCanvas"></param>
-/// <param name="input"></param>
-/// <param name="color"></param>
-/// <param name="left"></param>
-/// <param name="top"></param>
-/// <param name="right"></param>
-/// <param name="bottom"></param>
+/// <param name="pMatrix">返回矩阵</param>
 /// <returns></returns>
-BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top,
-                     FLOAT right, FLOAT bottom);
+BOOL _canvas_gettransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix);
 
-/// <summary>
-/// 画布画SVG从文件
-/// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="svgName"></param>
-/// <param name="color"></param>
-/// <param name="left"></param>
-/// <param name="top"></param>
-/// <param name="right"></param>
-/// <param name="bottom"></param>
-/// <returns></returns>
-BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, FLOAT left,
-                             FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布释放DC

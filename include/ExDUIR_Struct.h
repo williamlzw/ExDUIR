@@ -32,16 +32,6 @@
 #define ENGINE_FLAG_OBJECT_SHOWRECTBORDER 0x20000
 // 引擎标识_组件_显示组件位置
 #define ENGINE_FLAG_OBJECT_SHOWPOSTION 0x40000
-// 引擎标识_JS_允许JS全局对象访问文件
-#define ENGINE_FLAG_JS_FILE 0x80000
-// 引擎标识_JS_允许JS全局对象访问内存
-#define ENGINE_FLAG_JS_MEMORY 0x100000
-// 引擎标识_JS_允许JS全局对象申请内存
-#define ENGINE_FLAG_JS_MEMORY_ALLOC 0x200000
-// 引擎标识_JS_允许JS全局对象创建进程或加载DLLE
-#define ENGINE_FLAG_JS_PROCESS 0x400000
-// 引擎标识_JS_允许JS全局对象访问所有资源
-#define ENGINE_FLAG_JS_ALL 0x780000
 // 引擎标识_菜单_渲染所有菜单
 #define ENGINE_FLAG_MENU_ALL 0x800000
 #pragma endregion engine flag constant
@@ -1325,6 +1315,8 @@
 #define PROGRESSBAR_LONG_BACKGROUNDCOLOR 3
 // 进度条属性_前景颜色
 #define PROGRESSBAR_LONG_FOREGROUNDCOLOR 4
+// 进度条属性_方向 0从左往右， 1从下往上
+#define PROGRESSBAR_LONG_POINT 5
 #pragma endregion progressbar long constant
 
 // png数据头

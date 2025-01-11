@@ -1,0 +1,366 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="test_absolute.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_ani.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_button.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_buttonex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_calendar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_carousel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_checkbutton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_chromium.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_colorbutton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_colorpicker.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_combobox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_custombkg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_custommenu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_customredraw.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_datebox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_dragobj.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_drawingboard.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_dropobj.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_edit.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_editex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_effect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_event.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_flow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_fullscreen.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_groupbox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_iconlistview.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_label.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_linear.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_listbutton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_listview.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_loading.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_mask.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_matrix.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_messagebox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_modal.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_nativewindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_navbutton.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_nchittest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_palette.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_path_and_rgn.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_progressbar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_propertygrid.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_relative.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_reportlistview.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_respack.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_rollmenu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_rotateimgbox.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_scorebtn.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_sliderbar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_svg_and_font.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_table.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_tagging.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_templatelistview.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_titlebar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_tray.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_treelistview.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="test_vlcplay.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="test_absolute.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_ani.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_button.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_buttonex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_calendar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_carousel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_checkbutton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_chromium.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_colorbutton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_colorpicker.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_combobox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_custombkg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_custommenu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_customredraw.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_datebox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_dragobj.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_drawingboard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_dropobj.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_edit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_editex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_effect.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_flow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_fullscreen.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_groupbox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_iconlistview.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_label.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_linear.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_listbutton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_listview.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_loading.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_mask.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_matrix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_messagebox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_modal.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_nativewindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_navbutton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_nchittest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_palette.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_path_and_rgn.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_progressbar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_propertygrid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_relative.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_reportlistview.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_respack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_rollmenu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_rotateimgbox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_scorebtn.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_sliderbar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_svg_and_font.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_table.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_tagging.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_templatelistview.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_titlebar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_tray.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_treelistview.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_vlcplay.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{b5c56e30-5b7e-4e4f-a21a-99784e22765f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{88431197-d44b-4d4b-8c20-e8649fafe720}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

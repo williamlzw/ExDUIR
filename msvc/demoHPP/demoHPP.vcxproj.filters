@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AbsoluteLayoutWindow.hpp" />
+    <ClInclude Include="ButtonExWindow.hpp" />
+    <ClInclude Include="ButtonWindow.hpp" />
+    <ClInclude Include="CalendarWindow.hpp" />
+    <ClInclude Include="CarouselWindow.hpp" />
+    <ClInclude Include="CEFBrowserWindow.hpp" />
+    <ClInclude Include="CheckButtonWindow.hpp" />
+    <ClInclude Include="ColorPickerWindow.hpp" />
+    <ClInclude Include="ComboBoxWindow.hpp" />
+    <ClInclude Include="CustomBackgroundWindow.hpp" />
+    <ClInclude Include="CustomButtonWindow.hpp" />
+    <ClInclude Include="CustomMenuWindow.hpp" />
+    <ClInclude Include="CustomRedrawWindow.hpp" />
+    <ClInclude Include="DateBoxWindow.hpp" />
+    <ClInclude Include="DragObjWindow.hpp" />
+    <ClInclude Include="DrawingBoardWindow.hpp" />
+    <ClInclude Include="DropObjWindow.hpp" />
+    <ClInclude Include="EasingWindow.hpp" />
+    <ClInclude Include="EditExWindow.hpp" />
+    <ClInclude Include="EditWindow.hpp" />
+    <ClInclude Include="EffectWindow.hpp" />
+    <ClInclude Include="EventWindow.hpp" />
+    <ClInclude Include="FlowLayoutWindow.hpp" />
+    <ClInclude Include="FullScreenWindow.hpp" />
+    <ClInclude Include="GroupBoxWindow.hpp" />
+    <ClInclude Include="IconListViewWindow.hpp" />
+    <ClInclude Include="LabelWindow.hpp" />
+    <ClInclude Include="LinearLayoutWindow.hpp" />
+    <ClInclude Include="ListButtonWindow.hpp" />
+    <ClInclude Include="ListViewWindow.hpp" />
+    <ClInclude Include="LoadingWindow.hpp" />
+    <ClInclude Include="MainWindow.hpp" />
+    <ClInclude Include="MaskWindow.hpp" />
+    <ClInclude Include="MatrixWindow.hpp" />
+    <ClInclude Include="MessageBoxWindow.hpp" />
+    <ClInclude Include="ModalWindow.hpp" />
+    <ClInclude Include="NativeWindow.hpp" />
+    <ClInclude Include="NavButtonWindow.hpp" />
+    <ClInclude Include="NchitTestWindow.hpp" />
+    <ClInclude Include="PaletteWindow.hpp" />
+    <ClInclude Include="PathAndRegionWindow.hpp" />
+    <ClInclude Include="ProgressBarWindow.hpp" />
+    <ClInclude Include="PropertyGridWindow.hpp" />
+    <ClInclude Include="RelativeLayoutWindow.hpp" />
+    <ClInclude Include="ReportListViewWindow.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ResPackWindow.hpp" />
+    <ClInclude Include="RollMenuWindow.hpp" />
+    <ClInclude Include="RotateImageBoxWindow.hpp" />
+    <ClInclude Include="ScoreButtonWindow.hpp" />
+    <ClInclude Include="SliderbarWindow.hpp" />
+    <ClInclude Include="SVGWindow.hpp" />
+    <ClInclude Include="TableLayoutWindow.hpp" />
+    <ClInclude Include="TaggingBoardWindow.hpp" />
+    <ClInclude Include="TemplateListViewWindow.hpp" />
+    <ClInclude Include="TitleBarWindow.hpp" />
+    <ClInclude Include="TrayWindow.hpp" />
+    <ClInclude Include="TreeViewWindow.hpp" />
+    <ClInclude Include="VLCPlayerWindow.hpp" />
+    <ClInclude Include="Global\ExApp.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExBrush.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExCanvas.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExCommon.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExControl.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="ExDUIRCPP.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExEasing.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExFont.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExImage.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExImageList.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExLayout.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExMatrix.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExMessageBox.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExPath.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExRegion.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExSkin.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExUIbase.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="Global\ExWindow.hpp">
+      <Filter>Global</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Global">
+      <UniqueIdentifier>{81bab847-0615-4425-a5bf-7054605cd055}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

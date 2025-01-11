@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{acad373f-c5a9-4a7c-8b01-2f4f88b6a738}</ProjectGuid>
+    <RootNamespace>test</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>demo</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <LibraryPath>$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <SDLCheck>false</SDLCheck>
+      <CallingConvention>Cdecl</CallingConvention>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MinSpace</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(IncludePath)</AdditionalIncludeDirectories>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <SDLCheck>false</SDLCheck>
+      <CallingConvention>Cdecl</CallingConvention>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <Optimization>MinSpace</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(IncludePath)</AdditionalIncludeDirectories>
+      <OmitFramePointers />
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <SDLCheck>false</SDLCheck>
+      <CallingConvention>Cdecl</CallingConvention>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MinSpace</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(IncludePath)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <LanguageStandard>Default</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <SDLCheck>false</SDLCheck>
+      <CallingConvention>Cdecl</CallingConvention>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)include;$(IncludePath)</AdditionalIncludeDirectories>
+      <Optimization>MinSpace</Optimization>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="test_absolute.cpp" />
+    <ClCompile Include="test_ani.cpp" />
+    <ClCompile Include="test_button.cpp" />
+    <ClCompile Include="test_buttonex.cpp" />
+    <ClCompile Include="test_calendar.cpp" />
+    <ClCompile Include="test_carousel.cpp" />
+    <ClCompile Include="test_checkbutton.cpp" />
+    <ClCompile Include="test_chromium.cpp" />
+    <ClCompile Include="test_colorbutton.cpp" />
+    <ClCompile Include="test_colorpicker.cpp" />
+    <ClCompile Include="test_combobox.cpp" />
+    <ClCompile Include="test_custombkg.cpp" />
+    <ClCompile Include="test_custommenu.cpp" />
+    <ClCompile Include="test_customredraw.cpp" />
+    <ClCompile Include="test_datebox.cpp" />
+    <ClCompile Include="test_dragobj.cpp" />
+    <ClCompile Include="test_drawingboard.cpp" />
+    <ClCompile Include="test_dropobj.cpp" />
+    <ClCompile Include="test_edit.cpp" />
+    <ClCompile Include="test_editex.cpp" />
+    <ClCompile Include="test_effect.cpp" />
+    <ClCompile Include="test_event.cpp" />
+    <ClCompile Include="test_flow.cpp" />
+    <ClCompile Include="test_fullscreen.cpp" />
+    <ClCompile Include="test_groupbox.cpp" />
+    <ClCompile Include="test_iconlistview.cpp" />
+    <ClCompile Include="test_label.cpp" />
+    <ClCompile Include="test_linear.cpp" />
+    <ClCompile Include="test_listbutton.cpp" />
+    <ClCompile Include="test_listview.cpp" />
+    <ClCompile Include="test_loading.cpp" />
+    <ClCompile Include="test_mask.cpp" />
+    <ClCompile Include="test_matrix.cpp" />
+    <ClCompile Include="test_messagebox.cpp" />
+    <ClCompile Include="test_modal.cpp" />
+    <ClCompile Include="test_nativewindow.cpp" />
+    <ClCompile Include="test_navbutton.cpp" />
+    <ClCompile Include="test_nchittest.cpp" />
+    <ClCompile Include="test_palette.cpp" />
+    <ClCompile Include="test_path_and_rgn.cpp" />
+    <ClCompile Include="test_progressbar.cpp" />
+    <ClCompile Include="test_propertygrid.cpp" />
+    <ClCompile Include="test_relative.cpp" />
+    <ClCompile Include="test_reportlistview.cpp" />
+    <ClCompile Include="test_respack.cpp" />
+    <ClCompile Include="test_rollmenu.cpp" />
+    <ClCompile Include="test_rotateimgbox.cpp" />
+    <ClCompile Include="test_scorebtn.cpp" />
+    <ClCompile Include="test_sliderbar.cpp" />
+    <ClCompile Include="test_svg_and_font.cpp" />
+    <ClCompile Include="test_table.cpp" />
+    <ClCompile Include="test_tagging.cpp" />
+    <ClCompile Include="test_templatelistview.cpp" />
+    <ClCompile Include="test_titlebar.cpp" />
+    <ClCompile Include="test_tray.cpp" />
+    <ClCompile Include="test_treelistview.cpp" />
+    <ClCompile Include="test_vlcplay.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="test_absolute.h" />
+    <ClInclude Include="test_ani.h" />
+    <ClInclude Include="test_button.h" />
+    <ClInclude Include="test_buttonex.h" />
+    <ClInclude Include="test_calendar.h" />
+    <ClInclude Include="test_carousel.h" />
+    <ClInclude Include="test_checkbutton.h" />
+    <ClInclude Include="test_chromium.h" />
+    <ClInclude Include="test_colorbutton.h" />
+    <ClInclude Include="test_colorpicker.h" />
+    <ClInclude Include="test_combobox.h" />
+    <ClInclude Include="test_custombkg.h" />
+    <ClInclude Include="test_custommenu.h" />
+    <ClInclude Include="test_customredraw.h" />
+    <ClInclude Include="test_datebox.h" />
+    <ClInclude Include="test_dragobj.h" />
+    <ClInclude Include="test_drawingboard.h" />
+    <ClInclude Include="test_dropobj.h" />
+    <ClInclude Include="test_edit.h" />
+    <ClInclude Include="test_editex.h" />
+    <ClInclude Include="test_effect.h" />
+    <ClInclude Include="test_event.h" />
+    <ClInclude Include="test_flow.h" />
+    <ClInclude Include="test_fullscreen.h" />
+    <ClInclude Include="test_groupbox.h" />
+    <ClInclude Include="test_iconlistview.h" />
+    <ClInclude Include="test_label.h" />
+    <ClInclude Include="test_linear.h" />
+    <ClInclude Include="test_listbutton.h" />
+    <ClInclude Include="test_listview.h" />
+    <ClInclude Include="test_loading.h" />
+    <ClInclude Include="test_mask.h" />
+    <ClInclude Include="test_matrix.h" />
+    <ClInclude Include="test_messagebox.h" />
+    <ClInclude Include="test_modal.h" />
+    <ClInclude Include="test_nativewindow.h" />
+    <ClInclude Include="test_navbutton.h" />
+    <ClInclude Include="test_nchittest.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="test_palette.h" />
+    <ClInclude Include="test_path_and_rgn.h" />
+    <ClInclude Include="test_progressbar.h" />
+    <ClInclude Include="test_propertygrid.h" />
+    <ClInclude Include="test_relative.h" />
+    <ClInclude Include="test_reportlistview.h" />
+    <ClInclude Include="test_respack.h" />
+    <ClInclude Include="test_rollmenu.h" />
+    <ClInclude Include="test_rotateimgbox.h" />
+    <ClInclude Include="test_scorebtn.h" />
+    <ClInclude Include="test_sliderbar.h" />
+    <ClInclude Include="test_svg_and_font.h" />
+    <ClInclude Include="test_table.h" />
+    <ClInclude Include="test_tagging.h" />
+    <ClInclude Include="test_templatelistview.h" />
+    <ClInclude Include="test_titlebar.h" />
+    <ClInclude Include="test_tray.h" />
+    <ClInclude Include="test_treelistview.h" />
+    <ClInclude Include="test_vlcplay.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libexdui\libexdui.vcxproj">
+      <Project>{f8c5c742-d8e0-414e-a6b6-e6ff95482e37}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
