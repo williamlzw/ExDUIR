@@ -295,11 +295,12 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 /// <param name="hCanvas"></param>
 /// <param name="hPath"></param>
 /// <param name="hBrush"></param>
-/// <param name="strokeWidth"></param>
-/// <param name="strokeStyle"></param>
+/// <param name="strokeWidth">线条宽度</param>
+/// <param name="strokeStyle">线条中间样式类型，0实线</param>
+/// <param name="lineCap">线条两端样式默认1。 1直角,2圆角</param>
 /// <returns></returns>
 BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth,
-                      DWORD strokeStyle);
+                      DWORD strokeStyle, DWORD lineCap = 1U);
 
 /// <summary>
 /// 画布画多边形
@@ -1515,6 +1516,17 @@ BOOL _path_addarc3(HEXPATH hPath, FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY
 /// <param name="y3"></param>
 /// <returns></returns>
 BOOL _path_addbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT y2, FLOAT x3, FLOAT y3);
+
+/// <summary>
+/// 路径添加椭圆, 起始点坐标(left, (top + bottom) / 2)
+/// </summary>
+/// <param name="hPath"></param>
+/// <param name="left"></param>
+/// <param name="top"></param>
+/// <param name="right"></param>
+/// <param name="bottom"></param>
+/// <returns></returns>
+BOOL _path_addellipse(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 路径添加直线

@@ -67,5 +67,5 @@
 #include "test_path_and_rgn.h"
 #include "test_vlcplay.h"
 #include "test_respack.h"
-
+#include "test_circleprogressbar.h"
 

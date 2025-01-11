@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _path_destroy_dx(path_s* pPath)
 {
@@ -424,6 +424,42 @@ BOOL _path_addquadraticbezier(HEXPATH hPath, FLOAT x1, FLOAT y1, FLOAT x2, FLOAT
         bs.point2.x                      = x2;
         bs.point2.y                      = y2;
         pPath->pObj_->AddQuadraticBezier(bs);
+    }
+    Ex_SetLastError(nError);
+    return nError == 0;
+}
+
+BOOL _path_addellipse(HEXPATH hPath, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+{
+    INT     nError = 0;
+    path_s* pPath  = nullptr;
+    if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError)) {
+        // 计算椭圆的中心点和半径
+        FLOAT centerX = (left + right) / 2;
+        FLOAT centerY = (top + bottom) / 2;
+        FLOAT radiusX = (right - left) / 2;
+        FLOAT radiusY = (bottom - top) / 2;
+
+        // 添加第一个圆弧（上半部分）
+        D2D1_ARC_SEGMENT arc1 = {};
+        arc1.point.x          = right;
+        arc1.point.y          = centerY;
+        arc1.size.width       = radiusX;
+        arc1.size.height      = radiusY;
+        arc1.rotationAngle    = 0.0F;
+        arc1.sweepDirection   = D2D1_SWEEP_DIRECTION_CLOCKWISE;
+        arc1.arcSize          = D2D1_ARC_SIZE_LARGE;
+        pPath->pObj_->AddArc(arc1);
+
+        // 添加第二个圆弧（下半部分）
+        D2D1_ARC_SEGMENT arc2 = {};
+        arc2.point.x          = left;
+        arc2.point.y          = centerY;
+        arc2.size.width       = radiusX;
+        arc2.size.height      = radiusY;
+        arc2.sweepDirection   = D2D1_SWEEP_DIRECTION_CLOCKWISE;
+        arc2.arcSize          = D2D1_ARC_SIZE_LARGE;
+        pPath->pObj_->AddArc(arc2);
     }
     Ex_SetLastError(nError);
     return nError == 0;

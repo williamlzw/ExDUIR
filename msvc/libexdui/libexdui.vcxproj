@@ -29,6 +29,7 @@
     <ClCompile Include="..\..\src\Class_CefBrowser_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CheckButtonEx_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_CircleProgressBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_DateBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_DrawingBoard_ex.cpp" />
     <ClCompile Include="..\..\src\Class_EditEx_ex.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="..\..\include\Class_CefBrowser_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckBox_ex.h" />
     <ClInclude Include="..\..\include\Class_CheckButtonEx_ex.h" />
+    <ClInclude Include="..\..\include\Class_CircleProgressBar_ex.h" />
     <ClInclude Include="..\..\include\Class_DateBox_ex.h" />
     <ClInclude Include="..\..\include\Class_DrawingBoard_ex.h" />
     <ClInclude Include="..\..\include\Class_EditEx_ex.h" />

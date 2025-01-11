@@ -40,6 +40,7 @@ void _object_init()
     _propertygrid_register();
     _rollmenu_register();
     _taggingboard_register();
+    _circleprogressbar_register();
 #ifdef ENABLE_VLC
     _vlcplayer_register();
 #endif

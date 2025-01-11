@@ -62,7 +62,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_mask,               // 154测试蒙板
         test_tagging,            // 155测试标注画板
         test_effect,             // 156测试效果器
-        test_respack             // 157测试打包
+        test_respack,             // 157测试打包
+        test_circleprogressbar    // 158环形进度条
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
@@ -145,7 +146,7 @@ void test_exdui()
             {390, L"测试卷帘菜单"},   {430, L"测试托盘图标"},   {470, L"测试蒙板"},
             {510, L"测试标注画板"},   {550, L"测试效果器"},
 
-            {30, L"测试打包"}};
+            {30, L"测试打包"},        {70, L"测试环形进度条"}};
 
         for (size_t i = 0; i < buttonData.size(); ++i) {
             int          y    = buttonData[i].first;

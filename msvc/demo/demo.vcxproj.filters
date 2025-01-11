@@ -173,6 +173,9 @@
     <ClCompile Include="test_vlcplay.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test_circleprogressbar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -346,6 +349,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_vlcplay.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_circleprogressbar.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

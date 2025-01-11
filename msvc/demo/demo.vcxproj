@@ -208,6 +208,7 @@
     <ClCompile Include="test_carousel.cpp" />
     <ClCompile Include="test_checkbutton.cpp" />
     <ClCompile Include="test_chromium.cpp" />
+    <ClCompile Include="test_circleprogressbar.cpp" />
     <ClCompile Include="test_colorbutton.cpp" />
     <ClCompile Include="test_colorpicker.cpp" />
     <ClCompile Include="test_combobox.cpp" />
@@ -271,6 +272,7 @@
     <ClInclude Include="test_carousel.h" />
     <ClInclude Include="test_checkbutton.h" />
     <ClInclude Include="test_chromium.h" />
+    <ClInclude Include="test_circleprogressbar.h" />
     <ClInclude Include="test_colorbutton.h" />
     <ClInclude Include="test_colorpicker.h" />
     <ClInclude Include="test_combobox.h" />

@@ -222,6 +222,9 @@
     <ClCompile Include="..\..\thirdparty\nanosvg\nanosvgrast.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Class_CircleProgressBar_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -429,6 +432,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\thirdparty\nanosvg\nanosvgrast.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_CircleProgressBar_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

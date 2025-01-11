@@ -1319,6 +1319,23 @@
 #define PROGRESSBAR_LONG_POINT 5
 #pragma endregion progressbar long constant
 
+#pragma region circleprogressbar long constant
+// 环形进度条属性_位置
+#define CIRCLEPROGRESSBAR_LONG_POS 0
+// 环形进度条属性_范围
+#define CIRCLEPROGRESSBAR_LONG_RANGE 1
+// 环形进度条属性_环宽度
+#define CIRCLEPROGRESSBAR_LONG_LINEHEIGHT 2
+// 环形进度条属性_进度条两端样式 0直线 1弧线
+#define CIRCLEPROGRESSBAR_LONG_LINECAP 3
+// 环形进度条属性_背景颜色
+#define CIRCLEPROGRESSBAR_LONG_BACKGROUNDCOLOR 4
+// 环形进度条属性_前景颜色
+#define CIRCLEPROGRESSBAR_LONG_FOREGROUNDCOLOR 5
+// 环形进度条属性_进度字体句柄,无需手动销毁
+#define CIRCLEPROGRESSBAR_LONG_FONT 6
+#pragma endregion circleprogressbar long constant
+
 // png数据头
 #define PACKAGEHEADER_PNGBITS 1
 // 主题包头

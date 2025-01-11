@@ -523,7 +523,7 @@ BOOL _canvas_fillroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 }
 
 BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth,
-                      DWORD strokeStyle)
+                      DWORD strokeStyle, DWORD lineCap)
 {
     canvas_s* pCanvas = nullptr;
     path_s*   pPath   = nullptr;
@@ -531,7 +531,7 @@ BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT s
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
         if (_handle_validate(hPath, HT_PATH, (LPVOID*)&pPath, &nError)) {
             ID2D1StrokeStyle* stroke = _strokestyle_create(
-                D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE,
+                (D2D1_CAP_STYLE)lineCap, (D2D1_CAP_STYLE)lineCap, (D2D1_CAP_STYLE)lineCap,
                 D2D1_LINE_JOIN_BEVEL, 1.0, (D2D1_DASH_STYLE)strokeStyle, 0);
             ID2D1DeviceContext* pContext = pCanvas->pContext_;
             pContext->DrawGeometry((ID2D1Geometry*)pPath->pGeometry_, (ID2D1Brush*)hBrush,

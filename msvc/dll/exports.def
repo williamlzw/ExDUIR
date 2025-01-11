@@ -1,7 +1,6 @@
 ﻿LIBRARY
 
 EXPORTS
-Ex_ReadFile
 Ex_WriteFile
 
 ;----------------------------------------

@@ -148,6 +148,8 @@
 #include "Class_TreeView_ex.h"
 #include "Class_Win10Loading_ex.h"
 #include "Class_scrollbar_ex.h"
+#include "Class_CircleProgressBar_ex.h"
+
 #ifdef ENABLE_VLC
 #define VCL_PLAYER
 #include "Class_VLCPlayer_ex.h"
