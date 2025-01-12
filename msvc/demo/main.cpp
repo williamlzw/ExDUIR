@@ -147,8 +147,7 @@ void test_exdui()
     // Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
     //  开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
-            ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL |
-                ENGINE_FLAG_OBJECT_SHOWRECTBORDER,
+            ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,
             hCursor, 0, data.data(), data.size(), 0, 0);
     Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
     INT windowWidth   = 1280;
