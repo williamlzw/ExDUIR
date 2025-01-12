@@ -38,7 +38,7 @@ void test_iconlistview(HWND hWnd)
     m_hImageListIcon = _imglist_create(36, 36);
     std::vector<CHAR> imgdata;
     for (INT i = 1; i <= 3; i++) {
-        auto str = L"./icon/" + std::to_wstring(i) + L".png";
+        auto str = L"./res/icon/" + std::to_wstring(i) + L".png";
         Ex_ReadFile(str.c_str(), &imgdata);
         _imglist_add(m_hImageListIcon, 0, imgdata.data(), imgdata.size());
     }

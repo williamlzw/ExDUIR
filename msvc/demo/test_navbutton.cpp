@@ -36,17 +36,17 @@ void test_navbutton(HWND hWnd)
         m_hNavBtn[i] =
             Ex_ObjCreate(L"NavButton", str.c_str(), -1, 20 + i * 85, 40, 80, 80, hExDui_navbutton);
 
-        auto file = L"./navbtn/大图标" + std::to_wstring(i + 1) + L".png";
+        auto file = L"./res/navbtn/大图标" + std::to_wstring(i + 1) + L".png";
         _img_createfromfile(file.c_str(), &hImage);
 
         Ex_ObjSendMessage(m_hNavBtn[i], WM_SETICON, 0, hImage);
         Ex_ObjSetColor(m_hNavBtn[i], COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16777215, 255), FALSE);
 
-        _img_createfromfile(L"./navbtn/顶部按钮背景C.png", &hImg1);
+        _img_createfromfile(L"./res/navbtn/顶部按钮背景C.png", &hImg1);
 
         Ex_ObjSendMessage(m_hNavBtn[i], BM_SETIMAGE, 1, hImg1);
 
-        _img_createfromfile(L"./navbtn/顶部按钮背景D.png", &hImg2);
+        _img_createfromfile(L"./res/navbtn/顶部按钮背景D.png", &hImg2);
 
         Ex_ObjSendMessage(m_hNavBtn[i], BM_SETIMAGE, 2, hImg2);
 

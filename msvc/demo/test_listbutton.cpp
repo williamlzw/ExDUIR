@@ -140,7 +140,7 @@ void test_listbutton(HWND hWnd)
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16765337, 255), FALSE);   // 按下背景色
     HEXIMAGELIST      hImageList = _imglist_create(18, 18);
     std::vector<CHAR> imgdata;
-    Ex_ReadFile(L"buttonex\\4.png", &imgdata);
+    Ex_ReadFile(L"res/buttonex/4.png", &imgdata);
     size_t nImageIndex = _imglist_add(hImageList, 0, imgdata.data(), imgdata.size());
     Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_SETIMAGELIST, 0, (LPARAM)hImageList);
     EX_LISTBUTTON_ITEMINFO item2 = {0};

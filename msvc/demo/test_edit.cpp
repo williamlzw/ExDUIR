@@ -187,8 +187,7 @@ void test_edit(HWND hWnd)
                                             WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
                                             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
                                         0, 0);
-    Ex_DUISetLong(m_hExDuiEdit, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-
+    Ex_DUISetLong(m_hExDuiEdit, ENGINE_LONG_CRBKG, ExARGB(80, 80, 90, 255));
     HEXOBJ hObj_edit1 = Ex_ObjCreateEx(
         OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_CUSTOMDRAW,
         L"edit", L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION, 10, 30, 150, 30,
@@ -276,7 +275,7 @@ void test_edit(HWND hWnd)
         L"粘贴",     L"删除",       L"取行数 ", L"寻找文本",  L"替换文本"};
     m_hEditButton.resize(buttonTitles.size());
     HEXOBJ hObj_page = Ex_ObjCreate(L"Page", NULL, -1, 500, 30, 350, 300, m_hExDuiEdit);
-    Ex_ObjSetColor(hObj_page, COLOR_EX_BACKGROUND, ExARGB(133, 33, 53, 255), TRUE);
+
     HEXLAYOUT hLayoutPage = _layout_create(LAYOUT_TYPE_FLOW, hObj_page);
     BOOL      bWrapLine;
     for (int i = 0; i < buttonTitles.size(); i++) {

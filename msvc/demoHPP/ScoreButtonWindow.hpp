@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include "ExDUIRCPP.hpp"
 
 
@@ -18,8 +18,8 @@ public:
 		for (int i = 0; i < 5; i++)
 		{
 			m_scorebuttons[i] = ExScoreButton(m_skin, 20 + i * 45, 40, 40, 40);
-			m_scorebuttons[i].SetImage(0, ExImage(L"../test/navbtn/star_normal.png"));
-			m_scorebuttons[i].SetImage(1, ExImage(L"../test/navbtn/star_hover.png"));
+			m_scorebuttons[i].SetImage(0, ExImage(L"../test/res/navbtn/star_normal.png"));
+			m_scorebuttons[i].SetImage(1, ExImage(L"../test/res/navbtn/star_hover.png"));
 			m_scorebuttons[i].SetLongLParam(i);
 			m_scorebuttons[i].HandleEvent(NM_CHECK, OnScoreButtonCheckEvent);
 		}

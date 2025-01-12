@@ -50,13 +50,13 @@ void test_buttonex(HWND hWnd)
     Ex_ObjSendMessage(hObj_btnex4, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops4);
     Ex_ObjSetFontFromFamily(hObj_btnex4, L"楷体", 16, -1, TRUE);
     HEXIMAGE hImg;
-    _img_createfromfile(L"buttonex\\5.png", &hImg);
+    _img_createfromfile(L"res/buttonex/5.png", &hImg);
     Ex_ObjSendMessage(hObj_btnex4, WM_SETICON, 0, (LPARAM)hImg); /* 设置图标; */
 
     EX_IMAGEINFO IMG0 = {0};
-    _img_createfromfile(L"buttonex/4正常.png", &IMG0.imgNormal);
-    _img_createfromfile(L"buttonex/4点燃.png", &IMG0.imgHover);
-    _img_createfromfile(L"buttonex/4按下.png", &IMG0.imgDownOrChecked);
+    _img_createfromfile(L"res/buttonex/4正常.png", &IMG0.imgNormal);
+    _img_createfromfile(L"res/buttonex/4点燃.png", &IMG0.imgHover);
+    _img_createfromfile(L"res/buttonex/4按下.png", &IMG0.imgDownOrChecked);
     HEXOBJ hObj_btnex5 =
         Ex_ObjCreate(L"ButtonEx", NULL, -1, 50, 250, 100, 30, hExDui_buttonex);   // 图片按钮
     Ex_ObjSendMessage(hObj_btnex5, BM_SETIMAGE, 0, (LPARAM)&IMG0);
@@ -102,7 +102,7 @@ void test_buttonex(HWND hWnd)
     ButtonExprops9.nIconPosition      = 2;
     Ex_ObjSendMessage(hObj_btnex9, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops9);
     Ex_ObjSetFontFromFamily(hObj_btnex9, L"楷体", 16, -1, TRUE);
-    _img_createfromfile(L"buttonex\\4.png", &hImg);
+    _img_createfromfile(L"res/buttonex/4.png", &hImg);
     Ex_ObjSendMessage(hObj_btnex9, WM_SETICON, 0, (LPARAM)hImg); /* 设置图标; */
 
     HEXOBJ hObj_btnex10 =
@@ -119,7 +119,7 @@ void test_buttonex(HWND hWnd)
     ButtonExprops10.radius                = 7;
     Ex_ObjSendMessage(hObj_btnex10, WM_EX_PROPS, 0, (LPARAM)&ButtonExprops10);
     Ex_ObjSetFontFromFamily(hObj_btnex10, L"楷体", 16, -1, TRUE);
-    _img_createfromfile(L"buttonex\\3.png", &hImg);
+    _img_createfromfile(L"res/buttonex/3.png", &hImg);
     Ex_ObjSendMessage(hObj_btnex10, WM_SETICON, 0, (LPARAM)hImg); /* 设置图标; */
 
     Ex_DUIShowWindow(hExDui_buttonex, SW_SHOWNORMAL, 0, 0, 0);

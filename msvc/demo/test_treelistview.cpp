@@ -21,7 +21,7 @@ void test_treelistview(HWND hWnd)
     auto              m_hImageListIcon = _imglist_create(30, 30);
     std::vector<CHAR> imgdata;
     for (INT i = 3; i <= 5; i++) {
-        auto str = L"./buttonex/" + std::to_wstring(i) + L".png";
+        auto str = L"./res/buttonex/" + std::to_wstring(i) + L".png";
         Ex_ReadFile(str.c_str(), &imgdata);
         _imglist_add(m_hImageListIcon, 0, imgdata.data(), imgdata.size());
     }

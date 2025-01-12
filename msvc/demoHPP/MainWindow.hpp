@@ -83,7 +83,7 @@ public:
 
 		m_skin.SetBackgroundColor(ExARGB(255, 255, 255, 255));
         m_skin.SetShadowColor(ExARGB(250, 50, 50, 240));
-		m_skin.SetBackgroundImageFromFile(L"../test/res/bkg.png");
+		m_skin.SetBackgroundImageFromFile(L"../test/res/bkg.jpg");
 		//设置圆角，另一种方案是重画窗口背景参照异形窗口例子
 		m_skin.SetRadius(30);
         

@@ -99,18 +99,18 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
             rc.top    = 40;
             // 创建顶部按钮
             HEXIMAGE hImg;
-            _img_createfromfile(L"custommenu/btn1.png", &hImg);
+            _img_createfromfile(L"res/custommenu/btn1.png", &hImg);
 
             Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, rc.left, rc.top,
                            rc.right * 0.333, Ex_Scale(70), hExDUI, 100, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
-            _img_createfromfile(L"custommenu/btn2.png", &hImg);
+            _img_createfromfile(L"res/custommenu/btn2.png", &hImg);
             Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, rc.left + rc.right * 0.333,
                            rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 101, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
-            _img_createfromfile(L"custommenu/btn3.png", &hImg);
+            _img_createfromfile(L"res/custommenu/btn3.png", &hImg);
             Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, rc.left + rc.right * 0.666,
                            rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 102, -1, hImg, 0,
                            OnMenuBtnMsgProc);
@@ -119,7 +119,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
                 Ex_ObjCreateEx(OBJECT_STYLE_EX_TRANSPARENT | OBJECT_STYLE_EX_TOPMOST, L"Static", 0,
                                OBJECT_STYLE_VISIBLE, 0, 0, 45, 38, hExDUI, 0, -1, 0, 0, 0);
             std::vector<CHAR> data;
-            Ex_ReadFile(L"custommenu/Icon.png", &data);
+            Ex_ReadFile(L"res/custommenu/Icon.png", &data);
             Ex_ObjSetBackgroundImage(hObj, data.data(), data.size(), 0, 0,
                                      BACKGROUND_REPEAT_NO_REPEAT, 0, 0, 255, TRUE);
             rc.top    = rc.top + Ex_Scale(75);
@@ -158,12 +158,12 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
         _canvas_clear(wParam, 0);
         HEXIMAGE hImg;
         if (GetPropW(hWnd, L"IsMainMenu") != 0) {
-            _img_createfromfile(L"custommenu/Main.png", &hImg);
+            _img_createfromfile(L"res/custommenu/Main.png", &hImg);
             _canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 68,
                                       68, 46, 42, 13, 12, 0, 230);
         }
         else {
-            _img_createfromfile(L"custommenu/Sub.png", &hImg);
+            _img_createfromfile(L"res/custommenu/Sub.png", &hImg);
             _canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 24,
                                       24, 8, 9, 10, 10, 0, 230);
         }

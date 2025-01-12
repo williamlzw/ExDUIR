@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _buttonex_register()
 {
@@ -286,7 +286,7 @@ void _buttonex_paint(HEXOBJ hObj)
 
                 rctext.left   = (ps.uWidth - (long)nTextWidth) / 2;
                 rctext.top    = rcimg.bottom - (long)nTextHeight;
-                rctext.right  = (ps.uWidth + (long)nTextWidth) / 2;
+                rctext.right = (ps.uWidth + (long)nTextWidth) / 2;
                 rctext.bottom = ps.rcText.bottom;
             }
 

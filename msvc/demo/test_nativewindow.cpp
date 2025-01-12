@@ -121,7 +121,7 @@ void test_nativewindow(HWND hParent)
 
     Ex_ObjScrollSetInfo(m_hObjPage, SCROLLBAR_TYPE_VERT, SIF_ALL, 0, (300 + 300 - 420 + 30) * 1,
                         100, 0,
-                        TRUE);   // 1是文本缩放比例
+                        TRUE);   // 1是文本缩放比例,300+300是两个子窗口总高度，减去页面高度加上间隙30
     Ex_ObjScrollShow(m_hObjPage, SCROLLBAR_TYPE_VERT, TRUE);
 
     // 子窗口是原生窗口，父窗口需要删除这个WS_EX_LAYERED风格

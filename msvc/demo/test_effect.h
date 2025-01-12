@@ -77,9 +77,9 @@ public:
     IFACEMETHODIMP Initialize(_In_ ID2D1EffectContext*  pEffectContext,
                               _In_ ID2D1TransformGraph* pTransformGraph)
     {
-        _shader_loadfromfile(pEffectContext, L"res/effect.cso", GUID_MYSHADER);
+        _shader_loadfromfile(pEffectContext, L"res/effect/effect.cso", GUID_MYSHADER);
         /*std::vector<CHAR> data1;
-        Ex_ReadFile(L"res/effect.hlsl", &data1);
+        Ex_ReadFile(L"res/effect/effect.hlsl", &data1);
         std::string buf = Ex_U2A2(data1);
         if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
         {

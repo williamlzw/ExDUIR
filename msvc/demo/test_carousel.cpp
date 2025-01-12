@@ -13,11 +13,11 @@ void test_carousel(HWND hParent)
     // 添加图片前必须设置尺寸
     Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_SIZE, 1600, 1200);
     HEXIMAGE hImg = 0;
-    _img_createfromfile(L"res/1.jpeg", &hImg);
+    _img_createfromfile(L"res/carousel/1.jpeg", &hImg);
     Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_ADDIMG, 0, hImg);
-    _img_createfromfile(L"res/2.jpeg", &hImg);
+    _img_createfromfile(L"res/carousel/2.jpeg", &hImg);
     Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_ADDIMG, 0, hImg);
-    _img_createfromfile(L"res/3.jpeg", &hImg);
+    _img_createfromfile(L"res/carousel/3.jpeg", &hImg);
     Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_ADDIMG, 0, hImg);
     Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_SETTIMER, 0, 5000);   // 设置轮播间隔
 

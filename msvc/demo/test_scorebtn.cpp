@@ -25,11 +25,11 @@ void test_scorebtn(HWND hParent)
     HEXIMAGE hImg2 = 0;
     for (int i = 0; i < 5; i++) {
         m_hScoreBtn[i] = Ex_ObjCreate(L"ScoreButton", 0, -1, 20 + i * 45, 40, 40, 40, hExDui_score);
-        _img_createfromfile(L"./navbtn/star_normal.png", &hImg1);
+        _img_createfromfile(L"./res/navbtn/star_normal.png", &hImg1);
 
         Ex_ObjSendMessage(m_hScoreBtn[i], BM_SETIMAGE, 0, hImg1);
 
-        _img_createfromfile(L"./navbtn/star_hover.png", &hImg2);
+        _img_createfromfile(L"./res/navbtn/star_hover.png", &hImg2);
 
         Ex_ObjSendMessage(m_hScoreBtn[i], BM_SETIMAGE, 1, hImg2);
         Ex_ObjSetLong(m_hScoreBtn[i], OBJECT_LONG_LPARAM, i);

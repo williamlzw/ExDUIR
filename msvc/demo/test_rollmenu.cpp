@@ -101,13 +101,13 @@ void test_rollmenu(HWND hWnd)
     size_t nImageAuthIndex = _imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size());
 
     std::vector<INT> emoji;
-    Ex_ReadFile(L"navbtn/大图标1.png", &imgdata);
+    Ex_ReadFile(L"res/navbtn/大图标1.png", &imgdata);
     emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
-    Ex_ReadFile(L"navbtn/大图标2.png", &imgdata);
+    Ex_ReadFile(L"res/navbtn/大图标2.png", &imgdata);
     emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
-    Ex_ReadFile(L"navbtn/大图标3.png", &imgdata);
+    Ex_ReadFile(L"res/navbtn/大图标3.png", &imgdata);
     emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
-    Ex_ReadFile(L"navbtn/大图标4.png", &imgdata);
+    Ex_ReadFile(L"res/navbtn/大图标4.png", &imgdata);
     emoji.push_back(_imglist_add(m_hImageListRollMenu, 0, imgdata.data(), imgdata.size()));
 
     EX_ROLLMENU_DATA rollmenu = {0};

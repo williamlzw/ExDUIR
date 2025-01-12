@@ -75,7 +75,7 @@ void test_reportlistview(HWND hWnd)
 
     m_hReportListViewImgList = _imglist_create(30, 30);
     std::vector<CHAR> imgdata;
-    Ex_ReadFile(L"./icon/1.png", &imgdata);
+    Ex_ReadFile(L"./res/icon/1.png", &imgdata);
     _imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
     _imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
     _imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());

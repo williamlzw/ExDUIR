@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include "ExDUIRCPP.hpp"
 
 #define Random(min, max) (rand() % (max - min)) + min + 1
@@ -49,10 +49,10 @@ public:
 		size_t nImageInfoIndex = m_imagelist.AddImageFromFile(0, L"../test/res/info.png");
 		size_t nImageFansIndex = m_imagelist.AddImageFromFile(0, L"../test/res/fans.png");
 		size_t nImageAuthIndex = m_imagelist.AddImageFromFile(0, L"../test/res/authorization.png");
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/navbtn/大图标1.png"));
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/navbtn/大图标2.png"));
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/navbtn/大图标3.png"));
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/navbtn/大图标4.png"));
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标1.png"));
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标2.png"));
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标3.png"));
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标4.png"));
 		EX_ROLLMENU_DATA rollmenu = { 0 };
 		rollmenu.title = L"账号信息";
 		rollmenu.stateico.eicon = m_imagelist.GetImage(nImageAccountIndex).m_image;

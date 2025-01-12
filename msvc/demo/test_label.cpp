@@ -9,7 +9,8 @@ void test_label(HWND hWnd)
                                                  WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
                                                  WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
                                              0, 0);
-    Ex_DUISetLong(hExDui_label, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
+    Ex_DUISetLong(hExDui_label, ENGINE_LONG_CRBKG, ExARGB(80, 80, 90, 255));
+  
     HEXOBJ hObj_label =
         Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE, 10, 30, 180,
                        150, hExDui_label, 0, DT_VCENTER, 0, 0, NULL);

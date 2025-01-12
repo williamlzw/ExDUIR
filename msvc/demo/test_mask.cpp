@@ -6,8 +6,8 @@ LRESULT CALLBACK OnMaskObjMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
     if (uMsg == WM_ERASEBKGND) {
         HEXIMAGE hImg1 = 0;
         HEXIMAGE hImg2 = 0;
-        _img_createfromfile(L"mask/mask4.jpg", &hImg1);
-        _img_createfromfile(L"mask/mask1.png", &hImg2);
+        _img_createfromfile(L"res/mask/mask4.jpg", &hImg1);
+        _img_createfromfile(L"res/mask/mask1.png", &hImg2);
         HEXIMAGE hImg3;
         _img_mask(hImg1, hImg2, 0, FALSE, &hImg3);
         _canvas_drawimagerect(wParam, hImg3, 0, 0, 200, 200, 255);

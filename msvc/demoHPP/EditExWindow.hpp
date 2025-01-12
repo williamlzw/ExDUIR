@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include "ExDUIRCPP.hpp"
 
 
@@ -20,17 +20,17 @@ public:
 		m_edit1 = ExEditEx(m_skin, 30, 50, 150, 30, L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_UNDERLINE);
 		m_edit1.SetCueBanner(L"请输入账户名称", ExARGB(255, 255, 255, 100));
 		m_edit1.SetColorTextNormal(ExARGB(255, 255, 255, 200));
-		m_edit1.SetIcon(ExImage(L"../test/editex/icon_contacts_normal.png"));
+		m_edit1.SetIcon(ExImage(L"../test/res/editex/icon_contacts_normal.png"));
 
 		m_edit2 = ExEditEx(m_skin, 30, 100, 150, 30, L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_UNDERLINE | EDIT_STYLE_USEPASSWORD);
 		m_edit2.SetCueBanner(L"请输入账户密码", ExARGB(255, 255, 255, 100));
 		m_edit2.SetColorTextNormal(ExARGB(255, 255, 255, 200));
-		m_edit2.SetIcon(ExImage(L"../test/editex/psw_normal.png"));
+		m_edit2.SetIcon(ExImage(L"../test/res/editex/psw_normal.png"));
 
 		m_edit3 = ExEditEx(m_skin, 200, 50, 150, 30, L"", -1);
 		m_edit3.SetCueBanner(L"搜索一下", ExARGB(255, 255, 255, 100));
 		m_edit3.SetColorTextNormal(ExARGB(255, 255, 255, 200));
-		m_edit3.SetIcon(ExImage(L"../test/editex/search_normal.png"));
+		m_edit3.SetIcon(ExImage(L"../test/res/editex/search_normal.png"));
 		EX_OBJ_PROPS EditExprops = { 0 };
 		EditExprops.crBkgNormal = ExARGB(20, 20, 120, 150);
 		EditExprops.crBorderHover = ExARGB(255, 77, 77, 150);

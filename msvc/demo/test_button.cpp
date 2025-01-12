@@ -92,17 +92,21 @@ void test_button(HWND hWnd)
                                         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
                                             WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE |
                                             WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
-                                            WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
+                                            WINDOW_STYLE_HASICON,
                                         0, 0);
-    Ex_DUISetLong(m_hExDuiButton, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
+   
+    Ex_DUISetLong(m_hExDuiButton, ENGINE_LONG_CRBKG, ExARGB(80, 80, 90, 255));
+    Ex_DUISetLong(m_hExDuiButton, ENGINE_LONG_CRBORDER, ExARGB(20, 126, 255, 255));
+    Ex_DUISetLong(m_hExDuiButton, ENGINE_LONG_CRSD, ExARGB(20, 126, 255, 255));
+    Ex_DUISetLong(m_hExDuiButton, ENGINE_LONG_RADIUS, 10);
     std::vector<HEXOBJ> buttons;
-    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"禁用自身", -1, 10, 30, 120, 30,
+    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"🐓禁用自身", -1, 10, 30, 120, 30,
                                      m_hExDuiButton, 201, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"解除按钮1禁用", -1, 10, 70, 120, 30,
+    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"🐸解除按钮1禁用", -1, 10, 70, 120, 30,
                                      m_hExDuiButton, 202, DT_VCENTER | DT_CENTER, 0, 0, NULL));
     buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"改动自身文本", -1, 10, 110, 120, 30,
                                      m_hExDuiButton, 203, DT_VCENTER | DT_CENTER, 0, 0, NULL));
-    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"取按钮1文本", -1, 10, 150, 120, 30,
+    buttons.push_back(Ex_ObjCreateEx(-1, L"button", L"🦜取按钮1文本", -1, 10, 150, 120, 30,
                                      m_hExDuiButton, 204, DT_VCENTER | DT_CENTER, 0, 0, NULL));
 
     for (auto button : buttons) {

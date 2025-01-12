@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include "ExDUIRCPP.hpp"
 
 using namespace ExDUIR::FrameWorks::Layout;
@@ -26,12 +26,12 @@ public:
 		{
 			auto str = L"Tab" + std::to_wstring(i);
 			m_navbuttons[i] = ExNavButton(m_skin, 20 + i * 85, 40, 80, 80, str);
-			auto file = L"../test/navbtn/大图标" + std::to_wstring(i + 1) + L".png";
+			auto file = L"../test/res/navbtn/大图标" + std::to_wstring(i + 1) + L".png";
 			ExImage img = ExImage(file);
 			m_navbuttons[i].SetIcon(img);
 			m_navbuttons[i].SetColorTextNormal(ExRGB2ARGB(16777215, 255));
-			ExImage img1 = ExImage(L"../test/navbtn/顶部按钮背景C.png");
-			ExImage img2 = ExImage(L"../test/navbtn/顶部按钮背景D.png");
+			ExImage img1 = ExImage(L"../test/res/navbtn/顶部按钮背景C.png");
+			ExImage img2 = ExImage(L"../test/res/navbtn/顶部按钮背景D.png");
 			//img在navbutton内部会自动销毁，无需手动销毁
 			m_navbuttons[i].SetImage(1, img1);
 			m_navbuttons[i].SetImage(2, img2);

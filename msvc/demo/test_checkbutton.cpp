@@ -26,8 +26,8 @@ void test_checkbutton(HWND hWnd)
             WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
             WINDOW_STYLE_HASICON | WINDOW_STYLE_NOSHADOW,
         0, 0);
-    Ex_DUISetLong(hExDui_checkbutton, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-
+    Ex_DUISetLong(hExDui_checkbutton, ENGINE_LONG_CRBKG, ExARGB(80, 80, 90, 255));
+  
     Ex_ObjCreateEx(-1, L"checkbutton", L"复选框", -1, 10, 30, 60, 20, hExDui_checkbutton, 0,
                    DT_VCENTER, 0, 0, NULL);
     Ex_ObjCreateEx(-1, L"radiobutton", L"单选框1", -1, 10, 60, 80, 20, hExDui_checkbutton, 0,

@@ -1,4 +1,4 @@
-#include <vector>
+﻿#include <vector>
 #include "ExDUIRCPP.hpp"
 
 
@@ -140,14 +140,14 @@ public:
 				rc.left = Ex_Scale(6);
 				rc.top = 40;
 				//创建顶部按钮
-				ExImage img1 = ExImage(L"../test/custommenu/btn1.png");
+				ExImage img1 = ExImage(L"../test/res/custommenu/btn1.png");
 				ExButton button1 = ExButton(ExControl(hExDUI), rc.left, rc.top, rc.right * 0.333, Ex_Scale(70), L"消息", OBJECT_STYLE_VISIBLE, -1, -1, 100, img1.m_image, 0, OnMenuBtnMsgProc);
-				ExImage img2 = ExImage(L"../test/custommenu/btn2.png");
+				ExImage img2 = ExImage(L"../test/res/custommenu/btn2.png");
 				ExButton button2 = ExButton(ExControl(hExDUI), rc.left + rc.right * 0.333, rc.top, rc.right * 0.333, Ex_Scale(70), L"收藏", OBJECT_STYLE_VISIBLE, -1, -1, 101, img2.m_image, 0, OnMenuBtnMsgProc);
-				ExImage img3 = ExImage(L"../test/custommenu/btn3.png");
+				ExImage img3 = ExImage(L"../test/res/custommenu/btn3.png");
 				ExButton button3 = ExButton(ExControl(hExDUI), rc.left + rc.right * 0.666, rc.top, rc.right * 0.333, Ex_Scale(70), L"文件", OBJECT_STYLE_VISIBLE, -1, -1, 102, img3.m_image, 0, OnMenuBtnMsgProc);
 				ExStatic bkg = ExStatic(ExControl(hExDUI), 0, 0, 45, 38, L"", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TRANSPARENT | OBJECT_STYLE_EX_TOPMOST);
-				bkg.SetBackgroundImageFromFile(L"../test/custommenu/Icon.png", 0, 0, BACKGROUND_REPEAT_NO_REPEAT);
+				bkg.SetBackgroundImageFromFile(L"../test/res/custommenu/Icon.png", 0, 0, BACKGROUND_REPEAT_NO_REPEAT);
 				rc.top = rc.top + Ex_Scale(75);
 				rc.bottom = rc.bottom - Ex_Scale(75);
 			}
@@ -184,13 +184,13 @@ public:
 			canvas.Clear(0);
 			if (GetPropW(hWnd, L"IsMainMenu") != 0)
 			{
-				ExImage img = ExImage(L"../test/custommenu/Main.png");
+				ExImage img = ExImage(L"../test/res/custommenu/Main.png");
 				canvas.DrawImageFromGrid(img, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 68, 68, 46, 42, 13, 12, 0, 230);
 				img.Destroy();
 			}
 			else
 			{
-				ExImage img = ExImage(L"../test/custommenu/Sub.png");
+				ExImage img = ExImage(L"../test/res/custommenu/Sub.png");
 				canvas.DrawImageFromGrid(img, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 24, 24, 8, 9, 10, 10, 0, 230);
 				img.Destroy();
 			}
