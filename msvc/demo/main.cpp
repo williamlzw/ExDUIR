@@ -149,7 +149,7 @@ void test_exdui()
     Ex_Init(GetModuleHandleW(NULL),
             ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,
             hCursor, 0, data.data(), data.size(), 0, 0);
-    Ex_WndRegisterClass(L"Ex_DUIR", 0, 0, 0);
+    
     INT windowWidth   = 1280;
     INT windowsHeight = 700;
     m_hWnd = Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0,

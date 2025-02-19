@@ -355,6 +355,7 @@ _path_addarc2
 _path_addarc3
 _path_addbezier
 _path_addquadraticbezier
+_path_addellipse
 
 ;----------------------------------------
 ;rgn
