@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ExDUIR_Struct.h"
 
 /// <summary>
@@ -301,6 +301,9 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 /// <returns></returns>
 BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth,
                       DWORD strokeStyle, DWORD lineCap = 1U);
+
+BOOL _canvas_drawregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush,
+                        FLOAT strokeWidth, DWORD strokeStyle);
 
 /// <summary>
 /// 画布画多边形
@@ -1692,6 +1695,8 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
 /// <param name="hPath"></param>
 /// <returns></returns>
 HEXRGN _rgn_createfrompath(HEXPATH hPath);
+
+HEXRGN _rgn_createfromellipse(FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY);
 
 /// <summary>
 /// 区域创建自矩形

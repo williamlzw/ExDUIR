@@ -1,4 +1,4 @@
-﻿LIBRARY
+LIBRARY
 
 EXPORTS
 Ex_WriteFile
@@ -260,7 +260,7 @@ _canvas_drawpolygon
 _canvas_fillpolygon
 _canvas_drawsvg
 _canvas_drawsvgfromfile
-
+_canvas_drawregion
 ;----------------------------------------
 ;img
 ;----------------------------------------
@@ -369,7 +369,7 @@ _rgn_hittest2
 _rgn_createfrompath
 _rgn_getlines
 _rgn_getbounds
-
+_rgn_createfromellipse
 ;----------------------------------------
 ;easing
 ;----------------------------------------
