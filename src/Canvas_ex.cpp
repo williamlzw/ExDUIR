@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 
 class CustomTextRenderer : public IDWriteTextRenderer
 {
@@ -606,6 +606,23 @@ BOOL _canvas_fillregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush)
     }
     Ex_SetLastError(nError);
     return nError == 0;
+}
+
+BOOL _canvas_drawregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush, 
+                        FLOAT strokeWidth, DWORD strokeStyle) {
+  INT nError = -1;
+  canvas_s* pCanvas = nullptr;
+  if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
+    ID2D1DeviceContext* pContext = pCanvas->pContext_;
+    ID2D1StrokeStyle* stroke = _strokestyle_create(
+        D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE, D2D1_CAP_STYLE_SQUARE,
+        D2D1_LINE_JOIN_BEVEL, 1.0f, (D2D1_DASH_STYLE)strokeStyle, 0);
+    pContext->DrawGeometry((ID2D1Geometry*)hRgn, (ID2D1Brush*)hBrush,
+                           Ex_Scale(strokeWidth), stroke);
+   
+  }
+  Ex_SetLastError(nError);
+  return nError == 0;
 }
 
 BOOL _canvas_drawimagerectrect(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft, FLOAT dstTop,
