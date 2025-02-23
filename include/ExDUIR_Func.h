@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ExDUIR_Struct.h"
 
 /// <summary>
@@ -109,14 +109,13 @@ BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc);
 /// <param name="lpwzText"></param>
 /// <param name="dwLen"></param>
 /// <param name="dwDTFormat"></param>
-/// <param name="lParam"></param>
 /// <param name="layoutWidth"></param>
 /// <param name="layoutHeight"></param>
 /// <param name="lpWidth"></param>
 /// <param name="lpHeight"></param>
 /// <returns></returns>
 BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, INT dwLen,
-                          INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight,
+                          INT dwDTFormat, FLOAT layoutWidth, FLOAT layoutHeight,
                           FLOAT* lpWidth, FLOAT* lpHeight);
 
 /// <summary>
@@ -292,9 +291,9 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 /// <summary>
 /// 画布画路径
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hPath"></param>
-/// <param name="hBrush"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hPath">路径句柄</param>
+/// <param name="hBrush">画刷句柄</param>
 /// <param name="strokeWidth">线条宽度</param>
 /// <param name="strokeStyle">线条中间样式类型，0实线</param>
 /// <param name="lineCap">线条两端样式默认1。 1直角,2圆角</param>
@@ -302,6 +301,15 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth,
                       DWORD strokeStyle, DWORD lineCap = 1U);
 
+/// <summary>
+/// 画布画区域
+/// </summary>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="HEXRGN">区域句柄</param>
+/// <param name="hBrush">画刷句柄</param>
+/// <param name="strokeWidth">线条宽度</param>
+/// <param name="strokeStyle">线条中间样式类型，0实线</param>
+/// <returns></returns>
 BOOL _canvas_drawregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush,
                         FLOAT strokeWidth, DWORD strokeStyle);
 
@@ -415,34 +423,30 @@ BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWST
 /// <summary>
 /// 画布画文本Ex
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hFont"></param>
-/// <param name="crText"></param>
-/// <param name="lpwzText"></param>
-/// <param name="dwLen"></param>
-/// <param name="dwDTFormat"></param>
-/// <param name="left"></param>
-/// <param name="top"></param>
-/// <param name="right"></param>
-/// <param name="bottom"></param>
-/// <param name="iGlowsize"></param>
-/// <param name="crShadom"></param>
-/// <param name="lParam"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hFont">字体句柄</param>
+/// <param name="crText">颜色</param>
+/// <param name="lpwzText">内容</param>
+/// <param name="dwLen">长度</param>
+/// <param name="dwDTFormat">文本格式</param>
+/// <param name="left">目标左边</param>
+/// <param name="top">目标顶边</param>
+/// <param name="right">目标右边</param>
+/// <param name="bottom">目标底边</param>
 /// <returns>返回是否成功</returns>
 BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText,
-                        INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom,
-                        INT iGlowsize, EXARGB crShadom, LPARAM lParam);
+                        INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom);
 
 /// <summary>
 /// 画布画SVG从数据
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="input"></param>
-/// <param name="color"></param>
-/// <param name="left"></param>
-/// <param name="top"></param>
-/// <param name="right"></param>
-/// <param name="bottom"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="input">数据</param>
+/// <param name="color">颜色</param>
+/// <param name="left">目标左边</param>
+/// <param name="top">目标顶边</param>
+/// <param name="right">目标右边</param>
+/// <param name="bottom">目标底边</param>
 /// <returns></returns>
 BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top,
                      FLOAT right, FLOAT bottom);
@@ -450,13 +454,13 @@ BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, F
 /// <summary>
 /// 画布画SVG从文件
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="svgName"></param>
-/// <param name="color"></param>
-/// <param name="left"></param>
-/// <param name="top"></param>
-/// <param name="right"></param>
-/// <param name="bottom"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="svgName">文件路径</param>
+/// <param name="color">颜色</param>
+/// <param name="left">目标左边</param>
+/// <param name="top">目标顶边</param>
+/// <param name="right">目标右边</param>
+/// <param name="bottom">目标底边</param>
 /// <returns></returns>
 BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, FLOAT left,
                              FLOAT top, FLOAT right, FLOAT bottom);
@@ -464,19 +468,19 @@ BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, F
 /// <summary>
 /// 画布结束绘制
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <returns></returns>
 BOOL _canvas_enddraw(HEXCANVAS hCanvas);
 
 /// <summary>
 /// 画布填充椭圆
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hBrush"></param>
-/// <param name="x"></param>
-/// <param name="y"></param>
-/// <param name="radiusX"></param>
-/// <param name="radiusY"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hBrush">画刷句柄</param>
+/// <param name="x">圆心横坐标</param>
+/// <param name="y">圆心纵坐标</param>
+/// <param name="radiusX">横向半径</param>
+/// <param name="radiusY">纵向半径</param>
 /// <returns></returns>
 BOOL _canvas_fillellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, FLOAT radiusX,
                          FLOAT radiusY);
@@ -484,9 +488,9 @@ BOOL _canvas_fillellipse(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x, FLOAT y, F
 /// <summary>
 /// 画布填充路径
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hPath"></param>
-/// <param name="hBrush"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hPath">路径句柄</param>
+/// <param name="hBrush">画刷句柄</param>
 /// <returns></returns>
 BOOL _canvas_fillpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush);
 
@@ -508,12 +512,12 @@ BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT t
 /// <summary>
 /// 画布填充矩形
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hBrush"></param>
-/// <param name="left"></param>
-/// <param name="top"></param>
-/// <param name="right"></param>
-/// <param name="bottom"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hBrush">画刷句柄</param>
+/// <param name="left">矩形左边</param>
+/// <param name="top">矩形顶边</param>
+/// <param name="right">矩形右边</param>
+/// <param name="bottom">矩形底边</param>
 /// <returns></returns>
 BOOL _canvas_fillrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top, FLOAT right,
                       FLOAT bottom);
@@ -521,26 +525,26 @@ BOOL _canvas_fillrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT top,
 /// <summary>
 /// 画布填充区域
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hRgn"></param>
-/// <param name="hBrush"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hRgn">区域句柄</param>
+/// <param name="hBrush">画刷句柄</param>
 /// <returns></returns>
 BOOL _canvas_fillregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush);
 
 /// <summary>
 /// 画布填充圆角图片
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="hImg"></param>
-/// <param name="left"></param>
-/// <param name="top"></param>
-/// <param name="width"></param>
-/// <param name="height"></param>
-/// <param name="radiusX"></param>
-/// <param name="radiusY"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hImg">图像句柄</param>
+/// <param name="left">目标左边</param>
+/// <param name="top">目标顶边</param>
+/// <param name="width">目标宽度</param>
+/// <param name="height">目标高度</param>
+/// <param name="radiusX">横向圆角度</param>
+/// <param name="radiusY">纵向圆角度</param>
 /// <param name="shadowNum">透明度数组</param>
 /// <param name="number">透明度数量</param>
-/// <param name="crShadow"></param>
+/// <param name="crShadow">阴影颜色</param>
 /// <returns></returns>
 BOOL _canvas_fillroundedimage(HEXCANVAS hCanvas, HEXIMAGE hImg, FLOAT left, FLOAT top, FLOAT width,
                               FLOAT height, FLOAT radiusX, FLOAT radiusY, INT* shadowNum,
@@ -564,14 +568,14 @@ BOOL _canvas_fillroundedrect(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLO
 /// <summary>
 /// 画布刷新
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <returns></returns>
 BOOL _canvas_flush(HEXCANVAS hCanvas);
 
 /// <summary>
 /// 获取画布信息
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <param name="nType">画布信息类型 CVC_DX常量</param>
 /// <returns></returns>
 LPVOID _canvas_getcontext(HEXCANVAS hCanvas, INT nType);
@@ -579,23 +583,23 @@ LPVOID _canvas_getcontext(HEXCANVAS hCanvas, INT nType);
 /// <summary>
 /// 画布取DC
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <returns></returns>
 HDC _canvas_getdc(HEXCANVAS hCanvas);
 
 /// <summary>
 /// 画布取尺寸
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="width"></param>
-/// <param name="height"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="width">返回宽度</param>
+/// <param name="height">返回高度</param>
 /// <returns></returns>
 BOOL _canvas_getsize(HEXCANVAS hCanvas, INT* width, INT* height);
 
 /// <summary>
 /// 画布取矩阵
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <param name="pMatrix">返回矩阵</param>
 /// <returns></returns>
 BOOL _canvas_gettransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix);
@@ -604,38 +608,38 @@ BOOL _canvas_gettransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix);
 /// <summary>
 /// 画布释放DC
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <returns></returns>
 BOOL _canvas_releasedc(HEXCANVAS hCanvas);
 
 /// <summary>
 /// 画布重置剪辑区
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <returns></returns>
 BOOL _canvas_resetclip(HEXCANVAS hCanvas);
 
 /// <summary>
 /// 画布重新设置尺寸
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="width"></param>
-/// <param name="height"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="width">新宽度</param>
+/// <param name="height">新高度</param>
 /// <returns></returns>
 BOOL _canvas_resize(HEXCANVAS hCanvas, INT width, INT height);
 
 /// <summary>
 /// 画布旋转色相
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="fAngle">0-360</param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="fAngle">旋转角度 0-360</param>
 /// <returns></returns>
 BOOL _canvas_rotate_hue(HEXCANVAS hCanvas, FLOAT fAngle);
 
 /// <summary>
 /// 画布设置图形抗锯齿
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <param name="antialias">是否抗锯齿</param>
 /// <returns></returns>
 BOOL _canvas_setantialias(HEXCANVAS hCanvas, BOOL antialias);
@@ -643,7 +647,7 @@ BOOL _canvas_setantialias(HEXCANVAS hCanvas, BOOL antialias);
 /// <summary>
 /// 画布设置图像抗锯齿,等效于同时设置文本和图形抗锯齿
 /// </summary>
-/// <param name="hCanvas"></param>
+/// <param name="hCanvas">画布句柄</param>
 /// <param name="antialias">是否抗锯齿</param>
 /// <returns></returns>
 BOOL _canvas_setimageantialias(HEXCANVAS hCanvas, BOOL antialias);
@@ -651,36 +655,36 @@ BOOL _canvas_setimageantialias(HEXCANVAS hCanvas, BOOL antialias);
 /// <summary>
 /// 画布设置文本抗锯齿
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="antialias"></param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="antialias">是否抗锯齿</param>
 /// <returns></returns>
 BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, BOOL antialias);
 
 /// <summary>
 /// 画布置矩阵
 /// </summary>
-/// <param name="hCanvas"></param>
-/// <param name="pMatrix">0.则重置</param>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="pMatrix">矩阵句柄 0.则重置</param>
 /// <returns></returns>
 BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix);
 
 /// <summary>
 /// 缓动创建
 /// </summary>
-/// <param name="dwType">常量ET_</param>
-/// <param name="pEasingContext"></param>
-/// <param name="dwMode">常量ES_的组合</param>
-/// <param name="pContext">描述表,可以是值或回调地址</param>
-/// <param name="nTotalTime">毫秒</param>
-/// <param name="nInterval">毫秒</param>
-/// <param name="nState">常量EES_</param>
-/// <param name="nStart"></param>
-/// <param name="nStop"></param>
-/// <param name="param1"></param>
-/// <param name="param2"></param>
-/// <param name="param3"></param>
-/// <param name="param4"></param>
-/// <returns></returns>
+/// <param name="dwType">缓动类型 常量EASING_TYPE_</param>
+/// <param name="pEasingContext">缓动类型为EASING_TYPE_CUSTOM时，值为自定义回调函数(nProcess,nStart,nStop,nCurrent*,pEasingContext)</param>
+/// <param name="dwMode">缓动模式 常量EASING_MODE_的组合</param>
+/// <param name="pContext">自定义参数,可以是值或回调地址</param>
+/// <param name="nTotalTime">总耗时 毫秒</param>
+/// <param name="nInterval">间隔耗时 毫秒</param>
+/// <param name="nState">缓动状态 常量EASING_STATE_</param>
+/// <param name="nStart">开始值</param>
+/// <param name="nStop">结束值</param>
+/// <param name="param1">参数1</param>
+/// <param name="param2">参数2</param>
+/// <param name="param3">参数3</param>
+/// <param name="param4">参数4</param>
+/// <returns>缓动指针</returns>
 HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG_PTR pContext,
                          INT nTotalTime, INT nInterval, DWORD nState, INT nStart, INT nStop,
                          LONG_PTR param1, LONG_PTR param2, LONG_PTR param3, LONG_PTR param4);
@@ -688,15 +692,15 @@ HEXEASING _easing_create(DWORD dwType, LPVOID pEasingContext, DWORD dwMode, LONG
 /// <summary>
 /// 缓动取状态
 /// </summary>
-/// <param name="pEasing"></param>
+/// <param name="pEasing">缓动指针</param>
 /// <returns></returns>
 DWORD _easing_getstate(HEXEASING pEasing);
 
 /// <summary>
 /// 缓动置状态
 /// </summary>
-/// <param name="pEasing"></param>
-/// <param name="nState"></param>
+/// <param name="pEasing">缓动指针</param>
+/// <param name="nState">状态</param>
 /// <returns></returns>
 BOOL _easing_setstate(HEXEASING pEasing, DWORD nState);
 
@@ -1696,6 +1700,14 @@ HEXRGN _rgn_combine(HEXRGN hRgnSrc, HEXRGN hRgnDst, INT nCombineMode, INT dstOff
 /// <returns></returns>
 HEXRGN _rgn_createfrompath(HEXPATH hPath);
 
+/// <summary>
+/// 区域创建自椭圆
+/// </summary>
+/// <param name="x">圆心横坐标</param>
+/// <param name="y">圆心纵坐标</param>
+/// <param name="radiusX">横向半径</param>
+/// <param name="radiusY">纵向半径</param>
+/// <returns></returns>
 HEXRGN _rgn_createfromellipse(FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY);
 
 /// <summary>

@@ -186,8 +186,7 @@ void _button_paint(HEXOBJ hObj, obj_s* pObj)
 
             _canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, nIndex), lptext, -1,
                                ps.dwTextFormat, ps.rcText.left, ps.rcText.top, ps.rcText.right,
-                               ps.rcText.bottom, pObj->dwShadowSize_,
-                               _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
+                               ps.rcText.bottom);
         }
         Ex_ObjEndPaint(hObj, &ps);
     }
@@ -343,8 +342,7 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
                     *tmp1 = 0;
                 }
                 _canvas_drawtextex(ps.hCanvas, hFont, crColor, lpText, -1, ps.dwTextFormat,
-                                   ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom,
-                                   0, 0, 0);
+                                   ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom);
                 if (tmp1) {
                     *tmp1 = 9;
                     if (!fHover) {
@@ -352,7 +350,7 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
                     }
                     _canvas_drawtextex(ps.hCanvas, hFont, crColor, (LPCWSTR)(tmp1 + 1), -1,
                                        ps.dwTextFormat | DT_RIGHT, ps.rcText.left, ps.rcText.top,
-                                       ps.rcText.right, ps.rcText.bottom, 0, 0, 0);
+                                       ps.rcText.right, ps.rcText.bottom);
                 }
                 if ((mii.fState & MFS_DEFAULT) != 0) {
                     _font_destroy(hFont);
@@ -397,9 +395,7 @@ void _item_paint(HEXOBJ hObj, obj_s* pObj)
             }
             if (lptext != 0) {
                 _canvas_drawtextex(ps.hCanvas, pObj->hFont_, crColor, lptext, -1, ps.dwTextFormat,
-                                   ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom,
-                                   pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW),
-                                   0);
+                                   ps.rcText.left, ps.rcText.top, ps.rcText.right, ps.rcText.bottom);
             }
         }
         Ex_ObjEndPaint(hObj, &ps);

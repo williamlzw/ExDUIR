@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _combobox_regsiter()
 {
@@ -523,8 +523,7 @@ void _combobox_paint(HEXOBJ hObj, obj_s* pObj)
         if (!FLAGS_CHECK(ps.dwStyle, COMBOBOX_STYLE_ALLOWEDIT)) {
             _canvas_drawtextex(ps.hCanvas, pObj->hFont_, _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL),
                                pObj->pstrTitle_, -1, ps.dwTextFormat, ps.rcText.left, ps.rcText.top,
-                               ps.rcText.right - Ex_Scale(24), ps.rcText.bottom,
-                               pObj->dwShadowSize_, _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
+                               ps.rcText.right - Ex_Scale(24), ps.rcText.bottom);
         }
         Ex_ObjEndPaint(hObj, &ps);
     }

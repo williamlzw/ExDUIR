@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _navbtn_paint(HEXOBJ hObj)
 {
@@ -22,7 +22,7 @@ void _navbtn_paint(HEXOBJ hObj)
     FLOAT nTextHeight = 0;
     _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj),
                          (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1, ps.dwTextFormat,
-                         0, ps.uWidth, ps.uHeight, &nTextWidth, &nTextHeight);
+                         ps.uWidth, ps.uHeight, &nTextWidth, &nTextHeight);
     HEXIMAGE hImage2 = (HEXIMAGE)Ex_ObjGetLong(hObj, 0);
     if (hImage2 != 0) {
         _img_getsize(hImage2, &nImageWidth, &nImageHeight);

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 BOOL _rgn_destroy(HEXRGN hRgn)
 {
@@ -8,6 +8,7 @@ BOOL _rgn_destroy(HEXRGN hRgn)
     }
     return nError == 0;
 }
+
 HEXRGN _rgn_createfromellipse(FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY) {
   ID2D1EllipseGeometry* hgn = nullptr;
   const D2D1_ELLIPSE ellipse1 =
@@ -15,6 +16,7 @@ HEXRGN _rgn_createfromellipse(FLOAT x, FLOAT y, FLOAT radiusX, FLOAT radiusY) {
   g_Ri.pD2Dfactory->CreateEllipseGeometry(ellipse1, &hgn);
   return hgn;
 }
+
 HEXRGN _rgn_createfromroundrect(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, FLOAT radiusX,
                                 FLOAT radiusY)
 {

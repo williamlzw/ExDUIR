@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "ExUIbase.hpp"
 #include "ExBrush.hpp"
 #include "ExPath.hpp"
@@ -108,9 +108,9 @@ namespace ExDUIR
 					return _canvas_drawtext(m_canvas, font.m_font, crText, lpwzText.c_str(), dwLen, dwDTFormat, left, top, right, bottom);
 				}
 
-				inline BOOL DrawTextFromColorEx(ExFont font, EXARGB crText, std::wstring lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
+				inline BOOL DrawTextFromColorEx(ExFont font, EXARGB crText, std::wstring lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 				{
-					return _canvas_drawtextex(m_canvas, font.m_font, crText, lpwzText.c_str(), dwLen, dwDTFormat, left, top, right, bottom, iGlowsize, crShadom, lParam);
+					return _canvas_drawtextex(m_canvas, font.m_font, crText, lpwzText.c_str(), dwLen, dwDTFormat, left, top, right, bottom);
 				}
 
 				inline BOOL DrawTextFromBrush(ExFont font, ExBrush brush, std::wstring lpwzText, INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
@@ -198,9 +198,9 @@ namespace ExDUIR
 					return _canvas_clear(m_canvas, color);
 				}
 
-				inline BOOL CalcTextSize(ExFont font, std::wstring lpwzText, INT dwLen, INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight)
+				inline BOOL CalcTextSize(ExFont font, std::wstring lpwzText, INT dwLen, INT dwDTFormat, FLOAT layoutWidth, FLOAT layoutHeight, FLOAT* lpWidth, FLOAT* lpHeight)
 				{
-					return _canvas_calctextsize(m_canvas, font.m_font, lpwzText.c_str(), dwLen, dwDTFormat, lParam, layoutWidth, layoutHeight, lpWidth, lpHeight);
+					return _canvas_calctextsize(m_canvas, font.m_font, lpwzText.c_str(), dwLen, dwDTFormat, layoutWidth, layoutHeight, lpWidth, lpHeight);
 				}
 
 				inline BOOL Blur(FLOAT fDeviation, RECT* lprc)

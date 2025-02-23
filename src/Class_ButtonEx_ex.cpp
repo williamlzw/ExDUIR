@@ -245,7 +245,7 @@ void _buttonex_paint(HEXOBJ hObj)
         FLOAT nTextHeight = NULL;
         _canvas_calctextsize(
             ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-            -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
+            -1, ps.dwTextFormat, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
         /* 图标 */
         hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, BUTTONEX_LONG_ICON);

@@ -2872,7 +2872,7 @@ void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu)
         FLOAT width, height, nMax = 0;
         for (INT i = 0; i < nCount; i++) {
             GetMenuStringW(hMenu, i, buff, 520, MF_BYPOSITION);
-            _canvas_calctextsize(hCanvas, hFont, buff, -1, DT_SINGLELINE, 0, 0, 0, &width, &height);
+            _canvas_calctextsize(hCanvas, hFont, buff, -1, DT_SINGLELINE, 0, 0, &width, &height);
             if (nMax < width) {
                 nMax = width;
             }

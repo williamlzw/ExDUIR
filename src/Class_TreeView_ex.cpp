@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 ClsPROC _tv_lpfn;
 
@@ -189,7 +189,7 @@ void _treeview_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pW
                 else {
                     FLOAT width = 0;
                     if (_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, item->pwzText, -1, 32,
-                                             0, 0, 0, &width, NULL)) {
+                                             0, 0, &width, NULL)) {
                         width += item->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT) +
                                  imgWidth + Ex_Scale(35);
                         if (FLAGS_CHECK(pObj->dwStyle_, TREEVIEW_STYLE_SHOWADDANDSUB)) {

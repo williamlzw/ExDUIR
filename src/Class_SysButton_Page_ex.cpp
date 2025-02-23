@@ -85,7 +85,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                 _canvas_drawtextex(ps.hCanvas, pObj->hFont_,
                                    _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1,
                                    pObj->dwTextFormat_, left, ps.rcText.top, ps.rcText.right,
-                                   ps.rcText.bottom, pObj->dwShadowSize_, 0, 0);
+                                   ps.rcText.bottom);
             }
         }
         Ex_ObjEndPaint(hObj, &ps);

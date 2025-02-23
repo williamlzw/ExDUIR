@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 ClsPROC m_pfnTListView;
 
@@ -450,8 +450,7 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                     _canvas_drawtextex(ps.hCanvas, pObj->hFont_,
                                        _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), lpText, -1,
                                        ps.dwTextFormat, ps.rcText.left, ps.rcText.top,
-                                       ps.rcText.right, ps.rcText.bottom, pObj->dwShadowSize_,
-                                       _obj_getcolor(pObj, COLOR_EX_TEXT_SHADOW), 0);
+                                       ps.rcText.right, ps.rcText.bottom);
                 }
                 Ex_ObjEndPaint(hObj, &ps);
             }
@@ -1325,7 +1324,7 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
     RECT* rcClient = (RECT*)&pObj->c_left_;
     FLOAT iWidth   = 0;
     FLOAT iHeight  = 0;
-    _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, L"S", 1, 0, 0, rcClient->right,
+    _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, L"S", 1, 0, rcClient->right,
                          rcClient->bottom, &iWidth, &iHeight);
     if (bHView) {
         iWidth  = Ex_Scale(60);

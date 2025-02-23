@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _listbuttonex_register()
 {
@@ -301,7 +301,7 @@ INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText)
 
     if (nType == 1) {
         if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-            _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, wzText, -1, 0, 0, pObj->c_right_,
+            _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, wzText, -1, 0, pObj->c_right_,
                                  pObj->c_bottom_, &iWidth, &iHeight);
             nWidth = (UINT)iWidth + 15;
         }
@@ -312,7 +312,7 @@ INT _listbuttonex_itemWidth(HEXOBJ hObj, INT nType, UINT nImage, LPCWSTR wzText)
         }
         if (wzText != NULL) {
             if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-                _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, wzText, -1, 0, 0,
+                _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, wzText, -1, 0,
                                      pObj->c_right_, pObj->c_bottom_, &iWidth, &iHeight);
                 nWidth += (UINT)iWidth + 10;
             }

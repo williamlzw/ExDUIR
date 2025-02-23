@@ -255,7 +255,7 @@ public:
 			}
 			FLOAT nWidthText = 0;
 			FLOAT nHeightText = 0;
-			canvas.CalcTextSize(ExFont::GetFontFromObj(hObj), obj.GetText(), -1, ps.dwTextFormat, 0, ps.uWidth, ps.uHeight, &nWidthText, &nHeightText);
+			canvas.CalcTextSize(ExFont::GetFontFromObj(hObj), obj.GetText(), -1, ps.dwTextFormat, ps.uWidth, ps.uHeight, &nWidthText, &nHeightText);
 			HEXIMAGE hImg = obj.GetLongLParam();
 			INT nWidthIcon = 0;
 			INT nHeightIcon = 0;

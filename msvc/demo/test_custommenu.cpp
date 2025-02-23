@@ -22,7 +22,7 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
         FLOAT nHeightText = 0;
         _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj),
                              (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
-                             ps.dwTextFormat, 0, ps.uWidth, ps.uHeight, &nWidthText, &nHeightText);
+                             ps.dwTextFormat, ps.uWidth, ps.uHeight, &nWidthText, &nHeightText);
         HEXIMAGE hImg        = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
         INT      nWidthIcon  = 0;
         INT      nHeightIcon = 0;

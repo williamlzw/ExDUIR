@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _titlebar_register()
 {
@@ -17,7 +17,7 @@ LRESULT CALLBACK _titlebar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             FLOAT   nWidthText  = 0;
             FLOAT   nHeightText = 0;
             FLOAT   nTop        = 0;
-            _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), lpwzText, -1, -1, 0, ps.uWidth,
+            _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj), lpwzText, -1, -1, ps.uWidth,
                                  ps.uHeight, &nWidthText, &nHeightText);
             nTop = ps.uHeight / 2;
 

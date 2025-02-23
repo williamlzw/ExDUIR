@@ -1,4 +1,4 @@
-LIBRARY
+﻿LIBRARY
 
 EXPORTS
 Ex_WriteFile
@@ -370,6 +370,7 @@ _rgn_createfrompath
 _rgn_getlines
 _rgn_getbounds
 _rgn_createfromellipse
+
 ;----------------------------------------
 ;easing
 ;----------------------------------------

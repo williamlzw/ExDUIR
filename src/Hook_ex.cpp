@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 LRESULT CALLBACK _hook_proc(INT code, WPARAM wParam, LPARAM lParam)
 {
@@ -184,7 +184,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
     if (hFont != 0 && hCanvas != 0) {
         if (lpwzCheckbox != 0) {
             if (_canvas_begindraw(hCanvas)) {
-                _canvas_calctextsize(hCanvas, hFont, lpwzCheckbox, -1, DT_LEFT | DT_SINGLELINE, 0,
+                _canvas_calctextsize(hCanvas, hFont, lpwzCheckbox, -1, DT_LEFT | DT_SINGLELINE,
                                      0, 0, &widthCheckbox, &heightCheckbox);
                 _canvas_enddraw(hCanvas);
             }
@@ -194,7 +194,7 @@ void _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
 
         if (_canvas_begindraw(hCanvas)) {
             _canvas_calctextsize(hCanvas, hFont, pMsg->lpText_, -1,
-                                 DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, 0, width,
+                                 DT_NOPREFIX | DT_WORDBREAK | DT_EDITCONTROL, width,
                                  rcText.bottom - rcText.top, &w, &h);
             _canvas_enddraw(hCanvas);
         }

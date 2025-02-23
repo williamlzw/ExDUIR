@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 ClsPROC m_pfnCheckButtonProc; /*控件基类的消息回调函数*/
 
@@ -85,7 +85,7 @@ void _checkbuttonex_paint(HEXOBJ hObj)
         FLOAT nTextHeight = NULL;
         _canvas_calctextsize(
             ps.hCanvas, Ex_ObjGetFont(hObj), (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE),
-            -1, ps.dwTextFormat, 0, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
+            -1, ps.dwTextFormat, (FLOAT)ps.uWidth, (FLOAT)ps.uHeight, &nTextWidth, &nTextHeight);
 
         /* 定义选择框矩形 */
         rcBlock.left   = ps.rcPaint.left + (long)Ex_Scale(2);

@@ -338,7 +338,7 @@ BOOL _obj_autosize(obj_s* pObj, HEXOBJ hObj, INT* width, INT* height)
         FLOAT   h      = 0;
         if (ptitle != 0) {
             _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, ptitle, -1, pObj->dwTextFormat_,
-                                 NULL, iWidth, iHeight, &w, &h);
+                                 iWidth, iHeight, &w, &h);
         }
         *width  = pObj->t_left_ + pObj->t_right_ + w + Ex_Scale(2);
         *height = pObj->t_top_ + pObj->t_bottom_ + h + Ex_Scale(2);

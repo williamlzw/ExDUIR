@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 class CustomTextRenderer : public IDWriteTextRenderer
 {
@@ -181,7 +181,7 @@ public:
 
 BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrText, LPCWSTR lpwzText,
                                 INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right,
-                                FLOAT bottom, INT iGlowsize, HEXBRUSH hrShadom, LPARAM lParam)
+                                FLOAT bottom, INT iGlowsize, HEXBRUSH hrShadom)
 {
     if (dwLen == -1) {
         dwLen = lstrlenW(lpwzText);
@@ -196,7 +196,7 @@ BOOL _canvas_drawtextwitheffect(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hrTex
                 if (bottom > top && right > left) {
                     FLOAT              iWidth, iHeight;
                     IDWriteTextLayout* pLayout = nullptr;
-                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat,
                                                 right - left, bottom - top, &iWidth, &iHeight,
                                                 &pLayout, &nError)) {
                         CustomTextRenderer* m_pTextRenderer =
@@ -966,7 +966,7 @@ BOOL _canvas_getsize(HEXCANVAS hCanvas, INT* width, INT* height)
 }
 
 BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText, INT dwLen,
-                             INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight,
+                             INT dwDTFormat, FLOAT layoutWidth, FLOAT layoutHeight,
                              FLOAT* lpWidth, FLOAT* lpHeight, IDWriteTextLayout** ppLayout,
                              INT* nError)
 {
@@ -1048,7 +1048,7 @@ BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText,
 }
 
 BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, INT dwLen,
-                          INT dwDTFormat, LPARAM lParam, FLOAT layoutWidth, FLOAT layoutHeight,
+                          INT dwDTFormat, FLOAT layoutWidth, FLOAT layoutHeight,
                           FLOAT* lpWidth, FLOAT* lpHeight)
 {
     INT nError = -1;
@@ -1062,7 +1062,7 @@ BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, IN
             HashTable_Get(g_Li.hTableFont, (size_t)hFont, (size_t*)&pFont);
             if (pFont) {
                 IDWriteTextLayout* pLayout = nullptr;
-                _canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                _canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat,
                                         layoutWidth, layoutHeight, lpWidth, lpHeight, &pLayout,
                                         &nError);
                 if (pLayout) {
@@ -1076,8 +1076,7 @@ BOOL _canvas_calctextsize(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR lpwzText, IN
 }
 
 BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR lpwzText,
-                        INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom,
-                        INT iGlowsize, EXARGB crShadom, LPARAM lParam)
+                        INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
     if (dwLen == -1) {
         dwLen = lstrlenW(lpwzText);
@@ -1092,7 +1091,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
                 if (bottom > top && right > left) {
                     FLOAT              iWidth, iHeight;
                     IDWriteTextLayout* pLayout = nullptr;
-                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat,
                                                 right - left, bottom - top, &iWidth, &iHeight,
                                                 &pLayout, &nError)) {
                         HEXBRUSH hBrush = _brush_create(crText);
@@ -1118,7 +1117,7 @@ BOOL _canvas_drawtextex(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR
 
 BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText,
                          INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right,
-                         FLOAT bottom, INT iGlowsize, EXARGB crShadom, LPARAM lParam)
+                         FLOAT bottom)
 {
     if (dwLen == -1) {
         dwLen = lstrlenW(lpwzText);
@@ -1133,7 +1132,7 @@ BOOL _canvas_drawtextex2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCW
                 if (bottom > top && right > left) {
                     FLOAT              iWidth, iHeight;
                     IDWriteTextLayout* pLayout = nullptr;
-                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat, lParam,
+                    if (_canvas_calctextsize_ex(pCanvas, pFont, lpwzText, dwLen, dwDTFormat,
                                                 right - left, bottom - top, &iWidth, &iHeight,
                                                 &pLayout, &nError)) {
                         ID2D1DeviceContext* pContext = pCanvas->pContext_;
@@ -1157,14 +1156,14 @@ BOOL _canvas_drawtext(HEXCANVAS hCanvas, HEXFONT hFont, EXARGB crText, LPCWSTR l
                       INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
     return _canvas_drawtextex(hCanvas, hFont, crText, lpwzText, dwLen, dwDTFormat, left, top, right,
-                              bottom, 0, 0, NULL);
+                              bottom);
 }
 
 BOOL _canvas_drawtext2(HEXCANVAS hCanvas, HEXFONT hFont, HEXBRUSH hBrush, LPCWSTR lpwzText,
                        INT dwLen, INT dwDTFormat, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 {
     return _canvas_drawtextex2(hCanvas, hFont, hBrush, lpwzText, dwLen, dwDTFormat, left, top,
-                               right, bottom, 0, 0, NULL);
+                               right, bottom);
 }
 
 BOOL _canvas_blur(HEXCANVAS hCanvas, FLOAT fDeviation, RECT* lprc)

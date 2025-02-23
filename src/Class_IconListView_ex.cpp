@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 ClsPROC m_pfnListView_icon;
 
@@ -185,7 +185,7 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
         FLOAT nHeightText = 0;
         if (pItemInfo->pwzText != 0) {
             _canvas_calctextsize(cdr->hCanvas, Ex_ObjGetFont(hObj), pItemInfo->pwzText, -1,
-                                 Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT), 0,
+                                 Ex_ObjGetLong(hObj, OBJECT_LONG_TEXTFORMAT),
                                  cdr->rcPaint.right - cdr->rcPaint.left,
                                  cdr->rcPaint.bottom - cdr->rcPaint.top, &nWidthText, &nHeightText);
         }

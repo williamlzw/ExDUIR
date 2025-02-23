@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _groupbox_regsiter()
 {
@@ -23,7 +23,7 @@ void _groupbox_paint(HEXOBJ hObj, obj_s* pObj)
         HEXBRUSH hBrush = _brush_create(0);
         if (lpText) {
             FLOAT retWidth, retHeight;
-            _canvas_calctextsize(ps.hCanvas, pObj->hFont_, lpText, -1, ps.dwTextFormat, 0,
+            _canvas_calctextsize(ps.hCanvas, pObj->hFont_, lpText, -1, ps.dwTextFormat,
                                  ps.uWidth, ps.uHeight, &retWidth, &retHeight);
             rcText.right  = retWidth;
             rcText.bottom = retHeight;
