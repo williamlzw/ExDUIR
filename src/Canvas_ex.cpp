@@ -619,7 +619,7 @@ BOOL _canvas_drawregion(HEXCANVAS hCanvas, HEXRGN hRgn, HEXBRUSH hBrush,
         D2D1_LINE_JOIN_BEVEL, 1.0f, (D2D1_DASH_STYLE)strokeStyle, 0);
     pContext->DrawGeometry((ID2D1Geometry*)hRgn, (ID2D1Brush*)hBrush,
                            Ex_Scale(strokeWidth), stroke);
-   
+    _strokestyle_destroy(stroke);
   }
   Ex_SetLastError(nError);
   return nError == 0;
