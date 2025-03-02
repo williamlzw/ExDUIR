@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _taggingboard_register()
 {
@@ -221,58 +221,73 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                       (size_t)_taggingboard_OnScrollBarMsg);   // 改变滚动条回调
     }
     else if (uMsg == WM_SIZE) {
-        /*auto img = (HEXIMAGE)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_BKG);
-        if (img != 0)
-        {
+        auto img = (HEXIMAGE)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_BKG);
+        if (img != 0) {
             INT width, height;
             _img_getsize(img, &width, &height);
-            INT widthRC = (INT)LOWORD(lParam);
-            INT heightRC = (INT)HIWORD(lParam);
-            INT edge;
-            edge = heightRC;
-            INT edgeImg;
-            if (height > width)
-            {
-                edgeImg = height;
-            }
-            else {
-                edgeImg = width;
-            }
+            RECT rc;
+            Ex_ObjGetClientRect(hObj, &rc);
+            INT widthRC  = rc.right - rc.left;
+            INT heightRC = rc.bottom - rc.top;
+            widthRC      = Ex_Scale(widthRC);
+            heightRC     = Ex_Scale(heightRC);
+
+            INT   edge     = (height > width) ? heightRC : widthRC;
+            INT   edgeImg  = (height > width) ? height : width;
             float scaleImg = (float)edgeImg / edge;
-            INT left = (widthRC - width / scaleImg) / 2;
-            INT top = (heightRC - height / scaleImg) / 2;
-            auto scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_SCALE);
+
+            INT left = (widthRC - (float)width / scaleImg) / 2;
+            INT top  = (heightRC - (float)height / scaleImg) / 2;
+
+            auto  scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_SCALE);
             float oldscale;
             RtlMoveMemory(&oldscale, scalePtr, 4);
-            RtlMoveMemory(scalePtr, &scaleImg, 4);
             INT oldleft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET);
-            INT oldtop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET);
+            INT oldtop  = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET);
+
+            RtlMoveMemory(scalePtr, &scaleImg, 4);
             Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET, left);
             Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET, top);
 
             auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ARRAY);
-            if (arr->count > 1)
-            {
-                for (int i = 0; i < arr->count - 1; i++)
-                {
+            if (arr->count > 1) {
+                for (int i = 0; i < arr->count - 1; i++) {
                     size_t ptrValue = 0;
                     RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
-        sizeof(size_t)); EX_POLYGON* ptr = (EX_POLYGON*)ptrValue; if (ptr->count > 0)
-                    {
-                        for (int j = 0; j < ptr->count; j++)
-                        {
+                                  sizeof(size_t));
+                    EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
+                    if (ptr->count > 0) {
+                        for (int j = 0; j < ptr->count; j++) {
                             float x = 0, y = 0;
                             RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
                             RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
-                            x = (float)(x - oldleft) * oldscale / scaleImg + left;
-                            y = (float)(y - oldtop) * oldscale / scaleImg + top;
+                            x = (x - oldleft) * oldscale / scaleImg + left;
+                            y = (y - oldtop) * oldscale / scaleImg + top;
                             RtlMoveMemory((LPVOID)((size_t)ptr->points + j * 8), &x, 4);
                             RtlMoveMemory((LPVOID)((size_t)ptr->points + j * 8 + 4), &y, 4);
                         }
                     }
                 }
             }
-        }*/
+
+            // 更新滚动条范围
+            INT vHeight = -top;
+            INT vWidth  = -left;
+            if (vHeight > 0) {
+                Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, -vHeight, vHeight, TRUE);
+            }
+            else {
+                Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, 1, TRUE);
+            }
+            if (vWidth > 0) {
+                Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_HORZ, -vWidth, vWidth, TRUE);
+            }
+            else {
+                Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_HORZ, 0, 1, TRUE);
+            }
+
+            Ex_ObjInvalidateRect(hObj, 0);
+        }
     }
     else if (uMsg == WM_DESTROY) {
         auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ARRAY);
