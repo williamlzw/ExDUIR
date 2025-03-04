@@ -258,6 +258,7 @@
     <ClCompile Include="test_tray.cpp" />
     <ClCompile Include="test_treelistview.cpp" />
     <ClCompile Include="test_vlcplay.cpp" />
+    <ClCompile Include="test_waveprogressbar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
@@ -323,6 +324,7 @@
     <ClInclude Include="test_tray.h" />
     <ClInclude Include="test_treelistview.h" />
     <ClInclude Include="test_vlcplay.h" />
+    <ClInclude Include="test_waveprogressbar.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />

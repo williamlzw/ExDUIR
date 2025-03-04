@@ -827,7 +827,7 @@ BOOL _taggingboard_ptinregion(HEXOBJ hObj, FLOAT ptx, FLOAT pty, INT* index)
                           sizeof(size_t));
             EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
             HEXPATH     path;
-            _path_create(1, &path);
+            _path_create(PATH_FLAG_DISABLESCALE, &path);
             _path_open(path);
             _path_beginfigure(path);
             if (ptr->count > 0) {
@@ -943,7 +943,7 @@ void _taggingboard_paint(HEXOBJ hObj)
                               sizeof(size_t));
                 EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
                 HEXPATH     path;
-                _path_create(1, &path);
+                _path_create(PATH_FLAG_DISABLESCALE, &path);
                 _path_open(path);
                 _path_beginfigure(path);
                 if (ptr->count > 0) {

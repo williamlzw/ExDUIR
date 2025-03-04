@@ -1336,6 +1336,23 @@
 #define CIRCLEPROGRESSBAR_LONG_FONT 6
 #pragma endregion circleprogressbar long constant
 
+#pragma region waveprogressbar long constant
+// 水波进度条属性_位置 0到100
+#define WAVEPROGRESSBAR_LONG_POS 0
+// 水波进度条属性_水波宽度
+#define WAVEPROGRESSBAR_LONG_WAVE_WIDTH 1
+// 水波进度条属性_水波高度
+#define WAVEPROGRESSBAR_LONG_WAVE_HEIGHT 2
+// 水波进度条属性_水波左边，初始值为水波宽度取负数
+#define WAVEPROGRESSBAR_LONG_LEFT_X 3
+// 水波进度条属性_字体
+#define WAVEPROGRESSBAR_LONG_FONT 4
+// 水波进度条属性_背景色
+#define WAVEPROGRESSBAR_LONG_BACKGROUNDCOLOR 5
+// 水波进度条属性_前景色
+#define WAVEPROGRESSBAR_LONG_FOREGROUNDCOLOR 6
+#pragma endregion waveprogressbar long constant
+
 // png数据头
 #define PACKAGEHEADER_PNGBITS 1
 // 主题包头

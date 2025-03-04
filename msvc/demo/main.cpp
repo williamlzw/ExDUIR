@@ -13,16 +13,16 @@ const int verticalSpacing   = 20;    // 按钮纵向间距
 
 // 按钮数据
 const std::vector<std::wstring> buttonData = {
-    L"按钮开关",       L"标签",       L"单选复选框",    L"编辑框",    L"列表框",     L"菜单",
-    L"九宫格自定外形", L"布局选项卡", L"分组框",        L"绝对布局",  L"相对布局",   L"线性布局",
-    L"流式布局",       L"表格布局",   L"组合框",        L"缓动窗口",  L"异型窗口",   L"消息框",
-    L"自定义按钮",     L"报表列表",   L"图标列表",      L"树形列表",  L"矩阵",       L"扩展按钮",
-    L"扩展编辑框",     L"自定义菜单", L"事件分发",      L"加载动画",  L"滑块条",     L"旋转图片框",
-    L"拖动组件",       L"接收拖曳",   L"进度条",        L"限制通知",  L"模态窗口",   L"标题框",
-    L"日期框",         L"颜色选择器", L"月历",          L"CEF浏览框", L"打分按钮",   L"轮播",
-    L"模板列表",       L"鼠标绘制板", L"调色板",        L"属性框",    L"原生子窗口", L"全屏置顶",
-    L"路径与区域",     L"VLC播放器",  L"自定字体和SVG", L"卷帘菜单",  L"托盘图标",   L"蒙板",
-    L"标注画板",       L"效果器",     L"打包",          L"环形进度条"};
+    L"按钮开关",       L"标签",       L"单选复选框",    L"编辑框",     L"列表框",     L"菜单",
+    L"九宫格自定外形", L"布局选项卡", L"分组框",        L"绝对布局",   L"相对布局",   L"线性布局",
+    L"流式布局",       L"表格布局",   L"组合框",        L"缓动窗口",   L"异型窗口",   L"消息框",
+    L"自定义按钮",     L"报表列表",   L"图标列表",      L"树形列表",   L"矩阵",       L"扩展按钮",
+    L"扩展编辑框",     L"自定义菜单", L"事件分发",      L"加载动画",   L"滑块条",     L"旋转图片框",
+    L"拖动组件",       L"接收拖曳",   L"进度条",        L"限制通知",   L"模态窗口",   L"标题框",
+    L"日期框",         L"颜色选择器", L"月历",          L"CEF浏览框",  L"打分按钮",   L"轮播",
+    L"模板列表",       L"鼠标绘制板", L"调色板",        L"属性框",     L"原生子窗口", L"全屏置顶",
+    L"路径与区域",     L"VLC播放器",  L"自定字体和SVG", L"卷帘菜单",   L"托盘图标",   L"蒙板",
+    L"标注画板",       L"效果器",     L"打包",          L"环形进度条", L"水波进度条"};
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
                                   LRESULT* lpResult)
@@ -320,7 +320,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_tagging,            // 155标注画板
         test_effect,             // 156效果器
         test_respack,            // 157打包
-        test_circleprogressbar   // 158环形进度条
+        test_circleprogressbar,  // 158环形进度条
+        test_waveprogressbar     // 159水波进度条
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;

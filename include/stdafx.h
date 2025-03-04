@@ -149,6 +149,7 @@
 #include "Class_Win10Loading_ex.h"
 #include "Class_scrollbar_ex.h"
 #include "Class_CircleProgressBar_ex.h"
+#include "Class_WaveProgressBar_ex.h"
 
 #ifdef ENABLE_VLC
 #define VCL_PLAYER

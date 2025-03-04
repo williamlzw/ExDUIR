@@ -41,6 +41,7 @@ void _object_init()
     _rollmenu_register();
     _taggingboard_register();
     _circleprogressbar_register();
+    _waveprogressbar_register();
 #ifdef ENABLE_VLC
     _vlcplayer_register();
 #endif
