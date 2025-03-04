@@ -308,7 +308,7 @@ _font_createfromlogfont
 _font_getlogfont
 _font_getcontext
 _font_createfromfile
-
+_font_createfrommem
 ;----------------------------------------
 ;matrix
 ;----------------------------------------

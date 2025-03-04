@@ -288,7 +288,6 @@ struct LOCALINFO
     LPCWSTR                         lpStrClose;
     LPCWSTR                         lpStrHelp;
     UINT                            dwClickTime;
-    MFFontContext*                  fContext;
 };
 
 struct RENDERINFO
