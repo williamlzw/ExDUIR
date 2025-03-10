@@ -329,11 +329,12 @@ HEXRES Ex_ResLoadFromFile(LPCWSTR lptszFile)
     return ret;
 }
 
-void Ex_ResFree(HEXRES hRes)
+BOOL Ex_ResFree(HEXRES hRes)
 {
     if (hRes != 0) {
-        HashTable_Destroy((EX_HASHTABLE*)hRes);
+        return HashTable_Destroy((EX_HASHTABLE*)hRes);
     }
+    return FALSE;
 }
 
 BOOL Ex_ResGetFileFromAtom(HEXRES hRes, EXATOM atomPath, LPVOID* lpFile, size_t* dwFileLen)

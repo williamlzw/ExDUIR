@@ -3065,7 +3065,8 @@ BOOL Ex_ReadResSource(WORD lpname, LPCWSTR lpType, std::vector<CHAR>* retData);
 /// 资源释放
 /// </summary>
 /// <param name="hRes"></param>
-void Ex_ResFree(HEXRES hRes);
+/// <returns></returns>
+BOOL Ex_ResFree(HEXRES hRes);
 
 /// <summary>
 /// 获取资源文件

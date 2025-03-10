@@ -150,6 +150,9 @@ void Ex_UnInit()
     MemPool_Destroy(g_Li.hMemPoolMsg);
     Thread_DeleteCriticalSection(g_Li.csError);
     FreeLibrary(g_Ri.hRiched20);
+    DestroyIcon(g_Li.hIcon); 
+    DestroyIcon(g_Li.hIconsm); 
+    DestroyCursor(g_Li.hCursor);
     CoUninitialize();
 }
 
@@ -235,7 +238,7 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
                         HICON hicon = CreateIconFromResourceEx(
                             (PBYTE)lpMem, ((ICONDIRENTRY*)offset)->dwBytesInRes, bIcon, 196608, b1,
                             b2, 0);
-                        ret = CopyImage(hicon, uType, 0, 0, 4);
+                        ret = CopyImage(hicon, uType, 0, 0, LR_COPYRETURNORG);
                     }
                 }
                 else {
@@ -248,7 +251,7 @@ LPVOID Ex_LoadImageFromMemory(LPVOID lpData, size_t dwLen, INT uType, INT nIndex
                             SHORT objType = 0;
                             ((IPicture*)lpObj)->get_Type(&objType);
                             if (objType == uType) {
-                                ret = CopyImage((HANDLE)hImg, uType, 0, 0, 4);
+                                ret = CopyImage((HANDLE)hImg, uType, 0, 0, LR_COPYRETURNORG);
                             }
                             ((IPicture*)lpObj)->Release();
                         }
