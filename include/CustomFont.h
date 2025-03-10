@@ -1,249 +1,294 @@
-﻿#pragma once
+﻿#ifndef CUSTOMFONT_H_
+#define CUSTOMFONT_H_
+///////////////////////////////////////////////////////////////////////////////
+template <typename T>
+class ExUnknownImpl : public T {
+ public:
+  ExUnknownImpl() : m_ref(1) {}
+  virtual ~ExUnknownImpl() {}
 
+  STDMETHOD_(ULONG, AddRef)(void) override {
+    return InterlockedIncrement(&m_ref);
+  }
+  STDMETHOD_(ULONG, Release)(void) override {
+    long ref = InterlockedDecrement(&m_ref);
+    if (ref == 0) {
+      delete this;
+    }
+    return ref;
+  }
+
+ private:
+  long m_ref;
+};
+
+template <typename T, typename T_FOR_DESTROY>
+class ExUnknownImplEx : public ExUnknownImpl<T> {
+ public:
+  STDMETHOD_(ULONG, Release)(void) override {
+    long ref = InterlockedDecrement(&__super::m_ref);
+    if (ref == 0) {
+      delete static_cast<T>(this);
+    }
+    return ref;
+  }
+};
+
+#define EX_DECLEAR_INTERFACE_BEGIN() \
+  STDMETHOD(QueryInterface)(REFIID riid, void** ppvObject) override {
+#define EX_DECLEAR_INTERFACE(INTERFACE)        \
+  if (IsEqualIID(riid, __uuidof(INTERFACE))) { \
+    *ppvObject = this;                         \
+    this->AddRef();                            \
+    return S_OK;                               \
+  }
+
+#define EX_DECLEAR_INTERFACE_2(_GUID_) \
+  if (IsEqualIID(riid, _GUID_)) {      \
+    *ppvObject = this;                 \
+    this->AddRef();                    \
+    return S_OK;                       \
+  }
+
+#define EX_DECLEAR_INTERFACE_EX(_GUID_, PTR) \
+  if (IsEqualIID(riid, _GUID_)) {            \
+    *ppvObject = PTR;                        \
+    this->AddRef();                          \
+    return S_OK;                             \
+  }
+
+#define EX_DECLEAR_INTERFACE_END()                                 \
+  return E_NOINTERFACE;                                            \
+  }                                                                \
+  template <class T>                                               \
+  inline HRESULT STDMETHODCALLTYPE QueryInterface(T** ppvObject) { \
+    return this->QueryInterface(__uuidof(T), (void**)ppvObject);   \
+  }
+/////////////////////////////////////////////////////////////////////////////
+/// 数据块
+struct ExData {
+  /// 数据指针
+  byte* data;
+
+  /// 数据大小
+  size_t size;
+
+  ExData() : data(nullptr), size(0) {}
+  ExData(byte* data, size_t size) : data(data), size(size) {}
+};
+///////////////////////////////////////////////////////////////////////////////
+template <class T>
+class ExLazySingleton {
+ private:
+  static T* s_instance;
+
+ public:
+  static bool SetInstance(T* instance) {
+    bool is_null = s_instance == nullptr;
+    if (is_null) {
+      s_instance = instance;
+    }
+    return is_null;
+  }
+
+  static T* GetInstance() {
+    if (s_instance == nullptr) {
+      s_instance = new T();
+    }
+    return s_instance;
+  }
+
+  template <class... Args>
+  static T* GetInstance(Args... args) {
+    if (s_instance == nullptr) {
+      s_instance = new T(args...);
+    }
+    return s_instance;
+  }
+
+  static T* Instance() { return s_instance; }
+
+  static T* DetachInstance() {
+    T* temp = s_instance;
+    s_instance = nullptr;
+    return temp;
+  }
+
+  static void ClearInstance(bool delete_instance = true) {
+    if (s_instance != nullptr) {
+      if (delete_instance) {
+        delete s_instance;
+      }
+      s_instance = nullptr;
+    }
+  }
+};
+
+template <class T>
+T* ExLazySingleton<T>::s_instance = nullptr;
+///////////////////////////////////////////////////////////////////////////////
+#define SafeDelete(ptr) \
+  if (ptr != nullptr) { \
+    delete ptr;         \
+    ptr = NULL;         \
+  }
+#define SafeDeleteArry(ptr) \
+  if (ptr != nullptr) {     \
+    delete[] ptr;           \
+    ptr = NULL;             \
+  }
 #define SafeRelease(lpx) \
-    if (lpx != NULL) {   \
-        lpx->Release();  \
-        lpx = NULL;      \
-    }   // 释放COM
+  if (lpx != NULL) {     \
+    lpx->Release();      \
+    lpx = NULL;          \
+  }  // 释放COM
+///////////////////////////////////////////////////////////////
+	// 字体文件流对象
+class ExFontFileStream : public ExUnknownImpl<IDWriteFontFileStream> {
+ public:
+  EX_DECLEAR_INTERFACE_BEGIN();
+  EX_DECLEAR_INTERFACE(IUnknown);
+  EX_DECLEAR_INTERFACE(IDWriteFontFileStream);
+  EX_DECLEAR_INTERFACE_END();
 
-class Resource_FontFileLoader : public IDWriteFontFileLoader
-{
-public:
-    // IUnknown methods
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE   AddRef();
-    virtual ULONG STDMETHODCALLTYPE   Release();
+  ExFontFileStream(ExData* data) { m_data = *data; }
 
-    // IDWriteFontFileLoader methods
-    virtual HRESULT STDMETHODCALLTYPE
-    CreateStreamFromKey(void const* fontFileReferenceKey, UINT32 fontFileReferenceKeySize,
-                        OUT IDWriteFontFileStream** fontFileStream);
+  virtual HRESULT __stdcall ReadFileFragment(void const** fragmentStart,
+                                             UINT64 fileOffset,
+                                             UINT64 fragmentSize,
+                                             void** fragmentContext) override {
+    *fragmentContext = nullptr;
 
-    // Gets the singleton loader instance.
-    static IDWriteFontFileLoader* GetLoader() { return instance_; }
-
-    static bool IsLoaderInitialized() { return instance_ != NULL; }
-
-private:
-    ULONG                         m_refCount;
-    static IDWriteFontFileLoader* instance_;
-};
-
-
-class Resource_FontFileStream : public IDWriteFontFileStream
-{
-public:
-    Resource_FontFileStream(int date, int len);
-
-    // IUnknown methods
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE   AddRef();
-    virtual ULONG STDMETHODCALLTYPE   Release();
-
-    // IDWriteFontFileStream methods
-    virtual HRESULT STDMETHODCALLTYPE
-    ReadFileFragment(void const** fragmentStart,   // [fragmentSize] in bytes
-                     UINT64 fileOffset, UINT64 fragmentSize, OUT void** fragmentContext);
-
-    virtual void STDMETHODCALLTYPE ReleaseFileFragment(void* fragmentContext);
-
-    virtual HRESULT STDMETHODCALLTYPE GetFileSize(OUT UINT64* fileSize);
-
-    virtual HRESULT STDMETHODCALLTYPE GetLastWriteTime(OUT UINT64* lastWriteTime);
-
-
-private:
-    ULONG m_refCount;
-    int   m_data;   // [resourceSize_] in bytes
-    int   m_size;
-};
-
-class Resource_FontFileEnumerator : public IDWriteFontFileEnumerator
-{
-public:
-    // IUnknown methods
-    Resource_FontFileEnumerator(int nextIndex, IDWriteFontFile* currentFile,
-                                void const* collectionKey, int collectionKeySize,
-                                IDWriteFactory* factory);
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE   AddRef();
-    virtual ULONG STDMETHODCALLTYPE   Release();
-
-    // IDWriteFontFileEnumerator methods
-    virtual HRESULT STDMETHODCALLTYPE MoveNext(OUT BOOL* hasCurrentFile);
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentFontFile(OUT IDWriteFontFile** fontFile);
-
-private:
-    ULONG            m_refCount;
-    IDWriteFactory*  m_factory;
-    IDWriteFontFile* m_currentFile;
-    int              m_collectionKeySize;
-    int              m_nextIndex;
-    int              m_collectionKey;
-};
-
-class Resource_FontCollectionLoader : public IDWriteFontCollectionLoader
-{
-public:
-    // IUnknown methods
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE   AddRef();
-    virtual ULONG STDMETHODCALLTYPE   Release();
-
-    // IDWriteFontCollectionLoader methods
-    virtual HRESULT STDMETHODCALLTYPE CreateEnumeratorFromKey(
-        IDWriteFactory* factory,
-        void const*     collectionKey,   // [collectionKeySize] in bytes
-        UINT32 collectionKeySize, OUT IDWriteFontFileEnumerator** fontFileEnumerator);
-    // Gets the singleton loader instance.
-    static IDWriteFontCollectionLoader* GetLoader() { return instance_; }
-
-    static bool IsLoaderInitialized() { return instance_ != NULL; }
-
-private:
-    ULONG                               m_refCount;
-    static IDWriteFontCollectionLoader* instance_;
-};
-
-
-///////////////////////////////////////////////////////////////////
-// Acquires an additional reference, if non-null.
-template<typename InterfaceType> inline InterfaceType* SafeAcquire(InterfaceType* newObject)
-{
-    if (newObject != NULL) newObject->AddRef();
-
-    return newObject;
-}
-
-
-// Sets a new COM object, releasing the old one.
-template<typename InterfaceType>
-inline void SafeSet(InterfaceType** currentObject, InterfaceType* newObject)
-{
-    SafeAcquire(newObject);
-    SafeRelease(currentObject);
-    currentObject = newObject;
-}
-
-// Maps exceptions to equivalent HRESULTs,
-inline HRESULT ExceptionToHResult() throw()
-{
-    try {
-        throw;   // Rethrow previous exception.
+    // 在数据区内
+    if (fileOffset < m_data.size && fragmentSize <= m_data.size - fileOffset) {
+      *fragmentStart = m_data.data + fileOffset;
+      return S_OK;
+    } else {
+      *fragmentStart = nullptr;
+      return E_FAIL;
     }
-    catch (std::bad_alloc&) {
-        return E_OUTOFMEMORY;
-    }
-    catch (...) {
-        return E_FAIL;
-    }
-}
+  }
 
-typedef std::vector<std::wstring> MFCollection;
+  virtual void __stdcall ReleaseFileFragment(void* fragmentContext) override {}
+  virtual HRESULT __stdcall GetFileSize(UINT64* fileSize) override {
+    *fileSize = m_data.size;
+    return S_OK;
+  }
+  virtual HRESULT __stdcall GetLastWriteTime(UINT64* lastWriteTime) override {
+    *lastWriteTime = 0;
+    return E_NOTIMPL;
+  }
 
-class MFFontCollectionLoader : public IDWriteFontCollectionLoader
-{
-public:
-    MFFontCollectionLoader()
-        : refCount_(0)
-    {}
-
-    // IUnknown methods
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE   AddRef();
-    virtual ULONG STDMETHODCALLTYPE   Release();
-
-    // IDWriteFontCollectionLoader methods
-    virtual HRESULT STDMETHODCALLTYPE CreateEnumeratorFromKey(
-        IDWriteFactory* factory,
-        void const*     collectionKey,   // [collectionKeySize] in bytes
-        UINT32 collectionKeySize, OUT IDWriteFontFileEnumerator** fontFileEnumerator);
-
-    // Gets the singleton loader instance.
-    static IDWriteFontCollectionLoader* GetLoader() { return instance_; }
-
-    static bool IsLoaderInitialized() { return instance_ != NULL; }
-
-private:
-    ULONG refCount_;
-
-    static IDWriteFontCollectionLoader* instance_;
+ private:
+  ExData m_data;
 };
 
-class MFFontFileEnumerator : public IDWriteFontFileEnumerator
-{
-public:
-    MFFontFileEnumerator(IDWriteFactory* factory);
+// 字体文件加载器对象
+class ExFontFileLoader : public ExUnknownImpl<IDWriteFontFileLoader> {
+  friend ExLazySingleton<ExFontFileLoader>;
 
-    HRESULT Initialize(UINT const* collectionKey,   // [resourceCount]
-                       UINT32      keySize);
+ public:
+  EX_DECLEAR_INTERFACE_BEGIN();
+  EX_DECLEAR_INTERFACE(IUnknown);
+  EX_DECLEAR_INTERFACE(IDWriteFontFileLoader);
+  EX_DECLEAR_INTERFACE_END();
 
-    ~MFFontFileEnumerator()
-    {
-        SafeRelease(currentFile_);
-        SafeRelease(factory_);
+  virtual HRESULT __stdcall CreateStreamFromKey(
+      void const* fontFileReferenceKey, UINT32 fontFileReferenceKeySize,
+      IDWriteFontFileStream** fontFileStream) override {
+    if (fontFileReferenceKey != nullptr &&
+        fontFileReferenceKeySize == sizeof(ExData)) {
+      ExData* data = (ExData*)fontFileReferenceKey;
+      if (data->data != nullptr && data->size > 0) {
+        *fontFileStream = new ExFontFileStream(data);
+        return (*fontFileStream) ? S_OK : E_FAIL;
+      }
+    }
+    return E_FAIL;
+  }
+};
+
+// 字体文件枚举器对象
+class ExFontFileEnumerator : public ExUnknownImpl<IDWriteFontFileEnumerator> {
+ public:
+  EX_DECLEAR_INTERFACE_BEGIN();
+  EX_DECLEAR_INTERFACE(IUnknown);
+  EX_DECLEAR_INTERFACE(IDWriteFontFileEnumerator);
+  EX_DECLEAR_INTERFACE_END();
+
+  ExFontFileEnumerator(IDWriteFactory* pFactory, ExData* aDatas, UINT cDatas)
+      : m_factory(pFactory),
+        m_data_list(aDatas),
+        m_data_count(cDatas),
+        m_current_file(nullptr),
+        m_next_index(0) {}
+
+  virtual HRESULT __stdcall MoveNext(BOOL* hasCurrentFile) override {
+    HRESULT hr = S_OK;
+
+    // 释放当前字体文件
+    SafeRelease(m_current_file);
+    *hasCurrentFile = FALSE;
+
+    // 有下一个字体文件
+    if (m_next_index < m_data_count) {
+      ExData* data = m_data_list + m_next_index;
+      if (data->data != nullptr && data->size > 0) {
+        // 创建字体文件流
+        hr = m_factory->CreateCustomFontFileReference(
+            data, sizeof(ExData), ExLazySingleton<ExFontFileLoader>::Instance(),
+            &m_current_file);
+        if (SUCCEEDED(hr)) {
+          *hasCurrentFile = TRUE;
+          m_next_index++;
+        }
+      } else
+        hr = E_FAIL;
     }
 
-    // IUnknown methods
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE   AddRef();
-    virtual ULONG STDMETHODCALLTYPE   Release();
+    return hr;
+  }
 
-    // IDWriteFontFileEnumerator methods
-    virtual HRESULT STDMETHODCALLTYPE MoveNext(OUT BOOL* hasCurrentFile);
-    virtual HRESULT STDMETHODCALLTYPE GetCurrentFontFile(OUT IDWriteFontFile** fontFile);
+  virtual HRESULT __stdcall GetCurrentFontFile(
+      IDWriteFontFile** fontFile) override {
+    *fontFile = m_current_file;
+    if (m_current_file == nullptr) return E_FAIL;
+    m_current_file->AddRef();
+    return S_OK;
+  }
 
-private:
-    ULONG refCount_;
-
-    IDWriteFactory*           factory_;
-    IDWriteFontFile*          currentFile_;
-    std::vector<std::wstring> filePaths_;
-    size_t                    nextIndex_;
+ private:
+  IDWriteFactory* m_factory;
+  ExData* m_data_list;
+  UINT m_data_count;
+  IDWriteFontFile* m_current_file;
+  UINT m_next_index;
 };
 
-class MFFontContext
-{
-public:
-    MFFontContext(IDWriteFactory* pFactory);
-    ~MFFontContext();
+// 字体集加载器对象
+class ExFontCollectionLoader
+    : public ExUnknownImpl<IDWriteFontCollectionLoader> {
+  friend ExLazySingleton<ExFontCollectionLoader>;
 
-    HRESULT Initialize();
-    HRESULT Initialize2();
+ public:
+  EX_DECLEAR_INTERFACE_BEGIN();
+  EX_DECLEAR_INTERFACE(IUnknown);
+  EX_DECLEAR_INTERFACE(IDWriteFontCollectionLoader);
+  EX_DECLEAR_INTERFACE_END();
 
-    HRESULT CreateFontCollection(MFCollection& newCollection, OUT IDWriteFontCollection** result);
+  virtual HRESULT __stdcall CreateEnumeratorFromKey(
+      IDWriteFactory* factory, void const* collectionKey,
+      UINT32 collectionKeySize,
+      IDWriteFontFileEnumerator** fontFileEnumerator) override {
+    if (!collectionKey) return E_FAIL;
+    if (collectionKeySize % sizeof(ExData) != 0) return E_FAIL;
 
-    HRESULT CreateFontCollectionFromMem(
-        _In_reads_bytes_(collectionKeySize) void const* collectionKey, UINT32 collectionKeySize,
-        OUT IDWriteFontCollection** result);
+    *fontFileEnumerator = new ExFontFileEnumerator(
+        factory, (ExData*)collectionKey, collectionKeySize / sizeof(ExData));
 
-private:
-    // Not copyable or assignable.
-    MFFontContext(MFFontContext const&);
-    void operator=(MFFontContext const&);
-
-    HRESULT                          InitializeInternal();
-    HRESULT                          InitializeInternal2();
-    IDWriteFactory*                  g_dwriteFactory;
-    static std::vector<unsigned int> cKeys;
-
-    // Error code from Initialize().
-    HRESULT hr_;
-    HRESULT hr2_;
+    return (*fontFileEnumerator) ? S_OK : E_FAIL;
+  }
 };
 
-class MFFontGlobals
-{
-public:
-    MFFontGlobals() {}
-    static unsigned int push(MFCollection& addCollection)
-    {
-        unsigned int ret = fontCollections.size();
-        fontCollections.push_back(addCollection);
-        return ret;
-    }
-    static std::vector<MFCollection>& collections() { return fontCollections; }
 
-private:
-    static std::vector<MFCollection> fontCollections;
-};
+#endif  // 

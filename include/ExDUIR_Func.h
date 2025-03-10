@@ -827,6 +827,16 @@ HEXFONT _font_createfromfamily(LPCWSTR lpwzFontFace, INT dwFontSize, DWORD dwFon
 HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize = -1, DWORD dwFontStyle = -1);
 
 /// <summary>
+/// 创建字体自内存
+/// </summary>
+/// <param name="fontDate">字体数据指针</param>
+/// <param name="fontDateLen">字体数据长度</param>
+/// <param name="dwFontSize">字体尺寸大小</param>
+/// <param name="dwFontStyle">字体风格</param>
+/// <returns>字体句柄</returns>
+HEXFONT _font_createfrommem(const uint8_t* fontDate, size_t fontDateLen,INT dwFontSize=-1, DWORD dwFontStyle=-1);
+
+/// <summary>
 /// 创建字体自逻辑字体
 /// </summary>
 /// <param name="lpLogfont"></param>

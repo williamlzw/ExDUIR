@@ -8,6 +8,7 @@ void CALLBACK pfnDefaultFreeFont(LPVOID dwData)
             pObj->Release();
         }
         SafeRelease(((font_s*)dwData)->m_fontCollection);
+        Ex_MemFree(((font_s*)dwData)->fontdata.data);
         Ex_MemFree(dwData);
     }
 }
@@ -19,7 +20,7 @@ BOOL _font_destroy(HEXFONT hFont)
         if (pFont != 0) {
             if (InterlockedExchangeAdd((size_t*)&(pFont->dwCount_), -1) == 1) {
                 HashTable_Remove(g_Li.hTableFont, (size_t)hFont);
-                SafeRelease(pFont->m_fontCollection);
+                SafeRelease(pFont->m_fontCollection);             
             }
         }
     }
@@ -132,54 +133,61 @@ LPVOID _font_getcontext(HEXFONT hFont)
 }
 
 
-HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFontStyle)
+HEXFONT _font_createfromfile(LPCWSTR FontFilePaths, INT dwFontSize, DWORD dwFontStyle) 
 {
+  std::vector<CHAR> fontdata;
+  Ex_ReadFile(FontFilePaths, &fontdata);
+  return _font_createfrommem((const uint8_t*)fontdata.data(), fontdata.size(),
+                             dwFontSize, dwFontStyle);
+}
 
-    std::wstring fileInfo = L"fontPath:" + std::wstring(FontFilePaths);
-    fileInfo += L";fontSize:" + std::to_wstring(dwFontSize);
-    fileInfo += L";fontStyle:" + std::to_wstring(dwFontStyle);
-    HEXFONT hFont  = Crc32_Addr((LPVOID)fileInfo.data(), fileInfo.length() * 2);
-    font_s* pFont  = nullptr;
-    font_s* pFonta = 0;
-
-    if (HashTable_Get(g_Li.hTableFont, hFont, (size_t*)&pFonta)) {
-        pFont = pFonta;
-        if (pFont != 0) {
-            InterlockedExchangeAdd((size_t*)&(pFont->dwCount_), 1);
-        }
+HEXFONT _font_createfrommem(const uint8_t* fontDate,size_t fontDateLen, INT dwFontSize,DWORD dwFontStyle) 
+{
+  HEXFONT hFont = Crc32_Addr((LPVOID)fontDate, fontDateLen);
+  font_s* pFont = nullptr;
+  font_s* pFonta = 0;
+ 
+  if (HashTable_Get(g_Li.hTableFont, hFont, (size_t*)&pFonta)) {
+    pFont = pFonta;
+    if (pFont != 0) {
+      InterlockedExchangeAdd((size_t*)&(pFont->dwCount_), 1);
     }
-    else {
-        pFont = (font_s*)Ex_MemAlloc(sizeof(font_s));
-        if (pFont != 0) {
-            HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
-            pFont->dwCount_ = 1;
-            std::vector<std::wstring>
-                filePaths;   // vector containing ABSOLUTE file paths of the font files which are to
-                             // be added to the collection
-            filePaths.push_back(FontFilePaths);
-            g_Li.fContext->CreateFontCollection(
-                filePaths, &pFont->m_fontCollection);   // create custom font collection
+  } else {
+    pFont = (font_s*)Ex_MemAlloc(sizeof(font_s));
+    if (pFont != 0) {
+      HashTable_Set(g_Li.hTableFont, hFont, (size_t)pFont);
+      pFont->dwCount_ = 1;
 
-            UINT32 count = pFont->m_fontCollection->GetFontFamilyCount();
-            for (UINT32 i = 0; i < count; i++) {
-                IDWriteFontFamily* fontFamily = nullptr;
-                pFont->m_fontCollection->GetFontFamily(i, &fontFamily);
-                IDWriteLocalizedStrings* names = nullptr;
-                fontFamily->GetFamilyNames(&names);
-                UINT32 len = 0;
-                names->GetStringLength(0, &len);
-                len             = len + 1;
-                WCHAR* fontName = new WCHAR[len]();
-                names->GetString(0, fontName, len);
-                g_Ri.pDWriteFactory->CreateTextFormat(
-                    fontName, pFont->m_fontCollection, DWRITE_FONT_WEIGHT_NORMAL,
-                    DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
-                    dwFontSize == -1 ? abs(g_Li.lpLogFontDefault->lfHeight) : dwFontSize,
-                    (WCHAR*)g_Ri.pLocaleName, &pFont->pObj_);
-                fontFamily->Release();
-                names->Release();
-            }
-        }
+      pFont->fontdata.data = (byte*)Ex_MemAlloc(fontDateLen);
+      pFont->fontdata.size = fontDateLen;
+      std::memcpy(pFont->fontdata.data, fontDate, fontDateLen);
+      g_Ri.pDWriteFactory->CreateCustomFontCollection(
+          ExLazySingleton<ExFontCollectionLoader>::Instance(), &pFont->fontdata,
+          sizeof(ExData),
+          &pFont->m_fontCollection);
+     
+      UINT32 count = pFont->m_fontCollection->GetFontFamilyCount();
+      for (UINT32 i = 0; i < count; i++) {
+        IDWriteFontFamily* fontFamily = nullptr;
+        pFont->m_fontCollection->GetFontFamily(i, &fontFamily);
+        IDWriteLocalizedStrings* names = nullptr;
+        fontFamily->GetFamilyNames(&names);
+        UINT32 len = 0;
+        names->GetStringLength(0, &len);
+        len = len + 1;
+        WCHAR* fontName = new WCHAR[len]();
+        names->GetString(0, fontName, len);
+        g_Ri.pDWriteFactory->CreateTextFormat(
+            fontName, pFont->m_fontCollection, DWRITE_FONT_WEIGHT_NORMAL,
+            DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+            dwFontSize == -1 ? abs(g_Li.lpLogFontDefault->lfHeight)
+                             : dwFontSize,
+            (WCHAR*)g_Ri.pLocaleName, &pFont->pObj_);
+        fontFamily->Release();
+        names->Release();
+        delete[] fontName;
+      }
     }
-    return (HEXFONT)hFont;
+  }
+  return (HEXFONT)hFont;
 }

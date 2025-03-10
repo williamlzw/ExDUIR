@@ -125,7 +125,13 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
     g_Li.atomSysShadow = Ex_WndRegisterClass(L"SysShadow", 0, 0, 0);
 
     g_Li.hHookMsgBox = SetWindowsHookExW(WH_CBT, (HOOKPROC)_hook_proc, 0, GetCurrentThreadId());
-    g_Li.fContext    = new MFFontContext(g_Ri.pDWriteFactory);
+
+    nError = g_Ri.pDWriteFactory->RegisterFontFileLoader(
+        ExLazySingleton<ExFontFileLoader>::GetInstance());
+   
+    nError = g_Ri.pDWriteFactory->RegisterFontCollectionLoader(
+        ExLazySingleton<ExFontCollectionLoader>::GetInstance());
+   
     Ex_SetLastError(nError);
     return nError == 0;
 }
@@ -141,7 +147,14 @@ void Ex_UnInit()
     Ex_MemFree((LPVOID)g_Li.lpStrHelp);
     Ex_ThemeFree(g_Li.hThemeDefault);
     Ex_MemFree(g_Li.lpLogFontDefault);
-    delete g_Li.fContext;
+   
+    g_Ri.pDWriteFactory->UnregisterFontFileLoader(
+        ExLazySingleton<ExFontFileLoader>::Instance());
+    g_Ri.pDWriteFactory->UnregisterFontCollectionLoader(
+        ExLazySingleton<ExFontCollectionLoader>::Instance());
+    // 释放字体集加载器和字体文件加载器
+    ExLazySingleton<ExFontCollectionLoader>::ClearInstance(true);
+    ExLazySingleton<ExFontFileLoader>::ClearInstance(true);
     _canvas_uninit();
     _handle_uninit(g_Li.hHandles);
     HashTable_Destroy(g_Li.hTableClass);

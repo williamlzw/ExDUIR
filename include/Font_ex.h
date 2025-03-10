@@ -9,6 +9,7 @@ struct font_s
     IDWriteTextFormat*     pObj_;
     IDWriteFontCollection* m_fontCollection;
     LOGFONT                font_;
+    ExData fontdata;
 };
 
 void CALLBACK pfnDefaultFreeFont(LPVOID dwData);
