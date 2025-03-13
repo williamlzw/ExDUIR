@@ -42,6 +42,7 @@ void _object_init()
     _taggingboard_register();
     _circleprogressbar_register();
     _waveprogressbar_register();
+    _linechart_register();
 #ifdef ENABLE_VLC
     _vlcplayer_register();
 #endif

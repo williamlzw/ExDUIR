@@ -1,4 +1,4 @@
-#include "test_linechart.h"
+﻿#include "test_linechart.h"
 
 void test_linechart(HWND hWnd)
 {
@@ -12,8 +12,22 @@ void test_linechart(HWND hWnd)
         0, 0);
     Ex_DUISetLong(hExDui_linechart, ENGINE_LONG_CRBKG, ExARGB(220, 220, 220, 255));
 
-    HEXOBJ hObj1 = Ex_ObjCreateEx(-1, L"LineChart", L"", -1, 50, 50, 600, 300, hExDui_linechart, 0,
-        DT_VCENTER, 0, 0, 0);
-    Ex_ObjSetTimer(hObj1, 500);
+    HEXOBJ hObj = Ex_ObjCreateEx(-1, L"LineChart", L"", -1, 50, 50, 600, 300, hExDui_linechart, 0,
+                                  DT_VCENTER, 0, 0, OnLineChartMsgProc);
+    Ex_ObjSendMessage(hObj, LINECHART_MESSAGE_FOREGROUNDCOLOR_FILL, 0, ExARGB(80, 85, 205, 200));
+    Ex_ObjSendMessage(hObj, LINECHART_MESSAGE_FOREGROUNDCOLOR_DRAW, 0, ExARGB(100, 200, 100, 255));
+    Ex_ObjSetTimer(hObj, 500);
     Ex_DUIShowWindow(hExDui_linechart, SW_SHOWNORMAL, 0, 0, 0);
+}
+
+LRESULT CALLBACK OnLineChartMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
+    LRESULT* lpResult)
+{
+    if (uMsg == WM_TIMER)
+    {
+        int y = rand() % 30 + 30;
+        Ex_ObjSendMessage(hObj, LINECHART_MESSAGE_SETVALUE, 0, y);
+        Ex_ObjInvalidateRect(hObj, 0);
+    }
+    return 0;
 }

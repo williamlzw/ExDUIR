@@ -1672,8 +1672,14 @@
 #pragma endregion vlcplayer message
 
 #pragma region linechart message
-// 消息_折线图_添加值 1到100
+// 消息_折线图_添加值 lParam: 1到100
 #define LINECHART_MESSAGE_SETVALUE 200001
+// 消息_折线图_设置背景线条色 lParam:ARGB
+#define LINECHART_MESSAGE_BACKGROUNDCOLOR 200002
+// 消息_折线图_设置填充前景色
+#define LINECHART_MESSAGE_FOREGROUNDCOLOR_FILL 200003
+// 消息_折线图_设置边缘前景色
+#define LINECHART_MESSAGE_FOREGROUNDCOLOR_DRAW 200004
 #pragma endregion linechart message
 
 #define LVSICF_NOSCROLL 2

@@ -1,9 +1,9 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 void _linechart_register()
 {
     Ex_ObjRegister(L"LineChart", OBJECT_STYLE_VISIBLE,
-        OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, sizeof(size_t),
+        OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, 4 * sizeof(size_t),
         LoadCursor(0, IDC_HAND), CANVAS_FLAG_TEXTANTIALIAS, _linechart_proc);
 }
 
@@ -47,6 +47,9 @@ LRESULT CALLBACK _linechart_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         }
 
         Ex_ObjSetLong(hObj, LINECHART_LONG_DATA, (LONG_PTR)ptr);
+        Ex_ObjSetLong(hObj, LINECHART_LONG_BACKGROUNDCOLOR, ExARGB(180, 180, 180, 255));
+        Ex_ObjSetLong(hObj, LINECHART_LONG_FOREGROUNDCOLOR_FILL, ExARGB(65, 105, 225, 255));
+        Ex_ObjSetLong(hObj, LINECHART_LONG_FOREGROUNDCOLOR_DRAW, ExARGB(135, 206, 250, 200));
     }
     else if (uMsg == WM_DESTROY) {
         auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, LINECHART_LONG_DATA);
@@ -65,12 +68,17 @@ LRESULT CALLBACK _linechart_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
         auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, LINECHART_LONG_DATA);
         _linechart_update_polygon(ptr, y);
     }
-    else if (uMsg == WM_TIMER)
+    else if (uMsg == LINECHART_MESSAGE_BACKGROUNDCOLOR)
     {
-        int y = rand() % 100 + 1;
-
-        Ex_ObjSendMessage(hObj, LINECHART_MESSAGE_SETVALUE, 0, y);
-        Ex_ObjInvalidateRect(hObj, 0);
+        Ex_ObjSetLong(hObj, LINECHART_LONG_BACKGROUNDCOLOR, lParam);
+    }
+    else if (uMsg == LINECHART_MESSAGE_FOREGROUNDCOLOR_FILL)
+    {
+        Ex_ObjSetLong(hObj, LINECHART_LONG_FOREGROUNDCOLOR_FILL, lParam);
+    }
+    else if (uMsg == LINECHART_MESSAGE_FOREGROUNDCOLOR_DRAW)
+    {
+        Ex_ObjSetLong(hObj, LINECHART_LONG_FOREGROUNDCOLOR_DRAW, lParam);
     }
     else if (uMsg == WM_PAINT)
     {
@@ -86,7 +94,7 @@ void _linechart_paint(HEXOBJ hObj)
         _canvas_setantialias(ps.hCanvas, TRUE);
         int intervalX = (int)(ps.uWidth - 1 ) / 20;
         int intervalY = (int)(ps.uHeight - 1) / 10;
-        auto hBrush = _brush_create(ExARGB(150, 150, 150, 255));
+        auto hBrush    = _brush_create(Ex_ObjGetLong(hObj, LINECHART_LONG_BACKGROUNDCOLOR));
         for (int i = 0; i < 11; i++)
         {
             _canvas_drawline(ps.hCanvas, hBrush, 0, i * (ps.uHeight - 1) / 10, ps.uWidth, i * (ps.uHeight - 1) / 10, 1, 0);
@@ -122,9 +130,9 @@ void _linechart_paint(HEXOBJ hObj)
         _path_endfigure(path1, TRUE);
         _path_close(path1);
 
-        _brush_setcolor(hBrush, ExARGB(65, 105, 225, 255));
+        _brush_setcolor(hBrush, Ex_ObjGetLong(hObj, LINECHART_LONG_FOREGROUNDCOLOR_DRAW));
         _canvas_drawpath(ps.hCanvas, path1, hBrush, 2, 0, 1);
-        _brush_setcolor(hBrush, ExARGB(135, 206, 250, 200));
+        _brush_setcolor(hBrush, Ex_ObjGetLong(hObj, LINECHART_LONG_FOREGROUNDCOLOR_FILL));
         _canvas_fillpath(ps.hCanvas, path1, hBrush);
 
         _path_destroy(path1);

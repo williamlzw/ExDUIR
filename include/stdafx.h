@@ -150,6 +150,7 @@
 #include "Class_scrollbar_ex.h"
 #include "Class_CircleProgressBar_ex.h"
 #include "Class_WaveProgressBar_ex.h"
+#include "Class_LineChart_ex.h"
 
 #ifdef ENABLE_VLC
 #define VCL_PLAYER
