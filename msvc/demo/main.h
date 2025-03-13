@@ -69,6 +69,7 @@
 #include "test_respack.h"
 #include "test_circleprogressbar.h"
 #include "test_waveprogressbar.h"
+#include "test_linechart.h"
 
 INT CalculateContainerHeight(INT buttonsNumber, INT containerWidth, INT buttonWidth,
                              INT buttonHeight, INT horizontalSpacing, INT verticalSpacing);

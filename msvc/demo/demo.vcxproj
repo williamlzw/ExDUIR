@@ -229,6 +229,7 @@
     <ClCompile Include="test_iconlistview.cpp" />
     <ClCompile Include="test_label.cpp" />
     <ClCompile Include="test_linear.cpp" />
+    <ClCompile Include="test_linechart.cpp" />
     <ClCompile Include="test_listbutton.cpp" />
     <ClCompile Include="test_listview.cpp" />
     <ClCompile Include="test_loading.cpp" />
@@ -294,6 +295,7 @@
     <ClInclude Include="test_iconlistview.h" />
     <ClInclude Include="test_label.h" />
     <ClInclude Include="test_linear.h" />
+    <ClInclude Include="test_linechart.h" />
     <ClInclude Include="test_listbutton.h" />
     <ClInclude Include="test_listview.h" />
     <ClInclude Include="test_loading.h" />

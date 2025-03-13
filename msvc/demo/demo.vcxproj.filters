@@ -179,6 +179,9 @@
     <ClCompile Include="test_waveprogressbar.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test_linechart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -358,6 +361,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_waveprogressbar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_linechart.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

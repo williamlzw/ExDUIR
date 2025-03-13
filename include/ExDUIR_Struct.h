@@ -1671,6 +1671,11 @@
 #define VLCPLAYER_MESSAGE_GET_DURATION 20011
 #pragma endregion vlcplayer message
 
+#pragma region linechart message
+// 消息_折线图_添加值 1到100
+#define LINECHART_MESSAGE_SETVALUE 200001
+#pragma endregion linechart message
+
 #define LVSICF_NOSCROLL 2
 #define EX_DEFINE_API(NAME, RET, ARGS)      \
     typedef RET(WINAPI* ExPFN_##NAME) ARGS; \
@@ -1679,6 +1684,7 @@
 #define EX_GET_API(NAME) NAME = (ExPFN_##NAME)::GetProcAddress(hModule, #NAME)   // 获取函数指针
 #define GET_X_LPARAM(lp) ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp) ((int)(short)HIWORD(lp))   // 提取颜色分量
+#define MAKE_LPARAM(x, y) ((y << 16) | (x & 0xFFFF))
 #define ExGetB(argb) (LOBYTE(argb))
 #define ExGetG(argb) (LOBYTE(((WORD)(argb)) >> 8))
 #define ExGetR(argb) (LOBYTE((argb) >> 16))

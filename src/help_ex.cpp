@@ -1249,3 +1249,29 @@ std::wstring Md5Encrypt(const std::vector<BYTE>& data)
 
     return hashString;
 }
+
+void ConvertCurveToBezier(const std::vector<D2D1_POINT_2F>& points, float tension,
+    std::vector<D2D1_BEZIER_SEGMENT>& beziers)
+{
+    if (points.size() < 2) return;
+
+    // 首尾添加虚拟点以保证连续性
+    std::vector<D2D1_POINT_2F> paddedPoints;
+    paddedPoints.push_back(points[0]);   // 复制第一个点作为虚拟起点
+    paddedPoints.insert(paddedPoints.end(), points.begin(), points.end());
+    paddedPoints.push_back(points.back());   // 复制最后一个点作为虚拟终点
+
+    for (size_t i = 1; i < paddedPoints.size() - 2; ++i) {
+        const auto& p0 = paddedPoints[i - 1];
+        const auto& p1 = paddedPoints[i];
+        const auto& p2 = paddedPoints[i + 1];
+        const auto& p3 = paddedPoints[i + 2];
+
+        // 计算三次贝塞尔控制点
+        float         s = tension * 0.3f;
+        D2D1_POINT_2F c1 = { p1.x + s * (p2.x - p0.x), p1.y + s * (p2.y - p0.y) };
+        D2D1_POINT_2F c2 = { p2.x - s * (p3.x - p1.x), p2.y - s * (p3.y - p1.y) };
+
+        beziers.push_back(D2D1::BezierSegment(c1, c2, p2));
+    }
+}

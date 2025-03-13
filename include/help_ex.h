@@ -409,3 +409,5 @@ std::wstring FindFile(HANDLE& hFileFind, std::wstring prefindfile, INT prefindfi
 
 wchar_t LTOUCHAR(BYTE value);
 std::wstring Md5Encrypt(const std::vector<BYTE>& data);
+void ConvertCurveToBezier(const std::vector<D2D1_POINT_2F>& points, float tension,
+    std::vector<D2D1_BEZIER_SEGMENT>& beziers);
