@@ -12,10 +12,8 @@ LRESULT CALLBACK _hook_proc(INT code, WPARAM wParam, LPARAM lParam)
 LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
 {
     auto lpcs = ((CBT_CREATEWND*)lParam)->lpcs;
-
     EXATOM atomClass = (EXATOM)(lpcs->lpszClass);
     auto   hParent   = lpcs->hwndParent;
-
     if (atomClass == ATOM_DIALOG) {
         auto   hExDui = Ex_DUIFromWindow(hParent);
         wnd_s* pWnd   = nullptr;
@@ -28,7 +26,6 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
                 SetClassLongPtrW(hWnd, GCLP_HICONSM, (LONG_PTR)g_Li.hIconsm);
                 INT style = WINDOW_STYLE_TITLE | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_MOVEABLE |
                             WINDOW_STYLE_MESSAGEBOX;
-
                 if (((pMsg->dwFlags_ & MESSAGEBOX_FLAG_WINDOWICON) == MESSAGEBOX_FLAG_WINDOWICON)) {
                     style = style | WINDOW_STYLE_HASICON;
                 }
@@ -42,25 +39,21 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
         }
     }
     else if (atomClass == ATOM_MENU) {
-        Thunkwindow(hWnd, _menu_proc, 0, 0);
+        SetWindowSubclass(hWnd, _menu_proc, 0, 0);
     }
     return CallNextHookEx(g_Li.hHookMsgBox, code, (WPARAM)hWnd, lParam);
 }
 
-LRESULT CALLBACK _menu_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK _menu_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
 {
-    HWND    hWnd = pData->hWnd;
-    WNDPROC pOld = pData->Proc;
-    wnd_s*  pWnd = (wnd_s*)pData->dwData;
     if (uMsg == WM_DESTROY) {
-        SetWindowLongPtrW(hWnd, GWLP_WNDPROC, (size_t)pOld);
-        VirtualFree(pData, 0, MEM_RELEASE);
+        RemoveWindowSubclass(hWnd, _menu_proc, 0);
     }
     else if (uMsg == 482)   // MN_SIZEWINDOW
     {
         _menu_init(hWnd);
     }
-    return CallWindowProcW(pOld, hWnd, uMsg, wParam, lParam);
+    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
 void _menu_init(HWND hWnd)

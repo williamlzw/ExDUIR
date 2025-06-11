@@ -1,5 +1,6 @@
 ﻿#pragma once
-
+#include <commctrl.h>
+#pragma comment(lib,"comctl32.lib")
 #pragma comment(lib, "imm32.lib")
 
 extern "C" {
@@ -15,14 +16,17 @@ int WINAPI MessageBoxTimeoutW(IN HWND hWnd, IN LPCWSTR lpText, IN LPCWSTR lpCapt
 #define EMT_LAYOUT_UPDATE -3
 #define EMT_EASING -4
 
+typedef LRESULT(CALLBACK* ThunkPROC)(EX_THUNK_DATA*, INT, WPARAM, LPARAM);
+
 struct EX_THUNK_DATA
 {
     HWND    hWnd;
-    WNDPROC Proc;
-    LPVOID  dwData;
+    WNDPROC OriginalProc;
+    LPVOID dwData;
+    ThunkPROC ThunkProc;
 };
 
-typedef LRESULT(CALLBACK* ThunkPROC)(EX_THUNK_DATA*, INT, WPARAM, LPARAM);
+
 
 struct wnd_s
 {
@@ -157,7 +161,6 @@ BOOL    _wnd_querystyle(HWND hWnd, INT dwStyle, BOOL bExStyle);
 BOOL    _wnd_delstyle(HWND hWnd, INT dwStyle, BOOL bExStyle);
 BOOL    _wnd_addstyle(HWND hWnd, INT dwStyle, BOOL bExStyle);
 HICON   _wnd_geticonhandle(HWND hWnd, BOOL isbigicon);
-LPVOID  Thunkwindow(HWND hWnd, ThunkPROC pfnProc, LPVOID dwData, INT* nError);
 BOOL    _wnd_getscreenrect(HWND hWnd, RECT* rcMonitor = NULL, RECT* rcDesk = NULL);
 std::wstring _wnd_gettitle(HWND hWnd);
 INT          _wnd_classtoatom(HWND hWnd);
@@ -173,8 +176,8 @@ void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg, UINT_PTR 
 size_t        _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 size_t _wnd_dispatch_msg_obj(HWND hWnd, mempoolmsg_s* lpData, obj_s* pObj, INT uMsg, WPARAM wParam,
                              LPARAM lParam);
-LRESULT CALLBACK _wnd_tooltips_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM lParam);
-LRESULT CALLBACK _wnd_shadow_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK _wnd_tooltips_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
+LRESULT CALLBACK _wnd_shadow_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 INT              _wnd_popupclose(wnd_s* pWnd, HWND hWnd, INT wParam, obj_s* pObj);
 void             _wnd_dx_unint(wnd_s* pWnd);
 void             _wnd_dx_init(wnd_s* pWnd);
@@ -218,7 +221,7 @@ BOOL   _wnd_obj_childtabstop(HEXOBJ objEntry, HEXOBJ* objFocusable, LPVOID* pObj
 void   _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd);
 BOOL   _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam);
 void   _wnd_menu_updatecurrent(wnd_s* pWnd);
-LRESULT CALLBACK _wnd_proc(EX_THUNK_DATA* pData, INT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 BOOL             _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LONG_PTR* iItem);
 void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu);
 BOOL Ex_DUIGetBackgroundImage(HEXDUI hExDui, LPVOID lpBackgroundImage);
