@@ -206,6 +206,7 @@
     <ClCompile Include="test_buttonex.cpp" />
     <ClCompile Include="test_calendar.cpp" />
     <ClCompile Include="test_carousel.cpp" />
+    <ClCompile Include="test_chatbox.cpp" />
     <ClCompile Include="test_checkbutton.cpp" />
     <ClCompile Include="test_chromium.cpp" />
     <ClCompile Include="test_circleprogressbar.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="test_buttonex.h" />
     <ClInclude Include="test_calendar.h" />
     <ClInclude Include="test_carousel.h" />
+    <ClInclude Include="test_chatbox.h" />
     <ClInclude Include="test_checkbutton.h" />
     <ClInclude Include="test_chromium.h" />
     <ClInclude Include="test_circleprogressbar.h" />

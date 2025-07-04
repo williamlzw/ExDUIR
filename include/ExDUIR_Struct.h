@@ -1682,6 +1682,39 @@
 #define LINECHART_MESSAGE_FOREGROUNDCOLOR_DRAW 200004
 #pragma endregion linechart message
 
+#pragma region chatbox constant
+// 对话盒_项目类型_文本
+#define CHATBOX_ITEMTYPE_TEXT 0
+// 对话盒_项目类型_卡片
+#define CHATBOX_ITEMTYPE_CARD 1
+// 对话盒_项目角色_用户
+#define CHATBOX_ITEMROLE_USER 0
+// 对话盒_项目角色_助手
+#define CHATBOX_ITEMROLE_ASSISTANT 1
+#pragma endregion chatbox constant
+
+#pragma region chatbox event constant
+// 事件_对话盒_点击按钮,lParam返回路径索引,从0开始
+#define CHATBOX_EVENT_CLICKBUTTON 20000
+#pragma endregion chatbox event constant
+
+#pragma region chatbox message constant
+// 消息_对话盒_添加表项 添加行到尾部 wParam:项目类型CHATBOX_ITEMTYPE_  lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
+#define CHATBOX_MESSAGE_ADDITEM 10010
+// 消息_对话盒_更新表项 wParam:表项索引 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
+#define CHATBOX_MESSAGE_UPDATEITEM 10011
+// 消息_对话盒_取表项类型 wParam:表项索引，返回CHATBOX_ITEMTYPE_ ,失败返回-1
+#define CHATBOX_MESSAGE_GETITEMTYPE 10012
+// 消息_对话盒_取表项数据 wParam:表项索引，返回CEX_CHATBOX_ITEMINFO_SUBITEM 指针,失败返回-1
+#define CHATBOX_MESSAGE_GETITEMDATA 10013
+// 消息_对话盒_取表项总数,失败返回-1
+#define CHATBOX_MESSAGE_GETITEMCOUNT 10014
+// 消息_对话盒_设置用户图标
+#define CHATBOX_MESSAGE_SETIMAGE_USER 10015
+// 消息_对话盒_设置助手图标
+#define CHATBOX_MESSAGE_SETIMAGE_ASSISTANT 10016
+#pragma endregion chatbox message constant
+
 #define LVSICF_NOSCROLL 2
 #define EX_DEFINE_API(NAME, RET, ARGS)      \
     typedef RET(WINAPI* ExPFN_##NAME) ARGS; \
@@ -2163,6 +2196,51 @@ struct EX_POLYGON
     LPVOID points;   // 保存有count个POINT结构体数据:x,y
 };
 
+struct EX_CHATBOX_ITEMINFO_TEXT
+{
+    LPCWSTR Text;
+};
+
+struct EX_CHATBOX_ITEMINFO_CARD
+{
+    LPCWSTR  Title;
+    HEXIMAGE Image;
+    LPCWSTR  Content;
+    LPCWSTR  ReasonTitle;
+    LPCWSTR  Reason;
+    LPCWSTR  ButtonText;
+};
+
+struct EX_CHATBOX_ITEM_LAYOUT
+{
+    RECT rcItem;      // 整个项目的矩形区域
+    RECT rcAvatar;    // 头像区域
+    RECT rcBubble;    // 气泡区域
+    RECT rcContent;   // 内容区域
+    // 卡片项目特有区域
+    RECT rcCardImage;     // 卡片图片区域
+    RECT rcCardTitle;     // 卡片标题区域
+    RECT rcCardContent;   // 卡片内容区域
+    RECT rcReasonRect;    // 原因矩形区域
+    RECT rcReasonTitle;   // 原因标题区域
+    RECT rcReason;        // 原因文本区域
+    RECT rcButton;        // 按钮区域
+    INT  nHeight;         // 项目总高度
+};
+
+struct EX_CHATBOX_ITEMINFO_SUBITEM
+{
+    DWORD                  Type;
+    DWORD                  Role;
+    LPVOID                 Data;     // 子数据结构EX_CHATBOX_ITEMINFO_TEXT，EX_CHATBOX_ITEMINFO_CARD
+    EX_CHATBOX_ITEM_LAYOUT Layout;   // 新增布局信息,内部使用
+};
+
+struct EX_CHATBOX_ITEMINFO
+{
+    LPVOID Items;   // 数据,EX_CHATBOX_ITEMINFO_SUB数组
+    DWORD  Count;
+};
 
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown*                   effect,
                                                   _In_reads_(dataSize) const BYTE* data,

@@ -43,6 +43,7 @@ void _object_init()
     _circleprogressbar_register();
     _waveprogressbar_register();
     _linechart_register();
+    _chatbox_register();
 #ifdef ENABLE_VLC
     _vlcplayer_register();
 #endif

@@ -22,7 +22,8 @@ const std::vector<std::wstring> buttonData = {
     L"日期框",         L"颜色选择器", L"月历",          L"CEF浏览框",  L"打分按钮",   L"轮播",
     L"模板列表",       L"鼠标绘制板", L"调色板",        L"属性框",     L"原生子窗口", L"全屏置顶",
     L"路径与区域",     L"VLC播放器",  L"自定字体和SVG", L"卷帘菜单",   L"托盘图标",   L"蒙板",
-    L"标注画板",       L"效果器",     L"打包",          L"环形进度条", L"水波进度条", L"折线图"};
+    L"标注画板",       L"效果器",     L"打包",          L"环形进度条", L"水波进度条", L"折线图",
+    L"对话盒"};
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
                                   LRESULT* lpResult)
@@ -147,9 +148,9 @@ void test_exdui()
     // Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
     //  开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
-            ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,
+            ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL ,//| ENGINE_FLAG_OBJECT_SHOWRECTBORDER,
             hCursor, 0, data.data(), data.size(), 0, 0);
-    
+
     INT windowWidth   = 1280;
     INT windowsHeight = 700;
     m_hWnd = Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0,
@@ -263,66 +264,67 @@ void test_exdui()
 LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
     void (*buttonProc[])(HWND) = {
-        test_button,             // 101，按钮
-        test_label,              // 102，标签
-        test_checkbutton,        // 103，单选框选择框
-        test_edit,               // 104，编辑框
-        test_listview,           // 105，列表框
-        test_listbutton,         // 106，列表按钮
-        test_custombkg,          // 107,九宫格自定外形
-        test_navbutton,          // 108,选项卡
-        test_groupbox,           // 109,分组框
-        test_absolute,           // 110,绝对布局
-        test_relative,           // 111相对布局
-        test_linear,             // 112线性布局
-        test_flow,               // 113流式布局
-        test_table,              // 114表格布局
-        test_combobox,           // 115组合框
-        test_ani,                // 116缓动窗口
-        test_customredraw,       // 117异型窗口
-        test_messagebox,         // 118信息框
-        test_colorbutton,        // 119自定义按钮
-        test_reportlistview,     // 120报表列表
-        test_iconlistview,       // 121图标列表
-        test_treelistview,       // 122树形列表
-        test_matrix,             // 123矩阵
-        test_buttonex,           // 124扩展按钮
-        test_editex,             // 125扩展编辑框
-        test_custommenu,         // 126自定义菜单
-        test_event,              // 127事件分发
-        test_loading,            // 128加载动画
-        test_sliderbar,          // 129滑块条
-        test_rotateimgbox,       // 130旋转图片框
-        test_dragobj,            // 131拖动组件
-        test_dropobj,            // 132接收拖曳信息
-        test_progressbar,        // 133进度条
-        test_nchittest,          // 134限制通知区域
-        test_modal,              // 135模态窗口
-        test_titlebar,           // 136标题框
-        test_datebox,            // 137日期框
-        test_colorpicker,        // 138颜色选择器
-        test_calendar,           // 139月历
-        test_chromium,           // 140CEF浏览框
-        test_scorebtn,           // 141score打分
-        test_carousel,           // 142轮播
-        test_templatelistview,   // 143模板列表
-        test_drawingboard,       // 144鼠标绘制板
-        test_palette,            // 145调色板
-        test_propertygrid,       // 146属性框
-        test_nativewindow,       // 147原生子窗口
-        test_fullscreen,         // 148 全屏
-        test_pathandrgn,         // 149 路径区域
-        test_vlcPlay,            // 150 VLC播放器
-        test_svgAndfont,         // 151 自定义字体和SVG
-        test_rollmenu,           // 152 卷帘菜单
-        test_tray,               // 153 托盘
-        test_mask,               // 154蒙板
-        test_tagging,            // 155标注画板
-        test_effect,             // 156效果器
-        test_respack,            // 157打包
-        test_circleprogressbar,  // 158环形进度条
+        test_button,              // 101，按钮
+        test_label,               // 102，标签
+        test_checkbutton,         // 103，单选框选择框
+        test_edit,                // 104，编辑框
+        test_listview,            // 105，列表框
+        test_listbutton,          // 106，列表按钮
+        test_custombkg,           // 107,九宫格自定外形
+        test_navbutton,           // 108,选项卡
+        test_groupbox,            // 109,分组框
+        test_absolute,            // 110,绝对布局
+        test_relative,            // 111相对布局
+        test_linear,              // 112线性布局
+        test_flow,                // 113流式布局
+        test_table,               // 114表格布局
+        test_combobox,            // 115组合框
+        test_ani,                 // 116缓动窗口
+        test_customredraw,        // 117异型窗口
+        test_messagebox,          // 118信息框
+        test_colorbutton,         // 119自定义按钮
+        test_reportlistview,      // 120报表列表
+        test_iconlistview,        // 121图标列表
+        test_treelistview,        // 122树形列表
+        test_matrix,              // 123矩阵
+        test_buttonex,            // 124扩展按钮
+        test_editex,              // 125扩展编辑框
+        test_custommenu,          // 126自定义菜单
+        test_event,               // 127事件分发
+        test_loading,             // 128加载动画
+        test_sliderbar,           // 129滑块条
+        test_rotateimgbox,        // 130旋转图片框
+        test_dragobj,             // 131拖动组件
+        test_dropobj,             // 132接收拖曳信息
+        test_progressbar,         // 133进度条
+        test_nchittest,           // 134限制通知区域
+        test_modal,               // 135模态窗口
+        test_titlebar,            // 136标题框
+        test_datebox,             // 137日期框
+        test_colorpicker,         // 138颜色选择器
+        test_calendar,            // 139月历
+        test_chromium,            // 140CEF浏览框
+        test_scorebtn,            // 141score打分
+        test_carousel,            // 142轮播
+        test_templatelistview,    // 143模板列表
+        test_drawingboard,        // 144鼠标绘制板
+        test_palette,             // 145调色板
+        test_propertygrid,        // 146属性框
+        test_nativewindow,        // 147原生子窗口
+        test_fullscreen,          // 148 全屏
+        test_pathandrgn,          // 149 路径区域
+        test_vlcPlay,             // 150 VLC播放器
+        test_svgAndfont,          // 151 自定义字体和SVG
+        test_rollmenu,            // 152 卷帘菜单
+        test_tray,                // 153 托盘
+        test_mask,                // 154蒙板
+        test_tagging,             // 155标注画板
+        test_effect,              // 156效果器
+        test_respack,             // 157打包
+        test_circleprogressbar,   // 158环形进度条
         test_waveprogressbar,     // 159水波进度条
-        test_linechart
+        test_linechart,           // 160折线图
+        test_chatbox              // 161对话盒
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;

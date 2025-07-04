@@ -70,6 +70,7 @@
 #include "test_circleprogressbar.h"
 #include "test_waveprogressbar.h"
 #include "test_linechart.h"
+#include "test_chatbox.h"
 
 INT CalculateContainerHeight(INT buttonsNumber, INT containerWidth, INT buttonWidth,
                              INT buttonHeight, INT horizontalSpacing, INT verticalSpacing);
