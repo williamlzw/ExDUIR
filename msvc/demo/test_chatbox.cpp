@@ -13,11 +13,11 @@ LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
     if (nID == 101)
     {
         auto text_length =
-            Ex_ObjGetTextLength(Ex_ObjGetFromID(hExDui_chatbox, 100));   
+            Ex_ObjGetTextLength(Ex_ObjGetFromID(hExDui_chatbox, 100));
         std::wstring str;
         str.resize(text_length);
         Ex_ObjGetText(Ex_ObjGetFromID(hExDui_chatbox, 100), str.data(), text_length * 2);
-  
+
         EX_CHATBOX_ITEMINFO_SUBITEM ptr;
         ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
         ptr.Type = CHATBOX_ITEMTYPE_TEXT;
@@ -31,7 +31,7 @@ LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
     else if (nID == 102)
     {
         auto text_length =
-            Ex_ObjGetTextLength(Ex_ObjGetFromID(hExDui_chatbox, 100));   
+            Ex_ObjGetTextLength(Ex_ObjGetFromID(hExDui_chatbox, 100));
         std::wstring str;
         str.resize(text_length);
         Ex_ObjGetText(Ex_ObjGetFromID(hExDui_chatbox, 100), str.data(), text_length * 2);
@@ -122,13 +122,13 @@ void test_chatbox(HWND hWnd)
     Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKBUTTON, OnChatBoxEvent);
     HEXIMAGE hImgUser, hImgAssistant;
     HEXIMAGE hImgUserSmall, hImgAssistantSmall;
-    
+
     _img_createfromfile(L"res/user.png", &hImgUser);
     _img_createfromfile(L"res/ai.png", &hImgAssistant);
-    
+
     _img_scale(hImgUser, Ex_Scale(50), Ex_Scale(50), &hImgUserSmall);
     _img_scale(hImgAssistant, Ex_Scale(50), Ex_Scale(50), &hImgAssistantSmall);
-   
+
     _img_destroy(hImgUser);
     _img_destroy(hImgAssistant);
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_USER, 0, (size_t)hImgUserSmall);
@@ -140,157 +140,71 @@ void test_chatbox(HWND hWnd)
     ptr.Type = CHATBOX_ITEMTYPE_TEXT;
     EX_CHATBOX_ITEMINFO_TEXT itemData;
     LPCWSTR test1 = LR"(测试textExDUIR演示,项目地址：测试textExDUIR演示,项目地址项目地址：测试textExDUIR演示,项目地址项目地址：测试textExDUIR演示,项目地址)";
-    LPCWSTR test = LR"(LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+    LPCWSTR test = LR"(以下是一个用C#编写的计算当前月天数的方法：
+    using System;
+
+    public class MonthDaysCalculator
     {
-        if (uMsg == WM_CREATE) {
-            auto arr = malloc(sizeof(EX_POLYGON_ARRAY));
-            ((EX_POLYGON_ARRAY*)arr)->polygons = malloc(sizeof(size_t));
-            ((EX_POLYGON_ARRAY*)arr)->count = 1;
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ARRAY, (LONG_PTR)arr);
-
-            auto ptr = malloc(sizeof(EX_POLYGON));
-            ((EX_POLYGON*)ptr)->points = malloc(sizeof(POINT));
-            ((EX_POLYGON*)ptr)->count = 0;
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_DATA, (LONG_PTR)ptr);
-            size_t ptrValue = (size_t)ptr;
-            RtlMoveMemory(((EX_POLYGON_ARRAY*)arr)->polygons, &ptrValue, sizeof(size_t));
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_TAGGING, 0);
-
-            HEXBRUSH brush = _brush_create(ExARGB(255, 0, 0, 255));
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_PEN, (LONG_PTR)brush);
-            HEXBRUSH brush2 = _brush_create(ExARGB(255, 0, 0, 50));
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_PEN_FILL, (LONG_PTR)brush2);
-
-            RECT rc;
-            Ex_ObjGetRect(hObj, &rc);
-
-            auto canvas = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
-            _canvas_begindraw(canvas);
-            _canvas_clear(canvas, ExARGB(255, 255, 255, 255));
-            _canvas_enddraw(canvas);
-
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_CANVAS, canvas);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_BEGINX, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_BEGINY, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDX, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDY, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_HIT_POINT, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_HIT_PATH, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_CHECK_PATH, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_POINT_NULL, 1);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_BKG, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET, 0);
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET, 0);
-            auto scalePtr = malloc(sizeof(float));
-            Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_SCALE, (LONG_PTR)scalePtr);
-
-            Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_BOTH, TRUE);
-            Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000,
-                0, TRUE);
-            Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_HORZ, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000,
-                0, TRUE);
-            HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hObj, SCROLLBAR_TYPE_VERT);
-            Ex_ObjSetLong(hObj_scroll, OBJECT_LONG_OBJPROC,
-                (size_t)_taggingboard_OnScrollBarMsg);   // 改变滚动条回调
-            hObj_scroll = Ex_ObjScrollGetControl(hObj, SCROLLBAR_TYPE_HORZ);
-            Ex_ObjSetLong(hObj_scroll, OBJECT_LONG_OBJPROC,
-                (size_t)_taggingboard_OnScrollBarMsg);   // 改变滚动条回调
+        /// <summary>
+        /// 获取当前月份的天数
+        /// </summary>
+        /// <returns>当前月份的总天数</returns>
+        public static int GetDaysInCurrentMonth()
+        {
+            DateTime today = DateTime.Today;
+            return DateTime.DaysInMonth(today.Year, today.Month);
         }
-            else if (uMsg == WM_SIZE) {
-                    auto img = (HEXIMAGE)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_BKG);
-                    if (img != 0) {
-                        INT width, height;
-                        _img_getsize(img, &width, &height);
-                        RECT rc;
-                        Ex_ObjGetClientRect(hObj, &rc);
-                        INT widthRC = rc.right - rc.left;
-                        INT heightRC = rc.bottom - rc.top;
-                        widthRC = Ex_Scale(widthRC);
-                        heightRC = Ex_Scale(heightRC);
-                        INT   edge = (height > width) ? heightRC : widthRC;
-                        INT   edgeImg = (height > width) ? height : width;
-                        float scaleImg = (float)edgeImg / edge;
-                        INT left = (widthRC - (float)width / scaleImg) / 2;
-                        INT top = (heightRC - (float)height / scaleImg) / 2;
-                        auto  scalePtr = (LPVOID)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_SCALE);
-                        float oldscale;
-                        RtlMoveMemory(&oldscale, scalePtr, 4);
-                        INT oldleft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET);
-                        INT oldtop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET);
-                        RtlMoveMemory(scalePtr, &scaleImg, 4);
-                        Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET, left);
-                        Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET, top);
-                        auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ARRAY);
-                        if (arr->count > 1) {
-                            for (int i = 0; i < arr->count - 1; i++) {
-                                size_t ptrValue = 0;
-                                RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
-                                    sizeof(size_t));
-                                EX_POLYGON* ptr = (EX_POLYGON*)ptrValue;
-                                if (ptr->count > 0) {
-                                    for (int j = 0; j < ptr->count; j++) {
-                                        float x = 0, y = 0;
-                                        RtlMoveMemory(&x, (LPVOID)((size_t)ptr->points + j * 8), 4);
-                                        RtlMoveMemory(&y, (LPVOID)((size_t)ptr->points + j * 8 + 4), 4);
-                                        x = (x - oldleft) * oldscale / scaleImg + left;
-                                        y = (y - oldtop) * oldscale / scaleImg + top;
-                                        RtlMoveMemory((LPVOID)((size_t)ptr->points + j * 8), &x, 4);
-                                        RtlMoveMemory((LPVOID)((size_t)ptr->points + j * 8 + 4), &y, 4);
-                                    }
-                                }
-                            }
-                        }
-                        // 更新滚动条范围
-                        INT vHeight = -top;
-                        INT vWidth = -left;
-                        if (vHeight > 0) {
-                            Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, -vHeight, vHeight, TRUE);
-                        }
-                        else {
-                            Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, 1, TRUE);
-                        }
-                        if (vWidth > 0) {
-                            Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_HORZ, -vWidth, vWidth, TRUE);
-                        }
-                        else {
-                            Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_HORZ, 0, 1, TRUE);
-                        }
 
-                        Ex_ObjInvalidateRect(hObj, 0);
-                    }
+        /// <summary>
+        /// 获取指定年份和月份的天数
+        /// </summary>
+        /// <param name="year">年份</param>
+        /// <param name="month">月份(1-12)</param>
+        /// <returns>该月的总天数</returns>
+        public static int GetDaysInMonth(int year, int month)
+        {
+            return DateTime.DaysInMonth(year, month);
         }
-                else if (uMsg == WM_DESTROY) {
-                    auto arr = (EX_POLYGON_ARRAY*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ARRAY);
-                    if (arr->count > 0) {
-                        for (int i = 0; i < arr->count; i++) {
-                            size_t ptrValue = 0;
-                            RtlMoveMemory(&ptrValue, (LPVOID)((size_t)arr->polygons + i * sizeof(size_t)),
-                                sizeof(size_t));
-                            auto ptr = (EX_POLYGON*)ptrValue;
-                            free(ptr->points);
-                            free(ptr);
-                        }
-                    }
-                    free(arr->polygons);
-                    free(arr);
-                    free(arr);)";
-    //itemData->Text = L"测试textExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR项目地址：https://gitee.com/william_lzw/ExDUIR项目地址：https://gitee.com/william_lzw/ExDUIR";
-    //itemData->Text = L"测试textExDUIR演示,项目地址：测试textExDUIR演示,项目地址项目地址：测试textExDUIR演示,项目地址项目地址：测试textExDUIR演示,项目地址";
+    }
+
+    // 使用示例
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int daysInCurrentMonth = MonthDaysCalculator.GetDaysInCurrentMonth();
+            Console.WriteLine($"当前月份有 {daysInCurrentMonth} 天");
+        
+            // 也可以查询指定年月
+            int days = MonthDaysCalculator.GetDaysInMonth(2023, 2);
+            Console.WriteLine($"2023年2月有 {days} 天");
+        }
+    }   
+    这个方法使用了.NET框架内置的DateTime.DaysInMonth方法，它可以正确处理闰年二月的情况（28天或29天）。
+
+    主要特点：
+
+    GetDaysInCurrentMonth()方法无需参数，直接返回当前月份的天数
+
+    还提供了GetDaysInMonth(int year, int month)方法，可以查询任意年份月份的天数
+
+    这两个方法都是静态方法，可以直接调用
+
+    这个方法会正确处理所有月份，包括不同年份的二月天数差异。 
+    )";
     itemData.Text = test1;
-    
+
     ptr.Data = &itemData;
     ptr.Role = CHATBOX_ITEMROLE_USER;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
     itemData.Text = test;
-    
+
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
 
     itemData.Text = test1;
     ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
- 
+
     HEXIMAGE hImgCard, hImgCardSmall;
     _img_createfromfile(L"res/user.png", &hImgCard);
     _img_scale(hImgCard, Ex_Scale(50), Ex_Scale(50), &hImgCardSmall);
@@ -304,6 +218,18 @@ void test_chatbox(HWND hWnd)
     itemDataCard.ButtonText = L"测试按钮";
     ptr.Type = CHATBOX_ITEMTYPE_CARD;
     ptr.Data = &itemDataCard;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+
+    EX_CHATBOX_ITEMINFO_BOOSTMODE itemDataBoost;
+    HEXIMAGE hImgBoost, hImgBoostSmall;
+    _img_createfromfile(L"res/user.png", &hImgBoost);
+    _img_scale(hImgBoost, Ex_Scale(24), Ex_Scale(24), &hImgBoostSmall);
+    _img_destroy(hImgBoost);
+    itemDataBoost.Title = L"测试标题";
+    itemDataBoost.Content = L"测试内容测试内容!";
+    itemDataBoost.Image = hImgBoostSmall;
+    ptr.Type = CHATBOX_ITEMTYPE_BOOSTMODE;
+    ptr.Data = &itemDataBoost;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
     Ex_DUIShowWindow(hExDui_chatbox, SW_SHOWNORMAL, 0, 0, 0);
 }

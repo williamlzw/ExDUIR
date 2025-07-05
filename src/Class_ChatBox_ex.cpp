@@ -10,7 +10,7 @@ void _chatbox_register()
 {
     WCHAR wzCls[] = L"ChatBox";
     Ex_ObjRegister(wzCls, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-        DT_CENTER | DT_VCENTER, 12 * sizeof(size_t), NULL, NULL, _chatbox_proc);
+        DT_CENTER | DT_VCENTER, 30 * sizeof(size_t), NULL, NULL, _chatbox_proc);
 }
 
 LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -26,12 +26,19 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         Ex_ObjSetLong(hObj, CHATBOX_LONG_HOVER_INDEX, -1);
         Ex_ObjSetLong(hObj, CHATBOX_LONG_IMAGE_USER, 0);
         Ex_ObjSetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT, 0);
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_TEXT_FONT, _font_createfromfamily(L"Microsoft Yahei", 20, 0));
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_TITLEFONT, _font_createfromfamily(L"Microsoft Yahei", 24, FONT_STYLE_BOLD));
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_CONTENTFONT, _font_createfromfamily(L"Microsoft Yahei", 20, 0));
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT, _font_createfromfamily(L"Microsoft Yahei", 24, 0));
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_REASONFONT, _font_createfromfamily(L"Microsoft Yahei", 20, 0));
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_BUTTONFONT, _font_createfromfamily(L"Microsoft Yahei", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_TEXT_FONT, _font_createfromfamily(L"Arial", 20, 0));
+
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_TITLEFONT, _font_createfromfamily(L"Arial", 24, FONT_STYLE_BOLD));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_CONTENTFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT, _font_createfromfamily(L"Arial", 24, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_REASONFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_BUTTONFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_BOOSTMODE_TITLEFONT, _font_createfromfamily(L"Arial", 24, FONT_STYLE_BOLD));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_BOOSTMODE_CONTENTFONT, _font_createfromfamily(L"Arial", 20, 0));
+
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_ERRORLIST_TITLEFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_ERRORLIST_ERRORCODEFONT, _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT, _font_createfromfamily(L"Arial", 20, 0));
         Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000,
             0, TRUE);
         Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
@@ -62,7 +69,15 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     Ex_MemFree((void*)data->Content);
                     Ex_MemFree((void*)data->ButtonText);
                     _img_destroy(data->Image);
-                    free(data);              // 释放文本数据结构体
+                    free(data);              // 释放数据结构体
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
+                {
+                    EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
+                    Ex_MemFree((void*)data->Title);
+                    Ex_MemFree((void*)data->Content);
+                    _img_destroy(data->Image);
+                    free(data);
                 }
                 free(sub); // 释放子项结构体本身
             }
@@ -77,6 +92,13 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_BUTTONFONT));
+
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_TITLEFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_CONTENTFONT));
+
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_TITLEFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_ERRORCODEFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT));
     }
     else if (uMsg == WM_VSCROLL) {
         _chatbox_onvscrollbar(hWnd, hObj, uMsg, wParam, lParam);
@@ -101,7 +123,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 EX_CHATBOX_ITEMINFO_SUBITEM* sub = (EX_CHATBOX_ITEMINFO_SUBITEM*)ptrArray[i];
                 if (sub->Type == CHATBOX_ITEMTYPE_CARD)
                 {
-                    RECT rcButton = sub->Layout.rcButton;
+                    EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
+                    RECT rcButton = data->Layout.rcButton;
                     OffsetRect(&rcButton, 0, -nPos); // 应用滚动偏移
 
                     // 检查鼠标是否在按钮区域内
@@ -143,7 +166,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 EX_CHATBOX_ITEMINFO_SUBITEM* sub = (EX_CHATBOX_ITEMINFO_SUBITEM*)ptrArray[i];
                 if (sub->Type == CHATBOX_ITEMTYPE_CARD)
                 {
-                    RECT rcButton = sub->Layout.rcButton;
+                    EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
+                    RECT rcButton = data->Layout.rcButton;
                     OffsetRect(&rcButton, 0, -nPos); // 应用滚动偏移
 
                     // 检查点击是否在按钮区域内
@@ -151,7 +175,6 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                         y >= rcButton.top && y <= rcButton.bottom)
                     {
                         Ex_ObjDispatchNotify(hObj, CHATBOX_EVENT_CLICKBUTTON, 0, i);
-                        return 0; // 已处理
                     }
                 }
             }
@@ -187,7 +210,15 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             cardCopy->ButtonText = StrDupW(cardData->ButtonText);
             itemCopy->Data = cardCopy;
         }
-        // 其他类型可以在这里添加处理逻辑
+        else if (newValue->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
+        {
+            EX_CHATBOX_ITEMINFO_BOOSTMODE* boostData = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_BOOSTMODE* boostCopy = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)malloc(sizeof(EX_CHATBOX_ITEMINFO_BOOSTMODE));
+            boostCopy->Image = boostData->Image;
+            boostCopy->Title = StrDupW(boostData->Title); // 深拷贝字符串
+            boostCopy->Content = StrDupW(boostData->Content);
+            itemCopy->Data = boostCopy;
+        }
 
         // 重新分配内存并检查是否成功
         void* newItems = realloc(arr->Items, (arr->Count + 1) * sizeof(size_t));
@@ -248,7 +279,13 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             _img_destroy(oldData->Image);
             free(oldData);
         }
-
+        else if (oldSub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
+            EX_CHATBOX_ITEMINFO_BOOSTMODE* oldData = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)oldSub->Data;
+            Ex_MemFree((void*)oldData->Title);
+            Ex_MemFree((void*)oldData->Content);
+            _img_destroy(oldData->Image);
+            free(oldData);
+        }
         // 复制新的子项结构体（不包括数据部分）
         EX_CHATBOX_ITEMINFO_SUBITEM* newSub = (EX_CHATBOX_ITEMINFO_SUBITEM*)malloc(sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
         memcpy(newSub, newValue, sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
@@ -274,7 +311,14 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             cardCopy->ButtonText = StrDupW(cardData->ButtonText);
             newSub->Data = cardCopy;
         }
-
+        else if (newValue->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
+            EX_CHATBOX_ITEMINFO_BOOSTMODE* boostData = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_BOOSTMODE* boostCopy = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)malloc(sizeof(EX_CHATBOX_ITEMINFO_BOOSTMODE));
+            boostCopy->Image = boostData->Image;
+            boostCopy->Title = StrDupW(boostData->Title);
+            boostCopy->Content = StrDupW(boostData->Content);
+            newSub->Data = boostCopy;
+        }
         // 替换旧项目
         ptrArray[index] = (size_t)newSub;
 
@@ -292,7 +336,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         size_t* ptrArray = (size_t*)arr->Items;
         INT index = (INT)wParam;
         if (index < 0 || index >= arr->Count) return -1; // 索引无效
-        
+
         EX_CHATBOX_ITEMINFO_SUBITEM* sub = (EX_CHATBOX_ITEMINFO_SUBITEM*)ptrArray[index];
         return sub->Type;
     }
@@ -374,14 +418,85 @@ void _chatbox_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
     }
 }
 
+void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_BOOSTMODE* data,
+    EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE* layout,
+    INT nPos)
+{
+    // 直接使用预先计算的布局
+    RECT rcBubble = layout->rcBubble;
+    OffsetRect(&rcBubble, 0, -nPos);
+
+    RECT rcAvatar = layout->rcAvatar;
+    OffsetRect(&rcAvatar, 0, -nPos);
+
+    RECT rcImg = layout->rcImage;
+    OffsetRect(&rcImg, 0, -nPos);
+
+    RECT rcTitle = layout->rcTitle;
+    OffsetRect(&rcTitle, 0, -nPos);
+
+    RECT rcContent = layout->rcContent;
+    OffsetRect(&rcContent, 0, -nPos);
+
+    // 绘制背景
+    HEXBRUSH hBrush = _brush_create(ExARGB(120, 120, 120, 255));
+    _canvas_fillroundedrect(ps.hCanvas, hBrush,
+        rcBubble.left, rcBubble.top,
+        rcBubble.right, rcBubble.bottom,
+        Ex_Scale(5), Ex_Scale(5));
+
+    // 绘制头像（使用预计算的布局）
+    HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
+    _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
+
+    _canvas_drawimage(ps.hCanvas, data->Image, rcImg.left, rcImg.top, 255);
+    // 绘制区域
+    HEXFONT hFontTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_TITLEFONT);
+    HEXFONT hFontContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_CONTENTFONT);
+    _canvas_drawtext(ps.hCanvas, hFontTitle,
+        Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+        data->Title, -1,
+        DT_LEFT | DT_TOP,
+        rcTitle.left, rcTitle.top,
+        rcTitle.right, rcTitle.bottom);
+
+    _canvas_drawtext(ps.hCanvas, hFontContent,
+        Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+        data->Content, -1,
+        DT_LEFT | DT_TOP | DT_WORDBREAK,
+        rcContent.left, rcContent.top,
+        rcContent.right, rcContent.bottom);
+
+    _brush_setcolor(hBrush, ExARGB(150, 150, 150, 255));
+    _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcTitle.bottom + Ex_Scale(10), rcTitle.right, rcTitle.bottom + Ex_Scale(10), 1, 0);
+
+//#ifdef _DEBUG
+//    _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+//    _canvas_drawrect(ps.hCanvas, hBrush, rcBubble.left, rcBubble.top, rcBubble.right, rcBubble.bottom, 1, 0);
+//
+//    _brush_setcolor(hBrush, ExARGB(0, 255, 0, 255));   // 绿色边框
+//    _canvas_drawrect(ps.hCanvas, hBrush, rcImg.left, rcImg.top, rcImg.right, rcImg.bottom, 1, 0);
+//
+//    _canvas_drawrect(ps.hCanvas, hBrush, rcContent.left, rcContent.top, rcContent.right, rcContent.bottom, 1, 0);
+//
+//    _brush_setcolor(hBrush, ExARGB(255, 0, 0, 255));   // 红色边框
+//    _canvas_drawrect(ps.hCanvas, hBrush, rcAvatar.left, rcAvatar.top, rcAvatar.right, rcAvatar.bottom, 1, 0);
+//#endif
+    _brush_destroy(hBrush);
+}
+
 void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_CARD* data,
-    EX_CHATBOX_ITEM_LAYOUT* layout,
+    EX_CHATBOX_ITEM_LAYOUT_CARD* layout,
     INT nPos, INT index)
 {
     // 直接使用预先计算的布局
     RECT rcBubble = layout->rcBubble;
     OffsetRect(&rcBubble, 0, -nPos);
+
+    RECT rcAvatar = layout->rcAvatar;
+    OffsetRect(&rcAvatar, 0, -nPos);
 
     RECT rcImg = layout->rcCardImage;
     OffsetRect(&rcImg, 0, -nPos);
@@ -412,8 +527,6 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         Ex_Scale(5), Ex_Scale(5));
 
     // 绘制头像（使用预计算的布局）
-    RECT rcAvatar = layout->rcAvatar;
-    OffsetRect(&rcAvatar, 0, -nPos);
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
 
@@ -484,14 +597,13 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         rcButton.left, rcButton.top,
         rcButton.right, rcButton.bottom);
 
-        // 绘制调试边框（可选）
+    // 绘制调试边框（可选）
 //#ifdef _DEBUG
 //    _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
 //    _canvas_drawrect(ps.hCanvas, hBrush, rcBubble.left, rcBubble.top, rcBubble.right, rcBubble.bottom, 1, 0);
 //
 //    _brush_setcolor(hBrush, ExARGB(0, 255, 0, 255));   // 绿色边框
-//    _canvas_drawrect(ps.hCanvas, hBrush, rcImg.left, rcImg.top, rcImg.right, rcImg.bottom, 1,
-//                     0);
+//    _canvas_drawrect(ps.hCanvas, hBrush, rcImg.left, rcImg.top, rcImg.right, rcImg.bottom, 1, 0);
 //    _canvas_drawrect(ps.hCanvas, hBrush, rcContent.left, rcContent.top, rcContent.right, rcContent.bottom, 1, 0);
 //    _canvas_drawrect(ps.hCanvas, hBrush, rcReasonTitle.left, rcReasonTitle.top, rcReasonTitle.right, rcReasonTitle.bottom, 1, 0);
 //    _canvas_drawrect(ps.hCanvas, hBrush, rcReason.left, rcReason.top, rcReason.right, rcReason.bottom, 1, 0);
@@ -504,7 +616,7 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
 
 void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_TEXT* data,
-    EX_CHATBOX_ITEM_LAYOUT* layout,
+    EX_CHATBOX_ITEM_LAYOUT_TEXT* layout,
     INT nPos, INT role)
 {
     // 应用滚动偏移
@@ -582,16 +694,15 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
     HEXFONT hFontText = Ex_ObjGetLong(hObj, CHATBOX_LONG_TEXT_FONT);
     HEXFONT hFontContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_CONTENTFONT);
     HEXFONT hFontReason = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONFONT);
+    HEXFONT hFontReasonTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT);
+    HEXFONT hFontBoostModeTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_TITLEFONT);
+    HEXFONT hFontBoostModeContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_CONTENTFONT);
 
-    // 创建临时画布用于测量
     HEXCANVAS hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
-
-    // 初始化布局
-    memset(&sub->Layout, 0, sizeof(EX_CHATBOX_ITEM_LAYOUT));
 
     if (sub->Type == CHATBOX_ITEMTYPE_TEXT) {
         EX_CHATBOX_ITEMINFO_TEXT* data = (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data;
-
+        memset(&data->Layout, 0, sizeof(EX_CHATBOX_ITEM_LAYOUT_TEXT));
         // 测量文本尺寸
         FLOAT nWidthText, nHeightText;
         INT maxTextWidth = widthClient - Ex_Scale(140); // 70+70=140
@@ -599,48 +710,48 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             maxTextWidth, &nWidthText, &nHeightText);
 
         // 计算布局
-        INT bgWidth  = (INT)floor(nWidthText) + Ex_Scale(40);
+        INT bgWidth = (INT)floor(nWidthText) + Ex_Scale(40);
         INT bgHeight = (INT)floor(nHeightText) + Ex_Scale(40);
 
         // 设置项目区域
-        sub->Layout.rcItem.left = 0;
-        sub->Layout.rcItem.top = 0;
-        sub->Layout.rcItem.right = widthClient;
-        sub->Layout.rcItem.bottom = bgHeight + Ex_Scale(30);
-        sub->Layout.nHeight = sub->Layout.rcItem.bottom;
+        sub->rcItem.left = 0;
+        sub->rcItem.top = 0;
+        sub->rcItem.right = widthClient;
+        sub->rcItem.bottom = bgHeight + Ex_Scale(30);
+        sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
         if (sub->Role == CHATBOX_ITEMROLE_ASSISTANT) {
-            sub->Layout.rcAvatar.left = Ex_Scale(10);
-            sub->Layout.rcAvatar.top = Ex_Scale(0);
-            sub->Layout.rcAvatar.right = sub->Layout.rcAvatar.left + Ex_Scale(50);
-            sub->Layout.rcAvatar.bottom = sub->Layout.rcAvatar.top + Ex_Scale(50);
+            data->Layout.rcAvatar.left = Ex_Scale(10);
+            data->Layout.rcAvatar.top = Ex_Scale(0);
+            data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+            data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
 
-            sub->Layout.rcBubble.left = Ex_Scale(70);
-            sub->Layout.rcBubble.top = Ex_Scale(0);
+            data->Layout.rcBubble.left = Ex_Scale(70);
+            data->Layout.rcBubble.top = Ex_Scale(0);
         }
         else {
-            sub->Layout.rcAvatar.left = widthClient - Ex_Scale(60);
-            sub->Layout.rcAvatar.top = Ex_Scale(0);
-            sub->Layout.rcAvatar.right = sub->Layout.rcAvatar.left + Ex_Scale(50);
-            sub->Layout.rcAvatar.bottom = sub->Layout.rcAvatar.top + Ex_Scale(50);
+            data->Layout.rcAvatar.left = widthClient - Ex_Scale(60);
+            data->Layout.rcAvatar.top = Ex_Scale(0);
+            data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+            data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
 
-            sub->Layout.rcBubble.left = widthClient - Ex_Scale(70) - bgWidth;
-            sub->Layout.rcBubble.top = Ex_Scale(0);
+            data->Layout.rcBubble.left = widthClient - Ex_Scale(70) - bgWidth;
+            data->Layout.rcBubble.top = Ex_Scale(0);
         }
 
-        sub->Layout.rcBubble.right = sub->Layout.rcBubble.left + bgWidth;
-        sub->Layout.rcBubble.bottom = sub->Layout.rcBubble.top + bgHeight;
+        data->Layout.rcBubble.right = data->Layout.rcBubble.left + bgWidth;
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + bgHeight;
 
         // 设置内容区域
-        sub->Layout.rcContent.left = sub->Layout.rcBubble.left + Ex_Scale(20);
-        sub->Layout.rcContent.top = sub->Layout.rcBubble.top + Ex_Scale(20);
-        sub->Layout.rcContent.right = sub->Layout.rcBubble.right - Ex_Scale(20);
-        sub->Layout.rcContent.bottom = sub->Layout.rcBubble.bottom - Ex_Scale(20);
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.bottom - Ex_Scale(20);
     }
     else if (sub->Type == CHATBOX_ITEMTYPE_CARD) {
         EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
-
+        memset(&data->Layout, 0, sizeof(EX_CHATBOX_ITEM_LAYOUT_CARD));
         // 测量文本尺寸
         FLOAT nWidthContent, nHeightContent;
         FLOAT nWidthReason, nHeightReason;
@@ -654,71 +765,126 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
 
         // 计算卡片高度
         INT cardHeight = Ex_Scale(20 + 50 + 20 + 20 + 20 + 40 + 20 + 20 + 30 + 20) +
-                         (INT)floor(nHeightContent) + (INT)floor(nHeightReason);
+            (INT)floor(nHeightContent) + (INT)floor(nHeightReason);
 
         // 设置项目区域
-        sub->Layout.rcItem.left = 0;
-        sub->Layout.rcItem.top = 0;
-        sub->Layout.rcItem.right = widthClient;
-        sub->Layout.rcItem.bottom = cardHeight + Ex_Scale(30);
-        sub->Layout.nHeight = sub->Layout.rcItem.bottom;
+        sub->rcItem.left = 0;
+        sub->rcItem.top = 0;
+        sub->rcItem.right = widthClient;
+        sub->rcItem.bottom = cardHeight + Ex_Scale(30);
+        sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
-        sub->Layout.rcAvatar.left = Ex_Scale(10);
-        sub->Layout.rcAvatar.top = Ex_Scale(0);
-        sub->Layout.rcAvatar.right = sub->Layout.rcAvatar.left + Ex_Scale(50);
-        sub->Layout.rcAvatar.bottom = sub->Layout.rcAvatar.top + Ex_Scale(50);
+        data->Layout.rcAvatar.left = Ex_Scale(10);
+        data->Layout.rcAvatar.top = Ex_Scale(0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
 
         // 设置气泡区域
-        sub->Layout.rcBubble.left = Ex_Scale(70);
-        sub->Layout.rcBubble.top = Ex_Scale(0);
-        sub->Layout.rcBubble.right = sub->Layout.rcBubble.left +
+        data->Layout.rcBubble.left = Ex_Scale(70);
+        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.right = data->Layout.rcBubble.left +
             (maxTextWidthContent + Ex_Scale(40));
-        sub->Layout.rcBubble.bottom = sub->Layout.rcBubble.top + cardHeight;
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + cardHeight;
 
         // 设置卡片内部区域
-        sub->Layout.rcCardImage.left = sub->Layout.rcBubble.left + Ex_Scale(20);
-        sub->Layout.rcCardImage.top = sub->Layout.rcBubble.top + Ex_Scale(20);
-        sub->Layout.rcCardImage.right = sub->Layout.rcCardImage.left + Ex_Scale(50);
-        sub->Layout.rcCardImage.bottom = sub->Layout.rcCardImage.top + Ex_Scale(50);
+        data->Layout.rcCardImage.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcCardImage.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcCardImage.right = data->Layout.rcCardImage.left + Ex_Scale(50);
+        data->Layout.rcCardImage.bottom = data->Layout.rcCardImage.top + Ex_Scale(50);
 
-        sub->Layout.rcCardTitle.left = sub->Layout.rcCardImage.right + Ex_Scale(10);
-        sub->Layout.rcCardTitle.top = sub->Layout.rcBubble.top + Ex_Scale(20);
-        sub->Layout.rcCardTitle.right = sub->Layout.rcBubble.right - Ex_Scale(20);
-        sub->Layout.rcCardTitle.bottom = sub->Layout.rcCardTitle.top + Ex_Scale(50);
+        data->Layout.rcCardTitle.left = data->Layout.rcCardImage.right + Ex_Scale(10);
+        data->Layout.rcCardTitle.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcCardTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcCardTitle.bottom = data->Layout.rcCardTitle.top + Ex_Scale(50);
 
-        sub->Layout.rcCardContent.left = sub->Layout.rcBubble.left + Ex_Scale(20);
-        sub->Layout.rcCardContent.top = sub->Layout.rcCardImage.bottom + Ex_Scale(20);
-        sub->Layout.rcCardContent.right = sub->Layout.rcBubble.right - Ex_Scale(20);
-        sub->Layout.rcCardContent.bottom =
-            sub->Layout.rcCardContent.top + (INT)floor(nHeightContent);
+        data->Layout.rcCardContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcCardContent.top = data->Layout.rcCardImage.bottom + Ex_Scale(20);
+        data->Layout.rcCardContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcCardContent.bottom =
+            data->Layout.rcCardContent.top + (INT)floor(nHeightContent);
 
-        // 4. 原因矩形（在内容下方）
-        sub->Layout.rcReasonRect.left = sub->Layout.rcBubble.left + Ex_Scale(20);
-        sub->Layout.rcReasonRect.top = sub->Layout.rcCardContent.bottom + Ex_Scale(20);
-        sub->Layout.rcReasonRect.right = sub->Layout.rcBubble.right - Ex_Scale(20);
-        sub->Layout.rcReasonRect.bottom = sub->Layout.rcReasonRect.top+ Ex_Scale(20)  // 上内边距
+        //  原因矩形（在内容下方）
+        data->Layout.rcReasonRect.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcReasonRect.top = data->Layout.rcCardContent.bottom + Ex_Scale(20);
+        data->Layout.rcReasonRect.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcReasonRect.bottom = data->Layout.rcReasonRect.top + Ex_Scale(20)  // 上内边距
             + Ex_Scale(40)  // 原因标题高度
             + (INT)floor(nHeightReason)   // 原因文本高度
             + Ex_Scale(20); // 下内边距
 
-        // 5. 原因标题（在原因矩形内）
-        sub->Layout.rcReasonTitle.left = sub->Layout.rcReasonRect.left + Ex_Scale(20);
-        sub->Layout.rcReasonTitle.top = sub->Layout.rcReasonRect.top + Ex_Scale(20);
-        sub->Layout.rcReasonTitle.right = sub->Layout.rcReasonRect.right - Ex_Scale(20);
-        sub->Layout.rcReasonTitle.bottom = sub->Layout.rcReasonTitle.top + Ex_Scale(40);
+        //  原因标题（在原因矩形内）
+        data->Layout.rcReasonTitle.left = data->Layout.rcReasonRect.left + Ex_Scale(20);
+        data->Layout.rcReasonTitle.top = data->Layout.rcReasonRect.top + Ex_Scale(20);
+        data->Layout.rcReasonTitle.right = data->Layout.rcReasonRect.right - Ex_Scale(20);
+        data->Layout.rcReasonTitle.bottom = data->Layout.rcReasonTitle.top + Ex_Scale(40);
 
-        // 6. 原因文本（在原因标题下方）
-        sub->Layout.rcReason.left = sub->Layout.rcReasonRect.left + Ex_Scale(20);
-        sub->Layout.rcReason.top = sub->Layout.rcReasonTitle.bottom;
-        sub->Layout.rcReason.right = sub->Layout.rcReasonRect.right - Ex_Scale(20);
-        sub->Layout.rcReason.bottom = sub->Layout.rcReason.top + (INT)floor(nHeightReason);
+        //  原因文本（在原因标题下方）
+        data->Layout.rcReason.left = data->Layout.rcReasonRect.left + Ex_Scale(20);
+        data->Layout.rcReason.top = data->Layout.rcReasonTitle.bottom;
+        data->Layout.rcReason.right = data->Layout.rcReasonRect.right - Ex_Scale(20);
+        data->Layout.rcReason.bottom = data->Layout.rcReason.top + (INT)floor(nHeightReason);
 
-        // 7. 按钮（在原因矩形下方）
-        sub->Layout.rcButton.left = sub->Layout.rcBubble.left + Ex_Scale(20);
-        sub->Layout.rcButton.top = sub->Layout.rcReasonRect.bottom + Ex_Scale(20);
-        sub->Layout.rcButton.right = sub->Layout.rcButton.left + Ex_Scale(150);
-        sub->Layout.rcButton.bottom = sub->Layout.rcButton.top + Ex_Scale(30);
+        //  按钮（在原因矩形下方）
+        data->Layout.rcButton.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcButton.top = data->Layout.rcReasonRect.bottom + Ex_Scale(20);
+        data->Layout.rcButton.right = data->Layout.rcButton.left + Ex_Scale(150);
+        data->Layout.rcButton.bottom = data->Layout.rcButton.top + Ex_Scale(30);
+    }
+    else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
+
+        EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
+        memset(&data->Layout, 0, sizeof(EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE));
+        // 测量文本尺寸
+        FLOAT nWidthTitle, nHeightTitle;
+        FLOAT nWidthContent, nHeightContent;
+        INT maxTextWidthTitle = widthClient - Ex_Scale(130); // 10 + 50 + 10 + 20 + 20 + 20
+        INT maxTextWidthContent = widthClient - Ex_Scale(164); // 10 + 50 + 10 + 20 + 24 + 10 + 20 + 20
+        _chatbox_measure_text(hCanvas, hFontBoostModeTitle, data->Title,
+            maxTextWidthTitle, &nWidthTitle, &nHeightTitle);
+        _chatbox_measure_text(hCanvas, hFontBoostModeContent, data->Content,
+            maxTextWidthContent, &nWidthContent, &nHeightContent);
+
+        // 计算卡片高度
+        INT cardHeight = Ex_Scale(20 + 20 + 20) +
+            (INT)floor(nHeightTitle) + (INT)floor(nHeightContent);
+
+        // 设置项目区域
+        sub->rcItem.left = 0;
+        sub->rcItem.top = 0;
+        sub->rcItem.right = widthClient;
+        sub->rcItem.bottom = cardHeight + Ex_Scale(30);
+        sub->nHeight = sub->rcItem.bottom;
+
+        // 设置头像区域
+        data->Layout.rcAvatar.left = Ex_Scale(10);
+        data->Layout.rcAvatar.top = Ex_Scale(0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+
+        // 设置气泡区域
+        data->Layout.rcBubble.left = Ex_Scale(70);
+        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.right = data->Layout.rcBubble.left +
+            ((INT)floor(nWidthContent) + Ex_Scale(80));
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + cardHeight;
+
+        //  原因标题（在原因矩形内）
+        data->Layout.rcTitle.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcTitle.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)floor(nHeightTitle);
+
+        data->Layout.rcImage.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcImage.top = data->Layout.rcTitle.bottom + Ex_Scale(20);
+        data->Layout.rcImage.right = data->Layout.rcImage.left + Ex_Scale(24);
+        data->Layout.rcImage.bottom = data->Layout.rcImage.top + Ex_Scale(24);
+
+        //  原因文本（在原因标题下方）
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(54);//20+24+10
+        data->Layout.rcContent.top = data->Layout.rcTitle.bottom + Ex_Scale(20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcContent.bottom = data->Layout.rcContent.top + (INT)floor(nHeightContent);
     }
 }
 
@@ -741,29 +907,44 @@ void _chatbox_update_layout(HEXOBJ hObj) {
 
         // 计算单个项目布局
         _chatbox_calc_layout(hObj, sub, widthClient);
+        sub->rcItem.top = currentY;
+        sub->rcItem.bottom = currentY + sub->nHeight;
 
-        // 更新项目位置
-        sub->Layout.rcItem.top = currentY;
-        sub->Layout.rcItem.bottom = currentY + sub->Layout.nHeight;
+        if (sub->Type == CHATBOX_ITEMTYPE_TEXT) {
+            EX_CHATBOX_ITEMINFO_TEXT* data = (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data;
 
-        // 更新内部区域位置
-        OffsetRect(&sub->Layout.rcAvatar, 0, currentY);
-        OffsetRect(&sub->Layout.rcBubble, 0, currentY);
-        OffsetRect(&sub->Layout.rcContent, 0, currentY);
-
-        // 卡片特有区域的偏移
-        if (sub->Type == CHATBOX_ITEMTYPE_CARD) {
-            OffsetRect(&sub->Layout.rcCardImage, 0, currentY);
-            OffsetRect(&sub->Layout.rcCardTitle, 0, currentY);
-            OffsetRect(&sub->Layout.rcCardContent, 0, currentY);
-            OffsetRect(&sub->Layout.rcReasonRect, 0, currentY);
-            OffsetRect(&sub->Layout.rcReasonTitle, 0, currentY);
-            OffsetRect(&sub->Layout.rcReason, 0, currentY);
-            OffsetRect(&sub->Layout.rcButton, 0, currentY);
+            // 更新内部区域位置
+            OffsetRect(&data->Layout.rcAvatar, 0, currentY);
+            OffsetRect(&data->Layout.rcBubble, 0, currentY);
+            OffsetRect(&data->Layout.rcContent, 0, currentY);
         }
+        else if (sub->Type == CHATBOX_ITEMTYPE_CARD) {
+            EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
 
+            // 更新内部区域位置
+            OffsetRect(&data->Layout.rcAvatar, 0, currentY);
+            OffsetRect(&data->Layout.rcBubble, 0, currentY);
+            OffsetRect(&data->Layout.rcContent, 0, currentY);
+            OffsetRect(&data->Layout.rcCardImage, 0, currentY);
+            OffsetRect(&data->Layout.rcCardTitle, 0, currentY);
+            OffsetRect(&data->Layout.rcCardContent, 0, currentY);
+            OffsetRect(&data->Layout.rcReasonRect, 0, currentY);
+            OffsetRect(&data->Layout.rcReasonTitle, 0, currentY);
+            OffsetRect(&data->Layout.rcReason, 0, currentY);
+            OffsetRect(&data->Layout.rcButton, 0, currentY);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
+            EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
+
+            // 更新内部区域位置
+            OffsetRect(&data->Layout.rcAvatar, 0, currentY);
+            OffsetRect(&data->Layout.rcBubble, 0, currentY);
+            OffsetRect(&data->Layout.rcImage, 0, currentY);
+            OffsetRect(&data->Layout.rcTitle, 0, currentY);
+            OffsetRect(&data->Layout.rcContent, 0, currentY);
+        }
         // 更新累计高度
-        currentY = sub->Layout.rcItem.bottom;
+        currentY = sub->rcItem.bottom;
     }
 
     // 更新总高度和滚动条
@@ -799,17 +980,24 @@ void _chatbox_paint(HEXOBJ hObj)
             EX_CHATBOX_ITEMINFO_SUBITEM* sub = (EX_CHATBOX_ITEMINFO_SUBITEM*)ptrArray[i];
 
             // 检查项目是否可见
-            RECT rcItem = sub->Layout.rcItem;
+            RECT rcItem = sub->rcItem;
             OffsetRect(&rcItem, 0, -nPos);
 
             if (rcItem.bottom > 0 && rcItem.top < ps.rcPaint.bottom) {
                 if (sub->Type == CHATBOX_ITEMTYPE_TEXT) {
+                    EX_CHATBOX_ITEMINFO_TEXT* data = (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data;
                     _chatbox_paint_text(hObj, ps, (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data,
-                        &sub->Layout, nPos, sub->Role);
+                        &data->Layout, nPos, sub->Role);
                 }
                 else if (sub->Type == CHATBOX_ITEMTYPE_CARD) {
+                    EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
                     _chatbox_paint_card(hObj, ps, (EX_CHATBOX_ITEMINFO_CARD*)sub->Data,
-                        &sub->Layout, nPos, i);
+                        &data->Layout, nPos, i);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
+                    EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
+                    _chatbox_paint_boostmode(hObj, ps, (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data,
+                        &data->Layout, nPos);
                 }
             }
         }

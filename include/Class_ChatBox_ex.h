@@ -6,7 +6,7 @@
 #define CHATBOX_LONG_TOTAL_HEIGHT 1
 // 属性_对话盒_纵坐标偏移
 #define CHATBOX_LONG_TOP_OFFSET 2
-// 属性_对话盒_热点索引
+// 属性_对话盒_热点索引, -1无热点
 #define CHATBOX_LONG_HOVER_INDEX 3
 // 属性_对话盒_图标_用户
 #define CHATBOX_LONG_IMAGE_USER 4
@@ -24,18 +24,31 @@
 #define CHATBOX_LONG_CARD_REASONFONT 10
 // 属性_对话盒_卡片_按钮标题字体
 #define CHATBOX_LONG_CARD_BUTTONFONT 11
-
+// 属性_对话盒_增强模式_标题字体
+#define CHATBOX_LONG_BOOSTMODE_TITLEFONT 12
+// 属性_对话盒_增强模式_内容字体
+#define CHATBOX_LONG_BOOSTMODE_CONTENTFONT 13
+// 属性_对话盒_错误列表_标题字体
+#define CHATBOX_LONG_ERRORLIST_TITLEFONT 14
+// 属性_对话盒_错误列表_错误码字体
+#define CHATBOX_LONG_ERRORLIST_ERRORCODEFONT 15
+// 属性_对话盒_错误列表_描述字体
+#define CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT 16
 
 void _chatbox_register();
 LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_TEXT* data,
-    EX_CHATBOX_ITEM_LAYOUT* layout,
+    EX_CHATBOX_ITEM_LAYOUT_TEXT* layout,
     INT nPos, INT role);
 void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_CARD* data,
-    EX_CHATBOX_ITEM_LAYOUT* layout,
+    EX_CHATBOX_ITEM_LAYOUT_CARD* layout,
     INT nPos, INT index);
+void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_BOOSTMODE* data,
+    EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE* layout,
+    INT nPos);
 void _chatbox_update_layout(HEXOBJ hObj);
 void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT widthClient);
 void _chatbox_paint(HEXOBJ hObj);

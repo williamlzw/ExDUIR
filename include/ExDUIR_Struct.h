@@ -1682,16 +1682,23 @@
 #define LINECHART_MESSAGE_FOREGROUNDCOLOR_DRAW 200004
 #pragma endregion linechart message
 
-#pragma region chatbox constant
+#pragma region chatbox item type constant
 // 对话盒_项目类型_文本
 #define CHATBOX_ITEMTYPE_TEXT 0
 // 对话盒_项目类型_卡片
 #define CHATBOX_ITEMTYPE_CARD 1
+// 对话盒_项目类型_模式
+#define CHATBOX_ITEMTYPE_BOOSTMODE 2
+// 对话盒_项目类型_错误列表
+#define CHATBOX_ITEMTYPE_ERRORLIST 3
+#pragma endregion chatbox item type constant
+
+#pragma region chatbox item role constant
 // 对话盒_项目角色_用户
 #define CHATBOX_ITEMROLE_USER 0
 // 对话盒_项目角色_助手
 #define CHATBOX_ITEMROLE_ASSISTANT 1
-#pragma endregion chatbox constant
+#pragma endregion chatbox item role constant
 
 #pragma region chatbox event constant
 // 事件_对话盒_点击按钮,lParam返回路径索引,从0开始
@@ -1770,7 +1777,7 @@ typedef LRESULT(CALLBACK* ClsPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EventHandlerPROC)(HEXOBJ, INT, INT, WPARAM, LPARAM);
 typedef LRESULT(CALLBACK* EnumPropsPROC)(HEXOBJ, size_t, size_t, size_t);
 typedef LRESULT(CALLBACK* ReportListViewOrderPROC)(HEXOBJ, UINT, LPVOID, UINT, LPVOID, UINT, UINT,
-                                                   size_t);
+    size_t);
 
 
 
@@ -1834,7 +1841,7 @@ struct EX_BITMAPDATA
     UINT   height;
     UINT   stride;
     INT    pixelFormat;
-    BYTE*  scan0;
+    BYTE* scan0;
     LPVOID reserved;
 };
 
@@ -1888,9 +1895,9 @@ struct EX_REPORTLIST_CELLINFO
     DWORD   cellStyle;   // 单元格风格
     EXARGB cellBkgCr;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR"风格时,单元格的背景色
     EXARGB
-    cellTextCr;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR"风格时,单元格的文本色
+        cellTextCr;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLTEXTCOLOUR"风格时,单元格的文本色
     HEXFONT
-    cellFont;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLFONT"风格时,单元格的字体,该字体(修改时)无需手动释放
+        cellFont;   // cellStyle具有"REPORTLISTVIEW_CELLSTYLE_CELLFONT"风格时,单元格的字体,该字体(修改时)无需手动释放
     LPARAM lParam;   // 单元格参数
 };
 
@@ -1911,7 +1918,7 @@ struct EX_REPORTLIST_SORTINFO
     UINT nType;   // 0:文本,1:整数
     ReportListViewOrderPROC
         lpfnCmp;    // LRESULT orderProc(HEXOBJ hObj,UINT nIndex1,LPVOID pvData1,UINT nIndex2,LPVOID
-                    // pvData2,UINT nIndexCol,UINT nType,size_t lParam)
+    // pvData2,UINT nIndexCol,UINT nType,size_t lParam)
     BOOL   fDesc;   // 是否倒序
     LPARAM lParam;   // 排序附加参数
 };
@@ -2196,24 +2203,16 @@ struct EX_POLYGON
     LPVOID points;   // 保存有count个POINT结构体数据:x,y
 };
 
-struct EX_CHATBOX_ITEMINFO_TEXT
+struct EX_CHATBOX_ITEM_LAYOUT_TEXT
 {
-    LPCWSTR Text;
+    RECT rcAvatar;    // 头像区域
+    RECT rcBubble;    // 气泡区域
+    RECT rcContent;   // 内容区域
 };
 
-struct EX_CHATBOX_ITEMINFO_CARD
+struct EX_CHATBOX_ITEM_LAYOUT_CARD
 {
-    LPCWSTR  Title;
-    HEXIMAGE Image;
-    LPCWSTR  Content;
-    LPCWSTR  ReasonTitle;
-    LPCWSTR  Reason;
-    LPCWSTR  ButtonText;
-};
 
-struct EX_CHATBOX_ITEM_LAYOUT
-{
-    RECT rcItem;      // 整个项目的矩形区域
     RECT rcAvatar;    // 头像区域
     RECT rcBubble;    // 气泡区域
     RECT rcContent;   // 内容区域
@@ -2225,15 +2224,73 @@ struct EX_CHATBOX_ITEM_LAYOUT
     RECT rcReasonTitle;   // 原因标题区域
     RECT rcReason;        // 原因文本区域
     RECT rcButton;        // 按钮区域
-    INT  nHeight;         // 项目总高度
+};
+
+struct EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE
+{
+    RECT rcAvatar;    // 头像区域
+    RECT rcBubble;    // 气泡区域
+    RECT rcImage;     // 图片区域
+    RECT rcTitle;   // 标题区域
+    RECT rcContent;    // 文本区域
+};
+
+struct EX_CHATBOX_ITEM_LAYOUT_ERRORLIST
+{
+    RECT rcAvatar;    // 头像区域
+    RECT rcBubble;    // 气泡区域
+    RECT rcImage;     // 图片区域
+    RECT rcTitle;   // 标题区域
+    RECT* rcErrorList;  // 错误文本矩形列表
+};
+
+struct EX_CHATBOX_ITEMINFO_TEXT
+{
+    LPCWSTR Text;
+    EX_CHATBOX_ITEM_LAYOUT_TEXT Layout;
+};
+
+struct EX_CHATBOX_ITEMINFO_CARD
+{
+    LPCWSTR  Title;
+    HEXIMAGE Image;
+    LPCWSTR  Content;
+    LPCWSTR  ReasonTitle;
+    LPCWSTR  Reason;
+    LPCWSTR  ButtonText;
+    EX_CHATBOX_ITEM_LAYOUT_CARD Layout;
+};
+
+struct EX_CHATBOX_ITEMINFO_BOOSTMODE
+{
+    LPCWSTR  Title;
+    LPCWSTR  Content;
+    HEXIMAGE Image;
+    EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE Layout;
+};
+
+struct EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT
+{
+    LPCWSTR  ErrorCode;
+    LPCWSTR  Description;
+};
+
+struct EX_CHATBOX_ITEMINFO_ERRORLIST
+{
+    HEXIMAGE Image;
+    LPCWSTR Title;
+    LPVOID ListInfo; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组
+    INT ListCount; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组数量
+    EX_CHATBOX_ITEM_LAYOUT_ERRORLIST Layout;
 };
 
 struct EX_CHATBOX_ITEMINFO_SUBITEM
 {
     DWORD                  Type;
     DWORD                  Role;
-    LPVOID                 Data;     // 子数据结构EX_CHATBOX_ITEMINFO_TEXT，EX_CHATBOX_ITEMINFO_CARD
-    EX_CHATBOX_ITEM_LAYOUT Layout;   // 新增布局信息,内部使用
+    LPVOID                 Data;     // 子数据结构EX_CHATBOX_ITEMINFO_TEXT，EX_CHATBOX_ITEMINFO_CARD,EX_CHATBOX_ITEMINFO_BOOSTMODE,EX_CHATBOX_ITEMINFO_ERRORLIST,
+    RECT rcItem;      // 整个项目的矩形区域
+    INT  nHeight;         // 项目总高度
 };
 
 struct EX_CHATBOX_ITEMINFO
@@ -2242,12 +2299,12 @@ struct EX_CHATBOX_ITEMINFO
     DWORD  Count;
 };
 
-typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown*                   effect,
-                                                  _In_reads_(dataSize) const BYTE* data,
-                                                  UINT32                           dataSize);
-typedef HRESULT(CALLBACK* PPROPERTY_GET_FUNCTION)(_In_ const IUnknown*             effect,
-                                                  _Out_writes_opt_(dataSize) BYTE* data,
-                                                  UINT32 dataSize, _Out_opt_ UINT32* actualSize);
+typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown* effect,
+    _In_reads_(dataSize) const BYTE* data,
+    UINT32                           dataSize);
+typedef HRESULT(CALLBACK* PPROPERTY_GET_FUNCTION)(_In_ const IUnknown* effect,
+    _Out_writes_opt_(dataSize) BYTE* data,
+    UINT32 dataSize, _Out_opt_ UINT32* actualSize);
 
 /// <summary>
 /// 着色器属性信息结构
@@ -2365,29 +2422,29 @@ struct CkCookie
 };
 enum CkMSG_Browser
 {
-    type_BCreated           = 1,    //<浏览器创建完成
-    type_browserdraw        = 2,    //<浏览器绘制
-    type_Setcursor          = 3,    //<设置光标样式
-    type_KeyboardRequested  = 4,    // 虚拟键盘请求,文本输入类型
-    type_MenuCreated        = 5,    // 菜单即将被创建
-    type_MenuCommand        = 6,    // 菜单项被点击
-    type_TitleChange        = 7,    // 标题被改变
-    type_AddressChange      = 8,    // 地址被改变
-    type_LoadEnd            = 9,    // 加载完成
-    type_LoadStart          = 10,   // 加载开始
+    type_BCreated = 1,    //<浏览器创建完成
+    type_browserdraw = 2,    //<浏览器绘制
+    type_Setcursor = 3,    //<设置光标样式
+    type_KeyboardRequested = 4,    // 虚拟键盘请求,文本输入类型
+    type_MenuCreated = 5,    // 菜单即将被创建
+    type_MenuCommand = 6,    // 菜单项被点击
+    type_TitleChange = 7,    // 标题被改变
+    type_AddressChange = 8,    // 地址被改变
+    type_LoadEnd = 9,    // 加载完成
+    type_LoadStart = 10,   // 加载开始
     type_LoadingStateChange = 11,   // 加载状态被改变
-    type_StatusMessage      = 12,   // 接收到状态信息
-    type_LoadError          = 13,   // 加载错误
-    type_FaviconURLChange   = 14,   // 网页图标被改变
-    type_BeforePopup        = 15,   // 即将打开新窗口
-    type_DoClose            = 16,   // 关闭浏览器
-    type_                   = 17,
+    type_StatusMessage = 12,   // 接收到状态信息
+    type_LoadError = 13,   // 加载错误
+    type_FaviconURLChange = 14,   // 网页图标被改变
+    type_BeforePopup = 15,   // 即将打开新窗口
+    type_DoClose = 16,   // 关闭浏览器
+    type_ = 17,
 };
 enum CkMSG_Init
 {
-    type_CommandLine       = 1,   //<即将处理命令行
-    type_ContextCreated    = 2,   // 渲染_即将创建V8环境
-    type_ContextReleased   = 3,   // 即将释放V8环境
+    type_CommandLine = 1,   //<即将处理命令行
+    type_ContextCreated = 2,   // 渲染_即将创建V8环境
+    type_ContextReleased = 3,   // 即将释放V8环境
     type_WebKitInitialized = 4,   // 即将初始化WebKit
 };
 
@@ -2400,23 +2457,23 @@ DECLARE_HANDLEX(HBROWSER);     // 浏览器句柄
 
 EX_DEFINE_API(Ck_Init, int, (HMODULE hModule, CkSettings& basicinfo, void* pfun, void* hParam));
 EX_DEFINE_API(Ck_Browser_Init, int,
-              (HMODULE hModule, BOOL single_process_, LPCWSTR subprocess_path, LPCWSTR cache_path,
-               LPCWSTR user_agent, int debugging_port, void* pfun, void* lParam));
+    (HMODULE hModule, BOOL single_process_, LPCWSTR subprocess_path, LPCWSTR cache_path,
+        LPCWSTR user_agent, int debugging_port, void* pfun, void* lParam));
 EX_DEFINE_API(Ck_WCharToChar, char*, (const wchar_t* pwszUnicode));
 EX_DEFINE_API(Ck_CharToWChar, wchar_t*, (char* lpSrcBuffer));
 EX_DEFINE_API(Ck_RunMessageLoop, void, ());
 EX_DEFINE_API(Ck_Shutdown, void, ());
 EX_DEFINE_API(Ck_QuitMessageLoop, void, ());
 EX_DEFINE_API(Ck_Browser_Create, HWEBVIEW,
-              (HWND Parent, LONG_PTR hObj, RECT* Rect, int bcolor, LPCWSTR Url, void* pfun,
-               void* lParam));
+    (HWND Parent, LONG_PTR hObj, RECT* Rect, int bcolor, LPCWSTR Url, void* pfun,
+        void* lParam));
 EX_DEFINE_API(Ck_Browser_Close, void, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_LoadUrl, void, (HWEBVIEW hWeBView, LPCWSTR url));
 EX_DEFINE_API(Ck_Browser_SendMouse, void, (HWEBVIEW hWeBView, int uMsg, int wParam, int lParam));
 EX_DEFINE_API(Ck_Browser_SendKey, void, (HWEBVIEW hWeBView, int uMsg, int wParam, int lParam));
 EX_DEFINE_API(Ck_Browser_Focus, void, (HWEBVIEW hWeBView, bool IsFocus));
 EX_DEFINE_API(Ck_Browser_Move, void,
-              (HWEBVIEW hWeBView, int left, int top, int nWidth, int nHeight));
+    (HWEBVIEW hWeBView, int left, int top, int nWidth, int nHeight));
 EX_DEFINE_API(Ck_Browser_GoBack, BOOL, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_GoForward, BOOL, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_IsBack, BOOL, (HWEBVIEW hWeBView));
@@ -2426,7 +2483,7 @@ EX_DEFINE_API(Ck_Browser_ReloadIgnoreCache, void, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_StopLoad, void, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_Release, void, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_ExecJs, BOOL,
-              (HWEBVIEW hWeBView, wchar_t* lpFrame, const wchar_t* wszScript));
+    (HWEBVIEW hWeBView, wchar_t* lpFrame, const wchar_t* wszScript));
 EX_DEFINE_API(Ck_Browser_Refresh, void, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_GetUrl, const wchar_t*, (HWEBVIEW hWeBView));
 EX_DEFINE_API(Ck_Browser_GetName, const wchar_t*, (HWEBVIEW hWeBView));
@@ -2455,7 +2512,7 @@ EX_DEFINE_API(Ck_Frame_ViewSource, void, (HFRAME frame));
 // 回调类型
 
 EX_DEFINE_API(Ck_Browser_EnumAllCookies, BOOL,
-              (const TCHAR* szMatchURL, BOOL blpOnlyHttp, void* pfun, void* hParam));
+    (const TCHAR* szMatchURL, BOOL blpOnlyHttp, void* pfun, void* hParam));
 EX_DEFINE_API(Ck_Browser_SetCookie, BOOL, (const TCHAR* szMatchURL, CkCookie& pcookie));
 EX_DEFINE_API(Ck_Browser_DeleteCookies, BOOL, (const TCHAR* szMatchURL, const TCHAR* name));
 EX_DEFINE_API(Ck_Browser_FlushStore, BOOL, ());
@@ -2472,7 +2529,7 @@ EX_DEFINE_API(Ck_V8IsInt, bool, (HV8VALUE V8Value));
 EX_DEFINE_API(Ck_V8GetIntValue, int, (HV8VALUE V8Value));
 EX_DEFINE_API(Ck_V8ExecuteFunction_Int, HV8VALUE, (HV8VALUE V8Value, int* pargs, int hCount));
 EX_DEFINE_API(Ck_V8ExecuteFunction_String, HV8VALUE,
-              (HV8VALUE V8Value, wchar_t** pargs, int hCount));
+    (HV8VALUE V8Value, wchar_t** pargs, int hCount));
 EX_DEFINE_API(Ck_V8SetValueEx, bool, (HV8VALUE V8Value, LPCWSTR key, int settings, int attribute));
 EX_DEFINE_API(Ck_V8SetValueindex, bool, (HV8VALUE V8Value, int index, HV8VALUE pValue));
 EX_DEFINE_API(Ck_V8IsObject, bool, (HV8VALUE V8Value));
@@ -2482,8 +2539,8 @@ EX_DEFINE_API(Ck_V8CGetGlobal, HV8VALUE, (HV8CONTEXE context));
 EX_DEFINE_API(Ck_V8CEnter, bool, (HV8CONTEXE context));
 EX_DEFINE_API(Ck_V8CExit, bool, (HV8CONTEXE context));
 EX_DEFINE_API(Ck_V8CEval, bool,
-              (HV8CONTEXE context, LPCWSTR code, LPCWSTR script_url, int start_line,
-               uintptr_t* retval));
+    (HV8CONTEXE context, LPCWSTR code, LPCWSTR script_url, int start_line,
+        uintptr_t* retval));
 EX_DEFINE_API(Ck_V8CIsSame, bool, (HV8CONTEXE context, HV8CONTEXE hcontext));
 
 
@@ -2491,19 +2548,19 @@ EX_DEFINE_API(Ck_RegisterExtension, void, (const wchar_t* key, const wchar_t* ex
 // typedef void CALLBACK OnRegisterExtensionEx(LPCWSTR name, HV8VALUE object, LONG_PTR arguments,
 // HV8VALUE retval, LPCWSTR exception,bool* pbHWEBVIEWd, void* lParam)
 EX_DEFINE_API(Ck_RegisterExtensionEx, void,
-              (const wchar_t* key, const wchar_t* extensionCode, void* pfun, void* hParam));
+    (const wchar_t* key, const wchar_t* extensionCode, void* pfun, void* hParam));
 // 命令行集
 EX_DEFINE_API(Ck_CommandLine_AppendSwitch, void, (HCOMMAND Command, char* name));
 EX_DEFINE_API(Ck_CommandLine_AppendSwitchWithValue, void,
-              (HCOMMAND Command, char* name, const wchar_t* value));
+    (HCOMMAND Command, char* name, const wchar_t* value));
 EX_DEFINE_API(Ck_CommandLine_GetSwitchValue, const wchar_t*,
-              (HCOMMAND Command, const wchar_t* name));
+    (HCOMMAND Command, const wchar_t* name));
 EX_DEFINE_API(Ck_CommandLine_GetProgram, const wchar_t*, (HCOMMAND Command));
 EX_DEFINE_API(Ck_CommandLine_HasSwitch, bool, (HCOMMAND Command, const wchar_t* name));
 EX_DEFINE_API(Ck_CommandLine_HasSwitches, bool, (HCOMMAND Command));
 
 
-const long int      Default_ext_size   = 26345;
+const long int      Default_ext_size = 26345;
 const unsigned char Default_ext[26345] = {
     0x45, 0x58, 0x50, 0x4B, 0x54, 0x8F, 0x80, 0xDE, 0x5B, 0x83, 0x6F, 0x2D, 0x2A, 0x55, 0xD3, 0x56,
     0x36, 0x07, 0x3D, 0x94, 0x6F, 0xFE, 0x85, 0x2C, 0xBB, 0x68, 0xD5, 0x93, 0xCB, 0x1C, 0x09, 0x8C,
@@ -4151,4 +4208,4 @@ const unsigned char Default_ext[26345] = {
     0x57, 0xD2, 0x46, 0x8B, 0xB2, 0x2E, 0x5F, 0x53, 0xC3, 0x0C, 0x3C, 0x4B, 0x67, 0x04, 0xFA, 0x9B,
     0x29, 0xC5, 0x82, 0x82, 0xC1, 0x15, 0xDD, 0x4E, 0x99, 0x1C, 0x05, 0x81, 0x59, 0xA3, 0x68, 0x60,
     0xFE, 0xBF, 0x16, 0xEC, 0x19, 0xA0, 0x38, 0xC5, 0x98, 0x86, 0xB2, 0x73, 0x2C, 0x4C, 0xDD, 0x0D,
-    0x39, 0x89, 0xC6, 0xF0, 0xFD, 0xFA, 0x88, 0x04, 0xBC};
+    0x39, 0x89, 0xC6, 0xF0, 0xFD, 0xFA, 0x88, 0x04, 0xBC };
