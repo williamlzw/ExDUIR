@@ -91,7 +91,7 @@ LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 
 void test_chatbox(HWND hWnd)
 {
-    HWND hWnd_chatbox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试对话盒", 0, 0, 1100, 900, 0, 0);
+    HWND hWnd_chatbox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试对话盒", 0, 0, 1100, 1000, 0, 0);
     hExDui_chatbox = Ex_DUIBindWindowEx(hWnd_chatbox, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
         WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE |
@@ -101,24 +101,24 @@ void test_chatbox(HWND hWnd)
     Ex_DUISetLong(hExDui_chatbox, ENGINE_LONG_CRBKG, ExARGB(80, 80, 90, 255));
     auto hEdit = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"edit",
         L"测试多行编辑框\r\n测试多行编辑框测试多行编辑框\r\n测试多行编辑框测试多行编辑框测试多行编辑框\r\n测试多行编辑框测试多行编辑框测试多行编辑框测试多行编辑框",
-        OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | EDIT_STYLE_NEWLINE, 50, 680, 600, 150, hExDui_chatbox,
+        OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | EDIT_STYLE_NEWLINE, 50, 830, 600, 100, hExDui_chatbox,
         100, DT_LEFT, 0, 0, NULL);
-    auto hButton1 = Ex_ObjCreateEx(-1, L"button", L"发送助手", -1, 50, 850, 100, 30,
+    auto hButton1 = Ex_ObjCreateEx(-1, L"button", L"发送助手", -1, 50, 950, 100, 30,
         hExDui_chatbox, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton2 = Ex_ObjCreateEx(-1, L"button", L"发送用户", -1, 180, 850, 100, 30,
+    auto hButton2 = Ex_ObjCreateEx(-1, L"button", L"发送用户", -1, 180, 950, 100, 30,
         hExDui_chatbox, 102, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton3 = Ex_ObjCreateEx(-1, L"button", L"更新文本", -1, 310, 850, 100, 30,
+    auto hButton3 = Ex_ObjCreateEx(-1, L"button", L"更新文本", -1, 310, 950, 100, 30,
         hExDui_chatbox, 103, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton4 = Ex_ObjCreateEx(-1, L"button", L"更新卡片", -1, 440, 850, 100, 30,
+    auto hButton4 = Ex_ObjCreateEx(-1, L"button", L"更新卡片", -1, 440, 950, 100, 30,
         hExDui_chatbox, 104, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton5 = Ex_ObjCreateEx(-1, L"button", L"取内容", -1, 570, 850, 100, 30,
+    auto hButton5 = Ex_ObjCreateEx(-1, L"button", L"取内容", -1, 570, 950, 100, 30,
         hExDui_chatbox, 105, DT_VCENTER | DT_CENTER, 0, 0, NULL);
     Ex_ObjHandleEvent(hButton1, NM_CLICK, OnChatButtonEvent);
     Ex_ObjHandleEvent(hButton2, NM_CLICK, OnChatButtonEvent);
     Ex_ObjHandleEvent(hButton3, NM_CLICK, OnChatButtonEvent);
     Ex_ObjHandleEvent(hButton4, NM_CLICK, OnChatButtonEvent);
     Ex_ObjHandleEvent(hButton5, NM_CLICK, OnChatButtonEvent);
-    auto hChatBox = Ex_ObjCreateEx(-1, L"ChatBox", NULL, -1, 50, 50, 1000, 600, hExDui_chatbox, 200, -1, 0, 0, NULL);
+    auto hChatBox = Ex_ObjCreateEx(-1, L"ChatBox", NULL, -1, 50, 50, 1000, 750, hExDui_chatbox, 200, -1, 0, 0, NULL);
     Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKBUTTON, OnChatBoxEvent);
     HEXIMAGE hImgUser, hImgAssistant;
     HEXIMAGE hImgUserSmall, hImgAssistantSmall;
@@ -135,12 +135,10 @@ void test_chatbox(HWND hWnd)
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_ASSISTANT, 0, (size_t)hImgAssistantSmall);
 
     EX_CHATBOX_ITEMINFO_SUBITEM ptr;
-
-    ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
     ptr.Type = CHATBOX_ITEMTYPE_TEXT;
     EX_CHATBOX_ITEMINFO_TEXT itemData;
-    LPCWSTR test1 = LR"(测试textExDUIR演示,项目地址：测试textExDUIR演示,项目地址项目地址：测试textExDUIR演示,项目地址项目地址：测试textExDUIR演示,项目地址)";
-    LPCWSTR test = LR"(以下是一个用C#编写的计算当前月天数的方法：
+    LPCWSTR user = LR"(C#编写的计算当前月天数的方法)";
+    LPCWSTR assistant = LR"(以下是一个用C#编写的计算当前月天数的方法：
     using System;
 
     public class MonthDaysCalculator
@@ -192,19 +190,21 @@ void test_chatbox(HWND hWnd)
 
     这个方法会正确处理所有月份，包括不同年份的二月天数差异。 
     )";
-    itemData.Text = test1;
+    itemData.Text = user;
 
     ptr.Data = &itemData;
     ptr.Role = CHATBOX_ITEMROLE_USER;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    itemData.Text = test;
-
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-
-    itemData.Text = test1;
+ 
+    itemData.Text = assistant;
     ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
 
+    itemData.Text = L"输出更多样式";
+    ptr.Role = CHATBOX_ITEMROLE_USER;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+
+    ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
     HEXIMAGE hImgCard, hImgCardSmall;
     _img_createfromfile(L"res/user.png", &hImgCard);
     _img_scale(hImgCard, Ex_Scale(50), Ex_Scale(50), &hImgCardSmall);

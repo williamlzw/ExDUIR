@@ -1713,11 +1713,11 @@
 #pragma region chatbox message constant
 // 消息_对话盒_添加表项 添加行到尾部 wParam:项目类型CHATBOX_ITEMTYPE_  lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
 #define CHATBOX_MESSAGE_ADDITEM 10010
-// 消息_对话盒_更新表项 wParam:表项索引 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
+// 消息_对话盒_更新表项 注意CHATBOX_ITEMTYPE_一致才能更新 wParam:表项索引 从0开始 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
 #define CHATBOX_MESSAGE_UPDATEITEM 10011
-// 消息_对话盒_取表项类型 wParam:表项索引，返回CHATBOX_ITEMTYPE_ ,失败返回-1
+// 消息_对话盒_取表项类型 wParam:表项索引 从0开始，返回CHATBOX_ITEMTYPE_ ,失败返回-1
 #define CHATBOX_MESSAGE_GETITEMTYPE 10012
-// 消息_对话盒_取表项数据 wParam:表项索引，返回CEX_CHATBOX_ITEMINFO_SUBITEM 指针,失败返回-1
+// 消息_对话盒_取表项数据 wParam:表项索引 从0开始，返回CEX_CHATBOX_ITEMINFO_SUBITEM 指针,失败返回-1
 #define CHATBOX_MESSAGE_GETITEMDATA 10013
 // 消息_对话盒_取表项总数,失败返回-1
 #define CHATBOX_MESSAGE_GETITEMCOUNT 10014
