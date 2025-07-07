@@ -320,16 +320,28 @@ void test_chatbox(HWND hWnd)
     free(itemDataInfoList.ListInfo);
 
     EX_CHATBOX_ITEMINFO_TABLELIST itemDataTableList;
-    itemDataTableList.ListCount = 3;
+    itemDataTableList.ListCount = 4;
     itemDataTableList.ColumnCount = 4;
     itemDataTableList.Content = L"测试表格";
-    itemDataTableList.ListInfo = new EX_CHATBOX_ITEMINFO_TABLELIST_UNIT[3];
-    for (int i = 0; i < 3; i++)
+    itemDataTableList.ListInfo = new EX_CHATBOX_ITEMINFO_TABLELIST_UNIT[4];
+    for (int i = 0; i < 4; i++)
     {
         itemDataTableList.ListInfo[i].Columns = new LPCWSTR[4];
         for (int j = 0; j < 4; j++)
         {
             std::wstring str = std::wstring(L"第") + std::to_wstring(i) + std::wstring(L"行,第") + std::to_wstring(j) + std::wstring(L"列");
+            if (i == 1 && j == 2)
+            {
+                str += L"\r\n测试高度单元格\r\n测试高度单元格\r\n测试高度单元格";
+            }
+            else if (i == 2 && j == 1)
+            {
+                str += L"\r\n测试高度单元格\r\n测试高度单元格";
+            }
+            else if (i == 3 && j == 3)
+            {
+                str += L"\r\n测试高度单元格";
+            }
             itemDataTableList.ListInfo[i].Columns[j] = StrDupW(str.c_str());
         }
     }

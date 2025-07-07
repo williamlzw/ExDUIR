@@ -730,7 +730,7 @@ void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             _canvas_drawtext(ps.hCanvas, hFontTitle,
                 Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
                 ((EX_CHATBOX_ITEMINFO_TABLELIST_UNIT*)data->ListInfo)[i].Columns[j], -1,
-                DT_LEFT | DT_TOP,
+                DT_CENTER | DT_VCENTER,
                 rcColumnText.left, rcColumnText.top,
                 rcColumnText.right, rcColumnText.bottom);
         }
