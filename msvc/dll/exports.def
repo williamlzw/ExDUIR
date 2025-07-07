@@ -16,6 +16,9 @@ Ex_FreeBuffer
 Ex_AllocBuffer
 Ex_Scale
 Ex_Sleep
+Ex_MemAlloc
+Ex_MemFree
+Ex_MemReAlloc
 
 ;----------------------------------------
 ;wnd

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <Windows.h>
+#include <Shlwapi.h>
 #include <ocidl.h>
 #include <sstream>
 #include <string>
@@ -1691,6 +1692,10 @@
 #define CHATBOX_ITEMTYPE_BOOSTMODE 2
 // 对话盒_项目类型_错误列表
 #define CHATBOX_ITEMTYPE_ERRORLIST 3
+// 对话盒_项目类型_信息列表
+#define CHATBOX_ITEMTYPE_INFOLIST 4
+// 对话盒_项目类型_表格列表
+#define CHATBOX_ITEMTYPE_TABLELIST 5
 #pragma endregion chatbox item type constant
 
 #pragma region chatbox item role constant
@@ -2241,7 +2246,27 @@ struct EX_CHATBOX_ITEM_LAYOUT_ERRORLIST
     RECT rcBubble;    // 气泡区域
     RECT rcImage;     // 图片区域
     RECT rcTitle;   // 标题区域
-    RECT* rcErrorList;  // 错误文本矩形列表
+    RECT* rcErrorCodeList;  // 错误文本标题矩形列表
+    RECT* rcErrorCodeTextList;  // 错误文本内容矩形列表
+    RECT* rcDescriptionList;  // 描述文本标题矩形列表
+    RECT* rcDescriptionTextList;  // 描述文本内容矩形列表
+};
+
+struct EX_CHATBOX_ITEM_LAYOUT_INFOLIST
+{
+    RECT rcAvatar;    // 头像区域
+    RECT rcBubble;    // 气泡区域
+    RECT rcContent;   // 标题区域
+    RECT* rcTitleList;  // 文本标题矩形列表
+    RECT* rcDescriptionList;  // 描述文本矩形列表
+};
+
+struct EX_CHATBOX_ITEM_LAYOUT_TABLELIST
+{
+    RECT rcAvatar;    // 头像区域
+    RECT rcBubble;    // 气泡区域
+    RECT rcContent;   // 标题区域
+    RECT* rcUnitList;  // 单元矩形列表
 };
 
 struct EX_CHATBOX_ITEMINFO_TEXT
@@ -2272,16 +2297,46 @@ struct EX_CHATBOX_ITEMINFO_BOOSTMODE
 struct EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT
 {
     LPCWSTR  ErrorCode;
+    LPCWSTR  ErrorCodeText;
     LPCWSTR  Description;
+    LPCWSTR  DescriptionText;
 };
 
 struct EX_CHATBOX_ITEMINFO_ERRORLIST
 {
     HEXIMAGE Image;
     LPCWSTR Title;
-    LPVOID ListInfo; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组
     INT ListCount; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组数量
     EX_CHATBOX_ITEM_LAYOUT_ERRORLIST Layout;
+};
+
+struct EX_CHATBOX_ITEMINFO_INFOLIST_UNIT
+{
+    LPCWSTR  Title;
+    LPCWSTR  Description;
+};
+
+struct EX_CHATBOX_ITEMINFO_INFOLIST
+{
+    LPCWSTR Content;
+    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_INFOLIST_UNIT数组
+    INT ListCount; //EX_CHATBOX_ITEMINFO_INFOLIST_UNIT数组数量
+    EX_CHATBOX_ITEM_LAYOUT_INFOLIST Layout;
+};
+
+struct EX_CHATBOX_ITEMINFO_TABLELIST_UNIT
+{
+    LPCWSTR* Columns;          // 指向列文本数组的指针
+};
+
+struct EX_CHATBOX_ITEMINFO_TABLELIST
+{
+    LPCWSTR Content;
+    EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_TABLELIST_UNIT数组
+    INT ListCount; //行数（数组元素数量） EX_CHATBOX_ITEMINFO_TABLELIST_UNIT数组数量
+    EX_CHATBOX_ITEM_LAYOUT_TABLELIST Layout;
+    INT ColumnCount;// 总列数（每行共享列数）
 };
 
 struct EX_CHATBOX_ITEMINFO_SUBITEM

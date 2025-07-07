@@ -94,7 +94,6 @@
 #include "Easing_ex.h"
 #include "Font_ex.h"
 #include "Format_ex.h"
-#include "Global_ex.h"
 #include "HandelTable_ex.h"
 #include "HashTable_ex.h"
 #include "Hook_ex.h"

@@ -69,8 +69,8 @@ LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
         _img_destroy(hImgCard);
         EX_CHATBOX_ITEMINFO_CARD itemDataCard;
         itemDataCard.Title = L"测试卡片标题2!";
-        itemDataCard.Content = L"测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2测试卡片内容2";
-        itemDataCard.Reason = L"测试卡片子内容2测试卡片子内容2测试卡片子内容2测试卡片子内容2测试卡片子内容2测试卡片子内容2测试卡片子内容2测试卡片子内容2.";
+        itemDataCard.Content = L"测试卡片内容2测试卡片内容2";
+        itemDataCard.Reason = L"测试卡片子内容2测试卡片子内容2.";
         itemDataCard.ReasonTitle = L"测试卡片子标题2";
         itemDataCard.Image = hImgCardSmall;
         itemDataCard.ButtonText = L"测试按钮2";
@@ -225,11 +225,125 @@ void test_chatbox(HWND hWnd)
     _img_createfromfile(L"res/user.png", &hImgBoost);
     _img_scale(hImgBoost, Ex_Scale(24), Ex_Scale(24), &hImgBoostSmall);
     _img_destroy(hImgBoost);
-    itemDataBoost.Title = L"测试标题";
-    itemDataBoost.Content = L"测试内容测试内容!";
+    itemDataBoost.Title = L"完成标题";
+    itemDataBoost.Content = L"完成内容!";
     itemDataBoost.Image = hImgBoostSmall;
     ptr.Type = CHATBOX_ITEMTYPE_BOOSTMODE;
     ptr.Data = &itemDataBoost;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+
+    EX_CHATBOX_ITEMINFO_ERRORLIST itemDataErrorList;
+    HEXIMAGE hImgErrorList, hImgErrorListSmall;
+    _img_createfromfile(L"res/user.png", &hImgErrorList);
+    _img_scale(hImgErrorList, Ex_Scale(30), Ex_Scale(30), &hImgErrorListSmall);
+    _img_destroy(hImgErrorList);
+    itemDataErrorList.Title = L"一些错误被捕捉";
+    itemDataErrorList.Image = hImgErrorListSmall;
+    itemDataErrorList.ListCount = 3;
+    itemDataErrorList.ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * 3);
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit0;
+    unit0.ErrorCode = L"错误ID";
+    unit0.ErrorCodeText = L"20";
+    unit0.Description = L"错误描述";
+    unit0.DescriptionText = L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994";
+
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit1;
+    unit1.ErrorCode = L"错误ID";
+    unit1.ErrorCodeText = L"20";
+    unit1.Description = L"错误描述";
+    unit1.DescriptionText = L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994\r\n错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994";
+
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit2;
+    unit2.ErrorCode = L"错误ID";
+    unit2.ErrorCodeText = L"20";
+    unit2.Description = L"错误描述";
+    unit2.DescriptionText = L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994";
+
+    RtlMoveMemory(itemDataErrorList.ListInfo, &unit0, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
+    RtlMoveMemory((void*)((size_t)itemDataErrorList.ListInfo + sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT)), &unit1, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
+    RtlMoveMemory((void*)((size_t)itemDataErrorList.ListInfo + 2 * sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT)), &unit2, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
+    ptr.Type = CHATBOX_ITEMTYPE_ERRORLIST;
+    ptr.Data = &itemDataErrorList;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+    free(itemDataErrorList.ListInfo);
+
+    EX_CHATBOX_ITEMINFO_ERRORLIST itemDataErrorList2;
+    HEXIMAGE hImgErrorList2, hImgErrorListSmall2;
+    _img_createfromfile(L"res/user.png", &hImgErrorList2);
+    _img_scale(hImgErrorList2, Ex_Scale(30), Ex_Scale(30), &hImgErrorListSmall2);
+    _img_destroy(hImgErrorList2);
+    itemDataErrorList2.Title = L"一些错误被捕捉\r\n以下是错误信息";
+    itemDataErrorList2.Image = hImgErrorListSmall2;
+    itemDataErrorList2.ListCount = 2;
+    itemDataErrorList2.ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * 2);
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit5;
+    unit5.ErrorCode = L"错误码";
+    unit5.ErrorCodeText = L"024(时间:25/06/25 11:15:03)";
+    unit5.Description = L"错误描述";
+    unit5.DescriptionText = L"无法关机";
+
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit6;
+    unit6.ErrorCode = L"错误码";
+    unit6.ErrorCodeText = L"003(时间:25/06/25 15:12:13)";
+    unit6.Description = L"错误描述";
+    unit6.DescriptionText = L"系统崩溃\r\n无法关机";
+
+    RtlMoveMemory(itemDataErrorList2.ListInfo, &unit5, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
+    RtlMoveMemory((void*)((size_t)itemDataErrorList2.ListInfo + sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT)), &unit6, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
+    ptr.Type = CHATBOX_ITEMTYPE_ERRORLIST;
+    ptr.Data = &itemDataErrorList2;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+    free(itemDataErrorList2.ListInfo);
+
+    EX_CHATBOX_ITEMINFO_INFOLIST itemDataInfoList;
+    itemDataInfoList.Content = L"以下是信息列表";
+    itemDataInfoList.ListCount = 3;
+    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT unit11;
+    unit11.Title = L"CPU";
+    unit11.Description = L"Intel i9 14900k";
+
+    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT unit12;
+    unit12.Title = L"网络";
+    unit12.Description = L"●Intel Ethernet Connection 1219-LM\r\n●TP-LINK Wireless N Adapter\r\n●Marvell AQtion 10Gbit Network Adapter";
+
+    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT unit13;
+    unit13.Title = L"GPU";
+    unit13.Description = L"NVIDIA RTX 4090";
+
+    itemDataInfoList.ListInfo = (EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT) * 3);
+    RtlMoveMemory(itemDataInfoList.ListInfo, &unit11, sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT));
+    RtlMoveMemory((void*)((size_t)itemDataInfoList.ListInfo + sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT)), &unit12, sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT));
+    RtlMoveMemory((void*)((size_t)itemDataInfoList.ListInfo + 2 * sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT)), &unit13, sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT));
+    ptr.Type = CHATBOX_ITEMTYPE_INFOLIST;
+    ptr.Data = &itemDataInfoList;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+    free(itemDataInfoList.ListInfo);
+
+    EX_CHATBOX_ITEMINFO_TABLELIST itemDataTableList;
+    itemDataTableList.ListCount = 3;
+    itemDataTableList.ColumnCount = 4;
+    itemDataTableList.Content = L"测试表格";
+    itemDataTableList.ListInfo = new EX_CHATBOX_ITEMINFO_TABLELIST_UNIT[3];
+    for (int i = 0; i < 3; i++)
+    {
+        itemDataTableList.ListInfo[i].Columns = new LPCWSTR[4];
+        for (int j = 0; j < 4; j++)
+        {
+            std::wstring str = std::wstring(L"第") + std::to_wstring(i) + std::wstring(L"行,第") + std::to_wstring(j) + std::wstring(L"列");
+            itemDataTableList.ListInfo[i].Columns[j] = StrDupW(str.c_str());
+        }
+    }
+    ptr.Type = CHATBOX_ITEMTYPE_TABLELIST;
+    ptr.Data = &itemDataTableList;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+    for (int i = 0; i < itemDataTableList.ListCount; i++) {
+        for (int j = 0; j < itemDataTableList.ColumnCount; j++)
+        {
+            Ex_MemFree((void*)itemDataTableList.ListInfo[i].Columns[j]);
+        }
+        delete[] itemDataTableList.ListInfo[i].Columns;
+    }
+    delete[] itemDataTableList.ListInfo;
+
     Ex_DUIShowWindow(hExDui_chatbox, SW_SHOWNORMAL, 0, 0, 0);
 }

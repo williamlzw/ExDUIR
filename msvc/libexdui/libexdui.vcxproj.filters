@@ -257,9 +257,6 @@
     <ClInclude Include="..\..\include\Format_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Global_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\HandelTable_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>

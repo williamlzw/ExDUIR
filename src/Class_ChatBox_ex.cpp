@@ -21,26 +21,36 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         ptr->Items = NULL;
         ptr->Count = 0;
         Ex_ObjSetLong(hObj, CHATBOX_LONG_ITEMARRAY, (LONG_PTR)ptr);
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_TOTAL_HEIGHT, 0);
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_BKG_COLOR, ExARGB(244, 246, 255, 255));
         Ex_ObjSetLong(hObj, CHATBOX_LONG_TOP_OFFSET, 0);
         Ex_ObjSetLong(hObj, CHATBOX_LONG_HOVER_INDEX, -1);
         Ex_ObjSetLong(hObj, CHATBOX_LONG_IMAGE_USER, 0);
         Ex_ObjSetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT, 0);
+
         Ex_ObjSetLong(hObj, CHATBOX_LONG_TEXT_FONT, _font_createfromfamily(L"Arial", 20, 0));
 
         Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_TITLEFONT, _font_createfromfamily(L"Arial", 24, FONT_STYLE_BOLD));
         Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_CONTENTFONT, _font_createfromfamily(L"Arial", 20, 0));
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT, _font_createfromfamily(L"Arial", 24, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT, _font_createfromfamily(L"Arial", 24, FONT_STYLE_BOLD));
         Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_REASONFONT, _font_createfromfamily(L"Arial", 20, 0));
-        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_BUTTONFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_CARD_BUTTONFONT, _font_createfromfamily(L"Arial", 18, 0));
+
         Ex_ObjSetLong(hObj, CHATBOX_LONG_BOOSTMODE_TITLEFONT, _font_createfromfamily(L"Arial", 24, FONT_STYLE_BOLD));
         Ex_ObjSetLong(hObj, CHATBOX_LONG_BOOSTMODE_CONTENTFONT, _font_createfromfamily(L"Arial", 20, 0));
 
         Ex_ObjSetLong(hObj, CHATBOX_LONG_ERRORLIST_TITLEFONT, _font_createfromfamily(L"Arial", 20, 0));
         Ex_ObjSetLong(hObj, CHATBOX_LONG_ERRORLIST_ERRORCODEFONT, _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD));
         Ex_ObjSetLong(hObj, CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT, _font_createfromfamily(L"Arial", 20, 0));
-        Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000,
-            0, TRUE);
+
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_INFOLIST_CONTENTFONT, _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_INFOLIST_TITLEFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_INFOLIST_DESCRIPTIONFONT, _font_createfromfamily(L"Arial", 20, 0));
+
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_TABLELIST_CONTENTFONT, _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_TABLELIST_TITLEFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT, _font_createfromfamily(L"Arial", 20, 0));
+
+        Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
         Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
     }
     else if (uMsg == WM_DESTROY)
@@ -79,6 +89,56 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     _img_destroy(data->Image);
                     free(data);
                 }
+                else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+                {
+                    EX_CHATBOX_ITEMINFO_ERRORLIST* data = (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data;
+                    Ex_MemFree((void*)data->Title);
+                    _img_destroy(data->Image);
+                    free(data->Layout.rcErrorCodeList);
+                    free(data->Layout.rcErrorCodeTextList);
+                    free(data->Layout.rcDescriptionList);
+                    free(data->Layout.rcDescriptionTextList);
+                    // 释放错误列表数组
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        Ex_MemFree((void*)data->ListInfo[j].ErrorCode);
+                        Ex_MemFree((void*)data->ListInfo[j].ErrorCodeText);
+                        Ex_MemFree((void*)data->ListInfo[j].Description);
+                        Ex_MemFree((void*)data->ListInfo[j].DescriptionText);
+                    }
+                    free(data->ListInfo);
+                    free(data);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_INFOLIST)
+                {
+                    EX_CHATBOX_ITEMINFO_INFOLIST* data = (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data;
+                    Ex_MemFree((void*)data->Content);
+                    free(data->Layout.rcDescriptionList);
+                    free(data->Layout.rcTitleList);
+                    // 释放错误列表数组
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        Ex_MemFree((void*)data->ListInfo[j].Title);
+                        Ex_MemFree((void*)data->ListInfo[j].Description);
+                    }
+                    free(data->ListInfo);
+                    free(data);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_TABLELIST)
+                {
+                    EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data;
+                    Ex_MemFree((void*)data->Content);
+                    free(data->Layout.rcUnitList);
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        for (int k = 0; k < data->ColumnCount; k++)
+                        {
+                            Ex_MemFree((void*)data->ListInfo[j].Columns[k]);
+                        }
+                    }
+                    free(data->ListInfo);
+                    free(data);
+                }
                 free(sub); // 释放子项结构体本身
             }
             free(arr->Items); // 释放项数组
@@ -86,7 +146,9 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         }
         _img_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_USER));
         _img_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT));
+
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_TEXT_FONT));
+
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_TITLEFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_CONTENTFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT));
@@ -99,6 +161,14 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_TITLEFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_ERRORCODEFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT));
+
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_CONTENTFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_TITLEFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_DESCRIPTIONFONT));
+
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_CONTENTFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_TITLEFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT));
     }
     else if (uMsg == WM_VSCROLL) {
         _chatbox_onvscrollbar(hWnd, hObj, uMsg, wParam, lParam);
@@ -144,11 +214,6 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         {
             Ex_ObjSetLong(hObj, CHATBOX_LONG_HOVER_INDEX, hoverIndex);
             Ex_ObjInvalidateRect(hObj, 0); // 需要重绘更新按钮状态
-        }
-
-        // 设置鼠标指针样式
-        if (hoverIndex != -1) {
-            SetCursor(LoadCursorW(0, IDC_HAND)); // 手型指针
         }
     }
     else if (uMsg == WM_LBUTTONUP)
@@ -219,7 +284,76 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             boostCopy->Content = StrDupW(boostData->Content);
             itemCopy->Data = boostCopy;
         }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+        {
+            EX_CHATBOX_ITEMINFO_ERRORLIST* errorListData = (EX_CHATBOX_ITEMINFO_ERRORLIST*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_ERRORLIST* errorListCopy = (EX_CHATBOX_ITEMINFO_ERRORLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST));
+            errorListCopy->Image = errorListData->Image;
+            errorListCopy->ListCount = errorListData->ListCount;
+            errorListCopy->Title = StrDupW(errorListData->Title);
+            errorListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * errorListData->ListCount);
+            errorListCopy->Layout.rcErrorCodeList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            errorListCopy->Layout.rcErrorCodeTextList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            errorListCopy->Layout.rcDescriptionList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            errorListCopy->Layout.rcDescriptionTextList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            // 深拷贝每个错误项
+            for (int j = 0; j < errorListData->ListCount; j++)
+            {
+                EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* srcUnit = &(errorListData->ListInfo[j]);
+                EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* destUnit = &(errorListCopy->ListInfo[j]);
 
+                // 拷贝错误代码和描述
+                destUnit->ErrorCode = StrDupW(srcUnit->ErrorCode);
+                destUnit->ErrorCodeText = StrDupW(srcUnit->ErrorCodeText);
+                destUnit->Description = StrDupW(srcUnit->Description);
+                destUnit->DescriptionText = StrDupW(srcUnit->DescriptionText);
+            }
+            itemCopy->Data = errorListCopy;
+        }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_INFOLIST)
+        {
+            EX_CHATBOX_ITEMINFO_INFOLIST* infoListData = (EX_CHATBOX_ITEMINFO_INFOLIST*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_INFOLIST* infoListCopy = (EX_CHATBOX_ITEMINFO_INFOLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST));
+            infoListCopy->ListCount = infoListData->ListCount;
+            infoListCopy->Content = StrDupW(infoListData->Content);
+            infoListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT) * infoListData->ListCount);
+            infoListCopy->Layout.rcTitleList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
+            infoListCopy->Layout.rcDescriptionList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
+            // 深拷贝每个错误项
+            for (int j = 0; j < infoListData->ListCount; j++)
+            {
+                EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* srcUnit = &(infoListData->ListInfo[j]);
+                EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* destUnit = &(infoListCopy->ListInfo[j]);
+
+                // 拷贝标题和描述
+                destUnit->Title = StrDupW(srcUnit->Title);
+                destUnit->Description = StrDupW(srcUnit->Description);
+            }
+            itemCopy->Data = infoListCopy;
+        }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_TABLELIST)
+        {
+            EX_CHATBOX_ITEMINFO_TABLELIST* tableListData = (EX_CHATBOX_ITEMINFO_TABLELIST*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_TABLELIST* tableListCopy = (EX_CHATBOX_ITEMINFO_TABLELIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST));
+            tableListCopy->ListCount = tableListData->ListCount;
+            tableListCopy->ColumnCount = tableListData->ColumnCount;
+            tableListCopy->Content = StrDupW(tableListData->Content);
+            tableListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_TABLELIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST_UNIT) * tableListData->ListCount);
+            tableListCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * tableListData->ListCount * tableListData->ColumnCount);
+
+            // 深拷贝每个错误项
+            for (int j = 0; j < tableListData->ListCount; j++)
+            {
+                EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* srcUnit = &(tableListData->ListInfo[j]);
+                EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* destUnit = &(tableListCopy->ListInfo[j]);
+                destUnit->Columns = (LPCWSTR*)malloc(sizeof(LPCWSTR) * tableListData->ColumnCount);
+                for (int k = 0; k < tableListData->ColumnCount; k++)
+                {
+                    destUnit->Columns[k] = StrDupW(srcUnit->Columns[k]);
+                }
+            }
+            itemCopy->Data = tableListCopy;
+        }
         // 重新分配内存并检查是否成功
         void* newItems = realloc(arr->Items, (arr->Count + 1) * sizeof(size_t));
         if (newItems == NULL) {
@@ -286,6 +420,56 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             _img_destroy(oldData->Image);
             free(oldData);
         }
+        else if (oldSub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+        {
+            EX_CHATBOX_ITEMINFO_ERRORLIST* oldData = (EX_CHATBOX_ITEMINFO_ERRORLIST*)oldSub->Data;
+            Ex_MemFree((void*)oldData->Title);
+            _img_destroy(oldData->Image);
+            free((void*)oldData->Layout.rcErrorCodeList);
+            free((void*)oldData->Layout.rcErrorCodeTextList);
+            free((void*)oldData->Layout.rcDescriptionList);
+            free((void*)oldData->Layout.rcDescriptionTextList);
+            // 释放错误列表数组
+            for (int j = 0; j < oldData->ListCount; j++)
+            {
+                Ex_MemFree((void*)oldData->ListInfo[j].ErrorCode);
+                Ex_MemFree((void*)oldData->ListInfo[j].ErrorCodeText);
+                Ex_MemFree((void*)oldData->ListInfo[j].Description);
+                Ex_MemFree((void*)oldData->ListInfo[j].DescriptionText);
+            }
+            free(oldData->ListInfo);
+            free(oldData);
+        }
+        else if (oldSub->Type == CHATBOX_ITEMTYPE_INFOLIST)
+        {
+            EX_CHATBOX_ITEMINFO_INFOLIST* oldData = (EX_CHATBOX_ITEMINFO_INFOLIST*)oldSub->Data;
+            Ex_MemFree((void*)oldData->Content);
+            free((void*)oldData->Layout.rcDescriptionList);
+            free((void*)oldData->Layout.rcTitleList);
+            // 释放错误列表数组
+            for (int j = 0; j < oldData->ListCount; j++)
+            {
+                Ex_MemFree((void*)oldData->ListInfo[j].Description);
+                Ex_MemFree((void*)oldData->ListInfo[j].Title);
+            }
+            free(oldData->ListInfo);
+            free(oldData);
+        }
+        else if (oldSub->Type == CHATBOX_ITEMTYPE_TABLELIST)
+        {
+            EX_CHATBOX_ITEMINFO_TABLELIST* oldData = (EX_CHATBOX_ITEMINFO_TABLELIST*)oldSub->Data;
+            Ex_MemFree((void*)oldData->Content);
+            free((void*)oldData->Layout.rcUnitList);
+            for (int j = 0; j < oldData->ListCount; j++)
+            {
+                for (int k = 0; k < oldData->ColumnCount; k++)
+                {
+                    Ex_MemFree((void*)oldData->ListInfo[j].Columns[k]);
+                }
+            }
+            free(oldData->ListInfo);
+            free(oldData);
+        }
         // 复制新的子项结构体（不包括数据部分）
         EX_CHATBOX_ITEMINFO_SUBITEM* newSub = (EX_CHATBOX_ITEMINFO_SUBITEM*)malloc(sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
         memcpy(newSub, newValue, sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
@@ -294,13 +478,15 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         newSub->Role = oldRole;
 
         // 深拷贝新数据
-        if (newValue->Type == CHATBOX_ITEMTYPE_TEXT) {
+        if (newValue->Type == CHATBOX_ITEMTYPE_TEXT)
+        {
             EX_CHATBOX_ITEMINFO_TEXT* textData = (EX_CHATBOX_ITEMINFO_TEXT*)newValue->Data;
             EX_CHATBOX_ITEMINFO_TEXT* textCopy = (EX_CHATBOX_ITEMINFO_TEXT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TEXT));
             textCopy->Text = StrDupW(textData->Text);
             newSub->Data = textCopy;
         }
-        else if (newValue->Type == CHATBOX_ITEMTYPE_CARD) {
+        else if (newValue->Type == CHATBOX_ITEMTYPE_CARD)
+        {
             EX_CHATBOX_ITEMINFO_CARD* cardData = (EX_CHATBOX_ITEMINFO_CARD*)newValue->Data;
             EX_CHATBOX_ITEMINFO_CARD* cardCopy = (EX_CHATBOX_ITEMINFO_CARD*)malloc(sizeof(EX_CHATBOX_ITEMINFO_CARD));
             cardCopy->Image = cardData->Image;
@@ -311,13 +497,82 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             cardCopy->ButtonText = StrDupW(cardData->ButtonText);
             newSub->Data = cardCopy;
         }
-        else if (newValue->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
+        else if (newValue->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
+        {
             EX_CHATBOX_ITEMINFO_BOOSTMODE* boostData = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)newValue->Data;
             EX_CHATBOX_ITEMINFO_BOOSTMODE* boostCopy = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)malloc(sizeof(EX_CHATBOX_ITEMINFO_BOOSTMODE));
             boostCopy->Image = boostData->Image;
             boostCopy->Title = StrDupW(boostData->Title);
             boostCopy->Content = StrDupW(boostData->Content);
             newSub->Data = boostCopy;
+        }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+        {
+            EX_CHATBOX_ITEMINFO_ERRORLIST* errorListData = (EX_CHATBOX_ITEMINFO_ERRORLIST*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_ERRORLIST* errorListCopy = (EX_CHATBOX_ITEMINFO_ERRORLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST));
+            errorListCopy->Image = errorListData->Image;
+            errorListCopy->ListCount = errorListData->ListCount;
+            errorListCopy->Title = StrDupW(errorListData->Title);
+            errorListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * errorListData->ListCount);
+            errorListCopy->Layout.rcErrorCodeList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            errorListCopy->Layout.rcErrorCodeTextList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            errorListCopy->Layout.rcDescriptionList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            errorListCopy->Layout.rcDescriptionTextList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
+            // 深拷贝每个错误项
+            for (int j = 0; j < errorListData->ListCount; j++)
+            {
+                EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* srcUnit = &(errorListData->ListInfo[j]);
+                EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* destUnit = &(errorListCopy->ListInfo[j]);
+
+                // 拷贝错误代码和描述
+                destUnit->ErrorCode = StrDupW(srcUnit->ErrorCode);
+                destUnit->ErrorCodeText = StrDupW(srcUnit->ErrorCodeText);
+                destUnit->Description = StrDupW(srcUnit->Description);
+                destUnit->DescriptionText = StrDupW(srcUnit->DescriptionText);
+            }
+            newSub->Data = errorListCopy;
+        }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_INFOLIST)
+        {
+            EX_CHATBOX_ITEMINFO_INFOLIST* infoListData = (EX_CHATBOX_ITEMINFO_INFOLIST*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_INFOLIST* infoListCopy = (EX_CHATBOX_ITEMINFO_INFOLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST));
+            infoListCopy->ListCount = infoListData->ListCount;
+            infoListCopy->Content = StrDupW(infoListData->Content);
+            infoListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT) * infoListData->ListCount);
+            infoListCopy->Layout.rcDescriptionList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
+            infoListCopy->Layout.rcTitleList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
+            // 深拷贝每个错误项
+            for (int j = 0; j < infoListData->ListCount; j++)
+            {
+                EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* srcUnit = &(infoListData->ListInfo[j]);
+                EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* destUnit = &(infoListCopy->ListInfo[j]);
+
+                destUnit->Title = StrDupW(srcUnit->Title);
+                destUnit->Description = StrDupW(srcUnit->Description);
+            }
+            newSub->Data = infoListCopy;
+        }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_TABLELIST)
+        {
+            EX_CHATBOX_ITEMINFO_TABLELIST* tableListData = (EX_CHATBOX_ITEMINFO_TABLELIST*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_TABLELIST* tableListCopy = (EX_CHATBOX_ITEMINFO_TABLELIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST));
+            tableListCopy->ListCount = tableListData->ListCount;
+            tableListCopy->ColumnCount = tableListData->ColumnCount;
+            tableListCopy->Content = StrDupW(tableListData->Content);
+            tableListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_TABLELIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST_UNIT) * tableListData->ListCount);
+            tableListCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * tableListData->ListCount * tableListData->ColumnCount);
+            for (int j = 0; j < tableListData->ListCount; j++)
+            {
+                tableListCopy->ListInfo[j].Columns = (LPCWSTR*)malloc(sizeof(LPCWSTR) * tableListData->ColumnCount);
+                for (int k = 0; k < tableListData->ColumnCount; k++)
+                {
+                    EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* srcUnit = &(tableListData->ListInfo[j]);
+                    EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* destUnit = &(tableListCopy->ListInfo[j]);
+
+                    destUnit->Columns[k] = StrDupW(srcUnit->Columns[k]);
+                }
+            }
+            newSub->Data = tableListCopy;
         }
         // 替换旧项目
         ptrArray[index] = (size_t)newSub;
@@ -418,6 +673,267 @@ void _chatbox_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
     }
 }
 
+void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_TABLELIST* data,
+    EX_CHATBOX_ITEM_LAYOUT_TABLELIST* layout,
+    INT nPos)
+{
+    // 直接使用预先计算的布局
+    RECT rcBubble = layout->rcBubble;
+    OffsetRect(&rcBubble, 0, -nPos);
+
+    RECT rcAvatar = layout->rcAvatar;
+    OffsetRect(&rcAvatar, 0, -nPos);
+
+    RECT rcContent = layout->rcContent;
+    OffsetRect(&rcContent, 0, -nPos);
+
+    // 绘制背景
+    HEXBRUSH hBrush = _brush_create(ExARGB(255, 255, 255, 255));
+    _canvas_fillroundedrect(ps.hCanvas, hBrush,
+        rcBubble.left, rcBubble.top,
+        rcBubble.right, rcBubble.bottom,
+        Ex_Scale(5), Ex_Scale(5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
+        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+    // 绘制头像（使用预计算的布局）
+    HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
+    _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
+
+    // 绘制区域
+    HEXFONT hFontContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_CONTENTFONT);
+    HEXFONT hFontTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_TITLEFONT);
+    HEXFONT hFontDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT);
+
+    _canvas_drawtext(ps.hCanvas, hFontContent,
+        Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+        data->Content, -1,
+        DT_LEFT | DT_TOP,
+        rcContent.left, rcContent.top,
+        rcContent.right, rcContent.bottom);
+    _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
+    _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcContent.bottom + Ex_Scale(10), rcContent.right, rcContent.bottom + Ex_Scale(10), 1, 0);
+    BOOL fillTitle = FALSE;
+    for (int i = 0; i < data->ListCount; i++)
+    {
+        RECT rcCurrent;
+        for (int j = 0; j < data->ColumnCount; j++)
+        {
+            RECT rcColumnText = data->Layout.rcUnitList[i * data->ColumnCount + j];
+            OffsetRect(&rcColumnText, 0, -nPos);
+            rcCurrent = rcColumnText;
+            if (i == 0 && !fillTitle)//首行填充背景色
+            {
+                _canvas_fillrect(ps.hCanvas, hBrush, rcContent.left, rcCurrent.top - Ex_Scale(10), rcContent.right, rcCurrent.bottom + Ex_Scale(10));
+                fillTitle = TRUE;
+            }
+            _canvas_drawtext(ps.hCanvas, hFontTitle,
+                Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+                ((EX_CHATBOX_ITEMINFO_TABLELIST_UNIT*)data->ListInfo)[i].Columns[j], -1,
+                DT_LEFT | DT_TOP,
+                rcColumnText.left, rcColumnText.top,
+                rcColumnText.right, rcColumnText.bottom);
+        }
+        _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcCurrent.bottom + Ex_Scale(10), rcContent.right, rcCurrent.bottom + Ex_Scale(10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcCurrent.top - Ex_Scale(10), rcContent.left, rcCurrent.bottom + Ex_Scale(10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcContent.right, rcCurrent.top - Ex_Scale(10), rcContent.right, rcCurrent.bottom + Ex_Scale(10), 1, 0);
+    }
+    _brush_destroy(hBrush);
+}
+
+void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_INFOLIST* data,
+    EX_CHATBOX_ITEM_LAYOUT_INFOLIST* layout,
+    INT nPos)
+{
+    // 直接使用预先计算的布局
+    RECT rcBubble = layout->rcBubble;
+    OffsetRect(&rcBubble, 0, -nPos);
+
+    RECT rcAvatar = layout->rcAvatar;
+    OffsetRect(&rcAvatar, 0, -nPos);
+
+    RECT rcContent = layout->rcContent;
+    OffsetRect(&rcContent, 0, -nPos);
+
+    // 绘制背景
+    HEXBRUSH hBrush = _brush_create(ExARGB(255, 255, 255, 255));
+    _canvas_fillroundedrect(ps.hCanvas, hBrush,
+        rcBubble.left, rcBubble.top,
+        rcBubble.right, rcBubble.bottom,
+        Ex_Scale(5), Ex_Scale(5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
+        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+    // 绘制头像（使用预计算的布局）
+    HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
+    _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
+
+    // 绘制区域
+    HEXFONT hFontContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_CONTENTFONT);
+    HEXFONT hFontTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_TITLEFONT);
+    HEXFONT hFontDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_DESCRIPTIONFONT);
+
+    _canvas_drawtext(ps.hCanvas, hFontContent,
+        Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+        data->Content, -1,
+        DT_LEFT | DT_TOP,
+        rcContent.left, rcContent.top,
+        rcContent.right, rcContent.bottom);
+    _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
+    _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcContent.bottom + Ex_Scale(10), rcContent.right, rcContent.bottom + Ex_Scale(10), 1, 0);
+    for (int i = 0; i < data->ListCount; i++)
+    {
+        RECT rcTitle = data->Layout.rcTitleList[i];
+        OffsetRect(&rcTitle, 0, -nPos);
+        _canvas_drawtext(ps.hCanvas, hFontTitle,
+            ExARGB(134, 134, 140, 255),
+            ((EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)data->ListInfo)[i].Title, -1,
+            DT_LEFT | DT_TOP,
+            rcTitle.left + Ex_Scale(10), rcTitle.top,
+            rcTitle.right, rcTitle.bottom);
+
+        RECT rcDescription = data->Layout.rcDescriptionList[i];
+        OffsetRect(&rcDescription, 0, -nPos);
+        _canvas_drawtext(ps.hCanvas, hFontDescription,
+            Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+            ((EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)data->ListInfo)[i].Description, -1,
+            DT_LEFT | DT_TOP,
+            rcDescription.left, rcDescription.top,
+            rcDescription.right, rcDescription.bottom);
+
+        _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
+        _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcDescription.bottom + Ex_Scale(10), rcDescription.right, rcDescription.bottom + Ex_Scale(10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcDescription.top - Ex_Scale(10), rcTitle.left, rcDescription.bottom + Ex_Scale(10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcDescription.right, rcDescription.top - Ex_Scale(10), rcDescription.right, rcDescription.bottom + Ex_Scale(10), 1, 0);
+        //#ifdef _DEBUG
+        //        _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+        //        _canvas_drawrect(ps.hCanvas, hBrush, rcDescription.left, rcDescription.top, rcDescription.right, rcDescription.bottom, 1, 0);
+        //
+        //        _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+        //        _canvas_drawrect(ps.hCanvas, hBrush, rcTitle.left, rcTitle.top, rcTitle.right, rcTitle.bottom, 1, 0);
+        //#endif
+    }
+    //#ifdef _DEBUG
+    //    _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcContent.left, rcContent.top, rcContent.right, rcContent.bottom, 1, 0);
+    //
+    //#endif
+    _brush_destroy(hBrush);
+}
+
+void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_ERRORLIST* data,
+    EX_CHATBOX_ITEM_LAYOUT_ERRORLIST* layout,
+    INT nPos)
+{
+    // 直接使用预先计算的布局
+    RECT rcBubble = layout->rcBubble;
+    OffsetRect(&rcBubble, 0, -nPos);
+
+    RECT rcAvatar = layout->rcAvatar;
+    OffsetRect(&rcAvatar, 0, -nPos);
+
+    RECT rcImg = layout->rcImage;
+    OffsetRect(&rcImg, 0, -nPos);
+
+    RECT rcTitle = layout->rcTitle;
+    OffsetRect(&rcTitle, 0, -nPos);
+
+    // 绘制背景
+    HEXBRUSH hBrush = _brush_create(ExARGB(255, 255, 255, 255));
+    _canvas_fillroundedrect(ps.hCanvas, hBrush,
+        rcBubble.left, rcBubble.top,
+        rcBubble.right, rcBubble.bottom,
+        Ex_Scale(5), Ex_Scale(5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
+        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+    // 绘制头像（使用预计算的布局）
+    HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
+    _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
+
+    _canvas_drawimage(ps.hCanvas, data->Image, rcImg.left, rcImg.top, 255);
+
+    // 绘制区域
+    HEXFONT hFontTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_TITLEFONT);
+    HEXFONT hFontErrorCode = Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_ERRORCODEFONT);
+    HEXFONT hFontDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT);
+    _canvas_drawtext(ps.hCanvas, hFontTitle,
+        Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+        data->Title, -1,
+        DT_LEFT | DT_TOP,
+        rcTitle.left, rcTitle.top,
+        rcTitle.right, rcTitle.bottom);
+    _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
+    _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcTitle.bottom + Ex_Scale(10), rcTitle.right, rcTitle.bottom + Ex_Scale(10), 1, 0);
+
+    for (int i = 0; i < data->ListCount; i++)
+    {
+        RECT rcErrorCode = data->Layout.rcErrorCodeList[i];
+        OffsetRect(&rcErrorCode, 0, -nPos);
+        _canvas_drawtext(ps.hCanvas, hFontErrorCode,
+            Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+            ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].ErrorCode, -1,
+            DT_LEFT | DT_TOP,
+            rcErrorCode.left, rcErrorCode.top,
+            rcErrorCode.right, rcErrorCode.bottom);
+
+        RECT rcErrorCodeText = data->Layout.rcErrorCodeTextList[i];
+        OffsetRect(&rcErrorCodeText, 0, -nPos);
+        _canvas_drawtext(ps.hCanvas, hFontErrorCode,
+            Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+            ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].ErrorCodeText, -1,
+            DT_LEFT | DT_TOP,
+            rcErrorCodeText.left, rcErrorCodeText.top,
+            rcErrorCodeText.right, rcErrorCodeText.bottom);
+
+        RECT rcDescription = data->Layout.rcDescriptionList[i];
+        OffsetRect(&rcDescription, 0, -nPos);
+        _canvas_drawtext(ps.hCanvas, hFontDescription,
+            Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+            ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].Description, -1,
+            DT_LEFT | DT_TOP,
+            rcDescription.left, rcDescription.top,
+            rcDescription.right, rcDescription.bottom);
+
+        RECT rcDescriptionText = data->Layout.rcDescriptionTextList[i];
+        OffsetRect(&rcDescriptionText, 0, -nPos);
+        _canvas_drawtext(ps.hCanvas, hFontDescription,
+            Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+            ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].DescriptionText, -1,
+            DT_LEFT | DT_TOP,
+            rcDescriptionText.left, rcDescriptionText.top,
+            rcDescriptionText.right, rcDescriptionText.bottom);
+        _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
+        _canvas_drawline(ps.hCanvas, hBrush, rcDescription.left, rcDescriptionText.bottom + Ex_Scale(10), rcDescriptionText.right, rcDescriptionText.bottom + Ex_Scale(10), 1, 0);
+
+        //#ifdef _DEBUG
+        //        _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+        //        _canvas_drawrect(ps.hCanvas, hBrush, rcErrorCode.left, rcErrorCode.top, rcErrorCode.right, rcErrorCode.bottom, 1, 0);
+        //
+        //        _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+        //        _canvas_drawrect(ps.hCanvas, hBrush, rcErrorCodeText.left, rcErrorCodeText.top, rcErrorCodeText.right, rcErrorCodeText.bottom, 1, 0);
+        //
+        //        _brush_setcolor(hBrush, ExARGB(0, 255, 0, 255));   // 绿色边框
+        //        _canvas_drawrect(ps.hCanvas, hBrush, rcDescription.left, rcDescription.top, rcDescription.right, rcDescription.bottom, 1, 0);
+        //
+        //        _brush_setcolor(hBrush, ExARGB(255, 0, 0, 255));   // 红色边框
+        //        _canvas_drawrect(ps.hCanvas, hBrush, rcDescriptionText.left, rcDescriptionText.top, rcDescriptionText.right, rcDescriptionText.bottom, 1, 0);
+        //#endif
+
+    }
+    //#ifdef _DEBUG
+    //    _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcBubble.left, rcBubble.top, rcBubble.right, rcBubble.bottom, 1, 0);
+    //
+    //    _brush_setcolor(hBrush, ExARGB(0, 255, 0, 255));   // 绿色边框
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcImg.left, rcImg.top, rcImg.right, rcImg.bottom, 1, 0);
+    //
+    //    _brush_setcolor(hBrush, ExARGB(255, 0, 0, 255));   // 红色边框
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcAvatar.left, rcAvatar.top, rcAvatar.right, rcAvatar.bottom, 1, 0);
+    //#endif
+    _brush_destroy(hBrush);
+}
+
 void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_BOOSTMODE* data,
     EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE* layout,
@@ -440,12 +956,13 @@ void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     OffsetRect(&rcContent, 0, -nPos);
 
     // 绘制背景
-    HEXBRUSH hBrush = _brush_create(ExARGB(120, 120, 120, 255));
+    HEXBRUSH hBrush = _brush_create(ExARGB(255, 255, 255, 255));
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
         Ex_Scale(5), Ex_Scale(5));
-
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
+        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
@@ -468,21 +985,22 @@ void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
 
-    _brush_setcolor(hBrush, ExARGB(150, 150, 150, 255));
+    _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
     _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcTitle.bottom + Ex_Scale(10), rcTitle.right, rcTitle.bottom + Ex_Scale(10), 1, 0);
 
-//#ifdef _DEBUG
-//    _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
-//    _canvas_drawrect(ps.hCanvas, hBrush, rcBubble.left, rcBubble.top, rcBubble.right, rcBubble.bottom, 1, 0);
-//
-//    _brush_setcolor(hBrush, ExARGB(0, 255, 0, 255));   // 绿色边框
-//    _canvas_drawrect(ps.hCanvas, hBrush, rcImg.left, rcImg.top, rcImg.right, rcImg.bottom, 1, 0);
-//
-//    _canvas_drawrect(ps.hCanvas, hBrush, rcContent.left, rcContent.top, rcContent.right, rcContent.bottom, 1, 0);
-//
-//    _brush_setcolor(hBrush, ExARGB(255, 0, 0, 255));   // 红色边框
-//    _canvas_drawrect(ps.hCanvas, hBrush, rcAvatar.left, rcAvatar.top, rcAvatar.right, rcAvatar.bottom, 1, 0);
-//#endif
+    //#ifdef _DEBUG
+    //    _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcBubble.left, rcBubble.top, rcBubble.right, rcBubble.bottom, 1, 0);
+    //
+    //    _brush_setcolor(hBrush, ExARGB(0, 255, 0, 255));   // 绿色边框
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcImg.left, rcImg.top, rcImg.right, rcImg.bottom, 1, 0);
+    //
+    //    //_canvas_drawrect(ps.hCanvas, hBrush, rcTitle.left, rcTitle.top, rcTitle.right, rcTitle.bottom, 1, 0);
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcContent.left, rcContent.top, rcContent.right, rcContent.bottom, 1, 0);
+    //
+    //    _brush_setcolor(hBrush, ExARGB(255, 0, 0, 255));   // 红色边框
+    //    _canvas_drawrect(ps.hCanvas, hBrush, rcAvatar.left, rcAvatar.top, rcAvatar.right, rcAvatar.bottom, 1, 0);
+    //#endif
     _brush_destroy(hBrush);
 }
 
@@ -520,12 +1038,13 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     OffsetRect(&rcButton, 0, -nPos);
 
     // 绘制背景
-    HEXBRUSH hBrush = _brush_create(ExARGB(120, 120, 120, 255));
+    HEXBRUSH hBrush = _brush_create(ExARGB(255, 255, 255, 255));
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
         Ex_Scale(5), Ex_Scale(5));
-
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
+        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
@@ -556,10 +1075,10 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     HEXFONT hFontReasonTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT);
     HEXFONT hFontReason = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONFONT);
 
-    _brush_setcolor(hBrush, ExARGB(200, 200, 200, 255));
+    _brush_setcolor(hBrush, ExARGB(227, 241, 255, 255));
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcReasonRect.left, rcReasonRect.top,
-        rcReasonRect.right, rcReasonRect.bottom, 5, 5);
+        rcReasonRect.right, rcReasonRect.bottom, Ex_Scale(10), Ex_Scale(10));
 
     _brush_setcolor(hBrush, ExRGB2ARGB(16777215, 255));
     _canvas_drawtext(ps.hCanvas, hFontReasonTitle,
@@ -582,12 +1101,12 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     // 绘制按钮（根据悬停状态改变颜色）
     HEXBRUSH hButtonBrush = _brush_create(
         isHover ? ExARGB(80, 100, 180, 255) :  // 悬停时深蓝色
-        ExARGB(100, 100, 200, 255)   // 正常时蓝色
+        ExARGB(70, 99, 255, 255)   // 正常时蓝色
     );
 
     _canvas_fillroundedrect(ps.hCanvas, hButtonBrush,
         rcButton.left, rcButton.top,
-        rcButton.right, rcButton.bottom, 5, 5);
+        rcButton.right, rcButton.bottom, Ex_Scale(8), Ex_Scale(8));
 
     HEXFONT hFontButton = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_BUTTONFONT);
     _canvas_drawtext(ps.hCanvas, hFontButton,
@@ -632,7 +1151,7 @@ void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     // 确定气泡颜色（根据角色）
     EXARGB bubbleColor;
     if (role == CHATBOX_ITEMROLE_ASSISTANT) {
-        bubbleColor = ExARGB(80, 122, 200, 255); // 蓝色气泡
+        bubbleColor = ExARGB(255, 255, 255, 255); // 蓝色气泡
     }
     else {
         bubbleColor = ExARGB(80, 200, 122, 255); // 绿色气泡
@@ -644,6 +1163,11 @@ void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
         Ex_Scale(5), Ex_Scale(5));
+    if (role == CHATBOX_ITEMROLE_ASSISTANT)
+    {
+        _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
+            rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+    }
 
     // 绘制头像
     HEXIMAGE hImg;
@@ -690,19 +1214,13 @@ void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
 }
 
 void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT widthClient) {
-    // 获取字体信息
-    HEXFONT hFontText = Ex_ObjGetLong(hObj, CHATBOX_LONG_TEXT_FONT);
-    HEXFONT hFontContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_CONTENTFONT);
-    HEXFONT hFontReason = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONFONT);
-    HEXFONT hFontReasonTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONTITLEFONT);
-    HEXFONT hFontBoostModeTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_TITLEFONT);
-    HEXFONT hFontBoostModeContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_CONTENTFONT);
-
     HEXCANVAS hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
 
     if (sub->Type == CHATBOX_ITEMTYPE_TEXT) {
         EX_CHATBOX_ITEMINFO_TEXT* data = (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data;
         memset(&data->Layout, 0, sizeof(EX_CHATBOX_ITEM_LAYOUT_TEXT));
+
+        HEXFONT hFontText = Ex_ObjGetLong(hObj, CHATBOX_LONG_TEXT_FONT);
         // 测量文本尺寸
         FLOAT nWidthText, nHeightText;
         INT maxTextWidth = widthClient - Ex_Scale(140); // 70+70=140
@@ -752,15 +1270,18 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
     else if (sub->Type == CHATBOX_ITEMTYPE_CARD) {
         EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
         memset(&data->Layout, 0, sizeof(EX_CHATBOX_ITEM_LAYOUT_CARD));
+
+        HEXFONT hFontCardContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_CONTENTFONT);
+        HEXFONT hFontCardReason = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_REASONFONT);
         // 测量文本尺寸
         FLOAT nWidthContent, nHeightContent;
         FLOAT nWidthReason, nHeightReason;
         INT maxTextWidthContent = widthClient - Ex_Scale(140); // 70+70=140
         INT maxTextWidthReason = widthClient - Ex_Scale(180); // 70+70+40=180
-
-        _chatbox_measure_text(hCanvas, hFontContent, data->Content,
+        maxTextWidthContent = max(maxTextWidthContent, Ex_Scale(120));
+        _chatbox_measure_text(hCanvas, hFontCardContent, data->Content,
             maxTextWidthContent, &nWidthContent, &nHeightContent);
-        _chatbox_measure_text(hCanvas, hFontReason, data->Reason,
+        _chatbox_measure_text(hCanvas, hFontCardReason, data->Reason,
             maxTextWidthReason, &nWidthReason, &nHeightReason);
 
         // 计算卡片高度
@@ -784,7 +1305,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         data->Layout.rcBubble.left = Ex_Scale(70);
         data->Layout.rcBubble.top = Ex_Scale(0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
-            (maxTextWidthContent + Ex_Scale(40));
+            (nWidthContent + Ex_Scale(40));
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + cardHeight;
 
         // 设置卡片内部区域
@@ -828,13 +1349,16 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         //  按钮（在原因矩形下方）
         data->Layout.rcButton.left = data->Layout.rcBubble.left + Ex_Scale(20);
         data->Layout.rcButton.top = data->Layout.rcReasonRect.bottom + Ex_Scale(20);
-        data->Layout.rcButton.right = data->Layout.rcButton.left + Ex_Scale(150);
+        data->Layout.rcButton.right = data->Layout.rcButton.left + Ex_Scale(120);
         data->Layout.rcButton.bottom = data->Layout.rcButton.top + Ex_Scale(30);
     }
     else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
 
         EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
         memset(&data->Layout, 0, sizeof(EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE));
+
+        HEXFONT hFontBoostModeTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_TITLEFONT);
+        HEXFONT hFontBoostModeContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_BOOSTMODE_CONTENTFONT);
         // 测量文本尺寸
         FLOAT nWidthTitle, nHeightTitle;
         FLOAT nWidthContent, nHeightContent;
@@ -845,15 +1369,15 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         _chatbox_measure_text(hCanvas, hFontBoostModeContent, data->Content,
             maxTextWidthContent, &nWidthContent, &nHeightContent);
 
-        // 计算卡片高度
-        INT cardHeight = Ex_Scale(20 + 20 + 20) +
+        // 计算项目高度
+        INT itemHeight = Ex_Scale(20 + 20 + 20) +
             (INT)floor(nHeightTitle) + (INT)floor(nHeightContent);
 
         // 设置项目区域
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = cardHeight + Ex_Scale(30);
+        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
@@ -867,9 +1391,8 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         data->Layout.rcBubble.top = Ex_Scale(0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
             ((INT)floor(nWidthContent) + Ex_Scale(80));
-        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + cardHeight;
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
 
-        //  原因标题（在原因矩形内）
         data->Layout.rcTitle.left = data->Layout.rcBubble.left + Ex_Scale(20);
         data->Layout.rcTitle.top = data->Layout.rcBubble.top + Ex_Scale(20);
         data->Layout.rcTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
@@ -880,11 +1403,275 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         data->Layout.rcImage.right = data->Layout.rcImage.left + Ex_Scale(24);
         data->Layout.rcImage.bottom = data->Layout.rcImage.top + Ex_Scale(24);
 
-        //  原因文本（在原因标题下方）
         data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(54);//20+24+10
         data->Layout.rcContent.top = data->Layout.rcTitle.bottom + Ex_Scale(20);
         data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
         data->Layout.rcContent.bottom = data->Layout.rcContent.top + (INT)floor(nHeightContent);
+    }
+    else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+    {
+        EX_CHATBOX_ITEMINFO_ERRORLIST* data = (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data;
+
+        HEXFONT hFontErrorListTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_TITLEFONT);
+        HEXFONT hFontErrorListErrorCode = Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_ERRORCODEFONT);
+        HEXFONT hFontErrorListDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT);
+        // 测量文本尺寸
+        FLOAT nWidthTitle, nHeightTitle;
+        INT maxTitleWidth = widthClient - Ex_Scale(170); // 70+20+30+10+20+20
+        _chatbox_measure_text(hCanvas, hFontErrorListTitle, data->Title,
+            maxTitleWidth, &nWidthTitle, &nHeightTitle);
+
+        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)floor(nHeightTitle);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT maxErrorCodeWidth = (INT)((FLOAT)maxTitleWidth / 5 * 2);//宽度五分之二
+        INT maxErrorCodeTextWidth = (INT)((FLOAT)maxTitleWidth / 5 * 3);//宽度五分之三
+        INT maxDescriptionWidth = (INT)((FLOAT)maxTitleWidth / 5 * 2);//宽度五分之二
+        INT maxDescriptionTextWidth = (INT)((FLOAT)maxTitleWidth / 5 * 3);//宽度五分之三
+
+        INT* unitHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitErrorCodeHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitErrorCodeTextHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitDescriptionHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitDescriptionTextHeight = (INT*)malloc(data->ListCount * 4);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            auto errorCode = ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].ErrorCode;
+            FLOAT nWidthErrorCode, nHeightErrorCode;
+            _chatbox_measure_text(hCanvas, hFontErrorListErrorCode, errorCode,
+                maxErrorCodeWidth, &nWidthErrorCode, &nHeightErrorCode);
+            auto errorCodeText = ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].ErrorCodeText;
+            FLOAT nWidthErrorCodeText, nHeightErrorCodeText;
+            _chatbox_measure_text(hCanvas, hFontErrorListErrorCode, errorCodeText,
+                maxErrorCodeTextWidth, &nWidthErrorCodeText, &nHeightErrorCodeText);
+            auto description = ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].Description;
+            FLOAT nWidthDescription, nHeightDescription;
+            _chatbox_measure_text(hCanvas, hFontErrorListDescription, description,
+                maxDescriptionWidth, &nWidthDescription, &nHeightDescription);
+            auto descriptionText = ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].DescriptionText;
+            FLOAT nWidthDescriptionText, nHeightDescriptionText;
+            _chatbox_measure_text(hCanvas, hFontErrorListDescription, descriptionText,
+                maxDescriptionTextWidth, &nWidthDescriptionText, &nHeightDescriptionText);
+            unitHeight[i] = max((int)floor(nHeightErrorCode), (int)floor(nHeightErrorCodeText)) + max((int)floor(nHeightDescription), (int)floor(nHeightDescriptionText)) + Ex_Scale(20 + 20); //条目内间距20+内容间距20
+            unitErrorCodeHeight[i] = (int)floor(nHeightErrorCode);
+            unitErrorCodeTextHeight[i] = (int)floor(nHeightErrorCodeText);
+            unitDescriptionHeight[i] = (int)floor(nHeightDescription);
+            unitDescriptionTextHeight[i] = (int)floor(nHeightDescriptionText);
+            itemHeight += unitHeight[i];
+        }
+        // 设置项目区域
+        sub->rcItem.left = 0;
+        sub->rcItem.top = 0;
+        sub->rcItem.right = widthClient;
+        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->nHeight = sub->rcItem.bottom;
+
+        // 设置头像区域
+        data->Layout.rcAvatar.left = Ex_Scale(10);
+        data->Layout.rcAvatar.top = Ex_Scale(0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+
+        // 设置气泡区域
+        data->Layout.rcBubble.left = Ex_Scale(70);
+        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.right = data->Layout.rcBubble.left +
+            ((INT)floor(maxTitleWidth) + Ex_Scale(80));
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
+        //  标题
+        data->Layout.rcTitle.left = data->Layout.rcBubble.left + Ex_Scale(20 + 30 + 10);
+        data->Layout.rcTitle.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)floor(nHeightTitle);
+
+        data->Layout.rcImage.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcImage.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcImage.right = data->Layout.rcImage.left + Ex_Scale(30);
+        data->Layout.rcImage.bottom = data->Layout.rcImage.top + Ex_Scale(30);
+        INT topOffset = Ex_Scale(20);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            data->Layout.rcErrorCodeList[i].left = data->Layout.rcTitle.left;
+            data->Layout.rcErrorCodeList[i].top = data->Layout.rcTitle.bottom + topOffset;
+            data->Layout.rcErrorCodeList[i].right = data->Layout.rcErrorCodeList[i].left + (INT)floor(maxErrorCodeWidth);
+            data->Layout.rcErrorCodeList[i].bottom = data->Layout.rcErrorCodeList[i].top + unitErrorCodeHeight[i];
+
+            data->Layout.rcErrorCodeTextList[i].left = data->Layout.rcErrorCodeList[i].right;
+            data->Layout.rcErrorCodeTextList[i].top = data->Layout.rcTitle.bottom + topOffset;
+            data->Layout.rcErrorCodeTextList[i].right = data->Layout.rcErrorCodeTextList[i].left + (INT)floor(maxErrorCodeTextWidth);
+            data->Layout.rcErrorCodeTextList[i].bottom = data->Layout.rcErrorCodeTextList[i].top + unitErrorCodeTextHeight[i];
+
+            data->Layout.rcDescriptionList[i].left = data->Layout.rcTitle.left;
+            data->Layout.rcDescriptionList[i].top = data->Layout.rcErrorCodeList[i].top + max(unitErrorCodeHeight[i], unitErrorCodeTextHeight[i]) + Ex_Scale(20);//取最大高度
+            data->Layout.rcDescriptionList[i].right = data->Layout.rcDescriptionList[i].left + (INT)floor(maxDescriptionWidth);
+            data->Layout.rcDescriptionList[i].bottom = data->Layout.rcDescriptionList[i].top + unitDescriptionHeight[i];
+
+            data->Layout.rcDescriptionTextList[i].left = data->Layout.rcDescriptionList[i].right;
+            data->Layout.rcDescriptionTextList[i].top = data->Layout.rcDescriptionList[i].top;
+            data->Layout.rcDescriptionTextList[i].right = data->Layout.rcDescriptionTextList[i].left + (INT)floor(maxDescriptionTextWidth);
+            data->Layout.rcDescriptionTextList[i].bottom = data->Layout.rcDescriptionTextList[i].top + unitDescriptionTextHeight[i];
+
+            topOffset += unitHeight[i];
+        }
+        free(unitErrorCodeHeight);
+        free(unitErrorCodeTextHeight);
+        free(unitDescriptionHeight);
+        free(unitDescriptionTextHeight);
+        free(unitHeight);
+    }
+    else if (sub->Type == CHATBOX_ITEMTYPE_INFOLIST)
+    {
+        EX_CHATBOX_ITEMINFO_INFOLIST* data = (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data;
+        HEXFONT hFontInfoListContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_CONTENTFONT);
+        HEXFONT hFontInfoListTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_TITLEFONT);
+        HEXFONT hFontInfoListDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_DESCRIPTIONFONT);
+        // 测量文本尺寸
+        FLOAT nWidthContent, nHeightContent;
+        INT maxContentWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        _chatbox_measure_text(hCanvas, hFontInfoListContent, data->Content,
+            maxContentWidth, &nWidthContent, &nHeightContent);
+
+        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)floor(nHeightContent);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT maxTitleWidth = (INT)((FLOAT)maxContentWidth / 5 * 2);//宽度五分之二
+        INT maxDescriptionWidth = (INT)((FLOAT)maxContentWidth / 5 * 3);//宽度五分之三
+        INT* unitHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitTitleHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitDescriptionHeight = (INT*)malloc(data->ListCount * 4);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            auto title = ((EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)data->ListInfo)[i].Title;
+            FLOAT nWidthTitle, nHeightTitle;
+            _chatbox_measure_text(hCanvas, hFontInfoListTitle, title,
+                maxTitleWidth, &nWidthTitle, &nHeightTitle);
+            auto description = ((EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)data->ListInfo)[i].Description;
+            FLOAT nWidthDescription, nHeighDescription;
+            _chatbox_measure_text(hCanvas, hFontInfoListDescription, description,
+                maxDescriptionWidth, &nWidthDescription, &nHeighDescription);
+            unitHeight[i] = max((int)floor(nHeightTitle), (int)floor(nHeighDescription)) + Ex_Scale(20); //条目内间距20
+            unitTitleHeight[i] = (int)floor(nHeightTitle);
+            unitDescriptionHeight[i] = (int)floor(nHeighDescription);
+            itemHeight += unitHeight[i];
+        }
+        // 设置项目区域
+        sub->rcItem.left = 0;
+        sub->rcItem.top = 0;
+        sub->rcItem.right = widthClient;
+        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->nHeight = sub->rcItem.bottom;
+
+        // 设置头像区域
+        data->Layout.rcAvatar.left = Ex_Scale(10);
+        data->Layout.rcAvatar.top = Ex_Scale(0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+
+        // 设置气泡区域
+        data->Layout.rcBubble.left = Ex_Scale(70);
+        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.right = data->Layout.rcBubble.left +
+            ((INT)floor(maxContentWidth) + Ex_Scale(40));
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
+
+        //  内容
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)floor(nHeightContent);
+
+        INT topOffset = Ex_Scale(20);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            data->Layout.rcTitleList[i].left = data->Layout.rcContent.left;
+            data->Layout.rcTitleList[i].top = data->Layout.rcContent.bottom + topOffset;
+            data->Layout.rcTitleList[i].right = data->Layout.rcTitleList[i].left + (INT)floor(maxTitleWidth);
+            data->Layout.rcTitleList[i].bottom = data->Layout.rcTitleList[i].top + unitTitleHeight[i];
+
+            data->Layout.rcDescriptionList[i].left = data->Layout.rcTitleList[i].right;
+            data->Layout.rcDescriptionList[i].top = data->Layout.rcContent.bottom + topOffset;
+            data->Layout.rcDescriptionList[i].right = data->Layout.rcDescriptionList[i].left + (INT)floor(maxDescriptionWidth);
+            data->Layout.rcDescriptionList[i].bottom = data->Layout.rcDescriptionList[i].top + unitDescriptionHeight[i];
+
+            topOffset += unitHeight[i];
+        }
+        free(unitTitleHeight);
+        free(unitDescriptionHeight);
+        free(unitHeight);
+    }
+    else if (sub->Type == CHATBOX_ITEMTYPE_TABLELIST)
+    {
+        EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)(sub->Data);
+        HEXFONT hFontTableListContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_CONTENTFONT);
+        HEXFONT hFontTableListTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_TITLEFONT);
+        HEXFONT hFontTableListDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT);
+
+        // 测量文本尺寸
+        FLOAT nWidthContent, nHeightContent;
+        INT maxContentWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        _chatbox_measure_text(hCanvas, hFontTableListContent, data->Content,
+            maxContentWidth, &nWidthContent, &nHeightContent);
+
+        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)floor(nHeightContent);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT maxColumnWidth = (INT)((FLOAT)(maxContentWidth - Ex_Scale(10 + 10)) / data->ColumnCount);//宽度按列平均分,10是文本与表格边界距离
+        INT* unitHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitColumnHeight = (INT*)malloc(data->ListCount * 4);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            int maxColumnHeight = 0;
+            for (int j = 0; j < data->ColumnCount; j++)
+            {
+                auto columnText = data->ListInfo[i].Columns[j];
+                FLOAT nWidthColumn, nHeighColumn;
+                _chatbox_measure_text(hCanvas, hFontTableListTitle, columnText,
+                    maxColumnWidth, &nWidthColumn, &nHeighColumn);
+                if (nHeighColumn > maxColumnHeight)
+                {
+                    maxColumnHeight = nHeighColumn;
+                }
+            }
+            unitHeight[i] = (int)floor(maxColumnHeight) + Ex_Scale(20); //条目内间距20
+            unitColumnHeight[i] = (int)floor(maxColumnHeight);
+            itemHeight += unitHeight[i];
+        }
+        // 设置项目区域
+        sub->rcItem.left = 0;
+        sub->rcItem.top = 0;
+        sub->rcItem.right = widthClient;
+        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->nHeight = sub->rcItem.bottom;
+
+        // 设置头像区域
+        data->Layout.rcAvatar.left = Ex_Scale(10);
+        data->Layout.rcAvatar.top = Ex_Scale(0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+
+        // 设置气泡区域
+        data->Layout.rcBubble.left = Ex_Scale(70);
+        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.right = data->Layout.rcBubble.left +
+            ((INT)floor(maxContentWidth) + Ex_Scale(40));
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
+
+        //  内容
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)floor(nHeightContent);
+
+        INT topOffset = Ex_Scale(20);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            INT leftOffset = Ex_Scale(10);
+            for (int j = 0; j < data->ColumnCount; j++)
+            {
+                data->Layout.rcUnitList[i * data->ColumnCount + j].left = data->Layout.rcContent.left + leftOffset;
+                data->Layout.rcUnitList[i * data->ColumnCount + j].top = data->Layout.rcContent.bottom + topOffset;
+                data->Layout.rcUnitList[i * data->ColumnCount + j].right = data->Layout.rcUnitList[i * data->ColumnCount + j].left + (INT)floor(maxColumnWidth);
+                data->Layout.rcUnitList[i * data->ColumnCount + j].bottom = data->Layout.rcUnitList[i * data->ColumnCount + j].top + unitColumnHeight[i];
+                leftOffset += (INT)floor(maxColumnWidth);
+            }
+            topOffset += unitHeight[i];
+        }
+        free(unitColumnHeight);
+        free(unitHeight);
     }
 }
 
@@ -943,12 +1730,53 @@ void _chatbox_update_layout(HEXOBJ hObj) {
             OffsetRect(&data->Layout.rcTitle, 0, currentY);
             OffsetRect(&data->Layout.rcContent, 0, currentY);
         }
+        else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+        {
+            EX_CHATBOX_ITEMINFO_ERRORLIST* data = (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data;
+            OffsetRect(&data->Layout.rcAvatar, 0, currentY);
+            OffsetRect(&data->Layout.rcBubble, 0, currentY);
+            OffsetRect(&data->Layout.rcImage, 0, currentY);
+            OffsetRect(&data->Layout.rcTitle, 0, currentY);
+
+            for (int i = 0; i < data->ListCount; i++)
+            {
+                OffsetRect(&data->Layout.rcErrorCodeList[i], 0, currentY);
+                OffsetRect(&data->Layout.rcErrorCodeTextList[i], 0, currentY);
+                OffsetRect(&data->Layout.rcDescriptionList[i], 0, currentY);
+                OffsetRect(&data->Layout.rcDescriptionTextList[i], 0, currentY);
+            }
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_INFOLIST)
+        {
+            EX_CHATBOX_ITEMINFO_INFOLIST* data = (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data;
+            OffsetRect(&data->Layout.rcAvatar, 0, currentY);
+            OffsetRect(&data->Layout.rcBubble, 0, currentY);
+            OffsetRect(&data->Layout.rcContent, 0, currentY);
+
+            for (int i = 0; i < data->ListCount; i++)
+            {
+                OffsetRect(&data->Layout.rcTitleList[i], 0, currentY);
+                OffsetRect(&data->Layout.rcDescriptionList[i], 0, currentY);
+            }
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_TABLELIST)
+        {
+            EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data;
+            OffsetRect(&data->Layout.rcAvatar, 0, currentY);
+            OffsetRect(&data->Layout.rcBubble, 0, currentY);
+            OffsetRect(&data->Layout.rcContent, 0, currentY);
+
+            for (int i = 0; i < data->ListCount; i++)
+            {
+                for (int j = 0; j < data->ColumnCount; j++)
+                {
+                    OffsetRect(&data->Layout.rcUnitList[i * data->ColumnCount + j], 0, currentY);
+                }
+            }
+        }
         // 更新累计高度
         currentY = sub->rcItem.bottom;
     }
-
-    // 更新总高度和滚动条
-    Ex_ObjSetLong(hObj, CHATBOX_LONG_TOTAL_HEIGHT, currentY);
 
     // 更新滚动条范围
     INT viewHeight = Ex_Scale(rc.bottom - rc.top);
@@ -972,7 +1800,8 @@ void _chatbox_paint(HEXOBJ hObj)
             Ex_ObjEndPaint(hObj, &ps);
             return;
         }
-        _canvas_clear(ps.hCanvas, ExARGB(255, 255, 255, 255));
+        auto bkgColor = Ex_ObjGetLong(hObj, CHATBOX_LONG_BKG_COLOR);
+        _canvas_clear(ps.hCanvas, bkgColor);
         INT nPos = Ex_ObjGetLong(hObj, CHATBOX_LONG_TOP_OFFSET);
         size_t* ptrArray = (size_t*)arr->Items;
 
@@ -997,6 +1826,24 @@ void _chatbox_paint(HEXOBJ hObj)
                 else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
                     EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
                     _chatbox_paint_boostmode(hObj, ps, (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data,
+                        &data->Layout, nPos);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+                {
+                    EX_CHATBOX_ITEMINFO_ERRORLIST* data = (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data;
+                    _chatbox_paint_errorlist(hObj, ps, (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data,
+                        &data->Layout, nPos);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_INFOLIST)
+                {
+                    EX_CHATBOX_ITEMINFO_INFOLIST* data = (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data;
+                    _chatbox_paint_infolist(hObj, ps, (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data,
+                        &data->Layout, nPos);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_TABLELIST)
+                {
+                    EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data;
+                    _chatbox_paint_tablelist(hObj, ps, (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data,
                         &data->Layout, nPos);
                 }
             }

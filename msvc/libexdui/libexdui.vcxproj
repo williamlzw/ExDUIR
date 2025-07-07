@@ -162,7 +162,6 @@
     <ClInclude Include="..\..\include\Font_ex.h" />
     <ClInclude Include="..\..\include\Format_ex.h" />
     <ClInclude Include="..\..\include\Geometry_ex.h" />
-    <ClInclude Include="..\..\include\Global_ex.h" />
     <ClInclude Include="..\..\include\HandelTable_ex.h" />
     <ClInclude Include="..\..\include\HashTable_ex.h" />
     <ClInclude Include="..\..\include\help_ex.h" />
