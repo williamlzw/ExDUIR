@@ -50,6 +50,10 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         Ex_ObjSetLong(hObj, CHATBOX_LONG_TABLELIST_TITLEFONT, _font_createfromfamily(L"Arial", 20, 0));
         Ex_ObjSetLong(hObj, CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT, _font_createfromfamily(L"Arial", 20, 0));
 
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_LINK_CONTENTFONT, _font_createfromfamily(L"Arial", 20, 0));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_LINK_TITLEFONT, _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD));
+        Ex_ObjSetLong(hObj, CHATBOX_LONG_LINK_TEXTFONT, _font_createfromfamily(L"Arial", 18, 0));
+
         Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
         Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
     }
@@ -139,6 +143,19 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     free(data->ListInfo);
                     free(data);
                 }
+                else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
+                {
+                    EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)sub->Data;
+                    Ex_MemFree((void*)data->Content);
+                    Ex_MemFree((void*)data->Title);
+                    free(data->Layout.rcUnitList);
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        Ex_MemFree((void*)data->ListInfo[j].Text);
+                    }
+                    free(data->ListInfo);
+                    free(data);
+                }
                 free(sub); // 释放子项结构体本身
             }
             free(arr->Items); // 释放项数组
@@ -169,6 +186,10 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_CONTENTFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_TITLEFONT));
         _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT));
+
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_CONTENTFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_TITLEFONT));
+        _font_destroy(Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_TEXTFONT));
     }
     else if (uMsg == WM_VSCROLL) {
         _chatbox_onvscrollbar(hWnd, hObj, uMsg, wParam, lParam);
@@ -240,6 +261,21 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                         y >= rcButton.top && y <= rcButton.bottom)
                     {
                         Ex_ObjDispatchNotify(hObj, CHATBOX_EVENT_CLICKBUTTON, 0, i);
+                    }
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
+                {
+                    EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)sub->Data;
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        RECT rcText = data->Layout.rcUnitList[j];
+                        OffsetRect(&rcText, 0, -nPos); // 应用滚动偏移
+                        // 检查鼠标是否在按钮区域内
+                        if (x >= rcText.left && x <= rcText.right &&
+                            y >= rcText.top && y <= rcText.bottom)
+                        {
+                            Ex_ObjDispatchNotify(hObj, CHATBOX_EVENT_CLICKLINK, i, j);
+                        }
                     }
                 }
             }
@@ -353,6 +389,23 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 }
             }
             itemCopy->Data = tableListCopy;
+        }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_LINK)
+        {
+            EX_CHATBOX_ITEMINFO_LINK* linkData = (EX_CHATBOX_ITEMINFO_LINK*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_LINK* linkCopy = (EX_CHATBOX_ITEMINFO_LINK*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK));
+            linkCopy->ListCount = linkData->ListCount;
+            linkCopy->Content = StrDupW(linkData->Content);
+            linkCopy->Title = StrDupW(linkData->Title);
+            linkCopy->ListInfo = (EX_CHATBOX_ITEMINFO_LINK_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK_UNIT) * linkData->ListCount);
+            linkCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * linkData->ListCount);
+            for (int j = 0; j < linkData->ListCount; j++)
+            {
+                EX_CHATBOX_ITEMINFO_LINK_UNIT* srcUnit = &(linkData->ListInfo[j]);
+                EX_CHATBOX_ITEMINFO_LINK_UNIT* destUnit = &(linkCopy->ListInfo[j]);
+                destUnit->Text = StrDupW(srcUnit->Text);
+            }
+            itemCopy->Data = linkCopy;
         }
         // 重新分配内存并检查是否成功
         void* newItems = realloc(arr->Items, (arr->Count + 1) * sizeof(size_t));
@@ -470,6 +523,19 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             free(oldData->ListInfo);
             free(oldData);
         }
+        else if (oldSub->Type == CHATBOX_ITEMTYPE_LINK)
+        {
+            EX_CHATBOX_ITEMINFO_LINK* oldData = (EX_CHATBOX_ITEMINFO_LINK*)oldSub->Data;
+            Ex_MemFree((void*)oldData->Content);
+            Ex_MemFree((void*)oldData->Title);
+            free((void*)oldData->Layout.rcUnitList);
+            for (int j = 0; j < oldData->ListCount; j++)
+            {
+                Ex_MemFree((void*)oldData->ListInfo[j].Text);
+            }
+            free(oldData->ListInfo);
+            free(oldData);
+        }
         // 复制新的子项结构体（不包括数据部分）
         EX_CHATBOX_ITEMINFO_SUBITEM* newSub = (EX_CHATBOX_ITEMINFO_SUBITEM*)malloc(sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
         memcpy(newSub, newValue, sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
@@ -574,6 +640,24 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             }
             newSub->Data = tableListCopy;
         }
+        else if (newValue->Type == CHATBOX_ITEMTYPE_LINK)
+        {
+            EX_CHATBOX_ITEMINFO_LINK* linkData = (EX_CHATBOX_ITEMINFO_LINK*)newValue->Data;
+            EX_CHATBOX_ITEMINFO_LINK* linkCopy = (EX_CHATBOX_ITEMINFO_LINK*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK));
+            linkCopy->ListCount = linkData->ListCount;
+            linkCopy->Content = StrDupW(linkData->Content);
+            linkCopy->Title = StrDupW(linkData->Title);
+            linkCopy->ListInfo = (EX_CHATBOX_ITEMINFO_LINK_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK_UNIT) * linkData->ListCount);
+            linkCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * linkData->ListCount);
+            for (int j = 0; j < linkData->ListCount; j++)
+            {
+                EX_CHATBOX_ITEMINFO_LINK_UNIT* srcUnit = &(linkData->ListInfo[j]);
+                EX_CHATBOX_ITEMINFO_LINK_UNIT* destUnit = &(linkCopy->ListInfo[j]);
+
+                destUnit->Text = StrDupW(srcUnit->Text);
+            }
+            newSub->Data = linkCopy;
+        }
         // 替换旧项目
         ptrArray[index] = (size_t)newSub;
 
@@ -671,6 +755,70 @@ void _chatbox_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
         Ex_ObjScrollSetPos(hVSB, SCROLLBAR_TYPE_CONTROL, nPos, TRUE);
         Ex_ObjInvalidateRect(hObj, 0);
     }
+}
+
+void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_LINK* data,
+    EX_CHATBOX_ITEM_LAYOUT_LINK* layout,
+    INT nPos)
+{
+    // 直接使用预先计算的布局
+    RECT rcBubble = layout->rcBubble;
+    OffsetRect(&rcBubble, 0, -nPos);
+
+    RECT rcAvatar = layout->rcAvatar;
+    OffsetRect(&rcAvatar, 0, -nPos);
+
+    RECT rcContent = layout->rcContent;
+    OffsetRect(&rcContent, 0, -nPos);
+
+    // 绘制背景
+    HEXBRUSH hBrush = _brush_create(ExARGB(255, 255, 255, 255));
+    _canvas_fillroundedrect(ps.hCanvas, hBrush,
+        rcBubble.left, rcBubble.top,
+        rcBubble.right, rcBubble.bottom,
+        Ex_Scale(5), Ex_Scale(5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
+        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+    // 绘制头像（使用预计算的布局）
+    HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
+    _canvas_drawimage(ps.hCanvas, hAvatarImg, rcAvatar.left, rcAvatar.top, 255);
+
+    // 绘制区域
+    HEXFONT hFontContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_CONTENTFONT);
+    HEXFONT hFontTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_TITLEFONT);
+    HEXFONT hFontText = Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_TEXTFONT);
+    _canvas_drawtext(ps.hCanvas, hFontContent,
+        Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+        data->Content, -1,
+        DT_LEFT | DT_TOP,
+        rcContent.left, rcContent.top,
+        rcContent.right, rcContent.bottom);
+
+    RECT rcTitle = layout->rcTitle;
+    OffsetRect(&rcTitle, 0, -nPos);
+    _canvas_drawtext(ps.hCanvas, hFontTitle,
+        Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
+        data->Title, -1,
+        DT_LEFT | DT_TOP,
+        rcTitle.left, rcTitle.top,
+        rcTitle.right, rcTitle.bottom);
+
+    _brush_setcolor(hBrush, ExARGB(193, 212, 255, 255));
+    for (int i = 0; i < data->ListCount; i++)
+    {
+        RECT rcText = data->Layout.rcUnitList[i];
+        OffsetRect(&rcText, 0, -nPos);
+        _canvas_drawroundedrect(ps.hCanvas, hBrush, rcText.left, rcText.top,
+            rcText.right, rcText.bottom, Ex_Scale(5), Ex_Scale(5), 1, 0);
+        _canvas_drawtext(ps.hCanvas, hFontText,
+            ExARGB(70, 99, 255, 255),
+            ((EX_CHATBOX_ITEMINFO_LINK_UNIT*)data->ListInfo)[i].Text, -1,
+            DT_CENTER | DT_VCENTER,
+            rcText.left, rcText.top,
+            rcText.right, rcText.bottom);
+    }
+    _brush_destroy(hBrush);
 }
 
 void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
@@ -1673,6 +1821,86 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         free(unitColumnHeight);
         free(unitHeight);
     }
+    else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
+    {
+        EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)(sub->Data);
+        HEXFONT hFontLinkContent = Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_CONTENTFONT);
+        HEXFONT hFontLinkTitle = Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_TITLEFONT);
+        HEXFONT hFontLinkText = Ex_ObjGetLong(hObj, CHATBOX_LONG_LINK_TEXTFONT);
+
+        // 测量文本尺寸
+        FLOAT nWidthContent, nHeightContent;
+        INT maxContentWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        _chatbox_measure_text(hCanvas, hFontLinkContent, data->Content,
+            maxContentWidth, &nWidthContent, &nHeightContent);
+
+        FLOAT nWidthTitle, nHeightTitle;
+        INT maxTitleWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        _chatbox_measure_text(hCanvas, hFontLinkTitle, data->Content,
+            maxTitleWidth, &nWidthTitle, &nHeightTitle);
+
+        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)floor(nHeightContent) + (int)floor(nHeightTitle);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT maxTextWidth = (INT)(maxContentWidth - Ex_Scale(20 + 20));//20是文本与左右边界距离
+        INT* unitHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitTextHeight = (INT*)malloc(data->ListCount * 4);
+        INT* unitTextWidth = (INT*)malloc(data->ListCount * 4);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            auto Text = data->ListInfo[i].Text;
+            FLOAT nWidthText, nHeighText;
+            _chatbox_measure_text(hCanvas, hFontLinkText, Text,
+                maxTextWidth, &nWidthText, &nHeighText);
+            unitHeight[i] = (int)floor(nHeighText) + Ex_Scale(10) + Ex_Scale(20); //条目内间距20
+            unitTextHeight[i] = (int)floor(nHeighText) + Ex_Scale(20);
+            unitTextWidth[i] = (int)floor(nWidthText) + Ex_Scale(20);
+            itemHeight += unitHeight[i];
+        }
+        // 设置项目区域
+        sub->rcItem.left = 0;
+        sub->rcItem.top = 0;
+        sub->rcItem.right = widthClient;
+        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->nHeight = sub->rcItem.bottom;
+
+        // 设置头像区域
+        data->Layout.rcAvatar.left = Ex_Scale(10);
+        data->Layout.rcAvatar.top = Ex_Scale(0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+
+        // 设置气泡区域
+        data->Layout.rcBubble.left = Ex_Scale(70);
+        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.right = data->Layout.rcBubble.left +
+            ((INT)floor(maxContentWidth) + Ex_Scale(40));
+        data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
+
+        //  内容
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)floor(nHeightContent);
+
+        //  副标题
+        data->Layout.rcTitle.left = data->Layout.rcBubble.left + Ex_Scale(20);
+        data->Layout.rcTitle.top = data->Layout.rcContent.bottom + Ex_Scale(10);
+        data->Layout.rcTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)floor(nHeightContent) + (INT)floor(nHeightTitle) + Ex_Scale(10);
+
+        INT topOffset = Ex_Scale(20);
+        for (int i = 0; i < data->ListCount; i++)
+        {
+            data->Layout.rcUnitList[i].left = data->Layout.rcContent.left + Ex_Scale(20);
+            data->Layout.rcUnitList[i].top = data->Layout.rcTitle.bottom + topOffset;
+            data->Layout.rcUnitList[i].right = data->Layout.rcUnitList[i].left + unitTextWidth[i];
+            data->Layout.rcUnitList[i].bottom = data->Layout.rcUnitList[i].top + unitTextHeight[i];
+
+            topOffset += unitHeight[i];
+        }
+        free(unitTextWidth);
+        free(unitTextHeight);
+        free(unitHeight);
+    }
 }
 
 // 更新所有项目布局
@@ -1774,6 +2002,18 @@ void _chatbox_update_layout(HEXOBJ hObj) {
                 }
             }
         }
+        else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
+        {
+            EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)sub->Data;
+            OffsetRect(&data->Layout.rcAvatar, 0, currentY);
+            OffsetRect(&data->Layout.rcBubble, 0, currentY);
+            OffsetRect(&data->Layout.rcContent, 0, currentY);
+            OffsetRect(&data->Layout.rcTitle, 0, currentY);
+            for (int i = 0; i < data->ListCount; i++)
+            {
+                OffsetRect(&data->Layout.rcUnitList[i], 0, currentY);
+            }
+        }
         // 更新累计高度
         currentY = sub->rcItem.bottom;
     }
@@ -1844,6 +2084,12 @@ void _chatbox_paint(HEXOBJ hObj)
                 {
                     EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data;
                     _chatbox_paint_tablelist(hObj, ps, (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data,
+                        &data->Layout, nPos);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
+                {
+                    EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)sub->Data;
+                    _chatbox_paint_link(hObj, ps, (EX_CHATBOX_ITEMINFO_LINK*)sub->Data,
                         &data->Layout, nPos);
                 }
             }

@@ -4,7 +4,14 @@ HEXDUI hExDui_chatbox;
 
 LRESULT CALLBACK OnChatBoxEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-    OUTPUTW(L"卡片按钮点击", lParam);
+    if (nCode == CHATBOX_EVENT_CLICKLINK)
+    {
+        OUTPUTW(L"链接点击", wParam, lParam);
+    }
+    else if (nCode == CHATBOX_EVENT_CLICKBUTTON)
+    {
+        OUTPUTW(L"卡片按钮点击", lParam);
+    }
     return 0;
 }
 
@@ -120,6 +127,7 @@ void test_chatbox(HWND hWnd)
     Ex_ObjHandleEvent(hButton5, NM_CLICK, OnChatButtonEvent);
     auto hChatBox = Ex_ObjCreateEx(-1, L"ChatBox", NULL, -1, 50, 50, 1000, 750, hExDui_chatbox, 200, -1, 0, 0, NULL);
     Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKBUTTON, OnChatBoxEvent);
+    Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKLINK, OnChatBoxEvent);
     HEXIMAGE hImgUser, hImgAssistant;
     HEXIMAGE hImgUserSmall, hImgAssistantSmall;
 
@@ -195,7 +203,7 @@ void test_chatbox(HWND hWnd)
     ptr.Data = &itemData;
     ptr.Role = CHATBOX_ITEMROLE_USER;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
- 
+
     itemData.Text = assistant;
     ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
@@ -357,5 +365,18 @@ void test_chatbox(HWND hWnd)
     }
     delete[] itemDataTableList.ListInfo;
 
+    EX_CHATBOX_ITEMINFO_LINK itemDataLink;
+    itemDataLink.ListCount = 3;
+    itemDataLink.Content = L"测试标题";
+    itemDataLink.Title = L"副标题";
+    itemDataLink.ListInfo = new EX_CHATBOX_ITEMINFO_LINK_UNIT[3];
+    itemDataLink.ListInfo[0].Text = L"测试条目一";
+    itemDataLink.ListInfo[1].Text = L"测试条目二测试条目二测试条目二";
+    itemDataLink.ListInfo[2].Text = L"测试条目三\r\n测试条目三";
+    ptr.Type = CHATBOX_ITEMTYPE_LINK;
+    ptr.Data = &itemDataLink;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+
+    delete[] itemDataLink.ListInfo;
     Ex_DUIShowWindow(hExDui_chatbox, SW_SHOWNORMAL, 0, 0, 0);
 }

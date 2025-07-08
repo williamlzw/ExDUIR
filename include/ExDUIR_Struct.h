@@ -1696,6 +1696,8 @@
 #define CHATBOX_ITEMTYPE_INFOLIST 4
 // 对话盒_项目类型_表格列表
 #define CHATBOX_ITEMTYPE_TABLELIST 5
+// 对话盒_项目类型_链接列表
+#define CHATBOX_ITEMTYPE_LINK 6
 #pragma endregion chatbox item type constant
 
 #pragma region chatbox item role constant
@@ -1706,8 +1708,10 @@
 #pragma endregion chatbox item role constant
 
 #pragma region chatbox event constant
-// 事件_对话盒_点击按钮,lParam返回路径索引,从0开始
+// 事件_对话盒_点击按钮,lParam返回消息索引,从0开始
 #define CHATBOX_EVENT_CLICKBUTTON 20000
+// 事件_对话盒_点击链接,wParam返回消息索引,从0开始, lParam返回链接索引,从0开始
+#define CHATBOX_EVENT_CLICKLINK 20001
 #pragma endregion chatbox event constant
 
 #pragma region chatbox message constant
@@ -2269,6 +2273,15 @@ struct EX_CHATBOX_ITEM_LAYOUT_TABLELIST
     RECT* rcUnitList;  // 单元矩形列表
 };
 
+struct EX_CHATBOX_ITEM_LAYOUT_LINK
+{
+    RECT rcAvatar;    // 头像区域
+    RECT rcBubble;    // 气泡区域
+    RECT rcContent;   // 标题区域
+    RECT rcTitle;     // 副标题区域
+    RECT* rcUnitList;  // 单元矩形列表
+};
+
 struct EX_CHATBOX_ITEMINFO_TEXT
 {
     LPCWSTR Text;
@@ -2337,6 +2350,20 @@ struct EX_CHATBOX_ITEMINFO_TABLELIST
     INT ListCount; //行数（数组元素数量） EX_CHATBOX_ITEMINFO_TABLELIST_UNIT数组数量
     EX_CHATBOX_ITEM_LAYOUT_TABLELIST Layout;
     INT ColumnCount;// 总列数（每行共享列数）
+};
+
+struct EX_CHATBOX_ITEMINFO_LINK_UNIT
+{
+    LPCWSTR Text;
+};
+
+struct EX_CHATBOX_ITEMINFO_LINK
+{
+    LPCWSTR Content;
+    LPCWSTR Title;
+    EX_CHATBOX_ITEMINFO_LINK_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_LINK_UNIT数组
+    INT ListCount; //行数（数组元素数量） EX_CHATBOX_ITEMINFO_LINK_UNIT数组数量
+    EX_CHATBOX_ITEM_LAYOUT_LINK Layout;
 };
 
 struct EX_CHATBOX_ITEMINFO_SUBITEM

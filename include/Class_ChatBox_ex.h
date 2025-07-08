@@ -6,7 +6,7 @@
 #define CHATBOX_LONG_BKG_COLOR 1
 // 属性_对话盒_纵坐标偏移
 #define CHATBOX_LONG_TOP_OFFSET 2
-// 属性_对话盒_热点索引, -1无热点
+// 属性_对话盒_卡片按钮热点索引, -1无热点
 #define CHATBOX_LONG_HOVER_INDEX 3
 // 属性_对话盒_图标_用户
 #define CHATBOX_LONG_IMAGE_USER 4
@@ -46,6 +46,12 @@
 #define CHATBOX_LONG_TABLELIST_TITLEFONT 21
 // 属性_对话盒_表格列表_描述字体
 #define CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT 22
+// 属性_对话盒_链接_内容字体
+#define CHATBOX_LONG_LINK_CONTENTFONT 23
+// 属性_对话盒_链接_标题字体
+#define CHATBOX_LONG_LINK_TITLEFONT 24
+// 属性_对话盒_链接_选项字体
+#define CHATBOX_LONG_LINK_TEXTFONT 25
 
 
 void _chatbox_register();
@@ -73,6 +79,10 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
 void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_TABLELIST* data,
     EX_CHATBOX_ITEM_LAYOUT_TABLELIST* layout,
+    INT nPos);
+void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_LINK* data,
+    EX_CHATBOX_ITEM_LAYOUT_LINK* layout,
     INT nPos);
 void _chatbox_update_layout(HEXOBJ hObj);
 void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT widthClient);
