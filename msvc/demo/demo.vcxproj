@@ -225,6 +225,7 @@
     <ClCompile Include="test_effect.cpp" />
     <ClCompile Include="test_event.cpp" />
     <ClCompile Include="test_flow.cpp" />
+    <ClCompile Include="test_flowchart.cpp" />
     <ClCompile Include="test_fullscreen.cpp" />
     <ClCompile Include="test_groupbox.cpp" />
     <ClCompile Include="test_iconlistview.cpp" />
@@ -292,6 +293,7 @@
     <ClInclude Include="test_effect.h" />
     <ClInclude Include="test_event.h" />
     <ClInclude Include="test_flow.h" />
+    <ClInclude Include="test_flowchart.h" />
     <ClInclude Include="test_fullscreen.h" />
     <ClInclude Include="test_groupbox.h" />
     <ClInclude Include="test_iconlistview.h" />

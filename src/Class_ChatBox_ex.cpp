@@ -71,32 +71,32 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 if (sub->Type == CHATBOX_ITEMTYPE_TEXT)
                 {
                     EX_CHATBOX_ITEMINFO_TEXT* data = (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data;
-                    Ex_MemFree((void*)data->Text); // 释放文本字符串
+                    free((void*)data->Text); // 释放文本字符串
                     free(data);              // 释放文本数据结构体
                 }
                 else if (sub->Type == CHATBOX_ITEMTYPE_CARD)
                 {
                     EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
-                    Ex_MemFree((void*)data->Title); // 释放文本字符串
-                    Ex_MemFree((void*)data->ReasonTitle);
-                    Ex_MemFree((void*)data->Reason);
-                    Ex_MemFree((void*)data->Content);
-                    Ex_MemFree((void*)data->ButtonText);
+                    free((void*)data->Title); // 释放文本字符串
+                    free((void*)data->ReasonTitle);
+                    free((void*)data->Reason);
+                    free((void*)data->Content);
+                    free((void*)data->ButtonText);
                     _img_destroy(data->Image);
                     free(data);              // 释放数据结构体
                 }
                 else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
                 {
                     EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
-                    Ex_MemFree((void*)data->Title);
-                    Ex_MemFree((void*)data->Content);
+                    free((void*)data->Title);
+                    free((void*)data->Content);
                     _img_destroy(data->Image);
                     free(data);
                 }
                 else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
                 {
                     EX_CHATBOX_ITEMINFO_ERRORLIST* data = (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data;
-                    Ex_MemFree((void*)data->Title);
+                    free((void*)data->Title);
                     _img_destroy(data->Image);
                     free(data->Layout.rcErrorCodeList);
                     free(data->Layout.rcErrorCodeTextList);
@@ -105,10 +105,10 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     // 释放错误列表数组
                     for (int j = 0; j < data->ListCount; j++)
                     {
-                        Ex_MemFree((void*)data->ListInfo[j].ErrorCode);
-                        Ex_MemFree((void*)data->ListInfo[j].ErrorCodeText);
-                        Ex_MemFree((void*)data->ListInfo[j].Description);
-                        Ex_MemFree((void*)data->ListInfo[j].DescriptionText);
+                        free((void*)data->ListInfo[j].ErrorCode);
+                        free((void*)data->ListInfo[j].ErrorCodeText);
+                        free((void*)data->ListInfo[j].Description);
+                        free((void*)data->ListInfo[j].DescriptionText);
                     }
                     free(data->ListInfo);
                     free(data);
@@ -116,14 +116,14 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 else if (sub->Type == CHATBOX_ITEMTYPE_INFOLIST)
                 {
                     EX_CHATBOX_ITEMINFO_INFOLIST* data = (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data;
-                    Ex_MemFree((void*)data->Content);
+                    free((void*)data->Content);
                     free(data->Layout.rcDescriptionList);
                     free(data->Layout.rcTitleList);
                     // 释放错误列表数组
                     for (int j = 0; j < data->ListCount; j++)
                     {
-                        Ex_MemFree((void*)data->ListInfo[j].Title);
-                        Ex_MemFree((void*)data->ListInfo[j].Description);
+                        free((void*)data->ListInfo[j].Title);
+                        free((void*)data->ListInfo[j].Description);
                     }
                     free(data->ListInfo);
                     free(data);
@@ -131,13 +131,13 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 else if (sub->Type == CHATBOX_ITEMTYPE_TABLELIST)
                 {
                     EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data;
-                    Ex_MemFree((void*)data->Content);
+                    free((void*)data->Content);
                     free(data->Layout.rcUnitList);
                     for (int j = 0; j < data->ListCount; j++)
                     {
                         for (int k = 0; k < data->ColumnCount; k++)
                         {
-                            Ex_MemFree((void*)data->ListInfo[j].Columns[k]);
+                            free((void*)data->ListInfo[j].Columns[k]);
                         }
                     }
                     free(data->ListInfo);
@@ -146,12 +146,12 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
                 {
                     EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)sub->Data;
-                    Ex_MemFree((void*)data->Content);
-                    Ex_MemFree((void*)data->Title);
+                    free((void*)data->Content);
+                    free((void*)data->Title);
                     free(data->Layout.rcUnitList);
                     for (int j = 0; j < data->ListCount; j++)
                     {
-                        Ex_MemFree((void*)data->ListInfo[j].Text);
+                        free((void*)data->ListInfo[j].Text);
                     }
                     free(data->ListInfo);
                     free(data);
@@ -291,12 +291,12 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         auto newValue = (EX_CHATBOX_ITEMINFO_SUBITEM*)lParam;
         // 创建新的子项结构体副本
         EX_CHATBOX_ITEMINFO_SUBITEM* itemCopy = (EX_CHATBOX_ITEMINFO_SUBITEM*)malloc(sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
-        memcpy(itemCopy, newValue, sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
+        RtlMoveMemory(itemCopy, newValue, sizeof(EX_CHATBOX_ITEMINFO_SUBITEM));
         // 如果类型是文本，则拷贝文本数据
         if (newValue->Type == CHATBOX_ITEMTYPE_TEXT) {
             EX_CHATBOX_ITEMINFO_TEXT* textData = (EX_CHATBOX_ITEMINFO_TEXT*)newValue->Data;
             EX_CHATBOX_ITEMINFO_TEXT* textCopy = (EX_CHATBOX_ITEMINFO_TEXT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TEXT));
-            textCopy->Text = StrDupW(textData->Text); // 深拷贝字符串
+            textCopy->Text = _wcsdup(textData->Text); // 深拷贝字符串
             itemCopy->Data = textCopy;
         }
         else if (newValue->Type == CHATBOX_ITEMTYPE_CARD)
@@ -304,11 +304,11 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_CARD* cardData = (EX_CHATBOX_ITEMINFO_CARD*)newValue->Data;
             EX_CHATBOX_ITEMINFO_CARD* cardCopy = (EX_CHATBOX_ITEMINFO_CARD*)malloc(sizeof(EX_CHATBOX_ITEMINFO_CARD));
             cardCopy->Image = cardData->Image;
-            cardCopy->Title = StrDupW(cardData->Title); // 深拷贝字符串
-            cardCopy->Content = StrDupW(cardData->Content);
-            cardCopy->ReasonTitle = StrDupW(cardData->ReasonTitle);
-            cardCopy->Reason = StrDupW(cardData->Reason);
-            cardCopy->ButtonText = StrDupW(cardData->ButtonText);
+            cardCopy->Title = _wcsdup(cardData->Title); // 深拷贝字符串
+            cardCopy->Content = _wcsdup(cardData->Content);
+            cardCopy->ReasonTitle = _wcsdup(cardData->ReasonTitle);
+            cardCopy->Reason = _wcsdup(cardData->Reason);
+            cardCopy->ButtonText = _wcsdup(cardData->ButtonText);
             itemCopy->Data = cardCopy;
         }
         else if (newValue->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
@@ -316,8 +316,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_BOOSTMODE* boostData = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)newValue->Data;
             EX_CHATBOX_ITEMINFO_BOOSTMODE* boostCopy = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)malloc(sizeof(EX_CHATBOX_ITEMINFO_BOOSTMODE));
             boostCopy->Image = boostData->Image;
-            boostCopy->Title = StrDupW(boostData->Title); // 深拷贝字符串
-            boostCopy->Content = StrDupW(boostData->Content);
+            boostCopy->Title = _wcsdup(boostData->Title); // 深拷贝字符串
+            boostCopy->Content = _wcsdup(boostData->Content);
             itemCopy->Data = boostCopy;
         }
         else if (newValue->Type == CHATBOX_ITEMTYPE_ERRORLIST)
@@ -326,7 +326,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_ERRORLIST* errorListCopy = (EX_CHATBOX_ITEMINFO_ERRORLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST));
             errorListCopy->Image = errorListData->Image;
             errorListCopy->ListCount = errorListData->ListCount;
-            errorListCopy->Title = StrDupW(errorListData->Title);
+            errorListCopy->Title = _wcsdup(errorListData->Title);
             errorListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * errorListData->ListCount);
             errorListCopy->Layout.rcErrorCodeList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
             errorListCopy->Layout.rcErrorCodeTextList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
@@ -339,10 +339,10 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* destUnit = &(errorListCopy->ListInfo[j]);
 
                 // 拷贝错误代码和描述
-                destUnit->ErrorCode = StrDupW(srcUnit->ErrorCode);
-                destUnit->ErrorCodeText = StrDupW(srcUnit->ErrorCodeText);
-                destUnit->Description = StrDupW(srcUnit->Description);
-                destUnit->DescriptionText = StrDupW(srcUnit->DescriptionText);
+                destUnit->ErrorCode = _wcsdup(srcUnit->ErrorCode);
+                destUnit->ErrorCodeText = _wcsdup(srcUnit->ErrorCodeText);
+                destUnit->Description = _wcsdup(srcUnit->Description);
+                destUnit->DescriptionText = _wcsdup(srcUnit->DescriptionText);
             }
             itemCopy->Data = errorListCopy;
         }
@@ -351,7 +351,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_INFOLIST* infoListData = (EX_CHATBOX_ITEMINFO_INFOLIST*)newValue->Data;
             EX_CHATBOX_ITEMINFO_INFOLIST* infoListCopy = (EX_CHATBOX_ITEMINFO_INFOLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST));
             infoListCopy->ListCount = infoListData->ListCount;
-            infoListCopy->Content = StrDupW(infoListData->Content);
+            infoListCopy->Content = _wcsdup(infoListData->Content);
             infoListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT) * infoListData->ListCount);
             infoListCopy->Layout.rcTitleList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
             infoListCopy->Layout.rcDescriptionList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
@@ -362,8 +362,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* destUnit = &(infoListCopy->ListInfo[j]);
 
                 // 拷贝标题和描述
-                destUnit->Title = StrDupW(srcUnit->Title);
-                destUnit->Description = StrDupW(srcUnit->Description);
+                destUnit->Title = _wcsdup(srcUnit->Title);
+                destUnit->Description = _wcsdup(srcUnit->Description);
             }
             itemCopy->Data = infoListCopy;
         }
@@ -373,7 +373,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_TABLELIST* tableListCopy = (EX_CHATBOX_ITEMINFO_TABLELIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST));
             tableListCopy->ListCount = tableListData->ListCount;
             tableListCopy->ColumnCount = tableListData->ColumnCount;
-            tableListCopy->Content = StrDupW(tableListData->Content);
+            tableListCopy->Content = _wcsdup(tableListData->Content);
             tableListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_TABLELIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST_UNIT) * tableListData->ListCount);
             tableListCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * tableListData->ListCount * tableListData->ColumnCount);
 
@@ -385,7 +385,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 destUnit->Columns = (LPCWSTR*)malloc(sizeof(LPCWSTR) * tableListData->ColumnCount);
                 for (int k = 0; k < tableListData->ColumnCount; k++)
                 {
-                    destUnit->Columns[k] = StrDupW(srcUnit->Columns[k]);
+                    destUnit->Columns[k] = _wcsdup(srcUnit->Columns[k]);
                 }
             }
             itemCopy->Data = tableListCopy;
@@ -395,15 +395,15 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_LINK* linkData = (EX_CHATBOX_ITEMINFO_LINK*)newValue->Data;
             EX_CHATBOX_ITEMINFO_LINK* linkCopy = (EX_CHATBOX_ITEMINFO_LINK*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK));
             linkCopy->ListCount = linkData->ListCount;
-            linkCopy->Content = StrDupW(linkData->Content);
-            linkCopy->Title = StrDupW(linkData->Title);
+            linkCopy->Content = _wcsdup(linkData->Content);
+            linkCopy->Title = _wcsdup(linkData->Title);
             linkCopy->ListInfo = (EX_CHATBOX_ITEMINFO_LINK_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK_UNIT) * linkData->ListCount);
             linkCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * linkData->ListCount);
             for (int j = 0; j < linkData->ListCount; j++)
             {
                 EX_CHATBOX_ITEMINFO_LINK_UNIT* srcUnit = &(linkData->ListInfo[j]);
                 EX_CHATBOX_ITEMINFO_LINK_UNIT* destUnit = &(linkCopy->ListInfo[j]);
-                destUnit->Text = StrDupW(srcUnit->Text);
+                destUnit->Text = _wcsdup(srcUnit->Text);
             }
             itemCopy->Data = linkCopy;
         }
@@ -453,30 +453,30 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         // 释放旧数据
         if (oldSub->Type == CHATBOX_ITEMTYPE_TEXT) {
             EX_CHATBOX_ITEMINFO_TEXT* oldData = (EX_CHATBOX_ITEMINFO_TEXT*)oldSub->Data;
-            Ex_MemFree((void*)oldData->Text);
+            free((void*)oldData->Text);
             free(oldData);
         }
         else if (oldSub->Type == CHATBOX_ITEMTYPE_CARD) {
             EX_CHATBOX_ITEMINFO_CARD* oldData = (EX_CHATBOX_ITEMINFO_CARD*)oldSub->Data;
-            Ex_MemFree((void*)oldData->Title);
-            Ex_MemFree((void*)oldData->ReasonTitle);
-            Ex_MemFree((void*)oldData->Reason);
-            Ex_MemFree((void*)oldData->Content);
-            Ex_MemFree((void*)oldData->ButtonText);
+            free((void*)oldData->Title);
+            free((void*)oldData->ReasonTitle);
+            free((void*)oldData->Reason);
+            free((void*)oldData->Content);
+            free((void*)oldData->ButtonText);
             _img_destroy(oldData->Image);
             free(oldData);
         }
         else if (oldSub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
             EX_CHATBOX_ITEMINFO_BOOSTMODE* oldData = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)oldSub->Data;
-            Ex_MemFree((void*)oldData->Title);
-            Ex_MemFree((void*)oldData->Content);
+            free((void*)oldData->Title);
+            free((void*)oldData->Content);
             _img_destroy(oldData->Image);
             free(oldData);
         }
         else if (oldSub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
         {
             EX_CHATBOX_ITEMINFO_ERRORLIST* oldData = (EX_CHATBOX_ITEMINFO_ERRORLIST*)oldSub->Data;
-            Ex_MemFree((void*)oldData->Title);
+            free((void*)oldData->Title);
             _img_destroy(oldData->Image);
             free((void*)oldData->Layout.rcErrorCodeList);
             free((void*)oldData->Layout.rcErrorCodeTextList);
@@ -485,10 +485,10 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             // 释放错误列表数组
             for (int j = 0; j < oldData->ListCount; j++)
             {
-                Ex_MemFree((void*)oldData->ListInfo[j].ErrorCode);
-                Ex_MemFree((void*)oldData->ListInfo[j].ErrorCodeText);
-                Ex_MemFree((void*)oldData->ListInfo[j].Description);
-                Ex_MemFree((void*)oldData->ListInfo[j].DescriptionText);
+                free((void*)oldData->ListInfo[j].ErrorCode);
+                free((void*)oldData->ListInfo[j].ErrorCodeText);
+                free((void*)oldData->ListInfo[j].Description);
+                free((void*)oldData->ListInfo[j].DescriptionText);
             }
             free(oldData->ListInfo);
             free(oldData);
@@ -496,14 +496,14 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         else if (oldSub->Type == CHATBOX_ITEMTYPE_INFOLIST)
         {
             EX_CHATBOX_ITEMINFO_INFOLIST* oldData = (EX_CHATBOX_ITEMINFO_INFOLIST*)oldSub->Data;
-            Ex_MemFree((void*)oldData->Content);
+            free((void*)oldData->Content);
             free((void*)oldData->Layout.rcDescriptionList);
             free((void*)oldData->Layout.rcTitleList);
             // 释放错误列表数组
             for (int j = 0; j < oldData->ListCount; j++)
             {
-                Ex_MemFree((void*)oldData->ListInfo[j].Description);
-                Ex_MemFree((void*)oldData->ListInfo[j].Title);
+                free((void*)oldData->ListInfo[j].Description);
+                free((void*)oldData->ListInfo[j].Title);
             }
             free(oldData->ListInfo);
             free(oldData);
@@ -511,13 +511,13 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         else if (oldSub->Type == CHATBOX_ITEMTYPE_TABLELIST)
         {
             EX_CHATBOX_ITEMINFO_TABLELIST* oldData = (EX_CHATBOX_ITEMINFO_TABLELIST*)oldSub->Data;
-            Ex_MemFree((void*)oldData->Content);
+            free((void*)oldData->Content);
             free((void*)oldData->Layout.rcUnitList);
             for (int j = 0; j < oldData->ListCount; j++)
             {
                 for (int k = 0; k < oldData->ColumnCount; k++)
                 {
-                    Ex_MemFree((void*)oldData->ListInfo[j].Columns[k]);
+                    free((void*)oldData->ListInfo[j].Columns[k]);
                 }
             }
             free(oldData->ListInfo);
@@ -526,12 +526,12 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         else if (oldSub->Type == CHATBOX_ITEMTYPE_LINK)
         {
             EX_CHATBOX_ITEMINFO_LINK* oldData = (EX_CHATBOX_ITEMINFO_LINK*)oldSub->Data;
-            Ex_MemFree((void*)oldData->Content);
-            Ex_MemFree((void*)oldData->Title);
+            free((void*)oldData->Content);
+            free((void*)oldData->Title);
             free((void*)oldData->Layout.rcUnitList);
             for (int j = 0; j < oldData->ListCount; j++)
             {
-                Ex_MemFree((void*)oldData->ListInfo[j].Text);
+                free((void*)oldData->ListInfo[j].Text);
             }
             free(oldData->ListInfo);
             free(oldData);
@@ -548,7 +548,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         {
             EX_CHATBOX_ITEMINFO_TEXT* textData = (EX_CHATBOX_ITEMINFO_TEXT*)newValue->Data;
             EX_CHATBOX_ITEMINFO_TEXT* textCopy = (EX_CHATBOX_ITEMINFO_TEXT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TEXT));
-            textCopy->Text = StrDupW(textData->Text);
+            textCopy->Text = _wcsdup(textData->Text);
             newSub->Data = textCopy;
         }
         else if (newValue->Type == CHATBOX_ITEMTYPE_CARD)
@@ -556,11 +556,11 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_CARD* cardData = (EX_CHATBOX_ITEMINFO_CARD*)newValue->Data;
             EX_CHATBOX_ITEMINFO_CARD* cardCopy = (EX_CHATBOX_ITEMINFO_CARD*)malloc(sizeof(EX_CHATBOX_ITEMINFO_CARD));
             cardCopy->Image = cardData->Image;
-            cardCopy->Title = StrDupW(cardData->Title);
-            cardCopy->Content = StrDupW(cardData->Content);
-            cardCopy->ReasonTitle = StrDupW(cardData->ReasonTitle);
-            cardCopy->Reason = StrDupW(cardData->Reason);
-            cardCopy->ButtonText = StrDupW(cardData->ButtonText);
+            cardCopy->Title = _wcsdup(cardData->Title);
+            cardCopy->Content = _wcsdup(cardData->Content);
+            cardCopy->ReasonTitle = _wcsdup(cardData->ReasonTitle);
+            cardCopy->Reason = _wcsdup(cardData->Reason);
+            cardCopy->ButtonText = _wcsdup(cardData->ButtonText);
             newSub->Data = cardCopy;
         }
         else if (newValue->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
@@ -568,8 +568,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_BOOSTMODE* boostData = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)newValue->Data;
             EX_CHATBOX_ITEMINFO_BOOSTMODE* boostCopy = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)malloc(sizeof(EX_CHATBOX_ITEMINFO_BOOSTMODE));
             boostCopy->Image = boostData->Image;
-            boostCopy->Title = StrDupW(boostData->Title);
-            boostCopy->Content = StrDupW(boostData->Content);
+            boostCopy->Title = _wcsdup(boostData->Title);
+            boostCopy->Content = _wcsdup(boostData->Content);
             newSub->Data = boostCopy;
         }
         else if (newValue->Type == CHATBOX_ITEMTYPE_ERRORLIST)
@@ -578,7 +578,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_ERRORLIST* errorListCopy = (EX_CHATBOX_ITEMINFO_ERRORLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST));
             errorListCopy->Image = errorListData->Image;
             errorListCopy->ListCount = errorListData->ListCount;
-            errorListCopy->Title = StrDupW(errorListData->Title);
+            errorListCopy->Title = _wcsdup(errorListData->Title);
             errorListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * errorListData->ListCount);
             errorListCopy->Layout.rcErrorCodeList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
             errorListCopy->Layout.rcErrorCodeTextList = (RECT*)malloc(sizeof(RECT) * errorListData->ListCount);
@@ -591,10 +591,10 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* destUnit = &(errorListCopy->ListInfo[j]);
 
                 // 拷贝错误代码和描述
-                destUnit->ErrorCode = StrDupW(srcUnit->ErrorCode);
-                destUnit->ErrorCodeText = StrDupW(srcUnit->ErrorCodeText);
-                destUnit->Description = StrDupW(srcUnit->Description);
-                destUnit->DescriptionText = StrDupW(srcUnit->DescriptionText);
+                destUnit->ErrorCode = _wcsdup(srcUnit->ErrorCode);
+                destUnit->ErrorCodeText = _wcsdup(srcUnit->ErrorCodeText);
+                destUnit->Description = _wcsdup(srcUnit->Description);
+                destUnit->DescriptionText = _wcsdup(srcUnit->DescriptionText);
             }
             newSub->Data = errorListCopy;
         }
@@ -603,7 +603,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_INFOLIST* infoListData = (EX_CHATBOX_ITEMINFO_INFOLIST*)newValue->Data;
             EX_CHATBOX_ITEMINFO_INFOLIST* infoListCopy = (EX_CHATBOX_ITEMINFO_INFOLIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST));
             infoListCopy->ListCount = infoListData->ListCount;
-            infoListCopy->Content = StrDupW(infoListData->Content);
+            infoListCopy->Content = _wcsdup(infoListData->Content);
             infoListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT) * infoListData->ListCount);
             infoListCopy->Layout.rcDescriptionList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
             infoListCopy->Layout.rcTitleList = (RECT*)malloc(sizeof(RECT) * infoListData->ListCount);
@@ -613,8 +613,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* srcUnit = &(infoListData->ListInfo[j]);
                 EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* destUnit = &(infoListCopy->ListInfo[j]);
 
-                destUnit->Title = StrDupW(srcUnit->Title);
-                destUnit->Description = StrDupW(srcUnit->Description);
+                destUnit->Title = _wcsdup(srcUnit->Title);
+                destUnit->Description = _wcsdup(srcUnit->Description);
             }
             newSub->Data = infoListCopy;
         }
@@ -624,7 +624,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_TABLELIST* tableListCopy = (EX_CHATBOX_ITEMINFO_TABLELIST*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST));
             tableListCopy->ListCount = tableListData->ListCount;
             tableListCopy->ColumnCount = tableListData->ColumnCount;
-            tableListCopy->Content = StrDupW(tableListData->Content);
+            tableListCopy->Content = _wcsdup(tableListData->Content);
             tableListCopy->ListInfo = (EX_CHATBOX_ITEMINFO_TABLELIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_TABLELIST_UNIT) * tableListData->ListCount);
             tableListCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * tableListData->ListCount * tableListData->ColumnCount);
             for (int j = 0; j < tableListData->ListCount; j++)
@@ -635,7 +635,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* srcUnit = &(tableListData->ListInfo[j]);
                     EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* destUnit = &(tableListCopy->ListInfo[j]);
 
-                    destUnit->Columns[k] = StrDupW(srcUnit->Columns[k]);
+                    destUnit->Columns[k] = _wcsdup(srcUnit->Columns[k]);
                 }
             }
             newSub->Data = tableListCopy;
@@ -645,8 +645,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             EX_CHATBOX_ITEMINFO_LINK* linkData = (EX_CHATBOX_ITEMINFO_LINK*)newValue->Data;
             EX_CHATBOX_ITEMINFO_LINK* linkCopy = (EX_CHATBOX_ITEMINFO_LINK*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK));
             linkCopy->ListCount = linkData->ListCount;
-            linkCopy->Content = StrDupW(linkData->Content);
-            linkCopy->Title = StrDupW(linkData->Title);
+            linkCopy->Content = _wcsdup(linkData->Content);
+            linkCopy->Title = _wcsdup(linkData->Title);
             linkCopy->ListInfo = (EX_CHATBOX_ITEMINFO_LINK_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_LINK_UNIT) * linkData->ListCount);
             linkCopy->Layout.rcUnitList = (RECT*)malloc(sizeof(RECT) * linkData->ListCount);
             for (int j = 0; j < linkData->ListCount; j++)
@@ -654,7 +654,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 EX_CHATBOX_ITEMINFO_LINK_UNIT* srcUnit = &(linkData->ListInfo[j]);
                 EX_CHATBOX_ITEMINFO_LINK_UNIT* destUnit = &(linkCopy->ListInfo[j]);
 
-                destUnit->Text = StrDupW(srcUnit->Text);
+                destUnit->Text = _wcsdup(srcUnit->Text);
             }
             newSub->Data = linkCopy;
         }

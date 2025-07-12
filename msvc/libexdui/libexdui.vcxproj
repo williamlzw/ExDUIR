@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\src\Brush_ex.cpp" />
     <ClCompile Include="..\..\src\Canvas_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ChatBox_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_LineChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_WaveProgressBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
@@ -63,7 +64,6 @@
     <ClCompile Include="..\..\src\Class_TreeView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_VLCPlayer_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Win10Loading_ex.cpp" />
-    <ClCompile Include="..\..\src\CustomFont.cpp" />
     <ClCompile Include="..\..\src\DirectX_ex.cpp" />
     <ClCompile Include="..\..\src\DropTarget_ex.cpp" />
     <ClCompile Include="..\..\src\Easing_ex.cpp" />
@@ -112,6 +112,7 @@
     <ClInclude Include="..\..\include\Array_ex.h" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
     <ClInclude Include="..\..\include\Class_ChatBox_ex.h" />
+    <ClInclude Include="..\..\include\Class_FlowChart_ex.h" />
     <ClInclude Include="..\..\include\Class_LineChart_ex.h" />
     <ClInclude Include="..\..\include\Class_WaveProgressBar_ex.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />

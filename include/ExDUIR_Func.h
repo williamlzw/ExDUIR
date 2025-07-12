@@ -183,6 +183,20 @@ BOOL _canvas_drawcanvas(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT d
     DWORD dwCompositeMode);
 
 /// <summary>
+/// 画布画曲线
+/// </summary>
+/// <param name="hCanvas"></param>
+/// <param name="hBrush"></param>
+/// <param name="points">坐标点</param>
+/// <param name="count">点个数</param>
+/// <param name="tension">张力系数 (0,1] 大于0小于等于1</param>
+/// <param name="strokeWidth"></param>
+/// <param name="strokeStyle"></param>
+void _canvas_drawcurve(HEXCANVAS hCanvas, HEXBRUSH hBrush,
+    const POINTF* points, INT count,
+    FLOAT tension, FLOAT strokeWidth, DWORD strokeStyle);
+
+/// <summary>
 /// 画布画椭圆
 /// </summary>
 /// <param name="hCanvas"></param>
@@ -300,6 +314,19 @@ BOOL _canvas_drawline(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT X1, FLOAT Y1, FL
 /// <returns></returns>
 BOOL _canvas_drawpath(HEXCANVAS hCanvas, HEXPATH hPath, HEXBRUSH hBrush, FLOAT strokeWidth,
     DWORD strokeStyle, DWORD lineCap = 1U);
+
+/// <summary>
+/// 画布画二次方贝塞尔曲线
+/// </summary>
+/// <param name="hCanvas"></param>
+/// <param name="hBrush"></param>
+/// <param name="points">坐标点，必须是3个</param>
+/// <param name="count">坐标点个数，必须是3个</param>
+/// <param name="strokeWidth"></param>
+/// <param name="strokeStyle"></param>
+void _canvas_drawquadraticbezier(HEXCANVAS hCanvas, HEXBRUSH hBrush,
+    const POINTF* points, INT count,
+    FLOAT strokeWidth, DWORD strokeStyle);
 
 /// <summary>
 /// 画布画区域

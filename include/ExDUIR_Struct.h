@@ -1715,7 +1715,7 @@
 #pragma endregion chatbox event constant
 
 #pragma region chatbox message constant
-// 消息_对话盒_添加表项 添加行到尾部 wParam:项目类型CHATBOX_ITEMTYPE_  lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
+// 消息_对话盒_添加表项 添加行到尾部 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
 #define CHATBOX_MESSAGE_ADDITEM 10010
 // 消息_对话盒_更新表项 注意CHATBOX_ITEMTYPE_一致才能更新 wParam:表项索引 从0开始 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
 #define CHATBOX_MESSAGE_UPDATEITEM 10011
@@ -1725,11 +1725,54 @@
 #define CHATBOX_MESSAGE_GETITEMDATA 10013
 // 消息_对话盒_取表项总数,失败返回-1
 #define CHATBOX_MESSAGE_GETITEMCOUNT 10014
-// 消息_对话盒_设置用户图标
+// 消息_对话盒_设置用户图标 lParam: 图标句柄HEXIMAGE
 #define CHATBOX_MESSAGE_SETIMAGE_USER 10015
-// 消息_对话盒_设置助手图标
+// 消息_对话盒_设置助手图标 lParam: 图标句柄HEXIMAGE
 #define CHATBOX_MESSAGE_SETIMAGE_ASSISTANT 10016
 #pragma endregion chatbox message constant
+
+#pragma region flowchart nodedata type constant
+// 流程图_节点列表数据类型定义
+#define FLOWCHART_NODEDATA_TYPE_EDIT    0  // 编辑框
+#define FLOWCHART_NODEDATA_TYPE_IMAGE   1  // 图片框
+#define FLOWCHART_NODEDATA_TYPE_COMBO   2  // 选项卡
+#pragma endregion flowchart nodedata type constant
+
+#pragma region flowchart messagee constant
+// 消息_流程图_添加节点, lParam: EX_FLOWCHART_NODE 结构指针
+#define FLOWCHART_MESSAGE_ADD_NODE 10000
+// 消息_流程图_移除节点 wParam: 节点ID
+#define FLOWCHART_MESSAGE_REMOVE_NODE 10001
+// 消息_流程图_添加连接线 lParam: EX_FLOWCHART_CONNECTION 结构指针
+#define FLOWCHART_MESSAGE_ADD_CONNECTION 10002
+// 消息_流程图_移除连接线 wParam: 连接线ID
+#define FLOWCHART_MESSAGE_REMOVE_CONNECTION 10003
+// 消息_流程图_取节点数量
+#define FLOWCHART_MESSAGE_GET_NODE_COUNT 10004
+// 消息_流程图_取连接线数量
+#define FLOWCHART_MESSAGE_GET_CONNECTION_COUNT 10005
+// 消息_流程图_更新节点数据 wParam: 节点ID, lParam: EX_FLOWCHART_NODE_DATA 结构指针
+#define FLOWCHART_MESSAGE_UPDATE_NODEDATA 10006
+#pragma endregion flowchart messagee constant
+
+#pragma region flowchart event constant
+// 通知_流程图_节点点击 wParam: 节点ID
+#define FLOWCHART_EVENT_NODE_CLICKED 1
+// 通知_流程图_节点双击 wParam: 节点ID
+#define FLOWCHART_EVENT_NODE_DOUBLE_CLICKED 2
+// 通知_流程图_连接线添加 wParam: 连接线ID
+#define FLOWCHART_EVENT_CONNECTION_CREATED 3
+// 通知_流程图_删除连接线 wParam: 连接线ID
+#define FLOWCHART_EVENT_CONNECTION_REMOVED 4
+// 通知_流程图_节点移动 wParam: 节点ID
+#define FLOWCHART_EVENT_NODE_MOVED 5
+// 通知_流程图_连接线选中 wParam: 节点ID
+#define FLOWCHART_EVENT_CONNECTION_SELECTED 6
+// 通知_流程图_连接线移动 wParam: 连接线ID
+#define FLOWCHART_EVENT_CONNECTION_MOVED 7
+// 通知_流程图_节点数据改变事件 wParam: 节点ID , lParam: EX_FLOWCHART_NODE_COMBO_DATA 结构指针
+#define FLOWCHART_EVENT_NODEDATA_CHANGED 8
+#pragma endregion flowchart event constant
 
 #define LVSICF_NOSCROLL 2
 #define EX_DEFINE_API(NAME, RET, ARGS)      \
@@ -2380,6 +2423,79 @@ struct EX_CHATBOX_ITEMINFO
     LPVOID Items;   // 数据,EX_CHATBOX_ITEMINFO_SUB数组
     DWORD  Count;
 };
+
+typedef struct {
+    LPCWSTR* options;   // 选项数组
+    INT count;           // 选项数量
+    INT current;         // 当前选中的索引
+} EX_FLOWCHART_NODE_COMBO_DATA;
+
+typedef struct
+{
+    INT type;          // 数据类型
+    INT id;            // 数据id
+    RECT rect;         // 该项的位置和大小
+    LPVOID data;       // 数据指针（指向字符串、图片句柄或 COMBO 数据结构）
+} EX_FLOWCHART_NODE_DATA;
+
+// 节点数据结构
+typedef struct
+{
+    INT id;
+    FLOAT x;
+    FLOAT y;
+    FLOAT width;
+    FLOAT height;
+    LPCWSTR title;                   // 标题
+
+    EX_FLOWCHART_NODE_DATA* nodeDataList; // 节点数据列表
+    INT nodeDataCount;               // 节点数据项数量
+
+    // 输入输出插槽
+    LPCWSTR* inputSlots;             // 输入插槽名称数组
+    RECT* inputRects;                // 输入插槽位置数组
+    INT inputCount;                  // 输入插槽数量
+
+    LPCWSTR* outputSlots;            // 输出插槽名称数组
+    RECT* outputRects;               // 输出插槽位置数组
+    INT outputCount;                 // 输出插槽数量
+} EX_FLOWCHART_NODE;
+
+// 连接线数据结构
+typedef struct
+{
+    INT id; // 连接线唯一ID
+    INT fromNode; // 源节点ID
+    INT fromSlot; // 源插槽索引
+    INT toNode; // 目标节点ID
+    INT toSlot; // 目标插槽索引
+    POINTF controlPoint1; // 控制点1
+    POINTF controlPoint2; // 控制点2
+} EX_FLOWCHART_CONNECTION;
+
+// 流程图数据结构
+typedef struct
+{
+    FLOAT zoom;
+    POINTF panOffset;
+    INT selectedNode;
+    INT draggingNode;
+    POINTF dragStartPos;
+    INT connectingSlot;
+    INT connectingNode;
+    INT connectingSlotType;
+    INT hoverNode;
+    INT hoverSlot;
+    INT hoverSlotType;
+
+    EX_FLOWCHART_NODE* nodes;
+    INT nodeCount;
+    EX_FLOWCHART_CONNECTION* connections;
+    INT connectionCount;
+    INT selectedConnection; // 当前选中的连接线ID
+    BOOL draggingControlPoint; // 是否正在拖动控制点
+    INT draggingWhichPoint; // 0=无, 1=中间点, 2=控制点1
+} EX_FLOWCHART_DATA;
 
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown* effect,
     _In_reads_(dataSize) const BYTE* data,

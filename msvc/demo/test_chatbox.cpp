@@ -350,7 +350,7 @@ void test_chatbox(HWND hWnd)
             {
                 str += L"\r\n测试高度单元格";
             }
-            itemDataTableList.ListInfo[i].Columns[j] = StrDupW(str.c_str());
+            itemDataTableList.ListInfo[i].Columns[j] = _wcsdup(str.c_str());
         }
     }
     ptr.Type = CHATBOX_ITEMTYPE_TABLELIST;
@@ -359,7 +359,7 @@ void test_chatbox(HWND hWnd)
     for (int i = 0; i < itemDataTableList.ListCount; i++) {
         for (int j = 0; j < itemDataTableList.ColumnCount; j++)
         {
-            Ex_MemFree((void*)itemDataTableList.ListInfo[i].Columns[j]);
+            free((void*)itemDataTableList.ListInfo[i].Columns[j]);
         }
         delete[] itemDataTableList.ListInfo[i].Columns;
     }

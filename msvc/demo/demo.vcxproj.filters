@@ -185,6 +185,9 @@
     <ClCompile Include="test_chatbox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test_flowchart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -370,6 +373,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_chatbox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_flowchart.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

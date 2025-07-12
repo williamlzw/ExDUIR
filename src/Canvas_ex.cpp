@@ -1695,3 +1695,92 @@ void _canvas_applyeffect(HEXCANVAS hCanvas, HEXEFFECT hEffect)
     pContext->DrawImage(lpBitmap, D2D1_INTERPOLATION_MODE_LINEAR);
     lpBitmap->Release();
 }
+
+void _canvas_drawcurve(HEXCANVAS hCanvas, HEXBRUSH hBrush,
+    const POINTF* points, INT count,
+    FLOAT tension, FLOAT strokeWidth, DWORD strokeStyle)
+{
+    if (count < 2) return;  // 至少需要2个点才能绘制曲线
+
+    // 创建路径
+    HEXPATH hPath;
+    _path_create(0, &hPath);
+    _path_open(hPath);
+
+    // 添加虚拟点以保证曲线连续性
+    std::vector<POINTF> paddedPoints;
+    paddedPoints.push_back(points[0]);  // 第一个虚拟点
+    for (INT i = 0; i < count; i++) {
+        paddedPoints.push_back(POINTF{ (FLOAT)points[i].x, (FLOAT)points[i].y });
+    }
+    paddedPoints.push_back(points[count - 1]);  // 最后一个虚拟点
+
+    // 开始路径
+    _path_beginfigure2(hPath, paddedPoints[1].x, paddedPoints[1].y);
+
+    // 转换点为贝塞尔段
+    std::vector<D2D1_BEZIER_SEGMENT> beziers;
+    FLOAT s = tension * 0.3f;  // 张力系数
+
+    for (size_t i = 1; i < paddedPoints.size() - 2; ++i) {
+        const auto& p0 = paddedPoints[i - 1];
+        const auto& p1 = paddedPoints[i];
+        const auto& p2 = paddedPoints[i + 1];
+        const auto& p3 = paddedPoints[i + 2];
+
+        // 计算控制点
+        D2D1_POINT_2F c1 = { p1.x + s * (p2.x - p0.x), p1.y + s * (p2.y - p0.y) };
+        D2D1_POINT_2F c2 = { p2.x - s * (p3.x - p1.x), p2.y - s * (p3.y - p1.y) };
+        D2D1_POINT_2F p2_new = { p2.x, p2.y };
+        // 添加贝塞尔段
+        beziers.push_back(D2D1::BezierSegment(c1, c2, p2_new));
+    }
+
+    // 添加所有贝塞尔段到路径
+    for (const auto& seg : beziers) {
+        _path_addbezier(hPath,
+            seg.point1.x, seg.point1.y,
+            seg.point2.x, seg.point2.y,
+            seg.point3.x, seg.point3.y);
+    }
+
+    // 结束路径
+    _path_endfigure(hPath, FALSE);
+    _path_close(hPath);
+
+    // 绘制路径
+    _canvas_drawpath(hCanvas, hPath, hBrush, strokeWidth, strokeStyle);
+
+    // 清理资源
+    _path_destroy(hPath);
+}
+
+void _canvas_drawquadraticbezier(HEXCANVAS hCanvas, HEXBRUSH hBrush,
+    const POINTF* points, INT count,
+    FLOAT strokeWidth, DWORD strokeStyle)
+{
+    if (count != 3) return; // 二次贝塞尔曲线需要3个点（起点、控制点、终点）
+
+    // 创建路径
+    HEXPATH hPath;
+    _path_create(0, &hPath);
+    _path_open(hPath);
+
+    // 开始路径（起点）
+    _path_beginfigure2(hPath, points[0].x, points[0].y);
+
+    // 添加二次贝塞尔曲线段
+    _path_addquadraticbezier(hPath,
+        points[1].x, points[1].y,  // 控制点
+        points[2].x, points[2].y); // 终点
+
+    // 结束路径
+    _path_endfigure(hPath, FALSE);
+    _path_close(hPath);
+
+    // 绘制路径
+    _canvas_drawpath(hCanvas, hPath, hBrush, strokeWidth, strokeStyle);
+
+    // 清理资源
+    _path_destroy(hPath);
+}

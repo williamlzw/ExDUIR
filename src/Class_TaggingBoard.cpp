@@ -873,8 +873,6 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
     auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
     _canvas_clear(canvas, ExARGB(255, 255, 255, 0));
     auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
-    // auto imgOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_LEFT_OFFSET);
-    // auto imgOffsetTop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_TOP_OFFSET);
     auto sbOffsetTop = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET);
     auto tagging     = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_TAGGING);
     if (ptr->count > 0 && tagging == 1) {
