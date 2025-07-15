@@ -1704,7 +1704,7 @@ void _canvas_drawcurve(HEXCANVAS hCanvas, HEXBRUSH hBrush,
 
     // 创建路径
     HEXPATH hPath;
-    _path_create(0, &hPath);
+    _path_create(PATH_FLAG_DISABLESCALE, &hPath);
     _path_open(hPath);
 
     // 添加虚拟点以保证曲线连续性
@@ -1763,7 +1763,7 @@ void _canvas_drawquadraticbezier(HEXCANVAS hCanvas, HEXBRUSH hBrush,
 
     // 创建路径
     HEXPATH hPath;
-    _path_create(0, &hPath);
+    _path_create(PATH_FLAG_DISABLESCALE, &hPath);
     _path_open(hPath);
 
     // 开始路径（起点）

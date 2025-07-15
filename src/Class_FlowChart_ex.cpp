@@ -381,27 +381,27 @@ INT _flowchart_addnode(HEXOBJ hObj, EX_FLOWCHART_NODE* pNode)
 				}
 				break;
 			case FLOWCHART_NODEDATA_TYPE_COMBO:
+			{
+				if (srcData->data != NULL)
 				{
-					if (srcData->data != NULL)
-					{
-						// 源数据是 EX_FLOWCHART_NODE_COMBO_DATA 结构
-						EX_FLOWCHART_NODE_COMBO_DATA* srcCombo = (EX_FLOWCHART_NODE_COMBO_DATA*)srcData->data;
+					// 源数据是 EX_FLOWCHART_NODE_COMBO_DATA 结构
+					EX_FLOWCHART_NODE_COMBO_DATA* srcCombo = (EX_FLOWCHART_NODE_COMBO_DATA*)srcData->data;
 
-						// 为目标分配新的 COMBO 数据结构
-						EX_FLOWCHART_NODE_COMBO_DATA* destCombo = (EX_FLOWCHART_NODE_COMBO_DATA*)Ex_MemAlloc(sizeof(EX_FLOWCHART_NODE_COMBO_DATA));
-						destCombo->count = srcCombo->count;
-						destCombo->current = srcCombo->current;
+					// 为目标分配新的 COMBO 数据结构
+					EX_FLOWCHART_NODE_COMBO_DATA* destCombo = (EX_FLOWCHART_NODE_COMBO_DATA*)Ex_MemAlloc(sizeof(EX_FLOWCHART_NODE_COMBO_DATA));
+					destCombo->count = srcCombo->count;
+					destCombo->current = srcCombo->current;
 
-						// 复制选项数组
-						destCombo->options = (LPCWSTR*)Ex_MemAlloc(sizeof(LPCWSTR) * srcCombo->count);
-						for (INT k = 0; k < srcCombo->count; k++) {
-							destCombo->options[k] = StrDupW(srcCombo->options[k]);
-						}
-
-						destData->data = (LPVOID)destCombo;
+					// 复制选项数组
+					destCombo->options = (LPCWSTR*)Ex_MemAlloc(sizeof(LPCWSTR) * srcCombo->count);
+					for (INT k = 0; k < srcCombo->count; k++) {
+						destCombo->options[k] = StrDupW(srcCombo->options[k]);
 					}
-					break;
+
+					destData->data = (LPVOID)destCombo;
 				}
+				break;
+			}
 			case FLOWCHART_NODEDATA_TYPE_IMAGE:
 				// 图片数据直接复制句柄
 				destData->data = srcData->data;
@@ -604,7 +604,7 @@ INT _flowchart_removenode(HEXOBJ hObj, INT nodeId)
 			}
 			break;
 		case FLOWCHART_NODEDATA_TYPE_IMAGE:
-			if (dataItem->data != NULL) 
+			if (dataItem->data != NULL)
 			{
 				_img_destroy((HEXIMAGE)dataItem->data);
 			}
@@ -883,6 +883,7 @@ void _flowchart_paint(HEXOBJ hObj)
 
 			// 获取连接点位置（应用缩放和平移）
 			POINTF fromPt, toPt;
+
 			if (fromNode->outputCount > conn->fromSlot)
 			{
 				RECT rcSlot = fromNode->outputRects[conn->fromSlot];
@@ -909,7 +910,7 @@ void _flowchart_paint(HEXOBJ hObj)
 
 			// 计算曲线控制点
 			POINTF curvePoints[4] = {
-			{ fromPt.x, fromPt.y }, // 起点
+			{ fromPt.x , fromPt.y  }, // 起点
 			{
 				conn->controlPoint1.x * pData->zoom - scrollX,
 				conn->controlPoint1.y * pData->zoom - scrollY
@@ -1198,84 +1199,84 @@ void _flowchart_drawnode(HEXCANVAS hCanvas, EX_FLOWCHART_DATA* pData, EX_FLOWCHA
 		// 根据类型绘制不同的数据项
 		switch (dataItem->type)
 		{
-			case FLOWCHART_NODEDATA_TYPE_EDIT: // 编辑框
+		case FLOWCHART_NODEDATA_TYPE_EDIT: // 编辑框
+		{
+			HEXBRUSH hBrushEdit = _brush_create(ExARGB(34, 34, 34, 255));
+
+			_canvas_fillrect(hCanvas, hBrushEdit, itemX, itemY, itemX + itemWidth, itemY + itemHeight);
+			_canvas_drawrect(hCanvas, hBrushBorder, itemX, itemY, itemX + itemWidth, itemY + itemHeight, 1.0f * zoom, 0);
+
+			// 如果有文本数据，绘制文本
+			if (dataItem->data != NULL)
 			{
-				HEXBRUSH hBrushEdit = _brush_create(ExARGB(34, 34, 34, 255));
-
-				_canvas_fillrect(hCanvas, hBrushEdit, itemX, itemY, itemX + itemWidth, itemY + itemHeight);
-				_canvas_drawrect(hCanvas, hBrushBorder, itemX, itemY, itemX + itemWidth, itemY + itemHeight, 1.0f * zoom, 0);
-
-				// 如果有文本数据，绘制文本
-				if (dataItem->data != NULL)
-				{
-					HEXFONT hFont = _font_createfromfamily(L"Arial", 14 * zoom, 0);
-					_canvas_drawtext(hCanvas, hFont, ExARGB(217, 217, 217, 255),
-						(LPCWSTR)dataItem->data, -1, DT_LEFT | DT_VCENTER,
-						itemX + 5 * zoom, itemY,
-						itemX + itemWidth - 5 * zoom, itemY + itemHeight);
-					_font_destroy(hFont);
-				}
-				_brush_destroy(hBrushEdit);
-			
-				break;
+				HEXFONT hFont = _font_createfromfamily(L"Arial", 14 * zoom, 0);
+				_canvas_drawtext(hCanvas, hFont, ExARGB(217, 217, 217, 255),
+					(LPCWSTR)dataItem->data, -1, DT_LEFT | DT_VCENTER,
+					itemX + 5 * zoom, itemY,
+					itemX + itemWidth - 5 * zoom, itemY + itemHeight);
+				_font_destroy(hFont);
 			}
-			case FLOWCHART_NODEDATA_TYPE_IMAGE: // 图片框
+			_brush_destroy(hBrushEdit);
+
+			break;
+		}
+		case FLOWCHART_NODEDATA_TYPE_IMAGE: // 图片框
+		{
+			if (dataItem->data != NULL)
 			{
-				if (dataItem->data != NULL)
-				{
-					HEXIMAGE hImage = (HEXIMAGE)dataItem->data;
-					INT imgWidth, imgHeight;
-					_img_getsize(hImage, &imgWidth, &imgHeight);
-					_canvas_drawimagerectrect(hCanvas, hImage,
-						itemX, itemY, itemX + itemWidth, itemY + itemHeight,
-						0, 0, imgWidth, imgHeight, 255);
-				}
-				break;
+				HEXIMAGE hImage = (HEXIMAGE)dataItem->data;
+				INT imgWidth, imgHeight;
+				_img_getsize(hImage, &imgWidth, &imgHeight);
+				_canvas_drawimagerectrect(hCanvas, hImage,
+					itemX, itemY, itemX + itemWidth, itemY + itemHeight,
+					0, 0, imgWidth, imgHeight, 255);
 			}
-			case FLOWCHART_NODEDATA_TYPE_COMBO: // 选项卡 - 改为ComfyUI样式
-			{
-				HEXBRUSH hBrushCombo = _brush_create(ExARGB(34, 34, 34, 255));
-				_canvas_fillrect(hCanvas, hBrushCombo, itemX, itemY, itemX + itemWidth, itemY + itemHeight);
-				_canvas_drawrect(hCanvas, hBrushBorder, itemX, itemY, itemX + itemWidth, itemY + itemHeight, 1.0f * zoom, 0);
+			break;
+		}
+		case FLOWCHART_NODEDATA_TYPE_COMBO: // 选项卡 - 改为ComfyUI样式
+		{
+			HEXBRUSH hBrushCombo = _brush_create(ExARGB(34, 34, 34, 255));
+			_canvas_fillrect(hCanvas, hBrushCombo, itemX, itemY, itemX + itemWidth, itemY + itemHeight);
+			_canvas_drawrect(hCanvas, hBrushBorder, itemX, itemY, itemX + itemWidth, itemY + itemHeight, 1.0f * zoom, 0);
 
-				// 获取 COMBO 数据
-				EX_FLOWCHART_NODE_COMBO_DATA* comboData = (EX_FLOWCHART_NODE_COMBO_DATA*)dataItem->data;
+			// 获取 COMBO 数据
+			EX_FLOWCHART_NODE_COMBO_DATA* comboData = (EX_FLOWCHART_NODE_COMBO_DATA*)dataItem->data;
 
-				// 计算箭头区域大小
-				FLOAT arrowWidth = itemHeight * 0.8f; // 箭头区域宽度
-				FLOAT arrowHeight = arrowWidth * 0.6f; // 箭头高度（三角形高度）
+			// 计算箭头区域大小
+			FLOAT arrowWidth = itemHeight * 0.8f; // 箭头区域宽度
+			FLOAT arrowHeight = arrowWidth * 0.6f; // 箭头高度（三角形高度）
 
-				// 左侧箭头区域（左箭头）
-				FLOAT leftArrowX = itemX + 5 * zoom;
-				FLOAT leftArrowY = itemY + (itemHeight - arrowHeight) / 2;
+			// 左侧箭头区域（左箭头）
+			FLOAT leftArrowX = itemX + 5 * zoom;
+			FLOAT leftArrowY = itemY + (itemHeight - arrowHeight) / 2;
 
-				// 右侧箭头区域（右箭头）
-				FLOAT rightArrowX = itemX + itemWidth - arrowWidth - 5 * zoom;
-				FLOAT rightArrowY = itemY + (itemHeight - arrowHeight) / 2;
+			// 右侧箭头区域（右箭头）
+			FLOAT rightArrowX = itemX + itemWidth - arrowWidth - 5 * zoom;
+			FLOAT rightArrowY = itemY + (itemHeight - arrowHeight) / 2;
 
-				// 文本区域（两个箭头之间）
-				FLOAT textX = leftArrowX + arrowWidth + 5 * zoom;
-				FLOAT textWidth = rightArrowX - textX - 5 * zoom;
+			// 文本区域（两个箭头之间）
+			FLOAT textX = leftArrowX + arrowWidth + 5 * zoom;
+			FLOAT textWidth = rightArrowX - textX - 5 * zoom;
 
-				// 绘制左侧箭头（向左的三角形）
-				_flowchart_draw_triangle_arrow(hCanvas, hBrushBorder, leftArrowX, leftArrowY, arrowHeight, TRUE);
+			// 绘制左侧箭头（向左的三角形）
+			_flowchart_draw_triangle_arrow(hCanvas, hBrushBorder, leftArrowX, leftArrowY, arrowHeight, TRUE);
 
-				// 绘制右侧箭头（向右的三角形）
-				_flowchart_draw_triangle_arrow(hCanvas, hBrushBorder, rightArrowX, rightArrowY, arrowHeight, FALSE);
+			// 绘制右侧箭头（向右的三角形）
+			_flowchart_draw_triangle_arrow(hCanvas, hBrushBorder, rightArrowX, rightArrowY, arrowHeight, FALSE);
 
-				// 如果有选项，绘制当前选中的文本
-				if (comboData != NULL && comboData->count > 0 && comboData->current < comboData->count) {
-					LPCWSTR currentText = comboData->options[comboData->current];
-					HEXFONT hFont = _font_createfromfamily(L"Arial", 10 * zoom, 0);
-					_canvas_drawtext(hCanvas, hFont, ExARGB(217, 217, 217, 255),
-						currentText, -1, DT_CENTER | DT_VCENTER,
-						textX, itemY,
-						textX + textWidth, itemY + itemHeight);
-					_font_destroy(hFont);
-				}
-				_brush_destroy(hBrushCombo);
-				break;
+			// 如果有选项，绘制当前选中的文本
+			if (comboData != NULL && comboData->count > 0 && comboData->current < comboData->count) {
+				LPCWSTR currentText = comboData->options[comboData->current];
+				HEXFONT hFont = _font_createfromfamily(L"Arial", 10 * zoom, 0);
+				_canvas_drawtext(hCanvas, hFont, ExARGB(217, 217, 217, 255),
+					currentText, -1, DT_CENTER | DT_VCENTER,
+					textX, itemY,
+					textX + textWidth, itemY + itemHeight);
+				_font_destroy(hFont);
 			}
+			_brush_destroy(hBrushCombo);
+			break;
+		}
 		}
 	}
 	_brush_destroy(hBrushNode);
@@ -1575,9 +1576,9 @@ void _flowchart_onlbuttondown(HEXOBJ hObj, INT x, INT y)
 				}
 			}
 		}
-		
+
 		// 如果点击了节点主体（且没有点击插槽）
-		if (!clickedOnSlot &&  virtualX >= node->x && virtualX <= node->x + node->width &&
+		if (!clickedOnSlot && virtualX >= node->x && virtualX <= node->x + node->width &&
 			virtualY >= node->y && virtualY <= node->y + node->height)
 		{
 			pData->selectedNode = node->id;
