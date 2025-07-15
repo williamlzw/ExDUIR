@@ -7,7 +7,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         Ex_ObjInitPropList(hObj, 4);
 
         HEXPATH path;
-        _path_create(PATH_FLAG_NORMAL, &path);
+        _path_create(PATH_FLAG_DISABLESCALE, &path);
         _path_open(path);
         // 绘制太阳顶部圆弧，闭合
         _path_beginfigure3(path, 70, 155, PATH_BEGIN_FLAG_FILLED);
@@ -55,7 +55,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         HEXPATH path = Ex_ObjGetProp(hObj, 2);
 
         HEXPATH path2;
-        _path_create(PATH_FLAG_NORMAL, &path2);
+        _path_create(PATH_FLAG_DISABLESCALE, &path2);
         _path_open(path2);
         _path_beginfigure3(path2, x - 25, y - 25, PATH_BEGIN_FLAG_FILLED);
         _path_addrect(path2, x - 25, y - 25, x - 25 + 50, y - 25 + 50);
@@ -109,10 +109,9 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         _rgn_destroy(hRgn2);
     }
     else if (uMsg == WM_MOUSEMOVE) {
-        auto  dpi = Ex_DUIGetSystemDpi();
         POINT pt  = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-        Ex_ObjSetProp(hObj, 0, pt.x / dpi);
-        Ex_ObjSetProp(hObj, 1, pt.y / dpi);
+        Ex_ObjSetProp(hObj, 0, pt.x );
+        Ex_ObjSetProp(hObj, 1, pt.y );
         Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == WM_DESTROY) {
