@@ -1481,7 +1481,7 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas, FLOAT fLeft, FLOAT fTop, FLOAT fRight
         pContext->CreateCompatibleRenderTarget(&bmpRenderTarget);
 
         HEXPATH hPath;
-        _path_create(1, &hPath);
+        _path_create(PATH_FLAG_DISABLESCALE, &hPath);
         _path_open(hPath);
         _path_beginfigure(hPath);
         _path_addroundedrect(hPath, fLeft, fTop, fRight, fBottom, radiusTopLeft, radiusTopRight,
@@ -1572,7 +1572,7 @@ HEXPATH create_polygonpath(FLOAT left, FLOAT top, FLOAT right, FLOAT bottom, UIN
                            FLOAT angle)
 {
     HEXPATH p = NULL;
-    _path_create(1, &p);
+    _path_create(PATH_FLAG_DISABLESCALE, &p);
     if (p != NULL) {
         if (numberOfEdges > 2) {
             UINT          i;

@@ -17,7 +17,7 @@ namespace ExDUIR
 					m_path = path;
 				}
 
-				ExPath(DWORD flag = 0)
+				ExPath(DWORD flag = PATH_FLAG_DISABLESCALE)
 				{
 					_path_create(flag, &m_path);
 				}

@@ -1047,7 +1047,7 @@ void _flowchart_draw_triangle_arrow(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT x,
 		points[2] = { x, y + size };          // 左侧底部点
 	}
 	HEXPATH hPath;
-	_path_create(1, &hPath);
+	_path_create(PATH_FLAG_DISABLESCALE, &hPath);
 	_path_open(hPath);
 	_path_beginfigure(hPath);
 	_path_addline(hPath, points[0].x, points[0].y, points[1].x, points[1].y);
