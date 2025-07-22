@@ -46,7 +46,7 @@ public:
 		m_static1 = ExStatic(m_skin, 1050, 270, 60, 30, L"x:");
 		m_static2 = ExStatic(m_skin, 1120, 270, 60, 30, L"y:");
 		m_static3 = ExStatic(m_skin, 1050, 310, 130, 580, L"操作提示：\r\n1.点击【开始绘图】，鼠标在画板左键单击，开始绘制路径点，右键可以撤销点，达到3个点及以上可以闭合路径。 闭合路径后会自动调用【结束绘图】。此时再次点击【开始绘图】继续绘制下一条路径。\r\n2.绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3.点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4.点击【取出数据】演示打印原图点坐标。\r\n5.按住CTRL键+鼠标滚轮,可以放大缩小", -1, -1, DT_WORDBREAK);
-		m_static3.SetFont(L"微软雅黑", 15, FONT_STYLE_BOLD, FALSE);
+		m_static3.SetFont(L"Arial", 15, FONT_STYLE_BOLD, FALSE);
 		m_static3.SetColorTextNormal(ExARGB(133, 33, 53, 255));
 
 		m_skin.Show();

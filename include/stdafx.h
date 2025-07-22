@@ -153,10 +153,10 @@
 #include "Class_ChatBox_ex.h"
 #include "Class_FlowChart_ex.h"
 
-//#ifdef ENABLE_VLC
+#ifdef ENABLE_VLC
 #define VCL_PLAYER
 #include "Class_VLCPlayer_ex.h"
 #pragma comment(lib, "libvlc.lib")
 #pragma comment(lib, "libvlccore.lib")
-//#endif
+#endif
 

@@ -6,6 +6,12 @@
 #define FLOWCHART_LONG_MOUSE_X 1
 // 属性_流程图_鼠标纵坐标
 #define FLOWCHART_LONG_MOUSE_Y 2
+// 属性_流程图_编辑框
+#define FLOWCHART_LONG_EDIT_HANDLE 3
+// 属性_流程图_双击编辑框所处节点ID
+#define FLOWCHART_LONG_DOUBLECLICK_NODEID 4
+// 属性_流程图_双击编辑框所处数据ID
+#define FLOWCHART_LONG_DOUBLECLICK_DATAID 5
 
 // 流程图_连接点类型
 #define FLOWCHART_SLOTTYPE_INPUT 1
@@ -34,3 +40,5 @@ void _flowchart_initcontrolpoint(EX_FLOWCHART_CONNECTION* conn,
 void _flowchart_calcnodesize(HEXOBJ hObj, EX_FLOWCHART_NODE* node);
 void _flowchart_measure_text(HEXCANVAS hCanvas, HEXFONT hFont, LPCWSTR text,
     INT maxWidth, FLOAT* width, FLOAT* height);
+LRESULT CALLBACK _flowchart_edit_killfocus(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+    LPARAM lParam);

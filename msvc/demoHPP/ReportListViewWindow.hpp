@@ -106,7 +106,7 @@ public:
 			auto str = std::to_wstring(value);
 			cell.pwzText = str.c_str();
 			cell.cellStyle = REPORTLISTVIEW_CELLSTYLE_CELLFONT;
-			cell.cellFont = _font_createfromfamily(L"微软雅黑", 20, 0);
+			cell.cellFont = _font_createfromfamily(L"Arial", 20, 0);
 			m_reportlistview.SetCell(cell);
 		}
 		m_reportlistview.Update();//整体更新,以加快绘制速度

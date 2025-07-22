@@ -376,14 +376,14 @@ LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
             calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
             if (ni.nCode == NM_CALCSIZE) {
                 if (ni.idFrom == 77704) {
-                    __set_int((LPVOID)ni.lParam, 0, 40);   // 改变项目宽度  Ex_Scale
-                    __set_int((LPVOID)ni.lParam, 4, 40);   // 改变项目高度  Ex_Scale
+                    __set_int((LPVOID)ni.lParam, 0, 40);   // 改变项目宽度  
+                    __set_int((LPVOID)ni.lParam, 4, 40);   // 改变项目高度  
                     __set_int((LPVOID)ni.lParam, 8, 2);    // 改变项目间隔宽度
                     __set_int((LPVOID)ni.lParam, 12, 1);   // 改变项目间隔高度
                 }
                 else if (ni.idFrom == 77705) {
-                    __set_int((LPVOID)ni.lParam, 0, 72);   // 改变项目宽度  Ex_Scale
-                    __set_int((LPVOID)ni.lParam, 4, 72);   // 改变项目高度  Ex_Scale
+                    __set_int((LPVOID)ni.lParam, 0, 72);   // 改变项目宽度  
+                    __set_int((LPVOID)ni.lParam, 4, 72);   // 改变项目高度  
                     __set_int((LPVOID)ni.lParam, 8, 2);    // 改变项目间隔宽度
                     __set_int((LPVOID)ni.lParam, 12, 2);   // 改变项目间隔高度
                 }

@@ -189,7 +189,7 @@ void test_tagging(HWND hWnd)
         L"点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4."
         L"点击【取出数据】演示打印原图点坐标。\r\n5.按住CTRL键+鼠标滚轮,可以放大缩小",
         -1, 1050, 310, 130, 600, hExDui_tagging, 1090, DT_WORDBREAK, 0, 0, 0);
-    Ex_ObjSetFontFromFamily(hObj_taggingLabel3, L"微软雅黑", 12, FONT_STYLE_BOLD, FALSE);
+    Ex_ObjSetFontFromFamily(hObj_taggingLabel3, L"Arial", 12, FONT_STYLE_BOLD, FALSE);
     Ex_ObjSetColor(hObj_taggingLabel3, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
     Ex_ObjHandleEvent(hObj_button1, NM_CLICK, OnTaggingButtonEvent);

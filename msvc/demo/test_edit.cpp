@@ -221,7 +221,7 @@ void test_edit(HWND hWnd)
                            OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW,
                        L"edit", L"透明圆角编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION,
                        10, 190, 150, 44, m_hExDuiEdit, 0, DT_VCENTER, 0, 0, NULL);
-    m_hEditFont = _font_createfromfamily(L"微软雅黑", 24, FONT_STYLE_UNDERLINE | FONT_STYLE_ITALIC);
+    m_hEditFont = _font_createfromfamily(L"Arial", 24, FONT_STYLE_UNDERLINE | FONT_STYLE_ITALIC);
     Ex_ObjSetFont(hObj_edit5, m_hEditFont, FALSE);
     Ex_ObjSetColor(hObj_edit5, COLOR_EX_BACKGROUND, ExARGB(200, 120, 130, 100), FALSE);
     Ex_ObjSetColor(hObj_edit5, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(16872215, 100), FALSE);

@@ -1757,21 +1757,21 @@
 
 #pragma region flowchart event constant
 // 通知_流程图_节点点击 wParam: 节点ID
-#define FLOWCHART_EVENT_NODE_CLICKED 1
-// 通知_流程图_节点双击 wParam: 节点ID
-#define FLOWCHART_EVENT_NODE_DOUBLE_CLICKED 2
+#define FLOWCHART_EVENT_NODE_CLICKED 30000
 // 通知_流程图_连接线添加 wParam: 连接线ID
-#define FLOWCHART_EVENT_CONNECTION_CREATED 3
+#define FLOWCHART_EVENT_CONNECTION_CREATED 30001
 // 通知_流程图_删除连接线 wParam: 连接线ID
-#define FLOWCHART_EVENT_CONNECTION_REMOVED 4
+#define FLOWCHART_EVENT_CONNECTION_REMOVED 30002
 // 通知_流程图_节点移动 wParam: 节点ID
-#define FLOWCHART_EVENT_NODE_MOVED 5
+#define FLOWCHART_EVENT_NODE_MOVED 30003
 // 通知_流程图_连接线选中 wParam: 节点ID
-#define FLOWCHART_EVENT_CONNECTION_SELECTED 6
+#define FLOWCHART_EVENT_CONNECTION_SELECTED 30004
 // 通知_流程图_连接线移动 wParam: 连接线ID
-#define FLOWCHART_EVENT_CONNECTION_MOVED 7
-// 通知_流程图_节点数据改变事件 wParam: 节点ID , lParam: EX_FLOWCHART_NODE_COMBO_DATA 结构指针
-#define FLOWCHART_EVENT_NODEDATA_CHANGED 8
+#define FLOWCHART_EVENT_CONNECTION_MOVED 30005
+// 通知_流程图_节点数据改变 wParam: 节点ID , lParam: EX_FLOWCHART_NODE_COMBO_DATA 结构指针
+#define FLOWCHART_EVENT_NODEDATA_CHANGED 30006
+// 通知_流程图_节点双击 wParam: 节点ID
+#define FLOWCHART_EVENT_NODE_DOUBLE_CLICKED 30007
 #pragma endregion flowchart event constant
 
 #define LVSICF_NOSCROLL 2
@@ -2441,7 +2441,7 @@ typedef struct
 // 节点数据结构
 typedef struct
 {
-    INT id;
+    INT id;                          //节点ID
     FLOAT x;
     FLOAT y;
     FLOAT width;

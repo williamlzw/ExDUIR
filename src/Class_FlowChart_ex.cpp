@@ -6,7 +6,30 @@ void _flowchart_register()
 	WCHAR wzCls[] = L"FlowChart";
 	Ex_ObjRegister(wzCls, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL,
 		OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-		0, 5 * sizeof(size_t), NULL, NULL, _flowchart_proc);
+		0, 6 * sizeof(size_t), NULL, NULL, _flowchart_proc);
+}
+
+LRESULT CALLBACK _flowchart_edit_killfocus(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+	LPARAM lParam)
+{
+	if (nCode == NM_KILLFOCUS) {
+		Ex_ObjShow(hObj, FALSE);	
+		size_t       len = Ex_ObjGetTextLength(hObj);
+		std::wstring text;
+		text.resize(len);
+		Ex_ObjGetText(hObj, text.data(), len * 2);
+		EX_FLOWCHART_NODE_DATA newData;
+		auto hParent = Ex_ObjGetParent(hObj);
+		Ex_ObjSetFocus(hParent);
+		INT nodeId = Ex_ObjGetLong(hParent, FLOWCHART_LONG_DOUBLECLICK_NODEID);
+		INT dataId = Ex_ObjGetLong(hParent, FLOWCHART_LONG_DOUBLECLICK_DATAID);
+		newData.id = dataId; 
+		newData.type = FLOWCHART_NODEDATA_TYPE_EDIT;
+		newData.data = (LPVOID)text.data();
+		Ex_ObjSendMessage(hParent, FLOWCHART_MESSAGE_UPDATE_NODEDATA,
+			(WPARAM)nodeId, (LPARAM)&newData);
+	}
+	return 0;
 }
 
 // 流程图控件过程函数
@@ -31,6 +54,16 @@ LRESULT CALLBACK _flowchart_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		Ex_ObjSetLong(hObj, FLOWCHART_LONG_DATA, (LONG_PTR)pData);
 		Ex_ObjSetLong(hObj, FLOWCHART_LONG_MOUSE_X, 0);
 		Ex_ObjSetLong(hObj, FLOWCHART_LONG_MOUSE_Y, 0);
+		HEXOBJ edit = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit", 0,
+			OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION | OBJECT_STYLE_VSCROLL |
+			EDIT_STYLE_DISABLEMENU  | EDIT_STYLE_NEWLINE,
+			10, 30, 150, 30, hObj, 0, DT_LEFT | DT_TOP, 0, 0, 0);
+		Ex_ObjHandleEvent(edit, NM_KILLFOCUS, _flowchart_edit_killfocus);
+		
+		Ex_ObjShow(edit, FALSE);
+		Ex_ObjSetLong(hObj, FLOWCHART_LONG_EDIT_HANDLE, edit);
+		Ex_ObjSetLong(hObj, FLOWCHART_LONG_DOUBLECLICK_NODEID, -1);
+		Ex_ObjSetLong(hObj, FLOWCHART_LONG_DOUBLECLICK_DATAID, -1);
 
 		// 设置滚动条范围
 		Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_HORZ, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
@@ -521,7 +554,8 @@ void _flowchart_calcnodesize(HEXOBJ hObj, EX_FLOWCHART_NODE* node)
 		{
 			auto hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
 			HEXFONT hFont = _font_createfromfamily(L"Arial", 14, 0);
-			_flowchart_measure_text(hCanvas, hFont, (LPCWSTR)dataItem->data, width, &itemWidth, &itemHeight);
+			_flowchart_measure_text(hCanvas, hFont, (LPCWSTR)dataItem->data, width - 5.0f, &itemWidth, &itemHeight);
+			itemHeight += 10.0f; //内边距5
 			_font_destroy(hFont);
 			break;
 		}
@@ -1100,7 +1134,7 @@ void _flowchart_drawnode(HEXCANVAS hCanvas, EX_FLOWCHART_DATA* pData, EX_FLOWCHA
 		rcTitle.right, rcTitle.bottom);
 
 	// 绘制标题文本（字体大小也缩放）
-	HEXFONT hFontTitle = _font_createfromfamily(L"微软雅黑", 12 * zoom, FONT_STYLE_BOLD);
+	HEXFONT hFontTitle = _font_createfromfamily(L"Arial", 12 * zoom, FONT_STYLE_BOLD);
 	_canvas_drawtext(hCanvas, hFontTitle, ExARGB(217, 217, 217, 255),
 		node->title, -1, DT_CENTER | DT_VCENTER,
 		rcTitle.left, rcTitle.top,
@@ -1211,9 +1245,9 @@ void _flowchart_drawnode(HEXCANVAS hCanvas, EX_FLOWCHART_DATA* pData, EX_FLOWCHA
 			{
 				HEXFONT hFont = _font_createfromfamily(L"Arial", 14 * zoom, 0);
 				_canvas_drawtext(hCanvas, hFont, ExARGB(217, 217, 217, 255),
-					(LPCWSTR)dataItem->data, -1, DT_LEFT | DT_VCENTER,
-					itemX + 5 * zoom, itemY,
-					itemX + itemWidth - 5 * zoom, itemY + itemHeight);
+					(LPCWSTR)dataItem->data, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+					itemX + 5.0f * zoom, itemY + 5.0f * zoom,
+					itemX + itemWidth - 5.0f * zoom, itemY + itemHeight - 5.0f * zoom);
 				_font_destroy(hFont);
 			}
 			_brush_destroy(hBrushEdit);
@@ -1342,6 +1376,8 @@ void _flowchart_onmousemove(HEXOBJ hObj, INT x, INT y)
 		EX_FLOWCHART_NODE* node = _flowchart_findnode(pData, pData->draggingNode);
 		if (node)
 		{
+			HEXOBJ edit = Ex_ObjGetLong(hObj, FLOWCHART_LONG_EDIT_HANDLE);
+			Ex_ObjShow(edit, FALSE);
 			// 计算移动距离
 			FLOAT deltaX = virtualX - pData->dragStartPos.x;
 			FLOAT deltaY = virtualY - pData->dragStartPos.y;
@@ -1810,7 +1846,27 @@ void _flowchart_ondoubleclick(HEXOBJ hObj, INT x, INT y)
 		if (virtualX >= node->x && virtualX <= node->x + node->width &&
 			virtualY >= node->y && virtualY <= node->y + node->height)
 		{
-			// 发送节点双击事件
+			for (INT j = 0; j < node->nodeDataCount; j++)
+			{
+				EX_FLOWCHART_NODE_DATA* dataItem = &node->nodeDataList[j];
+				if (dataItem->type == FLOWCHART_NODEDATA_TYPE_EDIT)
+				{
+					if (virtualX - node->x >= dataItem->rect.left && virtualX - node->x <= dataItem->rect.right && 
+						virtualY - node->y >= dataItem->rect.top && virtualY - node->y <= dataItem->rect.bottom)
+					{
+						Ex_ObjSetLong(hObj, FLOWCHART_LONG_DOUBLECLICK_NODEID, node->id);
+						Ex_ObjSetLong(hObj, FLOWCHART_LONG_DOUBLECLICK_DATAID, dataItem->id);
+						HEXOBJ edit = Ex_ObjGetLong(hObj, FLOWCHART_LONG_EDIT_HANDLE);
+						Ex_ObjSetText(edit, (LPCWSTR)dataItem->data, FALSE);
+						EX_FLOWCHART_DATA* pData = (EX_FLOWCHART_DATA*)Ex_ObjGetLong(hObj, 0);
+						auto dpi = Ex_DUIGetSystemDpi();
+						Ex_ObjMove(edit, (node->x + dataItem->rect.left) / dpi * pData->zoom, (node->y + dataItem->rect.top) / dpi * pData->zoom, 
+							(dataItem->rect.right - dataItem->rect.left) / dpi * pData->zoom, (dataItem->rect.bottom - dataItem->rect.top) / dpi * pData->zoom, TRUE);
+						Ex_ObjShow(edit, TRUE);
+						break;
+					}
+				}
+			}
 			Ex_ObjDispatchNotify(hObj, FLOWCHART_EVENT_NODE_DOUBLE_CLICKED, node->id, 0);
 			break;
 		}

@@ -2581,6 +2581,7 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lP
             if (_wnd_getfunctionkeys() == 0) {
                 if (pObj != 0) {
                     if (!__query(pObj, offsetof(obj_s, dwFlags_), EOF_BDISABLESPACEANDENTER)) {
+                        
                         if (_obj_dispatchnotify(hWnd, pObj, objFocus, 0, NM_RETURN, wParam,
                                                 lParam) == 0) {
                             _obj_baseproc(hWnd, objFocus, pObj, WM_EX_LCLICK, 0, 0);

@@ -45,9 +45,9 @@ void _object_init()
     _linechart_register();
     _chatbox_register();
     _flowchart_register();
-//#ifdef ENABLE_VLC
+#ifdef ENABLE_VLC
     _vlcplayer_register();
-//#endif
+#endif
 }
 
 
@@ -1307,6 +1307,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
 
     if ((flags & SWP_NOMOVE) == 0 || (flags & SWP_NOSIZE) == 0 || (flags & SWP_DRAWFRAME) != 0) {
         BOOL fScale = (flags & SWP_EX_NODPISCALE) == 0;
+
         if ((flags & SWP_NOMOVE) == 0)   // 移动
         {
             if (x == OBJECT_POSITION_DEFAULT) {
@@ -1356,7 +1357,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
         wp.cy              = height;
         wp.flags           = flags;
         np.lppos           = &wp;
-        // WM_WINDOWPOSCHANGING
+        
         if (fNotify) {
             if (fAsyn) {
                 _obj_sendmessage(hWnd, hObj, pObj, WM_WINDOWPOSCHANGING, 0, (size_t)np.lppos, 0);
@@ -1365,7 +1366,7 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
                 _obj_baseproc(hWnd, hObj, pObj, WM_WINDOWPOSCHANGING, 0, (size_t)np.lppos);
             }
         }
-        // WM_GETMINMAXINFO
+        
         if (fNotify) {
             if (fAsyn) {
                 _obj_sendmessage(hWnd, hObj, pObj, WM_GETMINMAXINFO, 0,
@@ -3338,7 +3339,7 @@ BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
     if (bRepaint) {
         flags = flags | SWP_EX_UPDATEOBJECT;
     }
-
+    
     return Ex_ObjSetPos(hObj, 0, x, y, width, height, flags);
 }
 
