@@ -70,16 +70,15 @@ LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
         EX_CHATBOX_ITEMINFO_SUBITEM ptr;
         ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
         ptr.Type = CHATBOX_ITEMTYPE_CARD;
-        HEXIMAGE hImgCard, hImgCardSmall;
+        HEXIMAGE hImgCard;
         _img_createfromfile(L"res/user.png", &hImgCard);
-        _img_scale(hImgCard, Ex_Scale(50), Ex_Scale(50), &hImgCardSmall);
-        _img_destroy(hImgCard);
+        
         EX_CHATBOX_ITEMINFO_CARD itemDataCard;
         itemDataCard.Title = L"测试卡片标题2!";
         itemDataCard.Content = L"测试卡片内容2测试卡片内容2";
         itemDataCard.Reason = L"测试卡片子内容2测试卡片子内容2.";
         itemDataCard.ReasonTitle = L"测试卡片子标题2";
-        itemDataCard.Image = hImgCardSmall;
+        itemDataCard.Image = hImgCard;
         itemDataCard.ButtonText = L"测试按钮2";
         ptr.Data = &itemDataCard;
         Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_UPDATEITEM, 3, (size_t)&ptr);
@@ -129,18 +128,13 @@ void test_chatbox(HWND hWnd)
     Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKBUTTON, OnChatBoxEvent);
     Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKLINK, OnChatBoxEvent);
     HEXIMAGE hImgUser, hImgAssistant;
-    HEXIMAGE hImgUserSmall, hImgAssistantSmall;
 
     _img_createfromfile(L"res/user.png", &hImgUser);
     _img_createfromfile(L"res/ai.png", &hImgAssistant);
 
-    _img_scale(hImgUser, Ex_Scale(50), Ex_Scale(50), &hImgUserSmall);
-    _img_scale(hImgAssistant, Ex_Scale(50), Ex_Scale(50), &hImgAssistantSmall);
-
-    _img_destroy(hImgUser);
-    _img_destroy(hImgAssistant);
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_USER, 0, (size_t)hImgUserSmall);
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_ASSISTANT, 0, (size_t)hImgAssistantSmall);
+ 
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_USER, 0, (size_t)hImgUser);
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_ASSISTANT, 0, (size_t)hImgAssistant);
 
     EX_CHATBOX_ITEMINFO_SUBITEM ptr;
     ptr.Type = CHATBOX_ITEMTYPE_TEXT;
@@ -213,40 +207,37 @@ void test_chatbox(HWND hWnd)
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
 
     ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
-    HEXIMAGE hImgCard, hImgCardSmall;
+    HEXIMAGE hImgCard;
     _img_createfromfile(L"res/user.png", &hImgCard);
-    _img_scale(hImgCard, Ex_Scale(50), Ex_Scale(50), &hImgCardSmall);
-    _img_destroy(hImgCard);
+
     EX_CHATBOX_ITEMINFO_CARD itemDataCard;
     itemDataCard.Title = L"测试卡片标题!";
     itemDataCard.Content = L"测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容";
     itemDataCard.Reason = L"测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容.";
     itemDataCard.ReasonTitle = L"测试卡片子标题";
-    itemDataCard.Image = hImgCardSmall;
+    itemDataCard.Image = hImgCard;
     itemDataCard.ButtonText = L"测试按钮";
     ptr.Type = CHATBOX_ITEMTYPE_CARD;
     ptr.Data = &itemDataCard;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
 
     EX_CHATBOX_ITEMINFO_BOOSTMODE itemDataBoost;
-    HEXIMAGE hImgBoost, hImgBoostSmall;
+    HEXIMAGE hImgBoost;
     _img_createfromfile(L"res/user.png", &hImgBoost);
-    _img_scale(hImgBoost, Ex_Scale(24), Ex_Scale(24), &hImgBoostSmall);
-    _img_destroy(hImgBoost);
+
     itemDataBoost.Title = L"完成标题";
     itemDataBoost.Content = L"完成内容!";
-    itemDataBoost.Image = hImgBoostSmall;
+    itemDataBoost.Image = hImgBoost;
     ptr.Type = CHATBOX_ITEMTYPE_BOOSTMODE;
     ptr.Data = &itemDataBoost;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
 
     EX_CHATBOX_ITEMINFO_ERRORLIST itemDataErrorList;
-    HEXIMAGE hImgErrorList, hImgErrorListSmall;
+    HEXIMAGE hImgErrorList;
     _img_createfromfile(L"res/user.png", &hImgErrorList);
-    _img_scale(hImgErrorList, Ex_Scale(30), Ex_Scale(30), &hImgErrorListSmall);
-    _img_destroy(hImgErrorList);
+
     itemDataErrorList.Title = L"一些错误被捕捉";
-    itemDataErrorList.Image = hImgErrorListSmall;
+    itemDataErrorList.Image = hImgErrorList;
     itemDataErrorList.ListCount = 3;
     itemDataErrorList.ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * 3);
     EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit0;
@@ -276,12 +267,11 @@ void test_chatbox(HWND hWnd)
     free(itemDataErrorList.ListInfo);
 
     EX_CHATBOX_ITEMINFO_ERRORLIST itemDataErrorList2;
-    HEXIMAGE hImgErrorList2, hImgErrorListSmall2;
+    HEXIMAGE hImgErrorList2;
     _img_createfromfile(L"res/user.png", &hImgErrorList2);
-    _img_scale(hImgErrorList2, Ex_Scale(30), Ex_Scale(30), &hImgErrorListSmall2);
-    _img_destroy(hImgErrorList2);
+ 
     itemDataErrorList2.Title = L"一些错误被捕捉\r\n以下是错误信息";
-    itemDataErrorList2.Image = hImgErrorListSmall2;
+    itemDataErrorList2.Image = hImgErrorList2;
     itemDataErrorList2.ListCount = 2;
     itemDataErrorList2.ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * 2);
     EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit5;

@@ -9,7 +9,7 @@
 
 #pragma region 编译配置
 // 启用VLC播放引擎
-//#define ENABLE_VLC
+#define VCL_PLAYER
 #pragma endregion 编译配置
 
 #pragma region engine flag constant

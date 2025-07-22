@@ -201,8 +201,7 @@ LRESULT CALLBACK OnMenuItemRightMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
                     HEXIMAGE hImg      = 0;
                     HEXIMAGE hImgSmall = 0;
                     _img_createfromfile(L"res/rotateimgbox.jpg", &hImg);
-                    _img_scale(hImg, 20, 20,
-                               &hImgSmall);   // 注意菜单条目高度跟图像高度有关，因此缩放到24
+                    _img_scale(hImg, 20, 20, &hImgSmall);   // 注意菜单条目高度跟图像高度有关，因此缩放到24
 
                     _canvas_drawimage(ps.hCanvas, hImgSmall, 2, 2, 255);
                     _img_destroy(hImg);
