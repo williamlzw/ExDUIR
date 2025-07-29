@@ -122,7 +122,19 @@ void test_flowchart(HWND hWnd)
     node2.outputSlots = (LPCWSTR*)Ex_MemAlloc(sizeof(LPCWSTR) * node2.outputCount);
 
     node2.outputSlots[0] = L"结果";
+
     Ex_ObjSendMessage(hFlowChart, FLOWCHART_MESSAGE_ADD_NODE, 0, (LPARAM)&node2);
+
+    EX_FLOWCHART_CONNECTION connect;
+    connect.fromNode = 1001;
+    connect.toNode = 2000;
+    connect.fromSlot = 0;
+    connect.toSlot = 0;
+    connect.controlPoint1.x = 200;
+    connect.controlPoint1.y = 50;
+    connect.controlPoint2.x = 400;
+    connect.controlPoint2.y = 50;
+    Ex_ObjSendMessage(hFlowChart, FLOWCHART_MESSAGE_ADD_CONNECTION, 0, (LPARAM)&connect);
 
     UpdateNodeData(hFlowChart, 2000, 2001);
 

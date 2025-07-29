@@ -1003,7 +1003,6 @@ BOOL _img_mask(HEXIMAGE hImgDst, HEXIMAGE hImgSrc, DWORD nChannel, BOOL bBlackMa
     }
     _img_destroy(hImg);
     Ex_MemFree(bdDst);
-    _img_destroy(hImg);
     return ret;
 }
 
