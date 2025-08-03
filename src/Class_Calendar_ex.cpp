@@ -114,7 +114,7 @@ void _calendar_settime(calendar_s* pOwner, int type, int index, int year, int mo
     __set_int(lpItems, offset + 12, Mday);
     __set_int(lpItems, offset + 16, Wday);
     if (Calendar != 0) {
-        free(Calendar);
+        Ex_MemFree(Calendar);
         Calendar = 0;
     }
 
@@ -142,7 +142,7 @@ void _calendar_settime(calendar_s* pOwner, int type, int index, int year, int mo
         }
     }
 
-    Calendar = (LPVOID)_wcsdup(LunarCalendar);
+    Calendar = (LPVOID)StrDupW(LunarCalendar);
     __set(lpItems, offset + 20, (LONG_PTR)Calendar);
 }
 
@@ -232,7 +232,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                 LONG_PTR offset   = i * (20 + sizeof(size_t));
                 LPVOID   Calendar = (LPVOID)__get(pOld, offset + 20);
                 if (Calendar) {
-                    free(Calendar);
+                    Ex_MemFree(Calendar);
                 }
             }
             Ex_MemFree(pOld);

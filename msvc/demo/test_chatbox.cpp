@@ -324,7 +324,7 @@ void test_chatbox(HWND hWnd)
     itemDataTableList.ListInfo = new EX_CHATBOX_ITEMINFO_TABLELIST_UNIT[4];
     for (int i = 0; i < 4; i++)
     {
-        itemDataTableList.ListInfo[i].Columns = new LPCWSTR[4];
+        itemDataTableList.ListInfo[i].Columns = new EX_CHATBOX_ITEMINFO_TABLELIST_TEXT[4];
         for (int j = 0; j < 4; j++)
         {
             std::wstring str = std::wstring(L"第") + std::to_wstring(i) + std::wstring(L"行,第") + std::to_wstring(j) + std::wstring(L"列");
@@ -340,7 +340,7 @@ void test_chatbox(HWND hWnd)
             {
                 str += L"\r\n测试高度单元格";
             }
-            itemDataTableList.ListInfo[i].Columns[j] = _wcsdup(str.c_str());
+            itemDataTableList.ListInfo[i].Columns[j].Text = StrDupW(str.c_str());
         }
     }
     ptr.Type = CHATBOX_ITEMTYPE_TABLELIST;
@@ -349,7 +349,7 @@ void test_chatbox(HWND hWnd)
     for (int i = 0; i < itemDataTableList.ListCount; i++) {
         for (int j = 0; j < itemDataTableList.ColumnCount; j++)
         {
-            free((void*)itemDataTableList.ListInfo[i].Columns[j]);
+            Ex_MemFree((void*)itemDataTableList.ListInfo[i].Columns[j].Text);
         }
         delete[] itemDataTableList.ListInfo[i].Columns;
     }
