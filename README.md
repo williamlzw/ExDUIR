@@ -180,6 +180,12 @@ Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,
 ![image](demo_image/demo_effect.png)
 ### demo pathandrgn:
 ![image](demo_image/demo_pathandrgn.png)
+### demo circleprogressbar:
+![image](demo_image/demo_circleprogressbar.png)
+### demo waveprogressbar:
+![image](demo_image/demo_waveprogressbar.png)
+### demo linechart:
+![image](demo_image/demo_linechart.png)
 ### demo chatbox:
 ![image](demo_image/demo_chatbox.png)
 ### demo flowchart:
