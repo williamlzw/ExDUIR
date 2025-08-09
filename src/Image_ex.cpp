@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 
 BOOL _img_destroy(HEXIMAGE hImg)
 {
@@ -1125,12 +1125,6 @@ BOOL _img_createfromsvg(EXARGB color, NSVGimage* image, HEXIMAGE* phImg)
     if (color) {
         image->shapes->fill.color =
             nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
-        auto next = image->shapes->next;
-        while (next != NULL) {
-            next->fill.color =
-                nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
-            next = next->next;
-        }
     }
     NSVGrasterizer* rast = nsvgCreateRasterizer();
     if (rast) {
