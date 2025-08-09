@@ -139,7 +139,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
                     Ex_ObjGetText(hObj, text, (textLen + 1) * sizeof(WCHAR));
                 }
             }
-            
+
             _propertygrid_setitemtext(wParam, itemHover, text ? text : L"");
 
             if (text) Ex_MemFree(text);
@@ -462,6 +462,14 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             INT      start = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWBEGIN);
             INT      end = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWEND);
             INT      i = start;
+
+            // 获取表头可见性
+            BOOL bHeaderVisible = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE);
+            // 新增：计算表头隐藏时的垂直偏移（负值表示上移）
+            int headerAdjust = 0;
+            if (!bHeaderVisible) {
+                headerAdjust = -lineHeight;
+            }
             for (int index = start; index < end; index++) {
                 void* itemValue = (void*)Array_GetMember(itemArr, i);
                 if (itemValue == 0) {
@@ -473,10 +481,11 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 LPCWSTR itemText = (LPCWSTR)__get(itemValue, PGITEM_STRUCT_OFFSET_TEXT);
                 INT     offsetLeft = lineHeight / 3 * 2;
                 INT     expend = __get(itemValue, PGITEM_STRUCT_OFFSET_SHRINK);
-                RECT    titleRC = Ex_TreRect(ps.rcPaint, offsetLeft * g_Li.DpiY,
-                    (index * lineHeight + showOffset) * g_Li.DpiY - 1, 0,
-                    lineHeight * g_Li.DpiY * (index + 1) + showOffset * g_Li.DpiY -
+                RECT titleRC = Ex_TreRect(ps.rcPaint, offsetLeft * g_Li.DpiY,
+                    (index * lineHeight + showOffset + headerAdjust) * g_Li.DpiY - 1, 0,
+                    lineHeight * g_Li.DpiY * (index + 1) + showOffset * g_Li.DpiY + headerAdjust * g_Li.DpiY -
                     ps.rcPaint.bottom - 1 * g_Li.DpiY);
+
                 _brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMBACKGROUNDCOLOR));
                 if (itemType == PROPERTYGRID_OBJTYPE_GROUP) {
                     _brush_setcolor(brush, bkg);
@@ -548,9 +557,9 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                             textRC.right, textRC.bottom);
                     }
                     RECT textRC2 = Ex_TreRect(
-                        ps.rcPaint, columnWidth * g_Li.DpiX,
-                        (index * lineHeight + showOffset) * g_Li.DpiY - 1, -offsetLeft * g_Li.DpiX,
-                        lineHeight * g_Li.DpiY * (index + 1) + showOffset * g_Li.DpiY -
+                        ps.rcPaint, columnWidth * g_Li.DpiX - 1,
+                        (index * lineHeight + showOffset + headerAdjust) * g_Li.DpiY - 1, -offsetLeft * g_Li.DpiX,
+                        lineHeight * g_Li.DpiY * (index + 1) + showOffset * g_Li.DpiY + headerAdjust * g_Li.DpiY -
                         ps.rcPaint.bottom - 1 * g_Li.DpiY);
                     _canvas_fillrect(ps.hCanvas, brush, textRC2.left, textRC2.top, textRC2.right,
                         textRC2.bottom);
@@ -578,27 +587,64 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 }
                 i++;
             }
-            BOOL bHeaderVisible = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE);
             if (bHeaderVisible) {
                 EXARGB  textColor = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);   // 表头的文本色
                 LPCWSTR headerText = (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE);   // 表头文本
-                RECT headerRC = Ex_TreRect(ps.rcPaint, 5 * g_Li.DpiX, 8 * g_Li.DpiY, -5 * g_Li.DpiX,
-                    lineHeight * g_Li.DpiY - ps.rcPaint.bottom);
+
+                WCHAR leftBuffer[256] = { 0 }; // 假设左列标题
+                WCHAR rightBuffer[256] = { 0 }; // 右列标题
+
+                if (headerText) {
+                    // 分割字符串
+                    const WCHAR* p = wcschr(headerText, L',');
+                    if (p) {
+                        wcsncpy(leftBuffer, headerText, p - headerText);
+                        wcscpy(rightBuffer, p + 1);
+                    }
+                    else {
+                        wcscpy(leftBuffer, headerText);
+                    }
+                }
                 _brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERBACKGROUNDCOLOR));
                 _canvas_fillrect(ps.hCanvas, brush, ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right,
                     ps.rcPaint.top + lineHeight * g_Li.DpiY);   // 填充表头背景
-                _canvas_drawtext(ps.hCanvas, font, textColor, headerText, -1, textFormat, headerRC.left,
-                    headerRC.top, headerRC.right, headerRC.bottom - 5);
-                _brush_destroy(brush);
+                RECT headerLeftRC = { ps.rcPaint.left, ps.rcPaint.top,
+                                         ps.rcPaint.left + columnWidth * g_Li.DpiX,
+                                         ps.rcPaint.top + lineHeight * g_Li.DpiY };
+                if (leftBuffer) {
+                    // 绘制左列标题                 
+                    RECT textLeftRC = Ex_TreRect(headerLeftRC, 5 * g_Li.DpiX, 5 * g_Li.DpiY, -5 * g_Li.DpiX, -5 * g_Li.DpiY);
+                    _canvas_drawtext(ps.hCanvas, font, textColor, leftBuffer, -1, textFormat,
+                        textLeftRC.left, textLeftRC.top, textLeftRC.right, textLeftRC.bottom);
+                }
+                if (rightBuffer) {
+                    // 绘制右列标题
+                    RECT headerRightRC = { headerLeftRC.right, ps.rcPaint.top,
+                                          ps.rcPaint.right,
+                                          ps.rcPaint.top + lineHeight * g_Li.DpiY };
+                    RECT textRightRC = Ex_TreRect(headerRightRC, 5 * g_Li.DpiX, 5 * g_Li.DpiY, -5 * g_Li.DpiX, -5 * g_Li.DpiY);
+                    _canvas_drawtext(ps.hCanvas, font, textColor, rightBuffer, -1, textFormat,
+                        textRightRC.left, textRightRC.top, textRightRC.right, textRightRC.bottom);
+
+                    // 绘制列分隔线
+                    _brush_setcolor(brush, ExRGB2ARGB(0, 20));
+                    _canvas_drawline(ps.hCanvas, brush,
+                        headerLeftRC.right, headerLeftRC.top,
+                        headerLeftRC.right, headerLeftRC.bottom,
+                        1, D2D1_DASH_STYLE_SOLID);
+                }
+
             }
+            _brush_destroy(brush);
             // 修改滚动条位置
             obj_s* pObj = nullptr;
             if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, 0)) {
                 obj_s* VpObj = nullptr;
                 if (_handle_validate(pObj->objVScroll_, HT_OBJECT, (LPVOID*)&VpObj, 0)) {
                     Ex_ObjSetPos(pObj->objVScroll_, hObj, VpObj->left_ / g_Li.DpiX,
-                        lineHeight / g_Li.DpiY, (VpObj->right_ - VpObj->left_) / g_Li.DpiX,
-                        (pObj->bottom_ - pObj->top_ - lineHeight) / g_Li.DpiY,
+                        (lineHeight + headerAdjust) / g_Li.DpiY, // 上边距增加表头高度
+                        (VpObj->right_ - VpObj->left_) / g_Li.DpiX,
+                        (pObj->bottom_ - pObj->top_ - lineHeight - headerAdjust) / g_Li.DpiY, // 高度减少表头高度
                         SWP_NOZORDER);
                 }
             }
@@ -753,9 +799,15 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         }
 
         INT showOffset = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWOFFSET);
-
+        // 获取表头可见性
+        BOOL bHeaderVisible = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE);
+        // 新增：计算表头隐藏时的垂直偏移（负值表示上移）
+        int headerAdjust = 0;
+        if (!bHeaderVisible) {
+            headerAdjust = -lineHeight;
+        }
         // 计算可见行号 (基于鼠标Y坐标)
-        INT visibleLine = (pt[1] - showOffset * g_Li.DpiY) / (lineHeight * g_Li.DpiY);
+        INT visibleLine = (pt[1] - showOffset * g_Li.DpiY - headerAdjust) / (lineHeight * g_Li.DpiY);
 
         // 将可见行号转换为物理索引
         INT arrayIndex = _propertygrid_linetoarrayindex(hObj, visibleLine);
@@ -782,9 +834,15 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         INT      end = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWEND);
         INT      L = start;
 
-
+        // 获取表头可见性
+        BOOL bHeaderVisible = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE);
+        // 新增：计算表头隐藏时的垂直偏移（负值表示上移）
+        int headerAdjust = 0;
+        if (!bHeaderVisible) {
+            headerAdjust = -lineHeight;
+        }
         // 计算点击的可见行号
-        INT visibleLine = (pt.y - showOffset * g_Li.DpiY) / (lineHeight * g_Li.DpiY);
+        INT visibleLine = (pt.y - showOffset * g_Li.DpiY - headerAdjust) / (lineHeight * g_Li.DpiY);
 
         // 转换为物理索引
         INT arrayIndex = _propertygrid_linetoarrayindex(hObj, visibleLine);
@@ -812,8 +870,8 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                     lineHeight * (index + 1) + showOffset - rc.bottom);
                 int  horizontalCenter = lineHeight / 2;
                 int  offsetRC = offsetLeft / 4;
-                RECT plusRange = { offsetRC, itemRC.top + horizontalCenter - offsetRC, offsetRC * 3,
-                                  itemRC.top + horizontalCenter + offsetRC };
+                RECT plusRange = { offsetRC, itemRC.top + horizontalCenter - offsetRC + headerAdjust, offsetRC * 3,
+                                  itemRC.top + horizontalCenter + offsetRC + headerAdjust };
                 if (PtInRect(&plusRange, pt)) {
                     BOOL bexpend = 0;
                     if (__get(ptr, PGITEM_STRUCT_OFFSET_SHRINK) == 0) {
@@ -852,8 +910,8 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 }
             }
             RECT itemRC2 =
-                Ex_TreRect(rc, columnWidth, index * lineHeight + showOffset, -offsetLeft + 1,
-                    lineHeight * (index + 1) + showOffset - rc.bottom - 1);
+                Ex_TreRect(rc, columnWidth - 1, index * lineHeight + showOffset + headerAdjust - 1, -offsetLeft,
+                    lineHeight * (index + 1) + showOffset + headerAdjust - rc.bottom - 1);
             if (pt.y > itemRC2.top && pt.y < itemRC2.bottom && pt.x > columnWidth) {
                 Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER, L);
                 LPCWSTR itemText = (LPCWSTR)__get(ptr, PGITEM_STRUCT_OFFSET_TEXT);
@@ -960,8 +1018,16 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
             HEXOBJ combox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOMBOBOX);
             if (itemType == PROPERTYGRID_OBJTYPE_GROUP) {
-                RECT itemRC = Ex_TreRect(rc, 0, index * lineHeight + showOffset, 0,
-                    lineHeight * (index + 1) + showOffset - rc.bottom);
+                // 获取表头可见性
+                BOOL bHeaderVisible = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE);
+                // 新增：计算表头隐藏时的垂直偏移（负值表示上移）
+                int headerAdjust = 0;
+                if (!bHeaderVisible) {
+                    headerAdjust = -lineHeight;
+                }
+
+                RECT itemRC = Ex_TreRect(rc, 0, index * lineHeight + showOffset + headerAdjust, 0,
+                    lineHeight * (index + 1) + showOffset + headerAdjust - rc.bottom);
                 int  horizontalCenter = lineHeight / 2;
                 int  verticalCenter = offsetLeft / 2;
                 int  offsetRC = offsetLeft / 4;
