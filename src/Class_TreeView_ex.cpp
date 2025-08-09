@@ -42,7 +42,7 @@ EX_TREEVIEW_NODEITEM* _treeview_getnextvisibleitem(EX_TREEVIEW_NODEITEM* item)
             ret = item->pChildFirst;
         }
         if (!ret) {
-            ret                        = item->pNext;
+            ret = item->pNext;
             EX_TREEVIEW_NODEITEM* next = item;
             while (!ret) {
                 next = next->pParent;
@@ -87,7 +87,7 @@ INT _treeview_getitemindex(obj_s* pObj, EX_TREEVIEW_NODEITEM* item)
 {
     INT height = 0;
     if (item) {
-        height                    = 1;
+        height = 1;
         EX_TREEVIEW_NODEITEM* tmp = item->pPrev;
         while (tmp) {
             height++;
@@ -106,7 +106,7 @@ INT _treeview_getitemindex(obj_s* pObj, EX_TREEVIEW_NODEITEM* item)
 }
 
 EX_TREEVIEW_NODEITEM* _treeview_getitembyindex(EX_TREEVIEW_NODEITEM* item, INT index,
-                                               INT* childIndex)
+    INT* childIndex)
 {
     if (index <= 0) {
         return 0;
@@ -149,8 +149,8 @@ void _treeview_deleteitemlink(obj_s* pObj, EX_TREEVIEW_NODEITEM* item)
     if (item) {
         EX_TREEVIEW_NODEITEM* next = item->pNext;
         EX_TREEVIEW_NODEITEM* prev = item->pPrev;
-        item->pNext                = NULL;
-        item->pPrev                = NULL;
+        item->pNext = NULL;
+        item->pPrev = NULL;
         if (next) {
             next->pPrev = prev;
         }
@@ -158,13 +158,13 @@ void _treeview_deleteitemlink(obj_s* pObj, EX_TREEVIEW_NODEITEM* item)
             prev->pNext = next;
         }
         EX_TREEVIEW_NODEITEM* parent = item->pParent;
-        item->pParent                = NULL;
+        item->pParent = NULL;
         if (!prev) {
             if (parent) {
                 parent->pChildFirst = next;
             }
             else if ((EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM) ==
-                     item) {
+                item) {
                 _obj_setextralong(pObj, TREEVIEW_LONG_NODEITEM, (size_t)next);
             }
         }
@@ -177,7 +177,7 @@ void _treeview_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pW
     if (item) {
         if (_obj_getextralong(pObj, TREEVIEW_LONG_HIMAGELIST)) {
             _imglist_size((HEXIMAGELIST)_obj_getextralong(pObj, TREEVIEW_LONG_HIMAGELIST),
-                          &imgWidth, NULL);
+                &imgWidth, NULL);
             imgWidth = Ex_Scale(10) + imgWidth;
         }
         if (pObj->canvas_obj_) {
@@ -189,9 +189,9 @@ void _treeview_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pW
                 else {
                     FLOAT width = 0;
                     if (_canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, item->pwzText, -1, 32,
-                                             0, 0, &width, NULL)) {
+                        0, 0, &width, NULL)) {
                         width += item->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT) +
-                                 imgWidth + Ex_Scale(35);
+                            imgWidth + Ex_Scale(35);
                         if (FLAGS_CHECK(pObj->dwStyle_, TREEVIEW_STYLE_SHOWADDANDSUB)) {
                             width += Ex_Scale(20);
                         }
@@ -216,7 +216,7 @@ void _treeview_updateitem(obj_s* pObj)
     if (currentWidth != width) {
         _obj_setextralong(pObj, TREEVIEW_LONG_LEFT, width);
         _obj_sendmessage(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_SIZE, 0,
-                         MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
+            MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
     }
 }
 
@@ -228,7 +228,7 @@ BOOL _treeview_expanditem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item)
         while (tmp) {
             if (!tmp->fExpand) {
                 tmp->fExpand = TRUE;
-                result       = TRUE;
+                result = TRUE;
             }
             tmp = tmp->pParent;
         }
@@ -237,7 +237,7 @@ BOOL _treeview_expanditem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item)
 }
 
 BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM* parent,
-                        EX_TREEVIEW_NODEITEM* insertAfter)
+    EX_TREEVIEW_NODEITEM* insertAfter)
 {
     EX_TREEVIEW_NODEITEM* next = NULL;
     EX_TREEVIEW_NODEITEM* prev = NULL;
@@ -249,17 +249,17 @@ BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NOD
     }
     if ((size_t)insertAfter == TREEVIEW_NODE_ROOT) {
         if (parent) {
-            next                = parent->pChildFirst;
+            next = parent->pChildFirst;
             parent->pChildFirst = item;
         }
         else {
             next = (EX_TREEVIEW_NODEITEM*)_obj_setextralong(pObj, TREEVIEW_LONG_NODEITEM,
-                                                            (size_t)item);
+                (size_t)item);
         }
         prev = item->pPrev;
     }
     else if ((size_t)insertAfter == TREEVIEW_NODE_LAST || !insertAfter ||
-             (size_t)insertAfter == TREEVIEW_NODE_SORT) {
+        (size_t)insertAfter == TREEVIEW_NODE_SORT) {
         if (parent) {
             prev = _treeview_getlastitem(parent->pChildFirst);
         }
@@ -271,12 +271,12 @@ BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NOD
             next = prev->pNext;
         }
         else if (parent) {
-            next                = parent->pChildFirst;
+            next = parent->pChildFirst;
             parent->pChildFirst = item;
         }
         else {
             next = (EX_TREEVIEW_NODEITEM*)_obj_setextralong(pObj, TREEVIEW_LONG_NODEITEM,
-                                                            (size_t)item);
+                (size_t)item);
         }
     }
     else {
@@ -301,8 +301,8 @@ BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NOD
         item->nDepth = 0;
     }
     EX_TREEVIEW_NODEITEM* origin = item->pParent;
-    item->pParent                = parent;
-    INT nCountChild              = item->nCountChild + 1;
+    item->pParent = parent;
+    INT nCountChild = item->nCountChild + 1;
     while (parent) {
         parent->nCountChild += nCountChild;
         parent = parent->pParent;
@@ -315,14 +315,14 @@ BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NOD
 }
 
 EX_TREEVIEW_NODEITEM* _treeview_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIEW_NODEITEM* parent,
-                                        EX_TREEVIEW_NODEITEM* insertAfter, INT nID, BOOL fExpand)
+    EX_TREEVIEW_NODEITEM* insertAfter, INT nID, BOOL fExpand)
 {
     EX_TREEVIEW_NODEITEM* item = (EX_TREEVIEW_NODEITEM*)Ex_MemAlloc(sizeof(EX_TREEVIEW_NODEITEM));
     if (item) {
         if (_treeview_inititem(pObj, item, parent, insertAfter)) {
             item->pwzText = StrDupW(wzTitle);
             item->fExpand = fExpand;
-            item->nID     = nID;
+            item->nID = nID;
         }
         else {
             Ex_MemFree(item);
@@ -347,7 +347,7 @@ void _treeview_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child, BOO
             }
         }
         _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, pObj->id_,
-                            TREEVIEW_EVENT_DELETEITEM, 0, (size_t)item);
+            TREEVIEW_EVENT_DELETEITEM, 0, (size_t)item);
         _treeview_updateitem(pObj);
         if (item->pwzText) {
             Ex_MemFree((LPVOID)item->pwzText);
@@ -363,18 +363,18 @@ EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* 
     EX_TREEVIEW_NODEITEM* tvitem =
         _treeview_newitem(pObj, title, item->itemParent, item->itemInsertAfter, item->nID, FALSE);
     if (tvitem) {
-        tvitem->lParam            = item->lParam;
-        tvitem->nImageIndex       = item->nImageIndex;
+        tvitem->lParam = item->lParam;
+        tvitem->nImageIndex = item->nImageIndex;
         tvitem->nImageIndexExpand = item->nImageIndexExpand;
-        tvitem->fExpand           = item->fExpand;
-        tvitem->dwStyle           = item->dwStyle;
+        tvitem->fExpand = item->fExpand;
+        tvitem->dwStyle = item->dwStyle;
         _treeview_updateitem(pObj);
         if (!item->fUpdateLater) {
-            INT tmp   = 0;
+            INT tmp = 0;
             INT count = _treeview_itemcount(
                 (EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM), &tmp);
             _obj_sendmessage(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_SETITEMCOUNT,
-                             count, 2, 0);
+                count, 2, 0);
         }
     }
     return tvitem;
@@ -397,7 +397,7 @@ BOOL _treeview_generatelist(obj_s* pObj, BOOL bForce)
     if (_obj_getextralong(pObj, TREEVIEW_LONG_INDEXSTART) != list->index_start_ ||
         _obj_getextralong(pObj, TREEVIEW_LONG_INDEXEND) != list->index_end_ || bForce) {
         array_s* pArray = (array_s*)_obj_getextralong(pObj, TREEVIEW_LONG_ITEMARRAY);
-        INT      len    = list->index_end_ - list->index_start_;
+        INT      len = list->index_end_ - list->index_start_;
         if (len) {
             len++;
             Array_Resize(pArray, len + 1, 0);
@@ -407,7 +407,7 @@ BOOL _treeview_generatelist(obj_s* pObj, BOOL bForce)
         }
         EX_TREEVIEW_NODEITEM* root =
             (EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM);
-        INT                   tmp  = 0;
+        INT                   tmp = 0;
         EX_TREEVIEW_NODEITEM* item = _treeview_getitembyindex(root, list->index_start_, &tmp);
         if (!item) {
             return FALSE;
@@ -430,50 +430,73 @@ BOOL _treeview_generatelist(obj_s* pObj, BOOL bForce)
 
 void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
 {
-    EX_CUSTOMDRAW*        ps     = (EX_CUSTOMDRAW*)lParam->lParam;
-    listview_s*           pList  = (listview_s*)_obj_pOwner(pObj);
-    array_s*              pArray = (array_s*)_obj_getextralong(pObj, TREEVIEW_LONG_ITEMARRAY);
-    INT                   index  = ps->iItem - pList->index_start_ + 1;
-    EX_TREEVIEW_NODEITEM* item   = (EX_TREEVIEW_NODEITEM*)Array_GetMember(pArray, index);
+    EX_CUSTOMDRAW* ps = (EX_CUSTOMDRAW*)lParam->lParam;
+    listview_s* pList = (listview_s*)_obj_pOwner(pObj);
+    array_s* pArray = (array_s*)_obj_getextralong(pObj, TREEVIEW_LONG_ITEMARRAY);
+    INT                   index = ps->iItem - pList->index_start_ + 1;
+    EX_TREEVIEW_NODEITEM* item = (EX_TREEVIEW_NODEITEM*)Array_GetMember(pArray, index);
     _canvas_setantialias(ps->hCanvas, 0);
     if (item) {
         ps->iItemParam = (size_t)item;
         if (!_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, pObj->id_,
-                                 TREEVIEW_EVENT_DRAWITEM, index, (size_t)ps)) {
+            TREEVIEW_EVENT_DRAWITEM, index, (size_t)ps)) {
             RECT rect;
             rect.left = ps->rcPaint.left + Ex_Scale(5) +
-                        item->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT);
-            rect.right  = rect.left + Ex_Scale(8);
-            rect.top    = (ps->rcPaint.bottom + ps->rcPaint.top - Ex_Scale(8)) / 2;
+                item->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT);
+            rect.right = rect.left + Ex_Scale(8);
+            rect.top = (ps->rcPaint.bottom + ps->rcPaint.top - Ex_Scale(8)) / 2;
             rect.bottom = (ps->rcPaint.bottom + ps->rcPaint.top + Ex_Scale(8)) / 2;
+
+            // 获取选中项和热点项索引
+            INT iSelected = _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_GETSELECTIONMARK, 0, 0);
+            INT iHot = _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_GETHOTITEM, 0, 0);
+
+            // 绘制背景
+            if (ps->iItem == iSelected) {
+                // 绘制选中背景
+                HEXBRUSH brush = _brush_create((EXARGB)_obj_getextralong(pObj, TREEVIEW_LONG_SELECTEDCOLOR));
+                _canvas_fillrect(ps->hCanvas, brush,
+                    ps->rcPaint.left, ps->rcPaint.top,
+                    ps->rcPaint.right, ps->rcPaint.bottom);
+                _brush_destroy(brush);
+            }
+            else if (ps->iItem == iHot) {
+                // 绘制热点背景
+                HEXBRUSH brush = _brush_create((EXARGB)_obj_getextralong(pObj, TREEVIEW_LONG_HOTCOLOR));
+                _canvas_fillrect(ps->hCanvas, brush,
+                    ps->rcPaint.left, ps->rcPaint.top,
+                    ps->rcPaint.right, ps->rcPaint.bottom);
+                _brush_destroy(brush);
+            }
+
             if (FLAGS_CHECK(pObj->dwStyle_, TREEVIEW_STYLE_SHOWADDANDSUB)) {
                 if (item->pChildFirst) {
                     // 绘制加减号
-                    LPVOID brush = _brush_create(_obj_getcolor(pObj, 2));
+                    LPVOID brush = _brush_create(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
                     _canvas_drawline(ps->hCanvas, brush, rect.left, rect.top, rect.left,
-                                     rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
+                        rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
                     _canvas_drawline(ps->hCanvas, brush, rect.left, rect.top, rect.right, rect.top,
-                                     1, D2D1_DASH_STYLE_SOLID);
+                        1, D2D1_DASH_STYLE_SOLID);
                     _canvas_drawline(ps->hCanvas, brush, rect.right, rect.top, rect.right,
-                                     rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
+                        rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
                     _canvas_drawline(ps->hCanvas, brush, rect.left, rect.bottom, rect.right,
-                                     rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
+                        rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
 
                     _canvas_drawline(ps->hCanvas, brush, rect.left, (rect.top + rect.bottom) / 2,
-                                     rect.right, (rect.top + rect.bottom) / 2, 1,
-                                     D2D1_DASH_STYLE_SOLID);
+                        rect.right, (rect.top + rect.bottom) / 2, 1,
+                        D2D1_DASH_STYLE_SOLID);
                     if (!item->fExpand) {
                         _canvas_drawline(ps->hCanvas, brush, (rect.left + rect.right) / 2, rect.top,
-                                         (rect.left + rect.right) / 2, rect.bottom - 1, 1,
-                                         D2D1_DASH_STYLE_SOLID);
+                            (rect.left + rect.right) / 2, rect.bottom - 1, 1,
+                            D2D1_DASH_STYLE_SOLID);
                     }
                     _brush_destroy(brush);
                 }
             }
 
             if (FLAGS_CHECK(ps->dwStyle, TREEVIEW_STYLE_SHOWCABLE)) {
-                rect.top     = ps->rcPaint.top;
-                rect.bottom  = ps->rcPaint.bottom;
+                rect.top = ps->rcPaint.top;
+                rect.bottom = ps->rcPaint.bottom;
                 LPVOID brush = _brush_create(_obj_getcolor(pObj, 2));
                 if (item->pChildFirst) {
                     if (item->pNext) {
@@ -491,10 +514,10 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
                     }
                 }
                 if (!item->pChildFirst && !item->pParent) {
-                    INT top    = rect.top + (rect.bottom - rect.top) / 2;
+                    INT top = rect.top + (rect.bottom - rect.top) / 2;
                     INT bottom = rect.top + (rect.bottom - rect.top) / 2;
                     _canvas_drawline(ps->hCanvas, brush, rect.left + 4, top, rect.left + 12, bottom,
-                                     1.0, D2D1_DASH_STYLE_DOT);
+                        1.0, D2D1_DASH_STYLE_DOT);
                     if (item->pPrev) {
                         top = rect.top;
                     }
@@ -502,32 +525,32 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
                         bottom = rect.bottom;
                     }
                     _canvas_drawline(ps->hCanvas, brush, rect.left + 4, top, rect.left + 4, bottom,
-                                     1.0, D2D1_DASH_STYLE_DOT);
+                        1.0, D2D1_DASH_STYLE_DOT);
                 }
                 EX_TREEVIEW_NODEITEM* parent = item->pParent;
-                EX_TREEVIEW_NODEITEM* tmp    = item;
+                EX_TREEVIEW_NODEITEM* tmp = item;
                 while (parent && tmp) {
                     if (tmp->pParent) {
                         if (tmp->pParent->pNext) {
                             INT left = ps->rcPaint.left + Ex_Scale(9) +
-                                       tmp->pParent->nDepth *
-                                           _obj_getextralong(pObj, TREEVIEW_LONG_INDENT);
+                                tmp->pParent->nDepth *
+                                _obj_getextralong(pObj, TREEVIEW_LONG_INDENT);
                             _canvas_drawline(ps->hCanvas, brush, left, rect.top, left, rect.bottom,
-                                             1.0, D2D1_DASH_STYLE_DOT);
+                                1.0, D2D1_DASH_STYLE_DOT);
                         }
                     }
                     if (!tmp->nCountChild) {
-                        INT top    = rect.top + (rect.bottom - rect.top) / 2;
+                        INT top = rect.top + (rect.bottom - rect.top) / 2;
                         INT bottom = rect.top + (rect.bottom - rect.top) / 2;
                         _canvas_drawline(ps->hCanvas, brush, rect.left + 4, top, rect.left + 12,
-                                         top, 1.0, D2D1_DASH_STYLE_DOT);
+                            top, 1.0, D2D1_DASH_STYLE_DOT);
                         if (item->pNext) {
                             top = rect.bottom;
                         }
                         _canvas_drawline(ps->hCanvas, brush, rect.left + 4, rect.top, rect.left + 4,
-                                         top, 1.0, D2D1_DASH_STYLE_DOT);
+                            top, 1.0, D2D1_DASH_STYLE_DOT);
                     }
-                    tmp    = tmp->pParent;
+                    tmp = tmp->pParent;
                     parent = tmp->pParent;
                 }
                 _brush_destroy(brush);
@@ -544,24 +567,24 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
 
             if (imageList) {
                 if (nImageIndex) {
-                    rect.left  = rect.right + Ex_Scale(5);
+                    rect.left = rect.right + Ex_Scale(5);
                     rect.right = rect.left + ps->rcPaint.bottom - ps->rcPaint.top;
                     _imglist_draw(imageList, nImageIndex, ps->hCanvas, rect.left, rect.top,
-                                  rect.right, rect.bottom, 255);
+                        rect.right, rect.bottom, 255);
                 }
             }
             _canvas_drawtext(ps->hCanvas, pObj->hFont_, _obj_getcolor(pObj, 2), item->pwzText, -1,
-                             4 | 0 | 32, rect.right + Ex_Scale(5), ps->rcPaint.top,
-                             ps->rcPaint.right, ps->rcPaint.bottom);
+                4 | 0 | 32, rect.right + Ex_Scale(5), ps->rcPaint.top,
+                ps->rcPaint.right, ps->rcPaint.bottom);
         }
     }
 }
 
 EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType)
 {
-    listview_s* pList  = (listview_s*)_obj_pOwner(pObj);
-    INT         cur    = pList->index_mouse_ - pList->index_start_ + 1;
-    array_s*    pArray = (array_s*)_obj_getextralong(pObj, TREEVIEW_LONG_ITEMARRAY);
+    listview_s* pList = (listview_s*)_obj_pOwner(pObj);
+    INT         cur = pList->index_mouse_ - pList->index_start_ + 1;
+    array_s* pArray = (array_s*)_obj_getextralong(pObj, TREEVIEW_LONG_ITEMARRAY);
 
     EX_TREEVIEW_NODEITEM* pItem = NULL;
 
@@ -569,15 +592,15 @@ EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType)
     if (cur > 0 && cur < Array_GetCount(pArray)) {
         pItem = (EX_TREEVIEW_NODEITEM*)Array_GetMember(pArray, cur);
         if (pItem) {
-            RECT rect = {0};
+            RECT rect = { 0 };
             _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_GETITEMRECT,
-                          pList->index_mouse_, (size_t)&rect);
+                pList->index_mouse_, (size_t)&rect);
 
-            RECT tmp  = {0};
-            tmp.left  = rect.left;
+            RECT tmp = { 0 };
+            tmp.left = rect.left;
             tmp.right = rect.left + pItem->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT) +
-                        Ex_Scale(5);
-            tmp.top    = rect.top;
+                Ex_Scale(5);
+            tmp.top = rect.top;
             tmp.bottom = rect.bottom;
 
             if (PtInRect(&tmp, pt)) {
@@ -586,8 +609,8 @@ EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType)
             else {
                 tmp.left =
                     Ex_Scale(5) + pItem->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT);
-                tmp.right  = tmp.left + Ex_Scale(8);
-                tmp.top    = (rect.bottom - rect.top - Ex_Scale(8)) / 2;
+                tmp.right = tmp.left + Ex_Scale(8);
+                tmp.top = (rect.bottom - rect.top - Ex_Scale(8)) / 2;
                 tmp.bottom = (rect.bottom - rect.top + Ex_Scale(8)) / 2;
                 if (pItem->pChildFirst) {
                     pt.x -= rect.left;
@@ -606,15 +629,15 @@ EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType)
                     }
 
                     if (nImg > 0) {
-                        INT          width  = 0;
+                        INT          width = 0;
                         INT          height = 0;
                         HEXIMAGELIST imageList =
                             (HEXIMAGELIST)_obj_getextralong(pObj, TREEVIEW_LONG_HIMAGELIST);
                         _imglist_size(imageList, &width, &height);
 
-                        tmp.left   = tmp.right + Ex_Scale(5);
-                        tmp.right  = tmp.left + width;
-                        tmp.top    = (rect.bottom + rect.top - height) / 2;
+                        tmp.left = tmp.right + Ex_Scale(5);
+                        tmp.right = tmp.left + width;
+                        tmp.top = (rect.bottom + rect.top - height) / 2;
                         tmp.bottom = (rect.bottom + rect.top + height) / 2;
                         if (pItem->pChildFirst) {
                             pt.x += rect.left;
@@ -625,9 +648,9 @@ EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType)
                         }
                     }
                     if (hitType == TREEVIEW_HITTYPE_NOWHERE) {
-                        tmp.left   = tmp.right + Ex_Scale(5);
-                        tmp.right  = rect.right;
-                        tmp.top    = rect.top;
+                        tmp.left = tmp.right + Ex_Scale(5);
+                        tmp.right = rect.right;
+                        tmp.top = rect.top;
                         tmp.bottom = rect.bottom;
                         if (PtInRect(&tmp, pt)) {
                             hitType = TREEVIEW_HITTYPE_ONITEMLABEL;
@@ -666,6 +689,8 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         _obj_setextralong(pObj, TREEVIEW_LONG_INDENT, Ex_Scale(10));
         _obj_setextralong(pObj, TREEVIEW_LONG_ITEMHEIGHT, Ex_Scale(20));
         _obj_setextralong(pObj, TREEVIEW_LONG_ITEMARRAY, (size_t)Array_Create(0));
+        _obj_setextralong(pObj, TREEVIEW_LONG_SELECTEDCOLOR, ExRGB2ARGB(60, 60, 60, 255));
+        _obj_setextralong(pObj, TREEVIEW_LONG_HOTCOLOR, ExRGB2ARGB(30, 30, 30, 255));
     }
     else if (uMsg == WM_DESTROY) {
         Array_Destroy((array_s*)_obj_getextralong(pObj, TREEVIEW_LONG_ITEMARRAY));
@@ -692,7 +717,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             while (pItem) {
                 EX_TREEVIEW_NODEITEM* next = pItem->pNext;
                 _treeview_freeitem(pObj, pItem, TRUE, FALSE);
-                pItem    = next;
+                pItem = next;
                 bDeleted = TRUE;
             }
         }
@@ -701,11 +726,11 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             bDeleted = TRUE;
         }
         if (bDeleted && wParam) {
-            INT tmp   = 0;
+            INT tmp = 0;
             INT count = _treeview_itemcount(
                 (EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM), &tmp);
             _obj_sendmessage(_obj_gethwnd(pObj), hObj, pObj, LISTVIEW_MESSAGE_SETITEMCOUNT, count,
-                             2, 0);
+                2, 0);
             _treeview_generatelist(pObj, TRUE);
         }
         return bDeleted;
@@ -722,7 +747,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         if (wParam) {
             RtlMoveMemory((LPVOID)wParam, (LPVOID)lParam, sizeof(EX_TREEVIEW_ITEMINFO));
             EX_TREEVIEW_NODEITEM* itemInfo = (EX_TREEVIEW_NODEITEM*)wParam;
-            itemInfo->pwzText              = StrDupW(itemInfo->pwzText);
+            itemInfo->pwzText = StrDupW(itemInfo->pwzText);
             _treeview_updateitem(pObj);
             return TRUE;
         }
@@ -747,10 +772,10 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         BOOL result = FALSE;
         if (lParam) {
             INT count = 0;
-            result    = _treeview_expanditem(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
+            result = _treeview_expanditem(pObj, (EX_TREEVIEW_NODEITEM*)lParam);
             if (result) {
                 INT tmp = 0;
-                count   = _treeview_itemcount(
+                count = _treeview_itemcount(
                     (EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM), &tmp);
                 _obj_baseproc(hWnd, hObj, pObj, LISTVIEW_MESSAGE_SETITEMCOUNT, count, 0);
             }
@@ -768,7 +793,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                 if (!Ex_ObjDispatchNotify(hObj, TREEVIEW_EVENT_ITEMEXPANDING, wParam, lParam)) {
                     pItem->fExpand = wParam;
                     Ex_ObjDispatchNotify(hObj, TREEVIEW_EVENT_ITEMEXPANDED, wParam, lParam);
-                    INT tmp   = 0;
+                    INT tmp = 0;
                     INT count = _treeview_itemcount(
                         (EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM),
                         &tmp);
@@ -780,7 +805,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                         index = Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_GETHOTITEM, 0, 0);
                     }
                     _obj_baseproc(hWnd, hObj, pObj, LISTVIEW_MESSAGE_SETITEMCOUNT, count,
-                                  MAKELONG(LVSICF_NOSCROLL, index));
+                        MAKELONG(LVSICF_NOSCROLL, index));
                 }
             }
         }
@@ -820,24 +845,24 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == TREEVIEW_MESSAGE_UPDATE) {
-        INT tmp   = 0;
+        INT tmp = 0;
         INT count = _treeview_itemcount(
             (EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM), &tmp);
         _obj_sendmessage(hWnd, hObj, pObj, LISTVIEW_MESSAGE_SETITEMCOUNT, count, 2, 0);
         _treeview_generatelist(pObj, TRUE);
     }
     else if (uMsg == TREEVIEW_MESSAGE_HITTEST) {
-        return (size_t)_treeview_hittest(pObj, {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)},
-                                         (INT*)wParam);
+        return (size_t)_treeview_hittest(pObj, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) },
+            (INT*)wParam);
     }
     else if (uMsg == WM_LBUTTONDOWN) {
         INT                   hitType = TREEVIEW_HITTYPE_NOWHERE;
         EX_TREEVIEW_NODEITEM* pItem =
-            _treeview_hittest(pObj, {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)}, &hitType);
+            _treeview_hittest(pObj, { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) }, &hitType);
 
         if (pItem && hitType == TREEVIEW_HITTYPE_ONITEMSTATEICON) {
             _obj_baseproc(hWnd, hObj, pObj, TREEVIEW_MESSAGE_EXPAND, !pItem->fExpand,
-                          (size_t)pItem);
+                (size_t)pItem);
             _obj_baseproc(hWnd, hObj, pObj, TREEVIEW_MESSAGE_ENSUREVISIBLE, 0, (size_t)pItem);
             _obj_setextralong(pObj, TREEVIEW_LONG_EXPAND, 1);
             return 1;
@@ -862,7 +887,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             _obj_setextralong(pObj, TREEVIEW_LONG_ITEMHEIGHT, height);
             _treeview_updateitem(pObj);
             _obj_sendmessage(hWnd, hObj, pObj, WM_SIZE, 0,
-                             MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
+                MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
         }
         Ex_ObjInvalidateRect(hObj, 0);
     }
@@ -873,7 +898,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         lParam = Ex_Scale(lParam);
         if (_obj_setextralong(pObj, TREEVIEW_LONG_ITEMHEIGHT, lParam) != lParam) {
             _obj_sendmessage(hWnd, hObj, pObj, WM_SIZE, 0,
-                             MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
+                MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
         }
         Ex_ObjInvalidateRect(hObj, 0);
     }
@@ -888,12 +913,12 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 void _treeview_register()
 {
-    EX_CLASSINFO class_list = {0};
-    INT          nError     = 0;
+    EX_CLASSINFO class_list = { 0 };
+    INT          nError = 0;
     Ex_ObjGetClassInfoEx((LPCWSTR)ATOM_LISTVIEW, &class_list);
     _tv_lpfn = class_list.pfnClsProc;
     // TREEVIEW_STYLE_SHOWADDANDSUB | TREEVIEW_STYLE_SHOWCABLE |
     _obj_register(ATOM_TREEVIEW, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL,
-                  class_list.dwStyleEx, class_list.dwTextFormat, 9 * sizeof(size_t), NULL,
-                  _treeview_proc, class_list.dwFlags, &nError);
+        class_list.dwStyleEx, class_list.dwTextFormat, 11 * sizeof(size_t), NULL,
+        _treeview_proc, class_list.dwFlags, &nError);
 }

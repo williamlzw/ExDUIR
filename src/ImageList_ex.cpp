@@ -99,8 +99,22 @@ size_t _imglist_addimage(HEXIMAGELIST hImageList, size_t nIndex, HEXIMAGE hImg)
 
 HEXIMAGE _imglist_array_addmember(array_s* hArr, size_t nIndex, LPVOID pvItem, INT nType)
 {
+    if (!pvItem) return 0;
+
+    // 获取原图尺寸
+    INT srcWidth = 0, srcHeight = 0;
+    _img_getsize((HEXIMAGE)pvItem, &srcWidth, &srcHeight);
+
+    // 检查尺寸是否匹配
+    INT reqWidth = LOWORD(nType);
+    INT reqHeight = HIWORD(nType);
+
+    if (srcWidth == reqWidth && srcHeight == reqHeight) {
+        return (HEXIMAGE)pvItem; // 直接使用原图
+    }
+
     HEXIMAGE dst = 0;
-    _img_scale((HEXIMAGE)pvItem, LOWORD(nType), HIWORD(nType), &dst);
+    _img_scale((HEXIMAGE)pvItem, reqWidth, reqHeight, &dst);
     return dst;
 }
 
@@ -124,4 +138,118 @@ HEXIMAGELIST _imglist_create(INT width, INT height)
 HEXIMAGE _imglist_get(HEXIMAGELIST hImageList, size_t nIndex)
 {
     return Array_GetMember((array_s*)hImageList, nIndex);
+}
+
+
+BOOL _imglist_savetofile(HEXIMAGELIST hImageList, LPCWSTR lpwzFileName)
+{
+    FILE* fp = _wfopen(lpwzFileName, L"wb");
+    if (!fp) return FALSE;
+
+    BOOL ret = TRUE;
+    // 写入文件头 (EXDUIIMG标识 + 图片数量 + 统一宽度 + 统一高度)
+    char sig[8] = { 'E','X','D','U','I','I','M','G' };
+    INT nCount = Array_GetCount((array_s*)hImageList);
+    INT nSize = Array_GetExtra((array_s*)hImageList);
+    INT nWidth = LOWORD(nSize);
+    INT nHeight = HIWORD(nSize);
+
+    if (fwrite(sig, 1, 8, fp) != 8 ||
+        fwrite(&nCount, sizeof(INT), 1, fp) != 1 ||
+        fwrite(&nWidth, sizeof(INT), 1, fp) != 1 ||
+        fwrite(&nHeight, sizeof(INT), 1, fp) != 1)
+    {
+        ret = FALSE;
+        goto exit;
+    }
+
+    // 遍历所有图片并保存
+    for (INT i = 1; i <= nCount; i++)
+    {
+        HEXIMAGE hImg = Array_GetMember((array_s*)hImageList, i);
+        if (!hImg) continue;
+        LPVOID pData = NULL;
+        size_t nDataSize = _img_savetomemory(hImg, &pData);
+
+        if (pData)
+        {
+            // 写入图片数据长度
+            if (fwrite(&nDataSize, sizeof(size_t), 1, fp) != 1) {
+                ret = FALSE;
+                goto exit;
+            }
+            // 写入图片数据
+            if (fwrite(pData, 1, nDataSize, fp) != nDataSize) {
+                ret = FALSE;
+                goto exit;
+            }
+        }
+        else
+        {
+            // 空图片或保存失败，写入0长度标记
+            size_t zero = 0;
+            if (fwrite(&zero, sizeof(size_t), 1, fp) != 1) {
+                ret = FALSE;
+                goto exit;
+            }
+        }
+    }
+
+exit:
+    fclose(fp);
+    return ret;
+}
+
+HEXIMAGELIST _imglist_createfromfile(LPCWSTR lpwzFileName)
+{
+    FILE* fp = _wfopen(lpwzFileName, L"rb");
+    if (!fp) return 0;
+
+    HEXIMAGELIST hImgList = 0;
+    // 读取文件头
+    char sig[8] = { 0 };
+    INT nCount = 0, nWidth = 0, nHeight = 0;
+
+    if (fread(sig, 1, 8, fp) != 8 ||
+        memcmp(sig, "EXDUIIMG", 8) != 0 ||
+        fread(&nCount, sizeof(INT), 1, fp) != 1 ||
+        fread(&nWidth, sizeof(INT), 1, fp) != 1 ||
+        fread(&nHeight, sizeof(INT), 1, fp) != 1)
+    {
+        goto exit;
+    }
+
+    // 创建图片组
+    hImgList = _imglist_create(nWidth, nHeight);
+    if (!hImgList) goto exit;
+
+    // 读取所有图片数据
+    for (INT i = 1; i <= nCount; i++)
+    {
+        size_t nDataSize = 0;
+        if (fread(&nDataSize, sizeof(size_t), 1, fp) != 1) break;
+
+        if (nDataSize > 0)
+        {
+            LPVOID pData = malloc(nDataSize);
+            if (pData && fread(pData, 1, nDataSize, fp) == nDataSize)
+            {
+                HEXIMAGE hImg = 0;
+                if (_img_createfrommemory(pData, nDataSize, &hImg))
+                {
+                    Array_AddMember((array_s*)hImgList, hImg, i);
+                }
+            }
+            if (pData) free(pData);
+        }
+        else
+        {
+            // 添加空成员占位
+            Array_AddMember((array_s*)hImgList, 0, i);
+        }
+    }
+
+exit:
+    fclose(fp);
+    return hImgList;
 }

@@ -400,7 +400,8 @@ _imglist_size
 _imglist_addimage
 _imglist_create
 _imglist_get
-
+_imglist_createfromfile
+_imglist_savetofile
 
 ;----------------------------------------
 ;fmt

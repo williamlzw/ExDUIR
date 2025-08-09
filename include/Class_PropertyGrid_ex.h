@@ -35,7 +35,14 @@
 #define PROPERTYGRID_LONG_HOBJCOLORPICKER 15
 // 属性框属性_日期框标识
 #define PROPERTYGRID_LONG_HOBJDATEBOX 16
-
+// 属性框属性_是否绘制表头
+#define PROPERTYGRID_LONG_HEADERVISIBLE  17
+// 属性框属性_选中项目索引
+#define PROPERTYGRID_LONG_ITEMSEL 18
+// 属性框属性_热点项目背景色
+#define PROPERTYGRID_LONG_ITEMHOTCOLOR 19
+// 属性框属性_选中项目背景色
+#define PROPERTYGRID_LONG_ITEMSELCOLOR 20
 
 
 //----------数组成员结构体----内存偏移----------------------
@@ -56,3 +63,20 @@
 
 void             _propertygrid_register();
 LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+std::wstring _propertygrid_getedittext(HEXOBJ hObj);
+void _propertygrid_setitemtext(HEXOBJ hObj, INT index, std::wstring text);
+void _propertygrid_oncomboboxdelmember(array_s* pArray, INT nIndex, void* pvItem, INT nType);
+void _propertygrid_ondelmember(array_s* pArray, INT nIndex, void* pvItem, INT nType);
+LRESULT CALLBACK _propertygrid_oncomboboxevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+	LPARAM lParam);
+LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+	LPARAM lParam);
+LRESULT CALLBACK _propertygrid_oncolorpickerevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+	LPARAM lParam);
+LRESULT CALLBACK _propertygrid_ondateboxevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+	LPARAM lParam);
+LRESULT CALLBACK _propertygrid_onscrollbarmsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
+	LPARAM lParam, LRESULT* lpResult);
+INT _propertygrid_linetoarrayindex(HEXOBJ hObj, INT lineIndex);
+INT _propertygrid_arrayindextoline(HEXOBJ hObj, INT arrayIndex);
+

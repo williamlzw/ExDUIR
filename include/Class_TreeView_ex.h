@@ -18,6 +18,10 @@
 #define TREEVIEW_LONG_LEFT 7
 // 树形列表属性_是否点击收缩
 #define TREEVIEW_LONG_EXPAND 8
+// 树形列表属性_选中项颜色
+#define TREEVIEW_LONG_SELECTEDCOLOR 9
+// 树形列表属性_热点项颜色
+#define TREEVIEW_LONG_HOTCOLOR 10
 
 void                  _treeview_register();
 EX_TREEVIEW_NODEITEM* _treeview_getlastitem(EX_TREEVIEW_NODEITEM* item);
@@ -27,18 +31,18 @@ EX_TREEVIEW_NODEITEM* _treeview_getnextvisibleitem(EX_TREEVIEW_NODEITEM* item);
 EX_TREEVIEW_NODEITEM* _treeview_getnextitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT type);
 INT                   _treeview_getitemindex(obj_s* pObj, EX_TREEVIEW_NODEITEM* item);
 EX_TREEVIEW_NODEITEM* _treeview_getitembyindex(EX_TREEVIEW_NODEITEM* item, INT index,
-                                               INT* childIndex);
+    INT* childIndex);
 INT                   _treeview_getvisiblecount(EX_TREEVIEW_NODEITEM* item, BOOL expand);
 void                  _treeview_deleteitemlink(obj_s* pObj, EX_TREEVIEW_NODEITEM* item);
 void _treeview_calcitemmaxwidth(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, INT* pWidth);
 void _treeview_updateitem(obj_s* pObj);
 BOOL _treeview_expanditem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item);
 BOOL _treeview_inititem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, EX_TREEVIEW_NODEITEM* parent,
-                        EX_TREEVIEW_NODEITEM* insertAfter);
+    EX_TREEVIEW_NODEITEM* insertAfter);
 EX_TREEVIEW_NODEITEM* _treeview_newitem(obj_s* pObj, LPCWSTR wzTitle, EX_TREEVIEW_NODEITEM* parent,
-                                        EX_TREEVIEW_NODEITEM* insertAfter, INT nID, BOOL fExpand);
+    EX_TREEVIEW_NODEITEM* insertAfter, INT nID, BOOL fExpand);
 void                  _treeview_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child = TRUE,
-                                         BOOL dellink = TRUE);
+    BOOL dellink = TRUE);
 EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* item);
 EX_TREEVIEW_NODEITEM* _treeview_getnodefromindex(obj_s* pObj, INT index);
 BOOL                  _treeview_generatelist(obj_s* pObj, BOOL bForce);

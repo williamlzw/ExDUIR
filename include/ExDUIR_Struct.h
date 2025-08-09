@@ -1517,6 +1517,8 @@
 #define PROPERTYGRID_MESSAGE_SETITEMVALUE 10012
 // 消息_属性框_清空项目
 #define PROPERTYGRID_MESSAGE_CLEAR 10013
+// 消息_属性框_是否显示表头, wParam： 1显示  0不显示
+#define PROPERTYGRID_MESSAGE_SHOWHEADER 10014
 #pragma endregion propertygrid message
 
 #pragma region propertygrid notify
@@ -1773,6 +1775,89 @@
 // 通知_流程图_节点双击 wParam: 节点ID
 #define FLOWCHART_EVENT_NODE_DOUBLE_CLICKED 30007
 #pragma endregion flowchart event constant
+
+// Grid组件消息定义
+#define GRIDM_SETROWCOUNT           (WM_USER + 100)
+#define GRIDM_SETCOLCOUNT           (WM_USER + 101)
+#define GRIDM_GETROWCOUNT           (WM_USER + 102)
+#define GRIDM_GETCOLCOUNT           (WM_USER + 103)
+#define GRIDM_SETCELLTEXT           (WM_USER + 104)
+#define GRIDM_GETCELLTEXT           (WM_USER + 105)
+#define GRIDM_SETFOCUSCELL          (WM_USER + 106)
+#define GRIDM_GETFOCUSCELL          (WM_USER + 107)
+#define GRIDM_SORTROWS              (WM_USER + 108)
+#define GRIDM_MERGECELLS            (WM_USER + 109)
+#define GRIDM_UNMERGECELLS          (WM_USER + 110)
+#define GRIDM_SETCOLUMNWIDTH        (WM_USER + 111)
+#define GRIDM_GETCOLUMNWIDTH        (WM_USER + 112)
+#define GRIDM_SETROWHEIGHT          (WM_USER + 113)
+#define GRIDM_GETROWHEIGHT          (WM_USER + 114)
+#define GRIDM_SETCELLBACKGROUND     (WM_USER + 115)
+#define GRIDM_SETCELLTEXTCOLOR      (WM_USER + 116)
+#define GRIDM_SETCELLFONT           (WM_USER + 117)
+#define GRIDM_SETCELLFORMAT         (WM_USER + 118)
+#define GRIDM_SETCELLCHECKED        (WM_USER + 119)
+#define GRIDM_GETCELLCHECKED        (WM_USER + 120)
+#define GRIDM_SETCELLREADONLY       (WM_USER + 121)
+#define GRIDM_GETCELLREADONLY       (WM_USER + 122)
+#define GRIDM_SETCELLBITMAP         (WM_USER + 123)
+#define GRIDM_SETCELLIMAGE          (WM_USER + 124)
+#define GRIDM_SETCELLPARAM          (WM_USER + 125)
+#define GRIDM_GETCELLPARAM          (WM_USER + 126)
+#define GRIDM_CLEARALL              (WM_USER + 127)
+#define GRIDM_INSERTROW             (WM_USER + 128)
+#define GRIDM_DELETEROW             (WM_USER + 129)
+#define GRIDM_INSERTCOLUMN          (WM_USER + 130)
+#define GRIDM_DELETECOLUMN          (WM_USER + 131)
+#define GRIDM_SETSELECTION          (WM_USER + 132)
+#define GRIDM_GETSELECTION          (WM_USER + 133)
+#define GRIDM_SETSCROLLPOS          (WM_USER + 134)
+#define GRIDM_GETSCROLLPOS          (WM_USER + 135)
+#define GRIDM_SETGRIDLINES          (WM_USER + 136)
+#define GRIDM_GETGRIDLINES          (WM_USER + 137)
+#define GRIDM_SETEDITABLE           (WM_USER + 138)
+#define GRIDM_GETEDITABLE           (WM_USER + 139)
+#define GRIDM_SETENABLESELECTION    (WM_USER + 140)
+#define GRIDM_GETENABLESELECTION    (WM_USER + 141)
+#define GRIDM_SETDOUBLEBUFFER       (WM_USER + 142)
+#define GRIDM_GETDOUBLEBUFFER       (WM_USER + 143)
+#define GRIDM_GETSELECTIONEND          (WM_USER + 144)
+
+// Grid组件通知定义
+#define GRIDN_CELLCHANGED           (WM_USER + 200)
+#define GRIDN_SELCHANGED            (WM_USER + 201)
+#define GRIDN_BEGINEDIT             (WM_USER + 202)
+#define GRIDN_ENDEDIT               (WM_USER + 203)
+#define GRIDN_CELLCLICK             (WM_USER + 204)
+#define GRIDN_CELLDBLCLICK          (WM_USER + 205)
+#define GRIDN_CELLCHECKED           (WM_USER + 206)
+#define GRIDN_SORTCOMPLETE          (WM_USER + 207)
+
+// Grid组件样式定义
+#define EGS_GRIDLINES              0x00000001
+#define EGS_EDITABLE               0x00000002
+#define EGS_SELECTION              0x00000004
+#define EGS_DOUBLEBUFFER           0x00000008
+#define EGS_FIXEDROWS              0x00000010
+#define EGS_FIXEDCOLS              0x00000020
+#define EGS_SINGLEROWSELECTION     0x00000040
+#define EGS_ALLOWROWRESIZE         0x00000080
+#define EGS_ALLOWCOLUMNRESIZE      0x00000100
+#define EGS_SORTONCLICK            0x00000200
+#define EGS_HANDLETABKEY           0x00000400
+#define EGS_TITLETIPS              0x00000800
+#define EGS_WYSIWYGPRINTING       0x00001000
+#define EGS_HIDDENCOLUNHIDE        0x00002000
+#define EGS_HIDDENROWUNHIDE        0x00004000
+#define EGS_SHOWZEROINNUMCELL      0x00008000
+#define EGS_SIZETOWIDTH            0x00010000
+#define EGS_CANCLICKFIXED          0x00020000
+
+// Grid组件扩展样式定义
+#define EGS_EX_READONLY            0x00000001
+#define EGS_EX_VIRTUAL             0x00000002
+#define EGS_EX_OWNERDRAW           0x00000004 
+
 
 #define LVSICF_NOSCROLL 2
 #define EX_DEFINE_API(NAME, RET, ARGS)      \

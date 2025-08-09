@@ -1204,19 +1204,26 @@ size_t _imglist_add(HEXIMAGELIST hImageList, size_t nIndex, LPVOID pImg, size_t 
 size_t _imglist_addimage(HEXIMAGELIST hImageList, size_t nIndex, HEXIMAGE hImg);
 
 /// <summary>
-/// 图片组获取图片数量
-/// </summary>
-/// <param name="hImageList"></param>
-/// <returns>返回图片组图片数量</returns>
-INT _imglist_count(HEXIMAGELIST hImageList);
-
-/// <summary>
 /// 图片组创建
 /// </summary>
 /// <param name="width">宽度</param>
 /// <param name="height">高度</param>
 /// <returns></returns>
 HEXIMAGELIST _imglist_create(INT width, INT height);
+
+/// <summary>
+/// 从文件创建图片组
+/// </summary>
+/// <param name="lpwzFileName">文件名</param>
+/// <returns></returns>
+HEXIMAGELIST _imglist_createfromfile(LPCWSTR lpwzFileName);
+
+/// <summary>
+/// 图片组获取图片数量
+/// </summary>
+/// <param name="hImageList"></param>
+/// <returns>返回图片组图片数量</returns>
+INT _imglist_count(HEXIMAGELIST hImageList);
 
 /// <summary>
 /// 图片组删除图片
@@ -1255,6 +1262,14 @@ BOOL _imglist_draw(HEXIMAGELIST hImageList, size_t nIndex, HEXCANVAS hCanvas, IN
 /// <param name="nIndex"></param>
 /// <returns></returns>
 HEXIMAGE _imglist_get(HEXIMAGELIST hImageList, size_t nIndex);
+
+/// <summary>
+/// 保存图片组到文件
+/// </summary>
+/// <param name="hImageList"></param>
+/// <param name="lpwzFileName">文件名</param>
+/// <returns></returns>
+BOOL _imglist_savetofile(HEXIMAGELIST hImageList, LPCWSTR lpwzFileName);
 
 /// <summary>
 /// 图片组设置图片从数据
