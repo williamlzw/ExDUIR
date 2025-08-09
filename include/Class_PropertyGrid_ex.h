@@ -63,8 +63,7 @@
 
 void             _propertygrid_register();
 LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
-std::wstring _propertygrid_getedittext(HEXOBJ hObj);
-void _propertygrid_setitemtext(HEXOBJ hObj, INT index, std::wstring text);
+void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR text);
 void _propertygrid_oncomboboxdelmember(array_s* pArray, INT nIndex, void* pvItem, INT nType);
 void _propertygrid_ondelmember(array_s* pArray, INT nIndex, void* pvItem, INT nType);
 LRESULT CALLBACK _propertygrid_oncomboboxevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,

@@ -97,14 +97,23 @@ void _circleprogressbar_paint(HEXOBJ hObj)
                          lineCap == 0 ? D2D1_CAP_STYLE_SQUARE : D2D1_CAP_STYLE_ROUND);
         _path_destroy(path2);
         _brush_destroy(hBrush);
-        std::wstring text = std::to_wstring((INT)((FLOAT)nPos / nRange * 100)) + L"%";
+
+        wchar_t buffer[10];
+        if (nRange == 0) {
+            // 避免除以零错误
+            swprintf_s(buffer, L"0%%");
+        }
+        else {
+            int percent = (INT)((FLOAT)(nPos) / nRange * 100.0f);
+            swprintf_s(buffer, L"%d%%", percent); 
+        }
         HEXFONT      hFont = (HEXFONT)Ex_ObjGetLong(hObj, CIRCLEPROGRESSBAR_LONG_FONT);
         if (hFont == 0)
         {
             hFont = Ex_ObjGetFont(hObj);
         }
         _canvas_drawtext(ps.hCanvas, hFont,
-                         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), text.c_str(), -1,
+                         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), buffer, -1,
                          DT_CENTER | DT_SINGLELINE | DT_VCENTER, lineHeight, lineHeight,
                          ps.uWidth - lineHeight, ps.uHeight - lineHeight);
         Ex_ObjEndPaint(hObj, &ps);

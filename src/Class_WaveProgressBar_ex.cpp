@@ -126,13 +126,16 @@ void _waveprogressbar_paint(HEXOBJ hObj)
         _path_destroy(path1);
         _path_destroy(path2);
         _brush_destroy(hBrush);
-        std::wstring text  = std::to_wstring((INT)((FLOAT)pos / 100 * 100)) + L"%";
+        wchar_t buffer[10];
+        int percent = (INT)((FLOAT)(pos) / 100 * 100.0f);
+        swprintf_s(buffer, L"%d%%", percent);
+       
         HEXFONT      hFont = (HEXFONT)Ex_ObjGetLong(hObj, WAVEPROGRESSBAR_LONG_FONT);
         if (hFont == 0) {
             hFont = Ex_ObjGetFont(hObj);
         }
         _canvas_drawtext(ps.hCanvas, hFont, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                         text.c_str(), -1, DT_CENTER | DT_SINGLELINE | DT_VCENTER, 4,
+            buffer, -1, DT_CENTER | DT_SINGLELINE | DT_VCENTER, 4,
                          4, ps.uWidth - 4, ps.uHeight - 4);
         Ex_ObjEndPaint(hObj, &ps);
     }

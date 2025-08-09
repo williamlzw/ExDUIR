@@ -865,14 +865,28 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                 if (!((pObj->dwStyle_ & EDIT_STYLE_NEWLINE) ==
                       EDIT_STYLE_NEWLINE))   // 禁止回车时,删除\r\n
                 {
-                    std::wstring            strValue = (LPCWSTR)lParam;
-                    std::wstring::size_type iFind    = 0;
-                    while (true) {
-                        iFind = strValue.find(L"\r\n", iFind);
-                        if (std::wstring::npos == iFind) break;
-                        strValue.replace(iFind, 2, L"");
+                    LPCWSTR src = (LPCWSTR)lParam;
+                    int length = lstrlenW(src);  // 获取源字符串长度
+
+                    // 分配目标缓冲区（足够容纳原字符串）
+                    wchar_t* dest = new wchar_t[length + 1];
+                    int dest_index = 0;  // 目标缓冲区当前写入位置
+
+                    // 遍历源字符串
+                    for (int i = 0; i < length; ) {
+                        // 检查当前是否匹配 "\r\n"
+                        if (src[i] == L'\r' && (i + 1 < length) && src[i + 1] == L'\n') {
+                            i += 2;  // 跳过这两个字符
+                        }
+                        else {
+                            dest[dest_index++] = src[i++];  // 复制字符
+                        }
                     }
-                    auto ret = ((ITextServices*)_edit_its(pObj))->TxSetText(strValue.c_str());
+
+                    // 添加字符串结束符
+                    dest[dest_index] = L'\0';
+                    auto ret = ((ITextServices*)_edit_its(pObj))->TxSetText(dest);
+                    delete[] dest;
                     return ret;
                 }
             }

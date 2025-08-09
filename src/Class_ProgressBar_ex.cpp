@@ -56,10 +56,17 @@ void _progressbar_paint(HEXOBJ hObj)
             _brush_setcolor(hBrush, Ex_ObjGetLong(hObj, PROGRESSBAR_LONG_FOREGROUNDCOLOR));
             _canvas_fillroundedrect(ps.hCanvas, hBrush, ps.rcPaint.left, ps.rcPaint.top, pbD,
                                     ps.rcPaint.bottom, Radius, Radius);
-
-            std::wstring text = std::to_wstring((INT)((FLOAT)nPos / nRange * 100)) + L"%";
+            wchar_t buffer[10]; 
+            if (nRange == 0) {
+                // 避免除以零错误
+                swprintf_s(buffer, L"0%%");
+            }
+            else {
+                int percent = (INT)((FLOAT)(nPos) / nRange * 100.0f);
+                swprintf_s(buffer, L"%d%%", percent);
+            }
             _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
-                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), text.c_str(), -1,
+                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), buffer, -1,
                              DT_RIGHT | DT_SINGLELINE | DT_VCENTER, ps.rcPaint.left, ps.rcPaint.top,
                              pbD - 5, ps.rcPaint.bottom);
         }
@@ -88,9 +95,17 @@ void _progressbar_paint(HEXOBJ hObj)
             _matrix_rotate(mx, (FLOAT) -90);
             _matrix_translate(mx, -(FLOAT)ps.uWidth / 2, -(FLOAT)(filledBottom + 10 ));
             _canvas_settransform(ps.hCanvas, mx);
-            std::wstring text = std::to_wstring((INT)((FLOAT)nPos / nRange * 100)) + L"%";
+            wchar_t buffer[10]; 
+            if (nRange == 0) {
+                // 避免除以零错误
+                swprintf_s(buffer, L"0%%");
+            }
+            else {
+                int percent = (INT)((FLOAT)(nPos) / nRange * 100.0f);
+                swprintf_s(buffer, L"%d%%", percent);
+            }
             _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
-                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), text.c_str(), -1,
+                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL), buffer, -1,
                              DT_LEFT | DT_SINGLELINE, ps.rcPaint.left - 20, filledBottom ,
                              ps.rcPaint.right, ps.rcPaint.bottom );
   
