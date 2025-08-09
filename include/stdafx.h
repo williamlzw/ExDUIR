@@ -1,5 +1,4 @@
 ﻿#pragma once
-// clang-format off
 #include <Windows.h>
 #include <algorithm>
 #include <fstream>
@@ -81,6 +80,8 @@
 #include "ExDUIR_Interface.h"
 #include "ExDUIR_Struct.h"
 
+//必须，防止svg崩溃
+#pragma pack()
 #include "nanosvg/nanosvg.h"
 #include "nanosvg/nanosvgrast.h"
 #include "CustomFont.h"
@@ -152,7 +153,7 @@
 #include "Class_LineChart_ex.h"
 #include "Class_ChatBox_ex.h"
 #include "Class_FlowChart_ex.h"
-
+//#include "Class_Grid_ex.h"
 
 #ifdef VCL_PLAYER
 #include "Class_VLCPlayer_ex.h"

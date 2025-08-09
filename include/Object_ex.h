@@ -209,7 +209,7 @@ struct ti_s
     INT     rect_top_;
     INT     rect_right_;
     INT     rect_bottom_;
-    LPVOID     hinst_;
+    INT     hinst_;
     LPCWSTR lpszText_;
     LPARAM  lParam_;
 };
