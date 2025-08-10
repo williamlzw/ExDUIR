@@ -66,7 +66,76 @@ void SVGDocument::Render(float width, float height) {
   ColorMap colorMap;
   Render(colorMap, width, height);
 }
+// SVGDocument.cpp
+bool SVGDocument::SetElementFillColor(const char* id, EXARGB color) {
+    auto elementIter = mIdToElementMap.find(id);
+    if (elementIter == mIdToElementMap.end())
+        return false;
 
+    Color rgbaColor{
+        ExGetR(color) / 255.0f,
+        ExGetG(color) / 255.0f,
+        ExGetB(color) / 255.0f,
+        ExGetA(color) / 255.0f
+    };
+
+    auto element = elementIter->second;
+    switch (element->Type()) {
+    case ElementType::kGraphic: {
+        auto graphic = static_cast<Graphic*>(element.get());
+        // 关键修改：同时更新 internalPaint 和 paint
+        graphic->fillStyle.internalPaint = rgbaColor; // 更新原始数据
+        graphic->fillStyle.paint = rgbaColor;        // 更新渲染颜色
+        graphic->fillStyle.hasFill = true;
+        return true;
+    }
+    case ElementType::kReference: {
+        auto reference = static_cast<Reference*>(element.get());
+        reference->fillStyle.internalPaint = rgbaColor;
+        reference->fillStyle.paint = rgbaColor;
+        reference->fillStyle.hasFill = true;
+        return true;
+    }
+    default:
+        return false;
+    }
+}
+
+bool SVGDocument::SetElementStrokeColor(const char* id, EXARGB color, float strokeWidth) {
+    auto elementIter = mIdToElementMap.find(id);
+    if (elementIter == mIdToElementMap.end())
+        return false;
+
+    // 转换为RGBA浮点格式
+    Color rgbaColor{
+        ExGetR(color) / 255.0f,
+        ExGetG(color) / 255.0f,
+        ExGetB(color) / 255.0f,
+        ExGetA(color) / 255.0f
+    };
+
+    auto element = elementIter->second;
+    switch (element->Type()) {
+    case ElementType::kGraphic: {
+        auto graphic = static_cast<Graphic*>(element.get());
+        graphic->strokeStyle.paint = rgbaColor;
+        graphic->strokeStyle.hasStroke = true;
+        if (strokeWidth > 0)
+            graphic->strokeStyle.lineWidth = strokeWidth;
+        return true;
+    }
+    case ElementType::kReference: {
+        auto reference = static_cast<Reference*>(element.get());
+        reference->strokeStyle.paint = rgbaColor;
+        reference->strokeStyle.hasStroke = true;
+        if (strokeWidth > 0)
+            reference->strokeStyle.lineWidth = strokeWidth;
+        return true;
+    }
+    default:
+        return false; // 不支持的元素类型
+    }
+}
 void SVGDocument::SetUserFillColor(EXARGB color) { userFillColor = color; }
 
 void SVGDocument::SetUserStrokeColor(EXARGB color, float strokeWidth) {
@@ -200,8 +269,16 @@ void SVGDocument::ParseChild(XMLNode* child) {
   auto graphicStyle = ParseGraphic(child, fillStyle, strokeStyle, classNames);
 
   std::string idString;
-  auto idAttr = child->GetAttribute(kIdAttr);
-  if (idAttr.found) idString = idAttr.value;
+// 优先使用标准 id 属性
+    auto idAttr = child->GetAttribute(kIdAttr);
+    if (idAttr.found) {
+        idString = idAttr.value;
+    }
+    // 回退到其他可能的 ID 属性（如示例中的 p-id）
+    else {
+        auto pIdAttr = child->GetAttribute("p-id"); // 或任何其他可能的ID属性名
+        if (pIdAttr.found) idString = pIdAttr.value;
+    }
 
   // Check if we have a shape rect, circle, ellipse, line, polygon, polyline or
   // path first.
@@ -1189,9 +1266,16 @@ void SVGDocument::AddChildToCurrentGroup(std::shared_ptr<Element> element,
 
   mGroupStack.top()->children.push_back(element);
 
-  if (!idString.empty() &&
-      mIdToElementMap.find(idString) == mIdToElementMap.end())
-    mIdToElementMap.emplace(std::move(idString), element);
+  // 添加以下逻辑确保所有元素都能被找到
+  if (!idString.empty()) {
+      // 更新或添加映射
+      mIdToElementMap[idString] = element;
+  }
+  // 为引用元素添加额外映射
+  else if (element->Type() == ElementType::kReference) {
+      auto reference = static_cast<Reference*>(element.get());
+      mIdToElementMap[reference->href] = element;
+  }
 }
 
 static void ResolveColorImpl(const ColorMap& colorMap,

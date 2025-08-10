@@ -730,6 +730,8 @@ BOOL _svg_create(const char* svgdata, HEXSVG* phSvg);
 /// <returns></returns>
 BOOL _svg_createfromfile(const wchar_t* svgfile, HEXSVG* phSvg);
 
+void _svg_setelementfillcolor(HEXSVG hSvg, const char* id, EXARGB color);
+void _svg_setelementstrokecolor(HEXSVG hSvg, const char* id, EXARGB color, float strokeWidth = 0.0f);
 void _svg_setfillcolor(HEXSVG hSvg, EXARGB color);
 void _svg_setstrokecolor(HEXSVG hSvg, EXARGB color, FLOAT width = 0);
 

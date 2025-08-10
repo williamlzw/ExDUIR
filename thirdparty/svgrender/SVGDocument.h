@@ -183,7 +183,9 @@ class SVGDocument {
   EXARGB GetUserFillColor() { return userFillColor; }
 
   HRESULT GetUserStrokeColor(EXARGB* color, float* strokeWidth);
-
+  // 新增方法
+  bool SetElementFillColor(const char* id, EXARGB color);
+  bool SetElementStrokeColor(const char* id, EXARGB color, float strokeWidth = 0.0f);
  public:
   enum class ElementType { kImage, kGraphic, kGroup, kReference };
 
@@ -399,8 +401,8 @@ class SVGDocument {
 
   std::stack<D2D1_MATRIX_3X2_F> mContextTransform;
 
-  EXARGB userFillColor;
-  EXARGB userStrokeColor;
+  EXARGB userFillColor = 0;
+  EXARGB userStrokeColor = 0;
   float userStrokeWidth = 0.f;
 };
 

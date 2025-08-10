@@ -1822,6 +1822,20 @@ BOOL _svg_destroy(HEXSVG hSvg) {
   return FALSE;
 }
 
+void _svg_setelementfillcolor(HEXSVG hSvg, const char* id, EXARGB color) {
+    SVGNative::SVGDocument* pSvg = nullptr;
+    INT nError = 0;
+    if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
+        pSvg->SetElementFillColor(id, color);
+    }
+}
+void _svg_setelementstrokecolor(HEXSVG hSvg, const char* id, EXARGB color, float strokeWidth) {
+    SVGNative::SVGDocument* pSvg = nullptr;
+    INT nError = 0;
+    if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
+        pSvg->SetElementStrokeColor(id, color, strokeWidth);
+    }
+}
 void _svg_setfillcolor(HEXSVG hSvg, EXARGB color) {
   SVGNative::SVGDocument* pSvg = nullptr;
   INT nError = 0;

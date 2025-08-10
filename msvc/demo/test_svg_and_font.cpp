@@ -25,21 +25,25 @@ LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
                          L"\uE007 \uE008 \uE009 \uE00A \uE00B \uE00C \uE00D",
                          -1, -1, 20, 350, LOWORD(lParam), 580);
         _font_destroy(ColorToolbarIcons);
+
         HEXSVG svg = 0;
-        _svg_createfromfile(L"./res/微信.svg", &svg);
-        _svg_setfillcolor(svg, ExARGB(255, 255, 255, 255));
-        _canvas_drawhSvg(wParam, svg, 50, 50, 300, 300);
+        _svg_createfromfile(L"res/微信.svg", &svg);
+        //_svg_setfillcolor(svg, ExARGB(255, 255, 255, 255));
+        _svg_setelementfillcolor(svg, "1208", ExARGB(255, 0, 255, 255));
+        _canvas_drawhSvg(wParam, svg, 50, 50, 100, 100);
         _svg_destroy(svg);
 
-        _svg_createfromfile(L"./res/微博.svg", &svg);
-        _svg_setfillcolor(svg, ExARGB(0, 255, 255, 255));
-        _canvas_drawhSvg(wParam, svg, 360, 50, 300, 300);
+        _svg_createfromfile(L"res/微博.svg", &svg);
+        //_svg_setfillcolor(svg, ExARGB(0, 255, 255, 255));
+        _svg_setelementfillcolor(svg, "1372", ExARGB(0, 20, 255, 255));
+        _canvas_drawhSvg(wParam, svg, 200, 50, 100, 100);
         _svg_destroy(svg);
 
-        _svg_createfromfile(L"./res/QQ.svg", &svg);
-        _svg_setfillcolor(svg, ExARGB(255, 0, 255, 255));
-        _canvas_drawhSvg(wParam, svg, 650, 50, 300, 300);
+        _svg_createfromfile(L"res/QQ.svg", &svg);
+        //_svg_setfillcolor(svg, ExARGB(255, 0, 255, 255));
+        _canvas_drawhSvg(wParam, svg, 350, 50, 100, 100);
         _svg_destroy(svg);
+
         *lpResult = 1;
         return 1;
     }
