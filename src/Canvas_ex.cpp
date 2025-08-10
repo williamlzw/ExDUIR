@@ -1852,8 +1852,7 @@ void _svg_setstrokecolor(HEXSVG hSvg, EXARGB color, FLOAT width)
   }
 }
 
-
-BOOL _canvas_drawhSvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
+BOOL _canvas_drawsvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
                       FLOAT width, FLOAT height) {
   canvas_s* pCanvas = nullptr;
   SVGNative::SVGDocument* pSvg = nullptr;
@@ -1876,7 +1875,7 @@ BOOL _canvas_drawhSvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
   }
   return nError == 0;
 }
-BOOL _canvas_drawhSvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top) {
+BOOL _canvas_drawsvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top) {
   canvas_s* pCanvas = nullptr;
   SVGNative::SVGDocument* pSvg = nullptr;
   INT nError = 0;

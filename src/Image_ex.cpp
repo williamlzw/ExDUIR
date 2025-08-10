@@ -1117,60 +1117,74 @@ BOOL _img_paste(HEXIMAGE dstImg, HEXIMAGE srcImg, INT destX, INT destY, HEXIMAGE
     return TRUE;
 }
 
-BOOL _img_createfromsvg(EXARGB color, NSVGimage* image, HEXIMAGE* phImg)
+BOOL _img_createfromsvg(HEXSVG hSvg, INT width, INT height, HEXIMAGE* phImg)
 {
-    BOOL ret = FALSE;
-    int  w   = (int)image->width;
-    int  h   = (int)image->height;
-    if (color) {
-        image->shapes->fill.color =
-            nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
-        auto next = image->shapes->next;
-        while (next != NULL) {
-            next->fill.color =
-                nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
-            next = next->next;
+    INT nError = 0;
+    SVGNative::SVGDocument* pSvg = nullptr;
+    if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError))
+    {
+        D2D1_SIZE_U size;
+        size.width = width;
+        size.height = height;
+        D2D1_BITMAP_PROPERTIES1 pro = {};
+        pro.pixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+        pro.pixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        pro.dpiX = 96;
+        pro.dpiY = 96;
+        pro.bitmapOptions = D2D1_BITMAP_OPTIONS_CANNOT_DRAW | D2D1_BITMAP_OPTIONS_CPU_READ;
+        HRESULT hr = 0;
+        ID2D1Bitmap* pBitmap = _dx_createbitmap(g_Ri.pD2DDeviceContext, width, height, &nError);
+        if (pBitmap)
+        {
+            pSvg->mContext->SetTarget(pBitmap);
+            g_Ri.pD2DDeviceContext->BeginDraw();
+            pSvg->Render(width, height);
+            hr = g_Ri.pD2DDeviceContext->EndDraw();
+            ID2D1Bitmap1* pBitmap2 = nullptr;
+            hr = g_Ri.pD2DDeviceContext->CreateBitmap(size, NULL, 0, pro, (ID2D1Bitmap1**)&pBitmap2);
+            if (SUCCEEDED(hr))
+            {
+                hr = pBitmap2->CopyFromBitmap(0, pBitmap, 0);
+                if (SUCCEEDED(hr))
+                {
+                    IWICBitmap* pWBitmap = nullptr;
+                    D2D1_MAPPED_RECT MR;
+                    hr = pBitmap2->Map(D2D1_MAP_OPTIONS_READ, &MR);
+                    hr = g_Ri.pWICFactory->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppPBGRA,
+                        MR.pitch, MR.pitch * height, MR.bits, &pWBitmap);
+                    hr = pBitmap2->Unmap();
+                    if (SUCCEEDED(hr))
+                    {
+                        HEXIMAGE hImg = _img_init(pWBitmap, 0, 1, NULL, &nError);
+                        if (phImg)
+                        {
+                            *phImg = hImg;
+                        }
+                    }
+                }
+                else
+                    nError = 3;
+                pBitmap->Release();
+                pBitmap2->Release();
+            }
         }
+        else
+            nError = 4;
     }
-    NSVGrasterizer* rast = nsvgCreateRasterizer();
-    if (rast) {
-        unsigned char* img = (unsigned char*)malloc(w * h * 4);
-        nsvgRasterize(rast, image, 0, 0, 1, img, w, h, w * 4);
-        if (phImg) {
-            _img_createfrompngbits2(w, h, img, phImg);
-            ret = TRUE;
-        }
-        free(img);
-        nsvgDeleteRasterizer(rast);
-    }
-
-    return ret;
+    return nError == 0;
 }
 
-BOOL _img_createfromsvgfile(LPCWSTR lpwzFilename, EXARGB color, HEXIMAGE* phImg)
+
+BOOL _img_createfromsvgfile(LPCWSTR lpwzFilename, INT width, INT height, HEXIMAGE* phImg)
 {
     BOOL        ret   = FALSE;
-    std::string name  = Ex_W2U(lpwzFilename);
-    NSVGimage*  image = nsvgParseFromFile(name.data(), "px", 96);
-    if (image) {
+    HEXSVG hSvg = 0;
+    ret = _svg_createfromfile(lpwzFilename, &hSvg);
+    if (ret) {
         if (phImg) {
-            ret = _img_createfromsvg(color, image, phImg);
+            ret = _img_createfromsvg(hSvg, width, height, phImg);
         }
+        _svg_destroy(hSvg);
     }
-    nsvgDelete(image);
-    return ret;
-}
-
-
-BOOL _img_createfromsvgbuf(CHAR* input, EXARGB color, HEXIMAGE* phImg)
-{
-    BOOL       ret   = FALSE;
-    NSVGimage* image = nsvgParse(input, "px", 96);
-    if (image) {
-        if (phImg) {
-            ret = _img_createfromsvg(color, image, phImg);
-        }
-    }
-    nsvgDelete(image);
     return ret;
 }

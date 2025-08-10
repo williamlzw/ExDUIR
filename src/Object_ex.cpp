@@ -45,6 +45,7 @@ void _object_init()
     _linechart_register();
     _chatbox_register();
     _flowchart_register();
+    //_grid_register();
 #ifdef VCL_PLAYER
     _vlcplayer_register();
 #endif
@@ -4341,61 +4342,57 @@ size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering, INT
     return Ex_ObjSendMessage(hObj, EM_SETPARAFORMAT, 0, (LPARAM)&Format);
 }
 
-BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, CHAR* svgBuf, EXARGB color, INT x, INT y,
+BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, HEXSVG hSvg, INT x, INT y, INT width, INT height,
                                  INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError)
 {
-    if (svgBuf == 0) {
-        _obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
-        return TRUE;
-    }
-    else {
-        _obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
-        HEXIMAGE hImg = 0;
-        _img_createfromsvgbuf(svgBuf, color, &hImg);
-        if (hImg != 0) {
-            LPVOID lpBI = _struct_createfromaddr(pObj, offsetof(obj_base, lpBackgroundImage_),
-                                                 sizeof(EX_BACKGROUNDIMAGEINFO), nError);
-            if (lpBI != 0) {
-                ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwFlags  = dwFlags;
-                ((EX_BACKGROUNDIMAGEINFO*)lpBI)->hImage   = hImg;
-                ((EX_BACKGROUNDIMAGEINFO*)lpBI)->x        = x;
-                ((EX_BACKGROUNDIMAGEINFO*)lpBI)->y        = y;
-                ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwRepeat = dwRepeat;
-                ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwAlpha  = dwAlpha;
-                if (lpGrid != 0) {
-                    LPVOID lpDelay = _struct_createfromaddr(
-                        lpBI, offsetof(EX_BACKGROUNDIMAGEINFO, lpGrid), 16, nError);
-                    if (lpDelay != 0) {
-                        RtlMoveMemory(lpDelay, lpGrid, 16);
-                    }
+    
+    _obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
+    HEXIMAGE hImg = 0;
+    _img_createfromsvg(hSvg, width, height, &hImg);
+    if (hImg != 0) {
+        LPVOID lpBI = _struct_createfromaddr(pObj, offsetof(obj_base, lpBackgroundImage_),
+                                                sizeof(EX_BACKGROUNDIMAGEINFO), nError);
+        if (lpBI != 0) {
+            ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwFlags  = dwFlags;
+            ((EX_BACKGROUNDIMAGEINFO*)lpBI)->hImage   = hImg;
+            ((EX_BACKGROUNDIMAGEINFO*)lpBI)->x        = x;
+            ((EX_BACKGROUNDIMAGEINFO*)lpBI)->y        = y;
+            ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwRepeat = dwRepeat;
+            ((EX_BACKGROUNDIMAGEINFO*)lpBI)->dwAlpha  = dwAlpha;
+            if (lpGrid != 0) {
+                LPVOID lpDelay = _struct_createfromaddr(
+                    lpBI, offsetof(EX_BACKGROUNDIMAGEINFO, lpGrid), 16, nError);
+                if (lpDelay != 0) {
+                    RtlMoveMemory(lpDelay, lpGrid, 16);
                 }
-
-                INT nFrames = 0;
-                _img_getframecount(hImg, &nFrames);
-
-                if (nFrames > 1) {
-                    INT* lpDelay2 = (INT*)Ex_MemAlloc(nFrames * sizeof(INT));
-                    if (_img_getframedelay(hImg, lpDelay2, nFrames)) {
-                        ((EX_BACKGROUNDIMAGEINFO*)lpBI)->lpDelay  = lpDelay2;
-                        ((EX_BACKGROUNDIMAGEINFO*)lpBI)->maxFrame = nFrames;
-                        if ((dwFlags & BACKGROUND_FLAG_PLAYIMAGE) == BACKGROUND_FLAG_PLAYIMAGE) {
-                            SetTimer(hWnd, ((size_t)pObj + TIMER_BKG), lpDelay2[0] * 10,
-                                     _obj_backgroundimage_timer);
-                        }
-                    }
-                    else {
-                        Ex_MemFree(lpDelay2);
-                    }
-                }
-                return TRUE;
             }
-            _img_destroy(hImg);
+
+            INT nFrames = 0;
+            _img_getframecount(hImg, &nFrames);
+
+            if (nFrames > 1) {
+                INT* lpDelay2 = (INT*)Ex_MemAlloc(nFrames * sizeof(INT));
+                if (_img_getframedelay(hImg, lpDelay2, nFrames)) {
+                    ((EX_BACKGROUNDIMAGEINFO*)lpBI)->lpDelay  = lpDelay2;
+                    ((EX_BACKGROUNDIMAGEINFO*)lpBI)->maxFrame = nFrames;
+                    if ((dwFlags & BACKGROUND_FLAG_PLAYIMAGE) == BACKGROUND_FLAG_PLAYIMAGE) {
+                        SetTimer(hWnd, ((size_t)pObj + TIMER_BKG), lpDelay2[0] * 10,
+                                    _obj_backgroundimage_timer);
+                    }
+                }
+                else {
+                    Ex_MemFree(lpDelay2);
+                }
+            }
+            return TRUE;
         }
+        _img_destroy(hImg);
     }
+    
     return FALSE;
 }
 
-BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf, EXARGB color, INT x, INT y,
+BOOL Ex_ObjSetBackgroundImageFromSvg(EXHANDLE handle, HEXSVG hSvg, INT x, INT y, INT width, INT height,
                                         DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha,
                                         BOOL fUpdate)
 {
@@ -4404,7 +4401,7 @@ BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf, EXARGB co
     BOOL   bObj   = FALSE;
     INT    nError = 0;
     if (_wnd_getfromhandle(handle, &hWnd, NULL, &pObj, &bObj, &nError)) {
-        if (_obj_backgroundimage_setsvg(hWnd, pObj, svgBuf, color, x, y, dwRepeat, lpGrid, dwFlags,
+        if (_obj_backgroundimage_setsvg(hWnd, pObj, hSvg, x, y, width, height, dwRepeat, lpGrid, dwFlags,
                                         dwAlpha, &nError)) {
             if (bObj) {
                 nError = 0;

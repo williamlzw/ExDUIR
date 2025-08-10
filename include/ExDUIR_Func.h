@@ -730,9 +730,36 @@ BOOL _svg_create(const char* svgdata, HEXSVG* phSvg);
 /// <returns></returns>
 BOOL _svg_createfromfile(const wchar_t* svgfile, HEXSVG* phSvg);
 
+/// <summary>
+/// SVG置元素填充色
+/// </summary>
+/// <param name="hSvg"></param>
+/// <param name="id"></param>
+/// <param name="color"></param>
 void _svg_setelementfillcolor(HEXSVG hSvg, const char* id, EXARGB color);
+
+/// <summary>
+/// SVG置元素描边色
+/// </summary>
+/// <param name="hSvg"></param>
+/// <param name="id"></param>
+/// <param name="color"></param>
+/// <param name="strokeWidth"></param>
 void _svg_setelementstrokecolor(HEXSVG hSvg, const char* id, EXARGB color, float strokeWidth = 0.0f);
+
+/// <summary>
+/// SVG置填充色
+/// </summary>
+/// <param name="hSvg"></param>
+/// <param name="color"></param>
 void _svg_setfillcolor(HEXSVG hSvg, EXARGB color);
+
+/// <summary>
+/// SVG置描边色
+/// </summary>
+/// <param name="hSvg"></param>
+/// <param name="color"></param>
+/// <param name="width"></param>
 void _svg_setstrokecolor(HEXSVG hSvg, EXARGB color, FLOAT width = 0);
 
 /// <summary>
@@ -747,8 +774,9 @@ void _svg_setstrokecolor(HEXSVG hSvg, EXARGB color, FLOAT width = 0);
 /// <param
 /// name="height">高度(将与SVG的ViewBox属性的height比值进行缩放,取宽高最小缩放比缩放),为0不缩放</param>
 /// <returns></returns>
-BOOL _canvas_drawhSvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
+BOOL _canvas_drawsvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
                       FLOAT width, FLOAT height);
+
 /// <summary>
 /// 同_canvas_drawhSvg, width和height为画布大小
 /// </summary>
@@ -757,7 +785,7 @@ BOOL _canvas_drawhSvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
 /// <param name="Left"></param>
 /// <param name="Top"></param>
 /// <returns></returns>
-BOOL _canvas_drawhSvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top);
+BOOL _canvas_drawsvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top);
 
 /// <summary>
 /// SVG销毁
@@ -1100,21 +1128,22 @@ BOOL _img_createfromstream(LPSTREAM lpStream, HEXIMAGE* phImg);
 /// <summary>
 /// 图像创建自SVG文件数据
 /// </summary>
-/// <param name="input">SVG文件数据</param>
-/// <param name="color">填充颜色,0不填充</param>
+/// <param name="hSvg">SVG句柄</param>
+/// <param name="width">宽度</param>
+/// <param name="height">高度</param>
 /// <param name="phImg">返回图像</param>
 /// <returns></returns>
-BOOL _img_createfromsvgbuf(CHAR* input, EXARGB color, HEXIMAGE* phImg);
+BOOL _img_createfromsvg(HEXSVG hSvg, INT width, INT height, HEXIMAGE* phImg);
 
 /// <summary>
 /// 图像创建自SVG文件
 /// </summary>
-/// <param name="lpwzFilename">SVG文件路径</param>
-/// <param name="color">填充颜色,0不填充</param>
+/// <param name="lpwzFilename">SVG文件</param>
+/// <param name="width">宽度</param>
+/// <param name="height">高度</param>
 /// <param name="phImg">返回图像</param>
 /// <returns></returns>
-BOOL _img_createfromsvgfile(LPCWSTR lpwzFilename, EXARGB color,
-                            HEXIMAGE* phImg);
+BOOL _img_createfromsvgfile(LPCWSTR lpwzFilename, INT width, INT height, HEXIMAGE* phImg);
 
 /// <summary>
 /// 图像销毁
@@ -2974,8 +3003,8 @@ BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage,
 /// <param name="dwAlpha">透明度(0-255)</param>
 /// <param name="fUpdate">是否立即刷新</param>
 /// <returns></returns>
-BOOL Ex_ObjSetBackgroundImageFromSvgBuf(EXHANDLE handle, CHAR* svgBuf,
-                                        EXARGB color, INT x, INT y,
+BOOL Ex_ObjSetBackgroundImageFromSvg(EXHANDLE handle, HEXSVG hSvg,
+                                        INT x, INT y, INT width, INT height,
                                         DWORD dwRepeat, RECT* lpGrid,
                                         INT dwFlags, DWORD dwAlpha,
                                         BOOL fUpdate);
