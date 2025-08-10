@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="svgrender">
+      <UniqueIdentifier>{e522a165-08c8-4c27-8a38-26f16c575805}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="svgrender\xml">
+      <UniqueIdentifier>{28f80d67-f31d-43af-9b31-b47cbb7c4048}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\HandleTable_ex.cpp">
@@ -234,6 +240,30 @@
     <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\base64.cpp">
+      <Filter>svgrender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\D2DSVGRenderer.cpp">
+      <Filter>svgrender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\Interval.cpp">
+      <Filter>svgrender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\Rect.cpp">
+      <Filter>svgrender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\SVGDocument.cpp">
+      <Filter>svgrender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\SVGParserArcToCurve.cpp">
+      <Filter>svgrender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\SVGStringParser.cpp">
+      <Filter>svgrender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\xml\RapidXMLParser.cpp">
+      <Filter>svgrender\xml</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -434,12 +464,6 @@
     <ClInclude Include="..\..\include\stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\thirdparty\nanosvg\nanosvg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\nanosvg\nanosvgrast.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Class_CircleProgressBar_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -453,6 +477,54 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_FlowChart_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\base64.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\Config.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\config.hpp">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\Constants.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\CSSColorKeywords.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\in_place.hpp">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\Interval.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\lib.hpp">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\Rect.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\SVGDocument.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\SVGRenderer.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\SVGStringParser.h">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\variant.hpp">
+      <Filter>svgrender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\svgrender\xml\XMLParser.h">
+      <Filter>svgrender\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\nanosvg\nanosvg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\nanosvg\nanosvgrast.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

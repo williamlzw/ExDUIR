@@ -84,6 +84,7 @@
 #pragma pack()
 #include "nanosvg/nanosvg.h"
 #include "nanosvg/nanosvgrast.h"
+#include "svgrender/SVGDocument.h"
 #include "CustomFont.h"
 #include "help_ex.h"
 #include "Array_ex.h"

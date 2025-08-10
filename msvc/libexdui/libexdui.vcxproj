@@ -107,6 +107,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\thirdparty\svgrender\base64.cpp" />
+    <ClCompile Include="..\..\thirdparty\svgrender\D2DSVGRenderer.cpp" />
+    <ClCompile Include="..\..\thirdparty\svgrender\Interval.cpp" />
+    <ClCompile Include="..\..\thirdparty\svgrender\Rect.cpp" />
+    <ClCompile Include="..\..\thirdparty\svgrender\SVGDocument.cpp" />
+    <ClCompile Include="..\..\thirdparty\svgrender\SVGParserArcToCurve.cpp" />
+    <ClCompile Include="..\..\thirdparty\svgrender\SVGStringParser.cpp" />
+    <ClCompile Include="..\..\thirdparty\svgrender\xml\RapidXMLParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Array_ex.h" />
@@ -182,6 +190,20 @@
     <ClInclude Include="..\..\include\Wnd_ex.h" />
     <ClInclude Include="..\..\thirdparty\nanosvg\nanosvg.h" />
     <ClInclude Include="..\..\thirdparty\nanosvg\nanosvgrast.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\base64.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\Config.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\config.hpp" />
+    <ClInclude Include="..\..\thirdparty\svgrender\Constants.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\CSSColorKeywords.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\Interval.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\in_place.hpp" />
+    <ClInclude Include="..\..\thirdparty\svgrender\lib.hpp" />
+    <ClInclude Include="..\..\thirdparty\svgrender\Rect.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\SVGDocument.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\SVGRenderer.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\SVGStringParser.h" />
+    <ClInclude Include="..\..\thirdparty\svgrender\variant.hpp" />
+    <ClInclude Include="..\..\thirdparty\svgrender\xml\XMLParser.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

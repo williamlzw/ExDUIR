@@ -695,6 +695,56 @@ BOOL _canvas_settextantialiasmode(HEXCANVAS hCanvas, BOOL antialias);
 /// <returns></returns>
 BOOL _canvas_settransform(HEXCANVAS hCanvas, HEXMATRIX pMatrix);
 
+
+/// <summary>
+/// SVG创建(自内存)
+/// </summary>
+/// <param name="hExDuiOrhObj">引擎句柄或组件句柄</param>
+/// <param name="svgdata">SVG描述内容</param>
+/// <param name="phSvg">返回svg句柄</param>
+/// <returns></returns>
+BOOL  _svg_create(const char* svgdata, HEXSVG* phSvg);
+
+/// <summary>
+/// SVG创建自文件
+/// </summary>
+/// <param name="hExDuiOrhObj">引擎句柄或组件句柄</param>
+/// <param name="svgfile">SVG文件路径</param>
+/// <param name="phSvg">返回svg句柄</param>
+/// <returns></returns>
+BOOL  _svg_createfromfile(const wchar_t* svgfile, HEXSVG* phSvg);
+/// <summary>
+/// 画布_画svg句柄
+/// </summary>
+/// <param name="hCanvas">画布句柄</param>
+/// <param name="hSvg">svg句柄</param>
+/// <param name="Left">左边</param>
+/// <param name="Top">顶边</param>
+/// <param
+/// name="width">宽度(将与SVG的ViewBox属性的width比值进行缩放,取宽高最小缩放比缩放),为0不缩放</param>
+/// <param
+/// name="height">高度(将与SVG的ViewBox属性的height比值进行缩放,取宽高最小缩放比缩放),为0不缩放</param>
+/// <returns></returns>
+BOOL  _canvas_drawhSvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left,
+                               FLOAT Top, FLOAT width, FLOAT height);
+/// <summary>
+/// 同_canvas_drawhSvg, width和height为画布大小
+/// </summary>
+/// <param name="hCanvas"></param>
+/// <param name="hSvg"></param>
+/// <param name="Left"></param>
+/// <param name="Top"></param>
+/// <returns></returns>
+BOOL  _canvas_drawhSvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left,
+                                FLOAT Top);
+
+/// <summary>
+/// SVG销毁
+/// </summary>
+/// <param name="hSvg">svg句柄</param>
+/// <returns></returns>
+BOOL  _svg_destroy(HEXSVG hSvg);
+
 /// <summary>
 /// 缓动创建
 /// </summary>

@@ -9,7 +9,7 @@
 
 #pragma region 编译配置
 // 启用VLC播放引擎
-#define VCL_PLAYER
+//#define VCL_PLAYER
 #pragma endregion 编译配置
 
 #pragma region engine flag constant
@@ -1907,6 +1907,7 @@ typedef LPVOID   HEXMATRIX;      // 矩阵句柄
 typedef LPVOID   HEXEASING;      // 缓动句柄/指针
 typedef LPVOID   HEXRES;         // 资源包句柄
 typedef LPVOID   HEXEFFECT;      // 效果器句柄
+typedef EXHANDLE HEXSVG;         // SVG句柄
 
 typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);

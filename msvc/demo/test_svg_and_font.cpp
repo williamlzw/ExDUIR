@@ -25,13 +25,14 @@ LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
                          L"\uE007 \uE008 \uE009 \uE00A \uE00B \uE00C \uE00D",
                          -1, -1, 20, 350, LOWORD(lParam), 580);
         _font_destroy(ColorToolbarIcons);
-
-        _canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 50, 50, 200, 200);
-        std::vector<CHAR> data;
-        Ex_ReadFile(L"./res/niu1.svg", &data);
-        _canvas_drawsvg(wParam, data.data(), ExARGB(55, 250, 20, 255), 250, 50, 400, 200);
-
-
+        HEXSVG svg = 0;
+        _svg_createfromfile(L"./res/niu.svg", &svg);
+        //_canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 50, 50, 200, 200);
+        //std::vector<CHAR> data;
+        //Ex_ReadFile(L"./res/niu1.svg", &data);
+        //_canvas_drawsvg(wParam, data.data(), ExARGB(55, 250, 20, 255), 250, 50, 400, 200);
+        _canvas_drawhSvg(wParam, svg, 50, 50, LOWORD(lParam), HIWORD(lParam));
+        _svg_destroy(svg);
         *lpResult = 1;
         return 1;
     }

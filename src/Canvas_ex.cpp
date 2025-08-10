@@ -1784,3 +1784,88 @@ void _canvas_drawquadraticbezier(HEXCANVAS hCanvas, HEXBRUSH hBrush,
     // 清理资源
     _path_destroy(hPath);
 }
+
+// 2025.08.10 新添加SVG相关函数
+
+BOOL _svg_create(const char* svgdata, HEXSVG* phSvg) {
+  HEXSVG hSvg = 0;
+  SVGNative::SVGDocument* pSvg =
+      new SVGNative::SVGDocument(g_Ri.pD2DDeviceContext);
+  if (pSvg) {
+    if (pSvg->OpenSVGDocument(svgdata)) {
+      hSvg = _handle_create(HT_SVG, pSvg, 0);
+      if (phSvg) {
+        *phSvg = hSvg;
+      }
+      return TRUE;
+    } else
+      delete pSvg;
+  }
+  return FALSE;
+}
+
+BOOL _svg_createfromfile(const wchar_t* svgfile, HEXSVG* phSvg) {
+  std::vector<CHAR> imgdata;
+  if (Ex_ReadFile(svgfile, &imgdata)) {
+    return _svg_create(Ex_U2A2(imgdata).data(), phSvg);
+  }
+  return FALSE;
+}
+
+BOOL _svg_destroy(HEXSVG hSvg) {
+  SVGNative::SVGDocument* pSvg = nullptr;
+  INT nError = 0;
+  if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
+    delete pSvg;
+    return _handle_destroy(hSvg, &nError);
+  }
+  return FALSE;
+}
+
+
+BOOL _canvas_drawhSvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
+                      FLOAT width, FLOAT height) {
+  canvas_s* pCanvas = nullptr;
+  SVGNative::SVGDocument* pSvg = nullptr;
+  INT nError = 0;
+  if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
+    if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
+      ID2D1Bitmap* pBitmap =
+          _dx_createbitmap(pSvg->mContext, width, height, &nError);
+      if (pBitmap) {
+        pSvg->mContext->SetTarget(pBitmap);
+        g_Ri.pD2DDeviceContext->BeginDraw();
+        pSvg->Render(width, height);
+        g_Ri.pD2DDeviceContext->EndDraw();
+        ID2D1DeviceContext* pContext = pCanvas->pContext_;
+        D2D1_RECT_F RC{Left, Top, Left + width, Top + height};
+        pContext->DrawBitmap(pBitmap, RC, 1.0f);
+        pBitmap->Release();
+      }
+    }
+  }
+  return nError == 0;
+}
+BOOL _canvas_drawhSvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top) {
+  canvas_s* pCanvas = nullptr;
+  SVGNative::SVGDocument* pSvg = nullptr;
+  INT nError = 0;
+  if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
+    if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
+      ID2D1Bitmap* pBitmap = _dx_createbitmap(pSvg->mContext, pCanvas->width_,
+                                              pCanvas->height_, &nError);
+      if (pBitmap) {
+        pSvg->mContext->SetTarget(pBitmap);
+        g_Ri.pD2DDeviceContext->BeginDraw();
+        pSvg->Render(pCanvas->width_, pCanvas->height_);
+        g_Ri.pD2DDeviceContext->EndDraw();
+        ID2D1DeviceContext* pContext = pCanvas->pContext_;
+        D2D1_RECT_F RC{Left, Top, Left + pCanvas->width_,
+                       Top + pCanvas->height_};
+        pContext->DrawBitmap(pBitmap, RC, 1.0f);
+        pBitmap->Release();
+      }
+    }
+  }
+  return nError == 0;
+}
