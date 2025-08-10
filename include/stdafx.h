@@ -82,8 +82,6 @@
 
 //必须，防止svg崩溃
 #pragma pack()
-#include "nanosvg/nanosvg.h"
-#include "nanosvg/nanosvgrast.h"
 #include "svgrender/SVGDocument.h"
 #include "CustomFont.h"
 #include "help_ex.h"

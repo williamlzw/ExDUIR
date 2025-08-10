@@ -1631,62 +1631,6 @@ BOOL _canvas_fillpolygon(HEXCANVAS hCanvas, HEXBRUSH hBrush, FLOAT left, FLOAT t
     return ret;
 }
 
-BOOL _canvas_drawsvg(HEXCANVAS hCanvas, CHAR* input, EXARGB color, FLOAT left, FLOAT top,
-                     FLOAT right, FLOAT bottom)
-{
-    NSVGimage* image = nsvgParse(input, "px", 96);
-    if (image) {
-        int w = (int)image->width;
-        int h = (int)image->height;
-        if (color)
-            image->shapes->fill.color =
-                nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
-        NSVGrasterizer* rast = nsvgCreateRasterizer();
-        if (rast) {
-            unsigned char* img = (unsigned char*)malloc(w * h * 4);
-            nsvgRasterize(rast, image, 0, 0, 1, img, w, h, w * 4);
-            HEXIMAGE Himg;
-            _img_createfrompngbits2(w, h, img, &Himg);
-            _canvas_drawimagerect(hCanvas, Himg, left, top, right, bottom, 255);
-            free(img);
-            nsvgDeleteRasterizer(rast);
-            nsvgDelete(image);
-            _img_destroy(Himg);
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
-BOOL _canvas_drawsvgfromfile(HEXCANVAS hCanvas, LPCWSTR svgName, EXARGB color, FLOAT left,
-                             FLOAT top, FLOAT right, FLOAT bottom)
-{
-    std::string name  = Ex_W2U(svgName);
-    NSVGimage*  image = nsvgParseFromFile(name.data(), "px", 96);
-    if (image) {
-        int w = (int)image->width;
-        int h = (int)image->height;
-        if (color)
-            image->shapes->fill.color =
-                nsvg__RGBA(ExGetB(color), ExGetG(color), ExGetR(color), ExGetA(color));
-        NSVGrasterizer* rast = nsvgCreateRasterizer();
-        if (rast) {
-            unsigned char* img = (unsigned char*)malloc(w * h * 4);
-            nsvgRasterize(rast, image, 0, 0, 1, img, w, h, w * 4);
-            HEXIMAGE Himg;
-            _img_createfrompngbits2(w, h, img, &Himg);
-
-            _canvas_drawimagerect(hCanvas, Himg, left, top, right, bottom, 255);
-            free(img);
-            nsvgDeleteRasterizer(rast);
-            nsvgDelete(image);
-            _img_destroy(Himg);
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
 void _canvas_applyeffect(HEXCANVAS hCanvas, HEXEFFECT hEffect)
 {
     auto        pContext = (ID2D1DeviceContext*)_canvas_getcontext(hCanvas, CANVAS_DX_D2DCONTEXT);
