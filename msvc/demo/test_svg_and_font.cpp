@@ -26,12 +26,19 @@ LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
                          -1, -1, 20, 350, LOWORD(lParam), 580);
         _font_destroy(ColorToolbarIcons);
         HEXSVG svg = 0;
-        _svg_createfromfile(L"./res/niu.svg", &svg);
-        //_canvas_drawsvgfromfile(wParam, L"./res/niu.svg", 0, 50, 50, 200, 200);
-        //std::vector<CHAR> data;
-        //Ex_ReadFile(L"./res/niu1.svg", &data);
-        //_canvas_drawsvg(wParam, data.data(), ExARGB(55, 250, 20, 255), 250, 50, 400, 200);
-        _canvas_drawhSvg(wParam, svg, 50, 50, LOWORD(lParam), HIWORD(lParam));
+        _svg_createfromfile(L"./res/微信.svg", &svg);
+        _svg_setfillcolor(svg, ExARGB(255, 255, 255, 255));
+        _canvas_drawhSvg(wParam, svg, 50, 50, 300, 300);
+        _svg_destroy(svg);
+
+        _svg_createfromfile(L"./res/微博.svg", &svg);
+        _svg_setfillcolor(svg, ExARGB(0, 255, 255, 255));
+        _canvas_drawhSvg(wParam, svg, 360, 50, 300, 300);
+        _svg_destroy(svg);
+
+        _svg_createfromfile(L"./res/QQ.svg", &svg);
+        _svg_setfillcolor(svg, ExARGB(255, 0, 255, 255));
+        _canvas_drawhSvg(wParam, svg, 650, 50, 300, 300);
         _svg_destroy(svg);
         *lpResult = 1;
         return 1;

@@ -1822,6 +1822,22 @@ BOOL _svg_destroy(HEXSVG hSvg) {
   return FALSE;
 }
 
+void _svg_setfillcolor(HEXSVG hSvg, EXARGB color) {
+  SVGNative::SVGDocument* pSvg = nullptr;
+  INT nError = 0;
+  if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
+    pSvg->SetUserFillColor(color);
+  }
+}
+void _svg_setstrokecolor(HEXSVG hSvg, EXARGB color, FLOAT width)
+{
+  SVGNative::SVGDocument* pSvg = nullptr;
+  INT nError = 0;
+  if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
+    pSvg->SetUserStrokeColor(color, width);
+  }
+}
+
 
 BOOL _canvas_drawhSvg(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top,
                       FLOAT width, FLOAT height) {
