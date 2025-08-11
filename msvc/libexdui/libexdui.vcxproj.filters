@@ -219,12 +219,6 @@
     <ClCompile Include="..\..\src\stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\thirdparty\nanosvg\nanosvg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\thirdparty\nanosvg\nanosvgrast.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Class_CircleProgressBar_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -520,12 +514,6 @@
     </ClInclude>
     <ClInclude Include="..\..\thirdparty\svgrender\xml\XMLParser.h">
       <Filter>svgrender\xml</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\nanosvg\nanosvg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\thirdparty\nanosvg\nanosvgrast.h">
-      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -123,14 +123,12 @@ Ex_ObjInitPropList
 Ex_ObjMove
 Ex_ObjSetUIState
 Ex_ObjGetUIState
-;Ex_ObjLoadFromLayout
 Ex_ObjGetFromNodeID
 Ex_ObjGetRectEx
 Ex_ObjPointTransform
 Ex_ObjEnableEventBubble
 Ex_ObjGetClassInfo
 Ex_ObjGetClassInfoEx
-
 Ex_ObjScrollGetControl
 Ex_ObjScrollSetInfo
 Ex_ObjScrollSetRange
@@ -147,12 +145,10 @@ Ex_ObjDisableTranslateSpaceAndEnterToClick
 Ex_ObjEnablePaintingMsg
 Ex_ObjGetDropString
 Ex_ObjCheckDropFormat
-
 Ex_ObjEditSetSelCharFormat
 Ex_ObjEditSetSelParFormat
-
 Ex_ObjCefBrowserInitialize
-Ex_ObjSetBackgroundImageFromSvgBuf
+Ex_ObjSetBackgroundImageFromSvg
 
 ;----------------------------------------
 ;theme
@@ -165,7 +161,6 @@ Ex_ThemeDrawControlEx
 Ex_ThemeGetValuePtr
 Ex_ThemeGetColor
 
-
 ;----------------------------------------
 ;res
 ;----------------------------------------
@@ -175,19 +170,6 @@ Ex_ResFree
 Ex_ResGetFileFromAtom
 Ex_ResGetFile
 _res_pack
-
-
-;Ex_XmlRegisterCallback
-
-
-;----------------------------------------
-;I18N
-;----------------------------------------
-;Ex_I18NGetString
-;Ex_I18NGetStringFromAtom
-;Ex_I18NRegisterCallback
-;Ex_I18NStringFormat
-
 
 ;----------------------------------------
 ;layout
@@ -213,7 +195,6 @@ _layout_notify
 _layout_table_setinfo
 _layout_absolute_setedge
 _layout_absolute_lock
-
 
 ;----------------------------------------
 ;canvas
@@ -262,10 +243,11 @@ _canvas_fillroundedimage
 _canvas_drawpolygon
 _canvas_fillpolygon
 _canvas_drawsvg
-_canvas_drawsvgfromfile
+_canvas_drawsvg2
 _canvas_drawregion
 _canvas_drawcurve
 _canvas_drawquadraticbezier
+
 ;----------------------------------------
 ;img
 ;----------------------------------------
@@ -298,14 +280,12 @@ _img_rotateflip
 _img_createfrompngbits
 _img_createfrompngbits2
 _img_mask
-_img_createfromsvgbuf
+_img_createfromsvg
 _img_createfromsvgfile
-;_img_getthumbnail
 
 ;----------------------------------------
 ;font
 ;----------------------------------------
-;_font_copy
 _font_destroy
 _font_create
 _font_createfromfamily
@@ -314,6 +294,7 @@ _font_getlogfont
 _font_getcontext
 _font_createfromfile
 _font_createfrommem
+
 ;----------------------------------------
 ;matrix
 ;----------------------------------------
@@ -336,7 +317,6 @@ _brush_settransform
 _brush_createlinear
 _brush_createlinear_ex
 _brush_createfromcanvas2
-
 
 ;----------------------------------------
 ;path
@@ -379,12 +359,10 @@ _rgn_createfromellipse
 ;----------------------------------------
 ;easing
 ;----------------------------------------
-;_easing_curve_load
 _easing_curve_free
 _easing_create
 _easing_setstate
 _easing_getstate
-
 
 ;----------------------------------------
 ;imglist
@@ -408,34 +386,10 @@ _imglist_savetofile
 ;----------------------------------------
 _fmt_int
 _fmt_intary
-;_fmt_rect
-;_fmt_string
 _fmt_color
 _fmt_bin
 _fmt_getvalue
 _fmt_getatom
-;_fmt_const
-
-
-;----------------------------------------
-;JS
-;----------------------------------------
-;Ex_JSEval
-;Ex_JSAddCode
-;Ex_JSGetLastError
-;Ex_JSRegisterFunction
-;Ex_JSSetVariant
-;Ex_JSSetVariantPtr
-;Ex_JSGetParamCount
-;Ex_JSGetParamType
-;Ex_JSGetParam
-;Ex_JSGetParamNumber
-;Ex_JSGetParamInt
-;Ex_JSGetParamFloat
-;Ex_JSGetParamDouble
-;Ex_JSGetParamString
-;Ex_JSGetParamFormatString
-;Ex_JSGetParamToString
 
 ;----------------------------------------
 ;effect
@@ -451,3 +405,14 @@ _fmt_getatom
 ;_effect_set_vector2
 ;_effect_set_vector3
 ;_effect_set_vector4
+
+;----------------------------------------
+;SVG
+;----------------------------------------
+_svg_create
+_svg_createfromfile
+_svg_setelementfillcolor
+_svg_setelementstrokecolor
+_svg_setfillcolor
+_svg_setstrokecolor
+_svg_destroy

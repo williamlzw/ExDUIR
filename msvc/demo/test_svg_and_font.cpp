@@ -30,18 +30,18 @@ LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
         _svg_createfromfile(L"res/微信.svg", &svg);
         //_svg_setfillcolor(svg, ExARGB(255, 255, 255, 255));
         _svg_setelementfillcolor(svg, "1208", ExARGB(255, 0, 255, 255));
-        _canvas_drawhSvg(wParam, svg, 50, 50, 100, 100);
+        _canvas_drawsvg(wParam, svg, 50, 50, 100, 100);
         _svg_destroy(svg);
 
         _svg_createfromfile(L"res/微博.svg", &svg);
         //_svg_setfillcolor(svg, ExARGB(0, 255, 255, 255));
         _svg_setelementfillcolor(svg, "1372", ExARGB(0, 20, 255, 255));
-        _canvas_drawhSvg(wParam, svg, 200, 50, 100, 100);
+        _canvas_drawsvg(wParam, svg, 200, 50, 100, 100);
         _svg_destroy(svg);
 
         _svg_createfromfile(L"res/QQ.svg", &svg);
         //_svg_setfillcolor(svg, ExARGB(255, 0, 255, 255));
-        _canvas_drawhSvg(wParam, svg, 350, 50, 100, 100);
+        _canvas_drawsvg(wParam, svg, 350, 50, 100, 100);
         _svg_destroy(svg);
 
         *lpResult = 1;
@@ -60,10 +60,13 @@ void test_svgAndfont(HWND hWnd)
             WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE,
         0, OnSvgAndFontProc);
     Ex_DUISetLong(hExDui_svgAndfont, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    auto              obj = Ex_ObjCreate(L"static", NULL, -1, 50, 250, 150, 150, hExDui_svgAndfont);
+    auto              obj = Ex_ObjCreate(L"static", NULL, -1, 450, 250, 150, 150, hExDui_svgAndfont);
     std::vector<CHAR> imgdata;
-    Ex_ReadFile(L"res\\niu1.svg", &imgdata);
-    Ex_ObjSetBackgroundImageFromSvgBuf(obj, imgdata.data(), ExARGB(55, 0, 250, 255), 0, 0,
-                                       BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
+    Ex_ReadFile(L"res\\niu.svg", &imgdata);
+    std::string svg = std::string(imgdata.begin(), imgdata.end());
+    HEXSVG hSvg;
+    auto ret= _svg_create(svg.data(), &hSvg);
+    Ex_ObjSetBackgroundImageFromSvg(obj, hSvg, 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
+    _svg_destroy(hSvg);
     Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL, 0, 0, 0);
 }

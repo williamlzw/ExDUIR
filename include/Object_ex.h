@@ -307,7 +307,7 @@ HEXOBJ _obj_getobjfromidorname(wnd_s* pWnd, INT idorname);
 void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 BOOL _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, LPVOID lpImage, INT dwImageLen, INT x, INT y,
                               INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError);
-BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, HEXSVG hSvg, INT x, INT y, INT width, INT height,
+BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, HEXSVG hSvg, INT x, INT y,
     INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError);
 void _obj_backgroundimage_frames(HWND hWnd, obj_s* pObj, BOOL bResetFrame, BOOL bPlayFrames,
                                  BOOL fUpdate, INT* nError);

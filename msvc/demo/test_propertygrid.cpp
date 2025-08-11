@@ -131,7 +131,6 @@ void test_propertygrid(HWND hParent)
         Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
                           PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&item);
     }
-    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SHOWHEADER,
-        0, 0);
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SHOWHEADER, 0, 0);
     Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
 }
