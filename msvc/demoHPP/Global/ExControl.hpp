@@ -273,18 +273,6 @@ namespace ExDUIR
 					return SetBackgroundImageFromData(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 				}
 
-				inline BOOL SetBackgroundImageFromSvgData(std::vector<CHAR> imageData, EXARGB color, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
-				{
-					return Ex_ObjSetBackgroundImageFromSvgBuf(m_handle, imageData.data(), color, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
-				}
-
-				inline BOOL SetBackgroundImageFromSvgFile(std::wstring imageFilePath, EXARGB color, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
-				{
-					std::vector<CHAR> imgdata;
-					Ex_ReadFile(imageFilePath.c_str(), &imgdata);
-					return SetBackgroundImageFromSvgData(imgdata, color, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
-				}
-
 				inline EXARGB GetColorBackground()
 				{
 					return Ex_ObjGetColor(m_handle, COLOR_EX_BACKGROUND);
