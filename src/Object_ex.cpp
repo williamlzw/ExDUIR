@@ -4342,12 +4342,14 @@ size_t Ex_ObjEditSetSelParFormat(HEXOBJ hObj, DWORD dwMask, WORD wNumbering, INT
     return Ex_ObjSendMessage(hObj, EM_SETPARAFORMAT, 0, (LPARAM)&Format);
 }
 
-BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, HEXSVG hSvg, INT x, INT y, INT width, INT height,
+BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, HEXSVG hSvg, INT x, INT y,
                                  INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError)
 {
     
     _obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
     HEXIMAGE hImg = 0;
+    INT width = pObj->right_ - pObj->left_;
+    INT height = pObj->bottom_ - pObj->top_;
     _img_createfromsvg(hSvg, width, height, &hImg);
     if (hImg != 0) {
         LPVOID lpBI = _struct_createfromaddr(pObj, offsetof(obj_base, lpBackgroundImage_),
@@ -4392,7 +4394,7 @@ BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, HEXSVG hSvg, INT x, INT
     return FALSE;
 }
 
-BOOL Ex_ObjSetBackgroundImageFromSvg(EXHANDLE handle, HEXSVG hSvg, INT x, INT y, INT width, INT height,
+BOOL Ex_ObjSetBackgroundImageFromSvg(EXHANDLE handle, HEXSVG hSvg, INT x, INT y,
                                         DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha,
                                         BOOL fUpdate)
 {
@@ -4401,7 +4403,7 @@ BOOL Ex_ObjSetBackgroundImageFromSvg(EXHANDLE handle, HEXSVG hSvg, INT x, INT y,
     BOOL   bObj   = FALSE;
     INT    nError = 0;
     if (_wnd_getfromhandle(handle, &hWnd, NULL, &pObj, &bObj, &nError)) {
-        if (_obj_backgroundimage_setsvg(hWnd, pObj, hSvg, x, y, width, height, dwRepeat, lpGrid, dwFlags,
+        if (_obj_backgroundimage_setsvg(hWnd, pObj, hSvg, x, y, dwRepeat, lpGrid, dwFlags,
                                         dwAlpha, &nError)) {
             if (bObj) {
                 nError = 0;

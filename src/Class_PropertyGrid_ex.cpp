@@ -86,7 +86,7 @@ LRESULT CALLBACK _propertygrid_oncomboboxevent(HEXOBJ hObj, INT nID, INT nCode, 
     if (nCode == COMBOBOX_EVENT_SELCHANGE) {
         HEXOBJ parent = Ex_ObjGetParent(hObj);
         if (Ex_ObjIsValidate(parent)) {
-            int itemHover = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMHOVER);
+            int itemSelect = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMSEL);
             int index = Ex_ObjSendMessage(hObj, CB_GETCURSEL, 0, 0);
             if (index != CB_ERR) {
                 int textLen = Ex_ObjSendMessage(hObj, CB_GETLBTEXTLEN, index, 0);
@@ -94,7 +94,7 @@ LRESULT CALLBACK _propertygrid_oncomboboxevent(HEXOBJ hObj, INT nID, INT nCode, 
                     WCHAR* text = (WCHAR*)Ex_MemAlloc((textLen + 1) * sizeof(WCHAR));
                     if (text) {
                         Ex_ObjSendMessage(hObj, CB_GETLBTEXT, index, (LPARAM)text);
-                        _propertygrid_setitemtext(parent, itemHover, text);
+                        _propertygrid_setitemtext(parent, itemSelect, text);
                         Ex_MemFree(text);
                     }
                 }
@@ -110,7 +110,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
     if (nCode == NM_KEYDOWN && wParam == 13) {
         HEXOBJ parent = Ex_ObjGetParent(hObj);
         if (Ex_ObjIsValidate(parent)) {
-            int itemHover = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMHOVER);
+            int itemSelect = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMSEL);
             int textLen = Ex_ObjGetTextLength(hObj);
             WCHAR* text = NULL;
 
@@ -121,7 +121,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
                 }
             }
             // 即使文本为空也要设置属性项文本
-            _propertygrid_setitemtext(parent, itemHover, text ? text : L"");
+            _propertygrid_setitemtext(parent, itemSelect, text ? text : L"");
 
             if (text) Ex_MemFree(text);
             Ex_ObjShow(hObj, FALSE);
@@ -129,7 +129,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
     }
     else if (nCode == NM_KILLFOCUS) {
         if (Ex_ObjIsValidate(wParam)) {
-            int itemHover = Ex_ObjGetLong(wParam, PROPERTYGRID_LONG_ITEMHOVER);
+            int itemSelect = Ex_ObjGetLong(wParam, PROPERTYGRID_LONG_ITEMSEL);
             int textLen = Ex_ObjGetTextLength(hObj);
             WCHAR* text = NULL;
 
@@ -140,7 +140,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
                 }
             }
 
-            _propertygrid_setitemtext(wParam, itemHover, text ? text : L"");
+            _propertygrid_setitemtext(wParam, itemSelect, text ? text : L"");
 
             if (text) Ex_MemFree(text);
         }
@@ -175,10 +175,10 @@ LRESULT CALLBACK _propertygrid_oncolorpickerevent(HEXOBJ hObj, INT nID, INT nCod
     if (nCode == COLORPICKER_EVENT_COLORCHANGE) {
         HEXOBJ parent = Ex_ObjGetParent(hObj);
         if (Ex_ObjIsValidate(parent)) {
-            int itemHover = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMHOVER);
+            int itemSelect = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMSEL);
             WCHAR color[16] = { 0 };
             swprintf_s(color, L"%d", ExRGB2ARGB((int)lParam, 255));
-            _propertygrid_setitemtext(parent, itemHover, color);
+            _propertygrid_setitemtext(parent, itemSelect, color);
             Ex_ObjKillFocus(hObj);
             Ex_ObjShow(hObj, FALSE);
         }
@@ -192,11 +192,11 @@ LRESULT CALLBACK _propertygrid_ondateboxevent(HEXOBJ hObj, INT nID, INT nCode, W
     if (nCode == DATEBOX_EVENT_DATETIME) {
         HEXOBJ parent = Ex_ObjGetParent(hObj);
         if (Ex_ObjIsValidate(parent)) {
-            int itemHover = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMHOVER);
+            int itemSelect = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMSEL);
             EX_DATETIME* dt = (EX_DATETIME*)lParam;
             WCHAR date[255] = { 0 };
             swprintf_s(date, L"%d-%d-%d", dt->Year, dt->Mon, dt->Mday);
-            _propertygrid_setitemtext(parent, itemHover, date);
+            _propertygrid_setitemtext(parent, itemSelect, date);
             Ex_ObjKillFocus(hObj);
             Ex_ObjShow(hObj, FALSE);
         }
@@ -349,8 +349,8 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE, TRUE);//默认显示表头
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER, 0);      // 热点项目索引
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSEL, 0);      // 选中项目索引
-        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR, ExRGB2ARGB(1677215, 120)); // 热点背景色（浅灰色）
-        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR, ExRGB2ARGB(1677215, 200)); // 选中背景色（灰色）
+        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR, ExRGB2ARGB(30, 30, 30, 255)); 
+        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR, ExRGB2ARGB(60, 60, 60, 255)); 
         Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_ALL, 0, 0, showNum, 0, TRUE);
         Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
         INT    nError = 0;
@@ -556,6 +556,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                             itemTitle, -1, textFormat, textRC.left, textRC.top,
                             textRC.right, textRC.bottom);
                     }
+
                     RECT textRC2 = Ex_TreRect(
                         ps.rcPaint, columnWidth * g_Li.DpiX - 1,
                         (index * lineHeight + showOffset + headerAdjust) * g_Li.DpiY - 1, -offsetLeft * g_Li.DpiX,
@@ -563,6 +564,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                         ps.rcPaint.bottom - 1 * g_Li.DpiY);
                     _canvas_fillrect(ps.hCanvas, brush, textRC2.left, textRC2.top, textRC2.right,
                         textRC2.bottom);
+
                     RECT textRC3 = Ex_TreRect(textRC2, 5 * g_Li.DpiX, 5 * g_Li.DpiY, -5 * g_Li.DpiX,
                         -5 * g_Li.DpiY);
                     if (itemType == PROPERTYGRID_OBJTYPE_COLORPICKER) {
@@ -913,7 +915,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 Ex_TreRect(rc, columnWidth - 1, index * lineHeight + showOffset + headerAdjust - 1, -offsetLeft,
                     lineHeight * (index + 1) + showOffset + headerAdjust - rc.bottom - 1);
             if (pt.y > itemRC2.top && pt.y < itemRC2.bottom && pt.x > columnWidth) {
-                Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER, L);
+                Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSEL, L);
                 LPCWSTR itemText = (LPCWSTR)__get(ptr, PGITEM_STRUCT_OFFSET_TEXT);
                 if (itemType == PROPERTYGRID_OBJTYPE_EDIT) {
                     HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
