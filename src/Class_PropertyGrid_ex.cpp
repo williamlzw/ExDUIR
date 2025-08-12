@@ -5,7 +5,7 @@ void _propertygrid_register()
     Ex_ObjRegister(L"PropertyGrid",
         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL | OBJECT_STYLE_VSCROLL,
         OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
-        DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER, 21 * sizeof(size_t), NULL, 0,
+        DT_NOPREFIX | DT_SINGLELINE | DT_LEFT | DT_VCENTER, 22 * sizeof(size_t), NULL, 0,
         _propertygrid_proc);
 }
 
@@ -267,6 +267,39 @@ LRESULT CALLBACK _propertygrid_onscrollbarmsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
     return 0;
 }
 
+
+LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+    LPARAM lParam)
+{
+    if (nCode == NM_CLICK) {
+        HEXOBJ parent = Ex_ObjGetParent(hObj);
+        if (Ex_ObjIsValidate(parent)) {
+            array_s* itemArr = (array_s*)Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMARRAY);
+            if (itemArr) {
+                int count = Array_GetCount(itemArr);
+                int index = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMSEL);
+                if (index > 0 && index <= count) {
+                    void* item = (void*)Array_GetMember(itemArr, index);
+                    if (item) {
+                        LPCWSTR value = (LPCWSTR)__get(item, PGITEM_STRUCT_OFFSET_TEXT);
+                        obj_s* pObj = NULL;
+                        if (_handle_validate(parent, HT_OBJECT, (LPVOID*)&pObj, 0)) {
+                            EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
+                            itemInfo.text = value;
+                            itemInfo.type = __get(item, PGITEM_STRUCT_OFFSET_TYPE);
+                            _obj_dispatchnotify(pObj->pWnd_->hWnd_, pObj, parent, pObj->id_,
+                                PROPERTYGRID_EVENT_ITEMBUTTONCLICK, index,
+                                (LONG_PTR)&itemInfo);
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    return 0;
+}
+
 // 新增函数：将逻辑行号转换为物理索引
 INT _propertygrid_linetoarrayindex(HEXOBJ hObj, INT lineIndex)
 {
@@ -375,6 +408,12 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         Ex_ObjHandleEvent(hobjEdit, NM_KEYDOWN, _propertygrid_oneditevent);
         Ex_ObjHandleEvent(hobjEdit, NM_KILLFOCUS, _propertygrid_oneditevent);
         Ex_ObjHandleEvent(hobjEdit, NM_LEAVE, _propertygrid_oneditevent);
+
+        HEXOBJ hobjbt = Ex_ObjCreateEx(-1, L"button", L"...", -1, 320, 0, 40, lineHeight - 2,
+            hObj, -1, DT_VCENTER | DT_CENTER, 0, 0, NULL);
+        Ex_ObjShow(hobjbt, FALSE);
+        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON, hobjbt);
+        Ex_ObjHandleEvent(hobjbt, NM_CLICK, _propertygrid_onbuttonevent);
 
         HEXOBJ hobjComboBox = Ex_ObjCreateEx(-1, L"combobox", 0, OBJECT_STYLE_VISIBLE, 320, 0, 110,
             lineHeight, hObj, 0, DT_VCENTER, 0, 0, 0);
@@ -486,7 +525,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                     lineHeight * g_Li.DpiY * (index + 1) + showOffset * g_Li.DpiY + headerAdjust * g_Li.DpiY -
                     ps.rcPaint.bottom - 1 * g_Li.DpiY);
 
-                _brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMBACKGROUNDCOLOR));
                 if (itemType == PROPERTYGRID_OBJTYPE_GROUP) {
                     _brush_setcolor(brush, bkg);
                     _canvas_fillrect(ps.hCanvas, brush, titleRC.left, titleRC.top, ps.rcPaint.right,
@@ -530,23 +568,45 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                         i++;
                         continue;
                     }
-                    _canvas_fillrect(ps.hCanvas, brush, titleRC.left, titleRC.top,
-                        (columnWidth - 1) * g_Li.DpiX, titleRC.bottom);
+                  
 
                     // 高亮渲染逻辑
-                    EXARGB bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMBACKGROUNDCOLOR);
-                    if (i == Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER)) {
-                        bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR);
-                        _brush_setcolor(brush, bgColor);
-                        _canvas_fillrect(ps.hCanvas, brush, titleRC.left, titleRC.top, (columnWidth - 1) * g_Li.DpiX,
-                            titleRC.bottom);
-                    }
                     if (i == Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSEL)) {
-                        bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR);
+                        EXARGB bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR);
                         _brush_setcolor(brush, bgColor);
-                        _canvas_fillrect(ps.hCanvas, brush, titleRC.left, titleRC.top, (columnWidth - 1) * g_Li.DpiX,
-                            titleRC.bottom);
                     }
+                    else if (i == Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER)) {
+                        EXARGB bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR);
+                        _brush_setcolor(brush, bgColor);
+                    }
+                    else {
+                        EXARGB bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMBACKGROUNDCOLOR);
+                        _brush_setcolor(brush, bgColor);
+                    }
+                    _canvas_fillrect(ps.hCanvas, brush, titleRC.left, titleRC.top,
+                        (columnWidth - 1) * g_Li.DpiX, titleRC.bottom); 
+
+                    RECT textRC2 = Ex_TreRect(
+                        ps.rcPaint, columnWidth * g_Li.DpiX - 1,
+                        (index * lineHeight + showOffset + headerAdjust) * g_Li.DpiY - 1, -offsetLeft * g_Li.DpiX,
+                        lineHeight * g_Li.DpiY * (index + 1) + showOffset * g_Li.DpiY + headerAdjust * g_Li.DpiY -
+                        ps.rcPaint.bottom - 1 * g_Li.DpiY);
+                 
+                    if (i == Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSEL))
+                    {
+                        EXARGB bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR);
+                        _brush_setcolor(brush, bgColor);
+                    }
+                    else if (i == Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER)) {
+                        EXARGB bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR);
+                        _brush_setcolor(brush, bgColor);
+                    }
+                    else {
+                        EXARGB bgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMBACKGROUNDCOLOR);
+                        _brush_setcolor(brush, bgColor);
+                    }
+                    _canvas_fillrect(ps.hCanvas, brush, textRC2.left, textRC2.top, textRC2.right,
+                           textRC2.bottom);
 
                     if (itemTitle) {
                         RECT textRC = Ex_TreRect(titleRC, 5 * g_Li.DpiX, 5 * g_Li.DpiY,
@@ -556,15 +616,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                             itemTitle, -1, textFormat, textRC.left, textRC.top,
                             textRC.right, textRC.bottom);
                     }
-
-                    RECT textRC2 = Ex_TreRect(
-                        ps.rcPaint, columnWidth * g_Li.DpiX - 1,
-                        (index * lineHeight + showOffset + headerAdjust) * g_Li.DpiY - 1, -offsetLeft * g_Li.DpiX,
-                        lineHeight * g_Li.DpiY * (index + 1) + showOffset * g_Li.DpiY + headerAdjust * g_Li.DpiY -
-                        ps.rcPaint.bottom - 1 * g_Li.DpiY);
-                    _canvas_fillrect(ps.hCanvas, brush, textRC2.left, textRC2.top, textRC2.right,
-                        textRC2.bottom);
-
                     RECT textRC3 = Ex_TreRect(textRC2, 5 * g_Li.DpiX, 5 * g_Li.DpiY, -5 * g_Li.DpiX,
                         -5 * g_Li.DpiY);
                     if (itemType == PROPERTYGRID_OBJTYPE_COLORPICKER) {
@@ -724,6 +775,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             HEXOBJ combox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOMBOBOX);
             HEXOBJ color = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
             HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
+            HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
             if (pt[0] < Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_COLUMNWIDTH)) {
                 if (Ex_ObjIsValidate(edit)) {
                     Ex_ObjShow(edit, FALSE);
@@ -743,6 +795,9 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 if (Ex_ObjIsValidate(datebox)) {
                     Ex_ObjKillFocus(datebox);
                     Ex_ObjShow(datebox, FALSE);
+                }
+                if (Ex_ObjIsValidate(button)) {
+                    Ex_ObjShow(button, FALSE); // 隐藏 button 元素
                 }
             }
             else {
@@ -917,7 +972,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             if (pt.y > itemRC2.top && pt.y < itemRC2.bottom && pt.x > columnWidth) {
                 Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSEL, L);
                 LPCWSTR itemText = (LPCWSTR)__get(ptr, PGITEM_STRUCT_OFFSET_TEXT);
-                if (itemType == PROPERTYGRID_OBJTYPE_EDIT) {
+                if (itemType & PROPERTYGRID_OBJTYPE_EDIT) {
                     HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
                     // 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读
 
@@ -943,6 +998,11 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                     Ex_ObjMove(edit, itemRC2.left, itemRC2.top, itemRC2.right - itemRC2.left,
                         itemRC2.bottom - itemRC2.top, TRUE);
                     Ex_ObjSetText(edit, itemText, TRUE);
+                    if (itemType & PROPERTYGRID_OBJTYPE_BUTTON) {
+                        HEXOBJ btt = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
+                        Ex_ObjShow(btt, TRUE);
+                        Ex_ObjMove(btt, itemRC2.right - 20, itemRC2.top, 20, itemRC2.bottom - itemRC2.top, TRUE);
+                    }
                 }
                 else if (itemType == PROPERTYGRID_OBJTYPE_DATEBOX) {
                     HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
@@ -1157,9 +1217,14 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         if (wParam == PROPERTYGRID_OBJTYPE_GROUP) {
             __set(ptr, PGITEM_STRUCT_OFFSET_SHRINK, 0);
         }
-        else if (wParam == PROPERTYGRID_OBJTYPE_EDIT ||
-            wParam == PROPERTYGRID_OBJTYPE_COLORPICKER ||
+        else if (wParam == PROPERTYGRID_OBJTYPE_COLORPICKER ||
             wParam == PROPERTYGRID_OBJTYPE_DATEBOX)   // 如果需求不一致再拿出来单独判断执行
+        {
+            if (item->text) {
+                __set(ptr, PGITEM_STRUCT_OFFSET_TEXT, (LONG_PTR)StrDupW(item->text));
+            }
+        }
+        else if (wParam & PROPERTYGRID_OBJTYPE_EDIT || wParam & PROPERTYGRID_OBJTYPE_BUTTON)
         {
             if (item->text) {
                 __set(ptr, PGITEM_STRUCT_OFFSET_TEXT, (LONG_PTR)StrDupW(item->text));

@@ -33,6 +33,15 @@ LRESULT CALLBACK OnPropertyGridEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
     return 0;
 }
 
+LRESULT CALLBACK OnPropertyGridEventBUTTONCLICK(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+    EX_PROGRID_CHANGEITEMINFO itemInfo{ 0 };
+    RtlMoveMemory(&itemInfo, (void*)lParam, sizeof(EX_PROGRID_CHANGEITEMINFO));
+    OUTPUTW(L"属性框值改变, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:",
+        itemInfo.type);
+    return 0;
+}
+
 void test_propertygrid(HWND hParent)
 {
     HWND hWnd_propertygrid =
@@ -49,7 +58,7 @@ void test_propertygrid(HWND hParent)
         Ex_ObjCreateEx(-1, L"PropertyGrid", L"属性框", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
                        50, 50, 300, 300, hExDui_propertygrid, 0, 0, 0, 0, 0);
     Ex_ObjHandleEvent(m_hObjPropertyGrid, PROPERTYGRID_EVENT_ITEMVALUECHANGE, OnPropertyGridEvent);
-
+    Ex_ObjHandleEvent(m_hObjPropertyGrid, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, OnPropertyGridEventBUTTONCLICK);
     Ex_ObjSetColor(m_hObjPropertyGrid, COLOR_EX_BACKGROUND, ExRGB2ARGB(14737632, 255), TRUE);
 
     auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"取表项内容", -1, 380, 70, 100, 30,
@@ -99,8 +108,16 @@ void test_propertygrid(HWND hParent)
         auto text      = texts[i];
         item.text      = text.c_str();
         item.editStyle = editStyles[i];
-        Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
-                          PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&item);
+        if (i == 3)
+        {
+            Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                PROPERTYGRID_OBJTYPE_EDIT | PROPERTYGRID_OBJTYPE_BUTTON, (LPARAM)&item);
+        } 
+        else
+        {
+            Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
+                PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&item);
+        }  
     }
     item.title = L"小组B";
     Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_GROUP,
@@ -131,6 +148,6 @@ void test_propertygrid(HWND hParent)
         Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_ADDITEM,
                           PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&item);
     }
-    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SHOWHEADER, 0, 0);
+    Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SHOWHEADER, 1, 0);
     Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
 }

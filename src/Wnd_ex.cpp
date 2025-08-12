@@ -279,12 +279,6 @@ void _wnd_recalcclient(wnd_s* pWnd, HWND hWnd, INT width, INT height)
         _rgn_destroy(hRgnNC);
         pWnd->hrgn_sizebox_ = hRgnSizebox;
     }
-    auto rectround = pWnd->Radius_;
-
-    // 外缩1px防止锯齿
-    auto hRgn = CreateRoundRectRgn(-1, -1, width + 1, height + 1, rectround * 2 + 1, rectround * 2 + 1);
-    SetWindowRgn(hWnd, hRgn, TRUE);
-    DeleteObject(hRgn);
 }
 
 BOOL _wnd_wm_stylechanging(wnd_s* pWnd, HWND hWnd, WPARAM wParam, LPARAM lParam)
@@ -1867,7 +1861,23 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
             _canvas_bitblt(cvDisplay, pWnd->canvas_bkg_, rcPaint.left, rcPaint.top, rcPaint.right,
                            rcPaint.bottom, rcPaint.left, rcPaint.top);
         }
-
+        ID2D1Layer* pLayer = nullptr;
+        ID2D1RoundedRectangleGeometry* pClipGeometry = nullptr;
+        // 在调用_wnd_render_obj前插入：
+        if (pWnd->Radius_ != 0 && fDX) {
+            pContext->CreateLayer(nullptr, &pLayer);
+            D2D1_ROUNDED_RECT clipRect;
+            clipRect.rect = D2D1::RectF(0, 0, pWnd->width_, pWnd->height_);
+            clipRect.radiusX = pWnd->Radius_;
+            clipRect.radiusY = pWnd->Radius_;
+            // 创建圆角矩形几何对象
+            g_Ri.pD2Dfactory->CreateRoundedRectangleGeometry(clipRect, &pClipGeometry);
+            // 配置图层参数
+            D2D1_LAYER_PARAMETERS1 layerParams = D2D1::LayerParameters1();
+            layerParams.geometricMask = pClipGeometry;  // 直接赋值几何对象
+            // 应用图层裁剪
+            pContext->PushLayer(&layerParams, pLayer);
+        }
         LPVOID hBrush = nullptr;
         if (Flag_Query(ENGINE_FLAG_OBJECT_SHOWRECTBORDER)) {
             hBrush = _brush_create(-65536);
@@ -1875,6 +1885,12 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
         _wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcPaint,
                         pWnd->objChildFirst_, 0, 0, 255, fDX, hBrush);
         _brush_destroy(hBrush);
+        if (pWnd->Radius_ != 0 && fDX) {
+            // 使用后释放几何对象
+            if (pClipGeometry)pClipGeometry->Release();
+            if (pLayer)pContext->PopLayer();
+            if (pLayer)pLayer->Release();
+        }
         _wnd_render_dc(hWnd, pWnd, hDC, cvDisplay, rcPaint, fLayer);
         _canvas_enddraw(cvDisplay);
     }

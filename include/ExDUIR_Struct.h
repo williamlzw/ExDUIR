@@ -1522,22 +1522,25 @@
 #pragma endregion propertygrid message
 
 #pragma region propertygrid notify
-// 事件_属性框_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)
-// lParam:数据指针(可以通过"__get(数据指针,PGL_内存偏移_***)"来获取数据)
+// 事件_属性框_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)  lParam: EX_PROGRID_CHANGEITEMINFO数据指针
 #define PROPERTYGRID_EVENT_ITEMVALUECHANGE 10012
+// 事件_属性框_按钮被单击 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)  lParam: EX_PROGRID_CHANGEITEMINFO数据指针
+#define PROPERTYGRID_EVENT_ITEMBUTTONCLICK 10013
 #pragma endregion propertygrid notify
 
 #pragma region propertygrid obj type
 // 属性框_组件类型_分组
-#define PROPERTYGRID_OBJTYPE_GROUP -1
-// 属性框_组件类型_编辑框
-#define PROPERTYGRID_OBJTYPE_EDIT 0
+#define PROPERTYGRID_OBJTYPE_GROUP 1
+// 属性框_组件类型_编辑框,可以与PROPERTYGRID_OBJTYPE_BUTTON组合使用
+#define PROPERTYGRID_OBJTYPE_EDIT 2
 // 属性框_组件类型_组合框
-#define PROPERTYGRID_OBJTYPE_COMBOBOX 1
+#define PROPERTYGRID_OBJTYPE_COMBOBOX 4
 // 属性框_组件类型_颜色框
-#define PROPERTYGRID_OBJTYPE_COLORPICKER 2
+#define PROPERTYGRID_OBJTYPE_COLORPICKER 8
 // 属性框_组件类型_日期框
-#define PROPERTYGRID_OBJTYPE_DATEBOX 3
+#define PROPERTYGRID_OBJTYPE_DATEBOX 16
+// 属性框_组件类型_按钮,只能和PROPERTYGRID_OBJTYPE_EDIT组合使用
+#define PROPERTYGRID_OBJTYPE_BUTTON 32
 #pragma endregion propertygrid obj type
 
 #pragma region miniblinkbrowser type
