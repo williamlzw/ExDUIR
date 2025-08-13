@@ -1882,15 +1882,16 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, 
         if (Flag_Query(ENGINE_FLAG_OBJECT_SHOWRECTBORDER)) {
             hBrush = _brush_create(-65536);
         }
-        _wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcPaint,
-                        pWnd->objChildFirst_, 0, 0, 255, fDX, hBrush);
-        _brush_destroy(hBrush);
         if (pWnd->Radius_ != 0 && fDX) {
             // 使用后释放几何对象
             if (pClipGeometry)pClipGeometry->Release();
             if (pLayer)pContext->PopLayer();
             if (pLayer)pLayer->Release();
         }
+        _wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcPaint,
+                        pWnd->objChildFirst_, 0, 0, 255, fDX, hBrush);
+        _brush_destroy(hBrush);
+        
         _wnd_render_dc(hWnd, pWnd, hDC, cvDisplay, rcPaint, fLayer);
         _canvas_enddraw(cvDisplay);
     }
