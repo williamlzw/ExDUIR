@@ -817,6 +817,11 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             HEXOBJ color = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
             HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
             HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
+            if (Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSEL) != Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER)) {
+                if (Ex_ObjIsValidate(button)) {
+                    Ex_ObjShow(button, FALSE); // 隐藏 button 元素
+                }
+            }
             if (pt[0] < Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_COLUMNWIDTH)) {
                 if (Ex_ObjIsValidate(edit)) {
                     Ex_ObjShow(edit, FALSE);
