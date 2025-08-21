@@ -255,12 +255,12 @@ LRESULT CALLBACK _propertygrid_onscrollbarmsg(HWND hWND, HEXOBJ hObj, INT uMsg, 
     LPARAM lParam, LRESULT* lpResult)
 {
     if (uMsg == WM_MOUSEHOVER) {
-        Ex_ObjPostMessage(hObj, 56212, 0, 1);   // 显示滚动条
+        Ex_ObjPostMessage(hObj, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 1);   // 显示滚动条
     }
     else if (uMsg == WM_MOUSELEAVE) {
-        Ex_ObjPostMessage(hObj, 56212, 0, 0);   // 隐藏滚动条
+        Ex_ObjPostMessage(hObj, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);   // 隐藏滚动条
     }
-    else if (uMsg == 56212) {
+    else if (uMsg == SCROLLBAR_MESSAGE_SETVISIBLE) {
         Ex_ObjSetLong(hObj, OBJECT_LONG_ALPHA, lParam != 0 ? 255 : 0);
         Ex_ObjInvalidateRect(hObj, 0);
     }
@@ -359,54 +359,7 @@ INT _propertygrid_arrayindextoline(HEXOBJ hObj, INT arrayIndex)
     }
     return 0;
 }
-INT _propertygrid_getvisiblelinecount(HEXOBJ hObj)
-{
-    array_s* arr = (array_s*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
-    INT count = arr ? Array_GetCount(arr) : 0;
-    INT visibleCount = 0;
 
-    for (INT i = 1; i <= count; i++)
-    {
-        void* item = (void*)Array_GetMember(arr, i);
-        if (!item) continue;
-
-        INT type = __get(item, PGITEM_STRUCT_OFFSET_TYPE);
-        INT shrink = __get(item, PGITEM_STRUCT_OFFSET_SHRINK);
-
-        // 分组行始终可见
-        if (type == PROPERTYGRID_OBJTYPE_GROUP) {
-            visibleCount++;
-        }
-        // 普通行：仅当未收缩时可见
-        else if (shrink != -1) {
-            visibleCount++;
-        }
-    }
-    return visibleCount;
-}
-void _propertygrid_updatescrollbar(HEXOBJ hObj)
-{
-    INT visibleCount = _propertygrid_getvisiblelinecount(hObj);
-    INT showNum = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWNUM);
-    INT offset = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_OFFSET);
-    BOOL bHeaderVisible = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE);
-
-    // 可用行数 = 总可视行数 - 表头行(如果显示)
-    INT availableLines = visibleCount - (bHeaderVisible ? 1 : 0);
-
-    if (availableLines > showNum)
-    {
-        Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
-        Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, availableLines - showNum + offset, TRUE);
-    }
-    else
-    {
-        Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, FALSE);
-        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWOFFSET, 0);
-        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWBEGIN, 1);
-        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWEND, showNum + 1);
-    }
-}
 LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (uMsg == WM_CREATE) {
@@ -429,8 +382,8 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE, TRUE);//默认显示表头
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER, 0);      // 热点项目索引
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSEL, 0);      // 选中项目索引
-        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR, ExARGB(220, 220, 220, 255));
-        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR, ExARGB(180, 180, 180, 255));
+        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR, ExARGB(0, 0, 30, 30));
+        Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR, ExARGB(0, 0, 60, 60));
         Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_ALL, 0, 0, showNum, 0, TRUE);
         Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
         INT    nError = 0;
@@ -438,7 +391,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
             Ex_ObjSetLong(pObj->objVScroll_, OBJECT_LONG_OBJPROC,
                 (size_t)_propertygrid_onscrollbarmsg);   // 改变滚动条回调
-            Ex_ObjPostMessage(pObj->objVScroll_, 56212, 0, 0);     // 隐藏滚动条
+            Ex_ObjPostMessage(pObj->objVScroll_, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);     // 隐藏滚动条
         }
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMNUM, 0);
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMBACKGROUNDCOLOR, ExRGB2ARGB(16777215, 255));
@@ -488,15 +441,21 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, 0)) {
             Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_COLUMNWIDTH, Width / 2);
             INT lineHeight = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_LINEHEIGHT);
-            BOOL bHeaderVisible = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE);
-            int headerHeight = (bHeaderVisible ? lineHeight : 0);
-            int showNum = (Height - headerHeight) / lineHeight;
+            int showNum = Height / lineHeight;
             int offset = 1;
             Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_OFFSET, offset);
             Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWBEGIN, 1);
             Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWEND, showNum + offset);
             Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWNUM, showNum);
-            _propertygrid_updatescrollbar(hObj);
+            int itemNum = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMNUM);
+            if (itemNum > showNum) {
+                Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
+                Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, (itemNum - showNum) + offset,
+                    TRUE);   // +2分别是 差值占1 和标题栏占1
+            }
+            else {
+                Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, FALSE);
+            }
         }
     }
     else if (uMsg == WM_DESTROY) {
@@ -540,7 +499,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             INT      showOffset = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWOFFSET);
             array_s* itemArr = (array_s*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
             INT      start = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWBEGIN);
-            INT      end = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWEND) + 1;//不加1的话有位置的时候会少绘制一部分
+            INT      end = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWEND);
             INT      i = start;
 
             // 获取表头可见性
@@ -817,11 +776,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             HEXOBJ color = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
             HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
             HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
-            if (Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSEL) != Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOVER)) {
-                if (Ex_ObjIsValidate(button)) {
-                    Ex_ObjShow(button, FALSE); // 隐藏 button 元素
-                }
-            }
             if (pt[0] < Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_COLUMNWIDTH)) {
                 if (Ex_ObjIsValidate(edit)) {
                     Ex_ObjShow(edit, FALSE);
@@ -1002,8 +956,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                     {
                     }
                     else {}
-                    _propertygrid_updatescrollbar(hObj);
-                    Ex_ObjInvalidateRect(hObj, 0);
                     break;
                 }
             }
@@ -1183,8 +1135,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             }
             L++;
         }
-        _propertygrid_updatescrollbar(hObj);
-        Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == WM_VSCROLL) {
         HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
@@ -1247,18 +1197,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             if (nPos != oPos) {
                 Ex_ObjScrollSetPos(hObj, SCROLLBAR_TYPE_VERT, nPos, TRUE);
             }
-
-            INT visibleCount = _propertygrid_getvisiblelinecount(hObj);
-            INT showNum = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SHOWNUM);
-            INT maxPos = max(0, visibleCount - showNum);
-
-            if (nPos > maxPos) nPos = maxPos;
-
-            // 更新显示位置
-            Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWOFFSET, -nPos * lineHeight);
-            Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWBEGIN, nPos + 1);
-            Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SHOWEND, nPos + 1 + showNum + offset);
-
             Ex_ObjInvalidateRect(hObj, 0);
         }
     }
@@ -1308,7 +1246,14 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 
         Array_AddMember(itemArr, (size_t)ptr, item->index);
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMNUM, itemNum + 1);
-        _propertygrid_updatescrollbar(hObj);
+        if (itemNum + 1 > showNum) {
+            Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
+            Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, (itemNum + 1 - showNum) + offset,
+                TRUE);
+        }
+        else {
+            Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, FALSE);
+        }
     }
     else if (uMsg == PROPERTYGRID_MESSAGE_GETITEMVALUE) {
         array_s* itemArr = (array_s*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
@@ -1354,8 +1299,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
     }
     else if (uMsg == PROPERTYGRID_MESSAGE_SHOWHEADER) {
         Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_HEADERVISIBLE, wParam);
-        _propertygrid_updatescrollbar(hObj);
-        Ex_ObjInvalidateRect(hObj, 0);
     }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
