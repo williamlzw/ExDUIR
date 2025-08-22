@@ -1186,7 +1186,7 @@ namespace ExDUIR
 					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_SETITEMVALUE, (WPARAM)itemValue.c_str(), (LPARAM)itemName.c_str());
 				}
 
-				inline void AddItemGroup(EX_PROGRID_ITEMINFO info)
+				/*inline void AddItemGroup(EX_PROGRID_ITEMINFO info)
 				{
 					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_GROUP, (LPARAM)&info);
 				}
@@ -1209,7 +1209,7 @@ namespace ExDUIR
 				inline void AddItemEdit(EX_PROGRID_ITEMINFO info)
 				{
 					Ex_ObjSendMessage(m_handle, PROPERTYGRID_MESSAGE_ADDITEM, PROPERTYGRID_OBJTYPE_EDIT, (LPARAM)&info);
-				}
+				}*/
 			};
 
 			class ExCalendar : public ExControl
