@@ -1508,40 +1508,42 @@
 #define DRAWINGBOARD_MESSAGE_CLEAR 20003
 #pragma endregion drawingboard message
 
-#pragma region propertygrid message
-// 消息_属性框添加表项 添加行到尾部 wParam:组件_类型  lParam: PGITEM 指针 ----------
+#pragma region propertygrid message constant
+// 消息_属性框_添加表项 添加行到尾部 lParam: EX_PROPERTYGRID_ITEMINFO_SUBITEM 指针
 #define PROPERTYGRID_MESSAGE_ADDITEM 10010
-// 消息_属性框_取表项值 wParam: 未定义    lParam:表项名  return:表项值文本指针
-#define PROPERTYGRID_MESSAGE_GETITEMVALUE 10011
-// 消息_属性框_置表项值 wParam: 欲写入值    lParam:表项名  return:未定义
-#define PROPERTYGRID_MESSAGE_SETITEMVALUE 10012
-// 消息_属性框_清空项目
-#define PROPERTYGRID_MESSAGE_CLEAR 10013
-// 消息_属性框_是否显示表头, wParam： 1显示  0不显示
-#define PROPERTYGRID_MESSAGE_SHOWHEADER 10014
-#pragma endregion propertygrid message
+// 消息_属性框_更新表项 注意CHATBOX_ITEMTYPE_一致才能更新 wParam:表项索引 从0开始 lParam: EX_PROPERTYGRID_ITEMINFO_SUBITEM 指针
+#define PROPERTYGRID_MESSAGE_UPDATEITEM 10011
+// 消息_属性框_取表项类型 wParam:表项索引 从0开始，返回PROPERTYGRID_ITEMTYPE_ ,失败返回-1
+#define PROPERTYGRID_MESSAGE_GETITEMTYPE 10012
+// 消息_属性框_取表项文本值数据 wParam:表项索引 从0开始，return:表项值文本指针
+#define PROPERTYGRID_MESSAGE_GETITEMVALUE 10013
+// 消息_属性框_写表项文本值数据 wParam:表项索引 从0开始 lParam:文本值
+#define PROPERTYGRID_MESSAGE_SETITEMVALUE 10014
+// 消息_属性框_取表项总数,失败返回-1
+#define PROPERTYGRID_MESSAGE_GETITEMCOUNT 10015
+#pragma endregion propertygrid message constant
+
+#pragma region propertygrid item type constant
+// 属性框_项目类型_分组
+#define PROPERTYGRID_ITEMTYPE_GROUP 1
+// 属性框_项目类型_编辑框
+#define PROPERTYGRID_ITEMTYPE_EDIT 2
+// 属性框_项目类型_日期框
+#define PROPERTYGRID_ITEMTYPE_DATEBOX 4
+// 属性框_项目类型_颜色框
+#define PROPERTYGRID_ITEMTYPE_COLORPICKER 8
+// 属性框_项目类型_组合框
+#define PROPERTYGRID_ITEMTYPE_COMBOBOX 16
+// 属性框_项目类型_按钮
+#define PROPERTYGRID_ITEMTYPE_BUTTON 32
+#pragma endregion propertygrid item type constant
 
 #pragma region propertygrid notify
-// 事件_属性框_表项值改变 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)  lParam: EX_PROGRID_CHANGEITEMINFO数据指针
+// 事件_属性框_表项值改变 wParam:行索引(包括分组行和组件行,从0开始)  lParam: EX_PROGRID_CHANGEITEMINFO数据指针
 #define PROPERTYGRID_EVENT_ITEMVALUECHANGE 10012
-// 事件_属性框_按钮被单击 wParam:行索引(不包括标题行,包括分组行和组件行,从1开始)  lParam: EX_PROGRID_CHANGEITEMINFO数据指针
+// 事件_属性框_按钮被单击 wParam:行索引(包括分组行和组件行,从0开始)  lParam: EX_PROGRID_CHANGEITEMINFO数据指针
 #define PROPERTYGRID_EVENT_ITEMBUTTONCLICK 10013
 #pragma endregion propertygrid notify
-
-#pragma region propertygrid obj type
-// 属性框_组件类型_分组
-#define PROPERTYGRID_OBJTYPE_GROUP 1
-// 属性框_组件类型_编辑框,可以与PROPERTYGRID_OBJTYPE_BUTTON组合使用
-#define PROPERTYGRID_OBJTYPE_EDIT 2
-// 属性框_组件类型_组合框
-#define PROPERTYGRID_OBJTYPE_COMBOBOX 4
-// 属性框_组件类型_颜色框
-#define PROPERTYGRID_OBJTYPE_COLORPICKER 8
-// 属性框_组件类型_日期框
-#define PROPERTYGRID_OBJTYPE_DATEBOX 16
-// 属性框_组件类型_按钮,只能和PROPERTYGRID_OBJTYPE_EDIT组合使用
-#define PROPERTYGRID_OBJTYPE_BUTTON 32
-#pragma endregion propertygrid obj type
 
 #pragma region miniblinkbrowser type
 // miniblink浏览框加载类型_URL
@@ -2249,28 +2251,122 @@ struct EX_DATETIME
 	INT Wday;   // 星期 1-7 7=星期日
 };
 
-// 属性框项目组合框子结构
-struct EX_PROGRID_ITEMINFO_COMBOBOX
+
+struct EX_PROPERTYGRID_ITEM_LAYOUT_BUTTON
 {
-	LPCWSTR text = L"test";   // 组合框条目内容, 默认内容为test
+	RECT rcTitle;    // 标题区域
+	RECT rcContent;   // 内容区域
 };
 
-// 属性框项目结构
-struct EX_PROGRID_ITEMINFO
+#pragma pack(4)
+struct EX_PROPERTYGRID_ITEMINFO_BUTTON
 {
-	size_t  index = 0;   // 默认0,为尾部.索引从非表头开始计算,从1开始
-	LPCWSTR title;       // 标题
-	LPCWSTR text;        // 注意对于颜色框 为文本数字
-	int editStyle = 0;   // 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读
-	EX_PROGRID_ITEMINFO_COMBOBOX textComboBox[50];   // 组合框数组内容
-	size_t                       comboboxNum;        // 组合框数组数量
+	LPCWSTR Title;//标题
+	LPCWSTR Content;//内容
+	EX_PROPERTYGRID_ITEM_LAYOUT_BUTTON Layout;
+};
+
+struct EX_PROPERTYGRID_ITEM_LAYOUT_DATEBOX
+{
+	RECT rcTitle;    // 标题区域
+	RECT rcContent;   // 内容区域
+};
+
+#pragma pack(4)
+struct EX_PROPERTYGRID_ITEMINFO_DATEBOX
+{
+	LPCWSTR Title;//标题
+	LPCWSTR Content;//内容
+	EX_PROPERTYGRID_ITEM_LAYOUT_DATEBOX Layout;
+};
+
+struct EX_PROPERTYGRID_ITEM_LAYOUT_COLORPICKER
+{
+	RECT rcTitle;    // 标题区域
+	RECT rcContent;   // 内容区域
+};
+
+#pragma pack(4)
+struct EX_PROPERTYGRID_ITEMINFO_COLORPICKER
+{
+	LPCWSTR Title;//标题
+	LPCWSTR Content;//内容
+	EX_PROPERTYGRID_ITEM_LAYOUT_COLORPICKER Layout;
+};
+
+struct EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT
+{
+	LPCWSTR Text;//组合框内容
+};
+
+struct EX_PROPERTYGRID_ITEM_LAYOUT_COMBOBOX
+{
+	RECT rcTitle;    // 标题区域
+	RECT rcContent;   // 内容区域
+};
+
+#pragma pack(4)
+struct EX_PROPERTYGRID_ITEMINFO_COMBOBOX
+{
+	LPCWSTR Title;
+	LPCWSTR Content; //内容
+	EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT* ListInfo; //EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT数组
+	INT ListCount; //行数（数组元素数量） EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT数组数量
+	EX_PROPERTYGRID_ITEM_LAYOUT_COMBOBOX Layout;
+};
+
+struct EX_PROPERTYGRID_ITEM_LAYOUT_EDIT
+{
+	RECT rcTitle;    // 标题区域
+	RECT rcContent;   // 内容区域
+};
+
+#pragma pack(4)
+struct EX_PROPERTYGRID_ITEMINFO_EDIT
+{
+	LPCWSTR Title; //标题
+	LPCWSTR Content; //内容
+	INT EditStyle; //编辑框类型 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读
+	EX_PROPERTYGRID_ITEM_LAYOUT_EDIT Layout;
+};
+
+struct EX_PROPERTYGRID_ITEM_LAYOUT_GROUP
+{
+	RECT rcTitle;    // 标题区域
+	RECT rcImage;    // +号区域
+};
+
+#pragma pack(4)
+struct EX_PROPERTYGRID_ITEMINFO_GROUP
+{
+	LPCWSTR Title; //标题
+	BOOL bExpanded;//项目是否展开
+	EX_PROPERTYGRID_ITEM_LAYOUT_GROUP Layout;
+};
+
+#pragma pack(4)
+struct EX_PROPERTYGRID_ITEMINFO_SUBITEM
+{
+	DWORD   Type;
+	INT ParentIndex;    // 父项索引，-1表示无父项, 分组索引从0开始，与子项目索引无关
+	RECT rcItem;      // 整个项目的矩形区域
+	INT  nHeight;         // 项目总高度
+	BOOL bVisible; // 表示项目是否可见
+	LPVOID  Data;
+};
+
+struct EX_PROPERTYGRID_ITEMINFO
+{
+	LPVOID Items;   // 数据,EX_PROPERTYGRID_ITEMINFO_SUBITEM数组
+	DWORD  Count;   //项目数量
+	DWORD GroupCount; //分组数量
 };
 
 // 属性框项目值改变信息结构 PROPERTYGRID_EVENT_ITEMVALUECHANGE通知参数lParam
 struct EX_PROGRID_CHANGEITEMINFO
 {
-	INT     type;   // 改变类型
-	LPCWSTR text;   // 改变内容,注意对于颜色框 为文本数字
+	LPCWSTR text;   // 改变内容,注意对于颜色框 为ARGB文本数字
+	INT type;       // 改变子项目类型  0编辑框 1日期框 2颜色框 3组合框 4按钮
 };
 
 // 卷帘菜单_附加用户图标
@@ -2353,7 +2449,6 @@ struct EX_CHATBOX_ITEM_LAYOUT_TEXT
 
 struct EX_CHATBOX_ITEM_LAYOUT_CARD
 {
-
 	RECT rcAvatar;    // 头像区域
 	RECT rcBubble;    // 气泡区域
 	RECT rcContent;   // 内容区域

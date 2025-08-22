@@ -195,9 +195,6 @@
     <ClCompile Include="..\..\src\Class_Palette_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\Class_Calendar_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -257,6 +254,9 @@
     </ClCompile>
     <ClCompile Include="..\..\thirdparty\svgrender\xml\RapidXMLParser.cpp">
       <Filter>svgrender\xml</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -434,9 +434,6 @@
     <ClInclude Include="..\..\include\Class_Palette_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\CustomFont.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -514,6 +511,9 @@
     </ClInclude>
     <ClInclude Include="..\..\thirdparty\svgrender\xml\XMLParser.h">
       <Filter>svgrender\xml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

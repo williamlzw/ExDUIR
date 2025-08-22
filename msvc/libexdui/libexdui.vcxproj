@@ -25,6 +25,7 @@
     <ClCompile Include="..\..\src\Class_ChatBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_LineChart_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_WaveProgressBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
@@ -48,7 +49,6 @@
     <ClCompile Include="..\..\src\Class_Palette_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ColorPicker_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ProgressBar_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_RadioButtonEx_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ReportListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_RollMenu.cpp" />
@@ -110,6 +110,7 @@
     <ClInclude Include="..\..\include\Class_ChatBox_ex.h" />
     <ClInclude Include="..\..\include\Class_FlowChart_ex.h" />
     <ClInclude Include="..\..\include\Class_LineChart_ex.h" />
+    <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h" />
     <ClInclude Include="..\..\include\Class_WaveProgressBar_ex.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
@@ -133,7 +134,6 @@
     <ClInclude Include="..\..\include\Class_Palette_ex.h" />
     <ClInclude Include="..\..\include\Class_ColorPicker_ex.h" />
     <ClInclude Include="..\..\include\Class_ProgressBar_ex.h" />
-    <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h" />
     <ClInclude Include="..\..\include\Class_RadioButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_ReportListView_ex.h" />
     <ClInclude Include="..\..\include\Class_RollMenu.h" />
