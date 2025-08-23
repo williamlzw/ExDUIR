@@ -1521,6 +1521,8 @@
 #define PROPERTYGRID_MESSAGE_SETITEMVALUE 10014
 // 消息_属性框_取表项总数,失败返回-1
 #define PROPERTYGRID_MESSAGE_GETITEMCOUNT 10015
+// 消息_属性框_从标题取索引 返回索引
+#define PROPERTYGRID_MESSAGE_FINDITEMBYTITLE 10016
 #pragma endregion propertygrid message constant
 
 #pragma region propertygrid item type constant
