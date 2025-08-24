@@ -4,7 +4,7 @@ void _propertygrid_register()
 {
 	Ex_ObjRegister(L"PropertyGrid",
 		OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-		DT_LEFT | DT_VCENTER, 22 * sizeof(size_t), NULL, 0,
+		DT_LEFT | DT_VCENTER, 14 * sizeof(size_t), NULL, 0,
 		_propertygrid_proc);
 }
 
@@ -18,17 +18,16 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		ptr->GroupCount = 0;
 		INT lineHeight = Ex_Scale(26);
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY, (LONG_PTR)ptr);
-		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_BKG_COLOR, ExARGB(224, 224, 224, 255));
+		Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(224, 224, 224, 255), FALSE);
+		Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(0, 0, 0, 255), FALSE);
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET, 0);
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_LINEHEIGHT, lineHeight);
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SELITEM, -1); // 初始化选中项为-1
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_HOTITEM, -1); // 初始化热点项为-1
-		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_TEXT_FONT, _font_createfromfamily(L"Arial", 14, 0));
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_COLUMNWIDTH, 150); // 默认列宽
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR, ExARGB(198, 198, 201, 255));
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR, ExARGB(171, 171, 185, 255));
-		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMBACKGROUNDCOLOR, ExARGB(255, 255, 255, 255));
-
+		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_LINECOLOR, ExARGB(0, 0, 0, 10));
 		//-------组件创建---------------
 		HEXOBJ hobjEdit = Ex_ObjCreateEx(
 			OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_CUSTOMDRAW,
@@ -99,7 +98,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					Ex_MemFree((void*)data->Title);
 					free(data);
 				}
-				else if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+				else if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 				{
 					EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 					Ex_MemFree((void*)data->Title);
@@ -144,8 +143,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			free(arr->Items); // 释放项数组
 			free(arr);        // 释放主结构
 		}
-		_font_destroy(Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TEXT_FONT));
-
 	}
 	else if (uMsg == WM_VSCROLL) {
 		_propertygrid_onvscrollbar(hWnd, hObj, uMsg, wParam, lParam);
@@ -198,7 +195,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			textCopy->bExpanded = textData->bExpanded;
 			itemCopy->Data = textCopy;
 		}
-		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+		else if (newValue->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 		{
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)newValue->Data;
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textCopy = (EX_PROPERTYGRID_ITEMINFO_EDIT*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_EDIT));
@@ -220,7 +217,13 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			EX_PROPERTYGRID_ITEMINFO_COLORPICKER* textData = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)newValue->Data;
 			EX_PROPERTYGRID_ITEMINFO_COLORPICKER* textCopy = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_COLORPICKER));
 			textCopy->Title = StrDupW(textData->Title);
-			textCopy->Content = StrDupW(textData->Content);
+			EXARGB argb = _wtoll(textData->Content);
+			WCHAR color[16] = { 0 };
+			swprintf_s(color, L"#%02X%02X%02X",
+				(argb >> 16) & 0xFF, // 红色分量
+				(argb >> 8) & 0xFF,  // 绿色分量
+				argb & 0xFF);         // 蓝色分量
+			textCopy->Content = StrDupW(color);
 			itemCopy->Data = textCopy;
 		}
 		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX)
@@ -228,9 +231,10 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			EX_PROPERTYGRID_ITEMINFO_COMBOBOX* textData = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)newValue->Data;
 			EX_PROPERTYGRID_ITEMINFO_COMBOBOX* textCopy = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_COMBOBOX));
 			textCopy->Title = StrDupW(textData->Title);
-			if (textData->ListInfo[0].Text)
+			int i = (int)wParam;
+			if (i != -1 && i < textData->ListCount && textData->ListInfo[i].Text)
 			{
-				textCopy->Content = StrDupW(textData->ListInfo[0].Text);
+				textCopy->Content = StrDupW(textData->ListInfo[i].Text);
 			}
 			textCopy->ListCount = textData->ListCount;
 			textCopy->ListInfo = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT*)malloc(textData->ListCount * sizeof(EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT));
@@ -263,6 +267,10 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 
 		_propertygrid_update_layout(hObj);
 		Ex_ObjInvalidateRect(hObj, 0); // 触发重绘
+		if (newValue->Type == PROPERTYGRID_ITEMTYPE_GROUP) {
+			INT Index = arr->GroupCount - 1;
+			return Index; // 返回的父索引,为分组时有效
+		}
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_UPDATEITEM)
 	{
@@ -286,7 +294,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			Ex_MemFree((void*)oldData->Title);
 			free(oldData);
 		}
-		else if (oldSub->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+		else if (oldSub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 		{
 			EX_PROPERTYGRID_ITEMINFO_EDIT* oldData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)oldSub->Data;
 			Ex_MemFree((void*)oldData->Title);
@@ -342,7 +350,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			textCopy->bExpanded = textData->bExpanded;
 			newSub->Data = textCopy;
 		}
-		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+		else if (newValue->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 		{
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)newValue->Data;
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textCopy = (EX_PROPERTYGRID_ITEMINFO_EDIT*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_EDIT));
@@ -418,7 +426,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		if (index < 0 || index >= arr->Count) return -1; // 索引无效
 		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[index];
 		LPCWSTR text = NULL;
-		if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 		{
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 			text = textData->Content;
@@ -455,7 +463,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[index];
 		LPCWSTR newValue = (LPCWSTR)lParam;
 		LPCWSTR text = NULL;
-		if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 		{
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 			text = textData->Content;
@@ -513,26 +521,20 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			LPCWSTR currentTitle = NULL;
 
 			// 根据项目类型获取标题
-			switch (sub->Type) {
-			case PROPERTYGRID_ITEMTYPE_GROUP:
+
+			if (sub->Type == PROPERTYGRID_ITEMTYPE_GROUP)
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_GROUP*)sub->Data)->Title;
-				break;
-			case PROPERTYGRID_ITEMTYPE_EDIT:
+			else if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data)->Title;
-				break;
-			case PROPERTYGRID_ITEMTYPE_DATEBOX:
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_DATEBOX)
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_DATEBOX*)sub->Data)->Title;
-				break;
-			case PROPERTYGRID_ITEMTYPE_COLORPICKER:
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER)
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)sub->Data)->Title;
-				break;
-			case PROPERTYGRID_ITEMTYPE_COMBOBOX:
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX)
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)sub->Data)->Title;
-				break;
-			case PROPERTYGRID_ITEMTYPE_BUTTON:
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON)
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data)->Title;
-				break;
-			}
+
 
 			// 比较标题
 			if (currentTitle != NULL && wcscmp(currentTitle, lpszTitle) == 0) {
@@ -540,6 +542,100 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			}
 		}
 		return -1; // 未找到
+	}
+	else if (uMsg == PROPERTYGRID_MESSAGE_CLEAR)
+	{
+		EX_PROPERTYGRID_ITEMINFO* arr = (EX_PROPERTYGRID_ITEMINFO*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
+		if (arr == NULL) return 0;
+
+		// 释放所有项目内存
+		for (int i = 0; i < arr->Count; i++)
+		{
+			size_t* ptrArray = (size_t*)arr->Items;
+			EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[i];
+
+			if (sub->Type == PROPERTYGRID_ITEMTYPE_GROUP)
+			{
+				EX_PROPERTYGRID_ITEMINFO_GROUP* data = (EX_PROPERTYGRID_ITEMINFO_GROUP*)sub->Data;
+				Ex_MemFree((void*)data->Title);
+				free(data);
+			}
+			else if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
+			{
+				EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
+				Ex_MemFree((void*)data->Title);
+				Ex_MemFree((void*)data->Content);
+				free(data);
+			}
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_DATEBOX)
+			{
+				EX_PROPERTYGRID_ITEMINFO_DATEBOX* data = (EX_PROPERTYGRID_ITEMINFO_DATEBOX*)sub->Data;
+				Ex_MemFree((void*)data->Title);
+				Ex_MemFree((void*)data->Content);
+				free(data);
+			}
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER)
+			{
+				EX_PROPERTYGRID_ITEMINFO_COLORPICKER* data = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)sub->Data;
+				Ex_MemFree((void*)data->Title);
+				Ex_MemFree((void*)data->Content);
+				free(data);
+			}
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX)
+			{
+				EX_PROPERTYGRID_ITEMINFO_COMBOBOX* data = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)sub->Data;
+				Ex_MemFree((void*)data->Title);
+				Ex_MemFree((void*)data->Content);
+				for (int j = 0; j < data->ListCount; j++)
+				{
+					Ex_MemFree((void*)data->ListInfo[j].Text);
+				}
+				free(data->ListInfo);
+				free(data);
+			}
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON)
+			{
+				EX_PROPERTYGRID_ITEMINFO_BUTTON* data = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
+				Ex_MemFree((void*)data->Title);
+				Ex_MemFree((void*)data->Content);
+				free(data);
+			}
+			free(sub);
+		}
+
+		// 释放项目数组
+		free(arr->Items);
+
+		// 重置数组结构
+		arr->Items = NULL;
+		arr->Count = 0;
+		arr->GroupCount = 0;
+
+		// 重置控件状态
+		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET, 0);
+		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_SELITEM, -1);
+		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_HOTITEM, -1);
+
+		// 隐藏所有编辑器控件
+		HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
+		HEXOBJ combobox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOMBOBOX);
+		HEXOBJ colorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
+		HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
+		HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
+
+		if (Ex_ObjIsValidate(edit)) Ex_ObjShow(edit, FALSE);
+		if (Ex_ObjIsValidate(combobox)) Ex_ObjShow(combobox, FALSE);
+		if (Ex_ObjIsValidate(colorPicker)) Ex_ObjShow(colorPicker, FALSE);
+		if (Ex_ObjIsValidate(datebox)) Ex_ObjShow(datebox, FALSE);
+		if (Ex_ObjIsValidate(button)) Ex_ObjShow(button, FALSE);
+
+		// 更新滚动条
+		Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, 0, TRUE);
+
+		// 重绘控件
+		Ex_ObjInvalidateRect(hObj, 0);
+
+		return 1; // 返回成功
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
@@ -565,18 +661,33 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 	if (nCode == NM_CLICK) {
 		HEXOBJ parent = Ex_ObjGetParent(hObj);
 		if (Ex_ObjIsValidate(parent)) {
-			auto text_length =
-				Ex_ObjGetTextLength(Ex_ObjGetFromID(hObj, 201));   // 取按钮1文本长度
-			std::wstring str;
-			str.resize(text_length);
-			Ex_ObjGetText(Ex_ObjGetFromID(hObj, 201), str.data(), text_length * 2);
-			int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
-			EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
-			itemInfo.text = str.c_str();
-			itemInfo.type = 5;
-			Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
-			Ex_ObjKillFocus(hObj);
-			Ex_ObjShow(hObj, FALSE);
+			EX_PROPERTYGRID_ITEMINFO* arr = (EX_PROPERTYGRID_ITEMINFO*)Ex_ObjGetLong(parent, PROPERTYGRID_LONG_ITEMARRAY);
+			if (arr) {
+				size_t* ptrArray = (size_t*)arr->Items;
+				int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+				EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[itemSelect];
+				if (sub->Type & PROPERTYGRID_ITEMTYPE_BUTTON) {
+					EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
+					EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
+					itemInfo.text = data->Content;
+					itemInfo.type = PROPERTYGRID_ITEMTYPE_BUTTON | PROPERTYGRID_ITEMTYPE_EDIT;
+					Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
+					Ex_ObjKillFocus(hObj);
+				}
+			}
+			else
+			{
+				auto text_length = Ex_ObjGetTextLength(hObj) * 2;   // 取按钮1文本长度
+				std::wstring str;
+				str.resize(text_length);
+				Ex_ObjGetText(hObj, str.data(), text_length);
+				int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+				EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
+				itemInfo.text = str.c_str();
+				itemInfo.type = 5;
+				Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
+				Ex_ObjKillFocus(hObj);
+			}
 		}
 	}
 	return 0;
@@ -610,7 +721,11 @@ LRESULT CALLBACK _propertygrid_oncolorpickerevent(HEXOBJ hObj, INT nID, INT nCod
 		{
 			int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 			WCHAR color[16] = { 0 };
-			swprintf_s(color, L"%d", ExRGB2ARGB((int)lParam, 255));
+			EXARGB argb = ExRGB2ARGB((int)lParam, 255);
+			swprintf_s(color, L"#%02X%02X%02X",
+				(argb >> 16) & 0xFF, // 红色分量
+				(argb >> 8) & 0xFF,  // 绿色分量
+				argb & 0xFF);         // 蓝色分量
 			_propertygrid_setitemtext(parent, itemSelect, color);
 			Ex_ObjKillFocus(hObj);
 			Ex_ObjShow(hObj, FALSE);
@@ -855,7 +970,17 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 	INT nPos = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET);
 	EX_PROPERTYGRID_ITEMINFO* arr = (EX_PROPERTYGRID_ITEMINFO*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
 	if (!arr) return;
+	HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
+	HEXOBJ combobox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOMBOBOX);
+	HEXOBJ colorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
+	HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
+	HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
 
+	if (Ex_ObjIsValidate(edit)) Ex_ObjShow(edit, FALSE);
+	if (Ex_ObjIsValidate(combobox)) Ex_ObjShow(combobox, FALSE);
+	if (Ex_ObjIsValidate(colorPicker)) Ex_ObjShow(colorPicker, FALSE);
+	if (Ex_ObjIsValidate(datebox)) Ex_ObjShow(datebox, FALSE);
+	if (Ex_ObjIsValidate(button)) Ex_ObjShow(button, FALSE);
 	size_t* ptrArray = (size_t*)arr->Items;
 	auto dpi = Ex_DUIGetSystemDpi();
 	for (int i = 0; i < arr->Count; i++) {
@@ -885,7 +1010,7 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 
 				}
 			}
-			else if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT) {
+			else if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT) {
 				EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 				RECT rcContent = data->Layout.rcContent;
 
@@ -919,6 +1044,16 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 					Ex_ObjSetText(edit, data->Content, TRUE);
 					Ex_ObjSetFocus(edit);
 					Ex_ObjSetLong(edit, OBJECT_LONG_LPARAM, i);
+
+					if (sub->Type & PROPERTYGRID_ITEMTYPE_BUTTON) {
+						HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
+						Ex_ObjSetText(button, L"...", TRUE);
+						Ex_ObjShow(button, TRUE);
+						Ex_ObjMove(button, (rcContent.right - 26) / dpi, rcContent.top / dpi, Ex_Scale(26) / dpi,
+							(rcContent.bottom - rcContent.top) / dpi, TRUE);
+						Ex_ObjSetLong(button, OBJECT_LONG_LPARAM, i);
+					}
+
 				}
 
 			}
@@ -946,7 +1081,7 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 					HEXOBJ hobjColorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
 					Ex_ObjShow(hobjColorPicker, TRUE);
 					Ex_ObjMove(hobjColorPicker, rcContent.left / dpi, rcContent.top / dpi,
-						(rcContent.right - rcContent.left) / dpi, (rcContent.bottom - rcContent.top) / dpi,
+						30 / dpi, (rcContent.bottom - rcContent.top) / dpi,
 						TRUE);
 					EXARGB color = ExRGB2ARGB(0, 255);
 					if (data->Content) {
@@ -1086,7 +1221,7 @@ void _propertygrid_update_layout(HEXOBJ hObj)
 			rcContent.left = columnWidth;
 			rcContent.right = rcContent.right - Ex_Scale(10);
 			// 根据项目类型设置布局
-			if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT) {
+			if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT) {
 				EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 				data->Layout.rcTitle = rcTitle;
 				data->Layout.rcContent = rcContent;
@@ -1171,7 +1306,7 @@ void _propertygrid_calc_layout(HEXOBJ hObj, EX_PROPERTYGRID_ITEMINFO_SUBITEM* su
 		};
 
 		// 根据项目类型设置布局
-		if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 		{
 			EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 			data->Layout.rcTitle = rcTitle;
@@ -1213,41 +1348,32 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 	EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[index];
 
 	// 根据项目类型更新内容
-	switch (sub->Type) {
-	case PROPERTYGRID_ITEMTYPE_EDIT: {
+	if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT) {
 		EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 		Ex_MemFree((void*)data->Content);
 		data->Content = StrDupW(content);
-		break;
 	}
-	case PROPERTYGRID_ITEMTYPE_DATEBOX: {
+	else if (sub->Type == PROPERTYGRID_ITEMTYPE_DATEBOX) {
 		EX_PROPERTYGRID_ITEMINFO_DATEBOX* data = (EX_PROPERTYGRID_ITEMINFO_DATEBOX*)sub->Data;
 		Ex_MemFree((void*)data->Content);
 		data->Content = StrDupW(content);
-		break;
 	}
-	case PROPERTYGRID_ITEMTYPE_COLORPICKER: {
+	else if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER) {
 		EX_PROPERTYGRID_ITEMINFO_COLORPICKER* data = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)sub->Data;
 		Ex_MemFree((void*)data->Content);
 		data->Content = StrDupW(content);
-		break;
 	}
-	case PROPERTYGRID_ITEMTYPE_COMBOBOX: {
+	else if (sub->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX) {
 		EX_PROPERTYGRID_ITEMINFO_COMBOBOX* data = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)sub->Data;
 		Ex_MemFree((void*)data->Content);
 		data->Content = StrDupW(content);
-		break;
 	}
-	case PROPERTYGRID_ITEMTYPE_BUTTON: {
+	else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON) {
 		EX_PROPERTYGRID_ITEMINFO_BUTTON* data = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
 		Ex_MemFree((void*)data->Content);
 		data->Content = StrDupW(content);
-		break;
 	}
-	default:
-		// 分组项目没有content，不处理
-		return;
-	}
+
 
 	// 如果该项目是当前选中的项目，更新编辑器内容
 	INT selItem = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SELITEM);
@@ -1257,7 +1383,7 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 		HEXOBJ colorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
 		HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
 		HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
-		if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT && Ex_ObjIsVisible(edit)) {
+		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT && Ex_ObjIsVisible(edit)) {
 			Ex_ObjSetText(edit, content, TRUE);
 		}
 		else if (sub->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX && Ex_ObjIsVisible(combobox)) {
@@ -1275,7 +1401,7 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 		}
 	}
 	INT type;
-	if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT)
+	if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
 	{
 		type = 0;
 	}
@@ -1312,17 +1438,17 @@ void _propertygrid_paint(HEXOBJ hObj)
 			Ex_ObjEndPaint(hObj, &ps);
 			return;
 		}
-		auto bkgColor = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_BKG_COLOR);
+		auto bkgColor = Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND);
 		_canvas_clear(ps.hCanvas, bkgColor);
-
+		auto txtColor = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
 		INT nPos = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET);
-		HEXFONT hFont = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TEXT_FONT);
+		HEXFONT hFont = Ex_ObjGetFont(hObj);
 		INT lineHeight = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_LINEHEIGHT);
 		INT columnWidth = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_COLUMNWIDTH);
 		INT selItem = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SELITEM);
 		INT hotItem = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOTITEM);
 		HEXBRUSH brush = _brush_create(ExRGB2ARGB(0, 255));
-		HEXBRUSH whiteBrush = _brush_create(ExARGB(255, 255, 255, 255));
+		HEXBRUSH lineBrush = _brush_create(Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_LINECOLOR));
 
 		size_t* ptrArray = (size_t*)arr->Items;
 		for (int i = 0; i < arr->Count; i++) {
@@ -1340,20 +1466,6 @@ void _propertygrid_paint(HEXOBJ hObj)
 			//根据项目类型进行绘制
 			if (sub->Type == PROPERTYGRID_ITEMTYPE_GROUP)
 			{
-				// 绘制背景
-				if (i == selItem) {
-					_brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR));
-					_canvas_fillrect(ps.hCanvas, brush, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom);
-				}
-				else if (i == hotItem) {
-					_brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR));
-					_canvas_fillrect(ps.hCanvas, brush, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom);
-				}
-				else {
-					_brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR));
-					_canvas_fillrect(ps.hCanvas, brush, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom);
-				}
-
 				EX_PROPERTYGRID_ITEMINFO_GROUP* data = (EX_PROPERTYGRID_ITEMINFO_GROUP*)sub->Data;
 				RECT rcTitle = data->Layout.rcTitle;
 				OffsetRect(&rcTitle, 0, -nPos);
@@ -1361,10 +1473,10 @@ void _propertygrid_paint(HEXOBJ hObj)
 				OffsetRect(&rcImage, 0, -nPos);
 
 				// 绘制分组标题 
-				_canvas_drawtext(ps.hCanvas, hFont, ExRGB2ARGB(0, 255), data->Title, -1,
+				_canvas_drawtext(ps.hCanvas, hFont, txtColor, data->Title, -1,
 					DT_LEFT | DT_VCENTER | DT_SINGLELINE,
-					rcTitle.left + Ex_Scale(5), rcTitle.top + Ex_Scale(5),
-					rcTitle.right - Ex_Scale(5), rcTitle.bottom - Ex_Scale(5));
+					rcTitle.left, rcTitle.top + Ex_Scale(5),
+					rcTitle.right, rcTitle.bottom - Ex_Scale(5));
 
 				// 绘制展开/折叠图标 
 				FLOAT arrowSize = min(rcImage.right - rcImage.left, rcImage.bottom - rcImage.top) * 0.7f; // 三角形大小为方框的70%
@@ -1374,20 +1486,17 @@ void _propertygrid_paint(HEXOBJ hObj)
 				FLOAT arrowBottom = arrowTop + arrowSize;
 
 				if (data->bExpanded) {
-					_brush_setcolor(brush, ExRGB2ARGB(0, 255));
+					_brush_setcolor(brush, txtColor);
 					_canvas_fillpolygon(ps.hCanvas, brush,
 						arrowLeft, arrowTop, arrowRight, arrowBottom, 3, 90.0f);
 
 				}
 				else {
-					_brush_setcolor(brush, ExRGB2ARGB(0, 255));
+					_brush_setcolor(brush, txtColor);
 					_canvas_fillpolygon(ps.hCanvas, brush,
 						arrowLeft, arrowTop, arrowRight, arrowBottom, 3, 0.0f);
 
 				}
-
-
-
 			}
 			else
 			{
@@ -1397,7 +1506,7 @@ void _propertygrid_paint(HEXOBJ hObj)
 				RECT rcTitle, rcContent;
 
 				// 获取标题和内容，并计算布局
-				if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT) {
+				if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT) {
 					EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 					title = data->Title;
 					content = data->Content;
@@ -1437,9 +1546,6 @@ void _propertygrid_paint(HEXOBJ hObj)
 				OffsetRect(&rcTitle, 0, -nPos);
 				OffsetRect(&rcContent, 0, -nPos);
 
-				// 绘制项目背景矩形（标题区域）
-				_brush_setcolor(whiteBrush, ExRGB2ARGB(0, 10));
-				//_canvas_fillrect(ps.hCanvas, whiteBrush, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom);
 				// 绘制背景
 				if (i == selItem) {
 					_brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR));
@@ -1449,18 +1555,14 @@ void _propertygrid_paint(HEXOBJ hObj)
 					_brush_setcolor(brush, Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR));
 					_canvas_fillrect(ps.hCanvas, brush, rcItem.left, rcItem.top, rcItem.right, rcItem.bottom);
 				}
-				_canvas_drawline(ps.hCanvas, whiteBrush,
-					0, rcItem.top,
-					ps.uWidth, rcItem.top,
-					1.0f * g_Li.DpiY, 0);
+				_canvas_drawline(ps.hCanvas, lineBrush, 0, rcItem.top,
+					ps.uWidth, rcItem.top, 1.0f * g_Li.DpiY, 0);
 				// 在每个属性项底部绘制横线
-				_canvas_drawline(ps.hCanvas, whiteBrush,
-					0, rcItem.bottom,
-					ps.uWidth, rcItem.bottom,
-					1.0f * g_Li.DpiY, 0);
+				_canvas_drawline(ps.hCanvas, lineBrush, 0, rcItem.bottom,
+					ps.uWidth, rcItem.bottom, 1.0f * g_Li.DpiY, 0);
 				// 绘制标题
 				if (title) {
-					_canvas_drawtext(ps.hCanvas, hFont, ExRGB2ARGB(0, 255), title, -1,
+					_canvas_drawtext(ps.hCanvas, hFont, txtColor, title, -1,
 						DT_LEFT | DT_VCENTER | DT_SINGLELINE,
 						rcTitle.left + Ex_Scale(5), rcTitle.top + Ex_Scale(5),  // 文本位置微调，避免紧贴边框
 						rcTitle.right - Ex_Scale(5), rcTitle.bottom - Ex_Scale(5));
@@ -1470,14 +1572,25 @@ void _propertygrid_paint(HEXOBJ hObj)
 				if (content) {
 					if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER)
 					{
-						EXARGB color = ExRGB2ARGB(0, 255);
-						if (content) color = _wtoll(content);
+						// 改为：
+						EXARGB color;
+						if (content[0] == L'#') {
+							// 解析#RRGGBB格式
+							color = wcstoul(content + 1, NULL, 16) | 0xFF000000;
+						}
+						else {
+							color = _wtoll(content);
+						}
 						_brush_setcolor(brush, color);
-						_canvas_fillrect(ps.hCanvas, brush, rcContent.left + Ex_Scale(5), rcContent.top + Ex_Scale(5), rcContent.right - Ex_Scale(5),
-							rcContent.bottom - Ex_Scale(5));
+						_canvas_fillrect(ps.hCanvas, brush, rcContent.left + Ex_Scale(5), rcContent.top + Ex_Scale(4),
+							rcContent.left + Ex_Scale(25), rcContent.bottom - Ex_Scale(4));
+						_canvas_drawtext(ps.hCanvas, hFont, txtColor, content, -1,
+							DT_LEFT | DT_VCENTER | DT_SINGLELINE,
+							rcContent.left + Ex_Scale(30), rcContent.top + Ex_Scale(5),  // 文本位置微调，避免紧贴边框
+							rcContent.right - Ex_Scale(2), rcContent.bottom - Ex_Scale(5));
 					}
 					else {
-						_canvas_drawtext(ps.hCanvas, hFont, ExRGB2ARGB(0, 255), content, -1,
+						_canvas_drawtext(ps.hCanvas, hFont, txtColor, content, -1,
 							DT_LEFT | DT_VCENTER | DT_SINGLELINE,
 							rcContent.left + Ex_Scale(5), rcContent.top + Ex_Scale(5),  // 文本位置微调，避免紧贴边框
 							rcContent.right - Ex_Scale(5), rcContent.bottom - Ex_Scale(5));
@@ -1487,7 +1600,7 @@ void _propertygrid_paint(HEXOBJ hObj)
 			}
 		}
 		_brush_destroy(brush);
-		_brush_destroy(whiteBrush);
+		_brush_destroy(lineBrush);
 		Ex_ObjEndPaint(hObj, &ps);
 	}
 }

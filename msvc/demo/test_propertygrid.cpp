@@ -36,7 +36,7 @@ LRESULT CALLBACK OnPropertyGridEventBUTTONCLICK(HEXOBJ hObj, INT nID, INT nCode,
 {
     EX_PROGRID_CHANGEITEMINFO itemInfo{ 0 };
     RtlMoveMemory(&itemInfo, (void*)lParam, sizeof(EX_PROGRID_CHANGEITEMINFO));
-    OUTPUTW(L"属性框值改变, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:",
+    OUTPUTW(L"按钮被点击, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:",
         itemInfo.type);
     return 0;
 }
@@ -143,6 +143,21 @@ void PropertyGrid_AddButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonT
     Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);
 }
 
+void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex)
+{
+    EX_PROPERTYGRID_ITEMINFO_SUBITEM item = { 0 };
+    item.Type = PROPERTYGRID_ITEMTYPE_EDIT | PROPERTYGRID_ITEMTYPE_BUTTON;
+    item.ParentIndex = parentIndex; // 父分组索引
+
+    EX_PROPERTYGRID_ITEMINFO_BUTTON buttonData = { 0 };
+    buttonData.Title = title;
+    buttonData.Content = buttonText;
+
+    item.Data = &buttonData;
+
+    Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);
+}
+
 void test_propertygrid(HWND hParent)
 {
     HWND hWnd_propertygrid =
@@ -191,6 +206,9 @@ void test_propertygrid(HWND hParent)
 
     // 添加按钮项目到第一个分组
     PropertyGrid_AddButtonItem(m_hObjPropertyGrid, L"测试按钮", L"按钮1", 0);
+
+    // 添加编辑框混合按钮项目到第一个分组
+    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮", L"测试", 0);
 
     // 添加第二个分组
     PropertyGrid_AddGroup(m_hObjPropertyGrid, L"编辑框Style演示", TRUE);

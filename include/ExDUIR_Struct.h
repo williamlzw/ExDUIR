@@ -1509,7 +1509,7 @@
 #pragma endregion drawingboard message
 
 #pragma region propertygrid message constant
-// 消息_属性框_添加表项 添加行到尾部 lParam: EX_PROPERTYGRID_ITEMINFO_SUBITEM 指针
+// 消息_属性框_添加表项 添加行到尾部 lParam: EX_PROPERTYGRID_ITEMINFO_SUBITEM 指针, 添加类型为Group分组会返回分组索引
 #define PROPERTYGRID_MESSAGE_ADDITEM 10010
 // 消息_属性框_更新表项 注意CHATBOX_ITEMTYPE_一致才能更新 wParam:表项索引 从0开始 lParam: EX_PROPERTYGRID_ITEMINFO_SUBITEM 指针
 #define PROPERTYGRID_MESSAGE_UPDATEITEM 10011
@@ -1523,6 +1523,8 @@
 #define PROPERTYGRID_MESSAGE_GETITEMCOUNT 10015
 // 消息_属性框_从标题取索引 返回索引
 #define PROPERTYGRID_MESSAGE_FINDITEMBYTITLE 10016
+// 消息_属性框_清空数据
+#define PROPERTYGRID_MESSAGE_CLEAR 10017
 #pragma endregion propertygrid message constant
 
 #pragma region propertygrid item type constant

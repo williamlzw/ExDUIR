@@ -142,17 +142,19 @@ void test_exdui()
     std::vector<CHAR> data;
     Ex_ReadFile(L"res/cursor.cur", &data);
     HCURSOR hCursor = (HCURSOR)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_CURSOR, 1);
+    // 从常量加载主题包
     data.resize(Default_ext_size);
     RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
     // Ex_ReadFile(L"res/Default.ext", &data);//从文件加载主题包
     // Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
-    //  开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
+    // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
         ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,//| ENGINE_FLAG_OBJECT_SHOWRECTBORDER,
         hCursor, 0, data.data(), data.size(), 0, 0);
 
     INT windowWidth = 1280;
     INT windowsHeight = 800;
+    // 若要创建任务栏不显示的窗口，dwStyleEx填WS_EX_TOOLWINDOW 扩展风格
     m_hWnd = Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0,
         windowWidth, windowsHeight, 0, 0);
     if (m_hWnd != 0) {
@@ -325,7 +327,7 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_waveprogressbar,     // 159水波进度条
         test_linechart,           // 160折线图
         test_chatbox,             // 161对话盒
-        test_flowchart            // 162流程图
+        test_flowchart           // 162流程图
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;
