@@ -1515,15 +1515,15 @@
 #define PROPERTYGRID_MESSAGE_UPDATEITEM 10011
 // 消息_属性框_取表项类型 wParam:表项索引 从0开始，返回PROPERTYGRID_ITEMTYPE_ ,失败返回-1
 #define PROPERTYGRID_MESSAGE_GETITEMTYPE 10012
-// 消息_属性框_取表项文本值数据 wParam:表项索引 从0开始，return:表项值文本指针
+// 消息_属性框_取表项值文本数据 wParam:表项索引 从0开始，return:表项值文本指针
 #define PROPERTYGRID_MESSAGE_GETITEMVALUE 10013
 // 消息_属性框_写表项文本值数据 wParam:表项索引 从0开始 lParam:文本值
 #define PROPERTYGRID_MESSAGE_SETITEMVALUE 10014
 // 消息_属性框_取表项总数,失败返回-1
 #define PROPERTYGRID_MESSAGE_GETITEMCOUNT 10015
-// 消息_属性框_从标题取索引 返回索引
+// 消息_属性框_从表项名取索引 lParam:表项名文本值 return:返回索引
 #define PROPERTYGRID_MESSAGE_FINDITEMBYTITLE 10016
-// 消息_属性框_清空数据
+// 消息_属性框_清空
 #define PROPERTYGRID_MESSAGE_CLEAR 10017
 // 消息_属性框_取表项名文本值数据 wParam:表项索引 从0开始，return:表项名文本指针
 #define PROPERTYGRID_MESSAGE_GETITEMNAME 10018

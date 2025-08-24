@@ -702,7 +702,7 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 				size_t* ptrArray = (size_t*)arr->Items;
 				int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 				EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[itemSelect];
-				if (sub->Type & PROPERTYGRID_ITEMTYPE_BUTTON) {
+				if (sub->Type == (PROPERTYGRID_ITEMTYPE_BUTTON | PROPERTYGRID_ITEMTYPE_EDIT)) {
 					EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 					EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
 					itemInfo.text = data->Content;
@@ -710,20 +710,21 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 					Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
 					Ex_ObjKillFocus(hObj);
 				}
+				else
+				{
+					auto text_length = Ex_ObjGetTextLength(hObj) * 2;   // 取按钮1文本长度
+					std::wstring str;
+					str.resize(text_length);
+					Ex_ObjGetText(hObj, str.data(), text_length);
+					int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+					EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
+					itemInfo.text = str.c_str();
+					itemInfo.type = 5;
+					Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
+					Ex_ObjKillFocus(hObj);
+				}
 			}
-			else
-			{
-				auto text_length = Ex_ObjGetTextLength(hObj) * 2;   // 取按钮1文本长度
-				std::wstring str;
-				str.resize(text_length);
-				Ex_ObjGetText(hObj, str.data(), text_length);
-				int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
-				EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
-				itemInfo.text = str.c_str();
-				itemInfo.type = 5;
-				Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
-				Ex_ObjKillFocus(hObj);
-			}
+			
 		}
 	}
 	return 0;
@@ -832,7 +833,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 	if (nCode == NM_LEAVE)
 	{
 		HEXOBJ parent = Ex_ObjGetParent(hObj);
-		if (Ex_ObjIsValidate(parent))
+		if (Ex_ObjIsValidate(parent) && Ex_ObjIsVisible(hObj))
 		{
 			int itemHover = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 			int textLen = Ex_ObjGetTextLength(hObj);
