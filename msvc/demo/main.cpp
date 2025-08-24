@@ -154,7 +154,6 @@ void test_exdui()
 
     INT windowWidth = 1280;
     INT windowsHeight = 800;
-    // 若要创建任务栏不显示的窗口，dwStyleEx填WS_EX_TOOLWINDOW 扩展风格
     m_hWnd = Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0,
         windowWidth, windowsHeight, 0, 0);
     if (m_hWnd != 0) {
