@@ -743,8 +743,8 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         _obj_setextralong(pObj, TREEVIEW_LONG_INDENT, Ex_Scale(10));
         _obj_setextralong(pObj, TREEVIEW_LONG_ITEMHEIGHT, Ex_Scale(20));
         _obj_setextralong(pObj, TREEVIEW_LONG_ITEMARRAY, (size_t)Array_Create(0));
-        _obj_setextralong(pObj, TREEVIEW_LONG_SELECTEDCOLOR, ExRGB2ARGB(60, 60, 60, 255));
-        _obj_setextralong(pObj, TREEVIEW_LONG_HOTCOLOR, ExRGB2ARGB(30, 30, 30, 255));
+        _obj_setextralong(pObj, TREEVIEW_LONG_SELECTEDCOLOR, ExARGB(134, 134, 146, 255));
+        _obj_setextralong(pObj, TREEVIEW_LONG_HOTCOLOR, ExARGB(166, 166, 168, 255));
         HEXOBJ hObj_hscroll = Ex_ObjScrollGetControl(hObj, SCROLLBAR_TYPE_HORZ);
         Ex_ObjPostMessage(hObj_hscroll, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);       
         Ex_ObjSetLong(hObj_hscroll, OBJECT_LONG_OBJPROC, (size_t)_treeview_onscrollbarmsg);   
