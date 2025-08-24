@@ -48,3 +48,5 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content);
 LRESULT CALLBACK _propertygrid_onscrollbarmsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	LPARAM lParam, LRESULT* lpResult);
 void _propertygrid_onlbuttondblclk(HEXOBJ hObj, INT x, INT y);
+LRESULT CALLBACK _propertygrid_oneditmsgproc(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
+	LPARAM lParam, LRESULT* lpResult);

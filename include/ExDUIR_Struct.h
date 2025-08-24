@@ -1525,6 +1525,8 @@
 #define PROPERTYGRID_MESSAGE_FINDITEMBYTITLE 10016
 // 消息_属性框_清空数据
 #define PROPERTYGRID_MESSAGE_CLEAR 10017
+// 消息_属性框_取表项名文本值数据 wParam:表项索引 从0开始，return:表项名文本指针
+#define PROPERTYGRID_MESSAGE_GETITEMNAME 10018
 #pragma endregion propertygrid message constant
 
 #pragma region propertygrid item type constant
