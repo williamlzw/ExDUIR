@@ -152,7 +152,7 @@ void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR but
     EX_PROPERTYGRID_ITEMINFO_EDIT buttonData = { 0 };
     buttonData.Title = title;
     buttonData.Content = buttonText;
-    buttonData.UserType = type;
+    buttonData.EditStyle = type;
     item.Data = &buttonData;
 
     Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);

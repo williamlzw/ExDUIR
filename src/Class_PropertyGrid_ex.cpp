@@ -201,10 +201,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textCopy = (EX_PROPERTYGRID_ITEMINFO_EDIT*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_EDIT));
 			textCopy->Title = StrDupW(textData->Title);
 			textCopy->Content = StrDupW(textData->Content);			
-			if (newValue->Type == (PROPERTYGRID_ITEMTYPE_EDIT | PROPERTYGRID_ITEMTYPE_BUTTON))
-				textCopy->UserType = textData->UserType;
-			else
-				textCopy->EditStyle = textData->EditStyle;
+			textCopy->EditStyle = textData->EditStyle;
 			itemCopy->Data = textCopy;
 		}
 		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_DATEBOX)
@@ -709,7 +706,7 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 					EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 					EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
 					itemInfo.text = data->Content;
-					itemInfo.type = data->UserType;
+					itemInfo.type = data->EditStyle;
 					Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
 					Ex_ObjKillFocus(hObj);
 				}
