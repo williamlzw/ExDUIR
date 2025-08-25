@@ -493,48 +493,10 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	{
 		EX_PROPERTYGRID_ITEMINFO* arr = (EX_PROPERTYGRID_ITEMINFO*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
 		if (arr == NULL) return -1;
-		size_t* ptrArray = (size_t*)arr->Items;
 		INT index = (INT)wParam;
 		if (index < 0 || index >= arr->Count) return -1; // 索引无效
-		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[index];
 		LPCWSTR newValue = (LPCWSTR)lParam;
-		LPCWSTR text = NULL;
-		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
-		{
-			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
-			text = textData->Content;
-			if (text) Ex_MemFree((void*)text);
-			textData->Content = StrDupW(newValue);
-		}
-		else if (sub->Type == PROPERTYGRID_ITEMTYPE_DATEBOX)
-		{
-			EX_PROPERTYGRID_ITEMINFO_DATEBOX* textData = (EX_PROPERTYGRID_ITEMINFO_DATEBOX*)sub->Data;
-			text = textData->Content;
-			if (text) Ex_MemFree((void*)text);
-			textData->Content = StrDupW(newValue);
-		}
-		else if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER)
-		{
-			EX_PROPERTYGRID_ITEMINFO_COLORPICKER* textData = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)sub->Data;
-			text = textData->Content;
-			if (text) Ex_MemFree((void*)text);
-			textData->Content = StrDupW(newValue);
-		}
-		else if (sub->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX)
-		{
-			EX_PROPERTYGRID_ITEMINFO_COMBOBOX* textData = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)sub->Data;
-			text = textData->Content;
-			if (text) Ex_MemFree((void*)text);
-			textData->Content = StrDupW(newValue);
-		}
-		else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON)
-		{
-			EX_PROPERTYGRID_ITEMINFO_BUTTON* textData = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
-			text = textData->Content;
-			if (text) Ex_MemFree((void*)text);
-			textData->Content = StrDupW(newValue);
-		}
-		Ex_ObjInvalidateRect(hObj, 0);
+		_propertygrid_setitemtext(hObj, index, newValue);
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_GETITEMCOUNT)
 	{
@@ -836,9 +798,24 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 		if (Ex_ObjIsValidate(parent) && Ex_ObjIsVisible(hObj))
 		{
 			int itemHover = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+			// 获取同项的按钮控件
+			HEXOBJ button = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_HOBJBUTTON);
+			if (Ex_ObjIsValidate(button))
+			{
+				POINT point = { 0 };
+				GetCursorPos(&point);
+				HWND currentWnd = WindowFromPoint(point);
+				ScreenToClient(currentWnd, &point);// 转换到父窗口坐标
+				RECT rcButton;
+				Ex_ObjGetRectEx(button, &rcButton,2);				
+				// 检查鼠标是否在按钮区域内
+				if (PtInRect(&rcButton, point))
+				{
+					return 0; // 鼠标在按钮上，忽略离开事件
+				}
+			}
 			int textLen = Ex_ObjGetTextLength(hObj);
 			WCHAR* text = NULL;
-
 			if (textLen > 0) {
 				text = (WCHAR*)Ex_MemAlloc((textLen + 1) * sizeof(WCHAR));
 				if (text) {
