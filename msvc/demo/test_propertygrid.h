@@ -12,3 +12,4 @@ void PropertyGrid_AddColorPickerItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR co
 void PropertyGrid_AddComboBoxItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR* options, INT optionCount, INT parentIndex);
 void PropertyGrid_AddDateBoxItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR dateValue, INT parentIndex);
 void PropertyGrid_AddButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex);
+void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex, INT type);
