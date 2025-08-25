@@ -493,10 +493,48 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 	{
 		EX_PROPERTYGRID_ITEMINFO* arr = (EX_PROPERTYGRID_ITEMINFO*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
 		if (arr == NULL) return -1;
+		size_t* ptrArray = (size_t*)arr->Items;
 		INT index = (INT)wParam;
 		if (index < 0 || index >= arr->Count) return -1; // 索引无效
+		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[index];
 		LPCWSTR newValue = (LPCWSTR)lParam;
-		_propertygrid_setitemtext(hObj, index, newValue);
+		LPCWSTR text = NULL;
+		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
+		{
+			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
+			text = textData->Content;
+			if (text) Ex_MemFree((void*)text);
+			textData->Content = StrDupW(newValue);
+		}
+		else if (sub->Type == PROPERTYGRID_ITEMTYPE_DATEBOX)
+		{
+			EX_PROPERTYGRID_ITEMINFO_DATEBOX* textData = (EX_PROPERTYGRID_ITEMINFO_DATEBOX*)sub->Data;
+			text = textData->Content;
+			if (text) Ex_MemFree((void*)text);
+			textData->Content = StrDupW(newValue);
+		}
+		else if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER)
+		{
+			EX_PROPERTYGRID_ITEMINFO_COLORPICKER* textData = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)sub->Data;
+			text = textData->Content;
+			if (text) Ex_MemFree((void*)text);
+			textData->Content = StrDupW(newValue);
+		}
+		else if (sub->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX)
+		{
+			EX_PROPERTYGRID_ITEMINFO_COMBOBOX* textData = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)sub->Data;
+			text = textData->Content;
+			if (text) Ex_MemFree((void*)text);
+			textData->Content = StrDupW(newValue);
+		}
+		else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON)
+		{
+			EX_PROPERTYGRID_ITEMINFO_BUTTON* textData = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
+			text = textData->Content;
+			if (text) Ex_MemFree((void*)text);
+			textData->Content = StrDupW(newValue);
+		}
+		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_GETITEMCOUNT)
 	{
