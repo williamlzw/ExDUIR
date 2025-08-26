@@ -557,6 +557,11 @@
 #define COLOR_EX_TEXT_VISTED 9
 // 颜色索引_文本颜色_阴影
 #define COLOR_EX_TEXT_SHADOW 10
+// 颜色索引_选择颜色
+#define COLOR_EX_SELECT 3
+// 颜色索引_焦点颜色
+#define COLOR_EX_FOCUS 4
+
 // 颜色索引_报表_表头背景色
 #define COLOR_EX_RLV_HEAD COLOR_EX_TEXT_RESERVE
 // 颜色索引_编辑框_光标原色

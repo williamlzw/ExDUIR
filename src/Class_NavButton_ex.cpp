@@ -18,6 +18,23 @@ void _navbtn_paint(HEXOBJ hObj)
         _canvas_drawimagerect(ps.hCanvas, hImage, (FLOAT)ps.rcPaint.left, (FLOAT)ps.rcPaint.top,
                               (FLOAT)ps.rcPaint.right, (FLOAT)ps.rcPaint.bottom, 255);
     }
+    else
+    {
+        INT crBkg = 0;
+        if ((ps.dwState & STATE_DOWN) != 0 || (ps.dwState & STATE_CHECKED) != 0) {
+            crBkg = Ex_ObjGetLong(hObj, COLOR_EX_SELECT);
+        }
+        else if ((ps.dwState & STATE_HOVER) == STATE_HOVER) {
+            crBkg = Ex_ObjGetLong(hObj, COLOR_EX_FOCUS);
+        }
+        if (crBkg == 0) {
+            crBkg = Ex_ObjGetColor(hObj,COLOR_EX_BACKGROUND);
+        }
+
+        _canvas_clear(ps.hCanvas, crBkg);
+    }
+
+
     FLOAT nTextWidth  = 0;
     FLOAT nTextHeight = 0;
     _canvas_calctextsize(ps.hCanvas, Ex_ObjGetFont(hObj),
@@ -31,7 +48,7 @@ void _navbtn_paint(HEXOBJ hObj)
         nImageWidth  = 0;
         nImageHeight = 0;
     }
-    RECT rc;
+    RECT rc = {0};
     rc.top    = (ps.uHeight - (nTextHeight + nImageHeight)) / 2;
     rc.bottom = (ps.uHeight + nTextHeight + nImageHeight) / 2;
     if (hImage2 != 0) {
@@ -64,7 +81,11 @@ void _navbtn_notify_brother(HEXOBJ hObj)
 
 LRESULT CALLBACK _navbtn_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (uMsg == WM_DESTROY) {
+    if (uMsg == WM_CREATE) {
+        Ex_ObjSetLong(hObj, COLOR_EX_SELECT, ExARGB(0, 255, 255, 255));
+        Ex_ObjSetLong(hObj, COLOR_EX_FOCUS, ExARGB(255, 0, 255, 255));
+    }
+    else if (uMsg == WM_DESTROY) {
         HEXIMAGE hImg1 = (HEXIMAGE)Ex_ObjGetLong(hObj, 1);
         if (hImg1 != 0) {
             _img_destroy(hImg1);
@@ -138,5 +159,5 @@ void _navbtn_register()
 {
     Ex_ObjRegister(L"NavButton", OBJECT_STYLE_VISIBLE,
                    OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_FOCUSABLE,
-                   DT_CENTER | DT_VCENTER | DT_SINGLELINE, 3 * sizeof(size_t), 0, 0, _navbtn_proc);
+                   DT_CENTER | DT_VCENTER | DT_SINGLELINE, 5 * sizeof(size_t), 0, 0, _navbtn_proc);
 }

@@ -994,18 +994,19 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                 _brush_destroy(hBrush);
             }
             HEXIMAGE hImage = 0;
-            RECT checkrc    = {rcTD.left + itemHeight / 4, rcTD.top, rcTD.left + itemHeight / 4 * 3,
+            RECT checkrc    = {rcTD.left + itemHeight / 4 - 1, rcTD.top, rcTD.left + itemHeight / 4 * 3,
                                rcTD.bottom};
             RECT imgrc      = {rcTD.left + itemHeight / 4, rcTD.top + itemHeight / 4,
                                rcTD.left + itemHeight / 4 * 3, rcTD.top + itemHeight / 4 * 3};
 
             if (pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) {
-                rcTD.left = rcTD.left + itemHeight / 4 * 3;
+
+                rcTD.left = rcTD.left + itemHeight / 4.0f * 3 ;
             }
             else {
                 hImage = _imglist_get(hImgList, pTR->nImageIndex_);
                 if (hImage != 0) {
-                    rcTD.left = rcTD.left + itemHeight / 4 * 3;
+                    rcTD.left = rcTD.left + itemHeight / 4.0f * 3;
                 }
             }
 
@@ -1016,7 +1017,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                 rcTD.right = rcTD.left + pTC->nWidth;
                 if (i == 1 &&
                     ((pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) || hImage != 0)) {
-                    rcTD.right = rcTD.right - itemHeight / 4 * 3;
+                    rcTD.right = rcTD.right - itemHeight / 4.0f * 3;
                 }
                 _reportlistview_draw_td(hObj, pDrawInfo, pDrawInfo->iItem, i, pTC, &rcTD);
                 rcTD.left = rcTD.right;
@@ -1088,7 +1089,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
                     }
                 }
                 _canvas_drawtext(cd->hCanvas, Font, crText, wzText, -1, pTC->dwTextFormat,
-                                 rcTD->left + 8, rcTD->top, rcTD->right + 1, rcTD->bottom);
+                                 rcTD->left + 3.5f, rcTD->top, rcTD->right + 1, rcTD->bottom);
             }
             if ((cd->dwStyle & REPORTLISTVIEW_STYLE_DRAWVERTICALLINE) ==
                 REPORTLISTVIEW_STYLE_DRAWVERTICALLINE) {
