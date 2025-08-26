@@ -1102,7 +1102,7 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				{
 					HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
 					auto editStyle = data->EditStyle;
-					if (editStyle == 0)
+					if (editStyle == 0 || editStyle >= 5)
 					{
 						Ex_ObjSetLong(edit, OBJECT_LONG_STYLE, OBJECT_STYLE_VISIBLE);
 					}

@@ -208,9 +208,9 @@ void test_propertygrid(HWND hParent)
     PropertyGrid_AddButtonItem(m_hObjPropertyGrid, L"测试按钮", L"按钮1", 0);
 
     // 添加编辑框混合按钮项目到第一个分组
-    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮", L"测试", 0, 1);
+    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮1", L"测试", 0, 5);
 
-    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮", L"测试", 0, 2);
+    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮2", L"随意输入", 0, 6);
 
 
 
