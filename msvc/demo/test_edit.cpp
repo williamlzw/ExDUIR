@@ -213,9 +213,10 @@ void test_edit(HWND hWnd)
                       (LPARAM)L"测试数值输入编辑框");
     HEXOBJ hObj_edit4 =
         Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
-                       L"测试只读编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY, 10, 150, 150,
+                       L"测试只读编辑框", -1, 10, 150, 150,
                        30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
-
+    Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE,
+                  OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
     HEXOBJ hObj_edit5 =
         Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED |
                            OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW,
