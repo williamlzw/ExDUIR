@@ -988,11 +988,14 @@ void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable)
 
 LPCWSTR GetErrorMessage(DWORD error)
 {
-    WCHAR szBuf[1024];
-    FormatMessageW(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL, error, 0, (LPWSTR)&szBuf, 1024, NULL);
-    wcscpy_s(szBuf, szBuf);
+    static WCHAR szBuf[1024];
+    DWORD result = FormatMessageW(
+        FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL, error, 0, szBuf, 1024, NULL);  
+    if (result == 0) {
+        // 格式化失败时返回空字符串或错误提示
+        szBuf[0] = L'\0';
+    }    
     return (LPCWSTR)szBuf;
 }
 

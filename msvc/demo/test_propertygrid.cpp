@@ -143,16 +143,16 @@ void PropertyGrid_AddButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonT
     Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);
 }
 
-void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex)
+void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex,INT type)
 {
     EX_PROPERTYGRID_ITEMINFO_SUBITEM item = { 0 };
     item.Type = PROPERTYGRID_ITEMTYPE_EDIT | PROPERTYGRID_ITEMTYPE_BUTTON;
     item.ParentIndex = parentIndex; // 父分组索引
 
-    EX_PROPERTYGRID_ITEMINFO_BUTTON buttonData = { 0 };
+    EX_PROPERTYGRID_ITEMINFO_EDIT buttonData = { 0 };
     buttonData.Title = title;
     buttonData.Content = buttonText;
-
+    buttonData.EditStyle = type;
     item.Data = &buttonData;
 
     Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);
@@ -208,7 +208,11 @@ void test_propertygrid(HWND hParent)
     PropertyGrid_AddButtonItem(m_hObjPropertyGrid, L"测试按钮", L"按钮1", 0);
 
     // 添加编辑框混合按钮项目到第一个分组
-    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮", L"测试", 0);
+    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮", L"测试", 0, 1);
+
+    PropertyGrid_AddEditButtonItem(m_hObjPropertyGrid, L"编辑框混合按钮", L"测试", 0, 2);
+
+
 
     // 添加第二个分组
     PropertyGrid_AddGroup(m_hObjPropertyGrid, L"编辑框Style演示", TRUE);

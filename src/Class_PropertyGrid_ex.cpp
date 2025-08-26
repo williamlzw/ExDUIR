@@ -200,7 +200,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)newValue->Data;
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textCopy = (EX_PROPERTYGRID_ITEMINFO_EDIT*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_EDIT));
 			textCopy->Title = StrDupW(textData->Title);
-			textCopy->Content = StrDupW(textData->Content);
+			textCopy->Content = StrDupW(textData->Content);			
 			textCopy->EditStyle = textData->EditStyle;
 			itemCopy->Data = textCopy;
 		}
@@ -257,7 +257,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			// 处理内存分配失败
 			free(itemCopy->Data); // 释放已分配的数据
 			free(itemCopy);       // 释放子项结构体
-			return 0;
+			return -1;
 		}
 		arr->Items = newItems;
 		// 添加新的项指针
@@ -271,6 +271,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			INT Index = arr->GroupCount - 1;
 			return Index; // 返回的父索引,为分组时有效
 		}
+        return arr->Count-1;
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_UPDATEITEM)
 	{
@@ -706,7 +707,7 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 					EX_PROPERTYGRID_ITEMINFO_EDIT* data = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
 					EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
 					itemInfo.text = data->Content;
-					itemInfo.type = PROPERTYGRID_ITEMTYPE_BUTTON | PROPERTYGRID_ITEMTYPE_EDIT;
+					itemInfo.type = data->EditStyle;
 					Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
 					Ex_ObjKillFocus(hObj);
 				}
@@ -719,7 +720,7 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 					int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 					EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
 					itemInfo.text = str.c_str();
-					itemInfo.type = 5;
+					itemInfo.type = 4;
 					Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
 					Ex_ObjKillFocus(hObj);
 				}
@@ -1482,7 +1483,7 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 		}
 	}
 	INT type;
-	if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
+	if (sub->Type == PROPERTYGRID_ITEMTYPE_EDIT)
 	{
 		type = 0;
 	}
@@ -1501,6 +1502,10 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 	else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON)
 	{
 		type = 4;
+	}
+	else if (sub->Type == (PROPERTYGRID_ITEMTYPE_EDIT | PROPERTYGRID_ITEMTYPE_BUTTON))
+	{
+		type = 5;
 	}
 	EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
 	itemInfo.text = content;

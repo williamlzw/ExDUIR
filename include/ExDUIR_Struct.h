@@ -557,6 +557,11 @@
 #define COLOR_EX_TEXT_VISTED 9
 // 颜色索引_文本颜色_阴影
 #define COLOR_EX_TEXT_SHADOW 10
+// 颜色索引_选择颜色
+#define COLOR_EX_SELECT 3
+// 颜色索引_焦点颜色
+#define COLOR_EX_FOCUS 4
+
 // 颜色索引_报表_表头背景色
 #define COLOR_EX_RLV_HEAD COLOR_EX_TEXT_RESERVE
 // 颜色索引_编辑框_光标原色
@@ -2332,7 +2337,7 @@ struct EX_PROPERTYGRID_ITEMINFO_EDIT
 {
 	LPCWSTR Title; //标题
 	LPCWSTR Content; //内容
-	INT EditStyle; //编辑框类型 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读
+	INT EditStyle; //编辑框类型 0默认能输入任何字符 1只能输入数字 2只能输入字母 3字母数字 4只读(注：当是编辑框按钮组合的时候，此参数可自定义)
 	EX_PROPERTYGRID_ITEM_LAYOUT_EDIT Layout;
 };
 
@@ -2372,7 +2377,7 @@ struct EX_PROPERTYGRID_ITEMINFO
 struct EX_PROGRID_CHANGEITEMINFO
 {
 	LPCWSTR text;   // 改变内容,注意对于颜色框 为ARGB文本数字
-	INT type;       // 改变子项目类型  0编辑框 1日期框 2颜色框 3组合框 4按钮
+	INT type;       // 改变子项目类型  0编辑框 1日期框 2颜色框 3组合框 4按钮 5编辑框按钮组合 注：当是编辑框按钮组合的时候，此参数是自定义值
 };
 
 // 卷帘菜单_附加用户图标
