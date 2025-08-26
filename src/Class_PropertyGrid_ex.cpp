@@ -257,7 +257,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			// 处理内存分配失败
 			free(itemCopy->Data); // 释放已分配的数据
 			free(itemCopy);       // 释放子项结构体
-			return 0;
+			return -1;
 		}
 		arr->Items = newItems;
 		// 添加新的项指针
@@ -271,6 +271,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			INT Index = arr->GroupCount - 1;
 			return Index; // 返回的父索引,为分组时有效
 		}
+        return arr->Count-1;
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_UPDATEITEM)
 	{

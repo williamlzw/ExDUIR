@@ -1088,7 +1088,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
                     }
                 }
                 _canvas_drawtext(cd->hCanvas, Font, crText, wzText, -1, pTC->dwTextFormat,
-                                 rcTD->left + 3.5, rcTD->top, rcTD->right + 1, rcTD->bottom);
+                                 rcTD->left + 8, rcTD->top, rcTD->right + 1, rcTD->bottom);
             }
             if ((cd->dwStyle & REPORTLISTVIEW_STYLE_DRAWVERTICALLINE) ==
                 REPORTLISTVIEW_STYLE_DRAWVERTICALLINE) {
