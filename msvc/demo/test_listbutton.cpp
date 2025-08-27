@@ -89,7 +89,7 @@ void test_listbutton(HWND hWnd)
     // 创建正常菜单条，显示Resource.rc资源文件里的菜单,若出现中文乱码将Resource.rc文件编码格式转为UCS-2
     // LE BOM
     HEXOBJ hObj = 0;
-    hObj        = Ex_ObjCreate(L"Menubar", 0, -1, 0, 30, 220, 22, hExDui_listbutton);
+    hObj        = Ex_ObjCreate(L"Menubar", 0, -1, 0, 30, 220, 24, hExDui_listbutton);
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), FALSE);         // 文本色
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16774117, 255), FALSE);   // 点燃背景色
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16765337, 255), FALSE);   // 按下背景色
@@ -110,7 +110,7 @@ void test_listbutton(HWND hWnd)
 
     // 创建自定义回调菜单条
 
-    hObj = Ex_ObjCreateEx(-1, L"Menubar", 0, -1, 0, 60, 220, 22, hExDui_listbutton, 0, -1, 0, 0,
+    hObj = Ex_ObjCreateEx(-1, L"Menubar", 0, -1, 0, 60, 220, 24, hExDui_listbutton, 0, -1, 0, 0,
                           OnListButtonMsgProc);
     Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(110, 120, 55, 255),
                    FALSE);   // 改变菜单按钮背景色
@@ -134,7 +134,7 @@ void test_listbutton(HWND hWnd)
     Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_INSERTITEM, 1, (size_t)&item1);
 
     // 创建工具条
-    hObj = Ex_ObjCreate(L"Toolbar", 0, -1, 0, 90, 400, 22, hExDui_listbutton);
+    hObj = Ex_ObjCreate(L"Toolbar", 0, -1, 0, 90, 400, 24, hExDui_listbutton);
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), FALSE);         // 文本色
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16774117, 255), FALSE);   // 点燃背景色
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(16765337, 255), FALSE);   // 按下背景色
@@ -181,7 +181,7 @@ void test_listbutton(HWND hWnd)
     Ex_ObjHandleEvent(hObj, LISTBUTTON_EVENT_CHECK, OnListButtonEvent);
 
     // 创建状态条
-    hObj = Ex_ObjCreate(L"Statusbar", 0, -1, 0, 120, 300, 22, hExDui_listbutton);
+    hObj = Ex_ObjCreate(L"Statusbar", 0, -1, 0, 120, 300, 24, hExDui_listbutton);
     Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(12557930, 255), FALSE);     // 背景色
     Ex_ObjSetColor(hObj, COLOR_EX_BORDER, ExARGB(255, 255, 255, 255), FALSE);        // 分割色
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, ExARGB(255, 255, 255, 255), FALSE);   // 文本色

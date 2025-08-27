@@ -943,7 +943,6 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     } else if (uMsg == WM_STYLECHANGED) {
       // 应该还有其他的style变化需要处理
       if (GWL_STYLE == wParam) {
-        output(L"style changed\r\n");
         if ((lParam & EDIT_STYLE_READONLY) != 0) {
           LPVOID pits = _edit_its(pObj);
           if (pits != nullptr) {

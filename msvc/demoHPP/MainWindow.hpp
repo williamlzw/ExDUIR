@@ -412,7 +412,7 @@ public:
 			}
 			case 146:
 			{
-				PropertyGridWindow::GetInstance().CreatePropertyGridWindow(MainWindow::GetInstance().m_skin.m_hWnd);
+				//PropertyGridWindow::GetInstance().CreatePropertyGridWindow(MainWindow::GetInstance().m_skin.m_hWnd);
 				break;
 			}
 			case 147:

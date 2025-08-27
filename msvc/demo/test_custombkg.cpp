@@ -10,7 +10,7 @@ void test_custombkg(HWND hWnd)
                            0, 0);
     std::vector<CHAR> imgdata;
     Ex_ReadFile(L"res/custombkg.png", &imgdata);
-    RECT grid = {45, 40, 15, 15};
+    RECT grid = { 45, 40, 15, 15};
     Ex_ObjSetBackgroundImage(hExDui_custombkg, imgdata.data(), imgdata.size(), 0, 0,
                              BACKGROUND_REPEAT_ZOOM, &grid, BACKGROUND_FLAG_DEFAULT, 220, TRUE);
     Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"",
