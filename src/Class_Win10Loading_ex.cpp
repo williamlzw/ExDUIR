@@ -107,9 +107,9 @@ void _win10_loading_paint(HEXOBJ hObj)
 
                 if ((INT)(360 * n) > 0 && (INT)(360 * n) < 720) {
                     _canvas_fillellipse(ps.hCanvas, hBrush,
-                                        (FLOAT)((ps.uWidth - ptr[(INT)(360 * n)]) / 2 +
+                                        (FLOAT)((ps.uWidth - Ex_Scale(ptr[(INT)(360 * n)])) / 2 +
                                                 Ex_Scale(ptr[(INT)(360 * n)])),
-                                        (FLOAT)((ps.uHeight - ptr[(INT)(360 * n) + 720]) / 2 +
+                                        (FLOAT)((ps.uHeight - Ex_Scale(ptr[(INT)(360 * n) + 720])) / 2 +
                                                 Ex_Scale(ptr[(INT)(360 * n) + 720])),
                                         (FLOAT)Ex_Scale(3), (FLOAT)Ex_Scale(3));
                 }

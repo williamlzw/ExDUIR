@@ -16,10 +16,10 @@ void test_respack(HWND hWnd)
     // 用Ex_ThemeGetValuePtr(hTheme, atom,
     // ATOM_BACKGROUND_COLOR)获取节点值指针，再获取对应的值参考_wnd_loadtheme方法
 
-    //_res_pack(L"E:\\ExDUIR\\msvc\\test\\Default\\", L"res/test_theme.ext", PACKAGEHEADER_THEME);
+    //_res_pack(L"E:\\ExDUIR\\msvc\\demo\\Default\\", L"res/test_theme.ext", PACKAGEHEADER_THEME);//打包后可以在Ex_Init使用
 
     // 打包成资源包
-    _res_pack(L"E:\\ExDUIR\\msvc\\test\\Default\\", L"res/test_res.exr", PACKAGEHEADER_FILES);
+    _res_pack(L"E:\\ExDUIR\\msvc\\demo\\Default\\", L"res/test_res.exr", PACKAGEHEADER_FILES);
 
     auto     hRes = Ex_ResLoadFromFile(L"res/test_res.exr");
     HEXIMAGE img;

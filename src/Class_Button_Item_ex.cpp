@@ -249,24 +249,27 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
     rcItem.right  = ps.uWidth;
     rcItem.bottom = ps.uHeight;
     INT atomProp  = 0;
-
     if (GetMenuItemInfoW(hMenu, nID, TRUE, &mii)) {
         if ((mii.fType & MFT_SEPARATOR) != 0) {
-            LPVOID lpPadding = pWnd->padding_separator_;
+            LPVOID lpPaddingSeparator = pWnd->padding_separator_;
             INT    tmp       = 0;
-            if (lpPadding != 0) {
-                RtlMoveMemory(&rcPadding, lpPadding, 16);
-                tmp = Ex_Scale(HIBYTE(HIWORD(pWnd->szItemSeparator_)) -
-                               (rcPadding.top + rcPadding.bottom));
+            RECT rcPaddingSeparator;
+            if (lpPaddingSeparator != 0) {
+                RtlMoveMemory(&rcPaddingSeparator, lpPaddingSeparator, 16);
+                tmp = HIBYTE(HIWORD(pWnd->szItemSeparator_) -
+                               (rcPaddingSeparator.top + rcPaddingSeparator.bottom));
             }
-            rcItem.left   = Ex_Scale(rcPadding.left);
-            rcItem.top    = (rcItem.bottom - tmp) / 2;
-            rcItem.right  = rcItem.right - Ex_Scale(rcPadding.right);
-            rcItem.bottom = rcItem.top + tmp;
-            Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcItem.left, rcItem.top, rcItem.right,
-                                  rcItem.bottom, ATOM_ITEM, ATOM_SEPARATOR, 0, 0, 0, 0, 255);
+            RECT rcSeparator;
+            rcSeparator.left   = rcPaddingSeparator.left;
+            rcSeparator.top    = (rcItem.bottom - tmp) / 2;
+            rcSeparator.right  = rcItem.right - rcPaddingSeparator.right;
+            rcSeparator.bottom = rcItem.top + tmp;
+            
+            Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcSeparator.left, rcSeparator.top, rcSeparator.right,
+                rcSeparator.bottom, ATOM_ITEM, ATOM_SEPARATOR, 0, 0, 0, 0, 255);
         }
         else {
+            
             BOOL fHover = ((ps.dwState & STATE_HOVER) != 0 && (mii.fState & MFS_GRAYED) == 0) ||
                           ((mii.fState & MFS_HILITE) != 0 && mii.hSubMenu != 0);
             CHAR alpha = 255;
@@ -285,19 +288,22 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
                 *(((CHAR*)&crColor) + 3) = alpha;
             }
             if (mii.hSubMenu != 0) {
-                LPVOID lpPadding = Ex_ThemeGetValuePtr(ps.hTheme, ATOM_ITEM, ATOM_EXPAND);
-                if (lpPadding != 0) {
-                    RtlMoveMemory(&rcPadding, lpPadding, 16);
+                LPVOID lpPaddingSub = Ex_ThemeGetValuePtr(ps.hTheme, ATOM_ITEM, ATOM_EXPAND);
+                RECT rcPaddingSub;
+                if (lpPaddingSub != 0) {
+                    RtlMoveMemory(&rcPaddingSub, lpPaddingSub, 16);
                 }
-                rcPadding.right  = rcPadding.right - rcPadding.left;
-                rcPadding.bottom = rcPadding.bottom - rcPadding.top;
-                rcSub.left       = rcItem.right - Ex_Scale(rcPadding.right);
-                rcSub.top        = rcItem.top + (rcItem.bottom - rcItem.top - rcPadding.bottom) / 2;
-                rcSub.right      = rcSub.left + rcPadding.right;
-                rcSub.bottom     = rcSub.top + rcPadding.bottom;
+                int subWidth = rcPaddingSub.right - rcPaddingSub.left;
+                int subHeight = rcPaddingSub.bottom - rcPaddingSub.top;
+                rcSub.left       = rcItem.right - subWidth;
+                rcSub.top        = rcItem.top + (rcItem.bottom - rcItem.top - subHeight) / 2;
+                rcSub.right      = rcSub.left + subWidth;
+                rcSub.bottom     = rcSub.top + subHeight;
+                
                 Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcSub.left, rcSub.top, rcSub.right,
                                       rcSub.bottom, ATOM_ITEM, ATOM_EXPAND, 0, 0, 0, 0, alpha);
             }
+           
             if ((mii.fState & MFS_CHECKED) != 0) {
                 atomProp = ATOM_CHECK;
             }
@@ -314,6 +320,7 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
             rcSub.top =
                 rcItem.top + (rcItem.bottom - rcItem.top - (rcPadding.bottom - rcPadding.top)) / 2;
             rcSub.bottom = rcSub.top + rcPadding.bottom - rcPadding.top;
+            
             Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcSub.left, rcSub.top, rcSub.right,
                                   rcSub.bottom, ATOM_ITEM, atomProp, 0, 0, 0, 0, alpha);
             if (lpText != 0) {
@@ -332,8 +339,8 @@ void _item_draw(obj_s* pObj, EX_PAINTSTRUCT ps, EXARGB crColor, LPCWSTR lpText)
                         INT imgWidth, imgHeight;
                         _img_getsize(img, &imgWidth, &imgHeight);
                         _canvas_drawimagerectrect(
-                            ps.hCanvas, img, 5, 3, ps.rcPaint.left + 5 + ps.rcPaint.bottom - 6,
-                            ps.rcPaint.bottom - 3, 0, 0, imgWidth, imgHeight, 255);
+                            ps.hCanvas, img, Ex_Scale(5), Ex_Scale(3), ps.rcPaint.left + Ex_Scale(5) + ps.rcPaint.bottom - Ex_Scale(6),
+                            ps.rcPaint.bottom - Ex_Scale(3), 0, 0, imgWidth, imgHeight, 255);
                         _img_destroy(img);
                     }
                 }

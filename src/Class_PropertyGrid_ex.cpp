@@ -200,8 +200,9 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)newValue->Data;
 			EX_PROPERTYGRID_ITEMINFO_EDIT* textCopy = (EX_PROPERTYGRID_ITEMINFO_EDIT*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_EDIT));
 			textCopy->Title = StrDupW(textData->Title);
-			textCopy->Content = StrDupW(textData->Content);			
+			textCopy->Content = StrDupW(textData->Content);
 			textCopy->EditStyle = textData->EditStyle;
+			textCopy->UserData = textData->UserData;
 			itemCopy->Data = textCopy;
 		}
 		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_DATEBOX)
@@ -271,7 +272,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			INT Index = arr->GroupCount - 1;
 			return Index; // 返回的父索引,为分组时有效
 		}
-        return arr->Count-1;
+		return arr->Count - 1;
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_UPDATEITEM)
 	{
@@ -358,6 +359,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			textCopy->Title = StrDupW(textData->Title);
 			textCopy->Content = StrDupW(textData->Content);
 			textCopy->EditStyle = textData->EditStyle;
+			textCopy->UserData = textData->UserData;
 			newSub->Data = textCopy;
 		}
 		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_DATEBOX)
@@ -487,6 +489,22 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		{
 			EX_PROPERTYGRID_ITEMINFO_BUTTON* textData = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
 			text = textData->Title;
+		}
+		return (LRESULT)(text);
+	}
+	else if (uMsg == PROPERTYGRID_MESSAGE_GETUSERDATA)
+	{
+		EX_PROPERTYGRID_ITEMINFO* arr = (EX_PROPERTYGRID_ITEMINFO*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
+		if (arr == NULL) return -1;
+		size_t* ptrArray = (size_t*)arr->Items;
+		INT index = (INT)wParam;
+		if (index < 0 || index >= arr->Count) return -1; // 索引无效
+		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[index];
+		LPVOID text = NULL;
+		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT)
+		{
+			EX_PROPERTYGRID_ITEMINFO_EDIT* textData = (EX_PROPERTYGRID_ITEMINFO_EDIT*)sub->Data;
+			text = textData->UserData;
 		}
 		return (LRESULT)(text);
 	}
@@ -708,6 +726,7 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 					EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
 					itemInfo.text = data->Content;
 					itemInfo.type = data->EditStyle;
+					itemInfo.UserData = data->UserData;
 					Ex_ObjDispatchNotify(parent, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, itemSelect, (LONG_PTR)&itemInfo);
 					Ex_ObjKillFocus(hObj);
 				}
@@ -725,7 +744,7 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 					Ex_ObjKillFocus(hObj);
 				}
 			}
-			
+
 		}
 	}
 	return 0;
@@ -846,7 +865,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 				HWND currentWnd = WindowFromPoint(point);
 				ScreenToClient(currentWnd, &point);// 转换到父窗口坐标
 				RECT rcButton;
-				Ex_ObjGetRectEx(button, &rcButton,2);				
+				Ex_ObjGetRectEx(button, &rcButton, 2);
 				// 检查鼠标是否在按钮区域内
 				if (PtInRect(&rcButton, point))
 				{
@@ -1119,7 +1138,8 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 							OBJECT_STYLE_VISIBLE | EDIT_STYLE_NUMERIC_LETTER);
 					}
 					else if (editStyle == 4) {
-						continue;
+						Ex_ObjSetLong(edit, OBJECT_LONG_STYLE,
+							OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
 					}
 					Ex_ObjShow(edit, TRUE);
 					Ex_ObjMove(edit, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,

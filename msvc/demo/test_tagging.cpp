@@ -131,7 +131,7 @@ LRESULT CALLBACK OnTaggingWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM 
         Ex_ObjMove(hObj_taggingLabel2, (LOWORD(lParam) - 80) / dpiy, 270 / dpiy, 60 / dpiy,
                    30 / dpiy, TRUE);
         Ex_ObjMove(hObj_taggingLabel3, (LOWORD(lParam) - 150) / dpiy, 310 / dpiy, 130 / dpiy,
-                   600 / dpiy, TRUE);
+                   800 / dpiy, TRUE);
     }
     return 0;
 }
@@ -188,7 +188,7 @@ void test_tagging(HWND hWnd)
         L"绘制过程中点击【结束绘图】清空临时点。变为选中模式，可以选择画板上闭合的路径。\r\n3."
         L"点击【清空绘图】清空画板全部临时点和闭合路径。\r\n4."
         L"点击【取出数据】演示打印原图点坐标。\r\n5.按住CTRL键+鼠标滚轮,可以放大缩小",
-        -1, 1050, 310, 130, 600, hExDui_tagging, 1090, DT_WORDBREAK, 0, 0, 0);
+        -1, 1050, 310, 130, 800, hExDui_tagging, 1090, DT_WORDBREAK, 0, 0, 0);
     Ex_ObjSetFontFromFamily(hObj_taggingLabel3, L"Arial", 12, FONT_STYLE_BOLD, FALSE);
     Ex_ObjSetColor(hObj_taggingLabel3, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 

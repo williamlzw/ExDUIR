@@ -2,7 +2,7 @@
 HEXOBJ m_hObjPropertyGrid = 0;
 
 LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
-                                           LPARAM lParam)
+    LPARAM lParam)
 {
     if (nCode == NM_CLICK) {
         if (nID == 100) {
@@ -13,7 +13,7 @@ LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
         else if (nID == 101) {
             LPCWSTR ret =
                 (LPCWSTR)Ex_ObjSendMessage(m_hObjPropertyGrid, PROPERTYGRID_MESSAGE_SETITEMVALUE,
-                                           1, (LPARAM)L"普通编辑框");
+                    1, (LPARAM)L"普通编辑框");
             OUTPUTW(L"置\"普通编辑框\"对应值");
         }
         else if (nID == 102) {
@@ -25,7 +25,7 @@ LRESULT CALLBACK OnPropertyGridButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 
 LRESULT CALLBACK OnPropertyGridEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-    EX_PROGRID_CHANGEITEMINFO itemInfo{0};
+    EX_PROGRID_CHANGEITEMINFO itemInfo{ 0 };
     RtlMoveMemory(&itemInfo, (void*)lParam, sizeof(EX_PROGRID_CHANGEITEMINFO));
     OUTPUTW(L"属性框值改变, 对应行索引:", wParam, L", 改变后值:", itemInfo.text, L", 改变类型:",
         itemInfo.type);
@@ -143,7 +143,7 @@ void PropertyGrid_AddButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonT
     Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);
 }
 
-void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex,INT type)
+void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex, INT type)
 {
     EX_PROPERTYGRID_ITEMINFO_SUBITEM item = { 0 };
     item.Type = PROPERTYGRID_ITEMTYPE_EDIT | PROPERTYGRID_ITEMTYPE_BUTTON;
@@ -165,26 +165,26 @@ void test_propertygrid(HWND hParent)
     HEXDUI hExDui_propertygrid = Ex_DUIBindWindowEx(
         hWnd_propertygrid, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
-            WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
-            WINDOW_STYLE_HASICON,
+        WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
+        WINDOW_STYLE_HASICON,
         0, 0);
     Ex_DUISetLong(hExDui_propertygrid, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
 
     m_hObjPropertyGrid =
         Ex_ObjCreateEx(-1, L"PropertyGrid", L"属性框", -1,
-                       50, 50, 300, 300, hExDui_propertygrid, 0, 0, 0, 0, 0);
+            50, 50, 300, 300, hExDui_propertygrid, 0, 0, 0, 0, 0);
     Ex_ObjHandleEvent(m_hObjPropertyGrid, PROPERTYGRID_EVENT_ITEMVALUECHANGE, OnPropertyGridEvent);
     Ex_ObjHandleEvent(m_hObjPropertyGrid, PROPERTYGRID_EVENT_ITEMBUTTONCLICK, OnPropertyGridEventBUTTONCLICK);
     Ex_ObjSetColor(m_hObjPropertyGrid, COLOR_EX_BACKGROUND, ExRGB2ARGB(14737632, 255), TRUE);
 
     auto hObj1 = Ex_ObjCreateEx(-1, L"button", L"取表项内容", -1, 380, 70, 100, 30,
-                                hExDui_propertygrid, 100, -1, 0, 0, 0);
+        hExDui_propertygrid, 100, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
     hObj1 = Ex_ObjCreateEx(-1, L"button", L"置表项内容", -1, 380, 120, 100, 30, hExDui_propertygrid,
-                           101, -1, 0, 0, 0);
+        101, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
     hObj1 = Ex_ObjCreateEx(-1, L"button", L"修改组件大小", -1, 380, 170, 100, 30,
-                           hExDui_propertygrid, 102, -1, 0, 0, 0);
+        hExDui_propertygrid, 102, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj1, NM_CLICK, OnPropertyGridButtonEvent);
 
     // 添加分组

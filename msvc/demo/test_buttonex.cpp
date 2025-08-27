@@ -67,9 +67,9 @@ void test_buttonex(HWND hWnd)
     Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(65535, 255), FALSE);
     Ex_ObjSetColor(hObj_btnex6, COLOR_EX_TEXT_DOWN, ExRGB2ARGB(65535, 255), FALSE);
     EX_IMAGEINFO IMG = {0};
-    _img_createfromfile(L"buttonex/正常.png", &IMG.imgNormal);
-    _img_createfromfile(L"buttonex/进入.png", &IMG.imgHover);
-    _img_createfromfile(L"buttonex/按下.png", &IMG.imgDownOrChecked);
+    _img_createfromfile(L"res/buttonex/正常.png", &IMG.imgNormal);
+    _img_createfromfile(L"res/buttonex/进入.png", &IMG.imgHover);
+    _img_createfromfile(L"res/buttonex/按下.png", &IMG.imgDownOrChecked);
     Ex_ObjSendMessage(hObj_btnex6, BM_SETIMAGE, 0, (LPARAM)&IMG);
 
     HEXOBJ hObj_btnex7 =

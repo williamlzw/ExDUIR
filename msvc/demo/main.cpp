@@ -145,7 +145,7 @@ void test_exdui()
     // 从常量加载主题包
     data.resize(Default_ext_size);
     RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
-    // Ex_ReadFile(L"res/Default.ext", &data);//从文件加载主题包
+    //Ex_ReadFile(L"res/Default.ext", &data);//从文件加载主题包
     // Ex_ReadFile(L"res/test_theme.ext", &data);//加载打包的主题包
     // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
@@ -243,7 +243,7 @@ void test_exdui()
             HEXIMAGE     hImgSmall;
             std::wstring imgPath = L"res\\button_icon\\" + std::to_wstring(i) + L".png";
             _img_createfromfile(imgPath.c_str(), &hImg);
-            _img_scale(hImg, 30, 30, &hImgSmall);
+            _img_scale(hImg, Ex_Scale(30), Ex_Scale(30), &hImgSmall);
             _img_destroy(hImg);
             Ex_ObjSendMessage(hObjButtnon, WM_SETICON, 0, (LPARAM)hImgSmall);
             buttons.push_back(hObjButtnon);

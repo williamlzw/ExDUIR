@@ -73,10 +73,10 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                     _img_createfromhicon(hicon, &hImg);
                     if (hImg != 0) {
                         _canvas_drawimagerect(
-                            ps.hCanvas, hImg, left, (ps.rcText.bottom - ps.rcText.top - 16) / 2,
-                            left + 16, (ps.rcText.bottom - ps.rcText.top - 16) / 2 + 16, 255);
+                            ps.hCanvas, hImg, left, ((float)ps.rcText.bottom - (float)ps.rcText.top - Ex_Scale(16)) / 2,
+                            (float)left + Ex_Scale(16), ((float)ps.rcText.bottom - (float)ps.rcText.top - Ex_Scale(16)) / 2 + Ex_Scale(16), 255);
                         _img_destroy(hImg);
-                        left = left + 20;
+                        left = left + (int)Ex_Scale(20);
                     }
                 }
             }

@@ -2063,6 +2063,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
             INT  offsetTop = 0;
             for (INT i = 0; i < nCount; i++) {
                 if (GetMenuItemRect(hParent, (HMENU)hMenu, i, &rcItem)) {
+                    
                     eos = OBJECT_STYLE_VISIBLE;
                     if (GetMenuItemInfoW((HMENU)hMenu, i, TRUE, &mii)) {
                         if ((mii.fType & MFT_SEPARATOR) != 0)   // 分隔符
@@ -2092,8 +2093,10 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
                     if (rcItem.top < 0 && i == 0) {
                         offsetTop = abs(rcItem.top);
                     }
+                    
                     rcItem.top    = rcItem.top + offsetTop;
                     rcItem.bottom = rcItem.bottom + offsetTop;
+                    
                     GetMenuStringW((HMENU)hMenu, i, buff, 520, MF_BYPOSITION);
                     obj_s* pObj = nullptr;
                     nError      = 0;
@@ -2104,6 +2107,7 @@ void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd)
                                          ATOM_ITEM, buff, eos, rcItem.left, rcItem.top, width,
                                          rcItem.bottom - rcItem.top, objParent, mii.wID, 0, i,
                                          DT_VCENTER | DT_SINGLELINE);
+                        
                         pObj->dwFlags_ = pObj->dwFlags_ | EOF_BMENUITEM;
                         _obj_create_done(hWnd, pWnd, hObj, pObj);
                         if (lpPaddingText != 0) {
@@ -2742,16 +2746,17 @@ BOOL _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam)
             INT  szItemSeparator = pWnd->szItemSeparator_;
             CHAR byte            = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_));
             INT  width, height;
+            
             if (nID == 0)   // MF_SEPARATOR
             {
                 width  = byte + offset;
                 byte   = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_) + 3);
-                height = byte;
+                height = Ex_Scale(byte);
             }
             else {
                 width  = pWnd->menu_maxwidth_ + offset;
                 byte   = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_) + 1);
-                height = byte;
+                height = Ex_Scale(byte);
             }
             ((MEASUREITEMSTRUCT*)lParam)->itemWidth  = width;
             ((MEASUREITEMSTRUCT*)lParam)->itemHeight = height;
@@ -2809,7 +2814,7 @@ void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu)
         fChecked = TRUE;
     }
     if (fChecked) {
-        INT       nCount  = GetMenuItemCount(hMenu) - 1;
+        INT       nCount  = GetMenuItemCount(hMenu);
         HEXCANVAS hCanvas = pWnd->canvas_bkg_;
         HEXFONT   hFont   = pWnd->hFont_Menu_;
 
@@ -2825,6 +2830,7 @@ void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu)
         pWnd->menu_maxwidth_ = nMax;
         MENUITEMINFOW mii;
         mii.cbSize = sizeof(MENUITEMINFOW);
+       
         mii.fMask  = MIIM_FTYPE | MIIM_ID;
         for (INT i = 0; i < nCount; i++) {
             if (GetMenuItemInfoW(hMenu, i, TRUE, &mii)) {
