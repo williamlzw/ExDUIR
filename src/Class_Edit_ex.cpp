@@ -131,11 +131,11 @@ class TextHost : public ITextHost {
   void TxSetCursor(HCURSOR hcur, BOOL fText) {};
 
   //@cmember Converts screen coordinates of a specified point to the client
-  //coordinates
+  // coordinates
   BOOL TxScreenToClient(LPPOINT lppt) { return FALSE; };
 
   //@cmember Converts the client coordinates of a specified point to screen
-  //coordinates
+  // coordinates
   BOOL TxClientToScreen(LPPOINT lppt) { return FALSE; };
 
   //@cmember Request host to activate text services
@@ -943,14 +943,15 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     } else if (uMsg == WM_STYLECHANGED) {
       // 应该还有其他的style变化需要处理
       if (GWL_STYLE == wParam) {
+        DWORD dwUpdatedBits = 0;
         if ((lParam & EDIT_STYLE_READONLY) != 0) {
-          LPVOID pits = _edit_its(pObj);
-          if (pits != nullptr) {
-            auto lret =
-                ((ITextServices*)pits)
-                    ->OnTxPropertyBitsChange(TXTBIT_READONLY, TXTBIT_READONLY);
-          }
-          return 1;
+          dwUpdatedBits |= TXTBIT_READONLY;
+        }
+        LPVOID pits = _edit_its(pObj);
+        if (pits != nullptr) {
+          auto lret =
+              ((ITextServices*)pits)
+                  ->OnTxPropertyBitsChange(TXTBIT_READONLY, dwUpdatedBits);
         }
       }
     } else {
