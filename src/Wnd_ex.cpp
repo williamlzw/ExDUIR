@@ -1300,8 +1300,9 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle)
         }
 
         _obj_create_proc(&nError, FALSE, hTheme, pObjCaption,
-                         (dwStyle & WINDOW_STYLE_NOCAPTIONTOPMOST) != 0 ? 0 : -1, ATOM_SYSBUTTON,
-                         lpTitle, OBJECT_STYLE_VISIBLE | WINDOW_STYLE_TITLE, rcCaption.left,
+                         (dwStyle & WINDOW_STYLE_NOCAPTIONTOPMOST) != 0 ? 0 : -1, ATOM_SYSBUTTON, lpTitle,
+            OBJECT_STYLE_VISIBLE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON,
+            rcCaption.left,
                          rcCaption.top, rcCaption.right - rcCaption.left,
                          rcCaption.bottom - rcCaption.top, 0, WINDOW_STYLE_TITLE, 0, 0,
                          DT_LEFT | DT_VCENTER | DT_SINGLELINE);
