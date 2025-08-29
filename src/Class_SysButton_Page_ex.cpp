@@ -65,7 +65,9 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                             atomState, 255);
         if ((ps.dwStyle & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE) {
             left = ps.rcText.left;
-            if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_HASICON) == WINDOW_STYLE_HASICON)) {
+          if (((ps.dwStyle & WINDOW_STYLE_HASICON) == WINDOW_STYLE_HASICON)/*||(
+                  (pObj->pWnd_->dwStyle_ & WINDOW_STYLE_HASICON) ==
+                  WINDOW_STYLE_HASICON)*/) {
                 HICON hicon = (HICON)_wnd_geticonhandle(hWnd, FALSE);
 
                 if (hicon != 0) {
