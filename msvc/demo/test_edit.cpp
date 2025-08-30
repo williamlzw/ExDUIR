@@ -153,7 +153,16 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
             textformat.codePage = 1200;   // Unicode code page
             Ex_ObjSendMessage(hEdit, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat,
                               (LPARAM)L"选中替换为这个");
-        }
+        } 
+    }
+    if (nID == 227) {
+      auto hObj_edit4 = Ex_ObjGetFromID(m_hExDuiEdit, 2020);
+      auto oldstyle=   Ex_ObjGetLong(hObj_edit4, OBJECT_LONG_STYLE);
+      if (oldstyle & EDIT_STYLE_READONLY)
+          Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE,OBJECT_STYLE_VISIBLE );
+      else
+        Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE,
+                      OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
     }
     return 0;
 }
@@ -214,7 +223,7 @@ void test_edit(HWND hWnd)
     HEXOBJ hObj_edit4 =
         Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
                        L"测试只读编辑框", -1, 10, 150, 150,
-                       30, m_hExDuiEdit, 0, DT_SINGLELINE, 0, 0, NULL);
+                       30, m_hExDuiEdit, 2020, DT_SINGLELINE, 0, 0, NULL);
     Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE,
                   OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
     HEXOBJ hObj_edit5 =
@@ -272,8 +281,8 @@ void test_edit(HWND hWnd)
     std::vector<std::wstring> buttonTitles = {
         L"全选",     L"取消选择",   L"置选择",  L"左对齐 ",   L"居中对齐", L"右对齐", L"首行缩进 ",
         L"右侧缩进", L"非首行缩进", L"项目符",  L"文本红色 ", L"加粗",     L"倾斜",   L"下划线",
-        L"删除线",   L"超链接",     L"幼圆30",  L"撤销 ",     L"重做",     L"复制",   L"剪切",
-        L"粘贴",     L"删除",       L"取行数 ", L"寻找文本",  L"替换文本"};
+        L"删除线",   L"超链接",     L"幼圆30",  L"撤销 ",     L"重做",     L"复制",   L"剪切",      L"粘贴",      L"删除",     L"取行数 ",    L"寻找文本",
+        L"替换文本",  L"切换只读模式"};
     m_hEditButton.resize(buttonTitles.size());
     HEXOBJ hObj_page = Ex_ObjCreate(L"Page", NULL, -1, 500, 30, 350, 300, m_hExDuiEdit);
 
