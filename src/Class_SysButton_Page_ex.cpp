@@ -63,7 +63,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
         INT left;
         Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, 0, 0, ps.uWidth, ps.uHeight, atomClass,
                             atomState, 255);
-        if ((ps.dwStyle & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE) {
+        /*if ((ps.dwStyle & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE)*/ {
             left = ps.rcText.left;
           if (((ps.dwStyle & WINDOW_STYLE_HASICON) == WINDOW_STYLE_HASICON)/*||(
                   (pObj->pWnd_->dwStyle_ & WINDOW_STYLE_HASICON) ==
@@ -83,7 +83,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
                 }
             }
 
-            if (((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE)) {
+            if ((ps.dwStyle & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE/*((pObj->pWnd_->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE)*/) {
                 _canvas_drawtextex(ps.hCanvas, pObj->hFont_,
                                    _obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL), pObj->pstrTitle_, -1,
                                    pObj->dwTextFormat_, left, ps.rcText.top, ps.rcText.right,
@@ -224,7 +224,9 @@ LRESULT CALLBACK _sysbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
             return 0;
         }
         else if (uMsg == WM_SIZE) {
-            if (((pObj->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE)) {
+          if (((pObj->dwStyle_ & WINDOW_STYLE_TITLE) == WINDOW_STYLE_TITLE) ||
+              ((pObj->dwStyle_ & WINDOW_STYLE_HASICON) ==
+               WINDOW_STYLE_HASICON)) {
                 _sysbutton_remove_proc(pObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             }
         }
