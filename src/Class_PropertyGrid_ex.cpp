@@ -855,8 +855,8 @@ LRESULT CALLBACK _propertygrid_oneditmsgproc(HWND hWND, HEXOBJ hObj, INT uMsg, W
 			if (text) Ex_MemFree(text);
 			Ex_ObjKillFocus(hObj);
 			Ex_ObjShow(hObj, FALSE);
-			HEXOBJ button1 = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_HOBJBUTTON);
-			if (Ex_ObjIsValidate(button1)) Ex_ObjShow(button1, FALSE);
+			HEXOBJ button = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_HOBJBUTTON);
+			if (Ex_ObjIsValidate(button)) Ex_ObjShow(button, FALSE);
 		}
 
 	}
@@ -1122,21 +1122,21 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 					Ex_ObjSetLong(edit, OBJECT_LONG_STYLE,
 						OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
 				}
-				Ex_ObjShow(edit, TRUE);
+				Ex_ObjSetText(edit, data->Content, TRUE);
 				Ex_ObjMove(edit, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
 					(rcContent.bottom - rcContent.top) / dpi, TRUE);
-				Ex_ObjSetText(edit, data->Content, TRUE);
 				Ex_ObjSendMessage(edit, EM_SETSEL, -1, -1);// 光标移动到末尾
-				Ex_ObjSetFocus(edit);
 				Ex_ObjSetLong(edit, OBJECT_LONG_LPARAM, i);
+				Ex_ObjSetFocus(edit);
+				Ex_ObjShow(edit, TRUE);
 
 				if (sub->Type & PROPERTYGRID_ITEMTYPE_BUTTON) {
 					HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
 					Ex_ObjSetText(button, L"...", TRUE);
-					Ex_ObjShow(button, TRUE);
 					Ex_ObjMove(button, (rcContent.right - Ex_Scale(26)) / dpi, rcContent.top / dpi, Ex_Scale(26) / dpi,
 						(rcContent.bottom - rcContent.top) / dpi, TRUE);
 					Ex_ObjSetLong(button, OBJECT_LONG_LPARAM, i);
+					Ex_ObjShow(button, TRUE);
 				}
 			}
 			else if (sub->Type == PROPERTYGRID_ITEMTYPE_DATEBOX) {
@@ -1145,18 +1145,17 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				OffsetRect(&rcContent, 0, -nPos);
 				HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
 				Ex_ObjSetText(datebox, data->Content, TRUE);
-				Ex_ObjShow(datebox, TRUE);
 				Ex_ObjMove(datebox, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
 					(rcContent.bottom - rcContent.top) / dpi, TRUE);
 				Ex_ObjSetFocus(datebox);
 				Ex_ObjSetLong(datebox, OBJECT_LONG_LPARAM, i);
+				Ex_ObjShow(datebox, TRUE);
 			}
 			else if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER) {
 				EX_PROPERTYGRID_ITEMINFO_COLORPICKER* data = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)sub->Data;
 				RECT rcContent = data->Layout.rcContent;
 				OffsetRect(&rcContent, 0, -nPos);
 				HEXOBJ hobjColorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
-				Ex_ObjShow(hobjColorPicker, TRUE);
 				Ex_ObjMove(hobjColorPicker, rcContent.left / dpi, rcContent.top / dpi,
 					30 / dpi, (rcContent.bottom - rcContent.top) / dpi,
 					TRUE);
@@ -1167,15 +1166,13 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				Ex_ObjSetColor(hobjColorPicker, COLOR_EX_BACKGROUND, color, TRUE);
 				Ex_ObjSetFocus(hobjColorPicker);
 				Ex_ObjSetLong(hobjColorPicker, OBJECT_LONG_LPARAM, i);
+				Ex_ObjShow(hobjColorPicker, TRUE);
 			}
 			else if (sub->Type == PROPERTYGRID_ITEMTYPE_COMBOBOX) {
 				EX_PROPERTYGRID_ITEMINFO_COMBOBOX* data = (EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)sub->Data;
 				RECT rcContent = data->Layout.rcContent;
 				OffsetRect(&rcContent, 0, -nPos);
 				HEXOBJ combobox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOMBOBOX);
-				Ex_ObjShow(combobox, TRUE);
-				Ex_ObjMove(combobox, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
-					(rcContent.bottom - rcContent.top) / dpi, TRUE);
 				// 清空组合框
 				Ex_ObjSendMessage(combobox, CB_RESETCONTENT, 0, 0);
 				// 添加组合框表项
@@ -1186,6 +1183,9 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				Ex_ObjSetText(combobox, data->Content, TRUE);   // 让组合框显示为当前的内容
 				Ex_ObjSetFocus(combobox);
 				Ex_ObjSetLong(combobox, OBJECT_LONG_LPARAM, i);
+				Ex_ObjMove(combobox, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
+					(rcContent.bottom - rcContent.top) / dpi, TRUE);
+				Ex_ObjShow(combobox, TRUE);
 			}
 			else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON) {
 				EX_PROPERTYGRID_ITEMINFO_BUTTON* data = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
@@ -1193,11 +1193,11 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				OffsetRect(&rcContent, 0, -nPos);
 				HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
 				Ex_ObjSetText(button, data->Content, TRUE);
-				Ex_ObjShow(button, TRUE);
 				Ex_ObjMove(button, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
 					(rcContent.bottom - rcContent.top) / dpi, TRUE);
 				Ex_ObjSetFocus(button);
 				Ex_ObjSetLong(button, OBJECT_LONG_LPARAM, i);
+				Ex_ObjShow(button, TRUE);
 			}
 			Ex_ObjInvalidateRect(hObj, 0);
 			break;
@@ -1442,7 +1442,6 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 		Ex_MemFree((void*)data->Content);
 		data->Content = StrDupW(content);
 	}
-
 
 	// 如果该项目是当前选中的项目，更新编辑器内容
 	INT selItem = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SELITEM);
