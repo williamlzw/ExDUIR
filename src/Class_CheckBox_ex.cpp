@@ -60,6 +60,10 @@ LRESULT CALLBACK _checkbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRHOVER, checkboxprops->crBkgHover);
         Ex_ObjSetProp(hObj, CHECKBOX_PROP_CRCHECKED, checkboxprops->crBkgDownOrChecked);
     }
+    else if (uMsg == WM_SETCURSOR)   // 禁控件自身再次设置光标产生闪烁
+    {
+        return 1;
+    }
     return Ex_ObjCallProc(m_pfnCheckBoxProc, hWnd, hObj, uMsg, wParam, lParam);
 }
 
