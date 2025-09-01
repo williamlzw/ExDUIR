@@ -873,7 +873,7 @@ LRESULT CALLBACK _propertygrid_oneditevent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 			int itemHover = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 			// 获取同项的按钮控件
 			HEXOBJ button = Ex_ObjGetLong(parent, PROPERTYGRID_LONG_HOBJBUTTON);
-			if (Ex_ObjIsValidate(button))
+			if (Ex_ObjIsValidate(button) && Ex_ObjIsValidate(button))
 			{
 				POINT point = { 0 };
 				GetCursorPos(&point);
