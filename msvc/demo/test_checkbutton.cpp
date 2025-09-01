@@ -19,7 +19,7 @@ LRESULT CALLBACK OnCheckButtonCheckedEvent(HEXOBJ hObj, INT nID, INT nCode, WPAR
 void test_checkbutton(HWND hWnd)
 {
     HWND hWnd_checkbutton =
-        Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试单选框复选框", 0, 0, 300, 250, 0, 0);
+        Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试单选框复选框", 0, 0, 300, 230, 0, 0);
     HEXDUI hExDui_checkbutton = Ex_DUIBindWindowEx(
         hWnd_checkbutton, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
@@ -55,17 +55,13 @@ void test_checkbutton(HWND hWnd)
     Ex_ObjSendMessage(hObj_checkbutton2, WM_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
     Ex_ObjHandleEvent(hObj_checkbutton2, NM_CHECK, OnCheckButtonCheckedEvent);
 
-    HEXOBJ hObj_checkbutton3 =
-        Ex_ObjCreate(L"CheckButtonEx", L"三态选择框", -1, 10, 150, 100, 30, hExDui_checkbutton);
-    Ex_ObjSendMessage(hObj_checkbutton3, BM_SETCHECK, 2, 0);
-
-    Ex_ObjCreate(L"RadioButtonEx", L"扩展单选框", -1, 150, 120, 120, 30, hExDui_checkbutton);
+    Ex_ObjCreate(L"RadioButtonEx", L"扩展单选框", -1, 150, 90, 120, 30, hExDui_checkbutton);
     HEXOBJ hObj_radiobutton2 =
-        Ex_ObjCreate(L"RadioButtonEx", L"扩展单选框2", -1, 150, 150, 120, 30, hExDui_checkbutton);
+        Ex_ObjCreate(L"RadioButtonEx", L"扩展单选框2", -1, 150, 120, 120, 30, hExDui_checkbutton);
     Ex_ObjSendMessage(hObj_radiobutton2, BM_SETCHECK, 1, 0);
 
     HEXOBJ hObj_checkbox1 =
-        Ex_ObjCreate(L"CheckBox", L"记住账号", -1, 10, 200, 100, 30, hExDui_checkbutton);
+        Ex_ObjCreate(L"CheckBox", L"记住账号", -1, 10, 170, 100, 30, hExDui_checkbutton);
     Ex_ObjHandleEvent(hObj_checkbox1, NM_CHECK, OnCheckButtonCheckedEvent);
     Ex_ObjSetProp(hObj_checkbox1, CHECKBOX_PROP_TEXT, ExARGB(120, 40, 160, 255));
     Ex_ObjSetProp(hObj_checkbox1, CHECKBOX_PROP_CRHOVERCHECK, ExARGB(66, 66, 66, 255));
@@ -75,7 +71,7 @@ void test_checkbutton(HWND hWnd)
     prop.crBkgDownOrChecked = ExARGB(250, 150, 180, 255);
     Ex_ObjSendMessage(hObj_checkbox1, WM_EX_PROPS, 0, (size_t)&prop);
     HEXOBJ hObj_checkbox2 =
-        Ex_ObjCreate(L"CheckBox", L"记住密码", -1, 150, 200, 100, 30, hExDui_checkbutton);
+        Ex_ObjCreate(L"CheckBox", L"记住密码", -1, 150, 170, 100, 30, hExDui_checkbutton);
     Ex_ObjSendMessage(hObj_checkbox2, BM_SETCHECK, 1, 0);
 
     Ex_DUIShowWindow(hExDui_checkbutton, SW_SHOWNORMAL, 0, 0, 0);

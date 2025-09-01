@@ -1,37 +1,22 @@
 ﻿#include "stdafx.h"
 
-ClsPROC m_pfnCheckButtonProc; /*控件基类的消息回调函数*/
-
 void _checkbuttonex_register()
 {
-    EX_CLASSINFO pClsInfoCheckButton;
-
-    /* 超类化(从现有控件派生)过程
-     * 超类化的好处是可以直接利用现有控件，省去从头编写控件的时间，提高扩展效率*/
-
-    /* 1、获取父类控件信息*/
-    WCHAR oldwzCls[] = L"CheckButton";
-    Ex_ObjGetClassInfoEx(oldwzCls, &pClsInfoCheckButton);
-
-    /* 2、保存父类控件回调函数指针*/
-    m_pfnCheckButtonProc = pClsInfoCheckButton.pfnClsProc;
-
-    /* 3、注册新控件*/
     WCHAR newwzCls[] = L"CheckButtonEx";
-    Ex_ObjRegister(newwzCls, pClsInfoCheckButton.dwStyle, pClsInfoCheckButton.dwStyleEx,
-                   pClsInfoCheckButton.dwTextFormat, NULL, pClsInfoCheckButton.hCursor,
-                   pClsInfoCheckButton.dwFlags, _checkbuttonex_proc);
+    Ex_ObjRegister(newwzCls, OBJECT_STYLE_VISIBLE | BUTTON_STYLE_CHECKBUTTON, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP,
+        DT_VCENTER | DT_SINGLELINE, 1 * sizeof(SIZE_T), 0,
+                   0, _checkbuttonex_proc);
 }
 
 LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
     if (uMsg == WM_CREATE) {
         Ex_ObjInitPropList(hObj, 5);
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERNORMAL, ExARGB(0, 0, 0, 255));
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERHOVER, ExARGB(0, 0, 0, 255));
         Ex_ObjSetProp(hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
+        Ex_ObjSetLong(hObj, CHECKBOXEX_LONG_STATE, 0);
     }
     /*销毁时释放资源*/
     else if (uMsg == WM_DESTROY) {}
@@ -39,16 +24,43 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         _checkbuttonex_paint(hObj);
     }
     else if (uMsg == WM_MOUSEHOVER) {
-        Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
+        auto check = (INT)Ex_ObjGetLong(hObj, CHECKBOXEX_LONG_STATE);
+        if (check == 0)
+        {
+            Ex_ObjSetLong(hObj, CHECKBOXEX_LONG_STATE, 1);
+        }
+        Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == WM_MOUSELEAVE) {
-        Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
+        auto check = (INT)Ex_ObjGetLong(hObj, CHECKBOXEX_LONG_STATE);
+        if (check == 1)
+        {
+            Ex_ObjSetLong(hObj, CHECKBOXEX_LONG_STATE, 0);
+        }
+        Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == WM_LBUTTONDOWN) {
-        Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
+        auto check = (INT)Ex_ObjGetLong(hObj, CHECKBOXEX_LONG_STATE);
+        if (check == 2)
+        {
+            Ex_ObjSetLong(hObj, CHECKBOXEX_LONG_STATE, 1);
+        }
+        else if (check == 1) {
+            Ex_ObjSetLong(hObj, CHECKBOXEX_LONG_STATE, 2);
+        }
+        Ex_ObjInvalidateRect(hObj, 0);
     }
-    else if (uMsg == WM_LBUTTONUP) {
-        Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
+    else if (uMsg == WM_EX_LCLICK)
+    {
+        auto check = (INT)Ex_ObjGetLong(hObj, CHECKBOXEX_LONG_STATE);
+        Ex_ObjSendMessage(hObj, BM_SETCHECK, check == 2, 0);
+    }
+    else if (uMsg == BM_SETCHECK) {
+        Ex_ObjDispatchNotify(hObj, NM_CHECK, wParam, lParam); 
+    }
+    else if (uMsg == BM_GETCHECK) {
+        auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
+        return (state == 2 || state == 3) ? 1 : 0;
     }
     else if (uMsg == WM_EX_PROPS) {
         EX_OBJ_PROPS* CheckButtonExprops = (EX_OBJ_PROPS*)lParam;
@@ -60,7 +72,7 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
                       CheckButtonExprops->crBorderDownOrChecked);
     }
 
-    return Ex_ObjCallProc(m_pfnCheckButtonProc, hWnd, hObj, uMsg, wParam, lParam);
+    return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
 void _checkbuttonex_paint(HEXOBJ hObj)
@@ -71,15 +83,18 @@ void _checkbuttonex_paint(HEXOBJ hObj)
         HEXBRUSH hBrush =
             _brush_create((EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERNORMAL));
         EXARGB crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
-        if ((ps.dwState & STATE_HOVER) == STATE_HOVER) {
+        auto check = (INT)Ex_ObjGetLong(hObj, CHECKBOXEX_LONG_STATE);
+        if (check == 2) {
+            crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED);
+            _brush_setcolor(hBrush,
+                (EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED));
+        }
+        else if(check == 1) {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
             _brush_setcolor(hBrush, (EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERHOVER));
         }
 
-        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0) {
-            _brush_setcolor(hBrush,
-                            (EXARGB)Ex_ObjGetProp(hObj, CHECKBOXEX_PROP_CRBORDERDOWNORCHECKED));
-        }
+        
         /* 计算文本尺寸 */
         FLOAT nTextWidth  = NULL;
         FLOAT nTextHeight = NULL;
@@ -101,19 +116,8 @@ void _checkbuttonex_paint(HEXOBJ hObj)
 
         _brush_setcolor(hBrush, CHECKCLR);
 
-        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_HALFSELECT) != 0) {
-            crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED);
-            /* 把矩形往里缩2像素 */
-            rcBlock.left   = rcBlock.left + (long)Ex_Scale(2);
-            rcBlock.top    = rcBlock.top + (long)Ex_Scale(2);
-            rcBlock.right  = rcBlock.right - (long)Ex_Scale(2);
-            rcBlock.bottom = rcBlock.bottom - (long)Ex_Scale(2);
-            _canvas_fillrect(ps.hCanvas, hBrush, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top,
-                             (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom);
-        }
-        else if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0) {
-            crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED);
-
+   
+        if (check == 2) {
             _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), CHECKCLR, L"✔", -1,
                              DT_CENTER | DT_VCENTER, (FLOAT)rcBlock.left, (FLOAT)rcBlock.top,
                              (FLOAT)rcBlock.right, (FLOAT)rcBlock.bottom);
