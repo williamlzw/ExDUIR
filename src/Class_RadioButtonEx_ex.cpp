@@ -1,53 +1,72 @@
 ﻿#include "stdafx.h"
 
-ClsPROC m_pfnRadioButtonProc; /*控件基类的消息回调函数*/
-
 void _radiobuttonex_register()
 {
-    EX_CLASSINFO pClsInfoRadioButton;
-
-    /* 超类化(从现有控件派生)过程
-     * 超类化的好处是可以直接利用现有控件，省去从头编写控件的时间，提高扩展效率*/
-
-    /* 1、获取父类控件信息*/
-    WCHAR oldwzCls[] = L"RadioButton";
-    Ex_ObjGetClassInfoEx(oldwzCls, &pClsInfoRadioButton);
-
-    /* 2、保存父类控件回调函数指针*/
-    m_pfnRadioButtonProc = pClsInfoRadioButton.pfnClsProc;
-
-    /* 3、注册新控件*/
     WCHAR newwzCls[] = L"RadioButtonEx";
-    Ex_ObjRegister(newwzCls, pClsInfoRadioButton.dwStyle, pClsInfoRadioButton.dwStyleEx,
-                   pClsInfoRadioButton.dwTextFormat, 0, pClsInfoRadioButton.hCursor,
-                   pClsInfoRadioButton.dwFlags, _radiobuttonex_proc);
+    Ex_ObjRegister(newwzCls, OBJECT_STYLE_VISIBLE | BUTTON_STYLE_RADIOBUTTON,
+        OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, DT_VCENTER | DT_SINGLELINE, sizeof(SIZE_T), 0,
+                   0, _radiobuttonex_proc);
 }
 
 LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-
     if (uMsg == WM_CREATE) {
         Ex_ObjInitPropList(hObj, 5);
         Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED, ExRGB2ARGB(16777215, 255));
         Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERNORMAL, ExARGB(0, 0, 0, 255));
         Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER, ExARGB(0, 0, 0, 255));
         Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED, ExARGB(0, 0, 0, 255));
+        Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 0); // 0:正常 1:悬停 2:选中
     }
-    else if (uMsg == WM_DESTROY) {}
     else if (uMsg == WM_PAINT) {
         _radiobuttonex_paint(hObj);
     }
     else if (uMsg == WM_MOUSEHOVER) {
-        Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
+        auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
+        if (state == 0) {
+            Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 1);
+        }
+        Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == WM_MOUSELEAVE) {
-        Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
+        auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
+        if (state == 1) {
+            Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 0);
+        }
+        Ex_ObjInvalidateRect(hObj, 0);
     }
     else if (uMsg == WM_LBUTTONDOWN) {
-        Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, TRUE);
+        auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
+        if (state != 2) {
+            // 单选框被点击且未选中时，设置为选中状态并通知兄弟控件
+            Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 2);
+            Ex_ObjInvalidateRect(hObj, 0);
+            if (wParam == 1)
+            {
+                // 通知兄弟控件取消选中
+                INT    nError = 0;
+                obj_s* pObj = nullptr;
+                if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+                    _obj_notify_brothers(hWnd, hObj, pObj, BM_SETCHECK, 0, 0, TRUE, TRUE);
+                }
+            }
+            // 发送通知
+            Ex_ObjDispatchNotify(hObj, NM_CHECK, wParam, lParam);
+        }
     }
-    else if (uMsg == WM_LBUTTONUP) {
-        Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, TRUE);
+    else if (uMsg == BM_SETCHECK) {
+        if (wParam == 0) {
+            Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 0);
+        }
+        else {
+            Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 2);
+        }
+        Ex_ObjInvalidateRect(hObj, 0);
+        return 0;
+    }
+    else if (uMsg == BM_GETCHECK) {
+        auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
+        return (state == 2 || state == 3) ? 1 : 0;
     }
     else if (uMsg == WM_EX_PROPS) {
         EX_OBJ_PROPS* RadioButtonExprops = (EX_OBJ_PROPS*)lParam;
@@ -59,7 +78,7 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         Ex_ObjSetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED,
                       RadioButtonExprops->crBorderDownOrChecked);
     }
-    return Ex_ObjCallProc(m_pfnRadioButtonProc, hWnd, hObj, uMsg, wParam, lParam);
+    return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
 void _radiobuttonex_paint(HEXOBJ hObj)
@@ -67,15 +86,16 @@ void _radiobuttonex_paint(HEXOBJ hObj)
     EX_PAINTSTRUCT ps{0};
     RECT           rcBlock = {0};
     if (Ex_ObjBeginPaint(hObj, &ps)) {
+        auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
         HEXBRUSH hBrush = _brush_create(Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER));
         EXARGB   crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
-        if ((ps.dwState & STATE_HOVER) == STATE_HOVER) {
+
+        if (state == 2) {
+            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED));
+        }
+        else if (state == 1) {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL);
             _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERHOVER));
-        }
-
-        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0) {
-            _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBORDERDOWNORCHECKED));
         }
         /* 计算文本尺寸 */
         FLOAT nTextWidth  = NULL;
@@ -97,7 +117,7 @@ void _radiobuttonex_paint(HEXOBJ hObj)
         /* 定义选中色 */
         _brush_setcolor(hBrush, Ex_ObjGetProp(hObj, RADIOBUTTONEX_PROP_CRBKGDOWNORCHECKED));
 
-        if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STATE) & STATE_CHECKED) != 0) {
+        if (state == 2) {
             crText = Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED);
             /* 把矩形往里缩3像素 */
             rcBlock.left   = rcBlock.left + (long)Ex_Scale(3);

@@ -235,7 +235,7 @@
 
 #pragma region object state constant
 // 状态_正常
-#define STATE_NORMAL 0
+#define STATE_NORMAL 0x0
 // 状态_禁止
 #define STATE_DISABLE 0x1
 // 状态_选择
@@ -1607,6 +1607,9 @@
 // 扩展选择盒属性_悬浮打钩颜色
 #define CHECKBOX_PROP_CRHOVERCHECK 5
 #pragma endregion checkbox prop
+
+// 扩展选择盒_属性_状态 0正常 1点燃 2选中
+#define CHECKBOX_LONG_STATE 0
 
 // 消息_父组件改变前   lParam :EXHANDLE hParent HWND或HEXDUI句柄
 #define WM_SETPARENTBEFORE 55554
