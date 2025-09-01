@@ -2082,7 +2082,7 @@ HEXDUI Ex_DUIBindWindowEx(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle,
 HEXDUI Ex_DUIFromWindow(HWND hWnd);
 
 /// <summary>
-/// 获取窗口大小,启用EXGF_DPI_ENABLE风格则获取缩放dpi后的窗口大小
+/// 获取窗口大小,启用ENGINE_FLAG_DPI_ENABLE风格则获取缩放dpi后的窗口大小
 /// </summary>
 /// <param name="hExDui"></param>
 /// <param name="lpClientRect"></param>

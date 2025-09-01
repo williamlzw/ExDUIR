@@ -45,8 +45,6 @@ LRESULT CALLBACK _propertygrid_ondateboxevent(HEXOBJ hObj, INT nID, INT nCode, W
 LRESULT CALLBACK _propertygrid_oncolorpickerevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content);
-LRESULT CALLBACK _propertygrid_onscrollbarmsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
-	LPARAM lParam, LRESULT* lpResult);
 void _propertygrid_onlbuttondblclk(HEXOBJ hObj, INT x, INT y);
 LRESULT CALLBACK _propertygrid_oneditmsgproc(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	LPARAM lParam, LRESULT* lpResult);

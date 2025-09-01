@@ -85,34 +85,40 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
 {
     if (uMsg == WM_INITMENUPOPUP) {
         RECT rc{0};
+        RECT rcDui{ 0 };
+        INT topOffset, leftOffset;
+        INT itemWidth;
         if (wParam == (size_t)m_hMenu)   // 主菜单
         {
             size_t value = 1;
             SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
-            GetWindowRect(hWnd, &rc);
-            SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(rc.right - rc.left + 10),
-                         Ex_Scale(rc.bottom - rc.top + 10 + 108),
+            Ex_DUIGetClientRect(hExDUI, &rcDui);
+            INT menuItemTotalHeight = rcDui.bottom - rcDui.top;//项目高24px*3+顶边2px+底边2px+1px分割线=77px
+            INT menuItemWidth = rcDui.right - rcDui.left;//原始菜单项目宽度
+            INT windowHeight = menuItemTotalHeight + 70 + 54; //70px是按钮高度, 54px从WM_ERASEBKGND消息里九宫矩形gridPaddingTop 42+ gridPaddingBottom 12
+            INT windowWidth = menuItemWidth + 12;//+12px是使菜单项目左右内缩6px
+            SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(windowWidth), Ex_Scale(windowHeight),
                          SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-            rc.right  = rc.right - rc.left - Ex_Scale(10);
-            rc.bottom = rc.bottom - rc.top - Ex_Scale(10) + Ex_Scale(108);
-            rc.left   = Ex_Scale(6);
-            rc.top    = 40;
+            INT buttonAreaWidth  = menuItemWidth - 6;
+            itemWidth = menuItemWidth ;
+            leftOffset = 6;//项目左偏移6px
+            topOffset = 40;
             // 创建顶部按钮
             HEXIMAGE hImg;
             _img_createfromfile(L"res/custommenu/btn1.png", &hImg);
 
-            Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, rc.left, rc.top,
-                           rc.right * 0.333, Ex_Scale(70), hExDUI, 100, -1, hImg, 0,
+            Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, leftOffset, topOffset,
+                buttonAreaWidth * 0.333, 70, hExDUI, 100, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
             _img_createfromfile(L"res/custommenu/btn2.png", &hImg);
-            Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, rc.left + rc.right * 0.333,
-                           rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 101, -1, hImg, 0,
+            Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, leftOffset + buttonAreaWidth * 0.333,
+                topOffset, buttonAreaWidth * 0.333, 70, hExDUI, 101, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
             _img_createfromfile(L"res/custommenu/btn3.png", &hImg);
-            Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, rc.left + rc.right * 0.666,
-                           rc.top, rc.right * 0.333, Ex_Scale(70), hExDUI, 102, -1, hImg, 0,
+            Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, leftOffset + buttonAreaWidth * 0.666,
+                topOffset, buttonAreaWidth * 0.333, 70, hExDUI, 102, -1, hImg, 0,
                            OnMenuBtnMsgProc);
 
             HEXOBJ hObj =
@@ -122,41 +128,43 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
             Ex_ReadFile(L"res/custommenu/Icon.png", &data);
             Ex_ObjSetBackgroundImage(hObj, data.data(), data.size(), 0, 0,
                                      BACKGROUND_REPEAT_NO_REPEAT, 0, 0, 255, TRUE);
-            rc.top    = rc.top + Ex_Scale(75);
-            rc.bottom = rc.bottom - Ex_Scale(75);
+            topOffset = topOffset + 70;
         }
         else {
             // 子菜单
             size_t value = 0;
             SetPropW(hWnd, L"IsMainMenu", (HANDLE)value);
-            GetWindowRect(hWnd, &rc);
-            SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(rc.right - rc.left + 10),
-                         Ex_Scale(rc.bottom - rc.top + 10),
+            Ex_DUIGetClientRect(hExDUI, &rcDui);
+            INT menuItemTotalHeight = rcDui.bottom - rcDui.top;//项目高24px*3+顶边2px+底边2px+1px分割线=77px
+            INT menuItemWidth = rcDui.right - rcDui.left;
+            INT windowHeight = menuItemTotalHeight + 19; //19px从WM_ERASEBKGND消息里九宫矩形gridPaddingTop 9+ gridPaddingBottom 10
+            INT windowWidth = menuItemWidth + 12;//+12px是使菜单项目左右内缩6px
+            SetWindowPos(hWnd, 0, 0, 0, Ex_Scale(windowWidth), Ex_Scale(windowHeight),
                          SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-            rc.right  = rc.right - rc.left - Ex_Scale(10);
-            rc.bottom = rc.bottom - rc.top - Ex_Scale(10);
-            rc.left   = Ex_Scale(6);
-            rc.top    = Ex_Scale(8);
+            itemWidth = menuItemWidth ;
+            leftOffset   = 6;//项目左偏移6px
+            topOffset = 5;//项目顶偏移6px
         }
         HEXOBJ hObjfind = Ex_ObjFind(hExDUI, 0, L"Item", 0);
-        INT    t        = rc.top;
+        INT    itemTopOffset        = topOffset;
         RECT   rcObj{0};
-
+        auto dpi = Ex_DUIGetSystemDpi();
         while (hObjfind != 0) {
             Ex_ObjGetClientRect(hObjfind, &rcObj);
-            Ex_ObjMove(hObjfind, rc.left, t, rc.right, rcObj.bottom - rcObj.top, TRUE);
+            INT itemHeight = rcObj.bottom - rcObj.top;
+            Ex_ObjMove(hObjfind, 6, itemTopOffset, itemWidth - 6, itemHeight, TRUE);
             Ex_ObjSetColor(hObjfind, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
             Ex_ObjSetLong(hObjfind, OBJECT_LONG_OBJPROC, (size_t)OnMenuItemMsgProc);
-            t        = t + rcObj.bottom - rcObj.top;
+            itemTopOffset = itemTopOffset + itemHeight;
             hObjfind = Ex_ObjGetObj(hObjfind, GW_HWNDNEXT);
         }
     }
     else if (uMsg == WM_ERASEBKGND)   // wParam画布句柄, LOWORD(lParam)为宽度,HIWORD(lParam)为高度
     {
         RECT rc{0};
-        auto dpix = Ex_DUIGetSystemDpi();
         _canvas_clear(wParam, 0);
         HEXIMAGE hImg;
+        auto dpi = Ex_DUIGetSystemDpi();
         if (GetPropW(hWnd, L"IsMainMenu") != 0) {
             _img_createfromfile(L"res/custommenu/Main.png", &hImg);
             _canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 68,
