@@ -11,7 +11,8 @@ void _buttonex_register()
 LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
 
-    if (uMsg == WM_CREATE) {}
+    if (uMsg == WM_CREATE) {
+    }
     else if (uMsg == WM_DESTROY) {
         _img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, BUTTONEX_LONG_IMG_NORMAL)); /* 正常态 */
         _img_destroy((HEXIMAGE)Ex_ObjGetLong(hObj, BUTTONEX_LONG_IMG_HOVER));  /* 悬浮态 */
@@ -107,6 +108,10 @@ LRESULT CALLBACK _buttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRBORDEREND, ButtonExprops->crBorderEnd);
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRBKGBEGIN, ButtonExprops->crBkgBegin);
         Ex_ObjSetProp(hObj, BUTTONEX_PROP_CRBKGEND, ButtonExprops->crBkgEnd);
+    }
+    else if (uMsg == WM_SETCURSOR)   // 禁控件自身再次设置光标产生闪烁
+    {
+        return 1;
     }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
