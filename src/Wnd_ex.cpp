@@ -2659,11 +2659,11 @@ BOOL _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam) {
 
       if (nID == 0)  // MF_SEPARATOR
       {
-        width = byte + offset;
+        width = Ex_Scale(byte) + offset;
         byte = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_) + 3);
         height = Ex_Scale(byte);
       } else {
-        width = pWnd->menu_maxwidth_ + offset;
+        width = Ex_Scale(pWnd->menu_maxwidth_) + offset;
         byte = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_) + 1);
         height = Ex_Scale(byte);
       }

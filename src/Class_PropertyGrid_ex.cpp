@@ -75,9 +75,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjDisableTranslateSpaceAndEnterToClick(hobjbt, TRUE);
 		Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
 		Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
-		HEXOBJ hObj_vscroll = Ex_ObjScrollGetControl(hObj, SCROLLBAR_TYPE_VERT);
-		Ex_ObjPostMessage(hObj_vscroll, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);
-		Ex_ObjSetLong(hObj_vscroll, OBJECT_LONG_OBJPROC, (size_t)_propertygrid_onscrollbarmsg);
 	}
 	else if (uMsg == WM_DESTROY)
 	{
@@ -700,22 +697,6 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		return 1; // 返回成功
 	}
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
-}
-
-LRESULT CALLBACK _propertygrid_onscrollbarmsg(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,
-	LPARAM lParam, LRESULT* lpResult)
-{
-	if (uMsg == WM_MOUSEHOVER) {
-		Ex_ObjPostMessage(hObj, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 1);   // 显示滚动条
-	}
-	else if (uMsg == WM_MOUSELEAVE) {
-		Ex_ObjPostMessage(hObj, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);   // 隐藏滚动条
-	}
-	else if (uMsg == SCROLLBAR_MESSAGE_SETVISIBLE) {
-		Ex_ObjSetLong(hObj, OBJECT_LONG_ALPHA, lParam != 0 ? 255 : 0);
-		Ex_ObjInvalidateRect(hObj, 0);
-	}
-	return 0;
 }
 
 LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
