@@ -30,7 +30,7 @@ void test_checkbutton(HWND hWnd)
   
     auto hobj = Ex_ObjCreateEx(-1, L"checkbutton", L"复选框", -1, 10, 30, 60, 20, hExDui_checkbutton, 0,
                    DT_VCENTER, 0, 0, NULL);
-    Ex_ObjSetLong(hobj, CHECKBOXEX_LONG_STATE, 2);
+    Ex_ObjSetLong(hobj, CHECKBUTTON_LONG_STATE, 2);
     Ex_ObjCreateEx(-1, L"radiobutton", L"单选框1", -1, 10, 60, 80, 20, hExDui_checkbutton, 0,
                    DT_VCENTER, 0, 0, NULL);
     Ex_ObjCreateEx(-1, L"radiobutton", L"单选框2", -1, 100, 60, 80, 20, hExDui_checkbutton, 0,
