@@ -92,19 +92,11 @@ LRESULT CALLBACK _checkbutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
             Ex_ObjSetLong(hObj, CHECKBUTTON_LONG_STATE, 2); // 选中
         }
         Ex_ObjInvalidateRect(hObj, 0);
-
-        // 发送通知
-        Ex_ObjDispatchNotify(hObj, NM_CHECK, wParam, lParam);
     }
-    else if (uMsg == BM_SETCHECK) {
-        if (wParam == 0) {
-            Ex_ObjSetLong(hObj, CHECKBUTTON_LONG_STATE, 0);
-        }
-        else {
-            Ex_ObjSetLong(hObj, CHECKBUTTON_LONG_STATE, 2);
-        }
-        Ex_ObjInvalidateRect(hObj, 0);
-        Ex_ObjDispatchNotify(hObj, NM_CHECK, wParam, lParam);
+    else if (uMsg == WM_EX_LCLICK)
+    {
+        auto check = (INT)Ex_ObjGetLong(hObj, CHECKBUTTON_LONG_STATE);
+        Ex_ObjDispatchNotify(hObj, NM_CHECK, check == 2, lParam);
     }
     else if (uMsg == BM_GETCHECK) {
         auto state = (INT)Ex_ObjGetLong(hObj, CHECKBUTTON_LONG_STATE);

@@ -28,8 +28,9 @@ void test_checkbutton(HWND hWnd)
         0, 0);
     Ex_DUISetLong(hExDui_checkbutton, ENGINE_LONG_CRBKG, ExARGB(80, 80, 90, 255));
   
-    Ex_ObjCreateEx(-1, L"checkbutton", L"复选框", -1, 10, 30, 60, 20, hExDui_checkbutton, 0,
+    auto hobj = Ex_ObjCreateEx(-1, L"checkbutton", L"复选框", -1, 10, 30, 60, 20, hExDui_checkbutton, 0,
                    DT_VCENTER, 0, 0, NULL);
+    Ex_ObjSetLong(hobj, CHECKBUTTON_LONG_STATE, 2);
     Ex_ObjCreateEx(-1, L"radiobutton", L"单选框1", -1, 10, 60, 80, 20, hExDui_checkbutton, 0,
                    DT_VCENTER, 0, 0, NULL);
     Ex_ObjCreateEx(-1, L"radiobutton", L"单选框2", -1, 100, 60, 80, 20, hExDui_checkbutton, 0,
@@ -44,7 +45,7 @@ void test_checkbutton(HWND hWnd)
     CheckButtonExProps.crBorderHover         = ExARGB(222, 222, 222, 200);
     CheckButtonExProps.crBorderDownOrChecked = ExARGB(222, 222, 222, 250);
     Ex_ObjSendMessage(hObj_checkbutton1, WM_EX_PROPS, 0, (LPARAM)&CheckButtonExProps);
-    Ex_ObjSendMessage(hObj_checkbutton1, BM_SETCHECK, 1, 0);
+    Ex_ObjSetLong(hObj_checkbutton1, CHECKBOXEX_LONG_STATE, 2);
 
     HEXOBJ hObj_checkbutton2 =
         Ex_ObjCreate(L"CheckButtonEx", L"扩展复选框2", -1, 10, 120, 120, 30, hExDui_checkbutton);
