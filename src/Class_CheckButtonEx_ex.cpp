@@ -53,14 +53,11 @@ LRESULT CALLBACK _checkbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
     else if (uMsg == WM_EX_LCLICK)
     {
         auto check = (INT)Ex_ObjGetLong(hObj, CHECKBOXEX_LONG_STATE);
-        Ex_ObjSendMessage(hObj, BM_SETCHECK, check == 2, 0);
-    }
-    else if (uMsg == BM_SETCHECK) {
-        Ex_ObjDispatchNotify(hObj, NM_CHECK, wParam, lParam); 
+        Ex_ObjDispatchNotify(hObj, NM_CHECK, check == 2, lParam);
     }
     else if (uMsg == BM_GETCHECK) {
-        auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
-        return (state == 2 || state == 3) ? 1 : 0;
+        auto state = (INT)Ex_ObjGetLong(hObj, CHECKBOXEX_LONG_STATE);
+        return (state == 2) ? 1 : 0;
     }
     else if (uMsg == WM_EX_PROPS) {
         EX_OBJ_PROPS* CheckButtonExprops = (EX_OBJ_PROPS*)lParam;

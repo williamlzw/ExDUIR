@@ -1444,7 +1444,9 @@
 
 #pragma region datebox message
 // 消息_日期框_设置日期
-#define DATEBOX_MESSAGE_DATETIME 100061
+#define DATEBOX_MESSAGE_SETDATETIME 100061
+// 消息_日期框_取日期
+#define DATEBOX_MESSAGE_GETDATETIME 100062
 #pragma endregion datebox message
 
 #pragma region datebox notify
@@ -1879,6 +1881,8 @@
 #define EGS_EX_VIRTUAL             0x00000002
 #define EGS_EX_OWNERDRAW           0x00000004 
 
+// 扩展选择框_属性_状态 0正常 1点燃 2选中
+#define CHECKBOXEX_LONG_STATE 0
 
 #define LVSICF_NOSCROLL 2
 #define EX_DEFINE_API(NAME, RET, ARGS)      \
