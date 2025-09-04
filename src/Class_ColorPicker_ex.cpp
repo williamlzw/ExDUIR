@@ -89,12 +89,12 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 INT _color_picker_getcolor(INT index)
 {
     INT Result = 0;
-    if (index > 0 && index <= 32) {
-        std::vector<INT> arrCurs = {
+    INT arrCurs[] = {
             0,        8388608,  32768,   8421376,  128,   8388736,  32896,    12632256,
             8421504,  16711680, 65280,   16776960, 255,   16711935, 65535,    16777215,
             16744576, 14692440, 57472,   8445952,  24768, 16754943, 55512,    15527148,
-            16711824, 16746496, 8429696, 12607488, 33023, 8409343,  12615935, 6316128};
+            16711824, 16746496, 8429696, 12607488, 33023, 8409343,  12615935, 6316128 };
+    if (index > 0 && index <= 32) {
         Result = arrCurs[index - 1];
     }
     return Result;

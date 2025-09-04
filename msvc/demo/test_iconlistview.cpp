@@ -8,9 +8,18 @@ LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
 {
     if (uMsg == WM_SIZE) {
         auto dpix = Ex_DUIGetSystemDpi();
-        // 因为LOWORD(lParam)是DPI缩放后的窗口坐标,而Ex_ObjMove接受缩放前坐标，因此这里需要除以dpix
-        Ex_ObjMove(m_hListViewIcon, 25, 50, (LOWORD(lParam) - 50) / dpix,
-                   (HIWORD(lParam) - 75) / dpix, TRUE);
+        if (m_hListViewIcon != 0)
+        {
+            // 因为LOWORD(lParam)是DPI缩放后的窗口坐标,而Ex_ObjMove接受缩放前坐标，因此这里需要除以dpix
+            Ex_ObjMove(m_hListViewIcon, 25, 50, (LOWORD(lParam) - 50) / dpix,
+                (HIWORD(lParam) - 75) / dpix, TRUE);
+        }
+        
+    }
+    else if (uMsg == WM_DESTROY)
+    {
+        m_hListViewIcon = 0;
+        m_hImageListIcon = 0;
     }
     return 0;
 }

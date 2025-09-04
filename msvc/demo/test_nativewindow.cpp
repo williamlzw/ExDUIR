@@ -1,9 +1,10 @@
-﻿#include "test_nativewindow.h"
+#include "test_nativewindow.h"
 
 HWND   m_hWndChild;
 HWND   m_hWndChild2;
 HWND   m_hWndNativeWindow2;
 HEXOBJ m_hObjPage;
+
 
 LRESULT CALLBACK OnNativeParentWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam,
                                           LPARAM lParam, LRESULT* lpResult)
@@ -12,12 +13,22 @@ LRESULT CALLBACK OnNativeParentWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
         INT  width  = LOWORD(lParam);
         INT  height = HIWORD(lParam);
         auto dpiy   = Ex_DUIGetSystemDpi();
-        MoveWindow(m_hWndNativeWindow2, 0, 30 * dpiy, width, height - 30 * dpiy, TRUE);
-        MoveWindow(m_hWndChild, 0, 0, width - 30, 300 * dpiy, TRUE);
-        MoveWindow(m_hWndChild2, 0, 310 * dpiy, width - 30, 300 * dpiy, TRUE);
-        Ex_ObjMove(m_hObjPage, 0, 0, width / dpiy, height / dpiy - 30, TRUE);
-        Ex_ObjScrollSetInfo(m_hObjPage, SCROLLBAR_TYPE_VERT, SIF_ALL, 0,
-                            (300 + 300 - height / dpiy + 30) * dpiy, 100, 0, TRUE);
+        if (m_hWndNativeWindow2 != 0)
+        {
+            MoveWindow(m_hWndNativeWindow2, 0, 30 * dpiy, width, height - 30 * dpiy, TRUE);
+            MoveWindow(m_hWndChild, 0, 0, width - 30, 300 * dpiy, TRUE);
+            MoveWindow(m_hWndChild2, 0, 310 * dpiy, width - 30, 300 * dpiy, TRUE);
+            Ex_ObjMove(m_hObjPage, 0, 0, width / dpiy, height / dpiy - 30, TRUE);
+            Ex_ObjScrollSetInfo(m_hObjPage, SCROLLBAR_TYPE_VERT, SIF_ALL, 0,
+                (300 + 300 - height / dpiy + 30) * dpiy, 100, 0, TRUE);
+        }
+    }
+    else if (uMsg == WM_DESTROY)
+    {
+        m_hWndNativeWindow2 = 0;
+        m_hWndChild = 0;
+        m_hWndChild2 = 0;
+        m_hObjPage = 0;
     }
     return 0;
 }

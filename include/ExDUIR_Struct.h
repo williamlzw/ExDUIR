@@ -2307,6 +2307,7 @@ struct EX_PROPERTYGRID_ITEMINFO_BUTTON
 	LPCWSTR Content;//内容
 	EX_PROPERTYGRID_ITEM_LAYOUT_BUTTON Layout;
 };
+#pragma pack()
 
 struct EX_PROPERTYGRID_ITEM_LAYOUT_DATEBOX
 {
@@ -2321,6 +2322,7 @@ struct EX_PROPERTYGRID_ITEMINFO_DATEBOX
 	LPCWSTR Content;//内容
 	EX_PROPERTYGRID_ITEM_LAYOUT_DATEBOX Layout;
 };
+#pragma pack()
 
 struct EX_PROPERTYGRID_ITEM_LAYOUT_COLORPICKER
 {
@@ -2335,6 +2337,7 @@ struct EX_PROPERTYGRID_ITEMINFO_COLORPICKER
 	LPCWSTR Content;//内容
 	EX_PROPERTYGRID_ITEM_LAYOUT_COLORPICKER Layout;
 };
+#pragma pack()
 
 struct EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT
 {
@@ -2356,6 +2359,7 @@ struct EX_PROPERTYGRID_ITEMINFO_COMBOBOX
 	INT ListCount; //行数（数组元素数量） EX_PROPERTYGRID_ITEMINFO_COMBOBOX_UNIT数组数量
 	EX_PROPERTYGRID_ITEM_LAYOUT_COMBOBOX Layout;
 };
+#pragma pack()
 
 struct EX_PROPERTYGRID_ITEM_LAYOUT_EDIT
 {
@@ -2372,6 +2376,7 @@ struct EX_PROPERTYGRID_ITEMINFO_EDIT
     LPVOID  UserData;// 用户自行管理数据
 	EX_PROPERTYGRID_ITEM_LAYOUT_EDIT Layout;
 };
+#pragma pack()
 
 struct EX_PROPERTYGRID_ITEM_LAYOUT_GROUP
 {
@@ -2386,6 +2391,7 @@ struct EX_PROPERTYGRID_ITEMINFO_GROUP
 	BOOL bExpanded;//项目是否展开
 	EX_PROPERTYGRID_ITEM_LAYOUT_GROUP Layout;
 };
+#pragma pack()
 
 #pragma pack(4)
 struct EX_PROPERTYGRID_ITEMINFO_SUBITEM
@@ -2397,6 +2403,7 @@ struct EX_PROPERTYGRID_ITEMINFO_SUBITEM
 	BOOL bVisible; // 表示项目是否可见
 	LPVOID  Data;
 };
+#pragma pack()
 
 struct EX_PROPERTYGRID_ITEMINFO
 {
@@ -2560,6 +2567,7 @@ struct EX_CHATBOX_ITEMINFO_TEXT
 	LPCWSTR Text;
 	EX_CHATBOX_ITEM_LAYOUT_TEXT Layout;
 };
+#pragma pack()
 
 //4字节对齐 方便c#调用
 #pragma pack(4)
@@ -2573,6 +2581,7 @@ struct EX_CHATBOX_ITEMINFO_CARD
 	LPCWSTR  ButtonText;
 	EX_CHATBOX_ITEM_LAYOUT_CARD Layout;
 };
+#pragma pack()
 
 //4字节对齐 方便c#调用
 #pragma pack(4)
@@ -2583,6 +2592,7 @@ struct EX_CHATBOX_ITEMINFO_BOOSTMODE
 	HEXIMAGE Image;
 	EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE Layout;
 };
+#pragma pack()
 
 struct EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT
 {
@@ -2602,6 +2612,7 @@ struct EX_CHATBOX_ITEMINFO_ERRORLIST
 	INT ListCount; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组数量
 	EX_CHATBOX_ITEM_LAYOUT_ERRORLIST Layout;
 };
+#pragma pack()
 
 struct EX_CHATBOX_ITEMINFO_INFOLIST_UNIT
 {
@@ -2618,6 +2629,7 @@ struct EX_CHATBOX_ITEMINFO_INFOLIST
 	INT ListCount; //EX_CHATBOX_ITEMINFO_INFOLIST_UNIT数组数量
 	EX_CHATBOX_ITEM_LAYOUT_INFOLIST Layout;
 };
+#pragma pack()
 
 // 对话盒表格_列文本单元结构体
 struct EX_CHATBOX_ITEMINFO_TABLELIST_TEXT
@@ -2641,6 +2653,7 @@ struct EX_CHATBOX_ITEMINFO_TABLELIST
 	EX_CHATBOX_ITEM_LAYOUT_TABLELIST Layout;
 	INT ColumnCount;// 总列数（每行共享列数）
 };
+#pragma pack()
 
 struct EX_CHATBOX_ITEMINFO_LINK_UNIT
 {
@@ -2657,6 +2670,7 @@ struct EX_CHATBOX_ITEMINFO_LINK
 	INT ListCount; //行数（数组元素数量） EX_CHATBOX_ITEMINFO_LINK_UNIT数组数量
 	EX_CHATBOX_ITEM_LAYOUT_LINK Layout;
 };
+#pragma pack()
 
 //4字节对齐 方便c#调用
 #pragma pack(4)
@@ -2668,6 +2682,7 @@ struct EX_CHATBOX_ITEMINFO_SUBITEM
 	RECT rcItem;      // 整个项目的矩形区域
 	INT  nHeight;         // 项目总高度
 };
+#pragma pack()
 
 struct EX_CHATBOX_ITEMINFO
 {
@@ -2682,6 +2697,7 @@ struct EX_FLOWCHART_NODE_COMBO_DATA
 	INT count;           // 选项数量
 	INT current;         // 当前选中的索引
 };
+#pragma pack()
 
 struct EX_FLOWCHART_NODE_DATA
 {
@@ -2714,6 +2730,7 @@ struct EX_FLOWCHART_NODE
 	RECT* outputRects;               // 输出插槽位置数组
 	INT outputCount;                 // 输出插槽数量
 };
+#pragma pack()
 
 // 连接线数据结构
 struct EX_FLOWCHART_CONNECTION
