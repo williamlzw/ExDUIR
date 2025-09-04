@@ -28,11 +28,7 @@ BOOL _canvas_drawimagefrombkgimg_ex(HEXCANVAS hCanvas, HEXIMAGE hImage, INT x, I
                                     RECT* lpGrid, INT dwFlags, INT dwAlpha, RECT* lpRcSrc,
                                     EX_RECTF* lpRCFDst);
 BOOL _canvas_drawimagefrombkgimg(HEXCANVAS hCanvas, EX_BACKGROUNDIMAGEINFO* lpBkgImg);
-BOOL _canvas_bitblt(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight,
-                    INT dstBottom, INT srcLeft, INT srcTop);
-BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLOAT dstTop,
-                        FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop,
-                        FLOAT srcRight, FLOAT srcBottom, INT alpha);
+
 BOOL _canvas_calctextsize_ex(canvas_s* pCanvas, font_s* pFont, LPCWSTR lpwzText, INT dwLen,
                              INT dwDTFormat, FLOAT layoutWidth, FLOAT layoutHeight,
                              FLOAT* lpWidth, FLOAT* lpHeight, IDWriteTextLayout** pLayout,

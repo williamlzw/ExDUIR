@@ -307,9 +307,15 @@ void _canvas_recreate(canvas_s* pCanvas, INT width, INT height, INT* nError)
 
     pCanvas->width_  = width;
     pCanvas->height_ = height;
-    wnd_s* pWnd      = pCanvas->pWnd_;
-
-    ID2D1Bitmap* pBitmap = _dx_createbitmap(pWnd->dx_context_, width, height, nError);
+    ID2D1Bitmap* pBitmap = nullptr;
+    if (pCanvas->pWnd_ != nullptr) {
+        // 关联窗口的画布，使用窗口的设备上下文
+        pBitmap = _dx_createbitmap(pCanvas->pWnd_->dx_context_, width, height, nError);
+    }
+    else {
+        // 独立画布，使用全局设备上下文
+        pBitmap = _dx_createbitmap(g_Ri.pD2DDeviceContext, width, height, nError);
+    }
 
     if (pBitmap) {
         ID2D1Bitmap* oldBitmap = pCanvas->pBitmap_;
@@ -381,18 +387,26 @@ BOOL _canvas_begindraw(HEXCANVAS hCanvas)
     canvas_s* pCanvas = nullptr;
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
-        wnd_s*              pWnd     = pCanvas->pWnd_;
-        ID2D1DeviceContext* pContext = pWnd->dx_context_;
-        pCanvas->pContext_           = pContext;
-        pCanvas->pGdiInterop_        = pWnd->dx_gdiinterop_;
-        if (pWnd->dx_counts_ == 0) {
-            _dx_begindraw(pContext);
+        if (pCanvas->pWnd_ != nullptr) {
+            // 关联窗口的画布
+            wnd_s* pWnd = pCanvas->pWnd_;
+            ID2D1DeviceContext* pContext = pWnd->dx_context_;
+            pCanvas->pContext_ = pContext;
+            pCanvas->pGdiInterop_ = pWnd->dx_gdiinterop_;
+            if (pWnd->dx_counts_ == 0) {
+                _dx_begindraw(pContext);
+            }
+            InterlockedExchangeAdd((long*)&(pWnd->dx_counts_), 1);
         }
-
-        InterlockedExchangeAdd((long*)&(pWnd->dx_counts_), 1);
+        else {
+            // 独立画布，使用全局设备上下文
+            pCanvas->pContext_ = g_Ri.pD2DDeviceContext;
+            pCanvas->pGdiInterop_ = nullptr; // 独立画布可能不需要GDI交互
+            _dx_begindraw(g_Ri.pD2DDeviceContext);
+        }
         auto target = pCanvas->pBitmap_;
         if (target) {
-            _dx_settarget(pContext, target);
+            _dx_settarget(pCanvas->pContext_, target);
         }
     }
     Ex_SetLastError(nError);
@@ -404,18 +418,26 @@ BOOL _canvas_enddraw(HEXCANVAS hCanvas)
     canvas_s* pCanvas = nullptr;
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
-        wnd_s*              pWnd     = pCanvas->pWnd_;
-        ID2D1DeviceContext* pContext = pWnd->dx_context_;
-        _dx_settarget(pContext, 0);
+        _dx_settarget(pCanvas->pContext_, 0);
 
-        if (InterlockedExchangeAdd((long*)&pWnd->dx_counts_, -1) == 1) {
-            _dx_enddraw(pContext);
+        if (pCanvas->pWnd_ != nullptr) {
+            wnd_s* pWnd = pCanvas->pWnd_;
+            if (InterlockedExchangeAdd((long*)&pWnd->dx_counts_, -1) == 1) {
+                _dx_enddraw(pCanvas->pContext_);
+            }
+        }
+        else {
+            _dx_enddraw(g_Ri.pD2DDeviceContext);
         }
     }
     Ex_SetLastError(nError);
     return nError == 0;
 }
-
+HEXCANVAS _canvas_createindependent(INT width, INT height, INT dwFlags)
+{
+    INT nError = 0;
+    return _canvas_createfrompwnd(nullptr, width, height, dwFlags, &nError);
+}
 BOOL _canvas_clear(HEXCANVAS hCanvas, EXARGB Color)
 {
     canvas_s* pCanvas = nullptr;
