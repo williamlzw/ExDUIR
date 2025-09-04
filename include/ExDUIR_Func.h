@@ -509,7 +509,12 @@ BOOL _canvas_drawsvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top);
 /// <param name="hCanvas">画布句柄</param>
 /// <returns></returns>
 BOOL _canvas_enddraw(HEXCANVAS hCanvas);
-
+HEXCANVAS _canvas_createindependent(INT width, INT height, INT dwFlags);
+BOOL _canvas_bitblt(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight,
+    INT dstBottom, INT srcLeft, INT srcTop);
+BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLOAT dstTop,
+    FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop,
+    FLOAT srcRight, FLOAT srcBottom, INT alpha);
 /// <summary>
 /// 画布填充椭圆
 /// </summary>
