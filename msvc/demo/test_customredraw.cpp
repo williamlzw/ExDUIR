@@ -28,10 +28,8 @@ HEXCANVAS _canvas_draw(HEXDUI hExDui, INT width, INT height) {
 
     }
 
-    //if (hCanvas) _canvas_destroy(hCanvas);
     return hCanvas;
 }
-HEXCANVAS pCanvas = NULL;
 
 LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam,
                                           LPARAM lParam, LRESULT* lpResult)
@@ -40,31 +38,25 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
     {
         INT width = LOWORD(lParam);
         INT height = HIWORD(lParam);
+        HEXCANVAS pCanvas = _canvas_draw(hExDui, width, height);
         // 将双缓冲内容输出到窗口
         if (pCanvas) _canvas_alphablend(wParam, pCanvas, 0, 0, width, height, 0, 0, width, height, 255);
-        *lpResult = 1;
-        return 1;
-    }
-    if (uMsg == WM_DESTROY)
-    {
         if (pCanvas) _canvas_destroy(pCanvas);
         pCanvas = NULL;
+        *lpResult = 1;
+        return 1;
     }
     return 0;
 }
 
 void test_customredraw(HWND hWnd)
 {
-
-   
-
     // 异型窗口采用重画背景形式，才不会产生锯齿。用于需要圆角，不规则图形的窗口。
     HWND   hWnd_customredraw   = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"", 0, 0, 300, 200, 0, 0);
     HEXDUI hExDui_customredraw = Ex_DUIBindWindowEx(
         hWnd_customredraw, 0,
         WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW, 0,
         OnCustomRedrawWndMsgProc);
-    pCanvas = _canvas_draw(hExDui_customredraw,300,200);
 
     Ex_DUISetLong(hExDui_customredraw, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"",

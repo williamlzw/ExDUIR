@@ -144,7 +144,7 @@ BOOL _canvas_cliprect(HEXCANVAS hCanvas, INT left, INT top, INT right,
 /// <param name="hExDui"></param>
 /// <param name="width"></param>
 /// <param name="height"></param>
-/// <param name="dwFlags">CVF_</param>
+/// <param name="dwFlags">画布标识常量CANVAS_FLAG_</param>
 /// <returns></returns>
 HEXCANVAS _canvas_createfromexdui(HEXDUI hExDui, INT width, INT height,
                                   INT dwFlags);
@@ -155,10 +155,19 @@ HEXCANVAS _canvas_createfromexdui(HEXDUI hExDui, INT width, INT height,
 /// <param name="hObj"></param>
 /// <param name="uWidth"></param>
 /// <param name="uHeight"></param>
-/// <param name="dwFlags">常量CVF_</param>
+/// <param name="dwFlags">画布标识常量CANVAS_FLAG_</param>
 /// <returns></returns>
 HEXCANVAS _canvas_createfromobj(HEXOBJ hObj, INT uWidth, INT uHeight,
                                 INT dwFlags);
+
+/// <summary>
+/// 创建独立画布
+/// </summary>
+/// <param name="width"></param>
+/// <param name="height"></param>
+/// <param name="dwFlags">画布标识常量CANVAS_FLAG_</param>
+/// <returns></returns>
+HEXCANVAS _canvas_createindependent(INT width, INT height, INT dwFlags);
 
 /// <summary>
 /// 画布销毁
@@ -509,12 +518,41 @@ BOOL _canvas_drawsvg2(HEXCANVAS hCanvas, HEXSVG hSvg, FLOAT Left, FLOAT Top);
 /// <param name="hCanvas">画布句柄</param>
 /// <returns></returns>
 BOOL _canvas_enddraw(HEXCANVAS hCanvas);
-HEXCANVAS _canvas_createindependent(INT width, INT height, INT dwFlags);
+
+/// <summary>
+/// 画布_拷贝画布到目标画布(替换目标画布内容)
+/// </summary>
+/// <param name="hCanvas"></param>
+/// <param name="sCanvas"></param>
+/// <param name="dstLeft"></param>
+/// <param name="dstTop"></param>
+/// <param name="dstRight"></param>
+/// <param name="dstBottom"></param>
+/// <param name="srcLeft"></param>
+/// <param name="srcTop"></param>
+/// <returns></returns>
 BOOL _canvas_bitblt(HEXCANVAS hCanvas, HEXCANVAS sCanvas, INT dstLeft, INT dstTop, INT dstRight,
     INT dstBottom, INT srcLeft, INT srcTop);
+
+/// <summary>
+/// 画布_透明混合(画布内容混合)
+/// </summary>
+/// <param name="hCanvas"></param>
+/// <param name="sCanvas"></param>
+/// <param name="dstLeft"></param>
+/// <param name="dstTop"></param>
+/// <param name="dstRight"></param>
+/// <param name="dstBottom"></param>
+/// <param name="srcLeft"></param>
+/// <param name="srcTop"></param>
+/// <param name="srcRight"></param>
+/// <param name="srcBottom"></param>
+/// <param name="alpha"></param>
+/// <returns></returns>
 BOOL _canvas_alphablend(HEXCANVAS hCanvas, HEXCANVAS sCanvas, FLOAT dstLeft, FLOAT dstTop,
     FLOAT dstRight, FLOAT dstBottom, FLOAT srcLeft, FLOAT srcTop,
     FLOAT srcRight, FLOAT srcBottom, INT alpha);
+
 /// <summary>
 /// 画布填充椭圆
 /// </summary>
