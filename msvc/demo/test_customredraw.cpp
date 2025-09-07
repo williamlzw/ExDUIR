@@ -3,7 +3,7 @@
 
 HEXCANVAS _canvas_draw(HEXDUI hExDui, INT width, INT height) {
     // 创建独立画布作为双缓冲
-    HEXCANVAS hCanvas = _canvas_createindependent(width, height, 0);
+    HEXCANVAS hCanvas = _canvas_createindependent(width, height, CANVAS_FLAG_GDI_COMPATIBLE);
 
     if (hCanvas && _canvas_begindraw(hCanvas))  // 开始绘制独立画布
     {
@@ -48,7 +48,65 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
     }
     return 0;
 }
+void test_layered_window(HWND hParent)
+{
+    WORD  atomAdjuster = Ex_WndRegisterClass(L"Adjuster", 0, 0, 0);
+    INT   exStyle = WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE;
+    // 创建分层窗口
+    HWND hLayeredWnd = CreateWindowExW(
+        exStyle, (LPCWSTR)atomAdjuster, 0, WS_POPUP, 100, 100, 300, 200, hParent, 0, 0, 0);
 
+    // 创建画布
+    HEXCANVAS hCanvas = _canvas_createindependent(300, 200, 0);
+
+    if (hCanvas && _canvas_begindraw(hCanvas)) {
+        // 在画布上绘制内容
+        HEXBRUSH hBrush = _brush_create(0x80FF0000); // 半透明红色
+        _canvas_fillrect(hCanvas, hBrush, 0, 0, 300, 200);
+        _brush_destroy(hBrush);
+
+        HEXFONT hFont = _font_createfromfamily(L"Arial", 16, 0);
+        if (hFont) {
+            _canvas_drawtext(hCanvas, hFont, 0xFFFFFFFF, L"我是分层窗口,未绑定DUI", -1,
+                DT_CENTER | DT_VCENTER | DT_SINGLELINE,
+                0, 0, 300, 200);
+            _font_destroy(hFont);
+        }
+
+        // 获取 DC
+        HDC hDC = _canvas_getdc(hCanvas);
+        // 使用 UpdateLayeredWindow 更新分层窗口
+        POINT ptDst = { 0, 0 };
+        POINT ptSrc = { 0, 0 };
+        SIZE size = { 300, 200 };
+        BLENDFUNCTION blend = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
+        UpdateLayeredWindow(hLayeredWnd, hDC, &ptDst, &size, hDC, &ptSrc, 0, &blend, ULW_ALPHA);
+        
+        
+        _canvas_enddraw(hCanvas);
+        // 释放 DC
+        _canvas_releasedc(hCanvas);
+
+        // 获取屏幕工作区的尺寸
+        int screenWidth = GetSystemMetrics(SM_CXFULLSCREEN);
+        int screenHeight = GetSystemMetrics(SM_CYFULLSCREEN);
+        // 获取窗口的尺寸
+        RECT windowRect;
+        GetWindowRect(hLayeredWnd, &windowRect);
+        int windowWidth = windowRect.right - windowRect.left;
+        int windowHeight = windowRect.bottom - windowRect.top;
+        // 计算居中位置
+        int x = (screenWidth - windowWidth) / 2;
+        int y = (screenHeight - windowHeight) / 2;
+        // 移动窗口到居中位置
+        MoveWindow(hLayeredWnd, x, y, windowWidth, windowHeight, TRUE);
+        // 显示窗口
+        ShowWindow(hLayeredWnd, SW_SHOW);
+
+        // 清理资源
+        _canvas_destroy(hCanvas);
+    }
+}
 void test_customredraw(HWND hWnd)
 {
     // 异型窗口采用重画背景形式，才不会产生锯齿。用于需要圆角，不规则图形的窗口。
@@ -57,11 +115,16 @@ void test_customredraw(HWND hWnd)
         hWnd_customredraw, 0,
         WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW, 0,
         OnCustomRedrawWndMsgProc);
-
+    
     Ex_DUISetLong(hExDui_customredraw, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"",
                    OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE, (300 - 32) / 2, (200 - 32) / 2,
                    32, 32, hExDui_customredraw, 0, 0, 0, 0,
                    NULL);   // 改变标题栏按钮位置
+
+
+    test_layered_window(hWnd_customredraw);
+
+
     Ex_DUIShowWindow(hExDui_customredraw, SW_SHOWNORMAL, 0, 0, 0);
 }

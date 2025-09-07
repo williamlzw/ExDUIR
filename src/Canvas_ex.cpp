@@ -401,7 +401,7 @@ BOOL _canvas_begindraw(HEXCANVAS hCanvas)
         else {
             // 独立画布，使用全局设备上下文
             pCanvas->pContext_ = g_Ri.pD2DDeviceContext;
-            pCanvas->pGdiInterop_ = nullptr; // 独立画布可能不需要GDI交互
+            pCanvas->pGdiInterop_ = _dx_get_gdiInterop(g_Ri.pD2DDeviceContext); // 独立画布可能不需要GDI交互
             _dx_begindraw(g_Ri.pD2DDeviceContext);
         }
         auto target = pCanvas->pBitmap_;
@@ -1248,8 +1248,15 @@ HEXCANVAS _canvas_createfrompwnd(wnd_s* pWnd, INT width, INT height, INT dwFlags
 HDC _canvas_getdc_ex(canvas_s* pCanvas, INT* nError)
 {
     wnd_s* pWnd = pCanvas->pWnd_;
-    HDC    hDC  = nullptr;
-    if (pWnd->dx_counts_ > 0) {
+    HDC    hDC = nullptr;
+    if (pWnd != nullptr) {
+        // 关联窗口的画布
+        if (pWnd->dx_counts_ > 0) {
+            *nError = pCanvas->pGdiInterop_->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hDC);
+        }
+    }
+    else {
+        // 独立画布
         *nError = pCanvas->pGdiInterop_->GetDC(D2D1_DC_INITIALIZE_MODE_COPY, &hDC);
     }
     return hDC;
@@ -1270,7 +1277,14 @@ HDC _canvas_getdc(HEXCANVAS hCanvas)
 void _canvas_releasedc_ex(canvas_s* pCanvas, INT* nError)
 {
     wnd_s* pWnd = pCanvas->pWnd_;
-    if (pWnd->dx_counts_ > 0) {
+    if (pWnd != nullptr) {
+        // 关联窗口的画布
+        if (pWnd->dx_counts_ > 0) {
+            *nError = pCanvas->pGdiInterop_->ReleaseDC(0);
+        }
+    }
+    else {
+        // 独立画布
         *nError = pCanvas->pGdiInterop_->ReleaseDC(0);
     }
 }
