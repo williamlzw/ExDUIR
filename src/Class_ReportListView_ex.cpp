@@ -844,8 +844,8 @@ void _reportlistview_edit_killfous_settext(HWND hWnd, HEXOBJ hObj, WPARAM wParam
     obj_s* pObj = nullptr;
     int    nError = 0;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-        _obj_baseproc(hWnd, hObj, pObj, WM_KILLFOCUS, wParam, lParam);
         Ex_ObjShow(hObj, FALSE);
+        Ex_ObjKillFocus(hObj);
         pObj->pWnd_->objFocus_ = pObj->objParent_;
         size_t       len = Ex_ObjGetTextLength(hObj);
         std::wstring text;
@@ -865,7 +865,7 @@ void _reportlistview_edit_killfous_settext(HWND hWnd, HEXOBJ hObj, WPARAM wParam
 LRESULT CALLBACK _reportlistview_edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     LPARAM lParam, LRESULT* lpResult)
 {
-    if (uMsg == WM_MOUSELEAVE) {
+    if (uMsg == WM_KEYDOWN && wParam == VK_RETURN) {
         _reportlistview_edit_killfous_settext(hWnd, hObj, wParam, lParam);
         return 1;
     }
@@ -875,13 +875,11 @@ LRESULT CALLBACK _reportlistview_edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
 LRESULT CALLBACK _reportlistview_edit_enter(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
     LPARAM lParam)
 {
-    if (nCode == NM_KEYDOWN) {
-        if (wParam == 13) {
-            obj_s* pObj = nullptr;
-            int    nError = 0;
-            if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-                _reportlistview_edit_killfous_settext(pObj->pWnd_->hWnd_, hObj, wParam, lParam);
-            }
+    if (nCode == NM_KILLFOCUS) {
+        obj_s* pObj = nullptr;
+        int    nError = 0;
+        if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+            _reportlistview_edit_killfous_settext(pObj->pWnd_->hWnd_, hObj, wParam, lParam);
         }
     }
     return 0;
@@ -902,7 +900,8 @@ void _reportlistview_init(HEXOBJ hObj)
         ,
         10, 30, 150, 30, hObj, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE,
         0, 0, _reportlistview_edit_proc);
-    Ex_ObjHandleEvent(edit, NM_KEYDOWN, _reportlistview_edit_enter);
+    Ex_ObjDisableTranslateSpaceAndEnterToClick(edit, TRUE);
+    Ex_ObjHandleEvent(edit, NM_KILLFOCUS, _reportlistview_edit_enter);
     Ex_ObjShow(edit, FALSE);
     Ex_ObjSetLong(hObj, REPORTLISTVIEW_LONG_HEDIT, edit);
 
