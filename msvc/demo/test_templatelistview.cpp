@@ -5,16 +5,14 @@ std::vector<TLISTVIEW_ITEM> m_tlistViewItemInfo;
 LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
                                                 LPARAM lParam)
 {
-
     if (Ex_ObjGetLong(hObj, OBJECT_LONG_NODEID) == 3)   // 点了某项的按钮
     {
         HEXOBJ hObjItem = Ex_ObjGetParent(hObj);        // 表项句柄
         INT    nIndex   = Ex_ObjGetLong(hObjItem, 0);   // 获得表项当前代表的索引
         if (nIndex > 0 && nIndex <= (m_tlistViewItemInfo.size())) {
-            m_tlistViewItemInfo.erase(m_tlistViewItemInfo.begin() + nIndex - 1);
-            OUTPUTW(L"TList 按钮点击,删除本行", nIndex - 1, nID, wParam, lParam,
-                    m_tlistViewItemInfo.size());
-            Ex_ObjSendMessage(Ex_ObjGetParent(hObjItem), WM_PAINT, 0, 1);
+            //获取开关状态，设置数组变量
+            INT state = (INT)Ex_ObjSendMessage(hObj, BM_GETCHECK, 0, 0);
+            m_tlistViewItemInfo[nIndex - 1].btnState = state;
         }
     }
     if (nCode == NM_DBLCLK) {
@@ -76,7 +74,7 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
         hObjTmp =
             Ex_ObjCreateEx(-1, L"Switch", L"开|关", -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
         Ex_ObjSetLong(hObjTmp, OBJECT_LONG_NODEID, 3);
-        // Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
+        Ex_ObjHandleEvent(hObjTmp, NM_CLICK, OnTemplateListViewItemBtnClick);
         *lpResult = 1;
         return 1;
     }
@@ -96,6 +94,7 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
             hObjTmp = Ex_ObjGetFromNodeID(lParam, 3);
             if (hObjTmp) {
                 Ex_ObjSetText(hObjTmp, m_tlistViewItemInfo[wParam - 1].btnTitle.c_str(), true);
+                Ex_ObjSendMessage(hObjTmp, BM_SETCHECK, m_tlistViewItemInfo[wParam - 1].btnState, 1);
             }
         }
     }
@@ -124,7 +123,8 @@ void test_templatelistview(HWND hParent)
         for (int i = 0; i < 20; i++) {
             m_tlistViewItemInfo.push_back({L"标签一" + std::to_wstring(i),
                                            L"标签二" + std::to_wstring(i),
-                                           L"按钮" + std::to_wstring(i)});
+                                           L"按钮" + std::to_wstring(i),
+                                            0});
         }
     }
     Ex_ObjSendMessage(hobj_listview, LISTVIEW_MESSAGE_SETITEMCOUNT, m_tlistViewItemInfo.size(),

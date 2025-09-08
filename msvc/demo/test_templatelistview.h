@@ -7,6 +7,8 @@ struct TLISTVIEW_ITEM
     std::wstring title;
     std::wstring text;
     std::wstring btnTitle;
+    //开关状态,0闭合，1开启
+    INT btnState;
 };
 
 
