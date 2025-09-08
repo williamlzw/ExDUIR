@@ -158,6 +158,7 @@ void _tlv_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPARAM l
     INT         ox = 0, oy = 0;
     INT         iCur     = _listview_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
     INT         iHitTest = LISTVIEW_HITTYPE_NOWHERE;
+    
     if (iCur != pOwner->index_mouse_) {
         if ((pObj->dwStyle_ & LISTVIEW_STYLE_ITEMTRACKING) == LISTVIEW_STYLE_ITEMTRACKING) {
             if (_listview_checkitem(pOwner, pOwner->index_mouse_))
@@ -286,11 +287,11 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
         }
         else if (uMsg == WM_MOUSEMOVE) {
             _tlv_mousemove(hWnd, hObj, pObj, wParam, lParam);
-            return 0;   // 不执行父类的WM_MOUSEMOVE
+            //return 0;   // 不执行父类的WM_MOUSEMOVE
         }
         else if (uMsg == WM_MOUSELEAVE) {
             _tlv_mouseleave(hWnd, hObj, pObj, lParam);
-            return 0;   // 不执行父类
+            //return 0;   // 不执行父类
         }
         else if (uMsg == TEMPLATELISTVIEW_MESSAGE_ITEM_CREATE) {
             HEXOBJ handle = Ex_ObjCreateEx(OBJECT_STYLE_EX_TRANSPARENT, L"LISTITEM", 0, -1, 0, 0, 0,
@@ -464,8 +465,8 @@ LRESULT CALLBACK _tlvi_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
                  uMsg == WM_HSCROLL || uMsg == WM_MOUSEWHEEL) {
             LPARAM newlParam = lParam;
             if (uMsg != WM_MOUSELEAVE && uMsg != WM_MOUSEWHEEL) {
-                INT x     = GET_X_LPARAM(lParam) + pObj->left_ * g_Li.DpiX;
-                INT y     = GET_Y_LPARAM(lParam) + pObj->top_ * g_Li.DpiY;
+                INT x     = GET_X_LPARAM(lParam) + pObj->left_;
+                INT y     = GET_Y_LPARAM(lParam) + pObj->top_;
                 newlParam = MAKELONG(x, y);
             }
             Ex_ObjDispatchMessage(pObj->objParent_, uMsg, wParam, newlParam);
@@ -686,6 +687,7 @@ INT _listview_itemfrompos(obj_s* pObj, listview_s* pOwner, INT x, INT y, INT* of
                     INT tmp = realleft / nWidth;
                     if (tmp < pOwner->count_view_h_) {
                         uItem = (realtop / nHeight) * pOwner->count_view_h_ + tmp + 1;
+                        
                         if (uItem > pOwner->count_items_) {
                             uItem = 0;
                         }
@@ -923,6 +925,7 @@ void _listview_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, size_t wPa
         INT    ox      = 0;
         INT    oy      = 0;
         // 当前鼠标项目索引
+        
         INT iCur = _listview_itemfrompos(pObj, pOwner, x, y, &ox, &oy);
         // 当前鼠标是否有效按下项目
         BOOL vCur = _listview_checkitem(pOwner, iCur);
@@ -1220,6 +1223,7 @@ void _listview_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LPA
     BOOL bDragdrop = ((pObj->dwStyleEx_ & OBJECT_STYLE_EX_DRAGDROP) == OBJECT_STYLE_EX_DRAGDROP);
     BOOL bShowAllwasy =
         ((pObj->dwStyle_ & LISTVIEW_STYLE_SHOWSELALWAYS) == LISTVIEW_STYLE_SHOWSELALWAYS);
+    
     if (wParam != 1 || bSingelSelect) {
         if ((pObj->dwStyle_ & LISTVIEW_STYLE_ITEMTRACKING) == LISTVIEW_STYLE_ITEMTRACKING) {
             if (iCur != iSelect) {

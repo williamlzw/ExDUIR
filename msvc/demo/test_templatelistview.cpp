@@ -71,6 +71,7 @@ LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
         hObjTmp = Ex_ObjCreateEx(-1, L"Static", 0, -1, 130, 6, 358, 28, lParam, 0,
                                  DT_CENTER | DT_VCENTER, 0, 0, 0);
         Ex_ObjSetLong(hObjTmp, OBJECT_LONG_NODEID, 2);
+        
         hObjTmp =
             Ex_ObjCreateEx(-1, L"Switch", L"开|关", -1, 555, 11, 50, 20, lParam, 0, -1, 0, 0, 0);
         Ex_ObjSetLong(hObjTmp, OBJECT_LONG_NODEID, 3);

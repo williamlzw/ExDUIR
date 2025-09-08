@@ -80,8 +80,6 @@
 #include "ExDUIR_Interface.h"
 #include "ExDUIR_Struct.h"
 
-//必须，防止svg崩溃
-#pragma pack()
 #include "svgrender/SVGDocument.h"
 #include "CustomFont.h"
 #include "help_ex.h"
@@ -152,6 +150,7 @@
 #include "Class_LineChart_ex.h"
 #include "Class_ChatBox_ex.h"
 #include "Class_FlowChart_ex.h"
+//#include "Class_ScrollView_ex.h"
 //#include "Class_Grid_ex.h"
 
 #ifdef VCL_PLAYER
