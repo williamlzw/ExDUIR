@@ -665,8 +665,12 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
       _edit_txpaint(pITS, DVASPECT_CONTENT, 0, NULL, NULL, hDc, NULL, NULL,
                     NULL, &rcTmp, NULL,
                     ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);
-      BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left,
-             rcTmp.bottom - rcTmp.top, mDc, 0, 0, SRCPAINT);
+      BOOL fLayer = ((pWnd->dwFlags_ & EWF_BLAYERED) == EWF_BLAYERED);
+      if (!fLayer)
+      {
+          BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left,
+            rcTmp.bottom - rcTmp.top, mDc, 0, 0, SRCPAINT);
+      }
       _canvas_releasedc(ps.hCanvas);
       if (!((pObj->dwStyle_ & EDIT_STYLE_HIDDENCARET) ==
             EDIT_STYLE_HIDDENCARET)) {
@@ -834,6 +838,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
       _edit_command(pObj, uMsg, wParam, lParam);
     } else if (uMsg == WM_NOTIFY) {
     } else if (uMsg == WM_ERASEBKGND) {
+        
     } else if (uMsg == WM_SETTEXT) {
       if (lParam) {
         if (!((pObj->dwStyle_ & EDIT_STYLE_NEWLINE) ==

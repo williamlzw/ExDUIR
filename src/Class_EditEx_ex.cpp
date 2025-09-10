@@ -19,10 +19,10 @@ void _editex_register()
     /* 3、注册新控件*/
     WCHAR newwzCls[] = L"EditEx";
     Ex_ObjRegister(
-        newwzCls, pClsInfoEdit.dwStyle,
-        OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW |
-            OBJECT_STYLE_EX_FOCUSABLE /*pClsInfoEdit.dwStyleEx*/,
-        pClsInfoEdit.dwTextFormat, NULL, pClsInfoEdit.hCursor, pClsInfoEdit.dwFlags, _editex_proc);
+        newwzCls, OBJECT_STYLE_VISIBLE,
+        OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_TABSTOP |
+            OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_CUSTOMDRAW,
+        DT_NOPREFIX | DT_SINGLELINE, NULL, LoadCursorW(0, MAKEINTRESOURCEW(32513)), CANVAS_FLAG_GDI_COMPATIBLE, _editex_proc);
 }
 
 LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
@@ -79,14 +79,19 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
     }
     else if (uMsg == WM_ERASEBKGND) {
         RECT      rc            = {0};
-        HEXCANVAS hCanvas       = (HEXCANVAS)wParam;
+        /*获取编辑客户区矩形*/
+        Ex_ObjGetClientRect(hObj, &rc);
+        /*计算编辑框宽高*/
+        FLOAT Width = Ex_Scale((FLOAT)(rc.right - rc.left));
+        FLOAT Height = Ex_Scale((FLOAT)(rc.bottom - rc.top));
+        HEXCANVAS hCanvas       = (HEXCANVAS)_canvas_createindependent(Width, Height, 0);
+        _canvas_begindraw(hCanvas);
         HEXBRUSH  hbrush        = _brush_create(Ex_ObjGetProp(hObj, EDITEX_PROP_CRBKGNORMAL));
         BOOL      m_IsDraw      = FALSE; /*假为默认边框风格*/
         FLOAT     Radius        = (FLOAT)Ex_ObjGetProp(hObj, EDITEX_PROP_RADIUS);
         FLOAT     StrokeWidth   = (FLOAT)Ex_ObjGetProp(hObj, EDITEX_PROP_STORKEWIDTH);
         FLOAT     nIconPosition = (FLOAT)Ex_ObjGetProp(hObj, EDITEX_PROP_ICONPOSITION);
-        /*获取编辑客户区矩形*/
-        Ex_ObjGetClientRect(hObj, &rc);
+        
         /*填充背景*/
         if (Radius == NULL) {
             _canvas_fillrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right),
@@ -96,9 +101,7 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
             _canvas_fillroundedrect(hCanvas, hbrush, 0, 0, Ex_Scale((FLOAT)rc.right),
                                     Ex_Scale((FLOAT)rc.bottom), Ex_Scale(Radius), Ex_Scale(Radius));
         }
-        /*计算编辑框宽高*/
-        FLOAT Width  = Ex_Scale((FLOAT)(rc.right - rc.left));
-        FLOAT Height = Ex_Scale((FLOAT)(rc.bottom - rc.top));
+        
 
         /*获取图标*/
         HEXIMAGE hImage = (HEXIMAGE)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
@@ -164,6 +167,9 @@ LRESULT CALLBACK _editex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
             }
         }
         _brush_destroy(hbrush);
+        _canvas_enddraw(hCanvas);
+        _canvas_alphablend(wParam, hCanvas, 0, 0, Width, Height, 0, 0, Width, Height, 255);
+        _canvas_destroy(hCanvas);
     }
     return Ex_ObjCallProc(m_pfnEditExProc, hWnd, hObj, uMsg, wParam, lParam);
 }
