@@ -897,7 +897,7 @@ BOOL Ex_ObjClientToWindow(HEXOBJ hObj, INT* x, INT* y)
         }
         else {
             RtlMoveMemory(prc, (LPVOID)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
-            OffsetRect(prc, pObj->w_left_, pObj->w_left_);
+            OffsetRect(prc, pObj->w_left_, pObj->w_top_);
             if (x) {
                 *x += prc->left;
             }
