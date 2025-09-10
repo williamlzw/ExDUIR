@@ -4421,3 +4421,29 @@ BOOL Ex_ObjSetBackgroundImageFromSvg(EXHANDLE handle, HEXSVG hSvg, INT x, INT y,
     Ex_SetLastError(nError);
     return nError == 0;
 }
+
+BOOL Ex_ObjScreenToClient(HEXOBJ hObj, INT* x, INT* y)
+{
+    INT    nError = 0;
+    obj_s* pObj = nullptr;
+    if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+        LPRECT prc = (LPRECT)MemPool_Alloc(g_Li.hMemPoolMsg, TRUE);
+        if (prc == 0) {
+            nError = ERROR_EX_MEMORY_ALLOC;
+        }
+        else {
+            wnd_s* pWnd = pObj->pWnd_;
+            RtlMoveMemory(prc, (LPVOID)((size_t)pObj + offsetof(obj_s, c_left_)), 16);
+            OffsetRect(prc, pObj->w_left_ + pWnd->left_, pObj->w_top_ + pWnd->top_);
+            if (x) {
+                *x -= prc->left;
+            }
+            if (y) {
+                *y -= prc->top;
+            }
+            MemPool_Free(g_Li.hMemPoolMsg, prc);
+        }
+    }
+    Ex_SetLastError(nError);
+    return nError == 0;
+}

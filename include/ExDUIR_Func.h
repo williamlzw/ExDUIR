@@ -2875,6 +2875,15 @@ EXATOM Ex_ObjRegister(LPCWSTR lptszClassName, INT dwStyle, INT dwStyleEx,
 size_t Ex_ObjRemoveProp(HEXOBJ hObj, size_t dwKey);
 
 /// <summary>
+/// 组件屏幕坐标到客户区坐标
+/// </summary>
+/// <param name="hObj"></param>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <returns></returns>
+BOOL Ex_ObjScreenToClient(HEXOBJ hObj, INT* x, INT* y);
+
+/// <summary>
 /// 组件禁用/启用滚动条
 /// </summary>
 /// <param name="hObj"></param>
