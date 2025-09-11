@@ -248,6 +248,9 @@ _canvas_drawsvg2
 _canvas_drawregion
 _canvas_drawcurve
 _canvas_drawquadraticbezier
+_canvas_createindependent
+_canvas_alphablend
+_canvas_bitblt
 
 ;----------------------------------------
 ;img

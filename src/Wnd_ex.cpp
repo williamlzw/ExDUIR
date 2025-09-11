@@ -1885,6 +1885,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 			_canvas_bitblt(cvDisplay, pWnd->canvas_bkg_, rcPaint.left, rcPaint.top,
 				rcPaint.right, rcPaint.bottom, rcPaint.left, rcPaint.top);
 		}
+		
 		ID2D1Layer* pLayer = nullptr;
 		ID2D1RoundedRectangleGeometry* pClipGeometry = nullptr;
 		// 在调用_wnd_render_obj前插入：
@@ -1900,6 +1901,12 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 			// 配置图层参数
 			D2D1_LAYER_PARAMETERS1 layerParams = D2D1::LayerParameters1();
 			layerParams.geometricMask = pClipGeometry;  // 直接赋值几何对象
+			layerParams.contentBounds = D2D1::InfiniteRect();
+			layerParams.maskAntialiasMode = D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
+			layerParams.maskTransform = D2D1::Matrix3x2F::Identity();
+			layerParams.opacity = 1.0f;
+			layerParams.opacityBrush = nullptr;
+			layerParams.layerOptions = D2D1_LAYER_OPTIONS1_NONE;
 			// 应用图层裁剪
 			pContext->PushLayer(&layerParams, pLayer);
 		}
@@ -1919,6 +1926,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 		_brush_destroy(hBrush);
 
 		_wnd_render_dc(hWnd, pWnd, hDC, cvDisplay, rcPaint, fLayer);
+	
 		_canvas_enddraw(cvDisplay);
 	}
 	pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BRENDERING);

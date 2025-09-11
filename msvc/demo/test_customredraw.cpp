@@ -50,11 +50,10 @@ LRESULT CALLBACK OnCustomRedrawWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 }
 void test_layered_window(HWND hParent)
 {
-    WORD  atomAdjuster = Ex_WndRegisterClass(L"Adjuster", 0, 0, 0);
     INT   exStyle = WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE;
     // 创建分层窗口
     HWND hLayeredWnd = CreateWindowExW(
-        exStyle, (LPCWSTR)atomAdjuster, 0, WS_POPUP, 100, 100, 300, 200, hParent, 0, 0, 0);
+        exStyle, L"Ex_DirectUI", 0, WS_POPUP, 100, 100, 300, 200, hParent, 0, 0, 0);
 
     // 创建画布
     HEXCANVAS hCanvas = _canvas_createindependent(300, 200, 0);
@@ -102,7 +101,7 @@ void test_layered_window(HWND hParent)
         MoveWindow(hLayeredWnd, x, y, windowWidth, windowHeight, TRUE);
         // 显示窗口
         ShowWindow(hLayeredWnd, SW_SHOW);
-
+       
         // 清理资源
         _canvas_destroy(hCanvas);
     }
@@ -115,7 +114,7 @@ void test_customredraw(HWND hWnd)
         hWnd_customredraw, 0,
         WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_NOSHADOW, 0,
         OnCustomRedrawWndMsgProc);
-    
+
     Ex_DUISetLong(hExDui_customredraw, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"",
                    OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE, (300 - 32) / 2, (200 - 32) / 2,
