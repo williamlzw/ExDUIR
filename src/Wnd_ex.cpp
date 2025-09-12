@@ -1906,7 +1906,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 			layerParams.maskTransform = D2D1::Matrix3x2F::Identity();
 			layerParams.opacity = 1.0f;
 			layerParams.opacityBrush = nullptr;
-			layerParams.layerOptions = D2D1_LAYER_OPTIONS1_NONE;
+			layerParams.layerOptions = D2D1_LAYER_OPTIONS1_INITIALIZE_FROM_BACKGROUND;//重要防止编辑框黑色背景
 			// 应用图层裁剪
 			pContext->PushLayer(&layerParams, pLayer);
 		}

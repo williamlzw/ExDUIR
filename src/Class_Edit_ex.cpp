@@ -665,12 +665,11 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
       _edit_txpaint(pITS, DVASPECT_CONTENT, 0, NULL, NULL, hDc, NULL, NULL,
                     NULL, &rcTmp, NULL,
                     ismove ? TXTVIEW_INACTIVE : TXTVIEW_ACTIVE);
-      BOOL fLayer = ((pWnd->dwFlags_ & EWF_BLAYERED) == EWF_BLAYERED);
-      if (!fLayer)
-      {
-          BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left,
-            rcTmp.bottom - rcTmp.top, mDc, 0, 0, SRCPAINT);
-      }
+   
+      BitBlt(hDc, rcTmp.left, rcTmp.top, rcTmp.right - rcTmp.left, rcTmp.bottom - rcTmp.top,
+          mDc, 0, 0, SRCPAINT);
+    
+      
       _canvas_releasedc(ps.hCanvas);
       if (!((pObj->dwStyle_ & EDIT_STYLE_HIDDENCARET) ==
             EDIT_STYLE_HIDDENCARET)) {
@@ -945,21 +944,23 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                                    TXTBIT_CHARFORMATCHANGE);
       _edit_size(hWnd, hObj, pObj);
       return 0;
-    } else if (uMsg == WM_STYLECHANGED) {
-      // 应该还有其他的style变化需要处理
-      if (GWL_STYLE == wParam) {
-        DWORD dwUpdatedBits = 0;
-        if ((lParam & EDIT_STYLE_READONLY) != 0) {
-          dwUpdatedBits |= TXTBIT_READONLY;
-        }
-        LPVOID pits = _edit_its(pObj);
-        if (pits != nullptr) {
-          auto lret =
-              ((ITextServices*)pits)
-                  ->OnTxPropertyBitsChange(TXTBIT_READONLY, dwUpdatedBits);
-        }
-      }
-    } else {
+    } 
+    //else if (uMsg == WM_STYLECHANGED) {
+    //  // 应该还有其他的style变化需要处理
+    //  if (GWL_STYLE == wParam) {
+    //    DWORD dwUpdatedBits = 0;
+    //    if ((lParam & EDIT_STYLE_READONLY) != 0) {
+    //      dwUpdatedBits |= TXTBIT_READONLY;
+    //    }
+    //    LPVOID pits = _edit_its(pObj);
+    //    if (pits != nullptr) {
+    //      auto lret =
+    //          ((ITextServices*)pits)
+    //              ->OnTxPropertyBitsChange(TXTBIT_READONLY, dwUpdatedBits);
+    //    }
+    //  }
+    //} 
+    else {
       if (uMsg == WM_KEYDOWN) {
         if (wParam == VK_RETURN) {
           if ((pObj->dwStyle_ & EDIT_STYLE_NEWLINE) !=
