@@ -1813,6 +1813,8 @@
 #define SPLITTER_LONG_POSITION 4
 // 分割条当前位置,像素值
 #define SPLITTER_LONG_CURPOSITION 5
+// 是否正在拖动分割条
+#define SPLITTER_LONG_DRAGGING 6
 
 // ======自定义消息======
 

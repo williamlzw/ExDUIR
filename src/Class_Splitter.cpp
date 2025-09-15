@@ -14,6 +14,7 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
       Ex_ObjSetLong(hObj, SPLITTER_LONG_SIZE, 4);  // 默认分割条宽度4像素
       Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(250, 250, 250, 255),
                      TRUE);
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);
     } break;
     case WM_SIZE: {
       // 调整大小时，更新分割条位置
@@ -64,6 +65,7 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     } break;
     case WM_LBUTTONDOWN: {
       Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, FALSE);
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);
       float dpi = Flag_Query(ENGINE_FLAG_DPI_ENABLE)
                       ? GetDpiForWindow(hWnd) / 96.f
                       : 1.f;
@@ -82,11 +84,13 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         if (x >= m_rect.left + position && x <= m_rect.left + position + size) {
           // 水平分割条
           hCursor = LoadCursor(NULL, IDC_SIZEWE);
+          Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, TRUE);
         }
       } else {
         if (y >= m_rect.top + position && y <= m_rect.top + position + size) {
           // 垂直分割条
           hCursor = LoadCursor(NULL, IDC_SIZENS);
+          Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, TRUE);
         }
       }
       SetCursor(hCursor);
@@ -109,7 +113,8 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
       INT maxPos =
           direction == 0 ? (m_rect.right - size) : (m_rect.bottom - size);
 
-      if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) == STATE_DOWN) {
+      if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) == STATE_DOWN &&
+          Ex_ObjGetLong(hObj, SPLITTER_LONG_DRAGGING)) {
         // 计算新位置
         INT newPosition = direction == 0 ? x : y;
 
@@ -152,11 +157,13 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
               x <= m_rect.left + position + size) {
             // 水平分割条
             hCursor = LoadCursor(NULL, IDC_SIZEWE);
+            Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, TRUE);
           }
         } else {
           if (y >= m_rect.top + position && y <= m_rect.top + position + size) {
             // 垂直分割条
             hCursor = LoadCursor(NULL, IDC_SIZENS);
+            Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, TRUE);
           }
         }
         SetCursor(hCursor);
@@ -164,6 +171,7 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     } break;
     case WM_LBUTTONUP: {
       Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, FALSE);
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);
     } break;
     case SPLITTER_GET_DIRECTION: {
       return Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
