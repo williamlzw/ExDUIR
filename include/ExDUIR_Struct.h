@@ -1799,6 +1799,35 @@
 #define FLOWCHART_EVENT_NODE_DOUBLE_CLICKED 30007
 #pragma endregion flowchart event constant
 
+// ======分割条组件属性索引======
+
+// 分割条方向：0-垂直，1-水平
+#define SPLITTER_LONG_DIRECTION 0
+// 分割面板1，即左侧或上侧
+#define SPLITTER_LONG_PANEL1 1
+// 分割面板2，即右侧或下侧
+#define SPLITTER_LONG_PANEL2 2
+// 分割条大小
+#define SPLITTER_LONG_SIZE 3
+// 分割条初始位置：使用权重值0-10表示百分位置
+#define SPLITTER_LONG_POSITION 4
+// 分割条当前位置,像素值
+#define SPLITTER_LONG_CURPOSITION 5
+
+// ======自定义消息======
+
+// 获取分割条方向，返回值0-垂直，1-水平
+#define SPLITTER_GET_DIRECTION (WM_USER + 1)
+#define SPLITTER_SET_DIRECTION (WM_USER + 2)
+// 获取分割条位置，返回值为像素位置
+#define SPLITTER_GET_POSITION (WM_USER + 3)
+#define SPLITTER_SET_POSITION (WM_USER + 4)
+// 获取分割面板组件，wParam：0-返回左或上面板附加组件句柄；1-返回右或下面板附加组件句柄，lParam未用
+#define SPLITTER_GET_PANEL (WM_USER + 5)
+// 设置分割面板组件，wParam传入面板1附加组件句柄，lParam传入面板2附加组件句柄
+#define SPLITTER_SET_PANEL (WM_USER + 6)
+
+
 // Grid组件消息定义
 #define GRIDM_SETROWCOUNT           (WM_USER + 100)
 #define GRIDM_SETCOLCOUNT           (WM_USER + 101)

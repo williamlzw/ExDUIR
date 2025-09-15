@@ -152,6 +152,7 @@
 #include "Class_FlowChart_ex.h"
 //#include "Class_ScrollView_ex.h"
 //#include "Class_Grid_ex.h"
+#include "Class_Splitter.h"
 
 #ifdef VCL_PLAYER
 #include "Class_VLCPlayer_ex.h"

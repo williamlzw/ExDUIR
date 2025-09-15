@@ -49,6 +49,7 @@ void _object_init()
 #ifdef VCL_PLAYER
     _vlcplayer_register();
 #endif
+    SplitterRegister();
 }
 
 

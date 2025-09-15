@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_LineChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_Splitter.cpp" />
     <ClCompile Include="..\..\src\Class_WaveProgressBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="..\..\include\Theme_ex.h" />
     <ClInclude Include="..\..\include\Thread_ex.h" />
     <ClInclude Include="..\..\include\Wnd_ex.h" />
+    <ClInclude Include="..\..\src\Class_Splitter.h" />
     <ClInclude Include="..\..\thirdparty\svgrender\base64.h" />
     <ClInclude Include="..\..\thirdparty\svgrender\Config.h" />
     <ClInclude Include="..\..\thirdparty\svgrender\config.hpp" />
