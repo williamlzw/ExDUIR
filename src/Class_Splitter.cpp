@@ -2,19 +2,21 @@
 #include "stdafx.h"
 
 // 分割条组件回调函数
-LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
-                              LPARAM lParam) {
+inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg,
+                                     WPARAM wParam, LPARAM lParam) {
   switch (uMsg) {
     case WM_CREATE: {
       // 初始化默认属性
       Ex_ObjSetLong(hObj, SPLITTER_LONG_DIRECTION, 0);  // 默认垂直方向
       Ex_ObjSetLong(hObj, SPLITTER_LONG_POSITION, 20);  // 默认位置20%
-      Ex_ObjSetLong(hObj, SPLITTER_LONG_PANEL1, 0);
-      Ex_ObjSetLong(hObj, SPLITTER_LONG_PANEL2, 0);
-      Ex_ObjSetLong(hObj, SPLITTER_LONG_SIZE, 4);  // 默认分割条宽度4像素
-      Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExARGB(250, 250, 250, 255),
-                     TRUE);
-      Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_PANEL1, 0);     // 默认面板1为空
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_PANEL2, 0);     // 默认面板2为空
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_SIZE, 4);       // 默认分割条宽度4像素
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_COLOR,
+                    ExARGB(200, 200, 200, 255));           // 默认颜色
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);  // 默认不拖动
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_LOCK, 0);          // 默认不锁定
+      Ex_ObjSetLong(hObj, SPLITTER_LONG_CURPOSITION, 0);   // 当前像素位置0
     } break;
     case WM_SIZE: {
       // 调整大小时，更新分割条位置
@@ -39,6 +41,7 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
       HEXOBJ panel2 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
       INT newPosition = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
       int size = Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE);
+
       if (panel1) {
         Ex_ObjMove(panel1, m_rect.left, m_rect.top,
                    direction == 0 ? newPosition - m_rect.left
@@ -58,10 +61,9 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                                   : m_rect.bottom - m_rect.top -
                                         (newPosition - m_rect.top + size),
                    false);
+
+        Ex_ObjInvalidateRect(hObj, NULL);
       }
-      // 重置为初始位置0%，以防止size二次调整位置
-      Ex_ObjSetLong(hObj, SPLITTER_LONG_POSITION, 0);
-      Ex_ObjInvalidateRect(hObj, NULL);
     } break;
     case WM_LBUTTONDOWN: {
       Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, FALSE);
@@ -94,6 +96,7 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
       }
       SetCursor(hCursor);
+
     } break;
     case WM_MOUSEMOVE: {
       float dpi = Flag_Query(ENGINE_FLAG_DPI_ENABLE)
@@ -115,6 +118,15 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
       if ((Ex_ObjGetUIState(hObj) & STATE_DOWN) == STATE_DOWN &&
           Ex_ObjGetLong(hObj, SPLITTER_LONG_DRAGGING)) {
+        HEXOBJ panel1 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL1);
+        HEXOBJ panel2 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
+        // 如果锁定则不允许拖动
+        if (Ex_ObjGetLong(hObj, SPLITTER_LONG_LOCK)) {
+          // 貌似如果整个分割条组件大小变化了，这里会有问题，下/右面板是否应该变动尺寸？？？
+
+          break;
+        }
+
         // 计算新位置
         INT newPosition = direction == 0 ? x : y;
 
@@ -125,8 +137,6 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         if (newPosition != position) {
           Ex_ObjSetLong(hObj, SPLITTER_LONG_CURPOSITION, newPosition);
 
-          HEXOBJ panel1 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL1);
-          HEXOBJ panel2 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
           if (panel1) {
             Ex_ObjMove(panel1, m_rect.left, m_rect.top,
                        direction == 0 ? newPosition - m_rect.left
@@ -148,6 +158,11 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                                             (newPosition - m_rect.top + size),
                        false);
           }
+          // 设置新的百分比
+          auto pos = direction == 0
+                         ? newPosition * 100 / (m_rect.right - size)
+                         : newPosition * 100 / (m_rect.bottom - size);
+          Ex_ObjSetLong(hObj, SPLITTER_LONG_POSITION, pos);
           Ex_ObjInvalidateRect(hObj, NULL);
         }
       } else {
@@ -232,7 +247,7 @@ LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         INT position = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION));
 
         HEXBRUSH hBrush =
-            _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND));
+            _brush_create(Ex_ObjGetLong(hObj, SPLITTER_LONG_COLOR));
         if (Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION) == 0) {
           // 垂直分割条
           _canvas_fillrect(ps.hCanvas, hBrush, ps.rcPaint.left + position, 0,

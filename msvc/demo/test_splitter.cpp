@@ -16,8 +16,7 @@ void test_splitter(HWND hWnd) {
                    0, 30, 400, 300, m_hExDui);
   Ex_ObjSetLong(splitter, SPLITTER_LONG_POSITION, 35);  // 默认位置35%
   // 设置分割条颜色
-  // Ex_ObjSetColor(splitter, COLOR_EX_BACKGROUND, ExARGB(50, 50, 50, 255),
-  // TRUE);
+  Ex_ObjSetLong(splitter, SPLITTER_LONG_COLOR, ExARGB(50, 50, 50, 255));
   auto static1 =
       Ex_ObjCreate(L"static", L"面板一", -1, 0, 0, 100, 30, splitter);
   Ex_ObjSetColor(static1, COLOR_EX_BACKGROUND, ExARGB(50, 150, 150, 55), TRUE);

@@ -1815,7 +1815,10 @@
 #define SPLITTER_LONG_CURPOSITION 5
 // 是否正在拖动分割条
 #define SPLITTER_LONG_DRAGGING 6
-
+// 分割条颜色
+#define SPLITTER_LONG_COLOR 7
+// 分隔条锁定状态，0-不锁定，1-锁定
+#define SPLITTER_LONG_LOCK 8
 // ======自定义消息======
 
 // 获取分割条方向，返回值0-垂直，1-水平
