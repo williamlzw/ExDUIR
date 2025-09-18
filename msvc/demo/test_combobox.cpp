@@ -71,8 +71,8 @@ void test_combobox(HWND hWnd)
                                   OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 10, 230, 200, 30,
                                   hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
     m_hComboBox2 = Ex_ObjCreateEx(-1, L"combobox", L"测试组合框3",
-                                  OBJECT_STYLE_VISIBLE | COMBOBOX_STYLE_ALLOWEDIT, 230, 230, 200,
-                                  30, hExDui_combobox, 0, DT_VCENTER, 0, 0, NULL);
+                                  -1 , 230, 230, 200, 30,
+                       hExDui_combobox, 0, DT_VCENTER| DT_CENTER, 0, 0, NULL);
     Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"英文字母abc");
     Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"数字123");
     Ex_ObjSendMessage(m_hComboBox, CB_ADDSTRING, 0, (size_t)L"中文");
