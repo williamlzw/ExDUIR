@@ -730,7 +730,20 @@ BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect)
     Ex_SetLastError(nError);
     return nError == 0;
 }
-
+BOOL Ex_ObjGetRectForDpi(HEXOBJ hObj, RECT* lpRect) {
+  INT nError = 0;
+  obj_s* pObj = nullptr;
+  if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+    if (IsBadWritePtr(lpRect, 16)) {
+      nError = ERROR_EX_MEMORY_BADPTR;
+    } else {
+      RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, left_)),
+                    16);
+    }
+  }
+  Ex_SetLastError(nError);
+  return nError == 0;
+}
 BOOL Ex_ObjGetClientRect(HEXOBJ hObj, RECT* lpRect)
 {
     INT    nError = 0;
@@ -752,7 +765,20 @@ BOOL Ex_ObjGetClientRect(HEXOBJ hObj, RECT* lpRect)
     Ex_SetLastError(nError);
     return nError == 0;
 }
-
+BOOL Ex_ObjGetClientRectForDpi(HEXOBJ hObj, RECT* lpRect) {
+  INT nError = 0;
+  obj_s* pObj = nullptr;
+  if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+    if (IsBadWritePtr(lpRect, 16)) {
+      nError = ERROR_EX_MEMORY_BADPTR;
+    } else {
+      RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, c_left_)),
+                    16);
+    }
+  }
+  Ex_SetLastError(nError);
+  return nError == 0;
+}
 BOOL Ex_ObjGetTextRect(HEXOBJ hObj, RECT* lpRect)
 {
     INT    nError = 0;
@@ -3331,7 +3357,8 @@ INT Ex_ObjEnumProps(HEXOBJ hObj, EnumPropsPROC lpfnCbk, size_t param)
 
 BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
 {
-    INT flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_ASYNCWINDOWPOS;
+  INT flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER |
+              SWP_ASYNCWINDOWPOS ;
     if (x == OBJECT_POSITION_DEFAULT && y == OBJECT_POSITION_DEFAULT) {
         flags = flags | SWP_NOMOVE;
     }
@@ -3344,7 +3371,22 @@ BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height, BOOL bRepaint)
     
     return Ex_ObjSetPos(hObj, 0, x, y, width, height, flags);
 }
+BOOL Ex_ObjMoveForDpi(HEXOBJ hObj, INT x, INT y, INT width, INT height,
+                BOOL bRepaint) {
+  INT flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER |
+              SWP_ASYNCWINDOWPOS | SWP_EX_NODPISCALE;
+  if (x == OBJECT_POSITION_DEFAULT && y == OBJECT_POSITION_DEFAULT) {
+    flags = flags | SWP_NOMOVE;
+  }
+  if (width == OBJECT_POSITION_DEFAULT && height == OBJECT_POSITION_DEFAULT) {
+    flags = flags | SWP_NOSIZE;
+  }
+  if (bRepaint) {
+    flags = flags | SWP_EX_UPDATEOBJECT;
+  }
 
+  return Ex_ObjSetPos(hObj, 0, x, y, width, height, flags);
+}
 void _obj_setuistate(obj_s* pObj, DWORD dwState, BOOL fRemove, RECT* lprcRedraw, BOOL fRedraw,
                      INT* nError)
 {
@@ -3739,7 +3781,34 @@ BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT* lpRect, INT nType)
     Ex_SetLastError(nError);
     return nError == 0;
 }
-
+BOOL Ex_ObjGetRectExForDpi(HEXOBJ hObj, RECT* lpRect, INT nType) {
+  INT nError = 0;
+  obj_s* pObj = nullptr;
+  if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+    if (IsBadWritePtr(lpRect, 16)) {
+      nError = ERROR_EX_MEMORY_BADPTR;
+    } else if (nType == 0) {
+      RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, left_)),
+                    16);
+    } else if (nType == 1) {
+      RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, c_left_)),
+                    16);
+    } else if (nType == 2) {
+      RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, w_left_)),
+                    16);
+    } else if (nType == 3) {
+      RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, d_left_)),
+                    16);
+    } else if (nType == 4) {
+      RtlMoveMemory(lpRect, (LPVOID)((size_t)pObj + offsetof(obj_s, t_left_)),
+                    16);
+    } else {
+      nError = ERROR_EX_HANDLE_BADINDEX;
+    }
+  }
+  Ex_SetLastError(nError);
+  return nError == 0;
+}
 BOOL Ex_ObjPointTransform(HEXOBJ hObjSrc, HEXOBJ hObjDst, INT* ptX, INT* ptY)
 {
     INT nError = 0;

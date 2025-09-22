@@ -1837,7 +1837,7 @@
 // 设置分割面板组件，wParam传入面板1附加组件句柄，lParam传入面板2附加组件句柄
 #define SPLITTER_SET_PANEL (WM_USER + 6)
 
-
+#define SWP_EX_NODPISCALE 0x80000000
 
 // Grid组件消息定义
 #define GRIDM_SETROWCOUNT           (WM_USER + 100)

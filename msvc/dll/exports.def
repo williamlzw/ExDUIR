@@ -52,6 +52,7 @@ Ex_WndRegisterClass
 Ex_ObjBeginPaint
 Ex_ObjEndPaint
 Ex_ObjGetRect
+Ex_ObjGetRectForDpi
 Ex_ObjClientToWindow
 Ex_ObjDefProc
 Ex_ObjRegister
@@ -74,6 +75,7 @@ Ex_ObjInvalidateRect
 Ex_ObjUpdate
 Ex_ObjSetRedraw
 Ex_ObjGetClientRect
+Ex_ObjGetClientRectForDpi
 Ex_ObjGetTextRect
 Ex_ObjSetPadding
 Ex_ObjClientToScreen
@@ -121,10 +123,12 @@ Ex_ObjRemoveProp
 Ex_ObjEnumProps
 Ex_ObjInitPropList
 Ex_ObjMove
+Ex_ObjMoveForDpi
 Ex_ObjSetUIState
 Ex_ObjGetUIState
 Ex_ObjGetFromNodeID
 Ex_ObjGetRectEx
+Ex_ObjGetRectExForDpi
 Ex_ObjPointTransform
 Ex_ObjEnableEventBubble
 Ex_ObjGetClassInfo

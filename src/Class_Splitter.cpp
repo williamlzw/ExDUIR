@@ -16,7 +16,7 @@ void LockPanelRecursively(HEXOBJ panel) {
     HEXOBJ subPanel = (HEXOBJ)Ex_ObjGetLong(panel, SPLITTER_LONG_PANEL2);
     if (subPanel) {
       RECT subRect{};
-      Ex_ObjGetRectEx(subPanel, &subRect, 1);
+      Ex_ObjGetRectExForDpi(subPanel, &subRect, 1);
       Ex_ObjSetLong(
           panel, SPLITTER_LONG_LOCKSIZE,
           MAKELONG(subRect.right - subRect.left, subRect.bottom - subRect.top));
@@ -24,7 +24,7 @@ void LockPanelRecursively(HEXOBJ panel) {
     // 如果没有子面板2，则按照当前分割条位置计算锁定面板2的宽度和高度值
     else {
       RECT m_rect{};
-      Ex_ObjGetRectEx(panel, &m_rect, 1);
+      Ex_ObjGetRectExForDpi(panel, &m_rect, 1);
       int width = m_rect.right - m_rect.left;
       int height = m_rect.bottom - m_rect.top;
       if (direction == 0) {
@@ -61,14 +61,14 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
     case WM_SIZE: {
       // 调整大小时，更新分割条位置
       RECT m_rect{};
-      Ex_ObjGetRectEx(hObj, &m_rect, 1);
+      Ex_ObjGetRectExForDpi(hObj, &m_rect, 1);
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_POSITION);
       int newPosition = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
 
       HEXOBJ panel1 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL1);
       HEXOBJ panel2 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
-      int size = Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE);
+      int size = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE));
       // NOTE:嵌套的分割条锁定逻辑，如果面板2是一个分割条，则需保持面板2的子面板2的宽度或高度不变
       if (Ex_ObjGetLong(hObj, SPLITTER_LONG_LOCK) & 2) {
         int lockSize = Ex_ObjGetLong(hObj, SPLITTER_LONG_LOCKSIZE);
@@ -77,7 +77,7 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
         if (panel1) {
           LockPanelRecursively(panel1);
 
-          Ex_ObjMove(
+          Ex_ObjMoveForDpi(
               panel1, m_rect.left, m_rect.top,
               direction == 0 ? m_rect.right - lockWidth - size - m_rect.left
                              : m_rect.right - m_rect.left,
@@ -89,7 +89,7 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
         if (panel2) {
           LockPanelRecursively(panel2);
 
-          Ex_ObjMove(
+          Ex_ObjMoveForDpi(
               panel2, direction == 0 ? m_rect.right - lockWidth : m_rect.left,
               direction == 0 ? m_rect.top : m_rect.bottom - lockHeight,
               direction == 0 ? lockWidth : m_rect.right - m_rect.left,
@@ -107,24 +107,25 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
 
       Ex_ObjSetLong(hObj, SPLITTER_LONG_CURPOSITION, newPosition);
       if (panel1) {
-        Ex_ObjMove(panel1, m_rect.left, m_rect.top,
-                   direction == 0 ? newPosition - m_rect.left
-                                  : m_rect.right - m_rect.left,
-                   direction == 0 ? m_rect.bottom - m_rect.top
-                                  : newPosition - m_rect.top,
-                   false);
+        Ex_ObjMoveForDpi(panel1, m_rect.left, m_rect.top,
+                         direction == 0 ? newPosition - m_rect.left
+                                        : m_rect.right - m_rect.left,
+                         direction == 0 ? m_rect.bottom - m_rect.top
+                                        : newPosition - m_rect.top,
+                         false);
       }
 
       if (panel2) {
-        Ex_ObjMove(panel2, direction == 0 ? newPosition + size : m_rect.left,
-                   direction == 0 ? m_rect.top : newPosition + size,
-                   direction == 0 ? m_rect.right - m_rect.left -
-                                        (newPosition - m_rect.left + size)
-                                  : m_rect.right - m_rect.left,
-                   direction == 0 ? m_rect.bottom - m_rect.top
-                                  : m_rect.bottom - m_rect.top -
-                                        (newPosition - m_rect.top + size),
-                   false);
+        Ex_ObjMoveForDpi(panel2,
+                         direction == 0 ? newPosition + size : m_rect.left,
+                         direction == 0 ? m_rect.top : newPosition + size,
+                         direction == 0 ? m_rect.right - m_rect.left -
+                                              (newPosition - m_rect.left + size)
+                                        : m_rect.right - m_rect.left,
+                         direction == 0 ? m_rect.bottom - m_rect.top
+                                        : m_rect.bottom - m_rect.top -
+                                              (newPosition - m_rect.top + size),
+                         false);
       }
       Ex_ObjInvalidateRect(hObj, NULL);
 
@@ -132,15 +133,12 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
     case WM_LBUTTONDOWN: {
       Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, FALSE);
       Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);
-      float dpi = Flag_Query(ENGINE_FLAG_DPI_ENABLE)
-                      ? GetDpiForWindow(hWnd) / 96.f
-                      : 1.f;
 
-      int x = GET_X_LPARAM(lParam) / dpi;
-      int y = GET_Y_LPARAM(lParam) / dpi;
+      int x = GET_X_LPARAM(lParam);
+      int y = GET_Y_LPARAM(lParam);
 
       RECT m_rect{};  // 当前m_rect
-      Ex_ObjGetRectEx(hObj, &m_rect, 1);
+      Ex_ObjGetRectExForDpi(hObj, &m_rect, 1);
 
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
@@ -164,15 +162,11 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
       Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, isDragging);
     } break;
     case WM_MOUSEMOVE: {
-      float dpi = Flag_Query(ENGINE_FLAG_DPI_ENABLE)
-                      ? GetDpiForWindow(hWnd) / 96.f
-                      : 1.f;
-
-      int x = GET_X_LPARAM(lParam) / dpi;
-      int y = GET_Y_LPARAM(lParam) / dpi;
+      int x = GET_X_LPARAM(lParam);
+      int y = GET_Y_LPARAM(lParam);
       // output("WM_MOUSEMOVE", x, y);
       RECT m_rect{};  // 当前m_rect
-      Ex_ObjGetRectEx(hObj, &m_rect, 1);
+      Ex_ObjGetRectExForDpi(hObj, &m_rect, 1);
 
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
@@ -202,26 +196,26 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
 
           if (panel1) {
             LockPanelRecursively(panel1);
-            Ex_ObjMove(panel1, m_rect.left, m_rect.top,
-                       direction == 0 ? newPosition - m_rect.left
-                                      : m_rect.right - m_rect.left,
-                       direction == 0 ? m_rect.bottom - m_rect.top
-                                      : newPosition - m_rect.top,
-                       false);
+            Ex_ObjMoveForDpi(panel1, m_rect.left, m_rect.top,
+                             direction == 0 ? newPosition - m_rect.left
+                                            : m_rect.right - m_rect.left,
+                             direction == 0 ? m_rect.bottom - m_rect.top
+                                            : newPosition - m_rect.top,
+                             false);
           }
 
           if (panel2) {
             LockPanelRecursively(panel2);
-            Ex_ObjMove(panel2,
-                       direction == 0 ? newPosition + size : m_rect.left,
-                       direction == 0 ? m_rect.top : newPosition + size,
-                       direction == 0 ? m_rect.right - m_rect.left -
-                                            (newPosition - m_rect.left + size)
-                                      : m_rect.right - m_rect.left,
-                       direction == 0 ? m_rect.bottom - m_rect.top
-                                      : m_rect.bottom - m_rect.top -
-                                            (newPosition - m_rect.top + size),
-                       false);
+            Ex_ObjMoveForDpi(
+                panel2, direction == 0 ? newPosition + size : m_rect.left,
+                direction == 0 ? m_rect.top : newPosition + size,
+                direction == 0 ? m_rect.right - m_rect.left -
+                                     (newPosition - m_rect.left + size)
+                               : m_rect.right - m_rect.left,
+                direction == 0 ? m_rect.bottom - m_rect.top
+                               : m_rect.bottom - m_rect.top -
+                                     (newPosition - m_rect.top + size),
+                false);
           }
           // 设置新的百分比
           auto pos = direction == 0
@@ -298,7 +292,7 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
         _canvas_clear(ps.hCanvas, 0);
         // 绘制分割条
         int size = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE));
-        int position = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION));
+        int position = (Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION));
 
         HEXBRUSH hBrush =
             _brush_create(Ex_ObjGetLong(hObj, SPLITTER_LONG_COLOR));

@@ -2574,6 +2574,7 @@ BOOL Ex_ObjGetClassInfoEx(LPCWSTR lptszClassName, EX_CLASSINFO* lpClassInfo);
 /// <param name="lpRect"></param>
 /// <returns></returns>
 BOOL Ex_ObjGetClientRect(HEXOBJ hObj, RECT* lpRect);
+BOOL Ex_ObjGetClientRectForDpi(HEXOBJ hObj, RECT* lpRect);
 
 /// <summary>
 /// 组件获取相关颜色
@@ -2681,6 +2682,7 @@ size_t Ex_ObjGetProp(HEXOBJ hObj, size_t dwKey);
 /// <param name="lpRect"></param>
 /// <returns></returns>
 BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect);
+BOOL Ex_ObjGetRectForDpi(HEXOBJ hObj, RECT* lpRect);
 
 /// <summary>
 /// 组件取矩形Ex
@@ -2690,6 +2692,7 @@ BOOL Ex_ObjGetRect(HEXOBJ hObj, RECT* lpRect);
 /// <param name="nType">0组件相对位置矩形 1组件客户区矩形 2组件窗口矩形
 /// 3组件脏区域矩形 4组件文本矩形</param> <returns></returns>
 BOOL Ex_ObjGetRectEx(HEXOBJ hObj, RECT* lpRect, INT nType);
+BOOL Ex_ObjGetRectExForDpi(HEXOBJ hObj, RECT* lpRect, INT nType);
 
 /// <summary>
 /// 组件获取文本
@@ -2827,7 +2830,8 @@ BOOL Ex_ObjLayoutUpdate(EXHANDLE handle);
 /// <returns></returns>
 BOOL Ex_ObjMove(HEXOBJ hObj, INT x, INT y, INT width, INT height,
                 BOOL bRepaint);
-
+BOOL Ex_ObjMoveForDpi(HEXOBJ hObj, INT x, INT y, INT width, INT height,
+                BOOL bRepaint);
 /// <summary>
 /// 坐标转换
 /// </summary>
