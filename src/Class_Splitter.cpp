@@ -11,7 +11,7 @@ void LockPanelRecursively(HEXOBJ panel) {
     int direction = Ex_ObjGetLong(panel, SPLITTER_LONG_DIRECTION);
     int newPosition = Ex_ObjGetLong(panel, SPLITTER_LONG_CURPOSITION);
     int position = Ex_ObjGetLong(panel, SPLITTER_LONG_POSITION);
-    int size = Ex_ObjGetLong(panel, SPLITTER_LONG_SIZE);
+    int size = Ex_Scale(Ex_ObjGetLong(panel, SPLITTER_LONG_SIZE));
     // 计算锁定面板2的宽度和高度值
     HEXOBJ subPanel = (HEXOBJ)Ex_ObjGetLong(panel, SPLITTER_LONG_PANEL2);
     if (subPanel) {
@@ -142,7 +142,7 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
 
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
-      int size = Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE);
+      int size = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE));
       HCURSOR hCursor = LoadCursor(nullptr, IDC_ARROW);
       bool isDragging = false;
       if (direction == 0) {
@@ -170,7 +170,7 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
 
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
-      int size = Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE);
+      int size = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE));
       int minPos = direction == 0 ? m_rect.left : m_rect.top;
       int maxPos =
           direction == 0 ? (m_rect.right - size) : (m_rect.bottom - size);
