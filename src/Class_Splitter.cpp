@@ -29,10 +29,10 @@ void LockPanelRecursively(HEXOBJ panel) {
       int height = m_rect.bottom - m_rect.top;
       if (direction == 0) {
         // 垂直分割条
-        width = (m_rect.right - m_rect.left) - newPosition - size;
+        width = (m_rect.right - m_rect.left) * (100 - position) / 100 - size;
       } else {
         // 水平分割条
-        height = (m_rect.bottom - m_rect.top) - newPosition - size;
+        height = (m_rect.bottom - m_rect.top) * (100 - position) / 100 - size;
       }
       Ex_ObjSetLong(panel, SPLITTER_LONG_LOCKSIZE, MAKELONG(width, height));
     }
