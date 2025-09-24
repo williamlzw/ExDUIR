@@ -29,10 +29,10 @@ void LockPanelRecursively(HEXOBJ panel) {
       int height = m_rect.bottom - m_rect.top;
       if (direction == 0) {
         // 垂直分割条
-        width = (m_rect.right - m_rect.left) * (100 - position) / 100 - size;
+        width = (m_rect.right - m_rect.left) - newPosition - size;
       } else {
         // 水平分割条
-        height = (m_rect.bottom - m_rect.top) * (100 - position) / 100 - size;
+        height = (m_rect.bottom - m_rect.top) - newPosition - size;
       }
       Ex_ObjSetLong(panel, SPLITTER_LONG_LOCKSIZE, MAKELONG(width, height));
     }
@@ -70,7 +70,8 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
       HEXOBJ panel2 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
       int size = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE));
       // NOTE:嵌套的分割条锁定逻辑，如果面板2是一个分割条，则需保持面板2的子面板2的宽度或高度不变
-      if (Ex_ObjGetLong(hObj, SPLITTER_LONG_LOCK) & 2) {
+      int lockState = Ex_ObjGetLong(hObj, SPLITTER_LONG_LOCK);
+      if (lockState & 2) {
         int lockSize = Ex_ObjGetLong(hObj, SPLITTER_LONG_LOCKSIZE);
         int lockWidth = LOWORD(lockSize);
         int lockHeight = HIWORD(lockSize);
@@ -98,6 +99,8 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
                         direction == 0 ? m_rect.right - lockWidth - size
                                        : m_rect.bottom - lockHeight - size);
         }
+        Ex_ObjSetLong(hObj, SPLITTER_LONG_LOCK,
+                      lockState & ~2);  // 正确清除标志位 2
         break;
       }
 
@@ -130,6 +133,14 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
       Ex_ObjInvalidateRect(hObj, NULL);
 
     } break;
+    case WM_SETCURSOR: {
+      if (Ex_ObjGetLong(hObj, SPLITTER_LONG_DRAGGING)) {
+        int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
+        SetCursor(direction == 0 ? LoadCursor(NULL, IDC_SIZEWE)
+                                 : LoadCursor(NULL, IDC_SIZENS));
+        return 1;
+      }
+    } break;
     case WM_LBUTTONDOWN: {
       Ex_ObjSetUIState(hObj, STATE_DOWN, FALSE, 0, FALSE);
       Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);
@@ -143,22 +154,19 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
       int size = Ex_Scale(Ex_ObjGetLong(hObj, SPLITTER_LONG_SIZE));
-      HCURSOR hCursor = LoadCursor(nullptr, IDC_ARROW);
+
       bool isDragging = false;
       if (direction == 0) {
         if (x >= m_rect.left + position && x <= m_rect.left + position + size) {
           // 水平分割条
-          hCursor = LoadCursor(NULL, IDC_SIZEWE);
           isDragging = true;
         }
       } else {
         if (y >= m_rect.top + position && y <= m_rect.top + position + size) {
           // 垂直分割条
-          hCursor = LoadCursor(NULL, IDC_SIZENS);
           isDragging = true;
         }
       }
-      SetCursor(hCursor);
       Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, isDragging);
     } break;
     case WM_MOUSEMOVE: {
@@ -230,20 +238,16 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
           if (x >= m_rect.left + position &&
               x <= m_rect.left + position + size) {
             // 水平分割条
-            HCURSOR hCursor = LoadCursor(NULL, IDC_SIZEWE);
             isDragging = true;
-            SetCursor(hCursor);
           }
         } else {
           if (y >= m_rect.top + position && y <= m_rect.top + position + size) {
             // 垂直分割条
-            HCURSOR hCursor = LoadCursor(NULL, IDC_SIZENS);
             isDragging = true;
-            SetCursor(hCursor);
           }
         }
-        
         Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, isDragging);
+        Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, FALSE);
       }
     } break;
     case WM_LBUTTONUP: {
