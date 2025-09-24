@@ -225,23 +225,24 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
           Ex_ObjInvalidateRect(hObj, NULL);
         }
       } else {
-        HCURSOR hCursor = LoadCursor(nullptr, IDC_ARROW);
         bool isDragging = false;
         if (direction == 0) {
           if (x >= m_rect.left + position &&
               x <= m_rect.left + position + size) {
             // 水平分割条
-            hCursor = LoadCursor(NULL, IDC_SIZEWE);
+            HCURSOR hCursor = LoadCursor(NULL, IDC_SIZEWE);
             isDragging = true;
+            SetCursor(hCursor);
           }
         } else {
           if (y >= m_rect.top + position && y <= m_rect.top + position + size) {
             // 垂直分割条
-            hCursor = LoadCursor(NULL, IDC_SIZENS);
+            HCURSOR hCursor = LoadCursor(NULL, IDC_SIZENS);
             isDragging = true;
+            SetCursor(hCursor);
           }
         }
-        SetCursor(hCursor);
+        
         Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, isDragging);
       }
     } break;
