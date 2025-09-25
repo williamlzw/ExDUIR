@@ -7,7 +7,11 @@ struct TLISTVIEW_ITEM
 	std::wstring title;
 	std::wstring text;
 	std::wstring btnTitle;
+	//开关状态,0闭合，1开启
+	INT btnState;
 };
+
+
 
 class TemplateListViewWindow
 {
@@ -29,12 +33,31 @@ public:
 		m_tlistViewItemInfo.resize(20);
 		for (int i = 0; i < 20; i++)
 		{
-			m_tlistViewItemInfo[i] = { L"标签一" + std::to_wstring(i),L"标签二" + std::to_wstring(i), L"按钮" + std::to_wstring(i) };
+			m_tlistViewItemInfo[i] = { L"标签一" + std::to_wstring(i),L"标签二" + std::to_wstring(i), L"按钮" + std::to_wstring(i), 0 };
 		}
 		m_templatelistview.SetItemCount(20);
 		m_templatelistview.SetItemHoverColor(ExRGB2ARGB(15066083, 200));
 		m_templatelistview.SetItemSelectColor(ExRGB2ARGB(124123, 250));
 		m_skin.Show();
+	}
+
+	static LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam,
+		LPARAM lParam)
+	{
+		if (Ex_ObjGetLong(hObj, OBJECT_LONG_NODEID) == 3)   // 点了某项的按钮
+		{
+			HEXOBJ hObjItem = Ex_ObjGetParent(hObj);        // 表项句柄
+			INT    nIndex = Ex_ObjGetLong(hObjItem, 0);   // 获得表项当前代表的索引
+			if (nIndex > 0 && nIndex <= (TemplateListViewWindow::GetInstance().m_tlistViewItemInfo.size())) {
+				//获取开关状态，设置数组变量
+				INT state = (INT)Ex_ObjSendMessage(hObj, BM_GETCHECK, 0, 0);
+				TemplateListViewWindow::GetInstance().m_tlistViewItemInfo[nIndex - 1].btnState = state;
+			}
+		}
+		if (nCode == NM_DBLCLK) {
+			OUTPUTW(L"OnTemplateListViewItemBtnClick NM_DBLCLK", wParam, lParam);
+		}
+		return 0;
 	}
 
 	static LRESULT CALLBACK OnTemplateListViewProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
@@ -81,6 +104,7 @@ public:
 			static2.SetLongNodeID(2);
 			ExSwitch static3 = ExSwitch(ExControl(lParam), 555, 11, 50, 20, L"开|关", -1, -1, DT_CENTER | DT_VCENTER);
 			static3.SetLongNodeID(3);
+			static3.HandleEvent(NM_CLICK, OnTemplateListViewItemBtnClick);
 			*lpResult = 1;
 			return 1;
 		}
@@ -92,8 +116,9 @@ public:
 				obj1.SetText(L"TEST");
 				ExControl obj2 = ExControl(lParam).GetFromNodeID(2);
 				obj2.SetText(TemplateListViewWindow::GetInstance().m_tlistViewItemInfo[wParam - 1].text);
-				ExControl obj3 = ExControl(lParam).GetFromNodeID(2);
+				ExControl obj3 = ExControl(lParam).GetFromNodeID(3);
 				obj3.SetText(TemplateListViewWindow::GetInstance().m_tlistViewItemInfo[wParam - 1].btnTitle, TRUE);
+				obj3.SendMsg(BM_SETCHECK, TemplateListViewWindow::GetInstance().m_tlistViewItemInfo[wParam - 1].btnState, 1);
 			}
 		}
 		return 0;

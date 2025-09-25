@@ -125,5 +125,5 @@ void test_customredraw(HWND hWnd)
     test_layered_window(hWnd_customredraw);
 
 
-    Ex_DUIShowWindow(hExDui_customredraw, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_customredraw, SW_SHOWNORMAL);
 }

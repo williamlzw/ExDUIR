@@ -33,5 +33,5 @@ void test_respack(HWND hWnd)
     _img_destroy(img);
     Ex_ResFree(hRes);
 
-    Ex_DUIShowWindow(hExDui_respack, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_respack, SW_SHOWNORMAL);
 }

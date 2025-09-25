@@ -155,5 +155,5 @@ void test_rollmenu(HWND hWnd)
         Ex_ObjSendMessage(m_hObjRM, ROLLMENU_MESSAGE_ADDITEM, groupFansIndex, (LPARAM)&rollitem);
     }
 
-    Ex_DUIShowWindow(hExDui_RM, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_RM, SW_SHOWNORMAL);
 }

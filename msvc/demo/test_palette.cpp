@@ -23,5 +23,5 @@ void test_palette(HWND hParent)
     Ex_DUISetLong(m_hExDuiPalette, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"Palette", 0, -1, 50, 50, 300, 150, m_hExDuiPalette);
     Ex_ObjHandleEvent(hObj, PALETTE_EVENT_MOUSEMOVE, OnPaletteEvent);
-    Ex_DUIShowWindow(m_hExDuiPalette, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(m_hExDuiPalette, SW_SHOWNORMAL);
 }

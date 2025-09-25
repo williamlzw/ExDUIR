@@ -162,5 +162,5 @@ void test_chromium(HWND hParent)
     // Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"d:/test.mp4");
     // Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"res/cefjs.html");
     Ex_ObjHandleEvent(m_hObjChromium, CEFBROWSER_EVENT_LOADEND, OnChromiumEvent);
-    Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_chromium, SW_SHOWNORMAL);
 }

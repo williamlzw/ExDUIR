@@ -255,7 +255,7 @@ void test_exdui()
             Ex_ObjHandleEvent(button, NM_CLICK, button_click);
         }
 
-        Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL, 0, 0, 0);
+        Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL);
     }
 
     Ex_WndMsgLoop();

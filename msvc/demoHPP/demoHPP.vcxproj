@@ -221,6 +221,7 @@
     <ClInclude Include="Global\ExPath.hpp" />
     <ClInclude Include="Global\ExRegion.hpp" />
     <ClInclude Include="Global\ExSkin.hpp" />
+    <ClInclude Include="Global\ExSvg.hpp" />
     <ClInclude Include="Global\ExUIbase.hpp" />
     <ClInclude Include="Global\ExWindow.hpp" />
     <ClInclude Include="GroupBoxWindow.hpp" />

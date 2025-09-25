@@ -25,5 +25,5 @@ void test_calendar(HWND hParent)
         Ex_ObjCreateEx(-1, L"Calendar", NULL, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 50, 50,
                        336, 336, hExDui_calendar, 100, -1, 0, 0, 0);
     Ex_ObjHandleEvent(MonthCal, CALENDAR_EVENT_DATETIME, OnCalendarEvent);
-    Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_calendar, SW_SHOWNORMAL);
 }

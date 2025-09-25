@@ -66,5 +66,5 @@ void test_editex(HWND hWnd)
     Ex_ObjHandleEvent(hObj_editex4, EN_CHANGE, OnEditChangeEvent);
     Ex_ObjHandleEvent(hObj_editex4, NM_CHAR, OnEditChangeEvent);
 
-    Ex_DUIShowWindow(hExDui_editex, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_editex, SW_SHOWNORMAL);
 }

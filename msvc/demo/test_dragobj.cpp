@@ -94,5 +94,5 @@ void test_dragobj(HWND hWnd)
             Ex_ObjSetColor(hObj_label2, COLOR_EX_BACKGROUND, ExRGB2ARGB(16722680, 100), TRUE);
         }
     }
-    Ex_DUIShowWindow(hExDui_dragobj, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_dragobj, SW_SHOWNORMAL);
 }

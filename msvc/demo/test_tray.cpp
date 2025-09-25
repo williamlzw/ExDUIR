@@ -58,5 +58,5 @@ void test_tray(HWND hWnd)
     Ex_DUISetLong(m_hExDui_tray, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     Ex_ObjCreateEx(-1, L"static", L"最小化可以隐藏显示在托盘图标,右击托盘图标可以弹出托盘内容，双击托盘图标可以恢复显示窗口", -1, 10, 50, 200, 60, m_hExDui_tray,
                    0, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    Ex_DUIShowWindow(m_hExDui_tray, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(m_hExDui_tray, SW_SHOWNORMAL);
 }

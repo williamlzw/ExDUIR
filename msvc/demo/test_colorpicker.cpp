@@ -24,5 +24,5 @@ void test_colorpicker(HWND hParent)
     HEXOBJ hObj = Ex_ObjCreate(L"ColorPicker", 0, -1, 50, 40, 80, 30, hExDui_colorpicker);
     Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), TRUE);
     Ex_ObjHandleEvent(hObj, COLORPICKER_EVENT_COLORCHANGE, OnColorPickerButtonEvent);
-    Ex_DUIShowWindow(hExDui_colorpicker, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_colorpicker, SW_SHOWNORMAL);
 }

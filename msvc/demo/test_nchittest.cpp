@@ -43,5 +43,5 @@ void test_nchittest(HWND hWnd)
     Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"鼠标只能在红色区域里响应", -1, 50, 50,
                    300, 100, hExDui_nchittest, 0, DT_CENTER | DT_VCENTER | DT_SINGLELINE, 0, 0,
                    OnNchitTestMsgProc);
-    Ex_DUIShowWindow(hExDui_nchittest, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_nchittest, SW_SHOWNORMAL);
 }

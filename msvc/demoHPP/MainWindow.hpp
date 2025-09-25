@@ -73,8 +73,8 @@ public:
 		std::vector<CHAR> data;
 		data.resize(Default_ext_size);
 		RtlMoveMemory(data.data(), Default_ext, Default_ext_size);
-		//m_theApp = ExApp(L"../test/res/Default.ext", dwGlobalFlags, L"../test/res/cursor.cur");
-		m_theApp = ExApp(data, dwGlobalFlags, L"../test/res/cursor.cur");
+		//m_theApp = ExApp(L"../demo/res/Default.ext", dwGlobalFlags, L"../demo/res/cursor.cur");
+		m_theApp = ExApp(data, dwGlobalFlags, L"../demo/res/cursor.cur");
 
 		DWORD dwStyleDUI = WINDOW_STYLE_MAINWINDOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_BUTTON_MAX |
 			WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_ESCEXIT | WINDOW_STYLE_TITLE | WINDOW_STYLE_SIZEABLE | WINDOW_STYLE_HASICON;
@@ -83,7 +83,7 @@ public:
 
 		m_skin.SetBackgroundColor(ExARGB(255, 255, 255, 255));
         m_skin.SetShadowColor(ExARGB(250, 50, 50, 240));
-		m_skin.SetBackgroundImageFromFile(L"../test/res/bkg.jpg");
+		m_skin.SetBackgroundImageFromFile(L"../demo/res/bkg.jpg");
 		//设置圆角，另一种方案是重画窗口背景参照异形窗口例子
 		m_skin.SetRadius(30);
         

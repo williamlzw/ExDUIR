@@ -118,14 +118,9 @@ namespace ExDUIR
 					return _canvas_drawtext2(m_canvas, font.m_font, brush.m_brush, lpwzText.c_str(), dwLen, dwDTFormat, left, top, right, bottom);
 				}
 
-				inline BOOL DrawSvgFromData(std::vector<CHAR> data, EXARGB crText, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
+				inline BOOL DrawSvgFromHandle(HEXSVG hSvg, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
 				{
-					return _canvas_drawsvg(m_canvas, data.data(), crText, left, top, right, bottom);
-				}
-
-				inline BOOL DrawSvgFromFile(std::wstring svgFilePath, EXARGB crText, FLOAT left, FLOAT top, FLOAT right, FLOAT bottom)
-				{
-					return _canvas_drawsvgfromfile(m_canvas, svgFilePath.c_str(), crText, left, top, right, bottom);
+					return _canvas_drawsvg(m_canvas, hSvg, left, top, right, bottom);
 				}
 
 				inline BOOL BeginDraw()

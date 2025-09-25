@@ -104,5 +104,5 @@ void test_absolute(HWND hWnd)
 
     Ex_ObjLayoutSet(hExDui_absolute, hLayout, TRUE);
 
-    Ex_DUIShowWindow(hExDui_absolute, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_absolute, SW_SHOWNORMAL);
 }

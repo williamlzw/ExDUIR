@@ -19,7 +19,7 @@ public:
 		m_imagelist = ExImageList(30, 30);
 		for (INT i = 3; i <= 5; i++)
 		{
-			auto str = L"../test/res/buttonex/" + std::to_wstring(i) + L".png";
+			auto str = L"../demo/res/buttonex/" + std::to_wstring(i) + L".png";
 			m_imagelist.AddImageFromFile(0, str);
 		}
 		//设置列表的图片组,wParam可以重置表项高度为图标高度

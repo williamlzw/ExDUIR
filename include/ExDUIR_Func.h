@@ -2169,27 +2169,8 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong);
 /// </summary>
 /// <param name="hExDui"></param>
 /// <param name="nCmdShow">相关常量:#SW_</param>
-/// <param name="dwTimer">动画时间间隔(ms)</param>
-/// <param name="dwFrames">动画总帧数</param>
-/// <param name="dwFlags">动画标记</param>
 /// <returns></returns>
-BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames,
-                      INT dwFlags);
-
-/// <summary>
-/// 显示窗口Ex
-/// </summary>
-/// <param name="hExDui"></param>
-/// <param name="nCmdShow">相关常量:#SW_</param>
-/// <param name="dwTimer">动画时间间隔</param>
-/// <param name="dwFrames">动画总帧数</param>
-/// <param name="dwFlags">动画标记.#EXA_</param>
-/// <param name="uEasing">缓动类型常量#EASING_TYPE_</param>
-/// <param name="wParam">参数1</param>
-/// <param name="lParam">参数2</param>
-/// <returns></returns>
-BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames,
-                        INT dwFlags, INT uEasing, WPARAM wParam, LPARAM lParam);
+BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow);
 
 /// <summary>
 /// 弹出托盘图标

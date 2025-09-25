@@ -29,5 +29,5 @@ void test_waveprogressbar(HWND hWnd)
     Ex_ObjSetTimer(hObj_progressbar, 100);
 
 
-    Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL);
 }

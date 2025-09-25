@@ -20,5 +20,5 @@ void test_rotateimgbox(HWND hWnd)
     Ex_ObjSetBackgroundImage(hObj_imagebox, imgdata.data(), imgdata.size(), 0, 0,
                              BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_PLAYIMAGE, 255, TRUE);
     Ex_ObjSetRadius(hObj_imagebox, 50, 50, 50, 50, TRUE);
-    Ex_DUIShowWindow(hExDui_rotateimgbox, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_rotateimgbox, SW_SHOWNORMAL);
 }

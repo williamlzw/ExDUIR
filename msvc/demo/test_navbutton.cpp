@@ -76,5 +76,5 @@ void test_navbutton(HWND hWnd)
     _layout_setprop(m_hLayout, LAYOUT_PROP_PAGE_CURRENT, m_nCurIndex);
     Ex_ObjSendMessage(m_hNavBtn[0], BM_SETCHECK, 1, 1);
 
-    Ex_DUIShowWindow(hExDui_navbutton, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_navbutton, SW_SHOWNORMAL);
 }

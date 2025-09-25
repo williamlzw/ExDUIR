@@ -36,5 +36,5 @@ void test_scorebtn(HWND hParent)
         Ex_ObjHandleEvent(m_hScoreBtn[i], NM_CHECK, OnScoreButtonCheckEvent);
     }
 
-    Ex_DUIShowWindow(hExDui_score, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_score, SW_SHOWNORMAL);
 }

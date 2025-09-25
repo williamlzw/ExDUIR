@@ -18,7 +18,7 @@ INT_PTR CALLBACK OnDialgWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                                   (LPARAM)L"编辑框输入文字正常");
             }
             Ex_DUISetLong(hExDui, ENGINE_LONG_CRBKG, ExRGB2ARGB(16711680, 220));
-            Ex_DUIShowWindow(hExDui, SW_SHOW, 0, 0, 0);
+            Ex_DUIShowWindow(hExDui, SW_SHOW);
         }
     }
     return 0;
@@ -49,5 +49,5 @@ void test_modal(HWND hWnd)
     Ex_DUISetLong(hExDui_modal, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"button", L"弹出模态对话框", -1, 50, 50, 300, 100, hExDui_modal);
     Ex_ObjHandleEvent(hObj, NM_CLICK, OnModalButtonEvent);
-    Ex_DUIShowWindow(hExDui_modal, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_modal, SW_SHOWNORMAL);
 }

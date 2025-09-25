@@ -24,5 +24,5 @@ void test_loading(HWND hWnd)
                      OBJECT_STYLE_VISIBLE | LOADING_STYLE_LINE, 50, 150, 200, 60, hExDui_loading);
     Ex_ObjSetColor(hObj_win10loading2, COLOR_EX_BACKGROUND, ExRGB(100, 236, 255),
                    TRUE);   // 动画点颜色，只能提供RGB色
-    Ex_DUIShowWindow(hExDui_loading, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_loading, SW_SHOWNORMAL);
 }

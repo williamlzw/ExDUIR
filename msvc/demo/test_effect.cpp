@@ -80,5 +80,5 @@ void test_effect(HWND hWnd)
     auto hObj = Ex_ObjCreateEx(-1, L"static", L"", OBJECT_STYLE_VISIBLE, 50, 50, 400, 260,
                                hExDui_effect, 0, -1, 0, 0, OnEffectObjMsgProc);
     Ex_ObjSetTimer(hObj, 1);
-    Ex_DUIShowWindow(hExDui_effect, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_effect, SW_SHOWNORMAL);
 }

@@ -66,7 +66,7 @@ public:
 		m_toolbar.SetColorTextDown(ExRGB2ARGB(16765337, 255));
 		
 		m_imagelist = ExImageList(18, 18);
-		size_t nImageIndex = m_imagelist.AddImageFromFile(0, L"../test/res/buttonex/4.png");
+		size_t nImageIndex = m_imagelist.AddImageFromFile(0, L"../demo/res/buttonex/4.png");
 		m_toolbar.SetImageList(m_imagelist);
 		EX_LISTBUTTON_ITEMINFO item2 = { 0 };
 		item2.nType = 1;
@@ -144,7 +144,7 @@ public:
 				{
 					DeleteObject(minfo.hbmpItem);
 				}
-				ExImage image = ExImage(L"../test/res/rotateimgbox.jpg");
+				ExImage image = ExImage(L"../demo/res/rotateimgbox.jpg");
 				ExImage scaleImage = image.Scale(24, 24);
 				HBITMAP hBitmap = scaleImage.GetBitmap();
 				minfo.hbmpItem = hBitmap;

@@ -368,5 +368,5 @@ void test_chatbox(HWND hWnd)
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
 
     delete[] itemDataLink.ListInfo;
-    Ex_DUIShowWindow(hExDui_chatbox, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_chatbox, SW_SHOWNORMAL);
 }

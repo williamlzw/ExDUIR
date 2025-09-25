@@ -18,5 +18,5 @@ void test_groupbox(HWND hWnd)
     Ex_ObjSetLong(hObj_groupbox, GROUPBOX_LONG_TEXT_OFFSET, 50);
     Ex_ObjSetLong(hObj_groupbox, GROUPBOX_LONG_RADIUS, 30);
     Ex_ObjSetLong(hObj_groupbox, GROUPBOX_LONG_STROKEWIDTH, 3);
-    Ex_DUIShowWindow(hExDui_groupbox, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_groupbox, SW_SHOWNORMAL);
 }

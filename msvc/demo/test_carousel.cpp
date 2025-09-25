@@ -24,5 +24,5 @@ void test_carousel(HWND hParent)
     // 全部销毁用下面的
     // Ex_ObjSendMessage(hObj, CAROUSEL_MESSAGE_CLEAR, 0, 0);
 
-    Ex_DUIShowWindow(hExDui_carousel, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_carousel, SW_SHOWNORMAL);
 }

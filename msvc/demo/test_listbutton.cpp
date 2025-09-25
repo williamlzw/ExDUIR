@@ -226,5 +226,5 @@ void test_listbutton(HWND hWnd)
             SetMenuItemInfoW(hMenu_sub, 1, TRUE, &minfo);
         }
     }
-    Ex_DUIShowWindow(hExDui_listbutton, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_listbutton, SW_SHOWNORMAL);
 }

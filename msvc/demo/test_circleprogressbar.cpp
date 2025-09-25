@@ -53,5 +53,5 @@ void test_circleprogressbar(HWND hWnd)
     Ex_ObjSetTimer(hObj_progressbar2, 50);
 
 
-    Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL);
 }

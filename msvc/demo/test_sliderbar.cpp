@@ -51,5 +51,5 @@ void test_sliderbar(HWND hWnd)
     Ex_ObjSetLong(hObj_sliderbarex4, SLIDERBAR_LONG_BLOCK_DIRECTION, 1);
     m_hSliderBarLabel =
         Ex_ObjCreate(L"static", L"滑块条,当前值是：", -1, 80, 80, 300, 30, hExDui_sliderbar);
-    Ex_DUIShowWindow(hExDui_sliderbar, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_sliderbar, SW_SHOWNORMAL);
 }

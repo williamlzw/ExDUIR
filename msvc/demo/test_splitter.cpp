@@ -37,5 +37,5 @@ void test_splitter(HWND hWnd) {
   // 附加面板
   Ex_ObjSendMessage(splitter2, SPLITTER_SET_PANEL, static2, static3);
 
-  Ex_DUIShowWindow(m_hExDui, SW_SHOWNORMAL, 0, 0, 0);
+  Ex_DUIShowWindow(m_hExDui, SW_SHOWNORMAL);
 }

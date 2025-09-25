@@ -44,15 +44,15 @@ public:
 		m_button6.HandleEvent(NM_CLICK, OnRollMenuWndBtnEvent);
 
 		m_imagelist = ExImageList(32, 32);
-		size_t nImageAccountIndex = m_imagelist.AddImageFromFile(0, L"../test/res/account.png");
-		size_t nImageVideoIndex = m_imagelist.AddImageFromFile(0, L"../test/res/video.png");
-		size_t nImageInfoIndex = m_imagelist.AddImageFromFile(0, L"../test/res/info.png");
-		size_t nImageFansIndex = m_imagelist.AddImageFromFile(0, L"../test/res/fans.png");
-		size_t nImageAuthIndex = m_imagelist.AddImageFromFile(0, L"../test/res/authorization.png");
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标1.png"));
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标2.png"));
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标3.png"));
-		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../test/res/navbtn/大图标4.png"));
+		size_t nImageAccountIndex = m_imagelist.AddImageFromFile(0, L"../demo/res/account.png");
+		size_t nImageVideoIndex = m_imagelist.AddImageFromFile(0, L"../demo/res/video.png");
+		size_t nImageInfoIndex = m_imagelist.AddImageFromFile(0, L"../demo/res/info.png");
+		size_t nImageFansIndex = m_imagelist.AddImageFromFile(0, L"../demo/res/fans.png");
+		size_t nImageAuthIndex = m_imagelist.AddImageFromFile(0, L"../demo/res/authorization.png");
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../demo/res/navbtn/大图标1.png"));
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../demo/res/navbtn/大图标2.png"));
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../demo/res/navbtn/大图标3.png"));
+		m_emoji.push_back(m_imagelist.AddImageFromFile(0, L"../demo/res/navbtn/大图标4.png"));
 		EX_ROLLMENU_DATA rollmenu = { 0 };
 		rollmenu.title = L"账号信息";
 		rollmenu.stateico.eicon = m_imagelist.GetImage(nImageAccountIndex).m_image;

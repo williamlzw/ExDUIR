@@ -15,8 +15,9 @@ public:
 		m_skin = ExSkin(pOwner, 0, 0, 500, 600, L"自定义字体和SVG测试", dwStyleDUI, 0, 0, OnSvgAndFontProc);
 		m_skin.SetBackgroundColor(ExARGB(150, 150, 150, 255));
 		m_static = ExStatic(m_skin, 50, 250, 150, 150);
-		m_static.SetBackgroundImageFromSvgFile(L"../test/res/niu1.svg", ExARGB(55, 0, 250, 255), 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
-
+		ExSvg svg = ExSvg(L"../demo/res/niu1.svg");
+		m_static.SetBackgroundImageFromSvg(svg.m_svg, 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
+		svg.Destroy();
 		m_skin.Show();
 	}
 
@@ -26,13 +27,15 @@ public:
 		{
 			ExCanvas canvas = ExCanvas(wParam);
 			canvas.Clear(ExARGB(150, 150, 150, 255));
-			ExFont font = ExFont(L"../test/res/文道灵飞小楷.ttf", 64);
+			ExFont font = ExFont(L"../demo/res/fonts/文道灵飞小楷.ttf", 64);
 			canvas.DrawTextFromColor(font, ExARGB(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 450, 450, 530);
 			font.Destroy();
-			canvas.DrawSvgFromFile(L"../test/res/niu.svg", 0, 50, 50, 200, 200);
-			std::vector<CHAR> data;
-			Ex_ReadFile(L"../test/res/niu1.svg", &data);
-			canvas.DrawSvgFromData(data, ExARGB(55, 250, 20, 255), 250, 50, 400, 200);
+			ExSvg svg1 = ExSvg(L"../demo/res/niu.svg");
+			canvas.DrawSvgFromHandle(svg1.m_svg, 50, 50, 200, 200);
+			svg1.Destroy();
+			ExSvg svg2 = ExSvg(L"../demo/res/niu1.svg");
+			canvas.DrawSvgFromHandle(svg2.m_svg, 250, 50, 400, 200);
+			svg2.Destroy();
 			*lpResult = 1;
 			return 1;
 		}

@@ -227,5 +227,5 @@ void test_tagging(HWND hWnd)
 	Ex_ObjSendMessage(hObj_taggingBoard, TAGGINGBOARD_MESSAGE_SET_BKG, 0, img);
 	Ex_ObjHandleEvent(hObj_taggingBoard, TAGGINGBOARD_EVENT_MOUSEMOVE, OnTaggingBoradMouseMove);
 
-	Ex_DUIShowWindow(hExDui_tagging, SW_SHOWNORMAL, 0, 0, 0);
+	Ex_DUIShowWindow(hExDui_tagging, SW_SHOWNORMAL);
 }

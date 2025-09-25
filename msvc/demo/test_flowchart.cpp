@@ -151,5 +151,5 @@ void test_flowchart(HWND hWnd)
     // 释放输出插槽
     Ex_MemFree(node2.outputSlots);
 
-    Ex_DUIShowWindow(hExDui_flowchart, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_flowchart, SW_SHOWNORMAL);
 }

@@ -14,3 +14,4 @@
 #include "Global/ExControl.hpp"
 #include "Global/ExLayout.hpp"
 #include "Global/ExCommon.hpp"
+#include "Global/ExSvg.hpp"

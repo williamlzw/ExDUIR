@@ -235,5 +235,5 @@ void test_propertygrid(HWND hParent)
     PropertyGrid_AddEditItem(m_hObjPropertyGrid, L"参数8", L"默认值8", 2, 0);
     PropertyGrid_AddEditItem(m_hObjPropertyGrid, L"参数9", L"默认值9", 2, 0);
     PropertyGrid_AddEditItem(m_hObjPropertyGrid, L"参数10", L"默认值10", 2, 0);
-    Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_propertygrid, SW_SHOWNORMAL);
 }

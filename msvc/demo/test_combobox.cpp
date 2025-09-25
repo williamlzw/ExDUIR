@@ -123,5 +123,5 @@ void test_combobox(HWND hWnd)
     Ex_ObjHandleEvent(m_hComboBoxButton[6], NM_CLICK, OnComboBoxButtonEvent);
 
 
-    Ex_DUIShowWindow(hExDui_combobox, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_combobox, SW_SHOWNORMAL);
 }

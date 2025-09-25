@@ -309,5 +309,5 @@ void test_edit(HWND hWnd)
     }
     Ex_ObjLayoutSet(hObj_page, hLayoutPage, TRUE);
 
-    Ex_DUIShowWindow(m_hExDuiEdit, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(m_hExDuiEdit, SW_SHOWNORMAL);
 }

@@ -75,5 +75,5 @@ void test_checkbutton(HWND hWnd)
         Ex_ObjCreate(L"CheckBox", L"记住密码", -1, 150, 170, 100, 30, hExDui_checkbutton);
     Ex_ObjSendMessage(hObj_checkbox2, BM_SETCHECK, 1, 0);
 
-    Ex_DUIShowWindow(hExDui_checkbutton, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_checkbutton, SW_SHOWNORMAL);
 }

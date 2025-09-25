@@ -52,7 +52,7 @@ public:
 	static LRESULT CALLBACK OnTrayButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 	{
 		std::vector<CHAR> data;
-		Ex_ReadFile(L"../test/res/icon.ico", &data);
+		Ex_ReadFile(L"../demo/res/icon.ico", &data);
 		TrayWindow::GetInstance().m_icon = (HICON)Ex_LoadImageFromMemory(data.data(), data.size(), IMAGE_ICON, 0);
 		TrayWindow::GetInstance().m_skin.SetTrayIcon(TrayWindow::GetInstance().m_icon, L"ExDuiR");
 		return 0;

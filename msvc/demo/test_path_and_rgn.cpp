@@ -136,5 +136,5 @@ void test_pathandrgn(HWND hWnd)
     auto hObj = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"static", L"", OBJECT_STYLE_VISIBLE, 50,
                                50, 300, 200, hExDui_pathandrgn, 0, -1, 0, 0, OnPathAndRgnMsgProc);
 
-    Ex_DUIShowWindow(hExDui_pathandrgn, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_pathandrgn, SW_SHOWNORMAL);
 }

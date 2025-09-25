@@ -78,7 +78,7 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
                                lpTitle, OBJECT_STYLE_VISIBLE, 15, 150, 150, 25, hObj_Static, 76602,
                                DT_SINGLELINE, 0, 0, _color_picker_oneditproc);
-                Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
+                Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE);
                 Ex_ObjSetLong(hObj, COLORPICKER_LONG_STATE, 1);
             }
         }

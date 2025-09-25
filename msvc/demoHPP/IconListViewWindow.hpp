@@ -20,7 +20,7 @@ public:
 		m_imagelist = ExImageList(36, 36);
 		for (INT i = 1; i <= 3; i++)
 		{
-			auto str = L"../test/res/icon/" + std::to_wstring(i) + L".png";
+			auto str = L"../demo/res/icon/" + std::to_wstring(i) + L".png";
 			m_imagelist.AddImageFromFile(0, str);
 		}
 		m_iconlistview.SetImageList(m_imagelist);

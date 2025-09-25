@@ -108,5 +108,5 @@ void test_treelistview(HWND hWnd)
 
     Ex_ObjSendMessage(hObj_treeview, TREEVIEW_MESSAGE_UPDATE, 0, 0);
 
-    Ex_DUIShowWindow(hExDui_treelistview, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_treelistview, SW_SHOWNORMAL);
 }

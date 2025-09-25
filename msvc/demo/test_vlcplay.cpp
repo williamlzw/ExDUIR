@@ -78,5 +78,5 @@ void test_vlcPlay(HWND hWnd)
     Ex_ObjHandleEvent(m_hObjMediaVLCButton6, NM_CLICK, OnMediaVLCBtnEnevt);
     Ex_ObjHandleEvent(m_hObjMediaVLCButton7, NM_CLICK, OnMediaVLCBtnEnevt);
 
-    Ex_DUIShowWindow(hExDui_mediavlc, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_mediavlc, SW_SHOWNORMAL);
 }

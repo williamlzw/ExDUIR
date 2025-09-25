@@ -3236,9 +3236,7 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong) {
 	return ret;
 }
 
-BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames,
-	INT dwFlags, INT uEasing, WPARAM wParam,
-	LPARAM lParam) {
+BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow) {
 	wnd_s* pWnd = nullptr;
 	INT nError = 0;
 	BOOL ret = FALSE;
@@ -3264,12 +3262,6 @@ BOOL Ex_DUIShowWindowEx(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames,
 	}
 	Ex_SetLastError(nError);
 	return ret;
-}
-
-BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow, INT dwTimer, INT dwFrames,
-	INT dwFlags) {
-	return Ex_DUIShowWindowEx(hExDui, nCmdShow, dwTimer, dwFrames, dwFlags, 0, 0,
-		0);
 }
 
 HEXDUI Ex_DUIBindWindowEx(HWND hWnd, HEXTHEME hTheme, DWORD dwStyle,

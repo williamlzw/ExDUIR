@@ -17,9 +17,9 @@ public:
 		m_carousel = ExCarousel(m_skin, 20, 40, 760, 550);
 		//添加图片前必须设置尺寸
 		m_carousel.SetSize(1600, 1200);
-		m_carousel.AddImage(ExImage(L"../test/res/carousel/1.jpeg"));
-		m_carousel.AddImage(ExImage(L"../test/res/carousel/2.jpeg"));
-		m_carousel.AddImage(ExImage(L"../test/res/carousel/3.jpeg"));
+		m_carousel.AddImage(ExImage(L"../demo/res/carousel/1.jpeg"));
+		m_carousel.AddImage(ExImage(L"../demo/res/carousel/2.jpeg"));
+		m_carousel.AddImage(ExImage(L"../demo/res/carousel/3.jpeg"));
 		m_carousel.SetTimer(5000);
 		m_skin.Show();
 	}

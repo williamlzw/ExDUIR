@@ -68,5 +68,5 @@ void test_iconlistview(HWND hWnd)
     Ex_ObjSendMessage(m_hListViewIcon, LISTVIEW_MESSAGE_UPDATE, 0, 0);
 
     Ex_DUISetLong(hExDui_iconlistview, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-    Ex_DUIShowWindow(hExDui_iconlistview, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_iconlistview, SW_SHOWNORMAL);
 }

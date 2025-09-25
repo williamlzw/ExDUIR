@@ -49,5 +49,5 @@ void test_table(HWND hWnd)
 
     Ex_ObjLayoutSet(hExDui_table, hLayout, TRUE);
 
-    Ex_DUIShowWindow(hExDui_table, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_table, SW_SHOWNORMAL);
 }

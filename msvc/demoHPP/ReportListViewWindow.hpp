@@ -25,7 +25,7 @@ public:
 
 		m_imagelist = ExImageList(30, 30);
 		std::vector<CHAR> imgdata;
-		Ex_ReadFile(L"../test/res/icon/1.png", &imgdata);
+		Ex_ReadFile(L"../demo/res/icon/1.png", &imgdata);
 		m_imagelist.AddImageFromData(0, imgdata);
 		m_imagelist.AddImageFromData(0, imgdata);
 		m_imagelist.AddImageFromData(0, imgdata);

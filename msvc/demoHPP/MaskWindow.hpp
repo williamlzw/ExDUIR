@@ -23,8 +23,8 @@ public:
 	{
 		if (uMsg == WM_ERASEBKGND)
 		{
-			ExImage img1 = ExImage(L"../test/res/mask/mask4.jpg");
-			ExImage img2 = ExImage(L"../test/res/mask/mask1.png");
+			ExImage img1 = ExImage(L"../demo/res/mask/mask4.jpg");
+			ExImage img2 = ExImage(L"../demo/res/mask/mask1.png");
 			ExImage img3 = img1.MaskImage(img2, 0, FALSE);
 			ExCanvas canvas = ExCanvas(wParam);
 			canvas.DrawImageRect(img3, 0, 0, 200, 200, 255);

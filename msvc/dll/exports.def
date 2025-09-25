@@ -35,7 +35,6 @@ Ex_DUIGetLong
 Ex_DUIGetSystemDpi
 Ex_DUISetLong
 Ex_DUIShowWindow
-Ex_DUIShowWindowEx
 Ex_DUITrayIconPopup
 Ex_DUITrayIconSet
 Ex_MessageBox

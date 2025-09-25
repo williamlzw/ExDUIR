@@ -293,5 +293,5 @@ void test_custommenu(HWND hWnd)
     AppendMenuW(m_hMenuRight, MF_STRING, 401, L"项目一");
     AppendMenuW(m_hMenuRight, MF_STRING, 402, L"项目二");
 
-    Ex_DUIShowWindow(hExDui_custommenu, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_custommenu, SW_SHOWNORMAL);
 }

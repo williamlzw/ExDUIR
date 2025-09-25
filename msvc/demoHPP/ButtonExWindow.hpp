@@ -57,12 +57,12 @@ public:
 		ButtonExprops4.crBkgDownOrChecked = ExRGB2ARGB(10066176, 200);
 		m_button4.SetProps(ButtonExprops4);
 		m_button4.SetFont(L"楷体", 16, -1, TRUE);
-		m_button4.SetIcon(ExImage(L"../test/res/buttonex/5.png"));
+		m_button4.SetIcon(ExImage(L"../demo/res/buttonex/5.png"));
 
 		EX_IMAGEINFO IMG0 = { 0 };
-		IMG0.imgNormal = ExImage(L"../test/res/buttonex/4正常.png").m_image;
-		IMG0.imgHover = ExImage(L"../test/res/buttonex/4点燃.png").m_image;
-		IMG0.imgDownOrChecked = ExImage(L"../test/res/buttonex/4按下.png").m_image;
+		IMG0.imgNormal = ExImage(L"../demo/res/buttonex/4正常.png").m_image;
+		IMG0.imgHover = ExImage(L"../demo/res/buttonex/4点燃.png").m_image;
+		IMG0.imgDownOrChecked = ExImage(L"../demo/res/buttonex/4按下.png").m_image;
 		m_button5 = ExButtonEx(m_skin, 50, 250, 100, 30, L"");//图片按钮
 		m_button5.SetImage(IMG0);
 
@@ -71,9 +71,9 @@ public:
 		m_button6.SetColorTextHover(ExRGB2ARGB(65535, 255));
 		m_button6.SetColorTextDown(ExRGB2ARGB(65535, 255));
 		EX_IMAGEINFO IMG = { 0 };
-		IMG.imgNormal = ExImage(L"../test/res/buttonex/正常.png").m_image;
-		IMG.imgHover = ExImage(L"../test/res/buttonex/进入.png").m_image;
-		IMG.imgDownOrChecked = ExImage(L"../test/res/buttonex/按下.png").m_image;
+		IMG.imgNormal = ExImage(L"../demo/res/buttonex/正常.png").m_image;
+		IMG.imgHover = ExImage(L"../demo/res/buttonex/进入.png").m_image;
+		IMG.imgDownOrChecked = ExImage(L"../demo/res/buttonex/按下.png").m_image;
 		m_button6.SetImage(IMG);
 
 		m_button7 = ExButtonEx(m_skin, 180, 100, 100, 30, L"渐变按钮🔊");
@@ -103,7 +103,7 @@ public:
 		ButtonExprops9.nIconPosition = 2;
 		m_button9.SetProps(ButtonExprops9);
 		m_button9.SetFont(L"楷体", 16, -1, TRUE);
-		m_button9.SetIcon(ExImage(L"../test/res/buttonex/4.png"));
+		m_button9.SetIcon(ExImage(L"../demo/res/buttonex/4.png"));
 
 		m_button10 = ExButtonEx(m_skin, 180, 250, 100, 30, L"图标在右");
 		EX_OBJ_PROPS ButtonExprops10 = { 0 };
@@ -118,7 +118,7 @@ public:
 		ButtonExprops10.radius = 7;
 		m_button10.SetProps(ButtonExprops10);
 		m_button10.SetFont(L"楷体", 16, -1, TRUE);
-		m_button10.SetIcon(ExImage(L"../test/res/buttonex/3.png"));
+		m_button10.SetIcon(ExImage(L"../demo/res/buttonex/3.png"));
 
 		m_skin.Show();
 	}

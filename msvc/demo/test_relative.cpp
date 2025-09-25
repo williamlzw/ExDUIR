@@ -73,5 +73,5 @@ void test_relative(HWND hWnd)
 
     Ex_ObjLayoutSet(hExDui_relative, hLayout, TRUE);
 
-    Ex_DUIShowWindow(hExDui_relative, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_relative, SW_SHOWNORMAL);
 }

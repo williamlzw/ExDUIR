@@ -29,7 +29,7 @@ void AniShow(BOOL fShow)
 {
     Ex_DUISetLong(m_hExDuiAni, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, fShow ? 0 : 255));
     Ex_DUISetLong(m_hExDuiAni, ENGINE_LONG_ALPHA, fShow ? 0 : 255);
-    Ex_DUIShowWindow(m_hExDuiAni, SW_SHOW, 0, 0, 0);
+    Ex_DUIShowWindow(m_hExDuiAni, SW_SHOW);
 
     RECT rc{0};
     GetWindowRect((HWND)Ex_DUIGetLong(m_hExDuiAni, ENGINE_LONG_HWND), &rc);
@@ -37,7 +37,7 @@ void AniShow(BOOL fShow)
         EASING_TYPE_INOUTQUINT, 0,
         EASING_MODE_SINGLE | EASING_MODE_CALLFUNCTION | (fShow ? 0 : EASING_MODE_REVERSE),
         (size_t)OnAniEasing, 500, 20, EASING_STATE_PLAY, 0, 1, rc.left, 0, rc.top - 100, 100);
-    Ex_DUIShowWindow(m_hExDuiAni, fShow ? SW_SHOW : SW_HIDE, 0, 0, 0);
+    Ex_DUIShowWindow(m_hExDuiAni, fShow ? SW_SHOW : SW_HIDE);
 }
 
 size_t CALLBACK OnBtnEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent,

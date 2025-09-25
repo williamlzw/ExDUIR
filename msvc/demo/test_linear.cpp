@@ -38,5 +38,5 @@ void test_linear(HWND hWnd)
                          LAYOUT_SUBPROP_LINEAR_ALIGN_CENTER);   // 设置居中于父
 
     Ex_ObjLayoutSet(hExDui_linear, hLayout, TRUE);
-    Ex_DUIShowWindow(hExDui_linear, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_linear, SW_SHOWNORMAL);
 }

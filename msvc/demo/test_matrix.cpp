@@ -83,5 +83,5 @@ void test_matrix(HWND hWnd)
                                  hExDui_matrix, 0, DT_VCENTER, 0, 0, OnMatrixMsgProc);
     Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(255, 255), TRUE);
 
-    Ex_DUIShowWindow(hExDui_matrix, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_matrix, SW_SHOWNORMAL);
 }

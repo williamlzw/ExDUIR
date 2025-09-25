@@ -142,5 +142,5 @@ void test_button(HWND hWnd)
     switchprops.strokeWidth        = 1;
     Ex_ObjSendMessage(hObj_switch2, WM_EX_PROPS, 0, (LPARAM)&switchprops);
 
-    Ex_DUIShowWindow(m_hExDuiButton, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(m_hExDuiButton, SW_SHOWNORMAL);
 }

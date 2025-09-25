@@ -122,5 +122,5 @@ void test_buttonex(HWND hWnd)
     _img_createfromfile(L"res/buttonex/3.png", &hImg);
     Ex_ObjSendMessage(hObj_btnex10, WM_SETICON, 0, (LPARAM)hImg); /* 设置图标; */
 
-    Ex_DUIShowWindow(hExDui_buttonex, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_buttonex, SW_SHOWNORMAL);
 }

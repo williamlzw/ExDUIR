@@ -30,7 +30,7 @@ public:
 
 		m_edit1 = ExEdit(m_skin, 10, 30, 150, 30, L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_CUSTOMDRAW, DT_VCENTER);
 		m_edit1.SetCueBanner(L"背景图片编辑框", ExARGB(0, 0, 0, 100));
-		m_edit1.SetBackgroundImageFromFile(L"../test/res/editbkg.jpg");
+		m_edit1.SetBackgroundImageFromFile(L"../demo/res/editbkg.jpg");
 
 		m_edit2 = ExEdit(m_skin, 10, 70, 150, 30, L"", OBJECT_STYLE_VISIBLE | EDIT_STYLE_USEPASSWORD, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, DT_VCENTER);
 		m_edit2.SetCueBanner(L"密码输入编辑框", ExARGB(0, 0, 0, 100));
@@ -51,11 +51,11 @@ public:
         m_edit6.SetFocus();
 
 		m_edit7 = ExEdit(m_skin, 180, 30, 300, 300, L"", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL | EDIT_STYLE_RICHTEXT | EDIT_STYLE_PARSEURL | EDIT_STYLE_ALLOWTAB | EDIT_STYLE_NEWLINE, OBJECT_STYLE_EX_FOCUSABLE, DT_LEFT | DT_TOP, 101);
-		m_edit7.LoadRtf(L"../test/res/test.rtf");
+		m_edit7.LoadRtf(L"../demo/res/test.rtf");
 		m_edit7.HandleEvent(EDIT_EVENT_SELCHANGE, OnEditNotifyEvent);
 		m_edit7.HandleEvent(EDIT_EVENT_LINK, OnEditNotifyEvent);
 		m_edit7.AddLine(L"\r\n");
-		m_edit7.AddBitmap(L"../test/res/rotateimgbox.jpg", 200, 200);
+		m_edit7.AddBitmap(L"../demo/res/rotateimgbox.jpg", 200, 200);
         m_edit7.Select(0, 0);
 		std::vector<std::wstring> buttonTitles = { L"全选", L"取消选择", L"置选择", L"左对齐 ", L"居中对齐",
 		L"右对齐", L"首行缩进 ", L"右侧缩进", L"非首行缩进", L"项目符", L"文本红色 ", L"加粗", L"倾斜",

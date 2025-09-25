@@ -13,6 +13,7 @@ LRESULT CALLBACK OnTemplateListViewItemBtnClick(HEXOBJ hObj, INT nID, INT nCode,
             //获取开关状态，设置数组变量
             INT state = (INT)Ex_ObjSendMessage(hObj, BM_GETCHECK, 0, 0);
             m_tlistViewItemInfo[nIndex - 1].btnState = state;
+            
         }
     }
     if (nCode == NM_DBLCLK) {
@@ -134,5 +135,5 @@ void test_templatelistview(HWND hParent)
                       ExRGB2ARGB(15066083, 200));   // 表项悬浮色
     Ex_ObjSendMessage(hobj_listview, TEMPLATELISTVIEW_MESSAGE_SET_ITEM_SELECTCOLOR, 0,
                       ExRGB2ARGB(124123, 250));   // 表项选中色
-    Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL);
 }

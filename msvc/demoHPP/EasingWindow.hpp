@@ -38,11 +38,11 @@ public:
 	{
 		m_skin.SetBackgroundColor(ExARGB(150, 150, 150, fShow ? 0 : 255));
 		m_skin.SetAlpha(fShow ? 0 : 255);
-		m_skin.Show(SW_SHOW, 0, 0, 0);
+		m_skin.Show(SW_SHOW);
 		RECT rc{ 0 };
 		GetWindowRect(m_skin.GetHwnd(), &rc);
 		ExEasing(EASING_TYPE_INOUTQUINT, 0, EASING_MODE_SINGLE | EASING_MODE_CALLFUNCTION | (fShow ? 0 : EASING_MODE_REVERSE), (size_t)OnAniEasing, 500, 20, EASING_STATE_PLAY, 0, 1, rc.left, 0, rc.top - 100, 100);
-		m_skin.Show(fShow ? SW_SHOW : SW_HIDE, 0, 0, 0);
+		m_skin.Show(fShow ? SW_SHOW : SW_HIDE);
 	}
 
 	static LRESULT CALLBACK OnAniWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)

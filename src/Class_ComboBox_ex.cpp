@@ -462,7 +462,7 @@ void _combobox_btndown(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
             _obj_dispatchnotify(hWnd, pObj, hObj, 0,
                                 COMBOBOX_EVENT_POPUPLISTWINDOW, (size_t)hWndBox,
                                 hExBox);
-            Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
+            Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE);
           }
         }
       }

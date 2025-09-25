@@ -29,5 +29,5 @@ void test_titlebar(HWND hParent)
     Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), FALSE);
     Ex_ObjSetColor(hObj, COLOR_EX_TEXT_NORMAL, -1, TRUE);
 
-    Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL);
 }

@@ -17,7 +17,7 @@ void test_linechart(HWND hWnd)
     Ex_ObjSendMessage(hObj, LINECHART_MESSAGE_FOREGROUNDCOLOR_FILL, 0, ExARGB(80, 85, 205, 200));
     Ex_ObjSendMessage(hObj, LINECHART_MESSAGE_FOREGROUNDCOLOR_DRAW, 0, ExARGB(100, 200, 100, 255));
     Ex_ObjSetTimer(hObj, 500);
-    Ex_DUIShowWindow(hExDui_linechart, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_linechart, SW_SHOWNORMAL);
 }
 
 LRESULT CALLBACK OnLineChartMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,

@@ -68,5 +68,5 @@ void test_svgAndfont(HWND hWnd)
     auto ret= _svg_create(svg.data(), &hSvg);
     Ex_ObjSetBackgroundImageFromSvg(obj, hSvg, 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
     _svg_destroy(hSvg);
-    Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL);
 }

@@ -46,5 +46,5 @@ void test_progressbar(HWND hWnd)
     Ex_ObjSetLong(hObj_progressbar2, PROGRESSBAR_LONG_POINT, 0);
     Ex_ObjInvalidateRect(hObj_progressbar2, NULL);
     Ex_ObjSetTimer(hObj_progressbar2, 50);
-    Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_progressbar, SW_SHOWNORMAL);
 }

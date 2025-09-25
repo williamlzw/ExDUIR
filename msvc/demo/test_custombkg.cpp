@@ -16,5 +16,5 @@ void test_custombkg(HWND hWnd)
     Ex_ObjCreateEx(OBJECT_STYLE_EX_TOPMOST, L"sysbutton", L"",
                    OBJECT_STYLE_VISIBLE | WINDOW_STYLE_BUTTON_CLOSE, 140, 8, 30, 30,
                    hExDui_custombkg, 0, 0, 0, 0, NULL);
-    Ex_DUIShowWindow(hExDui_custombkg, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_custombkg, SW_SHOWNORMAL);
 }

@@ -42,5 +42,5 @@ void test_label(HWND hWnd)
     Ex_ObjSetFontFromFamily(hObj_label3, L"宋体", 14, FONT_STYLE_BOLD, FALSE);
     Ex_ObjSetColor(hObj_label3, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 
-    Ex_DUIShowWindow(hExDui_label, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_label, SW_SHOWNORMAL);
 }

@@ -101,5 +101,5 @@ void test_listview(HWND hWnd)
     HEXOBJ hObj_scroll = Ex_ObjScrollGetControl(hobj_listview, SCROLLBAR_TYPE_VERT);
     Ex_ObjPostMessage(hObj_scroll, SCROLLBAR_MESSAGE_SETVISIBLE, 0, 0);        // 隐藏滚动条
     Ex_ObjSetLong(hObj_scroll, OBJECT_LONG_OBJPROC, (size_t)OnScrollBarMsg);   // 改变滚动条回调
-    Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_listview, SW_SHOWNORMAL);
 }

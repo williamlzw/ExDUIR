@@ -75,9 +75,9 @@ public:
 		_In_ ID2D1EffectContext* pEffectContext,
 		_In_ ID2D1TransformGraph* pTransformGraph
 	) {
-		_shader_loadfromfile(pEffectContext, L"../test/res/effect/effect.cso", GUID_MYSHADER);
+		_shader_loadfromfile(pEffectContext, L"../demo/res/effect/effect.cso", GUID_MYSHADER);
 		/*std::vector<CHAR> data1;
-		Ex_ReadFile(L"../test/res/effect/effect.hlsl", &data1);
+		Ex_ReadFile(L"../demo/res/effect/effect.hlsl", &data1);
 		std::string buf = Ex_U2A2(data1);
 		if (!_shader_load(pEffectContext, buf.c_str(), buf.length(), GUID_MYSHADER))
 		{
@@ -166,7 +166,7 @@ public:
 			//注册效果器
 			std::wstring pProperityXml;
 			std::vector<CHAR> data1;
-			Ex_ReadFile(L"../test/res/effect/effect.xml", &data1);
+			Ex_ReadFile(L"../demo/res/effect/effect.xml", &data1);
 			pProperityXml = Ex_U2W2(data1);
 
 			EX_EFFECT_PROPERITY_INFO bindings[] =

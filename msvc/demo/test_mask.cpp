@@ -32,5 +32,5 @@ void test_mask(HWND hWnd)
 
     Ex_ObjCreateEx(-1, L"static", L"", -1, 50, 50, 200, 200, hExDui_mask, 0, DT_VCENTER | DT_CENTER,
                    0, 0, OnMaskObjMsgProc);
-    Ex_DUIShowWindow(hExDui_mask, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_mask, SW_SHOWNORMAL);
 }

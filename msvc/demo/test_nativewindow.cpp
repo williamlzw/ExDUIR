@@ -154,8 +154,8 @@ void test_nativewindow(HWND hParent)
         Ex_DUIBindWindowEx(m_hWndChild2, 0, WINDOW_STYLE_NOSHADOW, 0, OnNativeWndMsgProc);
     Ex_DUISetLong(hExDui_child2, ENGINE_LONG_CRBKG, ExARGB(0, 0, 0, 255));
 
-    Ex_DUIShowWindow(hExDui_child, SW_SHOWNORMAL, 0, 0, 0);
-    Ex_DUIShowWindow(hExDui_child2, SW_SHOWNORMAL, 0, 0, 0);
-    Ex_DUIShowWindow(hExDui_nativewindow, SW_SHOWNORMAL, 0, 0, 0);
-    Ex_DUIShowWindow(hExDui_nativewindow2, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_child, SW_SHOWNORMAL);
+    Ex_DUIShowWindow(hExDui_child2, SW_SHOWNORMAL);
+    Ex_DUIShowWindow(hExDui_nativewindow, SW_SHOWNORMAL);
+    Ex_DUIShowWindow(hExDui_nativewindow2, SW_SHOWNORMAL);
 }

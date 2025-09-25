@@ -297,7 +297,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 
                     Ex_ObjSetLong(hObj, DATEBOX_LONG_STATE, 1);
                 }
-                Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE, 0, 0, 0);
+                Ex_DUIShowWindow(hExBox, SW_SHOWNOACTIVATE);
             }
         }
         else if (uMsg == DATEBOX_MESSAGE_SETDATETIME) {

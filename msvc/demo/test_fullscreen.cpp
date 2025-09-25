@@ -33,5 +33,5 @@ void test_fullscreen(HWND hWnd)
     PostMessageW(hWnd_fullscreen, 274, 61488, 0);
     // 置顶
     SetWindowPos(hWnd_fullscreen, (HWND)-1, 0, 0, 0, 0, 3);
-    Ex_DUIShowWindow(hExDui_fullscreen, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_fullscreen, SW_SHOWNORMAL);
 }

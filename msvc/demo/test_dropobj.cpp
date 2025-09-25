@@ -56,5 +56,5 @@ void test_dropobj(HWND hWnd)
                    L"拖拽文本、文件到这里", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER, 25, 25, 250,
                    250, hExDui_dropobj, 0, DT_SINGLELINE | DT_VCENTER | DT_CENTER, 0, 0,
                    OnDropObjDataMsgProc);
-    Ex_DUIShowWindow(hExDui_dropobj, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_dropobj, SW_SHOWNORMAL);
 }

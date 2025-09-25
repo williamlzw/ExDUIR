@@ -43,7 +43,7 @@ public:
 	{
 		if (hObj == VLCPlayerWindow::GetInstance().m_button1.m_handle)
 		{
-			VLCPlayerWindow::GetInstance().m_player.PlayFromFile(L"../test/res/test.mp4");
+			VLCPlayerWindow::GetInstance().m_player.PlayFromFile(L"../demo/res/test.mp4");
 		}
 		else if (hObj == VLCPlayerWindow::GetInstance().m_button2.m_handle)
 		{

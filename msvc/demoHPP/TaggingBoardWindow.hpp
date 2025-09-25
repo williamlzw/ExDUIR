@@ -27,7 +27,7 @@ public:
 		m_taggingboard.HandleEvent(TAGGINGBOARD_EVENT_HITPATH, OnTaggingBoardEvent);
 		m_taggingboard.HandleEvent(TAGGINGBOARD_EVENT_MOUSEMOVE, OnTaggingBoradMouseMove);
 		m_taggingboard.SetPenColor(ExARGB(0, 255, 0, 255));
-		m_taggingboard.SetBackgroundImage(ExImage(L"../test/res/3.jpeg"));
+		m_taggingboard.SetBackgroundImage(ExImage(L"../demo/res/carousel/3.jpeg"));
 
 
 		m_button1 = ExButton(m_skin, 1050, 30, 100, 30, L"开始绘图");
@@ -105,7 +105,7 @@ public:
 		}
 		else if (hObj == TaggingBoardWindow::GetInstance().m_button5.m_handle)
 		{
-			TaggingBoardWindow::GetInstance().m_taggingboard.SetBackgroundImage(ExImage(L"../test/res/3.jpeg"));
+			TaggingBoardWindow::GetInstance().m_taggingboard.SetBackgroundImage(ExImage(L"../demo/res/carousel/3.jpeg"));
 			auto offsetLeft = TaggingBoardWindow::GetInstance().m_taggingboard.GetImageLeftOffset();
 			auto offsetTop = TaggingBoardWindow::GetInstance().m_taggingboard.GetImageTopOffset();
 			FLOAT scale = TaggingBoardWindow::GetInstance().m_taggingboard.GetImageScale();

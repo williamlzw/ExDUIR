@@ -16,7 +16,7 @@ public:
 		m_skin.SetBackgroundColor(ExARGB(150, 150, 150, 255));
 		m_rotateimagebox = ExRotateImageBox(m_skin, 50, 50, 100, 100, L"旋转背景但文字不变");
 		m_rotateimagebox.SetColorTextNormal(ExRGB2ARGB(255, 255));
-		m_rotateimagebox.SetBackgroundImageFromFile(L"../test/res/rotateimgbox.jpg");
+		m_rotateimagebox.SetBackgroundImageFromFile(L"../demo/res/rotateimgbox.jpg");
 		m_rotateimagebox.SetRadius(50, 50, 50, 50);
 		m_skin.Show();
 	}

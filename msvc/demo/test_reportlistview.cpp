@@ -181,5 +181,5 @@ void test_reportlistview(HWND hWnd)
     HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"button", L"取表项信息", -1, 150, 330, 100, 30,
                                          hExDui_reportlistview, 1002, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj_button2, NM_CLICK, OnReportListViewButtonEvent);
-    Ex_DUIShowWindow(hExDui_reportlistview, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_reportlistview, SW_SHOWNORMAL);
 }

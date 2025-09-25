@@ -273,6 +273,11 @@ namespace ExDUIR
 					return SetBackgroundImageFromData(imgdata, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
 				}
 
+				inline BOOL SetBackgroundImageFromSvg(HEXSVG hSvg, INT x = 0, INT y = 0, DWORD dwRepeat = BACKGROUND_REPEAT_ZOOM, RECT* lpGrid = NULL, INT dwFlags = BACKGROUND_FLAG_DEFAULT, DWORD dwAlpha = 255, BOOL fUpdate = FALSE)
+				{
+					return Ex_ObjSetBackgroundImageFromSvg(m_handle, hSvg, x, y, dwRepeat, lpGrid, dwFlags, dwAlpha, fUpdate);
+				}
+
 				inline EXARGB GetColorBackground()
 				{
 					return Ex_ObjGetColor(m_handle, COLOR_EX_BACKGROUND);

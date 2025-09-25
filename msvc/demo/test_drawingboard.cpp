@@ -70,5 +70,5 @@ void test_drawingboard(HWND hParent)
     auto hObj4 = Ex_ObjCreateEx(-1, L"button", L"保存到图片", -1, 550, 190, 100, 30,
                                 hExDui_drawingboard, 103, -1, 0, 0, 0);
     Ex_ObjHandleEvent(hObj4, NM_CLICK, OnDrawingBoardButtonEvent);
-    Ex_DUIShowWindow(hExDui_drawingboard, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_drawingboard, SW_SHOWNORMAL);
 }

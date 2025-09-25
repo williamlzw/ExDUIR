@@ -34,5 +34,5 @@ void test_flow(HWND hWnd)
     }
     Ex_ObjLayoutSet(hExDui_flow, hLayout, TRUE);
 
-    Ex_DUIShowWindow(hExDui_flow, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_flow, SW_SHOWNORMAL);
 }

@@ -134,5 +134,5 @@ void test_event(HWND hWnd)
             }
         }
     }
-    Ex_DUIShowWindow(hExDui_event, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_event, SW_SHOWNORMAL);
 }

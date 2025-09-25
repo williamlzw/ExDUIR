@@ -26,5 +26,5 @@ void test_datebox(HWND hParent)
 
     Ex_ObjHandleEvent(hObj, DATEBOX_EVENT_DATETIME, OnDateBoxButtonEvent);
 
-    Ex_DUIShowWindow(hExDui_datebox, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_datebox, SW_SHOWNORMAL);
 }

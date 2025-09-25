@@ -164,5 +164,5 @@ void test_colorbutton(HWND hWnd)
     button.SetTextDownColor(ExRGB2ARGB(16754943, 255), FALSE);
     button.SetTextFocusColor(ExRGB2ARGB(65280, 255), TRUE);
     button.SetRadius(25, 25, 25, 25, TRUE);
-    Ex_DUIShowWindow(hExDui_colorbutton, SW_SHOWNORMAL, 0, 0, 0);
+    Ex_DUIShowWindow(hExDui_colorbutton, SW_SHOWNORMAL);
 }
