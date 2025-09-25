@@ -39,12 +39,12 @@ namespace ExDUIR
 					}
 				}
 
-				void SetElementFillColor(const char* id, EXARGB color)
+				void SetElementFillColor(LPCWSTR id, EXARGB color)
 				{
 					_svg_setelementfillcolor(m_svg, id, color);
 				}
 
-				void SetElementStrokeColor(const char* id, EXARGB color, float strokeWidth = 0.0f)
+				void SetElementStrokeColor(LPCWSTR id, EXARGB color, float strokeWidth = 0.0f)
 				{
 					_svg_setelementstrokecolor(m_svg, id, color, strokeWidth);
 				}

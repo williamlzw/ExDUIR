@@ -1951,7 +1951,7 @@ BOOL _svg_create(const char* svgdata, HEXSVG* phSvg);
 /// <param name="svgfile">SVG文件路径</param>
 /// <param name="phSvg">返回svg句柄</param>
 /// <returns></returns>
-BOOL _svg_createfromfile(const wchar_t* svgfile, HEXSVG* phSvg);
+BOOL _svg_createfromfile(LPCWSTR svgfile, HEXSVG* phSvg);
 
 /// <summary>
 /// SVG销毁
@@ -1966,7 +1966,7 @@ BOOL _svg_destroy(HEXSVG hSvg);
 /// <param name="hSvg"></param>
 /// <param name="id"></param>
 /// <param name="color"></param>
-void _svg_setelementfillcolor(HEXSVG hSvg, const char* id, EXARGB color);
+void _svg_setelementfillcolor(HEXSVG hSvg, LPCWSTR id, EXARGB color);
 
 /// <summary>
 /// SVG置元素描边色
@@ -1975,7 +1975,7 @@ void _svg_setelementfillcolor(HEXSVG hSvg, const char* id, EXARGB color);
 /// <param name="id"></param>
 /// <param name="color"></param>
 /// <param name="strokeWidth"></param>
-void _svg_setelementstrokecolor(HEXSVG hSvg, const char* id, EXARGB color, float strokeWidth = 0.0f);
+void _svg_setelementstrokecolor(HEXSVG hSvg, LPCWSTR id, EXARGB color, float strokeWidth = 0.0f);
 
 /// <summary>
 /// SVG置填充色

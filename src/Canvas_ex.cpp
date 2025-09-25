@@ -1784,7 +1784,7 @@ BOOL _svg_create(const char* svgdata, HEXSVG* phSvg) {
   return FALSE;
 }
 
-BOOL _svg_createfromfile(const wchar_t* svgfile, HEXSVG* phSvg) {
+BOOL _svg_createfromfile(LPCWSTR svgfile, HEXSVG* phSvg) {
   std::vector<CHAR> imgdata;
   if (Ex_ReadFile(svgfile, &imgdata)) {
     return _svg_create(Ex_U2A2(imgdata).data(), phSvg);
@@ -1802,18 +1802,18 @@ BOOL _svg_destroy(HEXSVG hSvg) {
   return FALSE;
 }
 
-void _svg_setelementfillcolor(HEXSVG hSvg, const char* id, EXARGB color) {
+void _svg_setelementfillcolor(HEXSVG hSvg, LPCWSTR id, EXARGB color) {
     SVGNative::SVGDocument* pSvg = nullptr;
     INT nError = 0;
     if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
-        pSvg->SetElementFillColor(id, color);
+        pSvg->SetElementFillColor(Ex_W2U(id).c_str(), color);
     }
 }
-void _svg_setelementstrokecolor(HEXSVG hSvg, const char* id, EXARGB color, float strokeWidth) {
+void _svg_setelementstrokecolor(HEXSVG hSvg, LPCWSTR id, EXARGB color, float strokeWidth) {
     SVGNative::SVGDocument* pSvg = nullptr;
     INT nError = 0;
     if (_handle_validate(hSvg, HT_SVG, (LPVOID*)&pSvg, &nError)) {
-        pSvg->SetElementStrokeColor(id, color, strokeWidth);
+        pSvg->SetElementStrokeColor(Ex_W2U(id).c_str(), color, strokeWidth);
     }
 }
 void _svg_setfillcolor(HEXSVG hSvg, EXARGB color) {

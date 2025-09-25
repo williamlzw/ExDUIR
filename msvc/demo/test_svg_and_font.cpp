@@ -29,13 +29,13 @@ LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
         HEXSVG svg = 0;
         _svg_createfromfile(L"res/微信.svg", &svg);
         //_svg_setfillcolor(svg, ExARGB(255, 255, 255, 255));
-        _svg_setelementfillcolor(svg, "1208", ExARGB(255, 0, 255, 255));
+        _svg_setelementfillcolor(svg, L"1208", ExARGB(255, 0, 255, 255));
         _canvas_drawsvg(wParam, svg, 50, 50, 100, 100);
         _svg_destroy(svg);
 
         _svg_createfromfile(L"res/微博.svg", &svg);
         //_svg_setfillcolor(svg, ExARGB(0, 255, 255, 255));
-        _svg_setelementfillcolor(svg, "1372", ExARGB(0, 20, 255, 255));
+        _svg_setelementfillcolor(svg, L"1372", ExARGB(0, 20, 255, 255));
         _canvas_drawsvg(wParam, svg, 200, 50, 100, 100);
         _svg_destroy(svg);
 
