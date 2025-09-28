@@ -8,12 +8,12 @@ LRESULT CALLBACK OnSvgAndFontProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
         _canvas_clear(wParam, ExARGB(150, 150, 150, 255));
         HEXFONT hFont = _font_createfromfile(L"res/fonts/文道灵飞小楷.ttf", 64);
         _canvas_drawtext(wParam, hFont, ExARGB(200, 0, 200, 200), L"我是测试文本", -1, -1, 20, 250,
-                         450, 330);
+            600, 450);
         _font_destroy(hFont);
 
          hFont = _font_createfromfile(L"res/fonts/Aa双鱼座.ttf", 64);
         _canvas_drawtext(wParam, hFont, ExARGB(200, 200, 200, 200),
-                         L"我是测试文本", -1, -1, 20, 330, 450, 430);
+                         L"我是测试文本", -1, -1, 20, 450, 600, 650);
         _font_destroy(hFont);
 
         std::vector<CHAR> fontdata;
@@ -65,7 +65,7 @@ void test_svgAndfont(HWND hWnd)
     Ex_ReadFile(L"res\\niu.svg", &imgdata);
     std::string svg = std::string(imgdata.begin(), imgdata.end());
     HEXSVG hSvg;
-    auto ret= _svg_create(svg.data(), &hSvg);
+    auto ret = _svg_create(svg.data(), &hSvg);
     Ex_ObjSetBackgroundImageFromSvg(obj, hSvg, 0, 0, BACKGROUND_REPEAT_ZOOM, 0, 0, 255, TRUE);
     _svg_destroy(hSvg);
     Ex_DUIShowWindow(hExDui_svgAndfont, SW_SHOWNORMAL);

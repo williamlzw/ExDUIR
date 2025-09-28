@@ -185,7 +185,7 @@ HEXFONT _font_createfrommem(const uint8_t* fontDate, size_t fontDateLen, INT dwF
 				fontName, pFont->m_fontCollection, DWRITE_FONT_WEIGHT_NORMAL,
 				DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
 				dwFontSize == -1 ? abs(g_Li.lpLogFontDefault->lfHeight)
-				: dwFontSize,
+				: Ex_Scale(dwFontSize),
 				(WCHAR*)g_Ri.pLocaleName, &pFont->pObj_);
 			fontFamily->Release();
 			names->Release();
