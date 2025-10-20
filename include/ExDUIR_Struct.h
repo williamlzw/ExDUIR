@@ -1803,24 +1803,27 @@
 
 // 分割条方向：0-垂直(默认)，1-水平
 #define SPLITTER_LONG_DIRECTION 0
-// 分割面板1，即左侧或上侧
-#define SPLITTER_LONG_PANEL1 1
-// 分割面板2，即右侧或下侧
-#define SPLITTER_LONG_PANEL2 2
-// 分割条大小
-#define SPLITTER_LONG_SIZE 3
+// 分割条大小(默认4像素)
+#define SPLITTER_LONG_SIZE 1
 // 分割条初始位置：使用权重值0-100表示百分位置
-#define SPLITTER_LONG_POSITION 4
+#define SPLITTER_LONG_POSITION 2
+// 分割条颜色
+#define SPLITTER_LONG_COLOR 3
+// 分隔条锁定状态，0-不锁定(默认)，1-锁定
+#define SPLITTER_LONG_LOCK 4
 // 分割条当前位置,像素值(此属性用户设置无效)
 #define SPLITTER_LONG_CURPOSITION 5
 // 是否正在拖动分割条,TRUE/FALSE(此属性用户设置无效)
 #define SPLITTER_LONG_DRAGGING 6
-// 分割条颜色
-#define SPLITTER_LONG_COLOR 7
-// 分隔条锁定状态，0-不锁定(默认)，1-锁定
-#define SPLITTER_LONG_LOCK 8
+// 分割面板1，即左侧或上侧(此属性不允许用户设置)
+#define SPLITTER_LONG_PANEL1 7
+// 分割面板2，即右侧或下侧(此属性不允许用户设置)
+#define SPLITTER_LONG_PANEL2 8
 // 锁定面板2的宽度和高度值(此属性用户设置无效)
 #define SPLITTER_LONG_LOCKSIZE 9
+// 确定控件 Spliter 调整大小后，哪个面板将保持相同的大小
+#define SPLITTER_LONG_FIXEDPANEL 10
+
 
 // ======自定义消息======
 
