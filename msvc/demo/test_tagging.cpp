@@ -116,7 +116,7 @@ LRESULT CALLBACK OnTaggingWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM 
 		if (hObj_taggingBoard != 0)
 		{
 			Ex_ObjMove(hObj_taggingBoard, 30 / dpiy, 30 / dpiy, (LOWORD(lParam) - 200) / dpiy,
-				(HIWORD(lParam) - 50) / dpiy, TRUE);
+				(HIWORD(lParam) - 100) / dpiy, TRUE);
 			Ex_ObjMove(hObj_button1, (width - 150) / dpiy, 30 / dpiy, 100 / dpiy, 30 / dpiy,
 				TRUE);
 			Ex_ObjMove(hObj_button2, (LOWORD(lParam) - 150) / dpiy, 70 / dpiy, 100 / dpiy, 30 / dpiy,
