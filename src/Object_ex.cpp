@@ -1861,8 +1861,9 @@ void _obj_destroy(HEXOBJ hObj, obj_s* pObj, INT* nError)
             }
         }
     }
-
-    _obj_z_clear(hObj, pObj, 0, 0);
+    EXHANDLE  Parent = 0;
+    obj_base* pParnet = nullptr;
+    _obj_z_clear(hObj, pObj, &Parent, &pParnet);
     // 清理子组件
     HEXOBJ sObj  = pObj->objChildFirst_;
     obj_s* psObj = nullptr;

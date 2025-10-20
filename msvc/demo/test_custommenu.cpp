@@ -148,7 +148,6 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
         HEXOBJ hObjfind = Ex_ObjFind(hExDUI, 0, L"Item", 0);
         INT    itemTopOffset        = topOffset;
         RECT   rcObj{0};
-        auto dpi = Ex_DUIGetSystemDpi();
         while (hObjfind != 0) {
             Ex_ObjGetClientRect(hObjfind, &rcObj);
             INT itemHeight = rcObj.bottom - rcObj.top;
@@ -164,7 +163,6 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wPa
         RECT rc{0};
         _canvas_clear(wParam, 0);
         HEXIMAGE hImg;
-        auto dpi = Ex_DUIGetSystemDpi();
         if (GetPropW(hWnd, L"IsMainMenu") != 0) {
             _img_createfromfile(L"res/custommenu/Main.png", &hImg);
             _canvas_drawimagefromgrid(wParam, hImg, 0, 0, LOWORD(lParam), HIWORD(lParam), 0, 0, 68,
@@ -207,13 +205,13 @@ LRESULT CALLBACK OnMenuItemRightMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
                 }
                 if (nodeID == 0) {
                     HEXIMAGE hImg      = 0;
-                    HEXIMAGE hImgSmall = 0;
                     _img_createfromfile(L"res/rotateimgbox.jpg", &hImg);
-                    _img_scale(hImg, 20, 20, &hImgSmall);   // 注意菜单条目高度跟图像高度有关，因此缩放到24
-
-                    _canvas_drawimage(ps.hCanvas, hImgSmall, 2, 2, 255);
+                    INT width, height;
+                    _img_getsize(hImg, &width, &height);
+                    // 注意菜单条目高度跟图像高度有关，因此缩放到24
+                    _canvas_drawimagerectrect(ps.hCanvas, hImg, 2, 2, 20, 20, 0, 0, width, height, 255); 
                     _img_destroy(hImg);
-                    _img_destroy(hImgSmall);
+
                 }
                 *lpResult = 1;
                 return 1;
