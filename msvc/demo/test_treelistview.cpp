@@ -16,9 +16,9 @@ void test_treelistview(HWND hWnd)
     HEXOBJ hObj_treeview =
         Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"treeview", L"test_treeview",
                        OBJECT_STYLE_BORDER | OBJECT_STYLE_VISIBLE | OBJECT_STYLE_HSCROLL |
-                           OBJECT_STYLE_VSCROLL | TREEVIEW_STYLE_SHOWADDANDSUB,
+                           OBJECT_STYLE_VSCROLL | TREEVIEW_STYLE_SHOWADDANDSUB | TREEVIEW_STYLE_SHOWCABLE,
                        50, 50, 250, 250, hExDui_treelistview, 0, DT_VCENTER, 0, 0, NULL);
-    auto              m_hImageListIcon = _imglist_create(30, 30);
+    auto              m_hImageListIcon = _imglist_create(18, 18);
     std::vector<CHAR> imgdata;
     for (INT i = 3; i <= 5; i++) {
         auto str = L"./res/buttonex/" + std::to_wstring(i) + L".png";
@@ -27,11 +27,11 @@ void test_treelistview(HWND hWnd)
     }
     // 设置列表的图片组,wParam可以重置表项高度为图标高度
     Ex_ObjSendMessage(hObj_treeview, TREEVIEW_MESSAGE_SETIMAGELIST, 1, (size_t)m_hImageListIcon);
-
-    EX_TREEVIEW_INSERTINFO ti = {0};
-
+    Ex_ObjSetLong(hObj_treeview, 6, 26);
     Ex_ObjSetColor(hObj_treeview, COLOR_EX_BACKGROUND, ExARGB(255, 255, 255, 125), FALSE);
     Ex_ObjSetColor(hObj_treeview, COLOR_EX_BORDER, ExARGB(255, 255, 255, 255), TRUE);
+    
+    EX_TREEVIEW_INSERTINFO ti = {0};
     ti.fExpand           = TRUE;
     ti.pwzText           = L"节点1";
     ti.nImageIndexExpand = 2;   // 无子节点为展开节点
@@ -105,6 +105,12 @@ void test_treelistview(HWND hWnd)
     ti.pwzText    = L"节点5-2-2-2-1-1-1";
     ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(
         hObj_treeview, TREEVIEW_MESSAGE_INSERTITEM, 0, (size_t)&ti);
+    
+    ti.pwzText = L"节点6";
+    ti.itemParent = 0;
+    ti.itemParent = (EX_TREEVIEW_NODEITEM*)Ex_ObjSendMessage(hObj_treeview, TREEVIEW_MESSAGE_INSERTITEM, 0, (size_t)&ti);
+    //ti.pwzText = L"节点5-2-2-2-1-1-1";
+    //Ex_ObjSendMessage(hObj_treeview, TREEVIEW_MESSAGE_INSERTITEM, 0, (size_t)&ti);
 
     Ex_ObjSendMessage(hObj_treeview, TREEVIEW_MESSAGE_UPDATE, 0, 0);
 
