@@ -516,22 +516,34 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
 
             if (FLAGS_CHECK(pObj->dwStyle_, TREEVIEW_STYLE_SHOWADDANDSUB)) {
                 if (item->pChildFirst) {
-                    LPVOID brush = _brush_create(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
-                    _canvas_drawline(ps->hCanvas, brush, rect.left, rect.top, rect.left,
-                        rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
-                    _canvas_drawline(ps->hCanvas, brush, rect.left, rect.top, rect.right, rect.top,
-                        1, D2D1_DASH_STYLE_SOLID);
-                    _canvas_drawline(ps->hCanvas, brush, rect.right, rect.top, rect.right,
-                        rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
-                    _canvas_drawline(ps->hCanvas, brush, rect.left, rect.bottom, rect.right,
-                        rect.bottom, 1, D2D1_DASH_STYLE_SOLID);
+                    // 扩大加减框2个像素
+                    RECT expandRect = rect;
+                    expandRect.left -= Ex_Scale(1);    // 向左扩大1像素
+                    expandRect.right += Ex_Scale(1);   // 向右扩大1像素
+                    expandRect.top -= Ex_Scale(1);     // 向上扩大1像素
+                    expandRect.bottom += Ex_Scale(1);  // 向下扩大1像素
 
-                    _canvas_drawline(ps->hCanvas, brush, rect.left, (rect.top + rect.bottom) / 2,
-                        rect.right, (rect.top + rect.bottom) / 2, 1,
+                    LPVOID brush = _brush_create(_obj_getcolor(pObj, COLOR_EX_TEXT_NORMAL));
+
+                    // 绘制加减框边框
+                    _canvas_drawline(ps->hCanvas, brush, expandRect.left, expandRect.top, expandRect.left,
+                        expandRect.bottom, 1, D2D1_DASH_STYLE_SOLID);
+                    _canvas_drawline(ps->hCanvas, brush, expandRect.left, expandRect.top, expandRect.right, expandRect.top,
+                        1, D2D1_DASH_STYLE_SOLID);
+                    _canvas_drawline(ps->hCanvas, brush, expandRect.right, expandRect.top, expandRect.right,
+                        expandRect.bottom, 1, D2D1_DASH_STYLE_SOLID);
+                    _canvas_drawline(ps->hCanvas, brush, expandRect.left, expandRect.bottom, expandRect.right,
+                        expandRect.bottom, 1, D2D1_DASH_STYLE_SOLID);
+
+                    // 绘制水平中线
+                    _canvas_drawline(ps->hCanvas, brush, expandRect.left, (expandRect.top + expandRect.bottom) / 2,
+                        expandRect.right, (expandRect.top + expandRect.bottom) / 2, 1,
                         D2D1_DASH_STYLE_SOLID);
+
+                    // 如果未展开，绘制垂直中线（减号变加号）
                     if (!item->fExpand) {
-                        _canvas_drawline(ps->hCanvas, brush, (rect.left + rect.right) / 2, rect.top,
-                            (rect.left + rect.right) / 2, rect.bottom - 1, 1,
+                        _canvas_drawline(ps->hCanvas, brush, (expandRect.left + expandRect.right) / 2, expandRect.top,
+                            (expandRect.left + expandRect.right) / 2, expandRect.bottom, 1,
                             D2D1_DASH_STYLE_SOLID);
                     }
                     _brush_destroy(brush);
@@ -546,10 +558,10 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
                 if (item->pChildFirst) {
                     INT centerX = (rect.left + rect.right) / 2;
                     if (item->pNext) {
-                        _canvas_drawline(ps->hCanvas, brush, centerX, (ps->rcPaint.bottom + ps->rcPaint.top) / 2 + Ex_Scale(4), centerX, rect.bottom, 1.0, D2D1_DASH_STYLE_DOT);
+                        _canvas_drawline(ps->hCanvas, brush, centerX, (ps->rcPaint.bottom + ps->rcPaint.top) / 2 + Ex_Scale(5), centerX, rect.bottom, 1.0, D2D1_DASH_STYLE_DOT);
                     }
                     if (item->pParent || item->pPrev) {
-                        _canvas_drawline(ps->hCanvas, brush, centerX, rect.top, centerX, (ps->rcPaint.bottom + ps->rcPaint.top) / 2 - Ex_Scale(4), 1.0, D2D1_DASH_STYLE_DOT);
+                        _canvas_drawline(ps->hCanvas, brush, centerX, rect.top, centerX, (ps->rcPaint.bottom + ps->rcPaint.top) / 2 - Ex_Scale(5), 1.0, D2D1_DASH_STYLE_DOT);
                     }
                 }
 
@@ -559,10 +571,23 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
                     INT leftEnd = rect.left + Ex_Scale(12);
 
                     _canvas_drawline(ps->hCanvas, brush, leftStart, centerY, leftEnd, centerY, 1.0, D2D1_DASH_STYLE_DOT);
-
-                    if (item->pPrev) centerY = rect.top;
-                    if (item->pNext) centerY = rect.bottom;
-                    _canvas_drawline(ps->hCanvas, brush, leftStart, rect.top, leftStart, centerY, 1.0, D2D1_DASH_STYLE_DOT);
+                    // 修复：正确处理最后一项的垂直线
+                    if (item->pPrev) {
+                        // 有前项，需要绘制垂直线
+                        if (item->pNext) {
+                            // 中间项：完整垂直线
+                            _canvas_drawline(ps->hCanvas, brush, leftStart, rect.top, leftStart, rect.bottom, 1.0, D2D1_DASH_STYLE_DOT);
+                        }
+                        else {
+                            // 最后一项：垂直线只到中心
+                            _canvas_drawline(ps->hCanvas, brush, leftStart, rect.top, leftStart, centerY, 1.0, D2D1_DASH_STYLE_DOT);
+                        }
+                    }
+                    else if (item->pNext) {
+                        // 第一项：垂直线从中心开始
+                        _canvas_drawline(ps->hCanvas, brush, leftStart, centerY, leftStart, rect.bottom, 1.0, D2D1_DASH_STYLE_DOT);
+                    }
+                    // 如果是唯一项（既无前项也无后项），不绘制垂直线
                 }
 
                 EX_TREEVIEW_NODEITEM* parent = item->pParent;
@@ -576,7 +601,7 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
                         INT centerY = (rect.top + rect.bottom) / 2;
                         INT leftStart = rect.left + Ex_Scale(4);
                         INT leftEnd = rect.left + Ex_Scale(12);
-
+                        
                         _canvas_drawline(ps->hCanvas, brush, leftStart, centerY, leftEnd, centerY, 1.0, D2D1_DASH_STYLE_DOT);
                         if (item->pNext) centerY = rect.bottom;
                         _canvas_drawline(ps->hCanvas, brush, leftStart, rect.top, leftStart, centerY, 1.0, D2D1_DASH_STYLE_DOT);
@@ -605,7 +630,7 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
                 }
             }
             _canvas_drawtext(ps->hCanvas, pObj->hFont_, _obj_getcolor(pObj, 2), item->pwzText, -1,
-                4 | 0 | 32, rect.right + Ex_Scale(5), ps->rcPaint.top,
+                4 | 0 | 32, rect.right + (nImageIndex != 0 ? 0 : Ex_Scale(8)), ps->rcPaint.top,
                 ps->rcPaint.right, ps->rcPaint.bottom);
         }
     }
@@ -645,11 +670,10 @@ EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType)
                 hitType = TREEVIEW_HITTYPE_ONITEMINDENT;
             }
             else {
-                tmp.left =
-                    Ex_Scale(5) + pItem->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT);
-                tmp.right = tmp.left + Ex_Scale(8);
-                tmp.top = (rect.bottom - rect.top - Ex_Scale(8)) / 2;
-                tmp.bottom = (rect.bottom - rect.top + Ex_Scale(8)) / 2;
+                tmp.left = Ex_Scale(5) + pItem->nDepth * _obj_getextralong(pObj, TREEVIEW_LONG_INDENT) - Ex_Scale(1); // 向左扩大1像素
+                tmp.right = tmp.left + Ex_Scale(10); // 宽度扩大2像素（8+2=10）
+                tmp.top = (rect.bottom - rect.top - Ex_Scale(10)) / 2; // 高度扩大2像素
+                tmp.bottom = tmp.top + Ex_Scale(10); // 高度扩大2像素
                 if (pItem->pChildFirst) {
                     pt.x -= rect.left;
                     pt.y -= rect.top;
