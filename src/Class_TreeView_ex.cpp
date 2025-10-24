@@ -546,6 +546,14 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
                             (expandRect.left + expandRect.right) / 2, expandRect.bottom, 1,
                             D2D1_DASH_STYLE_SOLID);
                     }
+                    if (FLAGS_CHECK(ps->dwStyle, TREEVIEW_STYLE_SHOWCABLE)) {
+                        // 在三角形右侧绘制一条横线，连接子节点
+                        FLOAT lineY = (expandRect.top + expandRect.bottom) / 2; // 横线的Y坐标与三角形中心对齐
+                        FLOAT lineStartX = expandRect.right + Ex_Scale(2); // 横线起始X坐标（三角形右侧2像素）
+                        FLOAT lineEndX = lineStartX + _obj_getextralong(pObj, TREEVIEW_LONG_INDENT) - Ex_Scale(13); // 横线长度
+
+                        _canvas_drawline(ps->hCanvas, brush, lineStartX, lineY, lineEndX, lineY, 1, D2D1_DASH_STYLE_DOT);
+                    }
                     _brush_destroy(brush);
                 }
             }
@@ -764,7 +772,7 @@ LRESULT CALLBACK _treeview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
     }
     else if (uMsg == WM_CREATE) {
-        _obj_setextralong(pObj, TREEVIEW_LONG_INDENT, Ex_Scale(10));
+        _obj_setextralong(pObj, TREEVIEW_LONG_INDENT, Ex_Scale(18));
         _obj_setextralong(pObj, TREEVIEW_LONG_ITEMHEIGHT, Ex_Scale(20));
         _obj_setextralong(pObj, TREEVIEW_LONG_ITEMARRAY, (size_t)Array_Create(0));
         _obj_setextralong(pObj, TREEVIEW_LONG_SELECTEDCOLOR, ExARGB(134, 134, 146, 255));
