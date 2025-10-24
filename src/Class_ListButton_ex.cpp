@@ -384,8 +384,9 @@ void _listbuttonex_paint(HEXOBJ hObj)
                             if (hImage != 0) {
                                 _canvas_drawimagerectrect(ps.hCanvas, hImage, nLeft + Ex_Scale(5), hImageTop,
                                                           nLeft + Ex_Scale(5) + hImageWidth,
-                                                          hImageTop + hImageHeight, 0, 0,
-                                                          hImageWidth, hImageHeight, 255);
+                                                          hImageTop + hImageHeight, 0, 0, hImageWidth,
+                                  hImageHeight,
+                                  (pTR->dwState == STATE_DISABLE)?128:255);
                                 nLeft += Ex_Scale(5) + hImageWidth;
                                 nWidth -= hImageWidth;
                             }
