@@ -304,6 +304,10 @@ struct RENDERINFO
     ID2D1Effect*                 pEffectHueRotation;
     ID2D1Effect*                 pEffectComposite;
     HMODULE                      hRiched20;
+    ID3D11Device* pD3DDevice;
+    ID3D11Device1* pD3DDevice1;
+    IDXGIDevice* pDXGIDevice;
+    ID3D11DeviceContext* pD3DDeviceContext;
 };
 
 extern LOCALINFO  g_Li;

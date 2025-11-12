@@ -22,14 +22,15 @@
 #include <d2d1.h>
 #include <d2d1_1.h>
 #include <d3d11.h>
+#include <d3d11_1.h>
+#include <DirectXMath.h>
 #include <dwrite.h>
 #include <wincodec.h>
 #include <Initguid.h>
 #include <d2d1effectauthor.h>
 #include <d2d1effecthelpers.h>
-
-#pragma comment(lib, "bcrypt.lib")
 #include <d3dcompiler.h>
+#pragma comment(lib, "bcrypt.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")

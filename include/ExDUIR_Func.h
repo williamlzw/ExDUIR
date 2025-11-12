@@ -660,7 +660,7 @@ BOOL _canvas_flush(HEXCANVAS hCanvas);
 /// 获取画布信息
 /// </summary>
 /// <param name="hCanvas">画布句柄</param>
-/// <param name="nType">画布信息类型 CVC_DX常量</param>
+/// <param name="nType">画布信息类型 CANVAS_DX_常量</param>
 /// <returns></returns>
 LPVOID _canvas_getcontext(HEXCANVAS hCanvas, INT nType);
 
@@ -2154,6 +2154,48 @@ HEXOBJ Ex_DUIGetObjFromPoint(EXHANDLE handle, INT x, INT y);
 /// </summary>
 /// <returns></returns>
 DOUBLE Ex_DUIGetSystemDpi();
+
+/// <summary>
+/// 取引擎DWriteFactory指针
+/// </summary>
+/// <returns></returns>
+void* Ex_GetIDWriteFactory();
+
+/// <summary>
+/// 取引擎D2D1Factory1指针
+/// </summary>
+/// <returns></returns>
+void* Ex_GetD2D1Factory1();
+
+/// <summary>
+/// 取引擎D3DDevice指针
+/// </summary>
+/// <returns></returns>
+void* Ex_GetD3DDevice();
+
+/// <summary>
+/// 取引擎D3DDevice1指针
+/// </summary>
+/// <returns></returns>
+void* Ex_GetD3DDevice1();
+
+/// <summary>
+/// 取引擎D2DDevice指针
+/// </summary>
+/// <returns></returns>
+void* Ex_GetD2DDevice();
+
+/// <summary>
+/// 取引擎DXGIDevice指针
+/// </summary>
+/// <returns></returns>
+void* Ex_GetDXGIDevice();
+
+/// <summary>
+/// 取引擎D3DDeviceContext指针
+/// </summary>
+/// <returns></returns>
+void* Ex_GetD3DDeviceContext();
 
 /// <summary>
 /// 设置引擎数值

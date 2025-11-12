@@ -216,6 +216,7 @@
     <ClCompile Include="test_custombkg.cpp" />
     <ClCompile Include="test_custommenu.cpp" />
     <ClCompile Include="test_customredraw.cpp" />
+    <ClCompile Include="test_d3d.cpp" />
     <ClCompile Include="test_datebox.cpp" />
     <ClCompile Include="test_dragobj.cpp" />
     <ClCompile Include="test_drawingboard.cpp" />
@@ -268,6 +269,7 @@
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Geometry.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="test_absolute.h" />
     <ClInclude Include="test_ani.h" />
@@ -285,6 +287,7 @@
     <ClInclude Include="test_custombkg.h" />
     <ClInclude Include="test_custommenu.h" />
     <ClInclude Include="test_customredraw.h" />
+    <ClInclude Include="test_d3d.h" />
     <ClInclude Include="test_datebox.h" />
     <ClInclude Include="test_dragobj.h" />
     <ClInclude Include="test_drawingboard.h" />

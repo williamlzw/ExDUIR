@@ -19,6 +19,13 @@ Ex_Sleep
 Ex_MemAlloc
 Ex_MemFree
 Ex_MemReAlloc
+Ex_GetIDWriteFactory
+Ex_GetD2D1Factory1
+Ex_GetD3DDevice
+Ex_GetD3DDevice1
+Ex_GetD2DDevice
+Ex_GetDXGIDevice
+Ex_GetD3DDeviceContext
 
 ;----------------------------------------
 ;wnd

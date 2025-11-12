@@ -425,3 +425,34 @@ DOUBLE Ex_DUIGetSystemDpi()
         return 1;
     }
 }
+
+void* Ex_GetIDWriteFactory()
+{
+    return g_Ri.pDWriteFactory;
+
+}
+void* Ex_GetD2D1Factory1()
+{
+    return g_Ri.pD2Dfactory;
+}
+void* Ex_GetD3DDevice()
+{
+    return g_Ri.pD3DDevice;
+}
+void* Ex_GetD3DDevice1()
+{
+    return g_Ri.pD3DDevice1;
+}
+void* Ex_GetD2DDevice()
+{
+    return g_Ri.pD2DDevice;
+}
+void* Ex_GetDXGIDevice()
+{
+    return g_Ri.pDXGIDevice;
+}
+
+void* Ex_GetD3DDeviceContext()
+{
+    return g_Ri.pD3DDeviceContext;
+}

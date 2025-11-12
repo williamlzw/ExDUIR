@@ -73,6 +73,7 @@
 #include "test_chatbox.h"
 #include "test_flowchart.h"
 #include "test_splitter.h"
+#include "test_d3d.h"
 
 INT CalculateContainerHeight(INT buttonsNumber, INT containerWidth, INT buttonWidth,
                              INT buttonHeight, INT horizontalSpacing, INT verticalSpacing);

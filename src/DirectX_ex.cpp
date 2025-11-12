@@ -3,13 +3,18 @@
 BOOL _dx_init(INT* nError)
 {
     BOOL          ret        = FALSE;
-    ID3D11Device* pD3DDevice = nullptr;
+    D3D_FEATURE_LEVEL featureLevels[] =
+    {
+        D3D_FEATURE_LEVEL_11_1,
+        D3D_FEATURE_LEVEL_11_0,
+    };
+    UINT numFeatureLevels = ARRAYSIZE(featureLevels);
+    D3D_FEATURE_LEVEL featureLevel;
     *nError =
         D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-                          NULL, 0, D3D11_SDK_VERSION, &pD3DDevice, NULL, NULL);
-    if (*nError == 0 && pD3DDevice != nullptr) {
-        /* *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1),
-         * (LPVOID *)&(g_Ri.pD2Dfactory));*/
+            featureLevels, numFeatureLevels, D3D11_SDK_VERSION, &g_Ri.pD3DDevice, &featureLevel, &g_Ri.pD3DDeviceContext);
+    if (*nError == 0 && g_Ri.pD3DDevice != nullptr) {
+        g_Ri.pD3DDevice->QueryInterface(__uuidof(ID3D11Device1), (void**)&g_Ri.pD3DDevice1);
 #ifdef _DEBUG   // 如果为Debug模式，则启用D2D调试层
 
         // 下面为设置启用调试层，会在IDE输出窗口内显示,消息框和菜单项目会有彩色外框
@@ -23,10 +28,9 @@ BOOL _dx_init(INT* nError)
         *nError = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &g_Ri.pD2Dfactory);
 #endif
         if (*nError == 0) {
-            IDXGIDevice* pDXGIDevice = nullptr;
-            *nError = pD3DDevice->QueryInterface(__uuidof(IDXGIDevice), (LPVOID*)&pDXGIDevice);
-            if (*nError == 0 && pDXGIDevice != nullptr) {
-                *nError = g_Ri.pD2Dfactory->CreateDevice(pDXGIDevice, &g_Ri.pD2DDevice);
+            *nError = g_Ri.pD3DDevice->QueryInterface(__uuidof(IDXGIDevice), (LPVOID*)&g_Ri.pDXGIDevice);
+            if (*nError == 0 && g_Ri.pDXGIDevice != nullptr) {
+                *nError = g_Ri.pD2Dfactory->CreateDevice(g_Ri.pDXGIDevice, &g_Ri.pD2DDevice);
                 if (*nError == 0 && g_Ri.pD2DDevice != nullptr) {
                     *nError = g_Ri.pD2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
                                                                    &g_Ri.pD2DDeviceContext);
@@ -47,10 +51,8 @@ BOOL _dx_init(INT* nError)
                         }
                     }
                 }
-                pDXGIDevice->Release();
             }
         }
-        pD3DDevice->Release();
     }
     return ret;
 }

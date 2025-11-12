@@ -191,6 +191,9 @@
     <ClCompile Include="test_splitter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test_d3d.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -382,6 +385,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_splitter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_d3d.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
