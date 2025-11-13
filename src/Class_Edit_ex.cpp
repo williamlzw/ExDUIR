@@ -612,9 +612,9 @@ void _edit_command(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
 size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
   EX_PAINTSTRUCT ps{0};
   if (Ex_ObjBeginPaint(hObj, &ps)) {
-    INT atom;
+    if (!ps.dwOwnerData) return 0;
     LPVOID pITS = ((edit_s*)ps.dwOwnerData)->its_;
-    ;
+    INT atom;
     if ((ps.dwState & STATE_FOCUS) != 0) {
       atom = ATOM_FOCUS;
     } else if ((ps.dwState & STATE_HOVER) != 0) {
@@ -718,9 +718,11 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         return 0;
       }
     } else if (uMsg == WM_DESTROY) {
-      BOOL ret = FALSE;
-      _edit_sendmessage(pObj, uMsg, wParam, lParam, &ret);
-      _edit_unint(pObj);
+        KillTimer(hWnd, (size_t)pObj + TIMER_EDIT_CARET);
+        BOOL ret = FALSE;
+        _edit_sendmessage(pObj, uMsg, wParam, lParam, &ret);
+        _edit_unint(pObj);
+        UpdateWindow(hWnd);
     } else if (uMsg == WM_SETPARENTAFTER) {
       _edit_size(hWnd, hObj, pObj);
     } else if (uMsg == WM_SIZE) {

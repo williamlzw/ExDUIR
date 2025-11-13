@@ -1278,3 +1278,118 @@ void ConvertCurveToBezier(const std::vector<D2D1_POINT_2F>& points, float tensio
         beziers.push_back(D2D1::BezierSegment(c1, c2, p2));
     }
 }
+
+
+
+const struct ERuntimeClass EObject::classEObject = { "EObject",sizeof(EObject),0xffff,NULL,NULL,NULL };
+
+
+ERuntimeClass* EObject::GetRuntimeClass() const
+{
+    return RUNTIME_CLASS(EObject);
+}
+
+BOOL EObject::IsKindOf(const ERuntimeClass* pClass) const
+{
+    ERuntimeClass* pClassThis = GetRuntimeClass();
+    return pClassThis->IsDerivedFrom(pClass);
+}
+
+
+BOOL ERuntimeClass::IsDerivedFrom(const ERuntimeClass* pBaseClass) const
+{
+    const ERuntimeClass* pClassThis = this;
+    while (pClassThis)
+    {
+        if (pClassThis == pBaseClass)
+        {
+            return TRUE;
+        }
+        pClassThis = pClassThis->m_pBaseClass;
+    }
+    return FALSE;
+}
+
+
+EObject* ERuntimeClass::CreateObject()
+{
+    if (m_pfnCreateObject == NULL)
+    {
+        return NULL;
+    }
+    return (*m_pfnCreateObject)();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+IMPLEMENT_DYNCREATE(CHObj, EObject)
+CHObj::operator HEXOBJ() const
+{
+    return this == NULL ? NULL : hObj;
+}
+BOOL CHObj::operator==(const CHObj& wnd) const
+{
+    return ((HEXOBJ)wnd.hObj) == hObj;
+}
+BOOL CHObj::operator!=(const CHObj& wnd) const
+{
+    return ((HEXOBJ)wnd.hObj) != hObj;
+}
+CHObj::CHObj(HEXOBJ hWnd)
+{
+    hObj = hWnd;
+}
+void CPrintInfo::SetMinPage(UINT nMinPage)
+{
+    m_pPD.nMinPage = (WORD)nMinPage;
+}
+void CPrintInfo::SetMaxPage(UINT nMaxPage)
+{
+    m_pPD.nMaxPage = (WORD)nMaxPage;
+}
+UINT CPrintInfo::GetMinPage() const
+{
+    return m_pPD.nMinPage;
+}
+UINT CPrintInfo::GetMaxPage() const
+{
+    return m_pPD.nMaxPage;
+}
+UINT CPrintInfo::GetFromPage() const
+{
+    return m_pPD.lpPageRanges->nFromPage;
+}
+UINT CPrintInfo::GetToPage() const
+{
+    return m_pPD.lpPageRanges->nToPage;
+}
+HRESULT GetPrintTicketFromDevmode(_In_ PCTSTR printerName, _In_reads_bytes_(devModesize) PDEVMODE devMode, WORD devModesize, _Out_ LPSTREAM* printTicketStream)
+{
+    HRESULT hr = S_OK;
+    HPTPROVIDER provider = nullptr;
+    *printTicketStream = nullptr;
+    // 为打印票证分配流.
+    hr = CreateStreamOnHGlobal(nullptr, TRUE, printTicketStream);
+    if (SUCCEEDED(hr))
+    {
+        hr = PTOpenProvider(printerName, 1, &provider);
+    }
+    // 从DEVMODE获取打印票证.
+    if (SUCCEEDED(hr))
+    {
+        hr = PTConvertDevModeToPrintTicket(provider, devModesize, devMode, kPTJobScope, *printTicketStream);
+    }
+    if (FAILED(hr) && printTicketStream != nullptr)
+    {
+        // 如果失败，则释放printTicketStream.
+        if (*printTicketStream != 0) {
+            (*printTicketStream)->Release();
+            *printTicketStream = 0;
+        };
+    }
+    if (provider)
+    {
+        PTCloseProvider(provider);
+    }
+    return hr;
+}

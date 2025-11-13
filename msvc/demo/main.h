@@ -74,6 +74,7 @@
 #include "test_flowchart.h"
 #include "test_splitter.h"
 #include "test_d3d.h"
+#include "test_grid.h"
 
 INT CalculateContainerHeight(INT buttonsNumber, INT containerWidth, INT buttonWidth,
                              INT buttonHeight, INT horizontalSpacing, INT verticalSpacing);

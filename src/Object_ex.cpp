@@ -45,7 +45,7 @@ void _object_init()
     _linechart_register();
     _chatbox_register();
     _flowchart_register();
-    //_grid_register();
+    _grid_register();
 #ifdef VCL_PLAYER
     _vlcplayer_register();
 #endif

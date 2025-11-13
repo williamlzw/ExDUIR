@@ -6,7 +6,7 @@
 #include <string>
 #include <tchar.h>
 #include <vector>
-
+#include <commctrl.h>
 #pragma region 编译配置
 // 启用VLC播放引擎
 //#define VCL_PLAYER
@@ -180,6 +180,10 @@
 #define WM_EX_PROPS -11
 // 消息_扩展_左键双击组件
 #define WM_EX_LDCLICK -12
+// 消息_扩展_绘制打印作业  wParam:pageIndex   lParam: EX_PRINTINFO*
+#define WM_EX_PRINT -13
+// 消息_扩展_打印完成 wParam:无   lParam: 无
+#define WM_EX_PRINTCOMPLETE -15
 #pragma endregion msg ex constant
 
 #pragma region paint progress constant
@@ -2335,7 +2339,483 @@ struct EX_DATETIME
 	INT Mday;   // 日   1-31
 	INT Wday;   // 星期 1-7 7=星期日
 };
+//---------------------------------------------------------------------------------------------------------------------------------
+// Grid 表格
 
+#pragma region grid style
+#define GRID_FIRST        0x1000
+// Print 表格打印
+#define GRID_PRINT   (GRID_FIRST + 1)
+// MergeCells 合并单元格  lParam: CCellRange*
+#define GRID_MERGECELLS   (GRID_FIRST + 2)
+// SplitCells 拆分单元格  lParam: nMergeID
+#define GRID_SPLITCELLS   (GRID_FIRST + 3)
+
+// GetRowCount   取行数	
+#define GRID_GETROWCOUNT   (GRID_FIRST + 4)
+// GetColumnCount 取列数
+#define GRID_GETCOLCOUNT   (GRID_FIRST + 5)
+// GetFixedRowCount 取固定行数
+#define GRID_GETFIXROWCOUNT   (GRID_FIRST + 6)
+// GetFixedColumnCount 取固定列数
+#define GRID_GETFIXCOLCOUNT   (GRID_FIRST + 7)
+
+// SetRowCount  置行数    lParam: Count
+#define GRID_SETROWCOUNT   (GRID_FIRST + 8)
+// SetColumnCount  置列数 lParam: Count
+#define GRID_SETCOLCOUNT   (GRID_FIRST + 9)
+// SetFixedRowCount 置固定行数  lParam: Count
+#define GRID_SETFIXROWCOUNT   (GRID_FIRST + 10)
+// SetFixedColumnCount 置固定列数  lParam: Count
+#define GRID_SETFIXCOLCOUNT   (GRID_FIRST + 11)
+
+// GetRowHeight   取行高      lParam:row   return:Height
+#define GRID_GETROWHEIGHT   (GRID_FIRST + 12)
+// SetRowHeight   置行高      wParam: row  lParam: Height    
+#define GRID_SETROWHEIGHT   (GRID_FIRST + 13)
+// GetColumnWidth 取列宽     lParam:col    return:Width
+#define GRID_GETCOLHEIGHT   (GRID_FIRST + 14)
+// SetColumnWidth  置列宽    wParam: row   lParam: Width      
+#define GRID_SETCOLHEIGHT   (GRID_FIRST + 15)
+
+// GetFixedRowHeight     取固定行总高度    
+#define GRID_GETFIXROWHEIGHT   (GRID_FIRST + 16)
+// GetFixedColumnWidth   取固定列总宽度   
+#define GRID_GETFIXCOLWIDTH   (GRID_FIRST + 17)
+
+// GetVirtualWidth     取列总宽度    
+#define GRID_GETVIRTUALWIDTH   (GRID_FIRST + 18)
+// GetVirtualHeight    取行总高度   
+#define GRID_GETVIRTUALHEIGHT   (GRID_FIRST + 19)
+
+// GetGridBkColor     取表格背景色
+#define GRID_GETGRIDBKCOLOR   (GRID_FIRST + 20)
+// SetGridBkColor     置表格背景色  lParam: Color
+#define GRID_SETGRIDBKCOLOR   (GRID_FIRST + 21)
+// GetGridLineColor   取表格线色  
+#define GRID_GETGRIDLINECOLOR   (GRID_FIRST + 22)
+// SetGridLineColor   置表格线色  lParam: Color
+#define GRID_SETGRIDLINECOLOR   (GRID_FIRST + 23)
+
+// SetTitleTipBackClr....
+
+// GetTextColor  取文本色
+#define GRID_GETTEXTCOLOR   (GRID_FIRST + 27)
+// SetTextColor  置文本色   lParam: Color
+#define GRID_SETTEXTCOLOR   (GRID_FIRST + 28)
+// GetTextBKColor 取文本背景色
+#define GRID_GETTEXTBKCOLOR   (GRID_FIRST + 29)
+// SetTextBKColor 置文本背景色    lParam: Color
+#define GRID_SETTEXTBKCOLOR   (GRID_FIRST + 30)
+
+// GetFixedTextColor 取固定行文本色
+#define GRID_GETFIXTEXTCOLOR   (GRID_FIRST + 31)
+// SetFixedTextColor 置固定行文本色    lParam: Color
+#define GRID_SETFIXTEXTCOLOR   (GRID_FIRST + 32)
+// GetFixedBkColor 取固定行背景色
+#define GRID_GETFIXTEXTBKCOLOR   (GRID_FIRST + 33)
+// SetFixedBkColor 置固定行背景色    lParam: Color
+#define GRID_SETFIXTEXTBKCOLOR   (GRID_FIRST + 34)
+
+// GetVirtualMode  取虚表模式    return: BOOL
+#define GRID_GETVIRTUALMODE   (GRID_FIRST + 35)
+// SetVirtualMode  置虚表模式    lParam: BOOL
+#define GRID_SETVIRTUALMODE   (GRID_FIRST + 36)
+// GetCallbackFunc     return: GRIDCALLBACK
+#define GRID_GETCALLBACK   (GRID_FIRST + 37)
+// SetCallbackFunc     wParam: GRIDCALLBACK   lParam: lParam
+#define GRID_SETCALLBACK   (GRID_FIRST + 38)
+
+// GetGridLines 取表格线  return: #GVL_
+#define GRID_GETGRIDLINES  (GRID_FIRST + 39)
+// SetGridLines 置表格线  lParam: #GVL_
+#define GRID_SETGRIDLINES  (GRID_FIRST + 40)
+// IsEditable   是否可编辑   return: BOOL
+#define GRID_ISEDITABLE  (GRID_FIRST + 41)
+// SetEditable  置可编辑   lParam: BOOL
+#define GRID_SETEDITABLE  (GRID_FIRST + 42)
+
+// GetListMode  取列表模式
+#define GRID_GETLISTMODE  (GRID_FIRST + 43)
+// SetListMode  置列表模式
+#define GRID_SETLISTMODE  (GRID_FIRST + 44)
+
+// GetSingleRowSelection 
+//#define GRID_GETSINGLEROWSEL  (GRID_FIRST + 45)
+// SetSingleRowSelection
+//#define GRID_SETSINGLEROWSEL  (GRID_FIRST + 46)
+// GetSingleColSelection
+//#define GRID_GETSINGLECOLSEL  (GRID_FIRST + 47)
+// SetSingleColSelection
+//#define GRID_SETSINGLECOLSEL  (GRID_FIRST + 48)
+
+// GetFixedRowSelection
+//#define GRID_GETFIXROWSEL  (GRID_FIRST + 49)
+// SetFixedRowSelection
+//#define GRID_SETFIXROWSEL  (GRID_FIRST + 50)
+// GetFixedColumnSelection
+//#define GRID_GETFIXCOLSEL  (GRID_FIRST + 51)
+// SetFixedColumnSelection
+//#define GRID_SETFIXCOLSEL  (GRID_FIRST + 52)
+
+// IsSelectable   是否可选择   return: BOOL
+#define GRID_ISSELABLE  (GRID_FIRST + 53)
+// EnableSelection  置可选择    lParam: BOOL
+#define GRID_ENSELABLE  (GRID_FIRST + 51)
+
+// GetDragAndDrop      return: BOOL
+//#define GRID_GETDRAGDROP  (GRID_FIRST + 55)
+// EnableDragAndDrop      lParam: BOOL
+//#define GRID_ENDRAGDROP  (GRID_FIRST + 56)
+
+// GetRowResize 是否可重置行数量 return: BOOL
+#define GRID_GETROWRESIZE  (GRID_FIRST + 57)
+// SetRowResize  置可重置行数量  lParam: BOOL
+#define GRID_SETROWRESIZE  (GRID_FIRST + 58)
+// GetColumnResize 是否可重置列数量 return: BOOL
+#define GRID_GETCOLRESIZE  (GRID_FIRST + 59)
+// SetColumnResize 置可重置列数量  lParam: BOOL
+#define GRID_SETCOLRESIZE  (GRID_FIRST + 60)
+
+// GetHeaderSort  取表头是否可排序    return: BOOL
+#define GRID_GETHEADSORT  (GRID_FIRST + 61)
+// SetHeaderSort  置表头可排序    lParam: BOOL
+#define GRID_SETHEADSORT  (GRID_FIRST + 62)
+
+//SetHandleTabKey..  63  64
+
+// GetAutoSizeStyle 取自动调整大小风格  return: #GVS_
+#define GRID_GETAUTOSIZESTYLE  (GRID_FIRST + 77)
+// SetAutoSizeStyle 置自动调整大小风格 lParam: #GVS_
+#define GRID_SETAUTOSIZESTYLE  (GRID_FIRST + 78)
+
+// IsCellFixed
+//#define GRID_ISCELLFIX  (GRID_FIRST + 91)
+
+// GetItem 取项目 lParam: GV_ITEM*
+#define GRID_GETITEM  (GRID_FIRST + 92)
+// SetItem 置项目 lParam: const GV_ITEM*
+#define GRID_SETITEM  (GRID_FIRST + 93)
+// GetItemText 取项目文本 return: Text   wParam: nRow  lParam: nCol 
+#define GRID_GETITEMTEXT  (GRID_FIRST + 94)
+// SetItemText 置项目文本          lParam: GV_INFO* 
+#define GRID_SETITEMTEXT  (GRID_FIRST + 95)
+// GetItemData 取项目数据   wParam: nRow  lParam: nCol 
+#define GRID_GETITEMDATA  (GRID_FIRST + 96)
+// SetItemData 置项目数据   lParam: GV_INFO* 
+#define GRID_SETITEMDATA  (GRID_FIRST + 97)
+// GetItemImage 取项目图片索引  wParam: nRow  lParam: nCol 
+#define GRID_GETITEMIMG  (GRID_FIRST + 98)
+// SetItemImage 置项目图片索引  lParam: GV_INFO* 
+#define GRID_SETITEMIMG  (GRID_FIRST + 99)
+// GetItemState 取项目状态  wParam: nRow  lParam: nCol 
+#define GRID_GETITEMSTATE  (GRID_FIRST + 100)
+// SetItemState 置项目状态  lParam: GV_INFO* 
+#define GRID_SETITEMSTATE  (GRID_FIRST + 101)
+// GetItemFormat 取项目格式 wParam: nRow  lParam: nCol 
+#define GRID_GETITEMFMT  (GRID_FIRST + 102)
+// SetItemFormat 置项目格式 lParam: GV_INFO* 
+#define GRID_SETITEMFMT  (GRID_FIRST + 103)
+// GetItemBkColour 取项目背景色 wParam: nRow  lParam: nCol 
+#define GRID_GETITEMBKCOLOR  (GRID_FIRST + 104)
+// SetItemBkColour 置项目背景色 lParam: GV_INFO* 
+#define GRID_SETITEMBKCOLOR  (GRID_FIRST + 105)
+// GetItemFgColour 取项目前景色 wParam: nRow  lParam: nCol 
+#define GRID_GETITEMFGCOLOR  (GRID_FIRST + 106)
+// SetItemFgColour 置项目前景色 lParam: GV_INFO* 
+#define GRID_SETITEMFGCOLOR  (GRID_FIRST + 107)
+// GetItemFont  取项目字体    wParam: nRow  lParam: nCol 
+#define GRID_GETITEMFONT  (GRID_FIRST + 108)
+// SetItemFont  置项目字体    lParam: GV_INFO* 
+#define GRID_SETITEMFONT  (GRID_FIRST + 109)
+
+// IsItemEditing   项目是否正在编辑     wParam: nRow  lParam: nCol  return: BOOL
+#define GRID_ISITEMEDITING  (GRID_FIRST + 110)
+
+
+// G/SetCell :
+
+//  CGridCell  取单元格文本  wParam: nRow  lParam: nCol
+#define GRID_GETCELL_TEXT  (GRID_FIRST + 300) 
+//  CGridCell  置单元格文本 lParam: GV_INFO* 
+#define GRID_SETCELL_TEXT  (GRID_FIRST + 301) 
+//  CGridCell  取单元格图片索引  wParam: nRow  lParam: nCol
+#define GRID_GETCELL_IMG  (GRID_FIRST + 302) 
+//  CGridCell  置单元格图片索引 lParam: GV_INFO* 
+#define GRID_SETCELL_IMG  (GRID_FIRST + 303) 
+//  CGridCell  取单元格数据 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_DATA  (GRID_FIRST + 304) 
+//  CGridCell  置单元格数据 lParam: GV_INFO* 
+#define GRID_SETCELL_DATA  (GRID_FIRST + 305) 
+//  CGridCell  取单元格状态 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_STATE  (GRID_FIRST + 306) 
+//  CGridCell  置单元格状态 lParam: GV_INFO* 
+#define GRID_SETCELL_STATE  (GRID_FIRST + 307) 
+//  CGridCell  取单元格格式 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_FMT  (GRID_FIRST + 308) 
+//  CGridCell  置单元格格式 lParam: GV_INFO* 
+#define GRID_SETCELL_FMT  (GRID_FIRST + 309) 
+//  CGridCell  取单元格文本色 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_TEXTCOLOR  (GRID_FIRST + 310) 
+//  CGridCell  置单元格文本色 lParam: GV_INFO* 
+#define GRID_SETCELL_TEXTCOLOR   (GRID_FIRST + 311) 
+//  CGridCell  取单元格背景色 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_BKCOLOR  (GRID_FIRST + 312) 
+//  CGridCell  置单元格背景色 lParam: GV_INFO* 
+#define GRID_SETCELL_BKCOLOR   (GRID_FIRST + 313) 
+//  CGridCell  取单元格字体 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_FONT  (GRID_FIRST + 314) 
+//  CGridCell  置单元格字体 lParam: GV_INFO* 
+#define GRID_SETCELL_FONT   (GRID_FIRST + 315) 
+
+//  CGridCell  取单元格是否正在编辑 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_ISEDITING  (GRID_FIRST + 316) 
+//  CGridCell  结束单元格编辑 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_ENDEDIT  (GRID_FIRST + 317) 
+
+
+
+// SetCellType: CGridCell   置单元格默认      wParam: nRow  lParam: nCol    --------------- 
+#define GRID_SETCELLTYPE_NORMAL  (GRID_FIRST + 211)
+// SetCellType: CGridCellCombo 置单元格组合框    wParam: nRow  lParam: nCol    ---------------
+#define GRID_SETCELLTYPE_COM  (GRID_FIRST + 212) 
+//              CGridCellCombo  置单元格组合框候选项 lParam: GV_INFO* 
+#define GRID_SETCELL_COM_OPTION  (GRID_FIRST + 218) 
+//              CGridCellCombo  取单元格组合框风格   lParam: GV_INFO* 
+#define GRID_GETCELL_COM_STYLE  (GRID_FIRST + 219)  
+//              CGridCellCombo  置单元格组合框风格   lParam: GV_INFO* 
+#define GRID_SETCELL_COM_STYLE  (GRID_FIRST + 220) 
+
+// SetCellType: CGridCellDateTime  置单元格日期框   wParam: nRow  lParam: nCol    ---------------
+#define GRID_SETCELLTYPE_DATE  (GRID_FIRST + 213)  
+//              CGridCellDateTime  取单元格日期框时间 wParam: nRow  lParam: nCol
+#define GRID_GETCELL_DATE_TIME  (GRID_FIRST + 216) 
+//              CGridCellDateTime  置单元格日期框时间  lParam: GV_INFO* 
+#define GRID_SETCELL_DATE_TIME  (GRID_FIRST + 217) 
+
+// SetCellType: CGridCellCheck  置单元格检查框   wParam: nRow  lParam: nCol    ---------------
+#define GRID_SETCELLTYPE_CHECK  (GRID_FIRST + 214) 
+//              CGridCellCheck  取单元格检查框选中状态   wParam: nRow  lParam: nCol
+#define GRID_GETCELL_CHECK_CHECK  (GRID_FIRST + 221) 
+//              CGridCellCheck  置单元格检查框选中状态   lParam: GV_INFO* 
+#define GRID_SETCELL_CHECK_CHECK  (GRID_FIRST + 222) 
+
+// SetCellType: CGridCellNumeric  置单元格数字输入  wParam: nRow  lParam: nCol    ---------------
+#define GRID_SETCELLTYPE_NUM  (GRID_FIRST + 215)
+
+
+// InsertColumn  插入列  wParam: LPCTSTR    lParam:  GV_INSERTCOL*
+#define GRID_INSERTCOL  (GRID_FIRST + 113)
+// InsertRow   插入行  wParam: LPCTSTR    lParam: row 
+#define GRID_INSERTROW  (GRID_FIRST + 114)
+// DeleteColumn  删除列  lParam: col
+#define GRID_DELCOL  (GRID_FIRST + 115)
+// DeleteRow    删除行  lParam: col
+#define GRID_DELROW  (GRID_FIRST + 116)
+// DeleteNonFixedRows  删除所有非固定行
+#define GRID_DELNONFIXROWS  (GRID_FIRST + 117)
+// DeleteAllItems  删除所有
+#define GRID_DELALL  (GRID_FIRST + 118)
+// ClearCells   清空指定范围单元格内容   lParam: CCellRange*
+#define GRID_CLEARCELLS  (GRID_FIRST + 119)
+// AutoSizeRow  自动调整行  wParam: nRow      lParam: bResetScroll
+#define GRID_AUTOSIZEROW  (GRID_FIRST + 120)
+// AutoSizeColumn  自动调整列  wParam: col      lParam: LOWORD: #GVS_    HIDWORD: bResetScroll
+#define GRID_AUTOSIZECOL  (GRID_FIRST + 121)
+// AutoSizeRows    自动调整所有行
+#define GRID_AUTOSIZEROWS  (GRID_FIRST + 122)
+// AutoSizeColumns 自动调整所有列    lParam: #GVS_ 
+#define GRID_AUTOSIZECOLS  (GRID_FIRST + 123)
+// AutoSize  自动调整  lParam: #GVS_ 
+#define GRID_AUTOSIZE  (GRID_FIRST + 124)
+
+// Refresh  刷新
+#define GRID_REFRESH  (GRID_FIRST + 129)
+// AutoFill 自动填充
+#define GRID_AUTOFILL  (GRID_FIRST + 130)
+// EnsureVisible 确保显示   wParam: nRow  lParam: nCol
+#define GRID_ENSUREVISABLE  (GRID_FIRST + 131)
+// IsCellVisible 单元格是否可视   wParam: nRow  lParam: nCol
+#define GRID_ISCELLVISABLE  (GRID_FIRST + 132)
+// IsCellEditable 单元格是否可编辑
+#define GRID_ISCELLEDITABLE  (GRID_FIRST + 133)
+// IsCellSelected 单元格是否选中
+#define GRID_ISCELLSEL  (GRID_FIRST + 134)
+
+// GetImageList 取图片组句柄    return: HEXIMAGELIST
+#define GRID_GETIMAGELIST  (GRID_FIRST + 135)
+// SetImageList 置图片组句柄    lParam: HEXIMAGELIST
+#define GRID_SETIMAGELIST  (GRID_FIRST + 136)
+
+
+#pragma endregion grid style
+
+// Autosizing option
+#define GVS_DEFAULT             0
+#define GVS_HEADER              1       // Size using column fixed cells data only
+#define GVS_DATA                2       // Size using column non-fixed cells data only
+#define GVS_BOTH                3       // Size using column fixed and non-fixed
+
+
+struct CCellID
+{
+    int row, col;
+    explicit CCellID(int nRow = -1, int nCol = -1) : row(nRow), col(nCol) {}
+    int IsValid() const { return (row >= 0 && col >= 0); }
+    int operator==(const CCellID& rhs) const { return (row == rhs.row && col == rhs.col); }
+    int operator!=(const CCellID& rhs) const { return !operator==(rhs); }
+};
+
+struct CCellRange
+{
+    CCellRange(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
+    {
+        Set(nMinRow, nMinCol, nMaxRow, nMaxCol);
+    }
+
+    void Set(int nMinRow = -1, int nMinCol = -1, int nMaxRow = -1, int nMaxCol = -1)
+    {
+        m_nMinRow = nMinRow;
+        m_nMinCol = nMinCol;
+        m_nMaxRow = nMaxRow;
+        m_nMaxCol = nMaxCol;
+    }
+    int  IsValid() const
+    {
+        return (m_nMinRow >= 0 && m_nMinCol >= 0 && m_nMaxRow >= 0 && m_nMaxCol >= 0 &&
+            m_nMinRow <= m_nMaxRow && m_nMinCol <= m_nMaxCol);
+    }
+    int  InRange(int row, int col) const
+    {
+        return (row >= m_nMinRow && row <= m_nMaxRow && col >= m_nMinCol && col <= m_nMaxCol);
+    }
+    int  InRange(const CCellID& cellID) const
+    {
+        return InRange(cellID.row, cellID.col);
+    }
+    int  Count() { return (m_nMaxRow - m_nMinRow + 1) * (m_nMaxCol - m_nMinCol + 1); }
+
+    CCellID  GetTopLeft() const
+    {
+        return CCellID(m_nMinRow, m_nMinCol);
+    }
+    CCellRange  Intersect(const CCellRange& rhs) const
+    {
+        return CCellRange(max(m_nMinRow, rhs.m_nMinRow), max(m_nMinCol, rhs.m_nMinCol),
+            min(m_nMaxRow, rhs.m_nMaxRow), min(m_nMaxCol, rhs.m_nMaxCol));
+    }
+
+    int GetMinRow() const { return m_nMinRow; }
+    void SetMinRow(int minRow) { m_nMinRow = minRow; }
+
+    int GetMinCol() const { return m_nMinCol; }
+    void SetMinCol(int minCol) { m_nMinCol = minCol; }
+
+    int GetMaxRow() const { return m_nMaxRow; }
+    void SetMaxRow(int maxRow) { m_nMaxRow = maxRow; }
+
+    int GetMaxCol() const { return m_nMaxCol; }
+    void SetMaxCol(int maxCol) { m_nMaxCol = maxCol; }
+
+    int GetRowSpan() const { return m_nMaxRow - m_nMinRow + 1; }
+    int GetColSpan() const { return m_nMaxCol - m_nMinCol + 1; }
+
+    void operator=(const CCellRange& rhs)
+    {
+        if (this != &rhs)
+            Set(rhs.m_nMinRow, rhs.m_nMinCol, rhs.m_nMaxRow, rhs.m_nMaxCol);
+    }
+    int  operator==(const CCellRange& rhs)
+    {
+        return ((m_nMinRow == rhs.m_nMinRow) && (m_nMinCol == rhs.m_nMinCol) &&
+            (m_nMaxRow == rhs.m_nMaxRow) && (m_nMaxCol == rhs.m_nMaxCol));
+    }
+    int  operator!=(const CCellRange& rhs)
+    {
+        return !operator==(rhs);
+    }
+
+    int m_nMinRow;
+    int m_nMinCol;
+    int m_nMaxRow;
+    int m_nMaxCol;
+};
+
+// Cell states
+#define GVIS_FOCUSED            0x0001
+#define GVIS_SELECTED           0x0002
+#define GVIS_DROPHILITED        0x0004
+#define GVIS_READONLY           0x0008
+#define GVIS_FIXED              0x0010
+#define GVIS_FIXEDROW           0x0020
+#define GVIS_FIXEDCOL           0x0040
+#define GVIS_MODIFIED           0x0080
+#define GVIS_EDITABLE           0x0100		// Jeong : Editable cell
+#define GVIS_FILTER				0x0200		// Jeong : Filter cell
+#define GVIS_MERGED				0x0400		// Jeong : Has merged cell
+#define GVIS_MERGEDHL			0x0800		// Jeong : merged cell Line
+#define GVIS_MERGEDVL			0x1000		// Jeong : merged cell Line
+
+
+// Grid 表格:: Cell data mask
+#define GVIF_TEXT               LVIF_TEXT
+#define GVIF_IMAGE              LVIF_IMAGE
+#define GVIF_PARAM              LVIF_PARAM
+#define GVIF_STATE              LVIF_STATE
+#define GVIF_BKCLR              (GVIF_STATE<<1)
+#define GVIF_FGCLR              (GVIF_STATE<<2)
+#define GVIF_FORMAT             (GVIF_STATE<<3)
+#define GVIF_FONT               (GVIF_STATE<<4)
+#define GVIF_MARGIN             (GVIF_STATE<<5)
+#define GVIF_ALL                (GVIF_TEXT|GVIF_IMAGE|GVIF_PARAM|GVIF_STATE|GVIF_BKCLR|GVIF_FGCLR| \
+                                 GVIF_FORMAT|GVIF_FONT|GVIF_MARGIN)
+
+// Grid line/scrollbar selection
+#define GVL_NONE                0L      // Neither
+#define GVL_HORZ                1L      // Horizontal line or scrollbar
+#define GVL_VERT                2L      // Vertical line or scrollbar
+#define GVL_BOTH                3L      // Both
+
+// Grid 表格:: Used for Get/SetItem calls.
+typedef struct _GV_ITEM {
+    int      row, col;     // Row and Column of item
+    UINT     mask;        // Mask for use in getting/setting cell data
+    UINT     nState;      // cell state (focus/hilighted etc)
+    DWORD    nFormat;     // Format of cell
+    int      iImage;      // index of the list view item抯 icon
+    EXARGB crBkClr;     // Background colour (or CLR_DEFAULT)
+    EXARGB crFgClr;     // Forground colour (or CLR_DEFAULT)
+    LPARAM   lParam;      // 32-bit value to associate with item
+    HEXFONT  lfFont;      // Cell font
+    UINT     nMargin;     // Internal cell margin
+    std::wstring  strText;     // Text in cell
+} GV_ITEM;
+
+struct GV_INFO
+{
+    int      row, col;     // Row and Column of item
+    union
+    {
+        LPCTSTR itemstr;   // G/SetItemText
+        LPARAM lParam;     // G/SetItemData
+        int iImage;        // G/SetItemImage
+        UINT nFormat;      // G/SetItemFormat
+        EXARGB cr;         // G/SetItem Bk/Fg Colour
+        UINT state;        // G/SetItemState   
+        HEXFONT font;      // G/SetItemFont
+        time_t time;       // GRID_SETDATECELL_TIME
+        std::vector<std::wstring>* ar; //GRID_SETCELL_COM_OPTION
+        DWORD dwStyle;    //GRID_SETCELL_COM_STYLE
+        BOOL check;       //GRID_SETCELL_CHECK_CHECK
+    };
+};
+// 插入列
+struct GV_INSERTCOL
+{
+    int nColumn;
+    UINT nFormat;
+};
+//---------------------------------------------------------------------------------------------------
 
 struct EX_PROPERTYGRID_ITEM_LAYOUT_BUTTON
 {

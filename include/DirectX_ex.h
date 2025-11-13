@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include <DocumentTarget.h>
 BOOL                         _dx_init(INT* nError);
 void                         _dx_uninit();
 ID2D1GdiInteropRenderTarget* _dx_get_gdiInterop(ID2D1DeviceContext* prt);
@@ -35,3 +35,76 @@ void _dx_bmp_copyfrom(ID2D1Bitmap** pDestBitmap, ID2D1Bitmap* pSrcBitmap, INT dX
                       INT srcLeft, INT srcTop, INT srcRight, INT srcBottom);
 void ARGB2ColorF(EXARGB argb, D2D1_COLOR_F* color);
 void ColorF2ARGB(D2D1_COLOR_F color, EXARGB* argb);
+class D2DPrintJobChecker : public IPrintDocumentPackageStatusEvent
+{
+public:
+    D2DPrintJobChecker();
+    ~D2DPrintJobChecker();
+
+    // Implement virtual functions from interface IUnknown.
+    virtual
+        HRESULT STDMETHODCALLTYPE
+        QueryInterface(
+            REFIID  iid,
+            _Out_   void** ppvObject
+        );
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
+
+    // Implement virtual functions from interface IDispatch.
+    virtual STDMETHODIMP
+        GetTypeInfoCount(
+            _Out_ UINT* pctinfo
+        );
+    virtual STDMETHODIMP
+        GetTypeInfo(
+            UINT iTInfo,
+            LCID lcid,
+            _Outptr_result_maybenull_ ITypeInfo** ppTInfo
+        );
+    virtual STDMETHODIMP
+        GetIDsOfNames(
+            _In_                        REFIID      riid,
+            _In_reads_(cNames)          LPOLESTR* rgszNames,
+            _In_range_(0, 16384)        UINT        cNames,
+            LCID        lcid,
+            __out_ecount_full(cNames)   DISPID* rgDispId
+        );
+    virtual STDMETHODIMP
+        Invoke(
+            DISPID          dispIdMember,
+            REFIID          riid,
+            LCID            lcid,
+            WORD            wFlags,
+            DISPPARAMS* pDispParams,
+            VARIANT* pVarResult,
+            EXCEPINFO* pExcepInfo,
+            UINT* puArgErr
+        );
+
+    // Implement virtual functions from interface IPrintDocumentPackageStatusEvent.
+    virtual STDMETHODIMP
+        PackageStatusUpdated(
+            _In_ PrintDocumentPackageStatus* packageStatus
+        );
+
+    // New functions in D2DPrintJobChecker.
+    HRESULT Initialize(
+        _In_ IPrintDocumentPackageTarget* documentPackageTarget
+    );
+    PrintDocumentPackageStatus GetStatus();
+    HRESULT WaitForCompletion();
+
+
+private:
+    void ReleaseResources();
+
+private:
+    PrintDocumentPackageStatus m_documentPackageStatus;
+    DWORD m_eventCookie;
+    ULONG m_refcount;
+    HANDLE m_completionEvent;
+    CRITICAL_SECTION m_criticalSection;
+    IConnectionPoint* m_connectionPoint;
+    bool m_isInitialized;
+};

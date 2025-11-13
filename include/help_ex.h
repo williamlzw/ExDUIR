@@ -1,5 +1,6 @@
 ﻿#pragma once
-
+#include <prntvpt.h>
+#pragma comment(lib, "Prntvpt.lib")
 struct wnd_s;
 struct obj_s;
 struct font_s;
@@ -416,3 +417,107 @@ wchar_t LTOUCHAR(BYTE value);
 std::wstring Md5Encrypt(const std::vector<BYTE>& data);
 void ConvertCurveToBezier(const std::vector<D2D1_POINT_2F>& points, float tension,
     std::vector<D2D1_BEZIER_SEGMENT>& beziers);
+
+
+class EObject;
+
+struct ERuntimeClass
+{
+    LPCSTR m_lpszClassName;
+    int m_nObjectSize;
+    UINT m_wSchema;
+    EObject* (__stdcall* m_pfnCreateObject)();
+    ERuntimeClass* m_pBaseClass;
+
+    EObject* CreateObject();
+    BOOL IsDerivedFrom(const ERuntimeClass* pBaseClass) const;
+    ERuntimeClass* m_pNextClass;
+};
+
+class EObject
+{
+public:
+    virtual ERuntimeClass* GetRuntimeClass()const;
+    virtual ~EObject();
+public:
+    BOOL IsKindOf(const ERuntimeClass* pClass) const;
+public:
+    static const ERuntimeClass classEObject;
+};
+
+inline EObject::~EObject() {}
+#define RUNTIME_CLASS(class_name) ((ERuntimeClass*)&class_name::class##class_name)
+
+#define DECLARE_DYNAMIC(class_name)\
+	public:\
+	static const ERuntimeClass class##class_name;\
+	virtual ERuntimeClass* GetRuntimeClass() const;
+
+#define IMPLEMENT_RUNTIMECLASS(class_name,base_class,wSchema,pfnNew)\
+	const ERuntimeClass class_name::class##class_name = {\
+#class_name,sizeof(class_name),wSchema,pfnNew,\
+	 RUNTIME_CLASS(base_class),NULL};\
+	ERuntimeClass* class_name::GetRuntimeClass() const\
+	 {return RUNTIME_CLASS(class_name);}
+
+#define IMPLEMENT_DYNAMIC(class_name,base_class_name)\
+	IMPLEMENT_RUNTIMECLASS(class_name,base_class_name,0xffff,NULL)
+
+
+#define DECLARE_DYNCREATE(class_name) \
+	DECLARE_DYNAMIC(class_name) \
+	static EObject* __stdcall CreateObject();
+
+#define IMPLEMENT_DYNCREATE(class_name,base_class_name)\
+	EObject* __stdcall class_name::CreateObject()\
+{ return new class_name;}\
+	IMPLEMENT_RUNTIMECLASS(class_name,base_class_name,0xFFFF,class_name::CreateObject)
+
+
+#define IDC_INPLACE_CONTROL   8                  // ID of inplace edit controls
+
+class CHObj : public EObject
+{
+    DECLARE_DYNCREATE(CHObj)
+public:
+    CHObj() :hObj(0) {}
+    ~CHObj() {}
+    BOOL operator==(const CHObj& wnd) const;
+    BOOL operator!=(const CHObj& wnd) const;
+    operator HEXOBJ() const;
+    CHObj(HEXOBJ hWnd);
+public:
+    HEXOBJ  hObj;
+
+};
+
+HRESULT GetPrintTicketFromDevmode(_In_ PCTSTR printerName, _In_reads_bytes_(devModesize) PDEVMODE devMode,
+    WORD devModesize, _Out_ LPSTREAM* printTicketStream);
+
+struct CPrintInfo // Printing information structure
+{
+    PRINTDLGEX m_pPD;     // pointer to print dialog
+
+    BOOL m_bDocObject;       // TRUE if printing by IPrint interface
+    BOOL m_bPreview;         // TRUE if in preview mode
+    BOOL m_bDirect;          // TRUE if bypassing Print Dialog
+    BOOL m_bContinuePrinting;// set to FALSE to prematurely end printing
+    UINT m_nCurPage;         // Current page
+    UINT m_nNumPreviewPages; // Desired number of preview pages
+    std::wstring m_strPageDesc;   // Format string for page number display
+    LPVOID m_lpUserData;     // pointer to user created struct
+    RECT m_rectDraw;        // rectangle defining current usable page area
+    int m_nJobNumber;			 // job number (after StartDoc)
+
+    // these only valid if m_bDocObject
+    UINT m_nOffsetPage;      // offset of first page in combined IPrint job
+    DWORD m_dwFlags;         // flags passed to IPrint::Print
+
+    void SetMinPage(UINT nMinPage);
+    void SetMaxPage(UINT nMaxPage);
+    UINT GetMinPage() const;
+    UINT GetMaxPage() const;
+    UINT GetFromPage() const;
+    UINT GetToPage() const;
+    UINT GetOffsetPage() const;
+};
