@@ -39,7 +39,7 @@ void testgrid(HEXDUI hExDui)
     HEXOBJ hGrid = Ex_ObjCreate(L"GridCtrl", L"",
         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL
         ,
-        50, 50, 701, 270,
+        50, 50, 700, 270,
         hExDui);
     //auto bt = Ex_ObjCreateEx(-1, L"button", L"表格打印测试", -1, 290, 480, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, hGrid, NULL);
     //Ex_ObjHandleEvent(bt, NM_CLICK, button_click2);
@@ -148,7 +148,7 @@ void testgrid(HEXDUI hExDui)
 void test_grid(HWND hWnd)
 {
     HWND hWnd_grid =
-        Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试表格", 0, 0, 900, 500, 0, 0);
+        Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试表格", 0, 0, 800, 500, 0, 0);
     HEXDUI hExDui_grid = Ex_DUIBindWindowEx(
         hWnd_grid, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |

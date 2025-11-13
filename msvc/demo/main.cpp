@@ -153,7 +153,7 @@ void test_exdui()
         hCursor, 0, data.data(), data.size(), 0, 0);
 
     INT windowWidth = 1280;
-    INT windowsHeight = 800;
+    INT windowsHeight = 850;
     m_hWnd = Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0,
         windowWidth, windowsHeight, 0, 0);
     if (m_hWnd != 0) {
