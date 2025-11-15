@@ -33,16 +33,23 @@ void testimglist()
     _imglist_addimage(hImgList, 0, himg);
     _img_destroy(himg);
 }
+
+LRESULT CALLBACK button_click2(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+    Ex_ObjSendMessage((HEXOBJ)Ex_ObjGetLong(hObj,OBJECT_LONG_LPARAM), GRID_PRINT, 0, 0);
+    return 0;
+
+}
 void testgrid(HEXDUI hExDui)
 {
     // 创建Grid组件
     HEXOBJ hGrid = Ex_ObjCreate(L"GridCtrl", L"",
         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL
         ,
-        50, 50, 700, 270,
+        15, 35, 760, 410,
         hExDui);
-    //auto bt = Ex_ObjCreateEx(-1, L"button", L"表格打印测试", -1, 290, 480, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, hGrid, NULL);
-    //Ex_ObjHandleEvent(bt, NM_CLICK, button_click2);
+    auto bt = Ex_ObjCreateEx(-1, L"button", L"表格打印测试", -1, 15, 455, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, hGrid, NULL,0);
+    Ex_ObjHandleEvent(bt, NM_CLICK, button_click2);
     testimglist();
     Ex_ObjSendMessage(hGrid, GRID_SETIMAGELIST, 0, (LPARAM)hImgList);
     int n_row = 515;
