@@ -279,9 +279,13 @@ void test_custommenu(HWND hWnd)
 
     // 创建一个子菜单
     HMENU hSubMenu = CreateMenu();
-    AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"子项目1");   // 添加项目
+    AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"子项目");   // 添加项目
     AppendMenuW(m_hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"更多");
-
+    for (int i = 0; i < 30; i++) {
+        wchar_t buf[100];
+        wsprintfW(buf, L"子项目%d", i+1);
+        AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3000 + i, buf);
+    }
 
     // 以下是通过item组件改变菜单项目=====================
     HEXOBJ hObj_button2 = Ex_ObjCreateEx(-1, L"BUTTON", L"弹出菜单2", -1, 170, 50, 100, 30,
