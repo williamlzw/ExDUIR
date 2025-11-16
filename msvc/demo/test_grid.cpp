@@ -1,5 +1,6 @@
 ﻿#include "test_grid.h"
 HEXIMAGELIST hImgList = 0;
+INT_PTR nMergeID = -1;
 void testimglist()
 {
 
@@ -36,9 +37,21 @@ void testimglist()
 
 LRESULT CALLBACK button_click2(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-    Ex_ObjSendMessage((HEXOBJ)Ex_ObjGetLong(hObj,OBJECT_LONG_LPARAM), GRID_PRINT, 0, 0);
+    auto hGrid = (HEXOBJ)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+    if (nID == 101)
+        Ex_ObjSendMessage(hGrid, GRID_PRINT, 0, 0);
+    else if (nID == 102)
+    {
+        CCellRange mg(10, 1, 12, 5);
+        nMergeID = Ex_ObjSendMessage(hGrid, GRID_MERGECELLS, 0, (LPARAM)&mg);
+        Ex_ObjInvalidateRect(hGrid, NULL);
+    }
+    else if (nID == 103 && nMergeID != -1)
+    {
+        Ex_ObjSendMessage(hGrid, GRID_SPLITCELLS, 0, (LPARAM)nMergeID);
+        Ex_ObjInvalidateRect(hGrid, NULL);
+    }
     return 0;
-
 }
 void testgrid(HEXDUI hExDui)
 {
@@ -50,6 +63,13 @@ void testgrid(HEXDUI hExDui)
         hExDui);
     auto bt = Ex_ObjCreateEx(-1, L"button", L"表格打印测试", -1, 15, 455, 100, 30, hExDui, 101, DT_VCENTER | DT_CENTER, hGrid, NULL,0);
     Ex_ObjHandleEvent(bt, NM_CLICK, button_click2);
+
+    bt = Ex_ObjCreateEx(-1, L"button", L"合并单元格", -1, 120, 455, 100, 30, hExDui, 102, DT_VCENTER | DT_CENTER, hGrid, NULL, 0);
+    Ex_ObjHandleEvent(bt, NM_CLICK, button_click2);
+
+    bt = Ex_ObjCreateEx(-1, L"button", L"拆分单元格", -1, 225, 455, 100, 30, hExDui, 103, DT_VCENTER | DT_CENTER, hGrid, NULL, 0);
+    Ex_ObjHandleEvent(bt, NM_CLICK, button_click2);
+
     testimglist();
     Ex_ObjSendMessage(hGrid, GRID_SETIMAGELIST, 0, (LPARAM)hImgList);
     int n_row = 515;
