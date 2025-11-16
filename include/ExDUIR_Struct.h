@@ -2657,6 +2657,42 @@ struct EX_DATETIME
 #define GVS_BOTH                3       // Size using column fixed and non-fixed
 
 
+// Cell states
+#define GVIS_FOCUSED            0x0001
+#define GVIS_SELECTED           0x0002
+#define GVIS_DROPHILITED        0x0004
+// 表格单元风格_只读
+#define GVIS_READONLY           0x0008
+#define GVIS_FIXED              0x0010
+#define GVIS_FIXEDROW           0x0020
+#define GVIS_FIXEDCOL           0x0040
+#define GVIS_MODIFIED           0x0080
+#define GVIS_EDITABLE           0x0100		// Jeong : Editable cell
+#define GVIS_FILTER				0x0200		// Jeong : Filter cell
+#define GVIS_MERGED				0x0400		// Jeong : Has merged cell
+#define GVIS_MERGEDHL			0x0800		// Jeong : merged cell Line
+#define GVIS_MERGEDVL			0x1000		// Jeong : merged cell Line
+
+
+// Grid 表格:: Cell data mask
+#define GVIF_TEXT               LVIF_TEXT
+#define GVIF_IMAGE              LVIF_IMAGE
+#define GVIF_PARAM              LVIF_PARAM
+#define GVIF_STATE              LVIF_STATE
+#define GVIF_BKCLR              (GVIF_STATE<<1)
+#define GVIF_FGCLR              (GVIF_STATE<<2)
+#define GVIF_FORMAT             (GVIF_STATE<<3)
+#define GVIF_FONT               (GVIF_STATE<<4)
+#define GVIF_MARGIN             (GVIF_STATE<<5)
+#define GVIF_ALL                (GVIF_TEXT|GVIF_IMAGE|GVIF_PARAM|GVIF_STATE|GVIF_BKCLR|GVIF_FGCLR| \
+                                 GVIF_FORMAT|GVIF_FONT|GVIF_MARGIN)
+
+// Grid line/scrollbar selection
+#define GVL_NONE                0L      // Neither
+#define GVL_HORZ                1L      // Horizontal line or scrollbar
+#define GVL_VERT                2L      // Vertical line or scrollbar
+#define GVL_BOTH                3L      // Both
+
 struct CCellID
 {
     int row, col;
@@ -2740,41 +2776,6 @@ struct CCellRange
     int m_nMaxRow;
     int m_nMaxCol;
 };
-
-// Cell states
-#define GVIS_FOCUSED            0x0001
-#define GVIS_SELECTED           0x0002
-#define GVIS_DROPHILITED        0x0004
-#define GVIS_READONLY           0x0008
-#define GVIS_FIXED              0x0010
-#define GVIS_FIXEDROW           0x0020
-#define GVIS_FIXEDCOL           0x0040
-#define GVIS_MODIFIED           0x0080
-#define GVIS_EDITABLE           0x0100		// Jeong : Editable cell
-#define GVIS_FILTER				0x0200		// Jeong : Filter cell
-#define GVIS_MERGED				0x0400		// Jeong : Has merged cell
-#define GVIS_MERGEDHL			0x0800		// Jeong : merged cell Line
-#define GVIS_MERGEDVL			0x1000		// Jeong : merged cell Line
-
-
-// Grid 表格:: Cell data mask
-#define GVIF_TEXT               LVIF_TEXT
-#define GVIF_IMAGE              LVIF_IMAGE
-#define GVIF_PARAM              LVIF_PARAM
-#define GVIF_STATE              LVIF_STATE
-#define GVIF_BKCLR              (GVIF_STATE<<1)
-#define GVIF_FGCLR              (GVIF_STATE<<2)
-#define GVIF_FORMAT             (GVIF_STATE<<3)
-#define GVIF_FONT               (GVIF_STATE<<4)
-#define GVIF_MARGIN             (GVIF_STATE<<5)
-#define GVIF_ALL                (GVIF_TEXT|GVIF_IMAGE|GVIF_PARAM|GVIF_STATE|GVIF_BKCLR|GVIF_FGCLR| \
-                                 GVIF_FORMAT|GVIF_FONT|GVIF_MARGIN)
-
-// Grid line/scrollbar selection
-#define GVL_NONE                0L      // Neither
-#define GVL_HORZ                1L      // Horizontal line or scrollbar
-#define GVL_VERT                2L      // Vertical line or scrollbar
-#define GVL_BOTH                3L      // Both
 
 // Grid 表格:: Used for Get/SetItem calls.
 typedef struct _GV_ITEM {
