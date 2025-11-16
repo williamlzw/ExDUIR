@@ -8,7 +8,7 @@ HEXOBJ m_hObjPageMain;
 // 可配置参数
 const int buttonWidth = 100;   // 按钮宽度
 const int buttonHeight = 70;    // 按钮高度
-const int horizontalSpacing = 50;    // 按钮横向间距
+const int horizontalSpacing = 24;    // 按钮横向间距
 const int verticalSpacing = 20;    // 按钮纵向间距
 
 // 按钮数据
@@ -153,7 +153,7 @@ void test_exdui()
         hCursor, 0, data.data(), data.size(), 0, 0);
 
     INT windowWidth = 1280;
-    INT windowsHeight = 850;
+    INT windowsHeight = 800;
     m_hWnd = Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0,
         windowWidth, windowsHeight, 0, 0);
     if (m_hWnd != 0) {
