@@ -1992,30 +1992,53 @@ void _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* pos) {
 	wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
 	wnd_s* pMenuPrevWnd = nullptr;
 	RECT rcParent{ 0 };
+	RECT rcScreen{ 0 };
+
+	// 获取屏幕工作区域
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &rcScreen, 0);
+
 	if (pMenuHostWnd != 0) {
 		pMenuPrevWnd = pMenuHostWnd->pMenuPrevWnd_;
 		if (pMenuPrevWnd != 0) {
 			GetWindowRect(pMenuPrevWnd->hWnd_, &rcParent);
 		}
 	}
+
 	auto offset = LOBYTE(HIWORD(pWnd->szItemSeparator_));
 	INT x = pos->x;
 	INT y = pos->y;
+
+	// 获取子菜单尺寸
+	RECT rcSubMenu;
+	GetWindowRect(hWnd, &rcSubMenu);
+	INT subMenuWidth = rcSubMenu.right - rcSubMenu.left;
+	INT subMenuHeight = rcSubMenu.bottom - rcSubMenu.top;
+
 	POINT pt;
 	GetCursorPos(&pt);
-	if (rcParent.left < x)  // 子菜单在右边
-	{
+
+	// 水平方向定位
+	if (rcParent.left < x) {  // 子菜单在右边
 		x = rcParent.right + offset - 1;
+
+		// 检查右侧空间是否足够
+		if (x + subMenuWidth > rcScreen.right) {
+			// 空间不足，显示在左侧
+			x = rcParent.left - subMenuWidth - offset + 1;
+		}
 	}
-	else {
-		// 子菜单在左边
-		x = rcParent.left;
-		GetWindowRect(hWnd, &rcParent);
-		x = x - (rcParent.right - rcParent.left) +
-			GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + 1;
-		x = x - offset;
+	else {  // 子菜单在左边
+		x = rcParent.left - subMenuWidth - offset + 1;
+
+		// 检查左侧空间是否足够
+		if (x < rcScreen.left) {
+			// 空间不足，显示在右侧
+			x = rcParent.right + offset - 1;
+		}
 	}
+
 	pos->x = x;
+
 	if (pMenuPrevWnd != 0) {
 		HEXOBJ hObj = pMenuPrevWnd->objFocus_;
 		obj_s* pObj = nullptr;
@@ -2023,16 +2046,27 @@ void _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* pos) {
 		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 			LPVOID padding_client = pWnd->padding_client_;
 			y = pObj->w_top_ + pMenuPrevWnd->top_ - __get_int(padding_client, 4);
-			GetWindowRect(hWnd, &rcParent);
-			INT height = rcParent.bottom - rcParent.top -
-				GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
-			_wnd_getscreenrect(hWnd, &rcParent);
 
-			if (y + height > rcParent.bottom) {
-				y = pObj->w_bottom_ - height + __get_int(padding_client, 12);
+			// 检查垂直方向空间
+			if (y + subMenuHeight > rcScreen.bottom) {
+				// 空间不足，向上调整位置
+				y = rcScreen.bottom - subMenuHeight;
+
+				// 如果向上调整后顶部超出，则限制在屏幕内
+				if (y < rcScreen.top) {
+					y = rcScreen.top;
+					// 如果菜单高度超过屏幕高度，需要启用滚动或限制高度
+					// 这里可以添加滚动逻辑或高度限制
+				}
+			}
+
+			// 确保位置不低于屏幕顶部
+			if (y < rcScreen.top) {
+				y = rcScreen.top;
 			}
 		}
 	}
+
 	pos->y = y;
 }
 
