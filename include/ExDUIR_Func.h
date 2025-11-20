@@ -2256,13 +2256,13 @@ INT Ex_GetLastError();
 /// <param name="lpszDefaultClassName">默认窗口类名.(值可为0)</param>
 /// <param name="lpDefaultTheme">默认主题包指针</param>
 /// <param name="dwDefaultThemeLen">默认主题包长度</param>
-/// <param name="lpDefaultI18N">默认语言包指针.(值可为0)</param>
-/// <param name="dwDefaultI18NLen">默认语言包长度.(值可为0)</param>
+/// <param name="lpDefaultFontFace">默认字体名称.(值可为0，即默认)</param>
+/// <param name="dwDefaultFontSize">默认字体大小.(值可为0，即默认)</param>
 /// <returns></returns>
 BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
              LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme,
-             size_t dwDefaultThemeLen, LPVOID lpDefaultI18N,
-             size_t dwDefaultI18NLen);
+             size_t dwDefaultThemeLen, LPCWSTR lpDefaultFontFace,
+             size_t dwDefaultFontSize);
 
 /// <summary>
 /// 加载位图对象自内存

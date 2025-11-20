@@ -150,7 +150,7 @@ void test_exdui()
     // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
         ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,//| ENGINE_FLAG_OBJECT_SHOWRECTBORDER,
-        hCursor, 0, data.data(), data.size(), 0, 0);
+            hCursor, 0, data.data(), data.size(), L"楷体", 0);
 
     INT windowWidth = 1280;
     INT windowsHeight = 800;
