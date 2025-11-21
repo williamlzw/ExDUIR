@@ -49,6 +49,7 @@ LRESULT CALLBACK button_click2(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
     else if (nID == 103 && nMergeID != -1)
     {
         Ex_ObjSendMessage(hGrid, GRID_SPLITCELLS, 0, (LPARAM)nMergeID);
+        nMergeID = -1;
         Ex_ObjInvalidateRect(hGrid, NULL);
     }
     return 0;
