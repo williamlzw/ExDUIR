@@ -2269,7 +2269,7 @@ void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush) {
 						if (_canvas_begindraw(cvShadow)) {
 							_canvas_setantialias(cvShadow, TRUE);
 							_canvas_setimageantialias(cvShadow, TRUE);
-							_canvas_drawshadow(cvShadow, 11, 11, sz.cx - 12, sz.cy - 12, 11,
+							_canvas_drawshadow(cvShadow, 11, 11, sz.cx - 11, sz.cy - 11, 11,
 								pWnd->crSD_, pWnd->Radius_, pWnd->Radius_,
 								pWnd->Radius_, pWnd->Radius_, 0, 0);
 							LPVOID mDC = _canvas_getdc(cvShadow);
