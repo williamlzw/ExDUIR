@@ -40,7 +40,7 @@ LRESULT CALLBACK button_click2(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, L
     auto hGrid = (HEXOBJ)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
     if (nID == 101)
         Ex_ObjSendMessage(hGrid, GRID_PRINT, 0, 0);
-    else if (nID == 102)
+    else if (nID == 102 && nMergeID == -1)
     {
         CCellRange mg(10, 1, 12, 5);
         nMergeID = Ex_ObjSendMessage(hGrid, GRID_MERGECELLS, 0, (LPARAM)&mg);
