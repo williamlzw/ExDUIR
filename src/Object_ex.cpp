@@ -484,6 +484,10 @@ LRESULT _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wPar
         if ((pObj->pfnSubClass_)(hWnd, hObj, uMsg, wParam, lParam, &ret)) {
             return ret;
         }
+        else if (!_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, 0)) //pObj->pfnSubClass_回调里可能组件已经被销毁了
+        {
+            return 0;
+        }
     }
     if (uMsg == WM_NCHITTEST) {
         return _obj_wm_nchittest(hWnd, hObj, pObj, uMsg, wParam, lParam);
