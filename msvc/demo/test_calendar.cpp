@@ -3,7 +3,7 @@
 
 LRESULT CALLBACK OnCalendarEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (nCode == DATEBOX_EVENT_DATETIME) {
+    if (nCode == CALENDAR_EVENT_DATETIME) {
         EX_DATETIME* dt = (EX_DATETIME*)lParam;
         OUTPUTW(L"日期已更改", dt->Year, dt->Mon, dt->Mday, dt->Wday);
     }

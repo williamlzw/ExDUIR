@@ -246,8 +246,9 @@ LRESULT CALLBACK OnMenuButtonRightEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM 
     if (nCode == NM_CLICK) {
         POINT pt;
         GetCursorPos(&pt);
-        Ex_TrackPopupMenu(m_hMenuRight, 0, pt.x, pt.y, 0, hObj, 0, OnMenuWndRightMsgProc,
+        auto cmd = Ex_TrackPopupMenu(m_hMenuRight, TPM_RETURNCMD, pt.x, pt.y, 0, hObj, 0, OnMenuWndRightMsgProc,
                           MENU_FLAG_NOSHADOW);
+        output(L" TrackPopupMenu:return = ", cmd);
     }
     return 0;
 }
