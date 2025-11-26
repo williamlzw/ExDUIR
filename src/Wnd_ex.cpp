@@ -814,6 +814,10 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	}
 	else if (uMsg == 0x1ED)  // MN_BUTTONDOWN
 	{
+		// 如果是 TPM_RETURNCMD 模式，完全让系统处理 这样点击菜单后 会又残影
+		/*if (pWnd->lpMenuParams_ && (pWnd->lpMenuParams_->uFlags_ & TPM_RETURNCMD)) {
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+		}*/
 		if (!_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONDOWN, 1, (LONG_PTR*)&wParam)) {
 			return 0;
 		}
@@ -824,6 +828,10 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	}
 	else if (uMsg == 0x1EF)  // MN_BUTTONUP
 	{
+		// 如果是 TPM_RETURNCMD 模式，完全让系统处理 这样点击菜单后 会又残影
+		/*if (pWnd->lpMenuParams_ && (pWnd->lpMenuParams_->uFlags_ & TPM_RETURNCMD)) {
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+		}*/
 		_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONUP, 0, (LONG_PTR*)&wParam);
 		if (pWnd->objTrackPrev_ != pWnd->objHittest_) {
 			return 0;

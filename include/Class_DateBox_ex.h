@@ -17,7 +17,7 @@ struct datebox_s
     INT     nSohwType;   // 显示类型
     INT     lpYear;      // 临时年
     INT     lpMon;       // 临时月
-    LPVOID  Items;       // 数据
+    //LPVOID  Items;       // 数据
 };
 
 
@@ -88,15 +88,15 @@ inline int64_t get_year(time_t timestamp = 0)
 void   _datebox_register();
 time_t _datebox_gettimestamp();
 void   _datebox_settitle(HEXOBJ hObj, datebox_s* pOwner, int type);
-void   _datebox_setstatic(HEXOBJ hObj, datebox_s* pOwner);
-void   _datebox_init(HEXOBJ hObj, int nYear, int nMon);
-void   _datebox_settime(datebox_s* pOwner, int type, int index, int year, int mon, int Mday,
-                        int Wday);
-void   _datebox_show(HEXOBJ hObj, datebox_s* pOwner, int type);
+//void   _datebox_setstatic(HEXOBJ hObj, datebox_s* pOwner);
+//void   _datebox_init(HEXOBJ hObj, int nYear, int nMon);
+//void   _datebox_settime(datebox_s* pOwner, int type, int index, int year, int mon, int Mday,
+//                        int Wday);
+//void   _datebox_show(HEXOBJ hObj, datebox_s* pOwner, int type);
 LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK _datebox_onwndmsgproc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam,
                                        LPARAM lParam, LRESULT* lpResult);
-LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
-                                       LPARAM lParam, LRESULT* lpResult);
-LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
-                                     LRESULT* lpResult);
+//LRESULT CALLBACK _datebox_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
+//                                       LPARAM lParam, LRESULT* lpResult);
+//LRESULT CALLBACK _datebox_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
+//                                     LRESULT* lpResult);

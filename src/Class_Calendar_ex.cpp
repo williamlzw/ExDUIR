@@ -1,559 +1,536 @@
 #include "stdafx.h"
 
 
-void _calendar_register()
-{
-    Ex_ObjRegister(L"Calendar", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-                   OBJECT_STYLE_EX_FOCUSABLE, DT_CENTER | DT_VCENTER, sizeof(size_t),
-                   LoadCursor(0, IDC_HAND), CANVAS_FLAG_TEXTANTIALIAS, _calendar_proc);
+void _calendar_register() {
+    Ex_ObjRegister(L"Calendar",
+        OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
+        OBJECT_STYLE_EX_FOCUSABLE,
+        DT_CENTER | DT_VCENTER,
+        sizeof(calendar_s*),
+        LoadCursor(0, IDC_HAND),
+        CANVAS_FLAG_TEXTANTIALIAS,
+        _calendar_proc);
 }
 
-time_t _calendar_gettimestamp()
-{
+// DPI 缩放辅助宏
+#define DPI_X(x) ((INT)((x) * g_Li.DpiX))
+#define DPI_Y(y) ((INT)((y) * g_Li.DpiY))
+
+// 获取当前时间戳并初始化 tm
+time_t _calendar_gettimestamp() {
     time_t t = time(NULL);
-    localtime(&t);
-    return difftime(t, 0);
+    return t;
 }
 
-void _calendar_setstatic(HEXOBJ hObj, calendar_s* pOwner)
-{
-    WCHAR lpTitle[50];
-    if (pOwner->nSohwType == 0) {
-        swprintf_s(lpTitle, L"%d年%d月", pOwner->lpYear, pOwner->lpMon);
-    }
-    else if (pOwner->nSohwType == 1) {
-        swprintf_s(lpTitle, L"%d年", pOwner->lpYear);
-    }
-    else if (pOwner->nSohwType == 2) {
-        swprintf_s(lpTitle, L"%d-%d", pOwner->lpYear - 1, pOwner->lpYear + 10);
-    }
+// 绘制日历单元格
+void _calendar_draw_day(HEXCANVAS hCanvas, HEXFONT hFont, INT x, INT y, INT w, INT h, INT day,
+    LPCWSTR lunar, BOOL isToday, BOOL isOtherMonth, BOOL isHover, INT hoverIndex, INT index, BOOL isSelected) {
+    RECT rc = { x, y, x + w, y + h };
+    EXARGB bkColor = 0;
+    EXARGB textColor = isOtherMonth ? ExRGB2ARGB(0x888888, 255) : ExRGB2ARGB(0x000000, 255);
 
-    Ex_ObjSetText(hObj, (LPCWSTR)lpTitle, TRUE);
-}
-
-void _calendar_init(HEXOBJ hObj, int nYear, int nMon)
-{
-    calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
-    pOwner->lpYear     = nYear;
-    pOwner->lpMon      = nMon;
-
-    int DayOfWeek = GetWeekOfDate(nYear, nMon, 1);
-    int DayCount  = 0;
-    int MdayCount = 0;
-
-    if (DayOfWeek != 1) {
-        INT Year = nYear;
-        INT Mon  = nMon - 1;
-        if (Mon == 0) {
-            Year -= 1;
-            Mon = 12;
-        }
-
-        MdayCount = GetMdayCount(Year, Mon);
-
-        for (int i = DayOfWeek - 1; i > 0; i--) {
-            DayCount++;
-            _calendar_settime(pOwner, 1, DayCount, Year, Mon, MdayCount - i + 1, DayOfWeek - i);
-        }
+    if (isToday) {
+        bkColor = ExRGB2ARGB(0xFFE0B2, 255); // 淡黄色背景表示今天
+        textColor = ExRGB2ARGB(0x000000, 255);
     }
 
-    MdayCount = GetMdayCount(nYear, nMon);
-
-    int ddd = 0;
-    for (int i = 1; i <= MdayCount; i++) {
-        DayCount++;
-        if (i == 1) {
-            ddd = DayOfWeek;
-        }
-        else {
-            ddd = ddd + 1;
-        }
-
-        if (ddd > 7) {
-            ddd = 1;
-        }
-        _calendar_settime(pOwner, 2, DayCount, nYear, nMon, i, ddd);
+    // 绘制背景：hover 或 today
+    if (isHover && hoverIndex == index) {
+        HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(0xE0E0E0, 255));
+        _canvas_fillrect(hCanvas, hBrush, rc.left + 2, rc.top + 2, rc.right - 2, rc.bottom - 2);
+        _brush_destroy(hBrush);
+    }
+    else if (bkColor) {
+        HEXBRUSH hBrush = _brush_create(bkColor);
+        _canvas_fillrect(hCanvas, hBrush, rc.left + 2, rc.top + 2, rc.right - 2, rc.bottom - 2);
+        _brush_destroy(hBrush);
     }
 
-    if (pOwner->Year > 0) {
-        INT Year = nYear;
-        INT Mon  = nMon + 1;
-        if (Mon == 13) {
-            Year += 1;
-            Mon = 1;
-        }
-
-        for (int i = 1; i < 15; i++) {
-            DayCount++;
-            if (DayCount <= 42) {
-                ddd = ddd + 1;
-                if (ddd > 7) {
-                    ddd = 1;
-                }
-                _calendar_settime(pOwner, 3, DayCount, Year, Mon, i, ddd);
-            }
-            else {
-                break;
-            }
-        }
-    }
-    Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_SETITEMCOUNT, 42, 0);
-    _calendar_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
-}
-
-void _calendar_settime(calendar_s* pOwner, int type, int index, int year, int mon, int Mday,
-                       int Wday)
-{
-    LPVOID   lpItems  = pOwner->Items;
-    LONG_PTR offset   = (index - 1) * (20 + sizeof(size_t));
-    LPVOID   Calendar = (LPVOID)__get(lpItems, offset + 20);
-
-    __set_int(lpItems, offset, type);
-    __set_int(lpItems, offset + 4, year);
-    __set_int(lpItems, offset + 8, mon);
-    __set_int(lpItems, offset + 12, Mday);
-    __set_int(lpItems, offset + 16, Wday);
-    if (Calendar != 0) {
-        Ex_MemFree(Calendar);
-        Calendar = 0;
+    // >>> 绘制选中边框 <<<
+    if (isSelected) {
+        HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(0x0078D7, 255)); // 蓝色边框，2像素宽
+        _canvas_drawrect(hCanvas, hBrush, rc.left + 2, rc.top + 2, rc.right - 2, rc.bottom - 2,2,0);
+        _brush_destroy(hBrush);
     }
 
-    LPCWSTR LunarCalendar = L"";
-
-    int jr = 0;
-    int jq = 0;
-    // 取农历
-    int LunarCalendarDay = GetLunarCalendar(year, mon, Mday, &jr, &jq);
-    if (jr > 0) {
-        LunarCalendar = Chjrmc[jr];
-    }
-    else if (jq > 0) {
-        if (jq > 24) {
-            jq = jq - 24;
-        }
-        LunarCalendar = Chjqmc[jq];
+    WCHAR text[64];
+    if (lunar && lunar[0]) {
+        swprintf_s(text, L"%d\n%s", day, lunar);
+        _canvas_drawtext(hCanvas, hFont, textColor, text, -1, DT_CENTER | DT_VCENTER | DT_WORDBREAK,
+            rc.left, rc.top, rc.right, rc.bottom);
     }
     else {
-        if ((LunarCalendarDay & 0x3F) == 1) {
-            LunarCalendar = ChMonth[(LunarCalendarDay & 0x3C0) >> 6];
-        }
-        else {
-            LunarCalendar = ChDay[LunarCalendarDay & 0x3F];
-        }
-    }
-
-    Calendar = (LPVOID)StrDupW(LunarCalendar);
-    __set(lpItems, offset + 20, (LONG_PTR)Calendar);
-}
-
-void _calendar_show(HEXOBJ hObj, calendar_s* pOwner, int type)
-{
-    HEXOBJ hObj_list = 0;
-    if (type == 1) {
-        hObj_list = Ex_ObjGetFromID(hObj, 77704);
-        Ex_ObjShow(hObj_list, TRUE);
-        _calendar_init(hObj_list, pOwner->lpYear, pOwner->lpMon);
-
-        hObj_list = Ex_ObjGetFromID(hObj, 77705);
-        Ex_ObjShow(hObj_list, FALSE);
-        _calendar_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
-    }
-    else if (type == 2) {
-        hObj_list = Ex_ObjGetFromID(hObj, 77704);
-        Ex_ObjShow(hObj_list, FALSE);
-
-        hObj_list = Ex_ObjGetFromID(hObj, 77705);
-        Ex_ObjShow(hObj_list, TRUE);
-        Ex_ObjSendMessage(hObj_list, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
-        _calendar_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
-    }
-    else if (type == 3) {
-        hObj_list = Ex_ObjGetFromID(hObj, 77705);
-        Ex_ObjSendMessage(hObj_list, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
-        _calendar_setstatic(Ex_ObjGetFromID(hObj, 77701), pOwner);
-    }
-    else {
-        _calendar_init(Ex_ObjGetFromID(hObj, 77704), pOwner->lpYear, pOwner->lpMon);
+        swprintf_s(text, L"%d", day);
+        _canvas_drawtext(hCanvas, hFont, textColor, text, -1, DT_CENTER | DT_VCENTER,
+            rc.left, rc.top, rc.right, rc.bottom);
     }
 }
+// 计算指定日期在当前日历视图（year, mon）中的格子索引（0~41），若不在视图中返回 -1
+INT _calendar_get_day_index(INT viewYear, INT viewMon, INT targetDay) {
+    // 获取当月1号是星期几（1=周一, ..., 7=周日）
+    INT firstWday = GetWeekOfDate(viewYear, viewMon, 1); // 假设此函数返回 1~7
+    // 今天在网格中的偏移 = (星期偏移 - 1) + (日期 - 1)
+    // 因为网格从周一开始，且第0格对应 firstWday == 1 的情况
+    INT index = (firstWday - 1) + (targetDay - 1);
+    if (index >= 0 && index < 42) {
+        return index;
+    }
+    return -1;
+}
+// 绘制月份选择视图（12个月）
+void _calendar_draw_months(HEXCANVAS hCanvas, HEXFONT hFont, INT year, INT currentMon, INT x, INT y, INT cellW, INT cellH, BOOL isHover, INT hoverIndex) {
+    for (int i = 0; i < 12; ++i) {
+        INT col = i % 4;
+        INT row = i / 4;
+        INT left = x + col * cellW;
+        INT top = y + row * cellH;
+        RECT rc = { left, top, left + cellW, top + cellH };
 
-LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
-{
+        BOOL isSelected = (i + 1 == currentMon);
+        EXARGB color = isSelected ? ExRGB2ARGB(0x0000FF, 255) : ExRGB2ARGB(0x000000, 255);
+
+        if (isHover && hoverIndex == i) {
+            HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(0xE0E0E0, 255));
+            _canvas_fillrect(hCanvas, hBrush, rc.left + 2, rc.top + 2, rc.right - 2, rc.bottom - 2);
+            _brush_destroy(hBrush);
+        }
+
+        WCHAR text[32];
+        swprintf_s(text, L"%d月", i + 1);
+        _canvas_drawtext(hCanvas, hFont, color, text, -1, DT_CENTER | DT_VCENTER, rc.left, rc.top, rc.right, rc.bottom);
+    }
+}
+
+// 绘制年份选择视图（12年：prev + 10年）
+void _calendar_draw_years(HEXCANVAS hCanvas, HEXFONT hFont, INT baseYear, INT currentYear, INT x, INT y, INT cellW, INT cellH, BOOL isHover, INT hoverIndex) {
+    for (int i = 0; i < 12; ++i) {
+        INT year = (i == 0) ? (baseYear - 1) : (baseYear + i - 1);
+        INT col = i % 4;
+        INT row = i / 4;
+        INT left = x + col * cellW;
+        INT top = y + row * cellH;
+        RECT rc = { left, top, left + cellW, top + cellH };
+
+        BOOL isSelected = (year == currentYear);
+        EXARGB color = isSelected ? ExRGB2ARGB(0x0000FF, 255) : ExRGB2ARGB(0x000000, 255);
+
+        if (isHover && hoverIndex == i) {
+            HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(0xE0E0E0, 255));
+            _canvas_fillrect(hCanvas, hBrush, rc.left + 2, rc.top + 2, rc.right - 2, rc.bottom - 2);
+            _brush_destroy(hBrush);
+        }
+
+        WCHAR text[32];
+        swprintf_s(text, L"%d年", year);
+        _canvas_drawtext(hCanvas, hFont, color, text, -1, DT_CENTER | DT_VCENTER, rc.left, rc.top, rc.right, rc.bottom);
+    }
+}
+
+// 计算鼠标位置对应的日历索引（0~41）
+INT _calendar_hit_test_day(INT mouseX, INT mouseY, INT startX, INT startY, INT cellW, INT cellH) {
+    if (mouseX < startX || mouseY < startY) return -1;
+    INT col = (mouseX - startX) / cellW;
+    INT row = (mouseY - startY) / cellH;
+    if (col >= 0 && col < 7 && row >= 0 && row < 6) {
+        return row * 7 + col;
+    }
+    return -1;
+}
+
+// 计算月份或年份点击索引
+INT _calendar_hit_test_grid(INT mouseX, INT mouseY, INT startX, INT startY, INT cellW, INT cellH) {
+    if (mouseX < startX || mouseY < startY) return -1;
+    INT col = (mouseX - startX) / cellW;
+    INT row = (mouseY - startY) / cellH;
+    if (col >= 0 && col < 4 && row >= 0 && row < 3) {
+        return row * 4 + col;
+    }
+    return -1;
+}
+
+LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
+    static INT g_hoverIndex = -1;
+    static POINT g_lastMouse = { 0 };
+
+    calendar_s* pCal = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+
     if (uMsg == WM_CREATE) {
-        calendar_s* ptr = (calendar_s*)malloc(sizeof(calendar_s));
-        ptr->hObj       = hObj;
-        time_t time     = _calendar_gettimestamp();
-        tm     ptm;
-        localtime_s(&ptm, &time);
-        ptr->Year      = ptm.tm_year + 1900;
-        ptr->Mon       = ptm.tm_mon + 1;
-        ptr->Mday      = ptm.tm_mday;
-        ptr->Wday      = ptm.tm_wday == 0 ? 7 : ptm.tm_wday;
-        ptr->nCalendar = 1;
-        ptr->nSohwType = 0;
-        ptr->Items     = Ex_MemAlloc(42 * (20 + sizeof(size_t)));
-        ptr->nSohwType = 0;
+        pCal = (calendar_s*)malloc(sizeof(calendar_s));
+        ZeroMemory(pCal, sizeof(calendar_s));
 
-        HEXOBJ hObj1 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"", -1, 10, 8, 80, 22,
-                                      hObj, 77701, -1, (LPARAM)ptr, 0, _calendar_onbuttonproc);
-        Ex_ObjSetFontFromFamily(hObj1, 0, 14, -1, FALSE);
-        HEXOBJ hObj2 =
-            Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"-", -1, 240, 8, 30, 20, hObj,
-                           77702, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
-        Ex_ObjSetFontFromFamily(hObj2, 0, 24, -1, FALSE);
-        HEXOBJ hObj3 =
-            Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"Static", L"+", -1, 275, 8, 30, 20, hObj,
-                           77703, DT_CENTER | DT_VCENTER, (LPARAM)ptr, 0, _calendar_onbuttonproc);
-        Ex_ObjSetFontFromFamily(hObj3, 0, 24, -1, FALSE);
+        time_t now = _calendar_gettimestamp();
+        tm ptm;
+        localtime_s(&ptm, &now);
+        pCal->Year = ptm.tm_year + 1900;
+        pCal->Mon = ptm.tm_mon + 1;
+        pCal->Mday = ptm.tm_mday;
+        pCal->Wday = ptm.tm_wday == 0 ? 7 : ptm.tm_wday;
+        pCal->lpYear = pCal->Year;
+        pCal->lpMon = pCal->Mon;
+        pCal->nSohwType = 0;
+        pCal->nCalendar = 1;
+        pCal->nSelectedIndex = _calendar_get_day_index(pCal->lpYear, pCal->lpMon, pCal->Mday);
+        pCal->hFont = Ex_ObjGetFont(hObj);
+        
+        Ex_ObjSetLong(hObj, OBJECT_LONG_LPARAM, (LONG_PTR)pCal);
+        Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursor(0, IDC_ARROW));
 
-        HEXOBJ hObj4 =
-            Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL,
-                           OBJECT_STYLE_VISIBLE | LISTVIEW_STYLE_VERTICALLIST, 10, 45, 300, 267,
-                           hObj, 77704, -1, (LPARAM)ptr, 0, _calendar_onlistproc);
-        _calendar_init(hObj4, ptr->Year, ptr->Mon);
-
-        HEXOBJ hObj5 = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"listview", NULL,
-                                      LISTVIEW_STYLE_VERTICALLIST, 10, 65, 300, 247, hObj, 77705,
-                                      -1, (LPARAM)ptr, 0, _calendar_onlistproc);
-        Ex_ObjShow(hObj5, FALSE);
-        Ex_ObjSetFontFromFamily(hObj5, 0, 14, -1, FALSE);
-        Ex_ObjSendMessage(hObj5, LISTVIEW_MESSAGE_SETITEMCOUNT, 12, 0);
-
-        ptr->hFont = _font_createfromfamily(0, 14, 0);
-        Ex_ObjSetFont(hObj, ptr->hFont, FALSE);
-        Ex_ObjSetLong(hObj, 0, (LONG_PTR)ptr);
     }
     else if (uMsg == WM_DESTROY) {
-        calendar_s* ptr = (calendar_s*)Ex_ObjGetLong(hObj, 0);
-        _font_destroy(ptr->hFont);
-        LPVOID pOld = ptr->Items;
-        if (pOld != 0) {
-            for (int i = 0; i < 42; i++) {
-                LONG_PTR offset   = i * (20 + sizeof(size_t));
-                LPVOID   Calendar = (LPVOID)__get(pOld, offset + 20);
-                if (Calendar) {
-                    Ex_MemFree(Calendar);
-                }
-            }
-            Ex_MemFree(pOld);
+        if (pCal) {
+            //_font_destroy(pCal->hFont);
+            pCal->nSelectedIndex = -1;
+            free(pCal);
         }
-        free(ptr);
+
     }
     else if (uMsg == WM_PAINT) {
-        EX_PAINTSTRUCT ps{0};
-        if (Ex_ObjBeginPaint(hObj, &ps)) {
-            _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj),
-                             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
-                             (LPCWSTR)Ex_ObjGetLong(hObj, OBJECT_LONG_LPWZTITLE), -1,
-                             ps.dwTextFormat, 0, 0, ps.uWidth, ps.uHeight);
-            Ex_ObjEndPaint(hObj, &ps);
+        EX_PAINTSTRUCT ps;
+        if (!Ex_ObjBeginPaint(hObj, &ps)) return 0;
+        
+        INT width = ps.uWidth;
+        INT height = ps.uHeight;
+        HEXCANVAS hCanvas = ps.hCanvas;
+        _canvas_clear(hCanvas, ExRGB2ARGB(0xFFFFFF, 255));
+        _canvas_settextantialiasmode(hCanvas, TRUE);
+        // 绘制标题区域
+        INT titleH = DPI_Y(30);
+        // 左侧：年月文本
+        WCHAR leftText[64];
+        if (pCal->nSohwType == 0) {
+            swprintf_s(leftText, L"%d年%d月", pCal->lpYear, pCal->lpMon);
         }
-    }
-    return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
-}
+        else if (pCal->nSohwType == 1) {
+            swprintf_s(leftText, L"%d年", pCal->lpYear);
+        }
+        else {
+            swprintf_s(leftText, L"%d-%d年", pCal->lpYear - 1, pCal->lpYear + 10);
+        }
+        _canvas_drawtext(hCanvas, pCal->hFont, ExRGB2ARGB(0x000000, 255), leftText, -1,
+            DT_LEFT | DT_VCENTER | DT_SINGLELINE,
+            DPI_X(8), 0, DPI_X(150), titleH);
 
-LRESULT CALLBACK _calendar_onbuttonproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
-                                        LPARAM lParam, LRESULT* lpResult)
-{
-    if (uMsg == WM_CREATE) {
-        Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
-    }
-    else if (uMsg == WM_NOTIFY) {
-        EX_NMHDR ni{0};
-        RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
-        if (hObj == ni.hObjFrom) {
-            if (ni.nCode == NM_CLICK) {
-                calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+        // === 右侧按钮区域：今天 < > ===
+        INT btnH = titleH;
+        INT todayW = DPI_X(50);   // “今天”稍宽
+        INT arrowW = DPI_X(30);   // < 和 > 宽度
+        INT totalBtnW = todayW + arrowW * 2;
+        INT rightStartX = width - totalBtnW; // 按钮区起始 X
 
-                if (ni.idFrom == 77701) {
-                    if (pOwner->nSohwType == 0) {
-                        pOwner->nSohwType = 1;
-                        _calendar_show(hObj, pOwner, 2);
-                    }
-                    else if (pOwner->nSohwType == 1) {
-                        pOwner->nSohwType = 2;
-                        _calendar_show(hObj, pOwner, 3);
-                    }
-                    else if (pOwner->nSohwType == 2) {
-                        pOwner->nSohwType = 0;
-                        _calendar_show(hObj, pOwner, 1);
-                    }
+        // 绘制“今天”
+        _canvas_drawtext(hCanvas, pCal->hFont, ExRGB2ARGB(0x0000FF, 255), L"今天", -1,
+            DT_CENTER | DT_VCENTER | DT_SINGLELINE,
+            rightStartX, 0, rightStartX + todayW, btnH);
+
+        // 右侧：< 和 >
+        INT btnW = DPI_X(30);
+        INT rightAreaStart = width - btnW * 2;
+        _canvas_drawtext(hCanvas, pCal->hFont, ExRGB2ARGB(0x000000, 180), L"▲", -1,
+            DT_CENTER | DT_VCENTER,
+            rightAreaStart, 0, rightAreaStart + btnW, titleH);
+        _canvas_drawtext(hCanvas, pCal->hFont, ExRGB2ARGB(0x000000, 180), L"▼", -1,
+            DT_CENTER | DT_VCENTER,
+            rightAreaStart + btnW, 0, rightAreaStart + btnW * 2, titleH);
+        if (pCal->nSohwType == 0) {
+            // 绘制星期头
+            LPCWSTR weekdays[] = { L"一", L"二", L"三", L"四", L"五", L"六", L"日" };
+            INT cellW = width / 7;
+            INT startY = titleH + DPI_Y(5);
+            for (int i = 0; i < 7; ++i) {
+                _canvas_drawtext(hCanvas, pCal->hFont, ExRGB2ARGB(0x000000, 255), weekdays[i], -1,
+                    DT_CENTER | DT_VCENTER, i * cellW, startY, (i + 1) * cellW, startY + DPI_Y(20));
+            }
+
+            // 准备日历数据
+            INT firstDayOfWeek = GetWeekOfDate(pCal->lpYear, pCal->lpMon, 1); // 1=周一
+            INT daysInMonth = GetMdayCount(pCal->lpYear, pCal->lpMon);
+            INT totalCells = 42;
+            INT dayIndex = 0;
+
+            // 上月补天数
+            INT prevYear = pCal->lpYear, prevMon = pCal->lpMon - 1;
+            if (prevMon == 0) { prevYear--; prevMon = 12; }
+            INT prevDays = GetMdayCount(prevYear, prevMon);
+            for (int w = 1; w < firstDayOfWeek; ++w) {
+                dayIndex++;
+            }
+
+            // 当月
+            for (int d = 1; d <= daysInMonth; ++d) {
+                dayIndex++;
+            }
+
+            // 下月补天数
+            while (dayIndex < totalCells) {
+                dayIndex++;
+            }
+
+            // 重绘所有单元格
+            INT gridY = startY + DPI_Y(20) + DPI_Y(5);
+            INT gridH = height - gridY;
+            INT cellH = gridH / 6;
+
+            dayIndex = 0;
+            // 上月
+            for (int w = 1; w < firstDayOfWeek; ++w) {
+                INT d = prevDays - (firstDayOfWeek - w - 1);
+                int jr = 0, jq = 0;
+                INT lunarDay = GetLunarCalendar(prevYear, prevMon, d, &jr, &jq);
+                LPCWSTR lunarText = L"";
+                if (jr > 0) lunarText = Chjrmc[jr];
+                else if (jq > 0) lunarText = Chjqmc[jq > 24 ? jq - 24 : jq];
+                else lunarText = ChDay[lunarDay & 0x3F];
+
+                _calendar_draw_day(hCanvas, pCal->hFont,
+                    (dayIndex % 7) * cellW, gridY + (dayIndex / 7) * cellH, cellW, cellH,
+                    d, lunarText, FALSE, TRUE, g_hoverIndex == dayIndex, g_hoverIndex,dayIndex, pCal->nSelectedIndex == dayIndex);
+                dayIndex++;
+            }
+
+            // 当月
+            for (int d = 1; d <= daysInMonth; ++d) {
+                int jr = 0, jq = 0;
+                INT lunarDay = GetLunarCalendar(pCal->lpYear, pCal->lpMon, d, &jr, &jq);
+                LPCWSTR lunarText = L"";
+                if (jr > 0) lunarText = Chjrmc[jr];
+                else if (jq > 0) lunarText = Chjqmc[jq > 24 ? jq - 24 : jq];
+                else if ((lunarDay & 0x3F) == 1) lunarText = ChMonth[(lunarDay & 0x3C0) >> 6];
+                else lunarText = ChDay[lunarDay & 0x3F];
+
+                BOOL isToday = (pCal->lpYear == pCal->Year && pCal->lpMon == pCal->Mon && d == pCal->Mday);
+                _calendar_draw_day(hCanvas, pCal->hFont,
+                    (dayIndex % 7) * cellW, gridY + (dayIndex / 7) * cellH, cellW, cellH,
+                    d, lunarText, isToday, FALSE, g_hoverIndex == dayIndex, g_hoverIndex, dayIndex, pCal->nSelectedIndex == dayIndex);
+                dayIndex++;
+            }
+
+            // 下月
+            INT nextYear = pCal->lpYear, nextMon = pCal->lpMon + 1;
+            if (nextMon == 13) { nextYear++; nextMon = 1; }
+            for (int d = 1; dayIndex < 42; ++d) {
+                int jr = 0, jq = 0;
+                INT lunarDay = GetLunarCalendar(nextYear, nextMon, d, &jr, &jq);
+                LPCWSTR lunarText = L"";
+                if (jr > 0) lunarText = Chjrmc[jr];
+                else if (jq > 0) lunarText = Chjqmc[jq > 24 ? jq - 24 : jq];
+                else lunarText = ChDay[lunarDay & 0x3F];
+
+                _calendar_draw_day(hCanvas, pCal->hFont,
+                    (dayIndex % 7) * cellW, gridY + (dayIndex / 7) * cellH, cellW, cellH,
+                    d, lunarText, FALSE, TRUE, g_hoverIndex == dayIndex, g_hoverIndex, dayIndex, pCal->nSelectedIndex == dayIndex);
+                dayIndex++;
+            }
+
+        }
+        else if (pCal->nSohwType == 1) {
+            // 月份选择
+            INT cellW = width / 4;
+            INT cellH = (height - titleH) / 3;
+            _calendar_draw_months(hCanvas, pCal->hFont, pCal->lpYear, pCal->lpMon,
+                0, titleH, cellW, cellH, g_hoverIndex != -1, g_hoverIndex);
+        }
+        else if (pCal->nSohwType == 2) {
+            // 年份选择
+            INT cellW = width / 4;
+            INT cellH = (height - titleH) / 3;
+            _calendar_draw_years(hCanvas, pCal->hFont, pCal->lpYear, pCal->Year,
+                0, titleH, cellW, cellH, g_hoverIndex != -1, g_hoverIndex);
+        }
+
+        Ex_ObjEndPaint(hObj, &ps);
+    }
+    else if (uMsg == WM_LBUTTONDOWN) {
+        INT x = GET_X_LPARAM(lParam);
+        INT y = GET_Y_LPARAM(lParam);
+
+        INT titleH = DPI_Y(30);
+        if (y < titleH) {
+            RECT rc;
+            Ex_ObjGetClientRect(hObj, &rc);
+            int width = rc.right - rc.left;
+            // 计算按钮位置（与绘制逻辑一致）
+            INT todayW = DPI_X(50);
+            INT arrowW = DPI_X(30);
+            INT totalBtnW = todayW + arrowW * 2;
+            INT rightStartX = width - totalBtnW;
+            // 点击“今天”
+            if (x >= rightStartX && x < rightStartX + todayW) {
+                time_t now = _calendar_gettimestamp();
+                tm ptm;
+                localtime_s(&ptm, &now);
+                pCal->lpYear = ptm.tm_year + 1900;
+                pCal->lpMon = ptm.tm_mon + 1;
+                pCal->nSohwType = 0; // 切回日历视图
+                pCal->nSelectedIndex = _calendar_get_day_index(pCal->lpYear, pCal->lpMon, ptm.tm_mday);
+                Ex_ObjInvalidateRect(hObj, NULL);
+                //return 0;
+            }
+            // 右侧按钮区域
+            INT btnW = DPI_X(30);
+            INT rightAreaStart = width - btnW * 2;
+            if (x >= rightAreaStart && x < rightAreaStart + btnW) {
+                // "<" 上一
+                if (pCal->nSohwType == 0) {
+                    pCal->lpMon--;
+                    if (pCal->lpMon == 0) { pCal->lpYear--; pCal->lpMon = 12; }
                 }
-                else if (ni.idFrom == 77702) {
-                    if (pOwner->nSohwType == 0) {
-                        pOwner->lpMon -= 1;
-                        if (pOwner->lpMon == 0) {
-                            pOwner->lpYear -= 1;
-                            pOwner->lpMon = 12;
-                        }
-                        _calendar_show(hObj, pOwner, 4);
-                    }
-                    else if (pOwner->nSohwType == 1) {
-                        pOwner->lpYear -= 1;
-                        _calendar_show(hObj, pOwner, 3);
-                        ;
-                    }
-                    else if (pOwner->nSohwType == 2) {
-                        pOwner->lpYear -= 12;
-                        _calendar_show(hObj, pOwner, 3);
-                    }
+                else if (pCal->nSohwType == 1) {
+                    pCal->lpYear--;
                 }
-                else if (ni.idFrom == 77703) {
-                    if (pOwner->nSohwType == 0) {
-                        pOwner->lpMon += 1;
-                        if (pOwner->lpMon == 13) {
-                            pOwner->lpYear += 1;
-                            pOwner->lpMon = 1;
-                        }
-                        _calendar_show(hObj, pOwner, 4);
-                    }
-                    else if (pOwner->nSohwType == 1) {
-                        pOwner->lpYear += 1;
-                        _calendar_show(hObj, pOwner, 3);
-                    }
-                    else if (pOwner->nSohwType == 2) {
-                        pOwner->lpYear += 12;
-                        _calendar_show(hObj, pOwner, 3);
-                    }
+                else if (pCal->nSohwType == 2) {
+                    pCal->lpYear -= 12;
                 }
+                pCal->nSelectedIndex = -1;
+                Ex_ObjInvalidateRect(hObj, NULL);
+                //return 0;
+            }
+            else if (x >= rightAreaStart + btnW && x < rightAreaStart + btnW * 2) {
+                // ">" 下一
+                if (pCal->nSohwType == 0) {
+                    pCal->lpMon++;
+                    if (pCal->lpMon == 13) { pCal->lpYear++; pCal->lpMon = 1; }
+                }
+                else if (pCal->nSohwType == 1) {
+                    pCal->lpYear++;
+                }
+                else if (pCal->nSohwType == 2) {
+                    pCal->lpYear += 12;
+                }
+                pCal->nSelectedIndex = -1;
+                Ex_ObjInvalidateRect(hObj, NULL);
+                //return 0;
+            }
+
+            // 点击左侧年月区域：切换视图模式（可选）
+            if (x < DPI_X(100)) {
+                pCal->nSohwType = (pCal->nSohwType + 1) % 3;
+                Ex_ObjInvalidateRect(hObj, NULL);
+                //return 0;
             }
         }
-    }
-    return 0;
-}
+        else {
+            // 点击日历区域
+            RECT rc;
+            Ex_ObjGetClientRect(hObj, &rc);
+            int width = rc.right - rc.left;
+            int height = rc.bottom - rc.top;
+            INT hit = -1;
+            if (pCal->nSohwType == 0) {
+                INT cellW = width / 7;
+                INT startY = titleH + DPI_Y(25);
+                hit = _calendar_hit_test_day(x, y, 0, startY, cellW, (height - startY) / 6);
+                if (hit >= 0) {
+                    INT firstDayOfWeek = GetWeekOfDate(pCal->lpYear, pCal->lpMon, 1);
+                    INT offset = hit - (firstDayOfWeek - 1);
+                    if (offset >= 0) {
+                        INT day = offset + 1;
+                        INT daysInMonth = GetMdayCount(pCal->lpYear, pCal->lpMon);
+                        if (day <= daysInMonth) {
+                            // >>> 记录选中索引 <<<
+                            pCal->nSelectedIndex = hit;
 
-LRESULT CALLBACK _calendar_onlistproc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
-                                      LPARAM lParam, LRESULT* lpResult)
-{
-    INT           nError = 0;
-    static LPARAM nIndex;
-    if (uMsg == WM_NCCALCSIZE) {
-        obj_s* pObj = nullptr;
-        if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-            if (Ex_ObjGetLong(hObj, OBJECT_LONG_ID) == 77704) {
-                pObj->c_top_ = Ex_Scale(23);
-                *lpResult    = 1;
-                return 1;
+                            EX_DATETIME dt = {0}; //= (EX_DATETIME*)malloc(sizeof(EX_DATETIME));
+                            //if (!dt) return 0;
+
+                            dt.Year = pCal->lpYear;
+                            dt.Mon = pCal->lpMon;
+                            dt.Mday = day;
+                            dt.Wday = GetWeekOfDate(dt.Year, dt.Mon, dt.Mday);
+
+                            Ex_ObjDispatchNotify(hObj, CALENDAR_EVENT_DATETIME, 0, (size_t)&dt);// 安全：堆分配由接收方释放
+                            /*HWND hWndPopup = (HWND)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
+                            if (hWndPopup) {
+                                PostMessageW(hWndPopup, CALENDAR_EVENT_DATETIME, 0, (LPARAM)dt); // 安全：堆分配由接收方释放
+                            }*/
+                            Ex_ObjInvalidateRect(hObj, NULL); // 触发重绘以显示边框
+                        }
+                    }
+                }
             }
-        }
-    }
-    else if (uMsg == WM_ERASEBKGND) {
-        if (__get((LPVOID)lParam, 0) == wParam) {
-            calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
-            if (pOwner->nSohwType > 0) {
-                return 0;
+            else if (pCal->nSohwType == 1) {
+                hit = _calendar_hit_test_grid(x, y, 0, titleH, width / 4, (height - titleH) / 3);
+                if (hit >= 0) {
+                    pCal->lpMon = hit + 1;
+                    pCal->nSohwType = 0;
+                    Ex_ObjInvalidateRect(hObj, NULL);
+                }
             }
-            EX_PAINTSTRUCT ps{0};
-            RtlMoveMemory(&ps, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT));
-            INT     nLeft  = 0;
-            LPCWSTR wzText = L"";
-            for (INT i = 1; i <= 7; i++) {
-                if (i == 1) {
-                    nLeft = 15 * g_Li.DpiX;
+            else if (pCal->nSohwType == 2) {
+                hit = _calendar_hit_test_grid(x, y, 0, titleH, width / 4, (height - titleH) / 3);
+                if (hit >= 0) {
+                    if (hit == 0)
+                        pCal->lpYear--;
+                    else
+                        pCal->lpYear += hit - 1;
+                    pCal->nSohwType = 1;
+                    Ex_ObjInvalidateRect(hObj, NULL);
                 }
-                else {
-                    nLeft += 42 * g_Li.DpiX;
-                }
-                switch (i) {
-                case 1: wzText = L"一"; break;
-                case 2: wzText = L"二"; break;
-                case 3: wzText = L"三"; break;
-                case 4: wzText = L"四"; break;
-                case 5: wzText = L"五"; break;
-                case 6: wzText = L"六"; break;
-                case 7: wzText = L"日"; break;
-                }
-                _canvas_drawtext(ps.hCanvas, Ex_ObjGetFont(hObj), ExRGB2ARGB(0, 255), wzText, -1,
-                                 DT_LEFT | DT_VCENTER, nLeft, 0, nLeft + 30 * g_Li.DpiX,
-                                 16 * g_Li.DpiX);
-            }
-        }
-    }
-    else if (uMsg == WM_NOTIFY) {
-        EX_NMHDR ni{0};
-        RtlMoveMemory(&ni, (LPVOID)lParam, sizeof(EX_NMHDR));
-        if (hObj == ni.hObjFrom) {
-            calendar_s* pOwner = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
-            if (ni.nCode == NM_CALCSIZE) {
-                if (ni.idFrom == 77704) {
-                    __set_int((LPVOID)ni.lParam, 0, 40);   // 改变项目宽度  
-                    __set_int((LPVOID)ni.lParam, 4, 40);   // 改变项目高度  
-                    __set_int((LPVOID)ni.lParam, 8, 2);    // 改变项目间隔宽度
-                    __set_int((LPVOID)ni.lParam, 12, 1);   // 改变项目间隔高度
-                }
-                else if (ni.idFrom == 77705) {
-                    __set_int((LPVOID)ni.lParam, 0, 72);   // 改变项目宽度  
-                    __set_int((LPVOID)ni.lParam, 4, 72);   // 改变项目高度  
-                    __set_int((LPVOID)ni.lParam, 8, 2);    // 改变项目间隔宽度
-                    __set_int((LPVOID)ni.lParam, 12, 2);   // 改变项目间隔高度
-                }
-                nIndex    = 0;
-                *lpResult = 1;
-                return 1;
-            }
-            else if (ni.nCode == NM_CUSTOMDRAW) {
-                EX_CUSTOMDRAW cd{0};
-                RtlMoveMemory(&cd, (LPVOID)ni.lParam, sizeof(EX_CUSTOMDRAW));
-                //_canvas_clear(cd.hCanvas, 0);
-                if (ni.idFrom == 77704) {
-                    LPVOID   lpItems  = pOwner->Items;
-                    LONG_PTR offset   = (cd.iItem - 1) * (20 + sizeof(size_t));
-                    int      type     = __get_int(lpItems, offset);
-                    int      year     = __get_int(lpItems, offset + 4);
-                    int      mon      = __get_int(lpItems, offset + 8);
-                    int      Mday     = __get_int(lpItems, offset + 12);
-                    int      Wday     = __get_int(lpItems, offset + 16);
-                    LPVOID   Calendar = (LPVOID)__get(lpItems, offset + 20);
-
-                    HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(14120960, 255));
-                    EXARGB   crText = -1;
-                    if (year == pOwner->Year && mon == pOwner->Mon && Mday == pOwner->Mday) {
-                        _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
-                                         cd.rcPaint.top + 3, cd.rcPaint.right - 3,
-                                         cd.rcPaint.bottom - 3);
-                    }
-                    else {
-                        if (type == 2) {
-                            crText = ExRGB2ARGB(0, 255);
-                        }
-                        else {
-                            crText = ExRGB2ARGB(8421504, 255);
-                        }
-                    }
-                    if (cd.dwState & STATE_HOVER) {
-                        //_canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
-                        // cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
-                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1,
-                                         cd.rcPaint.top + 1, cd.rcPaint.right - 1,
-                                         cd.rcPaint.bottom - 1, 1, 0);
-                    }
-                    _brush_destroy(hBrush);
-
-                    WCHAR lpwzText[50];
-                    if (pOwner->nCalendar == 0) {
-                        swprintf_s(lpwzText, L"%d", Mday);
-                    }
-                    else {
-                        swprintf_s(lpwzText, L"%d\n%s", Mday, (LPCWSTR)Calendar);
-                    }
-                    _canvas_drawtext(cd.hCanvas, Ex_ObjGetFont(hObj), crText, lpwzText, -1,
-                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK, cd.rcPaint.left,
-                                     cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
-                }
-                else if (ni.idFrom == 77705) {
-                    LPVOID   lpItems = pOwner->Items;
-                    LONG_PTR offset  = (cd.iItem - 1) * (20 + sizeof(size_t));
-                    int      year    = __get_int(lpItems, offset + 4);
-                    int      mon     = __get_int(lpItems, offset + 8);
-
-                    EXARGB   crText = ExRGB2ARGB(0, 255);
-                    HEXBRUSH hBrush = _brush_create(ExRGB2ARGB(14120960, 255));
-                    if (pOwner->nSohwType == 1 && cd.iItem == pOwner->Mon &&
-                        pOwner->lpYear == pOwner->Year) {
-                        crText = -1;
-                        _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
-                                         cd.rcPaint.top + 3, cd.rcPaint.right - 3,
-                                         cd.rcPaint.bottom - 3);
-                    }
-                    if (pOwner->nSohwType == 2) {
-                        int nYear = 0;
-                        if (cd.iItem == 1) {
-                            nYear = pOwner->lpYear - 1;
-                        }
-                        else {
-                            nYear = pOwner->lpYear + cd.iItem - 2;
-                        }
-                        if (nYear == pOwner->Year) {
-                            crText = -1;
-                            _canvas_fillrect(cd.hCanvas, hBrush, cd.rcPaint.left + 3,
-                                             cd.rcPaint.top + 3, cd.rcPaint.right - 3,
-                                             cd.rcPaint.bottom - 3);
-                        }
-                    }
-                    if (cd.dwState & STATE_HOVER) {
-                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left, cd.rcPaint.top,
-                                         cd.rcPaint.right, cd.rcPaint.bottom, 1, 0);
-                        _canvas_drawrect(cd.hCanvas, hBrush, cd.rcPaint.left + 1,
-                                         cd.rcPaint.top + 1, cd.rcPaint.right - 1,
-                                         cd.rcPaint.bottom - 1, 1, 0);
-                    }
-                    _brush_destroy(hBrush);
-
-                    WCHAR lpwzText[50];
-                    if (pOwner->nSohwType == 1) {
-                        swprintf_s(lpwzText, L"%d月", cd.iItem);
-                    }
-                    else if (pOwner->nSohwType == 2) {
-                        int nYear = 0;
-                        if (cd.iItem == 1) {
-                            nYear = pOwner->lpYear - 1;
-                        }
-                        else {
-                            nYear = pOwner->lpYear + cd.iItem - 2;
-                        }
-                        swprintf_s(lpwzText, L"%d年", nYear);
-                    }
-                    _canvas_drawtext(cd.hCanvas, pOwner->hFont, crText, lpwzText, -1,
-                                     DT_CENTER | DT_VCENTER | DT_WORDBREAK, cd.rcPaint.left,
-                                     cd.rcPaint.top, cd.rcPaint.right, cd.rcPaint.bottom);
-                }
-
-                *lpResult = 1;
-                return 1;
-            }
-            else if (ni.nCode == LISTVIEW_EVENT_ITEMCHANGED) {
-                // wParam 新选中项,lParam 旧选中项
-                if (ni.idFrom == 77704) {
-                    LPVOID      lpItems = pOwner->Items;
-                    LONG_PTR    offset  = (ni.wParam - 1) * (20 + sizeof(size_t));
-                    EX_DATETIME dt;
-                    dt.Year = __get_int(lpItems, offset + 4);
-                    dt.Mon  = __get_int(lpItems, offset + 8);
-                    dt.Mday = __get_int(lpItems, offset + 12);
-                    dt.Wday = __get_int(lpItems, offset + 16);
-                    Ex_ObjDispatchNotify(pOwner->hObj, CALENDAR_EVENT_DATETIME, 0, (size_t)&dt);
-                }
-                else if (ni.idFrom == 77705) {
-                    if (pOwner->nSohwType == 1) {
-                        pOwner->lpMon     = ni.wParam;
-                        pOwner->nSohwType = 0;
-                        _calendar_show(hObj, pOwner, 1);
-                    }
-                    else if (pOwner->nSohwType == 2) {
-                        int nYear = 0;
-                        if (ni.wParam == 1) {
-                            nYear = pOwner->lpYear - 1;
-                        }
-                        else {
-                            nYear = pOwner->lpYear + ni.wParam - 2;
-                        }
-                        pOwner->lpYear    = nYear;
-                        pOwner->nSohwType = 1;
-                        _calendar_show(hObj, pOwner, 3);
-                    }
-                }
-                *lpResult = 1;
-                return 1;
             }
         }
     }
     else if (uMsg == WM_MOUSEMOVE) {
-        INT index = Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_GETHOTITEM, 0, 0);
-        if (index > 0) {
-            if (index != nIndex) {
-                nIndex = index;
-                Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_HAND));
+        INT x = GET_X_LPARAM(lParam);
+        INT y = GET_Y_LPARAM(lParam);
+        g_lastMouse.x = x; g_lastMouse.y = y;
+
+        INT titleH = DPI_Y(30);
+        INT newHover = -1;
+        if (y >= titleH) {
+            RECT rc;
+            Ex_ObjGetClientRect(hObj, &rc);
+            int width = rc.right - rc.left;
+            int height = rc.bottom - rc.top;
+            if (pCal->nSohwType == 0) {
+                INT cellW = width / 7;
+                INT startY = titleH + DPI_Y(25);
+                newHover = _calendar_hit_test_day(x, y, 0, startY, cellW, (height - startY) / 6);
+            }
+            else {
+                newHover = _calendar_hit_test_grid(x, y, 0, titleH, width / 4, (height - titleH) / 3);
             }
         }
-        else {
-            if (nIndex > 0) {
-                nIndex = 0;
-                Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
-            }
+
+        if (newHover != g_hoverIndex) {
+            g_hoverIndex = newHover;
+            Ex_ObjInvalidateRect(hObj, NULL);
         }
+        Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursor(0, IDC_HAND));
     }
     else if (uMsg == WM_MOUSELEAVE) {
-        Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursorW(0, IDC_ARROW));
+        if (g_hoverIndex != -1) {
+            g_hoverIndex = -1;
+            Ex_ObjInvalidateRect(hObj, NULL);
+        }
+        Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursor(0, IDC_ARROW));
+        return 0;
     }
-    return 0;
+    else if (uMsg == DATEBOX_MESSAGE_SETDATETIME) {
+        EX_DATETIME* dt = (EX_DATETIME*)lParam;
+        if (dt && dt->Year > 0 && dt->Mon >= 1 && dt->Mon <= 12 && dt->Mday >= 1) {
+            pCal->lpYear = dt->Year;
+            pCal->lpMon = dt->Mon;
+            // 可选：也更新当前选中日
+            pCal->Year = dt->Year;
+            pCal->Mon = dt->Mon;
+            pCal->Mday = dt->Mday;
+            pCal->Wday = GetWeekOfDate(dt->Year, dt->Mon, dt->Mday);
+            pCal->nSelectedIndex = _calendar_get_day_index(pCal->lpYear, pCal->lpMon, pCal->Mday);
+            g_hoverIndex = -1;
+            Ex_ObjInvalidateRect(hObj, NULL);
+            return 1;
+        }
+        return 0;
+    }
+    else if (uMsg == DATEBOX_MESSAGE_GETDATETIME) {
+        EX_DATETIME* dt = (EX_DATETIME*)lParam;
+        if (dt && pCal) {
+            dt->Year = pCal->Year;
+            dt->Mon = pCal->Mon;
+            dt->Mday = pCal->Mday;
+            dt->Wday = pCal->Wday;
+            return 1;
+        }
+        return 0;
+    }
+    return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
