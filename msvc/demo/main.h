@@ -75,14 +75,10 @@
 #include "test_splitter.h"
 #include "test_d3d.h"
 #include "test_grid.h"
+#include "test_webview2.h"
 
-INT CalculateContainerHeight(INT buttonsNumber, INT containerWidth, INT buttonWidth,
-                             INT buttonHeight, INT horizontalSpacing, INT verticalSpacing);
-LRESULT CALLBACK OnPageScrollMsg(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
-                                 LRESULT* lpResult);
+
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
                                   LRESULT* lpResult);
 LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
-INT              PageScrollDefaultProc(HEXOBJ hObj, DWORD nBar, WPARAM wParam, INT nLine, INT nPage,
-                                       BOOL fRedraw);
 void             test_exdui();

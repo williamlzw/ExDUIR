@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
 #include <string>
 #include <tuple>
 #include <vector>
-//#include <variant>
+#include <variant>
 #include "variant.hpp"
 namespace SVGNative
 {

@@ -27,7 +27,8 @@
     <ClCompile Include="..\..\src\Class_Grid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_LineChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
-    <ClCompile Include="..\..\src\Class_Splitter.cpp" />
+    <ClCompile Include="..\..\src\Class_FlowScrollView_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_Splitter_ex.cpp" />
     <ClCompile Include="..\..\src\Class_WaveProgressBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="..\..\include\Class_Grid_ex.h" />
     <ClInclude Include="..\..\include\Class_LineChart_ex.h" />
     <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h" />
+    <ClInclude Include="..\..\include\Class_FlowScrollView_ex.h" />
     <ClInclude Include="..\..\include\Class_WaveProgressBar_ex.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />
@@ -179,7 +181,7 @@
     <ClInclude Include="..\..\include\Theme_ex.h" />
     <ClInclude Include="..\..\include\Thread_ex.h" />
     <ClInclude Include="..\..\include\Wnd_ex.h" />
-    <ClInclude Include="..\..\src\Class_Splitter.h" />
+    <ClInclude Include="..\..\src\Class_Splitter_ex.h" />
     <ClInclude Include="..\..\thirdparty\svgrender\base64.h" />
     <ClInclude Include="..\..\thirdparty\svgrender\Config.h" />
     <ClInclude Include="..\..\thirdparty\svgrender\config.hpp" />
@@ -219,7 +221,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -346,7 +348,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
@@ -373,6 +375,7 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <CompileAs>Default</CompileAs>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

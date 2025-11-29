@@ -195,6 +195,7 @@ struct obj_s
     FLOAT         fHUE_;
     FLOAT         fBlur_;
     INT           nodeid_;
+    UINT uTimerID_;
     LONG_PTR      extraData_[1];   // 组件附加数据，必须放在末尾
 };
 

@@ -58,7 +58,7 @@ void LockPanel(HEXOBJ panel) {
 }
 
 // 分割条组件回调函数
-inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
+LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
                                      WPARAM wParam, LPARAM lParam) {
   switch (uMsg) {
     case WM_CREATE: {
@@ -320,27 +320,27 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
       Ex_ObjSetUIState(hObj, STATE_DOWN, TRUE, 0, FALSE);
       Ex_ObjSetLong(hObj, SPLITTER_LONG_DRAGGING, FALSE);
     } break;
-    case SPLITTER_GET_DIRECTION: {
+    case SPLITTER_MESSAGE_GET_DIRECTION: {
       return Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
     } break;
-    case SPLITTER_SET_DIRECTION: {
+    case SPLITTER_MESSAGE_SET_DIRECTION: {
       Ex_ObjSetLong(hObj, SPLITTER_LONG_DIRECTION, wParam);
       Ex_ObjInvalidateRect(hObj, NULL);
     } break;
-    case SPLITTER_GET_POSITION: {
+    case SPLITTER_MESSAGE_GET_POSITION: {
       return Ex_ObjGetLong(hObj, SPLITTER_LONG_POSITION);
     } break;
-    case SPLITTER_SET_POSITION: {
+    case SPLITTER_MESSAGE_SET_POSITION: {
       Ex_ObjSetLong(hObj, SPLITTER_LONG_POSITION, wParam);
       Ex_ObjInvalidateRect(hObj, NULL);
     } break;
-    case SPLITTER_GET_PANEL: {
+    case SPLITTER_MESSAGE_GET_PANEL: {
       if (wParam == 0)
         return Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL1);
       else if (wParam == 1)
         return Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
     } break;
-    case SPLITTER_SET_PANEL: {
+    case SPLITTER_MESSAGE_SET_PANEL: {
       HEXOBJ panel1 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL1);
       HEXOBJ panel2 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
       // 已有组件的面板到底允不允许被覆盖？？？？
@@ -387,8 +387,8 @@ inline LRESULT CALLBACK SplitterProc(HWND hWnd, HEXOBJ hObj, int uMsg,
 }
 
 // 注册分割条组件
-EXATOM SplitterRegister() {
+EXATOM _splitter_register() {
   return Ex_ObjRegister(L"Splitter", OBJECT_STYLE_VISIBLE,
                         OBJECT_STYLE_EX_FOCUSABLE, 0, 15 * sizeof(size_t), NULL,
-                        0, SplitterProc);
+                        0, _splitter_proc);
 }

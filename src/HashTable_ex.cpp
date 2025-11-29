@@ -74,11 +74,14 @@ void HashTable_ReHash(EX_HASHTABLE* hTable)
     for (size_t i = 0; i < oldBound; i++) {
         entry_s* pEntry = (entry_s*)__get(oldTable, i * sizeof(LPVOID));
         while (pEntry != nullptr) {
-            LPVOID oEntry = pEntry;
-            pEntry        = ((entry_s*)oEntry)->pEntry;
-            size_t nPos   = HashTable_GetPos(((entry_s*)oEntry)->hKey, newBound);
-            ((entry_s*)oEntry)->pEntry =
-                (entry_s*)__set(newTable, nPos * sizeof(LPVOID), (size_t)oEntry);
+            entry_s* nextEntry = pEntry->pEntry; // 保存下一个节点
+            size_t nPos = HashTable_GetPos(pEntry->hKey, newBound);
+
+            // 插入到新表的对应位置
+            pEntry->pEntry = (entry_s*)__get(newTable, nPos * sizeof(LPVOID));
+            __set(newTable, nPos * sizeof(LPVOID), (size_t)pEntry);
+
+            pEntry = nextEntry;
         }
     }
     hTable->pTable      = newTable;
@@ -97,7 +100,6 @@ BOOL HashTable_Set(EX_HASHTABLE* hTable, size_t hKey, size_t dwValue)
         entry_s* pEntry = (entry_s*)__get(pTable, nPos * sizeof(LPVOID));
         while (pEntry != nullptr) {
             if (pEntry->hKey == hKey) {
-                // pEntry->dwValue = dwValue;
                 InterlockedExchange((size_t*)&(pEntry->dwValue), (size_t)dwValue);
                 return TRUE;
             }
@@ -109,16 +111,18 @@ BOOL HashTable_Set(EX_HASHTABLE* hTable, size_t hKey, size_t dwValue)
             pTable = hTable->pTable;
         }
         pEntry          = (entry_s*)Ex_MemAlloc(sizeof(entry_s));
-        pEntry->hKey    = hKey;
-        pEntry->dwValue = dwValue;
+        if (pEntry != NULL) {
+            pEntry->hKey = hKey;
+            pEntry->dwValue = dwValue;
+            // 插入到链表头部
+            void* oldHead = (entry_s*)__get(pTable, nPos * sizeof(LPVOID));
+            pEntry->pEntry = (entry_s*)oldHead;
+            __set(pTable, nPos * sizeof(LPVOID), (size_t)pEntry);
 
-        auto aa =
-            InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(LPVOID)), (size_t)pEntry);
-        pEntry->pEntry = (entry_s*)aa;
-
-        hTable->dwCount = hTable->dwCount + 1;
-
-        ret = TRUE;
+            // 原子增加计数
+            InterlockedExchangeAdd((LONG*)&hTable->dwCount, 1);
+            ret = TRUE;
+        }
     }
     return ret;
 }
@@ -155,11 +159,11 @@ BOOL HashTable_Remove(EX_HASHTABLE* hTable, size_t hKey)
         while (pEntry != nullptr) {
             if (pEntry->hKey == hKey) {
                 if (prev != nullptr) {
-                    InterlockedExchange((size_t*)&(prev->pEntry), (size_t)pEntry->pEntry);
+                    InterlockedExchangePointer((void**)&(prev->pEntry), (void**)pEntry->pEntry);
                 }
                 else {
-                    InterlockedExchange((size_t*)((size_t)pTable + nPos * sizeof(LPVOID)),
-                                        (size_t)pEntry->pEntry);
+                    InterlockedExchangePointer((void**)((size_t)pTable + nPos * sizeof(LPVOID)),
+                        (void**)pEntry->pEntry);
                 }
                 InterlockedExchangeAdd((size_t*)&hTable->dwCount, -1);
                 HashTablePROC pfn = hTable->pfnDelete;

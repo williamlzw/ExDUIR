@@ -151,9 +151,9 @@
 #include "Class_LineChart_ex.h"
 #include "Class_ChatBox_ex.h"
 #include "Class_FlowChart_ex.h"
-//#include "Class_ScrollView_ex.h"
+#include "Class_FlowScrollView_ex.h"
 #include "Class_Grid_ex.h"
-#include "Class_Splitter.h"
+#include "Class_Splitter_ex.h"
 
 #ifdef VCL_PLAYER
 #include "Class_VLCPlayer_ex.h"

@@ -1,5 +1,7 @@
 ﻿#include "main.h"
 #include <iostream>
+#include <d3d11.h>
+
 
 HWND   m_hWnd;
 HEXOBJ m_hObjContainer;
@@ -23,118 +25,51 @@ const std::vector<std::wstring> buttonData = {
     L"模板列表",       L"鼠标绘制板", L"调色板",        L"属性框",     L"原生子窗口", L"全屏置顶",
     L"路径与区域",     L"VLC播放器",  L"自定字体和SVG", L"卷帘菜单",   L"托盘图标",   L"蒙板",
     L"标注画板",       L"效果器",     L"打包",          L"环形进度条", L"水波进度条", L"折线图",
-    L"对话盒",         L"流程图",     L"分隔条",         L"D3D绘制" , L"表格"};
+    L"对话盒",         L"流程图",     L"分隔条",         L"D3D绘制" , L"表格",       L"webview2浏览器"};
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
     LRESULT* lpResult)
 {
     if (uMsg == WM_SIZE) {
         auto dpi = Ex_DUIGetSystemDpi();
-        auto windowWidth = LOWORD(lParam) / dpi;
-        auto windowHeight = HIWORD(lParam) / dpi;
-        // 计算新的页面和容器尺寸，考虑边距和DPI缩放
-        INT pageMargin = 30;
-        INT containerExtraMargin = 30;
-        INT pageWidth = (windowWidth - 2 * pageMargin);
-        INT pageHeight = (windowHeight - 2 * pageMargin);
+        auto windowWidth = LOWORD(lParam);
+        auto windowHeight = HIWORD(lParam);
 
-        INT containerWidth = pageWidth;
-
-        // 移动并调整页面大小
-        Ex_ObjMove(m_hObjPageMain, pageMargin, pageMargin, pageWidth, pageHeight, FALSE);
-        INT containerHeight =
-            CalculateContainerHeight(buttonData.size(), containerWidth, buttonWidth, buttonHeight,
-                horizontalSpacing, verticalSpacing);
-        // 移动并调整容器大小
-        Ex_ObjMove(m_hObjContainer, 0, 0, containerWidth, containerHeight, FALSE);
-
-        if (containerHeight > pageHeight)   // 要判断，防止窗口最大化差值变负数
+        // 找到 ScrollView 组件并调整大小
+        HEXOBJ hScrollView = Ex_ObjGetFromID(hExDui, 1000);
+        if (hScrollView != 0)
         {
-            // 页面容器改变尺寸，改变滚动条位置信息
-            Ex_ObjScrollSetInfo(m_hObjPageMain, SCROLLBAR_TYPE_VERT, SIF_ALL, 0,
-                (containerHeight - pageHeight) * dpi, 100, 0, TRUE);
-        }
-        else {
-            // 容器高度小于页面，更新滚动条位置
-            Ex_ObjScrollSetInfo(m_hObjPageMain, SCROLLBAR_TYPE_VERT, SIF_ALL, 0, 0, 100, 0, TRUE);
+            INT margin = 30 * dpi;
+            INT scrollViewWidth = (windowWidth - 2 * margin) / dpi;
+            INT scrollViewHeight = (windowHeight - 2 * margin) / dpi;
+
+            Ex_ObjSetPos(hScrollView, 0, margin, margin, scrollViewWidth, scrollViewHeight, SWP_NOZORDER);
+
+            // 更新滚动范围
+            Ex_ObjSendMessage(hScrollView, FLOWSCROLLVIEW_MESSAGE_UPDATE_SCROLL_RANGE, 0, 0);
         }
     }
+ 
     return 0;
 }
 
-INT PageScrollDefaultProc(HEXOBJ hObj, DWORD nBar, WPARAM wParam, INT nLine, INT nPage,
-    BOOL fRedraw)
+// 设置按钮样式函数
+void SetButtonStyle(HEXOBJ hButton)
 {
-    auto hObjScroll = Ex_ObjScrollGetControl(hObj, nBar);
-    INT  nPos = 0;
-    if (hObjScroll != 0) {
-        DWORD nCode = LOWORD(wParam);
-        INT   nMin, nMax, oldPos, trackPos;
-        Ex_ObjScrollGetInfo(hObj, nBar, &nMin, &nMax, &oldPos, &trackPos);
-        if (nCode == SB_PAGEUP) {
-            nPos = oldPos - nPage;
-        }
-        else if (nCode == SB_PAGEDOWN) {
-            nPos = oldPos + nPage;
-        }
-        else if (nCode == SB_LINEUP) {
-            nPos = oldPos - nLine;
-        }
-        else if (nCode == SB_LINEDOWN) {
-            nPos = oldPos + nLine;
-        }
-        else if (nCode == SB_TOP) {
-            nPos = nMin;
-        }
-        else if (nCode == SB_BOTTOM) {
-            nPos = nMax;
-        }
-        else {
-            oldPos = nMin - 1;
-            nPos = Ex_ObjScrollGetTrackPos(hObj, nBar);
-        }
-        if (nPos < nMin) {
-            nPos = nMin;
-        }
-        if (nPos > nMax) {
-            nPos = nMax;
-        }
-        if (nPos != oldPos) {
-            Ex_ObjScrollSetPos(hObj, nBar, nPos, fRedraw);
-        }
-    }
-    return nPos;
-}
+    EX_OBJ_PROPS buttonProps = { 0 };
+    buttonProps.crBkgNormal = ExARGB(253, 253, 253, 255);
+    buttonProps.crBkgHover = ExARGB(164, 204, 253, 255);
+    buttonProps.crBkgDownOrChecked = ExARGB(142, 176, 217, 255);
+    buttonProps.crBorderNormal = ExARGB(189, 189, 191, 255);
+    buttonProps.crBorderHover = ExARGB(0, 108, 190, 255);
+    buttonProps.crBorderDownOrChecked = ExARGB(20, 126, 255, 255);
+    buttonProps.nIconPosition = 2;
+    buttonProps.radius = 8;
 
-LRESULT CALLBACK OnPageScrollMsg(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
-    LRESULT* lpResult)
-{
-    if (uMsg == WM_VSCROLL) {
-        auto nPos = PageScrollDefaultProc(hObj, SCROLLBAR_TYPE_VERT, wParam, 1, 10, TRUE);
-
-        auto dpi = Ex_DUIGetSystemDpi();
-        RECT rc;
-        Ex_ObjGetRect(m_hObjPageMain, &rc);
-        INT pageWidth = rc.right - rc.left;
-        INT containerWidth = pageWidth;
-        INT containerHeight =
-            CalculateContainerHeight(buttonData.size(), containerWidth / dpi, buttonWidth,
-                buttonHeight, horizontalSpacing, verticalSpacing);
-        // 拖动滚动条，移动容器
-        Ex_ObjMove(m_hObjContainer, 0, 0 - nPos / dpi, containerWidth, containerHeight, TRUE);
-    }
-    return 0;
-}
-
-INT CalculateContainerHeight(INT buttonsNumber, INT containerWidth, INT buttonWidth,
-    INT buttonHeight, INT horizontalSpacing, INT verticalSpacing)
-{
-    int nVCount = (containerWidth + horizontalSpacing) / (buttonWidth + horizontalSpacing);
-    if (nVCount == 0) return 0;
-    int nHCount =
-        (buttonsNumber % nVCount) ? (buttonsNumber / nVCount + 1) : (buttonsNumber / nVCount);
-    int containerHeight = (nHCount * (buttonHeight + verticalSpacing)) - verticalSpacing;
-    return containerHeight;
+    Ex_ObjSendMessage(hButton, WM_EX_PROPS, 0, (LPARAM)&buttonProps);
+    Ex_ObjSetColor(hButton, COLOR_EX_TEXT_NORMAL, ExARGB(89, 89, 91, 255), FALSE);
+    Ex_ObjSetColor(hButton, COLOR_EX_TEXT_HOVER, ExARGB(20, 126, 255, 255), FALSE);
+    Ex_ObjSetColor(hButton, COLOR_EX_TEXT_DOWN, ExARGB(19, 116, 234, 255), FALSE);
 }
 
 void test_exdui()
@@ -151,7 +86,7 @@ void test_exdui()
     Ex_Init(GetModuleHandleW(NULL),
         ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,//| ENGINE_FLAG_OBJECT_SHOWRECTBORDER,
             hCursor, 0, data.data(), data.size(), 0, 0);
-
+    
     INT windowWidth = 1280;
     INT windowsHeight = 800;
     m_hWnd = Ex_WndCreate(0, 0, L"ExDUIR演示,项目地址：https://gitee.com/william_lzw/ExDUIR", 0, 0,
@@ -182,78 +117,54 @@ void test_exdui()
         // 设置圆角，另一种方案是重画窗口背景参照异形窗口例子
         Ex_DUISetLong(hExDui, ENGINE_LONG_RADIUS, 30);
 
-        // 创建一个带滚动条页面,整体拖动滚动条调整容器位置
-        INT pageWidth = windowWidth - 60;
-        INT pageHeight = windowsHeight - 60;
-        m_hObjPageMain =
-            Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_VSCROLL | OBJECT_STYLE_VISIBLE, 30, 30,
-                pageWidth, pageHeight, hExDui, 0, -1, 0, 0, OnPageScrollMsg);
+        // 创建 ScrollView 组件
+        HEXOBJ hScrollView = Ex_ObjCreateEx(-1, L"ScrollView", NULL,
+            OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
+            30, 30, 1220, 740, hExDui, 1000, -1, 0, 0, NULL);
+        // 设置布局配置
+        EX_FLOWSCROLLVIEW_LAYOUT_CONFIG layoutConfig;
+        layoutConfig.nHorizontalSpacing = 24;
+        layoutConfig.nVerticalSpacing = 20;
+        Ex_ObjSendMessage(hScrollView, FLOWSCROLLVIEW_MESSAGE_SET_LAYOUT_CONFIG, 0, (LPARAM)&layoutConfig);
 
-        // 创建一个带流式布局的容器，放置按钮组,父组件是滚动条页面
-        INT containerWidth = pageWidth;
-        // 计算容器所需高度
-        INT containerHeight =
-            CalculateContainerHeight(buttonData.size(), containerWidth, buttonWidth, buttonHeight,
-                horizontalSpacing, verticalSpacing);
+        // 获取容器句柄
+        HEXOBJ hContainer = (HEXOBJ)Ex_ObjSendMessage(hScrollView, FLOWSCROLLVIEW_MESSAGE_GET_CONTAINER_HANDLE, 0, 0);
 
-        // 容器高度超过页面，调整页面滚动条
-        if (containerHeight > pageHeight) {
-            Ex_ObjScrollSetInfo(m_hObjPageMain, SCROLLBAR_TYPE_VERT, SIF_ALL, 0,
-                containerHeight - pageHeight, 100, 0, TRUE);
+        if (hContainer != 0)
+        {
+            // 创建所有按钮并添加到 ScrollView
+            for (size_t i = 0; i < buttonData.size(); ++i)
+            {
+                HEXOBJ hButton = Ex_ObjCreateEx(-1, L"ButtonEx", buttonData[i].c_str(),
+                    -1, 0, 0, 100, 70, hContainer, 101 + i,
+                    DT_VCENTER | DT_CENTER, 0, 0, NULL);
+
+                if (hButton != 0)
+                {
+                    // 设置按钮样式
+                    SetButtonStyle(hButton);
+
+                    // 加载图标
+                    std::wstring iconPath = L"res\\button_icon\\" + std::to_wstring(i) + L".png";
+                    HEXIMAGE hImg, hImgSmall;
+                    if (_img_createfromfile(iconPath.c_str(), &hImg))
+                    {
+                        _img_scale(hImg, Ex_Scale(30), Ex_Scale(30), &hImgSmall);
+                        _img_destroy(hImg);
+                        Ex_ObjSendMessage(hButton, WM_SETICON, 0, (LPARAM)hImgSmall);
+                    }
+
+                    // 绑定点击事件
+                    Ex_ObjHandleEvent(hButton, NM_CLICK, button_click);
+
+                    // 将按钮添加到 ScrollView 的布局中
+                    Ex_ObjSendMessage(hScrollView, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)hButton, 0);
+                }
+            }
         }
-        // 设置滚动条可视
-        Ex_ObjScrollShow(m_hObjPageMain, SCROLLBAR_TYPE_VERT, TRUE);
 
-
-        m_hObjContainer =
-            Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_VISIBLE, 0, 0, containerWidth,
-                containerHeight, m_hObjPageMain, 0, -1, 0, 0, 0);
-
-        HEXLAYOUT hLayoutPage = _layout_create(LAYOUT_TYPE_FLOW, m_hObjContainer);
-
-        std::vector<HEXOBJ> buttons;
-
-
-        for (size_t i = 0; i < buttonData.size(); ++i) {
-            // 创建按钮父组件是容器
-            HEXOBJ hObjButtnon = Ex_ObjCreateEx(-1, L"ButtonEx", buttonData[i].c_str(), -1, 10, 30,
-                buttonWidth, buttonHeight, m_hObjContainer, 101 + i,
-                DT_VCENTER | DT_CENTER, 0, 0, NULL);
-            // 设置按钮间右间距
-            _layout_setchildprop(hLayoutPage, hObjButtnon, LAYOUT_SUBPROP_MARGIN_RIGHT,
-                horizontalSpacing);
-            // 设置按钮间底间距
-            _layout_setchildprop(hLayoutPage, hObjButtnon, LAYOUT_SUBPROP_MARGIN_BOTTOM,
-                verticalSpacing);
-            EX_OBJ_PROPS buttonProps = { 0 };
-            buttonProps.crBkgNormal = ExARGB(253, 253, 253, 255);
-            buttonProps.crBkgHover = ExARGB(164, 204, 253, 255);
-            buttonProps.crBkgDownOrChecked = ExARGB(142, 176, 217, 255);
-            buttonProps.crBorderNormal = ExARGB(189, 189, 191, 255);
-            buttonProps.crBorderHover = ExARGB(0, 108, 190, 255);
-            buttonProps.crBorderDownOrChecked = ExARGB(20, 126, 255, 255);
-            buttonProps.nIconPosition = 2;
-            buttonProps.radius = 8;
-            Ex_ObjSendMessage(hObjButtnon, WM_EX_PROPS, 0, (LPARAM)&buttonProps);
-            Ex_ObjSetColor(hObjButtnon, COLOR_EX_TEXT_NORMAL, ExARGB(89, 89, 91, 255), FALSE);
-            Ex_ObjSetColor(hObjButtnon, COLOR_EX_TEXT_HOVER, ExARGB(20, 126, 255, 255), FALSE);
-            Ex_ObjSetColor(hObjButtnon, COLOR_EX_TEXT_DOWN, ExARGB(19, 116, 234, 255), FALSE);
-
-            HEXIMAGE     hImg;
-            HEXIMAGE     hImgSmall;
-            std::wstring imgPath = L"res\\button_icon\\" + std::to_wstring(i) + L".png";
-            _img_createfromfile(imgPath.c_str(), &hImg);
-            _img_scale(hImg, Ex_Scale(30), Ex_Scale(30), &hImgSmall);
-            _img_destroy(hImg);
-            Ex_ObjSendMessage(hObjButtnon, WM_SETICON, 0, (LPARAM)hImgSmall);
-            buttons.push_back(hObjButtnon);
-        }
-        // 容器绑定布局
-        Ex_ObjLayoutSet(m_hObjContainer, hLayoutPage, TRUE);
-
-        for (auto button : buttons) {
-            Ex_ObjHandleEvent(button, NM_CLICK, button_click);
-        }
+        // 更新滚动范围
+        Ex_ObjSendMessage(hScrollView, FLOWSCROLLVIEW_MESSAGE_UPDATE_SCROLL_RANGE, 0, 0);
 
         Ex_DUIShowWindow(hExDui, SW_SHOWNORMAL);
     }
@@ -329,7 +240,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_flowchart,           // 162流程图
         test_splitter,            // 163分隔条
         test_d3d,                 // 164测试d3d
-        test_grid
+        test_grid,                // 165测试表格
+        test_webview2             // 166测试webview2
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;

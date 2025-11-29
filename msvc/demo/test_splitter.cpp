@@ -43,7 +43,7 @@ void test_splitter(HWND hWnd) {
   // 默认固定面板2
   Ex_ObjSetLong(splitter2, SPLITTER_LONG_FIXEDPANEL, 2);
   // 附加面板
-  Ex_ObjSendMessage(splitter, SPLITTER_SET_PANEL, static1, splitter2);
+  Ex_ObjSendMessage(splitter, SPLITTER_MESSAGE_SET_PANEL, static1, splitter2);
 
   auto static2 =
       Ex_ObjCreate(L"static", L"面板二", -1, 0, 0, 100, 30, splitter2);
@@ -52,7 +52,7 @@ void test_splitter(HWND hWnd) {
       Ex_ObjCreate(L"static", L"面板三", -1, 0, 0, 100, 30, splitter2);
   Ex_ObjSetColor(static3, COLOR_EX_BACKGROUND, ExARGB(150, 50, 150, 55), TRUE);
   // 附加面板
-  Ex_ObjSendMessage(splitter2, SPLITTER_SET_PANEL, static2, static3);
+  Ex_ObjSendMessage(splitter2, SPLITTER_MESSAGE_SET_PANEL, static2, static3);
 
   Ex_ObjLayoutSet(m_hExDui, hLayout, TRUE);
 

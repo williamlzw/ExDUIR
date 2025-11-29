@@ -258,10 +258,13 @@
     <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\Class_Splitter.cpp">
+    <ClCompile Include="..\..\src\Class_Splitter_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\Class_Grid_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\Class_FlowScrollView_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -521,10 +524,13 @@
     <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Class_Splitter.h">
+    <ClInclude Include="..\..\src\Class_Splitter_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_Grid_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_FlowScrollView_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

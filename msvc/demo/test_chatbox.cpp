@@ -257,14 +257,15 @@ void test_chatbox(HWND hWnd)
     unit2.ErrorCodeText = L"20";
     unit2.Description = L"错误描述";
     unit2.DescriptionText = L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994";
+    itemDataErrorList.ListInfo = new EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT[3];
+    itemDataErrorList.ListInfo[0] = unit0;
+    itemDataErrorList.ListInfo[1] = unit1;
+    itemDataErrorList.ListInfo[2] = unit2;
 
-    RtlMoveMemory(itemDataErrorList.ListInfo, &unit0, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
-    RtlMoveMemory((void*)((size_t)itemDataErrorList.ListInfo + sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT)), &unit1, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
-    RtlMoveMemory((void*)((size_t)itemDataErrorList.ListInfo + 2 * sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT)), &unit2, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
     ptr.Type = CHATBOX_ITEMTYPE_ERRORLIST;
     ptr.Data = &itemDataErrorList;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    free(itemDataErrorList.ListInfo);
+    delete[] itemDataErrorList.ListInfo;
 
     EX_CHATBOX_ITEMINFO_ERRORLIST itemDataErrorList2;
     HEXIMAGE hImgErrorList2;
@@ -285,13 +286,14 @@ void test_chatbox(HWND hWnd)
     unit6.ErrorCodeText = L"003(时间:25/06/25 15:12:13)";
     unit6.Description = L"错误描述";
     unit6.DescriptionText = L"系统崩溃\r\n无法关机";
-
-    RtlMoveMemory(itemDataErrorList2.ListInfo, &unit5, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
-    RtlMoveMemory((void*)((size_t)itemDataErrorList2.ListInfo + sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT)), &unit6, sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT));
+    itemDataErrorList2.ListInfo = new EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT[2];
+    itemDataErrorList2.ListInfo[0] = unit5;
+    itemDataErrorList2.ListInfo[1] = unit6;
     ptr.Type = CHATBOX_ITEMTYPE_ERRORLIST;
     ptr.Data = &itemDataErrorList2;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    free(itemDataErrorList2.ListInfo);
+    delete[] itemDataErrorList2.ListInfo;
+     
 
     EX_CHATBOX_ITEMINFO_INFOLIST itemDataInfoList;
     itemDataInfoList.Content = L"以下是信息列表";
@@ -307,16 +309,15 @@ void test_chatbox(HWND hWnd)
     EX_CHATBOX_ITEMINFO_INFOLIST_UNIT unit13;
     unit13.Title = L"GPU";
     unit13.Description = L"NVIDIA RTX 4090";
-
-    itemDataInfoList.ListInfo = (EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT) * 3);
-    RtlMoveMemory(itemDataInfoList.ListInfo, &unit11, sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT));
-    RtlMoveMemory((void*)((size_t)itemDataInfoList.ListInfo + sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT)), &unit12, sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT));
-    RtlMoveMemory((void*)((size_t)itemDataInfoList.ListInfo + 2 * sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT)), &unit13, sizeof(EX_CHATBOX_ITEMINFO_INFOLIST_UNIT));
+    itemDataInfoList.ListInfo = new EX_CHATBOX_ITEMINFO_INFOLIST_UNIT[3];
+    // 直接赋值，不需要 RtlMoveMemory
+    itemDataInfoList.ListInfo[0] = unit11;
+    itemDataInfoList.ListInfo[1] = unit12;
+    itemDataInfoList.ListInfo[2] = unit13;
     ptr.Type = CHATBOX_ITEMTYPE_INFOLIST;
     ptr.Data = &itemDataInfoList;
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    free(itemDataInfoList.ListInfo);
-
+    delete[] itemDataInfoList.ListInfo;
     EX_CHATBOX_ITEMINFO_TABLELIST itemDataTableList;
     itemDataTableList.ListCount = 4;
     itemDataTableList.ColumnCount = 4;

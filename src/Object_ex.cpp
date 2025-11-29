@@ -46,10 +46,13 @@ void _object_init()
     _chatbox_register();
     _flowchart_register();
     _grid_register();
+    _flowscrollview_register();
+    _splitter_register();
+
 #ifdef VCL_PLAYER
     _vlcplayer_register();
 #endif
-    SplitterRegister();
+    
 }
 
 
@@ -3000,11 +3003,18 @@ BOOL Ex_ObjSetBackgroundPlayState(EXHANDLE handle, BOOL fPlayFrames, BOOL fReset
     return nError == 0;
 }
 
-
 void CALLBACK _obj_timer_object(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
     obj_s* pObj = (obj_s*)(idEvent - TIMER_OBJECT);
     _obj_baseproc(hWnd, pObj->hObj_, pObj, WM_TIMER, idEvent, dwTime);
+}
+
+void CALLBACK _obj_timer_object2(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2)
+{
+    obj_s* pObj = (obj_s*)(dwUser - TIMER_OBJECT);
+    auto hWnd = pObj->pWnd_->hWnd_;
+    pObj->uTimerID_ = uTimerID;
+    _obj_baseproc(hWnd, pObj->hObj_, pObj, WM_EX_TIMER_EVENT, dwUser, uTimerID);
 }
 
 INT Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
@@ -3015,6 +3025,25 @@ INT Ex_ObjSetTimer(HEXOBJ hObj, INT uElapse)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
         wnd_s* pWnd = pObj->pWnd_;
         ret = SetTimer(pWnd->hWnd_, (size_t)pObj + TIMER_OBJECT, uElapse, _obj_timer_object);
+    }
+  
+    Ex_SetLastError(nError);
+    return ret;
+}
+
+INT Ex_ObjSetTimer2(HEXOBJ hObj, INT uElapse)
+{
+    obj_s* pObj = nullptr;
+    INT    nError = 0;
+    INT    ret = 0;
+    if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+        ret = timeSetEvent(
+            uElapse,                    
+            1,                     // 1ms 精度
+            _obj_timer_object2,              // 回调函数
+            (DWORD_PTR)((size_t)pObj + TIMER_OBJECT),       
+            TIME_PERIODIC           // 周期定时器
+        );
     }
     Ex_SetLastError(nError);
     return ret;
@@ -3027,6 +3056,17 @@ BOOL Ex_ObjKillTimer(HEXOBJ hObj)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
         wnd_s* pWnd = pObj->pWnd_;
         KillTimer(pWnd->hWnd_, (size_t)pObj + TIMER_OBJECT);
+    }
+    Ex_SetLastError(nError);
+    return nError == 0;
+}
+
+BOOL Ex_ObjKillTimer2(HEXOBJ hObj)
+{
+    obj_s* pObj = nullptr;
+    INT    nError = 0;
+    if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+        timeKillEvent(pObj->uTimerID_);
     }
     Ex_SetLastError(nError);
     return nError == 0;
