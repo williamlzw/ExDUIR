@@ -395,7 +395,7 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 // 注册 ScrollView 组件
 void _flowscrollview_register()
 {
-    Ex_ObjRegister(L"ScrollView",
+    Ex_ObjRegister(L"FlowScrollView",
         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
         OBJECT_STYLE_EX_FOCUSABLE,
         DT_LEFT,
