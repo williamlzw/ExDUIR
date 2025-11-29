@@ -21,6 +21,7 @@ EXHANDLE _handle_create(INT nType, LPVOID dwData, INT* nError)
         EXHANDLE index = MemPool_GetIndexFromAddrsss(g_Li.hHandles, lpAddr);
         if (index > 0 && index < 65537) {
             ret = (index << 2) | (nType << 18) | (44 << 24);
+            MemPool_SetlParam(g_Li.hHandles, lpAddr, ret);
         }
         else {
             *nError = ERROR_EX_MEMPOOL_BADINDEX;
@@ -39,7 +40,7 @@ BOOL _handle_destroy(EXHANDLE handle, INT* pError)
     INT  nError = 0;
     if ((handle & 3) == 0) {
         EXHANDLE nIndex = -1;
-        for (INT i = 1; i <= 6; i++) {
+        for (INT i = 1; i <= 8; i++) {
             nIndex = (handle - (44 << 24) - (i << 18)) >> 2;
             if (nIndex > 0 && nIndex < 65537) {
                 break;

@@ -125,6 +125,7 @@ LPVOID MemPool_Alloc(mempool_s* hMemPool, BOOL fZero)
                 hMemPool->pEntry = ((mempoolheader_s*)pEntry)->pNextEntry;
                 ((mempoolheader_s*)pEntry)->dwFlags =
                     ((mempoolheader_s*)pEntry)->dwFlags | mpbf_used;
+                ((mempoolheader_s*)pEntry)->lParam = 0;
                 ret = (LPVOID)((size_t)pEntry + sizeof(mempoolheader_s));
                 if (fZero) {
                     RtlZeroMemory(ret, nBlock - sizeof(mempoolheader_s));
@@ -148,9 +149,30 @@ BOOL MemPool_Free(mempool_s* hMemPool, LPVOID lpAddress)
                 ((mempoolheader_s*)pEntry)->dwFlags =
                     ((mempoolheader_s*)pEntry)->dwFlags -
                     (((mempoolheader_s*)pEntry)->dwFlags & mpbf_used);
+                ((mempoolheader_s*)pEntry)->lParam = 0;
                 ((mempoolheader_s*)pEntry)->pNextEntry = hMemPool->pEntry;
                 hMemPool->pEntry                       = pEntry;
                 ret                                    = TRUE;
+            }
+        }
+        Thread_LeaveCriticalSection(cs);
+    }
+    return ret;
+}
+BOOL MemPool_SetlParam(mempool_s* hMemPool, LPVOID lpAddress, INT lParam)
+{
+    BOOL ret = FALSE;
+    if (hMemPool)
+    {
+        LPVOID cs = hMemPool->cs;
+        Thread_EnterCriticalSection(cs);
+        mempoolheader_s* pEntry = (mempoolheader_s*)((size_t)lpAddress - sizeof(mempoolheader_s));
+        if (pEntry)
+        {
+            if (((((mempoolheader_s*)pEntry)->dwFlags & mpbf_used) == mpbf_used))
+            {
+                ((mempoolheader_s*)pEntry)->lParam = lParam;
+                ret = TRUE;
             }
         }
         Thread_LeaveCriticalSection(cs);

@@ -8,6 +8,7 @@ struct mempoolheader_s
 {
     mempoolheader_s* pNextEntry;
     size_t           dwFlags;
+    INT              lParam;    // 用户数据
     size_t           dwSize;
 };
 
@@ -31,3 +32,4 @@ LPVOID     MemPool_GetAddressFromIndex(mempool_s* hMemPool, size_t nIndex);
 BOOL       MemPool_AddressIsUsed(LPVOID lpAddress);
 LPVOID     MemPool_Alloc(mempool_s* hMemPool, BOOL fZero);
 BOOL       MemPool_Free(mempool_s* hMemPool, LPVOID lpAddress);
+BOOL       MemPool_SetlParam(mempool_s* hMemPool, LPVOID lpAddress, INT lParam);
