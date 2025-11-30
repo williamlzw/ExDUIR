@@ -172,17 +172,27 @@ void testgrid(HEXDUI hExDui)
 
 }
 
-
+LRESULT CALLBACK OngridMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
+    LRESULT* lpResult)
+{
+    if (uMsg == WM_DESTROY) {
+        int count = _imglist_count(hImgList);
+        for (int i = 0; i < count; i++)
+        {
+            HEXIMAGE hImg = _imglist_get(hImgList, i);
+            _img_destroy(hImg);
+        }
+        _imglist_destroy(hImgList);
+    }
+    return 0;
+}
 void test_grid(HWND hWnd)
 {
-    HWND hWnd_grid =
-        Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试表格", 0, 0, 800, 500, 0, 0);
-    HEXDUI hExDui_grid = Ex_DUIBindWindowEx(
-        hWnd_grid, 0,
+    HWND hWnd_grid = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试表格", 0, 0, 800, 500, 0, 0);
+    HEXDUI hExDui_grid = Ex_DUIBindWindowEx(hWnd_grid, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW |
-            WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE |
-            WINDOW_STYLE_HASICON,
-        0, 0);
+        WINDOW_STYLE_NOSHADOW | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON,
+        0, OngridMainWndMsgProc);
     Ex_DUISetLong(hExDui_grid, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     
     testgrid(hExDui_grid);

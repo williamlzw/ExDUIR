@@ -114,7 +114,7 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
     wcsncpy(g_Li.lpLogFontDefault->lfFaceName, lpDefaultFontFace, LF_FACESIZE);
   }
   if (dwDefaultFontSize > 0) {
-    g_Li.lpLogFontDefault->lfHeight = -dwDefaultFontSize;
+    g_Li.lpLogFontDefault->lfHeight = -(LONG)dwDefaultFontSize;
   }
   if (!Flag_Query(ENGINE_FLAG_DPI_ENABLE)) {
     g_Li.lpLogFontDefault->lfHeight =
@@ -160,6 +160,41 @@ void Ex_UnInit() {
   ExLazySingleton<ExFontCollectionLoader>::ClearInstance(true);
   ExLazySingleton<ExFontFileLoader>::ClearInstance(true);
   _canvas_uninit();
+
+  {
+#ifdef _DEBUG
+      if (!g_Li.hHandles) return;
+
+      int totalUnreleased = 0;
+      int unreleasedByType[9] = { 0 }; // type 1~8
+      mempoolheader_s* pEntry = (mempoolheader_s*)g_Li.hHandles->pBase;
+      size_t nBlock = g_Li.hHandles->nBlockSize;
+      for (size_t p = (size_t)pEntry; p < (size_t)pEntry + nBlock * g_Li.hHandles->nMax; p += nBlock) {
+          if ((((mempoolheader_s*)p)->dwFlags & mpbf_used) == mpbf_used) {
+              INT& handle = ((mempoolheader_s*)p)->lParam; // lParam 存的是 EXHANDLE
+              DWORD magic = (handle >> 24) & 0xFF;
+              DWORD type = (handle >> 18) & 0x3F;
+              DWORD index = (handle >> 2) & 0xFFFF;
+              if (magic == 44 && index >= 1 && index <= 65536 && type >= 1 && type <= 8) {
+                  totalUnreleased++;
+                  unreleasedByType[type]++;
+              }
+          }
+      }
+
+      {
+          wchar_t buffer[512];
+          swprintf_s(buffer, L"* [句柄监测]: ExDUIR句柄未释放数: %d\n"
+              L"* 引擎:%d, 组件:%d, 画布:%d, 图片:%d, 布局:%d, 路径:%d, SVG:%d, 菜单:%d\n",
+              totalUnreleased,
+              unreleasedByType[1], unreleasedByType[2], unreleasedByType[3],
+              unreleasedByType[4], unreleasedByType[5], unreleasedByType[6],
+              unreleasedByType[7], unreleasedByType[8]);
+          OutputDebugStringW(buffer);
+      }
+#endif // DEBUG
+  }
+
   _handle_uninit(g_Li.hHandles);
   HashTable_Destroy(g_Li.hTableClass);
   HashTable_Destroy(g_Li.hTableFont);

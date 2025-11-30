@@ -53,6 +53,7 @@ struct obj_base
 #define HT_LAYOUT 5
 #define HT_PATH 6
 #define HT_SVG 7
+#define HT_MENU 8
 
 #define ATOM_MENU 32768
 #define ATOM_DESKTOPWINDOW 32769
