@@ -38,55 +38,7 @@ LRESULT _hook_oncreate(INT code, HWND hWnd, LPARAM lParam)
             }
         }
     }
-    else if (atomClass == ATOM_MENU) {
-        SetWindowSubclass(hWnd, _menu_proc, 0, 0);
-    }
     return CallNextHookEx(g_Li.hHookMsgBox, code, (WPARAM)hWnd, lParam);
-}
-
-LRESULT CALLBACK _menu_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
-{
-    if (uMsg == WM_DESTROY) {
-        RemoveWindowSubclass(hWnd, _menu_proc, 0);
-    }
-    else if (uMsg == 482)   // MN_SIZEWINDOW
-    {
-        _menu_init(hWnd);
-    }
-    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
-}
-
-void _menu_init(HWND hWnd)
-{
-    LPVOID hMenu = (LPVOID)SendMessageW(hWnd, MN_GETHMENU, 0, 0);
-    if (hMenu != 0) {
-        size_t hExDui;   // 由于HashTable_Get会写入8字节，这里必须是size_t类型
-        HashTable_Get(g_Li.hTableLayout, (size_t)hMenu, &hExDui);
-        wnd_s* pWnd   = nullptr;
-        INT    nError = 0;
-        if (_handle_validate(hExDui, HT_DUI, (LPVOID*)&pWnd, &nError)) {
-            HashTable_Remove(g_Li.hTableLayout, (size_t)hMenu);
-            menu_s* lpMenuParams = pWnd->lpMenuParams_;
-            SetWindowLongPtrW(hWnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED);
-            SetClassLongPtrW(hWnd, GCL_STYLE, CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS);
-            INT dwStyle = WINDOW_STYLE_MENU | WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_ESCEXIT |
-                          WINDOW_STYLE_FULLSCREEN;
-            MsgPROC pfnCallback = nullptr;
-            if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s))) {
-                if (((lpMenuParams->dwFlags_ & MENU_FLAG_NOSHADOW) == MENU_FLAG_NOSHADOW)) {
-                    dwStyle = dwStyle | WINDOW_STYLE_NOSHADOW;
-                }
-                pfnCallback = lpMenuParams->pfnCallback_;
-            }
-            HEXDUI hExDui =
-                Ex_DUIBindWindowEx(hWnd, pWnd->hTheme_, dwStyle, (size_t)pWnd, pfnCallback);
-            if (_handle_validate(hExDui, HT_DUI, (LPVOID*)&pWnd, &nError)) {
-                pWnd->lpMenuParams_ = lpMenuParams;
-                pWnd->hMenuPopup_   = hMenu;
-                pWnd->dwFlags_      = pWnd->dwFlags_ | EWF_INTED;
-            }
-        }
-    }
 }
 
 void _msgbox_drawinfo(wnd_s* pWnd, HEXCANVAS cvBkg)

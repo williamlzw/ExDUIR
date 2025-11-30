@@ -29,6 +29,7 @@
     <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_FlowScrollView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Splitter_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_SysMenu_ex.cpp" />
     <ClCompile Include="..\..\src\Class_WaveProgressBar_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Button_Item_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ButtonEx_ex.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="..\..\include\Class_LineChart_ex.h" />
     <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h" />
     <ClInclude Include="..\..\include\Class_FlowScrollView_ex.h" />
+    <ClInclude Include="..\..\include\Class_SysMenu_ex.h" />
     <ClInclude Include="..\..\include\Class_WaveProgressBar_ex.h" />
     <ClInclude Include="..\..\include\Class_ButtonEx_ex.h" />
     <ClInclude Include="..\..\include\Class_Button_Item_ex.h" />

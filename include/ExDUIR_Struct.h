@@ -1863,6 +1863,19 @@
 #define FLOWSCROLLVIEW_MESSAGE_CLEAR_COMPONENTS (WM_USER + 105) 
 #pragma endregion flowscrollview message constant
 
+
+
+// 事件_菜单消息 或 转换加速键消息
+#define NM_COMMAND -25
+#define MN_FIRST                        0x01E0           //;internal
+//发送向菜单拥有者句柄的WM_NOTIFY的事件代码: 弹出菜单绑定EXDUI引擎后  lParam:EX_NMHDR{ wParam:hExDui lParam:hmenu }
+#define MN_CREATE                          (MN_FIRST + 18)  
+//发送向菜单拥有者句柄的WM_NOTIFY的事件代码: 菜单项创建item组件后     lParam:EX_NMHDR{ wParam:hObj  lParam:hmenu  } 用户不应在此事件下修改或移动组件位置大小
+#define MN_ITEMCREATE                      (MN_FIRST + 19)  
+//发送向菜单拥有者句柄的WM_NOTIFY的事件代码: 弹出菜单窗口即将修改位置和大小
+#define MN_PRESETPOS              (MN_FIRST + 20)
+
+
 #define SWP_EX_NODPISCALE 0x80000000
 
 // Grid组件消息定义
@@ -2023,6 +2036,7 @@ typedef LPVOID   HEXEASING;      // 缓动句柄/指针
 typedef LPVOID   HEXRES;         // 资源包句柄
 typedef LPVOID   HEXEFFECT;      // 效果器句柄
 typedef EXHANDLE HEXSVG;         // SVG句柄
+typedef EXHANDLE HEXMENU;        // 菜单句柄
 
 typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);
@@ -2348,7 +2362,7 @@ struct EX_LISTBUTTON_ITEMINFO
 	UINT    nLeft;        // 项目左边
 	UINT    nWidth;       // 项目宽度
 	UINT    dwState;      // 项目状态   可取STATE_NORMAL,STATE_DOWN,STATE_FOCUS,STATE_DISABLE
-	HMENU   nMenu;        // 项目菜单
+	HEXMENU   nMenu;        // 项目菜单
 	INT     TextFormat;   // 项目文本格式
 };
 
@@ -2360,6 +2374,34 @@ struct EX_DATETIME
 	INT Mday;   // 日   1-31
 	INT Wday;   // 星期 1-7 7=星期日
 };
+
+typedef struct tagEXMENUINFO
+{
+	DWORD   cbSize;
+	DWORD   fMask;
+	DWORD   dwStyle;
+	UINT    cyMax;
+	HBRUSH  hbrBack;
+	DWORD   dwContextHelpID;
+	ULONG_PTR dwMenuData;
+}   EXMENUINFO, FAR* LPEXMENUINFO;
+typedef EXMENUINFO CONST FAR* LPCEXMENUINFO;
+
+typedef struct tagEXMENUITEMINFOW
+{
+	UINT     cbSize;
+	UINT     fMask;
+	UINT     fType;          // used if MIIM_TYPE (4.0) or MIIM_FTYPE (>4.0)
+	UINT     fState;         // used if MIIM_STATE
+	UINT     wID;            // used if MIIM_ID
+	HMENU    hSubMenu;       // used if MIIM_SUBMENU
+	HEXIMAGE  hbmpChecked;   // used if MIIM_CHECKMARKS
+	HEXIMAGE  hbmpUnchecked; // used if MIIM_CHECKMARKS
+	ULONG_PTR dwItemData;    // used if MIIM_DATA
+	LPWSTR   dwTypeData;     // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
+	UINT     cch;            // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
+	HEXIMAGE  hbmpItem;      // used if MIIM_BITMAP 
+}   EXMENUITEMINFOW, FAR* LPEXMENUITEMINFOW;
 
 //---------------------------------------------------------------------------------------------------------------------------------
 // Grid 表格

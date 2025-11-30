@@ -9,18 +9,18 @@ void _scrollbar_register()
 }
 
 size_t _scrollbar_parentnotify(HWND hWnd, obj_s* pObj, WPARAM wParam, LPARAM lParam, INT uMsg,
-                               BOOL bDispatch)
+    BOOL bDispatch)
 {
-    HEXOBJ hParent  = pObj->objParent_;
+    HEXOBJ hParent = pObj->objParent_;
     obj_s* lpParent = nullptr;
-    INT    nError   = 0;
-    size_t ret      = 0;
+    INT    nError = 0;
+    size_t ret = 0;
     if (_handle_validate(hParent, HT_OBJECT, (LPVOID*)&lpParent, &nError)) {
         if (uMsg == 0) {
             uMsg = ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) ==
-                    SCROLLBAR_STYLE_VERTICALSCROLL)
-                       ? WM_VSCROLL
-                       : WM_HSCROLL;
+                SCROLLBAR_STYLE_VERTICALSCROLL)
+                ? WM_VSCROLL
+                : WM_HSCROLL;
         }
         if (bDispatch) {
             ret = _obj_baseproc(hWnd, hParent, lpParent, uMsg, wParam, lParam);
@@ -34,26 +34,26 @@ size_t _scrollbar_parentnotify(HWND hWnd, obj_s* pObj, WPARAM wParam, LPARAM lPa
 
 INT _scrollbar_postopoint(HWND hWnd, obj_s* pObj, si_s* psi, INT* nPos, BOOL bVert, INT* cxy)
 {
-    __int64 l              = psi->rcRegion_left_;
-    __int64 t              = psi->rcRegion_top_;
-    __int64 r              = psi->rcRegion_right_;
-    __int64 b              = psi->rcRegion_bottom_;
-    __int64 nPage          = psi->nPage_;
-    __int64 nMin           = psi->nMin_;
-    __int64 nMax           = psi->nMax_;
-    __int64 nMinThumbsize  = HIWORD(psi->xyz_);
+    __int64 l = psi->rcRegion_left_;
+    __int64 t = psi->rcRegion_top_;
+    __int64 r = psi->rcRegion_right_;
+    __int64 b = psi->rcRegion_bottom_;
+    __int64 nPage = psi->nPage_;
+    __int64 nMin = psi->nMin_;
+    __int64 nMax = psi->nMax_;
+    __int64 nMinThumbsize = HIWORD(psi->xyz_);
     __int64 nMinThumbsize2 = HIBYTE(nMinThumbsize);
-    __int64 maxPos         = nMax - nMin;
-    __int64 sizeRegin      = bVert ? b - t : r - l;
-    __int64 point          = 0;
+    __int64 maxPos = nMax - nMin;
+    __int64 sizeRegin = bVert ? b - t : r - l;
+    __int64 point = 0;
     if (maxPos > 0) {
         if ((__int64)*nPos < nMin) {
-            *nPos      = (int)nMin;
+            *nPos = (int)nMin;
             psi->nPos_ = *nPos;
         }
         else {
             if (nMax < *nPos) {
-                *nPos      = (int)nMax;
+                *nPos = (int)nMax;
                 psi->nPos_ = *nPos;
             }
         }
@@ -84,24 +84,24 @@ HEXOBJ _scrollbar_getscroll(obj_s* pObj, INT nBar)
 
 void _scrollbar_calcthumb(HWND hWnd, obj_s* pObj, si_s* psi, BOOL bVScroll)
 {
-    INT cxy   = 0;
+    INT cxy = 0;
     INT point = _scrollbar_postopoint(hWnd, pObj, psi, &(psi->nPos_), bVScroll, &cxy);
     if (bVScroll) {
-        psi->rcThumb_left_   = psi->rcRegion_left_;
-        psi->rcThumb_top_    = point;
-        psi->rcThumb_right_  = psi->rcRegion_right_;
+        psi->rcThumb_left_ = psi->rcRegion_left_;
+        psi->rcThumb_top_ = point;
+        psi->rcThumb_right_ = psi->rcRegion_right_;
         psi->rcThumb_bottom_ = point + cxy;
     }
     else {
-        psi->rcThumb_left_   = point;
-        psi->rcThumb_top_    = psi->rcRegion_top_;
-        psi->rcThumb_right_  = point + cxy;
+        psi->rcThumb_left_ = point;
+        psi->rcThumb_top_ = psi->rcRegion_top_;
+        psi->rcThumb_right_ = point + cxy;
         psi->rcThumb_bottom_ = psi->rcRegion_bottom_;
     }
 }
 
 INT _scrollbar_realsetinfo(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT Mask, INT nMin, INT nMax,
-                           INT nPage, INT nPos, BOOL bRedraw)
+    INT nPage, INT nPos, BOOL bRedraw)
 {
     si_s* psi = (si_s*)_obj_pOwner(pObj);
     if ((Mask & SIF_POS) != 0) {
@@ -136,12 +136,12 @@ void _scrollbar_init(obj_s* pObj)
     if (psi) {
         bVS = ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) == SCROLLBAR_STYLE_VERTICALSCROLL);
         HEXTHEME hTheme = pObj->hTheme_;
-        INT      atom   = bVS ? ATOM_VSCROLL : ATOM_HSCROLL;
+        INT      atom = bVS ? ATOM_VSCROLL : ATOM_HSCROLL;
         LPVOID   pValue = Ex_ThemeGetValuePtr(hTheme, atom, ATOM_SIZE);
         if (pValue != 0) {
             psi->xyz_ =
                 MAKELONG(MAKEWORD(Ex_Scale(__get_int(pValue, 0)), Ex_Scale(__get_int(pValue, 4))),
-                         MAKEWORD(Ex_Scale(__get_int(pValue, 8)), Ex_Scale(__get_int(pValue, 12))));
+                    MAKEWORD(Ex_Scale(__get_int(pValue, 8)), Ex_Scale(__get_int(pValue, 12))));
         }
         if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLENOSCROLL) == OBJECT_STYLE_DISABLENOSCROLL)) {
             psi->wArrows_ = ESB_DISABLE_BOTH;
@@ -150,13 +150,13 @@ void _scrollbar_init(obj_s* pObj)
     if (g_Li.hMenuVS == 0 && bVS) {
         HMODULE puser32 = GetModuleHandleW(L"user32.dll");
         if (puser32 != 0) {
-            g_Li.hMenuVS = LoadMenuW(puser32, MAKEINTRESOURCE(80));
+            g_Li.hMenuVS = Ex_MenuLoadW(puser32, MAKEINTRESOURCE(80));
         }
     }
     if (g_Li.hMenuHS == 0 && !bVS) {
         HMODULE puser32 = GetModuleHandleW(L"user32.dll");
         if (puser32 != 0) {
-            g_Li.hMenuHS = LoadMenuW(puser32, MAKEINTRESOURCE(64));
+            g_Li.hMenuHS = Ex_MenuLoadW(puser32, MAKEINTRESOURCE(64));
         }
     }
 }
@@ -173,78 +173,78 @@ void _scrollbar_nccalcsize(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
         ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) == SCROLLBAR_STYLE_VERTICALSCROLL);
     INT  xyz = psi->xyz_;
     WORD cxy = HIWORD(xyz);
-    xyz      = LOWORD(xyz);
+    xyz = LOWORD(xyz);
     INT cx = 0, cy = 0;
     if (((pObj->dwStyle_ & SCROLLBAR_STYLE_CONTROLBUTTON) == SCROLLBAR_STYLE_CONTROLBUTTON)) {
         cx = LOBYTE(xyz);
         cy = HIBYTE(xyz);
     }
-    RECT rcClient{0};
-    rcClient.left   = pObj->c_left_;
-    rcClient.top    = pObj->c_top_;
-    rcClient.right  = pObj->c_right_;
+    RECT rcClient{ 0 };
+    rcClient.left = pObj->c_left_;
+    rcClient.top = pObj->c_top_;
+    rcClient.right = pObj->c_right_;
     rcClient.bottom = pObj->c_bottom_;
     if (bVScroll) {
-        psi->rcArrow1_left_   = rcClient.left;
-        psi->rcArrow1_top_    = rcClient.top;
-        psi->rcArrow1_right_  = rcClient.right;
+        psi->rcArrow1_left_ = rcClient.left;
+        psi->rcArrow1_top_ = rcClient.top;
+        psi->rcArrow1_right_ = rcClient.right;
         psi->rcArrow1_bottom_ = rcClient.top + cx;
 
-        psi->rcArrow2_left_   = rcClient.left;
-        psi->rcArrow2_top_    = rcClient.bottom - cy;
-        psi->rcArrow2_right_  = rcClient.right;
+        psi->rcArrow2_left_ = rcClient.left;
+        psi->rcArrow2_top_ = rcClient.bottom - cy;
+        psi->rcArrow2_right_ = rcClient.right;
         psi->rcArrow2_bottom_ = rcClient.bottom;
 
-        psi->rcRegion_left_   = rcClient.left;
-        psi->rcRegion_top_    = rcClient.top + cx;
-        psi->rcRegion_right_  = rcClient.right;
+        psi->rcRegion_left_ = rcClient.left;
+        psi->rcRegion_top_ = rcClient.top + cx;
+        psi->rcRegion_right_ = rcClient.right;
         psi->rcRegion_bottom_ = rcClient.bottom - cy;
     }
     else {
-        psi->rcArrow1_left_   = rcClient.left;
-        psi->rcArrow1_top_    = rcClient.top;
-        psi->rcArrow1_right_  = rcClient.left + cx;
+        psi->rcArrow1_left_ = rcClient.left;
+        psi->rcArrow1_top_ = rcClient.top;
+        psi->rcArrow1_right_ = rcClient.left + cx;
         psi->rcArrow1_bottom_ = rcClient.bottom;
 
-        psi->rcArrow2_left_   = rcClient.right - cy;
-        psi->rcArrow2_top_    = rcClient.top;
-        psi->rcArrow2_right_  = rcClient.right;
+        psi->rcArrow2_left_ = rcClient.right - cy;
+        psi->rcArrow2_top_ = rcClient.top;
+        psi->rcArrow2_right_ = rcClient.right;
         psi->rcArrow2_bottom_ = rcClient.bottom;
 
-        psi->rcRegion_left_   = rcClient.left + cx;
-        psi->rcRegion_top_    = rcClient.top;
-        psi->rcRegion_right_  = rcClient.right - cy;
+        psi->rcRegion_left_ = rcClient.left + cx;
+        psi->rcRegion_top_ = rcClient.top;
+        psi->rcRegion_right_ = rcClient.right - cy;
         psi->rcRegion_bottom_ = rcClient.bottom;
     }
     _obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_CALCSIZE, 0,
-                        (size_t)psi + offsetof(si_s, rcRegion_left_));
+        (size_t)psi + offsetof(si_s, rcRegion_left_));
     _scrollbar_calcthumb(hWnd, pObj, psi, bVScroll);
 }
 
 INT _scrollbar_pointtopos(si_s* psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
 {
     RECT rcRegion, rcThumb;
-    rcRegion.left    = psi->rcRegion_left_;
-    rcRegion.top     = psi->rcRegion_top_;
-    rcRegion.right   = psi->rcRegion_right_;
-    rcRegion.bottom  = psi->rcRegion_bottom_;
-    rcThumb.left     = psi->rcThumb_left_;
-    rcThumb.top      = psi->rcThumb_top_;
-    rcThumb.right    = psi->rcThumb_right_;
-    rcThumb.bottom   = psi->rcThumb_bottom_;
-    long long nMin   = psi->nMin_;
-    long long nMax   = psi->nMax_;
+    rcRegion.left = psi->rcRegion_left_;
+    rcRegion.top = psi->rcRegion_top_;
+    rcRegion.right = psi->rcRegion_right_;
+    rcRegion.bottom = psi->rcRegion_bottom_;
+    rcThumb.left = psi->rcThumb_left_;
+    rcThumb.top = psi->rcThumb_top_;
+    rcThumb.right = psi->rcThumb_right_;
+    rcThumb.bottom = psi->rcThumb_bottom_;
+    long long nMin = psi->nMin_;
+    long long nMax = psi->nMax_;
     long long maxpos = nMax - nMin;
     long long sizeRegion, curPoint, sizeThumb;
     if (bVert) {
         sizeRegion = rcRegion.bottom - rcRegion.top;
-        curPoint   = y - rcRegion.top - psi->nTrackPosOffset_;
-        sizeThumb  = rcThumb.bottom - rcThumb.top;
+        curPoint = y - rcRegion.top - psi->nTrackPosOffset_;
+        sizeThumb = rcThumb.bottom - rcThumb.top;
     }
     else {
         sizeRegion = rcRegion.right - rcRegion.left;
-        curPoint   = x - rcRegion.left - psi->nTrackPosOffset_;
-        sizeThumb  = rcThumb.right - rcThumb.left;
+        curPoint = x - rcRegion.left - psi->nTrackPosOffset_;
+        sizeThumb = rcThumb.right - rcThumb.left;
     }
     long long nPos = ((curPoint * maxpos) / (sizeRegion - sizeThumb)) + nMin;
     if (bCheckPos) {
@@ -261,14 +261,14 @@ INT _scrollbar_pointtopos(si_s* psi, INT x, INT y, BOOL bVert, BOOL bCheckPos)
 void _scrollbar_nchittest(obj_s* pObj, INT x, INT y)
 {
     si_s* psi = (si_s*)_obj_pOwner(pObj);
-    RECT  rc{0};
-    rc.left   = psi->rcArrow1_left_;
-    rc.top    = psi->rcArrow1_top_;
-    rc.right  = psi->rcArrow1_right_;
+    RECT  rc{ 0 };
+    rc.left = psi->rcArrow1_left_;
+    rc.top = psi->rcArrow1_top_;
+    rc.right = psi->rcArrow1_right_;
     rc.bottom = psi->rcArrow1_bottom_;
     POINT pt;
-    pt.x       = x;
-    pt.y       = y;
+    pt.x = x;
+    pt.y = y;
     INT httype = NULL;
     if (PtInRect(&rc, pt)) {
         if (!((psi->wArrows_ & ESB_DISABLE_LEFT) == ESB_DISABLE_LEFT)) {
@@ -276,10 +276,10 @@ void _scrollbar_nchittest(obj_s* pObj, INT x, INT y)
         }
     }
     else {
-        RECT rc1{0};
-        rc1.left   = psi->rcArrow2_left_;
-        rc1.top    = psi->rcArrow2_top_;
-        rc1.right  = psi->rcArrow2_right_;
+        RECT rc1{ 0 };
+        rc1.left = psi->rcArrow2_left_;
+        rc1.top = psi->rcArrow2_top_;
+        rc1.right = psi->rcArrow2_right_;
         rc1.bottom = psi->rcArrow2_bottom_;
         if (PtInRect(&rc1, pt)) {
             if (!((psi->wArrows_ & ESB_DISABLE_RIGHT) == ESB_DISABLE_RIGHT)) {
@@ -288,23 +288,23 @@ void _scrollbar_nchittest(obj_s* pObj, INT x, INT y)
         }
         else {
             if (psi->wArrows_ != ESB_DISABLE_BOTH) {
-                RECT rcThumb{0};
-                rcThumb.left   = psi->rcThumb_left_;
-                rcThumb.top    = psi->rcThumb_top_;
-                rcThumb.right  = psi->rcThumb_right_;
+                RECT rcThumb{ 0 };
+                rcThumb.left = psi->rcThumb_left_;
+                rcThumb.top = psi->rcThumb_top_;
+                rcThumb.right = psi->rcThumb_right_;
                 rcThumb.bottom = psi->rcThumb_bottom_;
                 if (PtInRect(&rcThumb, pt)) {
                     httype = SCROLLBAR_HITTYPE_CONTROL;
                 }
                 else {
-                    RECT rcRegion{0};
-                    rcRegion.left   = psi->rcRegion_left_;
-                    rcRegion.top    = psi->rcRegion_top_;
-                    rcRegion.right  = psi->rcRegion_right_;
+                    RECT rcRegion{ 0 };
+                    rcRegion.left = psi->rcRegion_left_;
+                    rcRegion.top = psi->rcRegion_top_;
+                    rcRegion.right = psi->rcRegion_right_;
                     rcRegion.bottom = psi->rcRegion_bottom_;
                     if (PtInRect(&rcRegion, pt)) {
                         if (((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) ==
-                             SCROLLBAR_STYLE_VERTICALSCROLL)) {
+                            SCROLLBAR_STYLE_VERTICALSCROLL)) {
                             if (y <= psi->rcThumb_top_) {
                                 httype = SCROLLBAR_HITTYPE_PAGEAREA1;
                             }
@@ -326,7 +326,7 @@ void _scrollbar_nchittest(obj_s* pObj, INT x, INT y)
         }
     }
     INT oldhttype = psi->httype_;
-    psi->httype_  = httype;
+    psi->httype_ = httype;
     if (oldhttype != httype) {
         INT nError = 0;
         _obj_invalidaterect(pObj, 0, &nError);
@@ -340,16 +340,16 @@ void _scrollbar_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, IN
         if (psi->httype_ == SCROLLBAR_HITTYPE_CONTROL) {
             INT lstPos = psi->nTrackPos_;
             INT curPos = _scrollbar_pointtopos(psi, x, y,
-                                               ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) ==
-                                                SCROLLBAR_STYLE_VERTICALSCROLL),
-                                               TRUE);
+                ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) ==
+                    SCROLLBAR_STYLE_VERTICALSCROLL),
+                TRUE);
             if (lstPos != curPos) {
                 psi->nTrackPos_ = curPos;
                 if (_scrollbar_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBTRACK, curPos), 0, 0,
-                                            TRUE) == 0) {
+                    TRUE) == 0) {
                     psi->nPos_ = curPos;
                     _scrollbar_parentnotify(hWnd, pObj, MAKELONG(SB_THUMBPOSITION, curPos), 0, 0,
-                                            TRUE);
+                        TRUE);
                 }
             }
         }
@@ -359,7 +359,7 @@ void _scrollbar_mousemove(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, IN
 void CALLBACK _scrollbar_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
     obj_s* pObj = (obj_s*)(idEvent - TIMER_SCROLLBAR);
-    si_s*  psi  = (si_s*)_obj_pOwner((obj_s*)pObj);
+    si_s* psi = (si_s*)_obj_pOwner((obj_s*)pObj);
     INT    nTrack;
     if (psi->httype_ == SCROLLBAR_HITTYPE_ADJUSTBUTTON1) {
         nTrack = SB_LINEUP;
@@ -383,7 +383,7 @@ void CALLBACK _scrollbar_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwT
 
 void _scrollbar_leftbuttondown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 {
-    si_s* psi    = (si_s*)_obj_pOwner(pObj);
+    si_s* psi = (si_s*)_obj_pOwner(pObj);
     INT   httype = psi->httype_;
     INT   nError = 0;
     _obj_setuistate(pObj, STATE_DOWN, FALSE, 0, TRUE, &nError);
@@ -392,13 +392,13 @@ void _scrollbar_leftbuttondown(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lPara
         INT  x, y;
         BOOL fTimer = FALSE;
         if (httype == SCROLLBAR_HITTYPE_CONTROL) {
-            x                     = GET_X_LPARAM(lParam) - psi->rcThumb_left_;
-            y                     = GET_Y_LPARAM(lParam) - psi->rcThumb_top_;
+            x = GET_X_LPARAM(lParam) - psi->rcThumb_left_;
+            y = GET_Y_LPARAM(lParam) - psi->rcThumb_top_;
             psi->nTrackPosOffset_ = ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) ==
-                                     SCROLLBAR_STYLE_VERTICALSCROLL)
-                                        ? y
-                                        : x;
-            psi->nTrackPos_       = psi->nPos_;
+                SCROLLBAR_STYLE_VERTICALSCROLL)
+                ? y
+                : x;
+            psi->nTrackPos_ = psi->nPos_;
         }
         else if (httype == SCROLLBAR_HITTYPE_ADJUSTBUTTON1) {
             nTrack = SB_LINEUP;
@@ -428,7 +428,7 @@ void _scrollbar_leftbuttonup(HWND hWnd, HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 {
     INT nError = 0;
     _obj_setuistate(pObj, STATE_DOWN, TRUE, 0, TRUE, &nError);
-    si_s* psi       = (si_s*)_obj_pOwner(pObj);
+    si_s* psi = (si_s*)_obj_pOwner(pObj);
     psi->nTrackPos_ = 0;
     KillTimer(hWnd, (size_t)pObj + TIMER_SCROLLBAR);
 }
@@ -440,17 +440,17 @@ void _scrollbar_oncommand(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LP
     INT    nPos = NULL;
     INT    nCode;
     if (wParam == 4100) {
-        pWnd                  = pObj->pWnd_;
-        si_s* psi             = (si_s*)_obj_pOwner(pObj);
+        pWnd = pObj->pWnd_;
+        si_s* psi = (si_s*)_obj_pOwner(pObj);
         INT   nTrackPosOffset = psi->nTrackPosOffset_;
         psi->nTrackPosOffset_ = 0;
-        nPos                  = _scrollbar_pointtopos(
+        nPos = _scrollbar_pointtopos(
             psi, LOWORD(nTrackPosOffset) - pObj->w_left_ - pWnd->left_,
             HIWORD(nTrackPosOffset) - pObj->w_top_ - pWnd->top_,
             ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) == SCROLLBAR_STYLE_VERTICALSCROLL),
             TRUE);
         psi->nTrackPos_ = nPos;
-        nCode           = SB_THUMBPOSITION;
+        nCode = SB_THUMBPOSITION;
     }
     else if (wParam == 4102) {
         nCode = SB_TOP;
@@ -480,40 +480,40 @@ void _scrollbar_oncommand(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LP
 
 void _scrollbar_oncontextmenu(HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 {
-    HMENU hMenu =
+    HEXMENU hMenu =
         ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) == SCROLLBAR_STYLE_VERTICALSCROLL)
-            ? g_Li.hMenuVS
-            : g_Li.hMenuHS;
-    hMenu                 = GetSubMenu(hMenu, 0);
-    si_s* psi             = (si_s*)_obj_pOwner(pObj);
+        ? g_Li.hMenuVS
+        : g_Li.hMenuHS;
+    hMenu = Ex_MenuGetSubMenu(hMenu, 0);
+    si_s* psi = (si_s*)_obj_pOwner(pObj);
     psi->nTrackPosOffset_ = lParam;
-    INT wEnable           = ((psi->wArrows_ & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH) ? 1026 : 1024;
-    EnableMenuItem(hMenu, 0, wEnable);   // 滚动至此
+    INT wEnable = ((psi->wArrows_ & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH) ? 1026 : 1024;
+    Ex_MenuEnableItem(hMenu, 0, wEnable);   // 滚动至此
     wEnable =
         (((psi->wArrows_ & ESB_DISABLE_LEFT) == ESB_DISABLE_LEFT) || (psi->nPos_ == psi->nMin_))
-            ? 1026
-            : 1024;
-    EnableMenuItem(hMenu, 2, wEnable);   // 顶部
-    EnableMenuItem(hMenu, 5, wEnable);   // 上页
-    EnableMenuItem(hMenu, 8, wEnable);   // 上行
+        ? 1026
+        : 1024;
+    Ex_MenuEnableItem(hMenu, 2, wEnable);   // 顶部
+    Ex_MenuEnableItem(hMenu, 5, wEnable);   // 上页
+    Ex_MenuEnableItem(hMenu, 8, wEnable);   // 上行
     wEnable =
         (((psi->wArrows_ & ESB_DISABLE_RIGHT) == ESB_DISABLE_RIGHT) || (psi->nPos_ == psi->nMax_))
-            ? 1026
-            : 1024;
-    EnableMenuItem(hMenu, 3, wEnable);   // 底部
-    EnableMenuItem(hMenu, 6, wEnable);   // 下页
-    EnableMenuItem(hMenu, 9, wEnable);   // 下行
-    Ex_TrackPopupMenu(hMenu, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hObj, 0, 0, 0);
+        ? 1026
+        : 1024;
+    Ex_MenuEnableItem(hMenu, 3, wEnable);   // 底部
+    Ex_MenuEnableItem(hMenu, 6, wEnable);   // 下页
+    Ex_MenuEnableItem(hMenu, 9, wEnable);   // 下行
+    Ex_TrackPopupMenu(hMenu, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hObj, 0);
 }
 
 INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)
 {
     EX_PAINTSTRUCT ps;
     if (Ex_ObjBeginPaint(hObj, &ps)) {
-        INT    httype    = ((si_s*)ps.dwOwnerData)->httype_;
-        BOOL   bHover    = (ps.dwState & STATE_HOVER) != 0;
-        BOOL   bDown     = (ps.dwState & STATE_DOWN) != 0;
-        BOOL   bVScroll  = (ps.dwStyle & SCROLLBAR_STYLE_VERTICALSCROLL) != 0;
+        INT    httype = ((si_s*)ps.dwOwnerData)->httype_;
+        BOOL   bHover = (ps.dwState & STATE_HOVER) != 0;
+        BOOL   bDown = (ps.dwState & STATE_DOWN) != 0;
+        BOOL   bVScroll = (ps.dwStyle & SCROLLBAR_STYLE_VERTICALSCROLL) != 0;
         EXATOM atomClass = bVScroll ? ATOM_VSCROLL : ATOM_HSCROLL;
         if (bHover || (ps.dwStyle & OBJECT_STYLE_DISABLENOSCROLL) != 0) {
             INT atomBtn1 = ATOM_ARROW1_NORMAL;
@@ -527,16 +527,16 @@ INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)
                     }
                 }
             }
-            RECT rcSrc{0};
-            rcSrc.left   = ((si_s*)ps.dwOwnerData)->rcArrow1_left_;
-            rcSrc.top    = ((si_s*)ps.dwOwnerData)->rcArrow1_top_;
-            rcSrc.right  = ((si_s*)ps.dwOwnerData)->rcArrow1_right_;
+            RECT rcSrc{ 0 };
+            rcSrc.left = ((si_s*)ps.dwOwnerData)->rcArrow1_left_;
+            rcSrc.top = ((si_s*)ps.dwOwnerData)->rcArrow1_top_;
+            rcSrc.right = ((si_s*)ps.dwOwnerData)->rcArrow1_right_;
             rcSrc.bottom = ((si_s*)ps.dwOwnerData)->rcArrow1_bottom_;
             INT alpha = ((((si_s*)ps.dwOwnerData)->wArrows_ & ESB_DISABLE_LEFT) == ESB_DISABLE_LEFT)
-                            ? 128
-                            : 255;
+                ? 128
+                : 255;
             Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcSrc.left, rcSrc.top, rcSrc.right,
-                                  rcSrc.bottom, atomClass, atomBtn1, 0, 0, 0, 0, alpha);
+                rcSrc.bottom, atomClass, atomBtn1, 0, 0, 0, 0, alpha);
         }
 
         if (bHover || (ps.dwStyle & OBJECT_STYLE_DISABLENOSCROLL) != 0) {
@@ -551,34 +551,34 @@ INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)
                     }
                 }
             }
-            RECT rcSrc{0};
-            rcSrc.left   = ((si_s*)ps.dwOwnerData)->rcArrow2_left_;
-            rcSrc.top    = ((si_s*)ps.dwOwnerData)->rcArrow2_top_;
-            rcSrc.right  = ((si_s*)ps.dwOwnerData)->rcArrow2_right_;
+            RECT rcSrc{ 0 };
+            rcSrc.left = ((si_s*)ps.dwOwnerData)->rcArrow2_left_;
+            rcSrc.top = ((si_s*)ps.dwOwnerData)->rcArrow2_top_;
+            rcSrc.right = ((si_s*)ps.dwOwnerData)->rcArrow2_right_;
             rcSrc.bottom = ((si_s*)ps.dwOwnerData)->rcArrow2_bottom_;
             INT alpha =
                 ((((si_s*)ps.dwOwnerData)->wArrows_ & ESB_DISABLE_RIGHT) == ESB_DISABLE_RIGHT)
-                    ? 128
-                    : 255;
+                ? 128
+                : 255;
             Ex_ThemeDrawControlEx(ps.hTheme, ps.hCanvas, rcSrc.left, rcSrc.top, rcSrc.right,
-                                  rcSrc.bottom, atomClass, atomBtn2, 0, 0, 0, 0, alpha);
+                rcSrc.bottom, atomClass, atomBtn2, 0, 0, 0, 0, alpha);
         }
         if (bHover || (ps.dwStyle & OBJECT_STYLE_DISABLENOSCROLL) != 0) {
-            RECT rcRegion{0};
-            rcRegion.left   = ((si_s*)ps.dwOwnerData)->rcRegion_left_;
-            rcRegion.top    = ((si_s*)ps.dwOwnerData)->rcRegion_top_;
-            rcRegion.right  = ((si_s*)ps.dwOwnerData)->rcRegion_right_;
+            RECT rcRegion{ 0 };
+            rcRegion.left = ((si_s*)ps.dwOwnerData)->rcRegion_left_;
+            rcRegion.top = ((si_s*)ps.dwOwnerData)->rcRegion_top_;
+            rcRegion.right = ((si_s*)ps.dwOwnerData)->rcRegion_right_;
             rcRegion.bottom = ((si_s*)ps.dwOwnerData)->rcRegion_bottom_;
             INT alpha = ((((si_s*)ps.dwOwnerData)->wArrows_ & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH)
-                            ? 128
-                            : 255;
+                ? 128
+                : 255;
             Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, rcRegion.left, rcRegion.top, rcRegion.right,
-                                rcRegion.bottom, atomClass, ATOM_RECT, alpha);
+                rcRegion.bottom, atomClass, ATOM_RECT, alpha);
         }
-        RECT rcThumb{0};
-        rcThumb.left   = ((si_s*)ps.dwOwnerData)->rcThumb_left_;
-        rcThumb.top    = ((si_s*)ps.dwOwnerData)->rcThumb_top_;
-        rcThumb.right  = ((si_s*)ps.dwOwnerData)->rcThumb_right_;
+        RECT rcThumb{ 0 };
+        rcThumb.left = ((si_s*)ps.dwOwnerData)->rcThumb_left_;
+        rcThumb.top = ((si_s*)ps.dwOwnerData)->rcThumb_top_;
+        rcThumb.right = ((si_s*)ps.dwOwnerData)->rcThumb_right_;
         rcThumb.bottom = ((si_s*)ps.dwOwnerData)->rcThumb_bottom_;
         if (!IsRectEmpty(&rcThumb)) {
             INT atomThumb = ATOM_THUMB_NORMAL;
@@ -593,7 +593,7 @@ INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)
                 }
             }
             Ex_ThemeDrawControl(ps.hTheme, ps.hCanvas, rcThumb.left, rcThumb.top, rcThumb.right,
-                                rcThumb.bottom, atomClass, atomThumb, 255);
+                rcThumb.bottom, atomClass, atomThumb, 255);
         }
         Ex_ObjEndPaint(hObj, &ps);
     }
@@ -602,16 +602,16 @@ INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)
 
 void _scrollbar_set_wArrows(HEXOBJ hSB, INT wArrows, BOOL fRedraw)
 {
-    obj_s* pSB    = nullptr;
+    obj_s* pSB = nullptr;
     INT    nError = 0;
     if (_handle_validate(hSB, HT_OBJECT, (LPVOID*)&pSB, &nError)) {
         si_s* psi = (si_s*)_obj_pOwner(pSB);
         if (psi != 0) {
             psi->wArrows_ = wArrows;
             if (wArrows == ESB_DISABLE_BOTH) {
-                psi->rcThumb_left_   = 0;
-                psi->rcThumb_top_    = 0;
-                psi->rcThumb_right_  = 0;
+                psi->rcThumb_left_ = 0;
+                psi->rcThumb_top_ = 0;
+                psi->rcThumb_right_ = 0;
                 psi->rcThumb_bottom_ = 0;
             }
         }
@@ -625,7 +625,7 @@ void _scrollbar_set_wArrows(HEXOBJ hSB, INT wArrows, BOOL fRedraw)
 LRESULT CALLBACK _scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     INT    nError = 0;
-    obj_s* pObj   = nullptr;
+    obj_s* pObj = nullptr;
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
         if (uMsg == WM_CREATE) {
             _scrollbar_init(pObj);
@@ -637,18 +637,18 @@ LRESULT CALLBACK _scrollbar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
             _scrollbar_nchittest(pObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         }
         else if (uMsg == WM_MOUSEMOVE) {
-            INT   x   = GET_X_LPARAM(lParam);
-            INT   y   = GET_Y_LPARAM(lParam);
+            INT   x = GET_X_LPARAM(lParam);
+            INT   y = GET_Y_LPARAM(lParam);
             si_s* psi = (si_s*)_obj_pOwner(pObj);
             if (((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) ==
-                 SCROLLBAR_STYLE_VERTICALSCROLL)) {
+                SCROLLBAR_STYLE_VERTICALSCROLL)) {
                 if (y >= psi->nMin_ &&
                     y <= psi->nMax_ + psi->rcRegion_bottom_ - psi->rcRegion_top_) {
                     _scrollbar_mousemove(hWnd, hObj, pObj, wParam, x, y);
                 }
             }
             else if (((pObj->dwStyle_ & SCROLLBAR_STYLE_HORIZONTALSCROLL) ==
-                      SCROLLBAR_STYLE_HORIZONTALSCROLL)) {
+                SCROLLBAR_STYLE_HORIZONTALSCROLL)) {
                 if (x >= psi->nMin_ &&
                     x <= psi->nMax_ + psi->rcRegion_right_ - psi->rcRegion_left_) {
                     _scrollbar_mousemove(hWnd, hObj, pObj, wParam, x, y);

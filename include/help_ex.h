@@ -276,9 +276,9 @@ struct LOCALINFO
     UpdateLayeredWindowIndirectPROC pfnUpdateLayeredWindowIndirect;
     LOGFONTW*                       lpLogFontDefault;
     HEXTHEME                        hThemeDefault;
-    HMENU                           hMenuVS;
-    HMENU                           hMenuHS;
-    HMENU                           hMenuEdit;
+    HEXMENU                           hMenuVS;
+    HEXMENU                           hMenuHS;
+    HEXMENU                           hMenuEdit;
     HHOOK                           hHookMsgBox;
     mempool_s*                      hHandles;
     std::vector<HEXTHEME>           aryThemes;

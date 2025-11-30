@@ -199,9 +199,6 @@ void          _wnd_render_dc(HWND hWnd, wnd_s* pWnd, LPVOID hDC, HEXCANVAS cvDis
                              BOOL fLayer);
 void          _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, BOOL fDX);
 void          _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width, INT height);
-void          _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* lParam);
-void          _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd);
-void          _wnd_menu_init(HWND hWnd, wnd_s* pWnd);
 void          _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush);
 BOOL          _wnd_wm_paint(wnd_s* pWnd, HWND hWnd);
 BOOL          _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam);
@@ -222,7 +219,5 @@ void   _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd);
 BOOL   _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam);
 void   _wnd_menu_updatecurrent(wnd_s* pWnd);
 LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
-BOOL             _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LONG_PTR* iItem);
-void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu);
 BOOL Ex_DUIGetBackgroundImage(HEXDUI hExDui, LPVOID lpBackgroundImage);
 void _wnd_getclientrect(wnd_s* pWnd, RECT* lpRect, INT* nError);

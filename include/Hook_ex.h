@@ -29,8 +29,5 @@ struct menu_s
 
 LRESULT CALLBACK _hook_proc(INT code, WPARAM wParam, LPARAM lParam);
 LRESULT          _hook_oncreate(INT code, HWND hWnd, LPARAM lParam);
-LRESULT CALLBACK _menu_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
-                            UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
-void             _menu_init(HWND hWnd);
 void             _msgbox_drawinfo(wnd_s* pWnd, HEXCANVAS cvBkg);
 void             _msgbox_initdialog(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam);

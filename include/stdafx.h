@@ -154,6 +154,7 @@
 #include "Class_FlowScrollView_ex.h"
 #include "Class_Grid_ex.h"
 #include "Class_Splitter_ex.h"
+#include "Class_SysMenu_ex.h"
 
 #ifdef VCL_PLAYER
 #include "Class_VLCPlayer_ex.h"

@@ -3581,6 +3581,10 @@ LRESULT Ex_ObjDefProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lP
         else if (uMsg == WM_CHAR) {
             _obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_CHAR, wParam, lParam);
         }
+        else if (uMsg == WM_COMMAND)
+        {
+            return _obj_dispatchnotify(hWnd, pObj, hObj, pObj->id_, NM_COMMAND, wParam, lParam);
+}
         else if (uMsg == WM_SIZE) {
             _obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_SIZE, wParam, lParam);
         }

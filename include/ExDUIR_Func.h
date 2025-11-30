@@ -3415,6 +3415,314 @@ void Ex_SetLastError(INT nError);
 void Ex_Sleep(INT us);
 
 /// <summary>
+/// 添加菜单项目
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="flags"></param>
+/// <param name="id"></param>
+/// <param name="data"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuAppendMenuW(HEXMENU hMenu, UINT flags, UINT_PTR id, LPCWSTR data);
+
+/// <summary>
+/// 创建弹出菜单
+/// </summary>
+/// <param name=""></param>
+/// <returns></returns>
+HEXMENU WINAPI Ex_MenuCreatePopupMenu(void);
+
+/// <summary>
+/// 创建菜单
+/// </summary>
+/// <param name=""></param>
+/// <returns></returns>
+HEXMENU WINAPI Ex_MenuCreateMenu(void);
+
+/// <summary>
+/// 置菜单信息
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="info"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuSetInfo(HEXMENU menu, const EXMENUINFO* info);
+
+/// <summary>
+/// 取子菜单句柄
+/// </summary>
+/// <param name="menu">菜单句柄</param>
+/// <param name="pos"></param>
+/// <returns></returns>
+HEXMENU WINAPI Ex_MenuGetSubMenu(HEXMENU menu, INT pos);
+
+/// <summary>
+/// 取菜单信息
+/// </summary>
+/// <param name="menu">菜单句柄</param>
+/// <param name="info">返回信息</param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuGetInfo(HEXMENU menu, EXMENUINFO* info);
+
+/// <summary>
+/// 是否是菜单
+/// </summary>
+/// <param name="menu"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuIsMenu(HEXMENU menu);
+
+/// <summary>
+/// 编辑菜单信息
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="pos"></param>
+/// <param name="flags"></param>
+/// <param name="id"></param>
+/// <param name="str"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuModifyW(HEXMENU hMenu, UINT pos, UINT flags, UINT_PTR id, LPCWSTR str);
+
+/// <summary>
+/// 销毁菜单
+/// </summary>
+/// <param name="hMenu"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuDestroy(HEXMENU hMenu);
+
+/// <summary>
+/// 改变菜单信息
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="pos"></param>
+/// <param name="data"></param>
+/// <param name="id"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuChangeW(HEXMENU hMenu, UINT pos, LPCWSTR data, UINT id, UINT flags);
+
+/// <summary>
+/// 取菜单项目ID
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="pos"></param>
+/// <returns></returns>
+UINT WINAPI Ex_MenuGetItemID(HEXMENU menu, INT pos);
+
+/// <summary>
+/// 取菜单项目信息
+/// </summary>
+/// <param name="hmenu"></param>
+/// <param name="item"></param>
+/// <param name="bypos"></param>
+/// <param name="lpmii"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuGetItemInfoW(HEXMENU hmenu, UINT item, BOOL bypos, LPEXMENUITEMINFOW lpmii);
+
+/// <summary>
+/// 取菜单状态
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="item"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+UINT WINAPI Ex_MenuGetState(HEXMENU menu, UINT item, UINT flags);
+
+/// <summary>
+/// 取菜单项目数量
+/// </summary>
+/// <param name="menu"></param>
+/// <returns></returns>
+INT WINAPI Ex_MenuGetItemCount(HEXMENU menu);
+
+/// <summary>
+/// 取菜单项目文本
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="item"></param>
+/// <param name="str"></param>
+/// <param name="count"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+INT WINAPI Ex_MenuGetStringW(HEXMENU menu, UINT item, WCHAR* str, INT count, UINT flags);
+
+/// <summary>
+/// 加载菜单从资源
+/// </summary>
+/// <param name="template_"></param>
+/// <returns></returns>
+HEXMENU WINAPI Ex_MenuLoadIndirectW(LPCVOID template_);
+
+/// <summary>
+/// 加载菜单
+/// </summary>
+/// <param name="instance"></param>
+/// <param name="name"></param>
+/// <returns></returns>
+HEXMENU WINAPI Ex_MenuLoadW(HINSTANCE instance, LPCWSTR name);
+
+/// <summary>
+/// 从鼠标指针获取菜单项目
+/// </summary>
+/// <param name="hwnd"></param>
+/// <param name="menu"></param>
+/// <param name="pt"></param>
+/// <returns></returns>
+INT WINAPI Ex_MenuItemFromPoint(HWND hwnd, HEXMENU menu, POINT pt);
+
+/// <summary>
+/// 启用/禁用菜单项目
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="id"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuEnableItem(HEXMENU menu, UINT id, UINT flags);
+
+/// <summary>
+/// 取菜单项目矩形
+/// </summary>
+/// <param name="hwnd"></param>
+/// <param name="handle"></param>
+/// <param name="item"></param>
+/// <param name="rect"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuGetItemRect(HWND hwnd, HEXMENU handle, UINT item, RECT* rect);
+
+/// <summary>
+/// 结束菜单
+/// </summary>
+/// <param name=""></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuEnd(void);
+
+/// <summary>
+/// 检查菜单项目
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="id"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuCheckItem(HEXMENU hMenu, UINT id, UINT flags);
+
+/// <summary>
+/// 删除菜单项目
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="id"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuDelete(HEXMENU hMenu, UINT id, UINT flags);
+
+/// <summary>
+/// 获取系统菜单复选标记尺寸
+/// </summary>
+/// <param name=""></param>
+/// <returns></returns>
+DWORD WINAPI Ex_MenuGetCheckMarkDimensions(void);
+
+/// <summary>
+/// 设置菜单项目图片
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="pos"></param>
+/// <param name="flags"></param>
+/// <param name="uncheck"></param>
+/// <param name="check"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuSetItemBitmaps(HEXMENU menu, UINT pos, UINT flags, HEXIMAGE uncheck, HEXIMAGE check);
+
+/// <summary>
+/// 取菜单默认项目
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="bypos"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+UINT WINAPI Ex_MenuGetDefaultItem(HEXMENU menu, UINT bypos, UINT flags);
+
+/// <summary>
+/// 高亮菜单项目
+/// </summary>
+/// <param name="hwnd"></param>
+/// <param name="handle"></param>
+/// <param name="item"></param>
+/// <param name="hilite"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuHiliteItem(HWND hwnd, HEXMENU handle, UINT item, UINT hilite);
+
+/// <summary>
+/// 移除菜单项目
+/// </summary>
+/// <param name="handle"></param>
+/// <param name="id"></param>
+/// <param name="flags"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuRemove(HEXMENU handle, UINT id, UINT flags);
+
+/// <summary>
+/// 置默认菜单项目
+/// </summary>
+/// <param name="menu"></param>
+/// <param name="item"></param>
+/// <param name="bypos"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuSetDefaultItem(HEXMENU menu, UINT item, UINT bypos);
+
+/// <summary>
+/// 置菜单项目信息
+/// </summary>
+/// <param name="hmenu"></param>
+/// <param name="item"></param>
+/// <param name="bypos"></param>
+/// <param name="lpmii"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuSetItemInfoW(HEXMENU hmenu, UINT item, BOOL bypos, const EXMENUITEMINFOW* lpmii);
+
+/// <summary>
+/// 插入菜单
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="pos"></param>
+/// <param name="flags"></param>
+/// <param name="id"></param>
+/// <param name="str"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuInsertW(HEXMENU hMenu, UINT pos, UINT flags, UINT_PTR id, LPCWSTR str);
+
+/// <summary>
+/// 插入菜单项目
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="uItem"></param>
+/// <param name="bypos"></param>
+/// <param name="lpmii"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_MenuInsertItemW(HEXMENU hMenu, UINT uItem, BOOL bypos, const EXMENUITEMINFOW* lpmii);
+
+/// <summary>
+/// 弹出菜单
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="wFlags"></param>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <param name="nReserved"></param>
+/// <param name="hWndOrhObjOrhExDui"></param>
+/// <param name="lpRect"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_TrackPopupMenu(HEXMENU hMenu, UINT wFlags, INT x, INT y, INT nReserved, LONG_PTR hWndOrhObjOrhExDui, const RECT* lpRect);
+
+/// <summary>
+/// 弹出菜单Ex
+/// </summary>
+/// <param name="hMenu"></param>
+/// <param name="uFlags"></param>
+/// <param name="x"></param>
+/// <param name="y"></param>
+/// <param name="hWndOrhObjOrhExDui"></param>
+/// <param name="lptpm"></param>
+/// <returns></returns>
+BOOL WINAPI Ex_TrackPopupMenuEx(HEXMENU hMenu, UINT uFlags, int x, int y, LONG_PTR hWndOrhObjOrhExDui, LPTPMPARAMS lptpm);
+
+/// <summary>
 /// 绘制主题数据
 /// </summary>
 /// <param name="hTheme">主题句柄</param>
@@ -3502,24 +3810,6 @@ HEXTHEME Ex_ThemeLoadFromFile(LPCWSTR lptszFile, LPVOID lpKey, size_t dwKeyLen,
 /// <returns></returns>
 HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey,
                                 size_t dwKeyLen, BOOL bDefault);
-
-/// <summary>
-/// 弹出菜单
-/// </summary>
-/// <param name="hMenu">菜单句柄</param>
-/// <param name="uFlags">相关常量 TPM_</param>
-/// <param name="x">弹出坐标X(屏幕坐标)</param>
-/// <param name="y">弹出坐标Y(屏幕坐标)</param>
-/// <param name="nReserved">0.备用</param>
-/// <param
-/// name="handle">组件句柄/引擎句柄/窗口句柄.(如果该值为窗口句柄且窗口未使用引擎渲染,则以默认菜单弹出)</param>
-/// <param name="lpRC"></param>
-/// <param name="pfnCallback">(LRESULT)MsgProc(HWND hWnd,size_t hExDui,INT
-/// uMsg,WPARAM wParam,LPARAM lParam,LRESULT* lpResult)</param> <param
-/// name="dwFlags">相关常量 EMNF_</param> <returns></returns>
-BOOL Ex_TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y,
-                       size_t nReserved, EXHANDLE handle, RECT* lpRC,
-                       MsgPROC pfnCallback, DWORD dwFlags);
 
 /// <summary>
 /// 反初始化引擎

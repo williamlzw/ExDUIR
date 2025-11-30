@@ -160,7 +160,12 @@ void Ex_UnInit() {
   ExLazySingleton<ExFontCollectionLoader>::ClearInstance(true);
   ExLazySingleton<ExFontFileLoader>::ClearInstance(true);
   _canvas_uninit();
-
+  if (g_Li.hMenuEdit)
+      Ex_MenuDestroy(g_Li.hMenuEdit);
+  if (g_Li.hMenuVS)
+      Ex_MenuDestroy(g_Li.hMenuVS);
+  if (g_Li.hMenuHS)
+      Ex_MenuDestroy(g_Li.hMenuHS);
   {
 #ifdef _DEBUG
       if (!g_Li.hHandles) return;
