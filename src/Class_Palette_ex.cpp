@@ -58,6 +58,9 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             }
         }
     }
+    else if (uMsg == PALETTE_LONG_SETCOLOR) {
+        Palette_SetDefaultColor(hObj, lParam);
+    }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
@@ -135,4 +138,37 @@ void _palette_paint(HEXOBJ hObj)
                             Ex_Scale(5), Ex_Scale(5), Ex_Scale(2), 0);
         Ex_ObjEndPaint(hObj, &ps);
     }
+}
+
+// 设置调色板默认选中颜色（根据颜色值自动定位）
+void Palette_SetDefaultColor(HEXOBJ hObj, EXARGB targetColor)
+{
+    HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PALETTE_LONG_IMAGE);
+    if (!img) return;
+
+    INT width, height;
+    _img_getsize(img, &width, &height);
+
+    // 遍历图像寻找最接近的颜色（简化版：只在中间一行找）
+    INT bestX = 0, bestY = height / 2;
+    INT minDist = INT_MAX;
+
+    for (INT x = 0; x < width; ++x)
+    {
+        EXARGB pixel;
+        _img_getpixel(img, x, bestY, &pixel);
+        INT dr = ExGetR(targetColor) - ExGetR(pixel);
+        INT dg = ExGetG(targetColor) - ExGetG(pixel);
+        INT db = ExGetB(targetColor) - ExGetB(pixel);
+        INT dist = dr * dr + dg * dg + db * db;
+        if (dist < minDist)
+        {
+            minDist = dist;
+            bestX = x;
+        }
+    }
+
+    Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINX, bestX);
+    Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINY, bestY);
+    Ex_ObjInvalidateRect(hObj, 0);
 }
