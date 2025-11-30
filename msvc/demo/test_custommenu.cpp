@@ -51,6 +51,14 @@ LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
         *lpResult = 1;
         return 1;
     }
+    else if (uMsg == WM_DESTROY)
+    {
+        HEXIMAGE hImg = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+        if (hImg != 0)
+        {
+            _img_destroy(hImg);
+        }
+    }
     return 0;
 }
 

@@ -115,6 +115,8 @@ HEXIMAGE _imglist_array_addmember(array_s* hArr, size_t nIndex, LPVOID pvItem, I
 
     HEXIMAGE dst = 0;
     _img_scale((HEXIMAGE)pvItem, reqWidth, reqHeight, &dst);
+    // 缩放后，原图片不再需要，销毁原图片
+    _img_destroy((HEXIMAGE)pvItem);
     return dst;
 }
 
