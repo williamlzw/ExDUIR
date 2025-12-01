@@ -514,7 +514,7 @@ LRESULT CALLBACK _reportlistview_head_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
                                 : TRUE;
                         }
 
-                        pSortInfo->nType = 0;
+                        pSortInfo->nType = 1;
                         Ex_ObjSendMessage(hObjList, LISTVIEW_MESSAGE_SORTITEMS, 0,
                             (size_t)pSortInfo);
                         Ex_MemFree(pSortInfo);
@@ -1090,7 +1090,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
             {
                 HEXBRUSH hBrush = _brush_create(pTD->crbk_);
                 _canvas_fillrect(cd->hCanvas, hBrush, nIndexTC == 1 ? 0 : rcTD->left + 2.0,
-                    rcTD->top, rcTD->right + 1.0, rcTD->bottom - 0.5);
+                    rcTD->top, rcTD->right + 1.0, rcTD->bottom);
                 _brush_destroy(hBrush);
             }
             LPCWSTR wzText = pTD->wzText_;

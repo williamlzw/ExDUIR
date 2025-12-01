@@ -48,6 +48,7 @@ void _object_init()
     _grid_register();
     _flowscrollview_register();
     _splitter_register();
+    _webview_register();
 
 #ifdef VCL_PLAYER
     _vlcplayer_register();

@@ -1,17 +1,7 @@
 ﻿#include "main.h"
-#include <iostream>
-#include <d3d11.h>
-
 
 HWND   m_hWnd;
-HEXOBJ m_hObjContainer;
-HEXOBJ m_hObjPageMain;
 
-// 可配置参数
-const int buttonWidth = 100;   // 按钮宽度
-const int buttonHeight = 70;    // 按钮高度
-const int horizontalSpacing = 24;    // 按钮横向间距
-const int verticalSpacing = 20;    // 按钮纵向间距
 
 // 按钮数据
 const std::vector<std::wstring> buttonData = {
