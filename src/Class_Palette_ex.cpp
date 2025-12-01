@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 void _palette_register()
 {
@@ -59,7 +59,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         }
     }
     else if (uMsg == PALETTE_LONG_SETCOLOR) {
-        Palette_SetDefaultColor(hObj, lParam);
+        _palette_setdefaultcolor(hObj, lParam);
     }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
@@ -140,8 +140,8 @@ void _palette_paint(HEXOBJ hObj)
     }
 }
 
-// ÉèÖÃµ÷É«°åÄ¬ÈÏÑ¡ÖĞÑÕÉ«£¨¸ù¾İÑÕÉ«Öµ×Ô¶¯¶¨Î»£©
-void Palette_SetDefaultColor(HEXOBJ hObj, EXARGB targetColor)
+// è®¾ç½®è°ƒè‰²æ¿é»˜è®¤é€‰ä¸­é¢œè‰²ï¼ˆæ ¹æ®é¢œè‰²å€¼è‡ªåŠ¨å®šä½ï¼‰
+void _palette_setdefaultcolor(HEXOBJ hObj, EXARGB targetColor)
 {
     HEXIMAGE img = (HEXIMAGE)Ex_ObjGetLong(hObj, PALETTE_LONG_IMAGE);
     if (!img) return;
@@ -149,7 +149,7 @@ void Palette_SetDefaultColor(HEXOBJ hObj, EXARGB targetColor)
     INT width, height;
     _img_getsize(img, &width, &height);
 
-    // ±éÀúÍ¼ÏñÑ°ÕÒ×î½Ó½üµÄÑÕÉ«£¨¼ò»¯°æ£ºÖ»ÔÚÖĞ¼äÒ»ĞĞÕÒ£©
+    // éå†å›¾åƒå¯»æ‰¾æœ€æ¥è¿‘çš„é¢œè‰²ï¼ˆç®€åŒ–ç‰ˆï¼šåªåœ¨ä¸­é—´ä¸€è¡Œæ‰¾ï¼‰
     INT bestX = 0, bestY = height / 2;
     INT minDist = INT_MAX;
 

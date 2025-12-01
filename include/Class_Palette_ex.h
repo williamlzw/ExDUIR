@@ -19,4 +19,4 @@ void             _palette_genimage(HEXOBJ hObj);
 void _palette_drawgradientrect(HDC hdc, INT left, INT top, INT right, INT bottom, EXARGB startColor,
                                EXARGB endColor, BOOL horizontalGradient);
 void _palette_paint(HEXOBJ hObj);
-void Palette_SetDefaultColor(HEXOBJ hObj, EXARGB targetColor);
+void _palette_setdefaultcolor(HEXOBJ hObj, EXARGB targetColor);

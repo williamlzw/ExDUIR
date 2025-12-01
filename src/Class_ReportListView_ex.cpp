@@ -1021,18 +1021,18 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                 _brush_destroy(hBrush);
             }
             HEXIMAGE hImage = 0;
-            RECT checkrc = { rcTD.left + itemHeight / 4 - 1, rcTD.top, rcTD.left + itemHeight / 4 * 3,
+            RECT checkrc = { rcTD.left + itemHeight / 4, rcTD.top, rcTD.left + itemHeight / 4 * 3,
                                rcTD.bottom };
             RECT imgrc = { rcTD.left + itemHeight / 4, rcTD.top + itemHeight / 4,
                                rcTD.left + itemHeight / 4 * 3, rcTD.top + itemHeight / 4 * 3 };
 
             if (pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) {
-                rcTD.left = rcTD.left + itemHeight / 4.0f * 3 - 2;
+                rcTD.left = rcTD.left + itemHeight / 4.0f * 3 -1;
             }
             else {
                 hImage = _imglist_get(hImgList, pTR->nImageIndex_);
                 if (hImage != 0) {
-                    rcTD.left = rcTD.left + itemHeight / 4.0f * 3;
+                    rcTD.left = rcTD.left + itemHeight / 4.0f * 3 - 1;
                 }
             }
 
