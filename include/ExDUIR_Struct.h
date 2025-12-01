@@ -1444,6 +1444,8 @@
 #pragma endregion colorpicker notify
 
 #pragma region palette notify
+// 通知_调色板_设置颜色 wParam 0,lParam ExARGB
+#define PALETTE_LONG_SETCOLOR 100001
 // 调色板通知_鼠标移动 wParam返回不带alpha的RGB颜色,用ExRGB2ARGB转换到ARGB
 #define PALETTE_EVENT_MOUSEMOVE 100000
 #pragma endregion palette notify

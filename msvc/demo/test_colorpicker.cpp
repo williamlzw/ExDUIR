@@ -22,7 +22,7 @@ void test_colorpicker(HWND hParent)
         0, 0);
     Ex_DUISetLong(hExDui_colorpicker, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"ColorPicker", 0, -1, 50, 40, 80, 30, hExDui_colorpicker);
-    Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, ExRGB2ARGB(0, 255), TRUE);
+
     Ex_ObjHandleEvent(hObj, COLORPICKER_EVENT_COLORCHANGE, OnColorPickerButtonEvent);
     Ex_DUIShowWindow(hExDui_colorpicker, SW_SHOWNORMAL);
 }
