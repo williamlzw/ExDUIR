@@ -1,4 +1,4 @@
-﻿#include "test_reportlistview.h"
+#include "test_reportlistview.h"
 
 
 HEXOBJ       m_hReportListView;
@@ -82,6 +82,7 @@ void test_reportlistview(HWND hWnd)
     _imglist_add(m_hReportListViewImgList, 0, imgdata.data(), imgdata.size());
     Ex_ObjSendMessage(m_hReportListView, LISTVIEW_MESSAGE_SETIMAGELIST, 0,
                       (LPARAM)m_hReportListViewImgList);
+                     (LPARAM)m_hReportListViewImgList);
 
     EX_REPORTLIST_COLUMNINFO col = {0};
     col.pwzText                  = L"第一列";
