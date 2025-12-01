@@ -3514,7 +3514,7 @@ UINT WINAPI Ex_MenuGetItemID(HEXMENU menu, INT pos);
 /// <param name="bypos"></param>
 /// <param name="lpmii"></param>
 /// <returns></returns>
-BOOL WINAPI Ex_MenuGetItemInfoW(HEXMENU hmenu, UINT item, BOOL bypos, LPEXMENUITEMINFOW lpmii);
+BOOL WINAPI Ex_MenuGetItemInfoW(HEXMENU hmenu, UINT item, BOOL bypos, EXMENUITEMINFOW* lpmii);
 
 /// <summary>
 /// 取菜单状态

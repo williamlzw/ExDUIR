@@ -2377,7 +2377,7 @@ struct EX_DATETIME
 	INT Wday;   // 星期 1-7 7=星期日
 };
 
-typedef struct tagEXMENUINFO
+struct EXMENUINFO
 {
 	DWORD   cbSize;
 	DWORD   fMask;
@@ -2386,10 +2386,10 @@ typedef struct tagEXMENUINFO
 	HBRUSH  hbrBack;
 	DWORD   dwContextHelpID;
 	ULONG_PTR dwMenuData;
-}   EXMENUINFO, FAR* LPEXMENUINFO;
-typedef EXMENUINFO CONST FAR* LPCEXMENUINFO;
+};
 
-typedef struct tagEXMENUITEMINFOW
+
+struct EXMENUITEMINFOW
 {
 	UINT     cbSize;
 	UINT     fMask;
@@ -2403,7 +2403,7 @@ typedef struct tagEXMENUITEMINFOW
 	LPWSTR   dwTypeData;     // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
 	UINT     cch;            // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
 	HEXIMAGE  hbmpItem;      // used if MIIM_BITMAP 
-}   EXMENUITEMINFOW, FAR* LPEXMENUITEMINFOW;
+};
 
 //---------------------------------------------------------------------------------------------------------------------------------
 // Grid 表格
@@ -2861,20 +2861,19 @@ typedef struct _GV_ITEM {
 struct GV_INFO
 {
 	int      row, col;     // Row and Column of item
-	union
-	{
-		LPCTSTR itemstr;   // G/SetItemText
-		LPARAM lParam;     // G/SetItemData
-		int iImage;        // G/SetItemImage
-		UINT nFormat;      // G/SetItemFormat
-		EXARGB cr;         // G/SetItem Bk/Fg Colour
-		UINT state;        // G/SetItemState   
-		HEXFONT font;      // G/SetItemFont
-		time_t time;       // GRID_SETDATECELL_TIME
-		std::vector<std::wstring>* ar; //GRID_SETCELL_COM_OPTION
-		DWORD dwStyle;    //GRID_SETCELL_COM_STYLE
-		BOOL check;       //GRID_SETCELL_CHECK_CHECK
-	};
+
+	LPCTSTR itemstr;   // G/SetItemText
+	LPARAM lParam;     // G/SetItemData
+	int iImage;        // G/SetItemImage
+	UINT nFormat;      // G/SetItemFormat
+	EXARGB cr;         // G/SetItem Bk/Fg Colour
+	UINT state;        // G/SetItemState   
+	HEXFONT font;      // G/SetItemFont
+	time_t time;       // GRID_SETDATECELL_TIME
+	std::vector<std::wstring>* ar; //GRID_SETCELL_COM_OPTION
+	DWORD dwStyle;    //GRID_SETCELL_COM_STYLE
+	BOOL check;       //GRID_SETCELL_CHECK_CHECK
+	
 };
 // 插入列
 struct GV_INSERTCOL
