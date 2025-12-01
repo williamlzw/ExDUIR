@@ -60,6 +60,7 @@ LRESULT CALLBACK OnListMenuMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
 {
     if (uMsg == WM_DESTROY) {
         Ex_MenuDestroy(hMenu);
+        hMenu = 0;
         HEXIMAGE hImg = Ex_DUIGetLong(hExDui, ENGINE_LONG_LPARAM);
         _img_destroy(hImg);
     }

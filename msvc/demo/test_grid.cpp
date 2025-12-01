@@ -176,13 +176,8 @@ LRESULT CALLBACK OngridMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
     LRESULT* lpResult)
 {
     if (uMsg == WM_DESTROY) {
-        int count = _imglist_count(hImgList);
-        for (int i = 0; i < count; i++)
-        {
-            HEXIMAGE hImg = _imglist_get(hImgList, i);
-            _img_destroy(hImg);
-        }
         _imglist_destroy(hImgList);
+        hImgList = 0;
     }
     return 0;
 }

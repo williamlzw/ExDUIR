@@ -1,7 +1,5 @@
 ﻿#include "test_custommenu.h"
 
-HMENU m_hMenu;
-HMENU m_hMenuRight;
 
 LRESULT CALLBACK OnMenuBtnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam,
 	LRESULT* lpResult)
@@ -225,6 +223,9 @@ LRESULT CALLBACK OnMenuMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
 		_imglist_destroy(hImgList1);
 		Ex_MenuDestroy(hImageSubMenu);
 		Ex_MenuDestroy(hmenuCtxt);
+		hmenuCtxt = 0;
+		hImageSubMenu = 0;
+		hImgList1 = 0;
 	}
 	return 0;
 }
