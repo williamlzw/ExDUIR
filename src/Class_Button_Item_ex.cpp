@@ -308,8 +308,8 @@ static HBITMAP get_arrow_bitmap(void)
         arrow_bitmap = (HBITMAP)LoadImageW(0, MAKEINTRESOURCEW(OBM_MNARROW), IMAGE_BITMAP, 0, 0, 0);
     return arrow_bitmap;
 }
-static void draw_bitmap_item(HWND hwnd, obj_s* pObj, struct menu_item* item, const RECT* rect,
-    struct menu* menu, HWND owner, UINT odaction)
+static void draw_bitmap_item(HWND hwnd, obj_s* pObj, struct MENU_ITEM* item, const RECT* rect,
+    struct MENU_INFO* menu, HWND owner, UINT odaction)
 {
     int w = rect->right - rect->left;
     int h = rect->bottom - rect->top;
@@ -455,7 +455,7 @@ static void draw_bitmap_item(HWND hwnd, obj_s* pObj, struct menu_item* item, con
     _canvas_drawimagefrombkgimg_ex(pObj->canvas_obj_, bmp, 0, 0, BACKGROUND_REPEAT_ZOOM, 0, BACKGROUND_FLAG_DEFAULT, 255, 0, &drc);
 }
 
-void  _item_draw(obj_s* pObj, EXARGB crColor, LPCWSTR lpText, struct menu_item* item, struct menu* menu, BOOL menu_bar)
+void  _item_draw(obj_s* pObj, EXARGB crColor, LPCWSTR lpText, struct MENU_ITEM* item, struct MENU_INFO* menu, BOOL menu_bar)
 {
     HWND hwnd = pObj->pWnd_->hWnd_;
     UINT arrow_width = 0, arrow_height = 0;
@@ -479,7 +479,7 @@ void  _item_draw(obj_s* pObj, EXARGB crColor, LPCWSTR lpText, struct menu_item* 
     }
 
     //rect = item->rect;
-    //adjust_menu_item_rect(menu, &rect);
+    //adjust_MENU_ITEM_rect(menu, &rect);
     //if (!intersect_rect(&bmprc, &rect, &menu->items_rect)) //  bmprc用作占位符   bmprc is used as a dummy
     //    return;
     rect = *(RECT*)&pObj->c_left_;
@@ -519,7 +519,7 @@ void  _item_draw(obj_s* pObj, EXARGB crColor, LPCWSTR lpText, struct menu_item* 
     HEXFONT prev_font = 0;
     if (item->fState & MFS_DEFAULT)
     {
-        prev_font = get_menu_font(TRUE);
+        prev_font = Menu_GetFont(TRUE);
     }
     else
         prev_font = pObj->hFont_;
@@ -657,7 +657,7 @@ void  _item_draw(obj_s* pObj, EXARGB crColor, LPCWSTR lpText, struct menu_item* 
             if (item->hbmpItem == (-1)) //HBMMENU_CALLBACK
                 bmprc.left = 3;
             else
-                bmprc.left = item->text ? menucharsize.cx : 0;
+                bmprc.left = item->text ? g_sizeMenuChar.cx : 0;
         }
         else if (menu->dwStyle & MNS_NOCHECK) // 项左侧没有为检查标记保留空间。 仍然可以选择该项，但项目旁边不会显示检查标记
             bmprc.left = 4;
@@ -669,7 +669,7 @@ void  _item_draw(obj_s* pObj, EXARGB crColor, LPCWSTR lpText, struct menu_item* 
         if (menu_bar && !(item->hbmpItem == (-1))) // HBMMENU_CALLBACK
             bmprc.top = 0;
         else
-            bmprc.top = 2;// (rect.right - rect.left - (menucharsize.cy + 4)) / 2;
+            bmprc.top = 2;// (rect.right - rect.left - (g_sizeMenuChar.cy + 4)) / 2;
         //bmprc.top = (rect.bottom - rect.top - item->bmpsize.cy) / 2;
         bmprc.right = bmprc.left + (rect.bottom - rect.top - 4);
         //bmprc.right = bmprc.left + item->bmpsize.cx;
@@ -759,8 +759,8 @@ void  _item_draw(obj_s* pObj, EXARGB crColor, LPCWSTR lpText, struct menu_item* 
             if (item->hbmpItem)
                 rect.left += item->bmpsize.cx;
             if (item->hbmpItem != (-1)) // HBMMENU_CALLBACK
-                rect.left += menucharsize.cx;
-            rect.right -= menucharsize.cx;
+                rect.left += g_sizeMenuChar.cx;
+            rect.right -= g_sizeMenuChar.cx;
         }
 
         for (i = 0; item->text[i]; i++)
@@ -868,7 +868,7 @@ void _item_paint(HEXOBJ hObj, obj_s* pObj)
         LPCWSTR lptext = pObj->pstrTitle_;
         if ((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)
         {
-            _item_draw(pObj, crColor, lptext, (menu_item*)_obj_getextralong(pObj, 0), (struct menu*)_obj_getextralong(pObj, 1), FALSE);
+            _item_draw(pObj, crColor, lptext, (MENU_ITEM*)_obj_getextralong(pObj, 0), (struct MENU_INFO*)_obj_getextralong(pObj, 1), FALSE);
         }
         else
         {
@@ -909,7 +909,7 @@ LRESULT CALLBACK _item_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
         if ((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)
         {
             //_button_obj_notify_brothers(hWnd, hObj, pObj, WM_MOUSELEAVE, 0, 0, TRUE, TRUE);
-            menu_item* item = (menu_item*)_obj_getextralong(pObj, 0);
+            MENU_ITEM* item = (MENU_ITEM*)_obj_getextralong(pObj, 0);
             item->fState |= MF_HILITE;
 
         }
@@ -922,7 +922,7 @@ LRESULT CALLBACK _item_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
         if ((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)
         {
             //_button_obj_notify_brothers(hWnd, hObj, pObj, WM_MOUSELEAVE, 0, 0, TRUE, TRUE);
-            menu_item* item = (menu_item*)_obj_getextralong(pObj, 0);
+            MENU_ITEM* item = (MENU_ITEM*)_obj_getextralong(pObj, 0);
             item->fState &= ~MF_HILITE;
         }
         if ((pObj->dwState_ & STATE_HOVER) == STATE_HOVER)
