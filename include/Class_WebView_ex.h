@@ -8,8 +8,6 @@
 #include <string>
 #include "WebView2.h"
 
-#pragma comment(lib, "WebView2LoaderStatic.lib")
-
 class CWebView
 {
 public:

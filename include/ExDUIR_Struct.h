@@ -10,6 +10,8 @@
 #pragma region 编译配置
 // 启用VLC播放引擎
 //#define VCL_PLAYER
+// 启用webview2浏览器编译
+//#define WEB_VIEW2
 #pragma endregion 编译配置
 
 #pragma region engine flag constant

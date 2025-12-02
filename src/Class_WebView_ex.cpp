@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-
+#ifdef WEB_VIEW2
 CWebView::CWebView()
 {
 
@@ -284,3 +284,5 @@ LRESULT CALLBACK _webview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
     }
 	return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
+
+#endif
