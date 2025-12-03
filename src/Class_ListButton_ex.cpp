@@ -223,9 +223,6 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         }
         return 0;
     }
-    else if (uMsg == TREEVIEW_MESSAGE_UPDATE) {
-        // _listbuttonex_update(hObj);
-    }
     else if (uMsg == LISTVIEW_MESSAGE_SETIMAGELIST) {
         INT imgWidth = 0;
         INT imgHeight = 0;
@@ -244,9 +241,8 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 Ex_MenuEnd();
                 RECT lpRect = { 0 };
                 GetWindowRect(hWnd, &lpRect);
-                INT Pos_x = lpRect.left + pObj->w_left_ + pTR->nLeft * g_Li.DpiX;
+                INT Pos_x = lpRect.left + pObj->w_left_ + pTR->nLeft ;
                 INT Pos_y = lpRect.top + pObj->w_bottom_ + 2;
-                //RECT RC = { Pos_x, lpRect.top + pObj->w_top_, Pos_x + (LONG)(pTR->nWidth * g_Li.DpiX), lpRect.top + pObj->w_bottom_ };
                 Ex_TrackPopupMenu(pTR->nMenu, 0, Pos_x, Pos_y, 0, hObj, NULL);
             }
         }
@@ -445,7 +441,7 @@ INT _listbuttonex_hittest(HEXOBJ hObj, array_s* hArr, POINT pt)
     if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
         for (INT i = 1; i <= nCount; i++) {
             EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)Array_GetMember(hArr, i);
-            RECT rc{ (LONG)(pTR->nLeft * g_Li.DpiX), pObj->c_top_, (LONG)((pTR->nLeft + pTR->nWidth) * g_Li.DpiX), pObj->c_bottom_ };
+            RECT rc{ (LONG)(pTR->nLeft ), pObj->c_top_, (LONG)((pTR->nLeft + pTR->nWidth) ), pObj->c_bottom_ };
             if (PtInRect(&rc, pt))
             {
                 Index = i;

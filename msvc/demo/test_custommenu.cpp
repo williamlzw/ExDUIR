@@ -85,10 +85,8 @@ HEXIMAGELIST hImgList1 = 0;
 
 void AddImgList()
 {
-
 	hImgList1 = _imglist_create(22, 22);
 	HEXIMAGE himg = 0;
-
 	_img_createfromfile(L"res\\icon\\1.png", &himg);//0
 	_imglist_addimage(hImgList1, 0, himg);
 	_img_destroy(himg);
@@ -127,12 +125,17 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			// EX_NMHDR::hObjFrom  是当前菜单窗口的引擎句柄
 			// EX_NMHDR::idFrom    是菜单句柄
 			SIZE* rc = (SIZE*)hdr->lParam;// lParam 是默认计算后的菜单窗口大小的传值, 本事件执行后将进行菜单窗口弹出定位,无需自己再次计算
+			float dpiScale = Ex_DUIGetSystemDpi();
+			
+			int windowWidth = (INT)(rc->cx / dpiScale - 12 / dpiScale);
+			int windowHeight = (INT)(rc->cy / dpiScale);
+
 			if (hdr->idFrom == hmenuCtxt) //判断是否为主菜单句柄 
 			{
-				rc->cx += 10;
-				rc->cy += 10 + 103;
+				rc->cx += 10 * dpiScale;
+				rc->cy += 110 * dpiScale;
 				HEXOBJ hObjfind = Ex_ObjFind(hdr->hObjFrom, 0, L"Item", 0);
-				INT t = 40 + Ex_Scale(70);
+				INT t = 40 + 70;
 				RECT rcObj{ 0 };
 				while (hObjfind != 0) // 先将所有的菜单项item组件进行移动位置
 				{
@@ -148,16 +151,16 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 				HEXIMAGE hImg;
 				_img_createfromfile(L"res/custommenu/btn1.png", &hImg);
 
-				Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, Ex_Scale(6), 40, (rc->cx - 12) * 0.333,
-					Ex_Scale(70), hdr->hObjFrom, 100, -1, hImg, 0, OnMenuBtnMsgProc);
+				Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, 6, 40, (windowWidth) * 0.333,
+					70, hdr->hObjFrom, 100, -1, hImg, 0, OnMenuBtnMsgProc);
 
 				_img_createfromfile(L"res/custommenu/btn2.png", &hImg);
-				Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, Ex_Scale(6) + (rc->cx - 12) * 0.333, 40,
-					(rc->cx - 12) * 0.333, Ex_Scale(70), hdr->hObjFrom, 101, -1, hImg, 0, OnMenuBtnMsgProc);
+				Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, 6 + (windowWidth) * 0.333, 40,
+					(windowWidth ) * 0.333, 70, hdr->hObjFrom, 101, -1, hImg, 0, OnMenuBtnMsgProc);
 
 				_img_createfromfile(L"res/custommenu/btn3.png", &hImg);
-				Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, Ex_Scale(6) + (rc->cx - 12) * 0.666, 40,
-					(rc->cx - 12) * 0.333, Ex_Scale(70), hdr->hObjFrom, 102, -1, hImg, 0, OnMenuBtnMsgProc);
+				Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, 6 + (windowWidth) * 0.666, 40,
+					(windowWidth ) * 0.333, 70, hdr->hObjFrom, 102, -1, hImg, 0, OnMenuBtnMsgProc);
 
 				std::vector<CHAR> data;
 				Ex_ReadFile(L"res/custommenu/Main.png", &data);
@@ -170,8 +173,8 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			}
 			else //子菜单句柄
 			{
-				rc->cx += Ex_Scale(10);
-				rc->cy += Ex_Scale(12);
+				windowWidth += 10;
+				windowHeight += 12;
 				std::vector<CHAR> data;
 				Ex_ReadFile(L"res/custommenu/Sub.png", &data);
 				RECT grid{ 8, 9, 10, 10 };
