@@ -79,7 +79,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 		_datebox_settitle(hObj, ptr, 1);
 
 		ptr->hFont = _font_createfromfamily(L"Microsoft YaHei", 14, 0);
-		Ex_ObjSetFont(hObj, ptr->hFont, FALSE);
+		//Ex_ObjSetFont(hObj, ptr->hFont, FALSE);
 		Ex_ObjSetLong(hObj, DATEBOX_LONG_DATA, (LONG_PTR)ptr);
 	}
 	else if (uMsg == WM_DESTROY) {
