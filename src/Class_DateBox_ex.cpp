@@ -136,7 +136,7 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 					Ex_Scale(290), SWP_NOZORDER | SWP_NOACTIVATE);
 				// Calendar 控件
 				HEXOBJ hCal = Ex_ObjCreateEx(OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-					L"Calendar",L"",-1,0, 0, Ex_Scale(290), Ex_Scale(290),
+					L"Calendar",L"",-1,0, 0, (290), (290),
 					hExBox,0,-1,0,0,nullptr
 				);
 				Ex_ObjSetLong(hCal, OBJECT_LONG_USERDATA, (LONG_PTR)hExBox);
