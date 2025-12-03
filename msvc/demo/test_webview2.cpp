@@ -10,9 +10,6 @@ LRESULT CALLBACK OnWebViewWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM 
 	
 		if (hObj_webview2 != 0)
 		{
-			OUTPUTW(L"外部组件改变大小", (LOWORD(lParam) - 2) / dpiy,
-				(HIWORD(lParam) - 1) / dpiy);
-		
 			Ex_ObjMove(hObj_webview2, 1, 0, (LOWORD(lParam) - 2) / dpiy,
 				(HIWORD(lParam) ) / dpiy, FALSE);
 		}

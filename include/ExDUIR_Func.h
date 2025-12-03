@@ -3381,6 +3381,16 @@ BOOL Ex_ResGetFileFromAtom(HEXRES hRes, EXATOM atomPath, LPVOID* lpFile,
                            size_t* dwFileLen);
 
 /// <summary>
+/// 获取资源文件原始路径从路径原子
+/// </summary>
+/// <param name="hRes"></param>
+/// <param name="atomPath"></param>
+/// <param name="lpwzPath"></param>
+/// <param name="dwPathLen"></param>
+/// <returns></returns>
+BOOL Ex_ResGetOriginalPathFromAtom(HEXRES hRes, EXATOM atomPath, LPWSTR* lpwzPath, size_t* dwPathLen);
+
+/// <summary>
 /// 从文件加载资源
 /// </summary>
 /// <param name="lptszFile"></param>
@@ -3394,6 +3404,14 @@ HEXRES Ex_ResLoadFromFile(LPCWSTR lptszFile);
 /// <param name="dwDataLen"></param>
 /// <returns></returns>
 HEXRES Ex_ResLoadFromMemory(LPVOID lpData, size_t dwDataLen);
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="hRes"></param>
+/// <param name="lpwzOutputDir"></param>
+/// <returns></returns>
+BOOL Ex_ResWriteToDirectory(HEXRES hRes, LPCWSTR lpwzOutputDir);
 
 /// <summary>
 /// 取DPI缩放值
@@ -3810,6 +3828,14 @@ HEXTHEME Ex_ThemeLoadFromFile(LPCWSTR lptszFile, LPVOID lpKey, size_t dwKeyLen,
 /// <returns></returns>
 HEXTHEME Ex_ThemeLoadFromMemory(LPVOID lpData, size_t dwDataLen, LPVOID lpKey,
                                 size_t dwKeyLen, BOOL bDefault);
+
+/// <summary>
+/// 解码主题包到文件夹
+/// </summary>
+/// <param name="lpszThemeFile">主题包文件路径</param>
+/// <param name="lpszOutputDir">保存的文件夹</param>
+/// <returns></returns>
+BOOL Ex_ThemeWriteToDirectory(LPCWSTR lpszThemeFile, LPCWSTR lpszOutputDir);
 
 /// <summary>
 /// 反初始化引擎

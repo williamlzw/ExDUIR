@@ -88,6 +88,12 @@ UCHAR __get_unsignedchar(LPVOID lpAddr, LONG_PTR offset)
     return *(UCHAR*)a;
 }
 
+UINT __get_unsignedint(LPVOID lpAddr, LONG_PTR offset)
+{
+    size_t a = (size_t)lpAddr + offset;
+    return *(UINT*)a;
+}
+
 WCHAR __get_wchar(LPVOID lpAddr, LONG_PTR offset)
 {
     size_t a = (size_t)lpAddr + offset;

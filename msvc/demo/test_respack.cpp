@@ -15,9 +15,10 @@ void test_respack(HWND hWnd)
     // 节点名用Ex_Atom获取原子，如(UINT)Ex_Atom(L"background-color")值与ATOM_BACKGROUND_COLOR常量一致，
     // 用Ex_ThemeGetValuePtr(hTheme, atom,
     // ATOM_BACKGROUND_COLOR)获取节点值指针，再获取对应的值参考_wnd_loadtheme方法
-
     //_res_pack(L"E:\\ExDUIR\\msvc\\demo\\Default\\", L"res/test_theme.ext", PACKAGEHEADER_THEME);//打包后可以在Ex_Init使用
-
+    //解压主题包
+    //Ex_ThemeWriteToDirectory(L"E:\\ExDUIR\\x64\\Debug\\res/test_theme.ext", L"E:\\ExDUIR\\x64\\Debug\\output");
+   
     // 打包成资源包
     _res_pack(L"E:\\ExDUIR\\msvc\\demo\\Default\\", L"res/test_res.exr", PACKAGEHEADER_FILES);
 
@@ -31,6 +32,8 @@ void test_respack(HWND hWnd)
     Ex_WriteFile(L"res/read_from_res2.png", lpFile, dwLen);   // 不销毁lpFile
 
     _img_destroy(img);
+
+    Ex_ResWriteToDirectory(hRes, L"E:\\ExDUIR\\x64\\Debug\\output");
     Ex_ResFree(hRes);
 
     Ex_DUIShowWindow(hExDui_respack, SW_SHOWNORMAL);

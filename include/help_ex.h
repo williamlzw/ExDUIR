@@ -345,6 +345,7 @@ typedef struct ICONIMAGE
 
 void CALLBACK pfnDefaultFreeData(LPVOID dwData);
 CHAR          __get_char(LPVOID lpAddr, LONG_PTR offset);
+UINT          __get_unsignedint(LPVOID lpAddr, LONG_PTR offset);
 UCHAR         __get_unsignedchar(LPVOID lpAddr, LONG_PTR offset);
 WCHAR         __get_wchar(LPVOID lpAddr, LONG_PTR offset);
 void          __set_char(LPVOID lpAddr, LONG_PTR offset, CHAR value);

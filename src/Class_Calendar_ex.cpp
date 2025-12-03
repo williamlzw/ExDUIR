@@ -438,10 +438,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
                             dt.Wday = GetWeekOfDate(dt.Year, dt.Mon, dt.Mday);
 
                             Ex_ObjDispatchNotify(hObj, CALENDAR_EVENT_DATETIME, 0, (size_t)&dt);// 安全：堆分配由接收方释放
-                            /*HWND hWndPopup = (HWND)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
-                            if (hWndPopup) {
-                                PostMessageW(hWndPopup, CALENDAR_EVENT_DATETIME, 0, (LPARAM)dt); // 安全：堆分配由接收方释放
-                            }*/
+           
                             Ex_ObjInvalidateRect(hObj, NULL); // 触发重绘以显示边框
                         }
                     }

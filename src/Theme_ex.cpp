@@ -1,13 +1,13 @@
 ﻿#include "stdafx.h"
 
 BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLen,
-                   std::vector<INT>* atomFiles, std::vector<LPVOID>* lpFiles,
-                   std::vector<UCHAR>* dwFileProps)
+    std::vector<INT>* atomFiles, std::vector<LPVOID>* lpFiles,
+    std::vector<UCHAR>* dwFileProps)
 {
-    LPVOID retPtr        = nullptr;
+    LPVOID retPtr = nullptr;
     LPVOID retPtrDestroy = nullptr;
-    size_t retLen        = 0;
-    BOOL   ret           = FALSE;
+    size_t retLen = 0;
+    BOOL   ret = FALSE;
     _bin_uncompress(lpData, dwDataLen, 0, 0, &retPtr, &retLen);
     retPtrDestroy = retPtr;
 
@@ -20,18 +20,23 @@ BOOL _theme_unpack(LPVOID lpData, size_t dwDataLen, LPVOID lpKey, size_t dwKeyLe
                 (*dwFileProps).resize(count);
                 retPtr = (LPVOID)((size_t)retPtr + 5);
                 for (INT i = 0; i < count; i++) {
+                    EXATOM atom = __get_int(retPtr, 0);
                     UCHAR prop = __get_unsignedchar(retPtr, 4);
-                    INT   len  = __get_int(retPtr, 5) + 4;
-                    if (len > 4) {
-                        LPVOID tmp = Ex_MemAlloc(len + 2);
-                        if (tmp != 0) {
-                            (*atomFiles)[i]   = __get_int(retPtr, 0);
-                            (*lpFiles)[i]     = tmp;
-                            (*dwFileProps)[i] = prop;
-                            RtlMoveMemory(tmp, (LPVOID)((size_t)retPtr + 5), len);
-                        }
+                    INT pathLen = __get_int(retPtr, 5);
+                    INT len = __get_int(retPtr, 9);
+
+                    // 分配内存存储资源项（包含原始路径信息）
+                    // 存储格式：atom(4) + prop(1) + pathLen(4) + len(4) + pathData + fileData
+                    INT totalLen = 13 + pathLen + len;
+                    LPVOID tmp = Ex_MemAlloc(totalLen + 2);
+                    if (tmp != 0) {
+                        (*atomFiles)[i] = atom;
+                        (*lpFiles)[i] = tmp;
+                        (*dwFileProps)[i] = prop;
+                        RtlMoveMemory(tmp, retPtr, totalLen);
                     }
-                    retPtr = (LPVOID)((size_t)retPtr + 5 + len);
+
+                    retPtr = (LPVOID)((size_t)retPtr + totalLen);
                 }
                 ret = TRUE;
             }
@@ -76,28 +81,39 @@ INT _theme_fillitems(LPVOID lpContent, std::vector<INT>* artItems1, std::vector<
 }
 
 BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
-                        std::vector<INT> atomFiles, std::vector<LPVOID> lpFiles,
-                        std::vector<UCHAR> dwFileProps, LPVOID aryCorlors)
+    std::vector<INT> atomFiles, std::vector<LPVOID> lpFiles,
+    std::vector<UCHAR> dwFileProps, LPVOID aryCorlors)
 {
     std::vector<INT>    aryAtomKey;
     std::vector<size_t> arylpValue;
     BOOL                ret = FALSE;
+
+    // 存储所有文件到哈希表
     for (size_t i = 0; i < atomFiles.size(); i++) {
         HashTable_Set(pTableFiles, atomFiles[i], (size_t)lpFiles[i]);
     }
+
     EXATOM atomINI = ATOM_THEME_INI;
-    size_t lpFile  = 0;
+    size_t lpFile = 0;
     if (HashTable_Get(pTableFiles, atomINI, &lpFile)) {
-        std::string  utf8Str((char*)(lpFile + 4), __get_int((LPVOID)lpFile, 0));
+        // 解析INI文件资源项
+        LPVOID pResItem = (LPVOID)lpFile;
+        INT pathLen = __get_int(pResItem, 5);
+        INT dataLen = __get_int(pResItem, 9);
+        LPVOID pFileData = (LPVOID)((size_t)pResItem + 13 + pathLen);
+
+        // 读取INI文件内容
+        std::string utf8Str((char*)pFileData, dataLen);
         std::wstring unicodeStr = Ex_U2W(utf8Str);
         transform(unicodeStr.begin(), unicodeStr.end(), unicodeStr.begin(), ::tolower);
+
         aryAtomKey.resize(32);
         arylpValue.resize(32);
         auto   iClassStart = wcschr((WCHAR*)unicodeStr.c_str(), '[');
-        LPVOID lpValue     = nullptr;
+        LPVOID lpValue = nullptr;
         INT    Value;
         while (iClassStart != 0) {
-            iClassStart    = (WCHAR*)((size_t)iClassStart + 2);
+            iClassStart = (WCHAR*)((size_t)iClassStart + 2);
             auto iClassEnd = wcschr(iClassStart, ']');
             if (iClassEnd == 0) {
                 break;
@@ -105,14 +121,14 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
             else {
                 __set_wchar(iClassEnd, 0, 0);
                 auto iContentStart = (WCHAR*)((size_t)iClassEnd + 2);
-                auto iContentEnd   = wcschr(iContentStart, '[');
+                auto iContentEnd = wcschr(iContentStart, '[');
                 if (iContentEnd != 0) {
                     __set_wchar(iContentEnd, 0, 0);
                 }
                 auto dwLen = (size_t)iClassEnd - (size_t)iClassStart;
                 if (dwLen > 0) {
                     EXATOM atomClass = Crc32_Addr(iClassStart, dwLen);
-                    INT    nCount    = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
+                    INT    nCount = _theme_fillitems(iContentStart, &aryAtomKey, &arylpValue);
                     if (nCount > 0) {
                         if (atomClass == ATOM_COLOR) {
                             for (INT i = 0; i < nCount; i++) {
@@ -120,9 +136,9 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
                                     for (size_t ii = 0; ii < g_Li.aryColorsAtom.size(); ii++) {
                                         if (g_Li.aryColorsAtom[ii] == aryAtomKey[i]) {
                                             __set_int(aryCorlors,
-                                                      g_Li.aryColorsOffset[ii] -
-                                                          offsetof(obj_s, crBackground_),
-                                                      Value);
+                                                g_Li.aryColorsOffset[ii] -
+                                                offsetof(obj_s, crBackground_),
+                                                Value);
                                             break;
                                         }
                                     }
@@ -148,15 +164,26 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
                                                     Crc32_Addr((LPVOID)arylpValue[i], dwLen);
                                                 for (size_t ii = 0; ii < atomFiles.size(); ii++) {
                                                     if (atomProp == atomFiles[ii]) {
-                                                        if (dwFileProps[ii] ==
-                                                            PACKAGEHEADER_PNGBITS) {
-                                                            _img_createfrompngbits(
-                                                                lpFiles[ii], &pClass->hImage_);
+                                                        // 处理图像资源（新格式）
+                                                        LPVOID pImageResItem = lpFiles[ii];
+                                                        // 修复点：正确解析资源项结构
+                                                        // 格式：atom(4) + prop(1) + pathLen(4) + len(4) + pathData + fileData
+                                                        UCHAR prop = __get_unsignedchar(pImageResItem, 4);
+                                                        INT imgPathLen = __get_int(pImageResItem, 5);
+                                                        INT imgDataLen = __get_int(pImageResItem, 9);
+                                                        
+                                                        LPVOID pImageFileData = (LPVOID)((size_t)pImageResItem + 13 + imgPathLen);
+                                                        if (dwFileProps[ii] == PACKAGEHEADER_PNGBITS) {
+                                                            // PNG位图资源
+                                                            // 注意：PNGBITS格式是 width(4) + height(4) + 像素数据
+                                                            _img_createfrompngbits(pImageFileData, &pClass->hImage_);
                                                         }
                                                         else {
+                                                            // 普通图像资源
+                                                            // 注意：数据格式是 len(4字节) + 数据
                                                             _img_createfrommemory(
-                                                                (LPVOID)((size_t)lpFiles[ii] + 4),
-                                                                __get_int(lpFiles[ii], 0),
+                                                                pImageFileData,  // 不需要+4，因为文件数据本身就包含4字节的长度头
+                                                                imgDataLen,      // 使用从资源项读取的长度
                                                                 &pClass->hImage_);
                                                         }
                                                         break;
@@ -167,10 +194,10 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
                                             else {
                                                 LPVOID lpValueaa = Ex_MemAlloc(dwLen + 2);
                                                 RtlMoveMemory(lpValueaa, (LPVOID)arylpValue[i],
-                                                              dwLen);
+                                                    dwLen);
 
                                                 HashTable_Set(pTableProp, aryAtomKey[i],
-                                                              (size_t)lpValueaa);
+                                                    (size_t)lpValueaa);
                                             }
                                         }
                                         else {
@@ -183,10 +210,10 @@ BOOL _theme_fillclasses(EX_HASHTABLE* pTableFiles, EX_HASHTABLE* pTableClass,
                                             }
                                             else {
                                                 _fmt_intary_ex((LPVOID)arylpValue[i], &lpValuea, 0,
-                                                               TRUE);
+                                                    TRUE);
                                             }
                                             HashTable_Set(pTableProp, (size_t)aryAtomKey[i],
-                                                          (size_t)lpValuea);
+                                                (size_t)lpValuea);
                                         }
                                     }
                                 }
@@ -415,4 +442,204 @@ BOOL Ex_ThemeFree(HEXTHEME hTheme)
         }
     }
     return ret;
+}
+
+BOOL Ex_ThemeWriteToDirectory(LPCWSTR lpszThemeFile, LPCWSTR lpszOutputDir)
+{
+    // 参数检查
+    if (lpszThemeFile == nullptr || lpszOutputDir == nullptr) {
+        Ex_SetLastError(ERROR_EX_HANDLE_INVALID);
+        return FALSE;
+    }
+
+    // 确保输出目录存在
+    if (!std::filesystem::exists(lpszOutputDir)) {
+        if (!std::filesystem::create_directories(lpszOutputDir)) {
+            Ex_SetLastError(ERROR_EX_HANDLE_INVALID);
+            return FALSE;
+        }
+    }
+
+    // 读取主题文件
+    std::vector<CHAR> themeData;
+    if (!Ex_ReadFile(lpszThemeFile, &themeData) || themeData.empty()) {
+        Ex_SetLastError(ERROR_EX_HANDLE_INVALID);
+        return FALSE;
+    }
+
+    // 解压主题文件
+    LPVOID pUncompressedData = nullptr;
+    size_t dwUncompressedSize = 0;
+    _bin_uncompress(themeData.data(), themeData.size(), nullptr, 0,
+        &pUncompressedData, &dwUncompressedSize);
+
+    if (pUncompressedData == nullptr || dwUncompressedSize == 0) {
+        Ex_SetLastError(ERROR_EX_UNSUPPORTED_TYPE);
+        return FALSE;
+    }
+
+    // 检查文件头
+    if (__get_unsignedchar(pUncompressedData, 0) != PACKAGEHEADER_THEME) {
+        Ex_MemFree(pUncompressedData);
+        Ex_SetLastError(ERROR_EX_UNSUPPORTED_TYPE);
+        return FALSE;
+    }
+
+    // 获取资源数量
+    INT nFileCount = __get_int(pUncompressedData, 1);
+    if (nFileCount <= 0) {
+        Ex_MemFree(pUncompressedData);
+        Ex_SetLastError(ERROR_EX_BAD_LENGTH);
+        return FALSE;
+    }
+
+    // 遍历所有资源
+    LPVOID pCurrentPos = (LPVOID)((size_t)pUncompressedData + 5);
+    INT nError = 0;
+
+    for (INT i = 0; i < nFileCount; i++) {
+        // 读取资源项信息（新格式）
+        EXATOM atomName = __get_int(pCurrentPos, 0);
+        UCHAR byteProp = __get_unsignedchar(pCurrentPos, 4);
+        INT nPathLen = __get_int(pCurrentPos, 5);
+        INT nDataLen = __get_int(pCurrentPos, 9);
+        LPVOID pPathData = (LPVOID)((size_t)pCurrentPos + 13);
+        LPVOID pFileData = (LPVOID)((size_t)pPathData + nPathLen);
+
+        if (nDataLen <= 0) {
+            // 移动到下一个资源项
+            pCurrentPos = (LPVOID)((size_t)pCurrentPos + 13 + nPathLen + nDataLen);
+            continue;
+        }
+
+        // 构建输出文件路径
+        std::wstring wzOutputPath = lpszOutputDir;
+        if (!wzOutputPath.empty() && wzOutputPath.back() != L'\\' && wzOutputPath.back() != L'/') {
+            wzOutputPath += L'\\';
+        }
+
+        // 获取原始路径（从存储的路径数据中）
+        std::wstring wzOriginalPath((wchar_t*)pPathData);
+        wzOutputPath += wzOriginalPath;
+
+        // 创建目录（如果需要）
+        size_t nLastSlash = wzOutputPath.find_last_of(L"\\/");
+        if (nLastSlash != std::wstring::npos) {
+            std::wstring wzDirPath = wzOutputPath.substr(0, nLastSlash);
+            if (!std::filesystem::exists(wzDirPath)) {
+                std::filesystem::create_directories(wzDirPath);
+            }
+        }
+
+        // 根据资源类型处理文件
+        if (byteProp == PACKAGEHEADER_PNGBITS) {
+            // PNG位图资源 - 需要解码并保存为PNG
+            if (nDataLen >= 8) {
+                UINT nWidth = __get_unsignedint(pFileData, 0);
+                UINT nHeight = __get_unsignedint(pFileData, 4);
+                BYTE* pPixels = (BYTE*)((size_t)pFileData + 8);
+
+                // 创建WIC位图
+                IWICBitmap* pBitmap = nullptr;
+                HRESULT hr = g_Ri.pWICFactory->CreateBitmap(
+                    nWidth, nHeight,
+                    GUID_WICPixelFormat32bppPBGRA,
+                    WICBitmapCacheOnLoad, &pBitmap);
+
+                if (SUCCEEDED(hr)) {
+                    // 锁定位图并复制像素数据
+                    WICRect rect = { 0, 0, (INT)nWidth, (INT)nHeight };
+                    IWICBitmapLock* pLock = nullptr;
+                    hr = pBitmap->Lock(&rect, WICBitmapLockWrite, &pLock);
+
+                    if (SUCCEEDED(hr)) {
+                        BYTE* pBuffer = nullptr;
+                        UINT nBufferSize = 0;
+                        UINT nStride = 0;
+                        pLock->GetDataPointer(&nBufferSize, &pBuffer);
+                        pLock->GetStride(&nStride);
+
+                        // 复制像素数据
+                        for (UINT y = 0; y < nHeight; y++) {
+                            BYTE* pDest = pBuffer + y * nStride;
+                            BYTE* pSrc = pPixels + y * nWidth * 4;
+                            memcpy(pDest, pSrc, nWidth * 4);
+                        }
+
+                        pLock->Release();
+
+                        // 保存为PNG文件
+                        IWICStream* pStream = nullptr;
+                        hr = g_Ri.pWICFactory->CreateStream(&pStream);
+
+                        if (SUCCEEDED(hr)) {
+                            hr = pStream->InitializeFromFilename(wzOutputPath.c_str(), GENERIC_WRITE);
+
+                            if (SUCCEEDED(hr)) {
+                                IWICBitmapEncoder* pEncoder = nullptr;
+                                hr = g_Ri.pWICFactory->CreateEncoder(
+                                    GUID_ContainerFormatPng, NULL, &pEncoder);
+
+                                if (SUCCEEDED(hr)) {
+                                    hr = pEncoder->Initialize(pStream, WICBitmapEncoderNoCache);
+
+                                    if (SUCCEEDED(hr)) {
+                                        IWICBitmapFrameEncode* pFrameEncode = nullptr;
+                                        hr = pEncoder->CreateNewFrame(&pFrameEncode, NULL);
+
+                                        if (SUCCEEDED(hr)) {
+                                            hr = pFrameEncode->Initialize(NULL);
+
+                                            if (SUCCEEDED(hr)) {
+                                                hr = pFrameEncode->SetSize(nWidth, nHeight);
+
+                                                if (SUCCEEDED(hr)) {
+                                                    WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
+                                                    hr = pFrameEncode->SetPixelFormat(&format);
+
+                                                    if (SUCCEEDED(hr)) {
+                                                        hr = pFrameEncode->WriteSource(pBitmap, NULL);
+                                                    }
+                                                }
+                                                pFrameEncode->Commit();
+                                            }
+                                            pFrameEncode->Release();
+                                        }
+                                        pEncoder->Commit();
+                                    }
+                                    pEncoder->Release();
+                                }
+                            }
+                            pStream->Release();
+                        }
+                    }
+                    pBitmap->Release();
+                }
+
+                if (FAILED(hr)) {
+                    nError = ERROR_EX_INVALID_OBJECT;
+                }
+            }
+        }
+        else {
+            // 普通文件资源 - 直接写入
+            std::ofstream file(wzOutputPath, std::ios::binary);
+            if (file.is_open()) {
+                file.write((const char*)pFileData, nDataLen);
+                file.close();
+            }
+            else {
+                nError = ERROR_EX_HANDLE_INVALID;
+            }
+        }
+
+        // 移动到下一个资源项
+        pCurrentPos = (LPVOID)((size_t)pCurrentPos + 13 + nPathLen + nDataLen);
+    }
+
+    // 清理内存
+    Ex_MemFree(pUncompressedData);
+
+    Ex_SetLastError(nError);
+    return nError == 0;
 }

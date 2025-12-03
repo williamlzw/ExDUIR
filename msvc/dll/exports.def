@@ -171,6 +171,7 @@ Ex_ThemeDrawControl
 Ex_ThemeDrawControlEx
 Ex_ThemeGetValuePtr
 Ex_ThemeGetColor
+Ex_ThemeWriteToDirectory
 
 ;----------------------------------------
 ;res
@@ -181,6 +182,9 @@ Ex_ResFree
 Ex_ResGetFileFromAtom
 Ex_ResGetFile
 _res_pack
+_res_unpack
+Ex_ResWriteToDirectory
+Ex_ResGetOriginalPathFromAtom
 
 ;----------------------------------------
 ;layout

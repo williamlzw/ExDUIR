@@ -350,13 +350,13 @@ BOOL _img_createfrompngbits(LPVOID lpmem, HEXIMAGE* dstImg)
 {
     INT         nError      = 0;
     HEXIMAGE    hImg        = 0;
-    INT         width       = __get_int(lpmem, sizeof(INT));
-    INT         height      = __get_int(lpmem, 2 * sizeof(INT));
+    INT         width       = __get_int(lpmem, 0);
+    INT         height      = __get_int(lpmem, 4);
     INT         len         = width * height * 4;
     IWICBitmap* pBitmapData = nullptr;
     nError                  = g_Ri.pWICFactory->CreateBitmapFromMemory(
         width, height, GUID_WICPixelFormat32bppPBGRA, width * 4, len,
-        (BYTE*)((size_t)lpmem + 3 * sizeof(INT)), &pBitmapData);
+        (BYTE*)((size_t)lpmem + 8), &pBitmapData);
     if (nError == 0) {
         hImg = _img_init(pBitmapData, 0, 1, NULL, &nError);
     }

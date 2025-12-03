@@ -2830,7 +2830,6 @@ BOOL Ex_ObjGetBackgroundImage(EXHANDLE handle, EX_BACKGROUNDIMAGEINFO* lpBackgro
 
 void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
 {
-    // KillTimer(hWnd, idEvent);
     obj_base*               pObj = (obj_base*)(idEvent - TIMER_BKG);
     EX_BACKGROUNDIMAGEINFO* lpBI = pObj->lpBackgroundImage_;
     if (lpBI != 0) {
@@ -2853,7 +2852,6 @@ void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent,
                 _wnd_redraw_bkg(hWnd, (wnd_s*)pObj, 0, TRUE, FALSE);
             }
             UpdateWindow(hWnd);
-            // SetTimer(hWnd, idEvent, pDelay[iCur] * 10, _obj_backgroundimage_timer);
         }
     }
 }
