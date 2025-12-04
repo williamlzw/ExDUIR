@@ -77,6 +77,7 @@
 #include "test_grid.h"
 #include "test_webview2.h"
 #include "test_flowscrollview.h"
+#include "test_prototypeboard.h"
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
                                   LRESULT* lpResult);

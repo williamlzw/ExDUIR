@@ -250,6 +250,7 @@
     <ClCompile Include="test_path_and_rgn.cpp" />
     <ClCompile Include="test_progressbar.cpp" />
     <ClCompile Include="test_propertygrid.cpp" />
+    <ClCompile Include="test_prototypeboard.cpp" />
     <ClCompile Include="test_relative.cpp" />
     <ClCompile Include="test_reportlistview.cpp" />
     <ClCompile Include="test_respack.cpp" />
@@ -325,6 +326,7 @@
     <ClInclude Include="test_path_and_rgn.h" />
     <ClInclude Include="test_progressbar.h" />
     <ClInclude Include="test_propertygrid.h" />
+    <ClInclude Include="test_prototypeboard.h" />
     <ClInclude Include="test_relative.h" />
     <ClInclude Include="test_reportlistview.h" />
     <ClInclude Include="test_respack.h" />

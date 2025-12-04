@@ -1882,6 +1882,49 @@
 
 #define SWP_EX_NODPISCALE 0x80000000
 
+// 原型画板模式_选择
+#define PROTOTYPEBOARD_MODE_SELECT 0
+// 原型画板模式_拖动
+#define PROTOTYPEBOARD_MODE_MOVE 1
+// 原型画板模式_绘制路径
+#define PROTOTYPEBOARD_MODE_DRAW 2
+
+// 原型画板绘制类型_直线
+#define PROTOTYPEBOARD_DRAW_TYPE_LINE 0
+// 原型画板绘制类型_矩形
+#define PROTOTYPEBOARD_DRAW_TYPE_RECT 1
+// 原型画板绘制类型_椭圆
+#define PROTOTYPEBOARD_DRAW_TYPE_ELLIPSE 2
+// 原型画板绘制类型_文本
+#define PROTOTYPEBOARD_DRAW_TYPE_TEXT 3
+// 原型画板绘制类型_图像
+#define PROTOTYPEBOARD_DRAW_TYPE_IMAGE 4
+// 原型画板绘制类型_路径
+#define PROTOTYPEBOARD_DRAW_TYPE_PATH 5
+// 原型画板绘制类型_拉框区域
+#define PROTOTYPEBOARD_DRAW_TYPE_SELECT 6
+
+
+// 原型画板消息_绘制直线
+#define PROTOTYPEBOARD_MESSAGE_DRAW_LINE 100000
+// 原型画板消息_绘制矩形
+#define PROTOTYPEBOARD_MESSAGE_DRAW_RECT 100001
+// 原型画板消息_绘制椭圆
+#define PROTOTYPEBOARD_MESSAGE_DRAW_ELLIPSE 100002
+// 原型画板消息_绘制文本
+#define PROTOTYPEBOARD_MESSAGE_DRAW_TEXT 100003
+// 原型画板消息_绘制图像
+#define PROTOTYPEBOARD_MESSAGE_DRAW_IMAGE 100004
+// 原型画板消息_绘制路径
+#define PROTOTYPEBOARD_MESSAGE_DRAW_PATH 100005
+// 原型画板消息_改变模式, lParam设置模式PROTOTYPEBOARD_MODE_
+#define PROTOTYPEBOARD_MESSAGE_MODE 100006
+// 原型画板消息_设置图片，wParam为图片句柄HEXIMAGE，lParam为是否保持宽高比（1保持，0拉伸）
+#define PROTOTYPEBOARD_MESSAGE_SET_IMAGE 100007
+// 原型画板消息_设置文本，wParam为字体句柄HEXFONT，lParam为文本内容指针（WCHAR*）
+#define PROTOTYPEBOARD_MESSAGE_SET_TEXT 100008
+
+
 // Grid组件消息定义
 #define GRIDM_SETROWCOUNT           (WM_USER + 100)
 #define GRIDM_SETCOLCOUNT           (WM_USER + 101)

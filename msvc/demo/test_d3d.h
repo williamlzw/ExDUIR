@@ -31,12 +31,6 @@ struct VertexPosColor
 	static const D3D11_INPUT_ELEMENT_DESC inputLayout[2];
 };
 
-struct VertexPosTex
-{
-	DirectX::XMFLOAT3 pos;
-	DirectX::XMFLOAT2 tex;
-	static const D3D11_INPUT_ELEMENT_DESC inputLayout[2];
-};
 
 struct VertexPosSize
 {

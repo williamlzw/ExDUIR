@@ -194,3 +194,5 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ![image](demo_image/demo_webview2.png)
 ### demo flowscrollview:
 ![image](demo_image/demo_flowscrollview.png)
+### demo prototypeboard:
+![image](demo_image/demo_prototypeboard.png)
