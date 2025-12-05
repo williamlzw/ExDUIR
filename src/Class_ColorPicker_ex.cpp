@@ -91,13 +91,13 @@ void _color_picker_show_popup(HWND hWnd, HEXOBJ hObj) {
     //Ex_ObjHandleEvent(hPalette, NM_LUP, _color_OnPaletteEvent);
     
     // 创建颜色输入框
-    HEXOBJ hEdit = Ex_ObjCreateEx(-1, L"Edit", NULL, OBJECT_STYLE_VISIBLE,
-        4, 170, 100, 25, hExDUI, 0, -1, 0, 0, _color_picker_edit_proc);
+    HEXOBJ hEdit = Ex_ObjCreateEx(-1, L"Edit", NULL, OBJECT_STYLE_VISIBLE | EDIT_STYLE_NUMERIC_LETTER,
+        4, 170, 100, 25, hExDUI, 0, -1, hObj, 0, _color_picker_edit_proc);
 
     // 设置初始颜色
     EXARGB initialColor = Ex_ObjGetColor(hColorPicker, COLOR_EX_BACKGROUND);
     _color_picker_update_edit(hEdit, initialColor);
-
+    Ex_ObjSetLong(hEdit, OBJECT_LONG_USERDATA, (LONG_PTR)hPalette);
     Ex_ObjSendMessage(hPalette, PALETTE_LONG_SETCOLOR, 0, initialColor);
 
     // 创建“确认”按钮
@@ -188,14 +188,15 @@ LRESULT CALLBACK _color_picker_edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARA
             }
 
             // 获取颜色选择器对象
-            HEXOBJ hColorPicker = Ex_ObjGetParent(hObj);
+            HEXOBJ hColorPicker = (HEXOBJ)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
 
             // 更新颜色选择器的背景颜色
             Ex_ObjSetColor(hColorPicker, COLOR_EX_BACKGROUND, color, TRUE);
 
             // 通知颜色变化
-            Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
-
+            //Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
+            HEXOBJ hPalette = (HEXOBJ)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
+            Ex_ObjSendMessage(hPalette, PALETTE_LONG_SETCOLOR, 0, color);
             return 0;
         }
     }
