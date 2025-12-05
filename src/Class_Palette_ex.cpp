@@ -149,25 +149,42 @@ void _palette_setdefaultcolor(HEXOBJ hObj, EXARGB targetColor)
     INT width, height;
     _img_getsize(img, &width, &height);
 
-    // 遍历图像寻找最接近的颜色（简化版：只在中间一行找）
-    INT bestX = 0, bestY = height / 2;
+    if (width <= 0 || height <= 0) return;
+
+    INT bestX = 0, bestY = 0;
     INT minDist = INT_MAX;
 
-    for (INT x = 0; x < width; ++x)
+    BYTE tr = ExGetR(targetColor);
+    BYTE tg = ExGetG(targetColor);
+    BYTE tb = ExGetB(targetColor);
+
+    for (INT y = 0; y < height; ++y)
     {
-        EXARGB pixel;
-        _img_getpixel(img, x, bestY, &pixel);
-        INT dr = ExGetR(targetColor) - ExGetR(pixel);
-        INT dg = ExGetG(targetColor) - ExGetG(pixel);
-        INT db = ExGetB(targetColor) - ExGetB(pixel);
-        INT dist = dr * dr + dg * dg + db * db;
-        if (dist < minDist)
+        for (INT x = 0; x < width; ++x)
         {
-            minDist = dist;
-            bestX = x;
+            EXARGB pixel;
+            _img_getpixel(img, x, y, &pixel);
+
+            // 提前跳过完全透明像素（如果调色板含透明色且你不希望选中）
+            // if (ExGetA(pixel) == 0) continue;
+
+            INT dr = tr - ExGetR(pixel);
+            INT dg = tg - ExGetG(pixel);
+            INT db = tb - ExGetB(pixel);
+            INT dist = dr * dr + dg * dg + db * db;
+
+            if (dist < minDist)
+            {
+                minDist = dist;
+                bestX = x;
+                bestY = y;
+                if (minDist == 0) // 完全匹配，提前退出
+                    goto found;
+            }
         }
     }
 
+found:
     Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINX, bestX);
     Ex_ObjSetLong(hObj, PALETTE_LONG_BEGINY, bestY);
     Ex_ObjInvalidateRect(hObj, 0);

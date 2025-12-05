@@ -6,7 +6,7 @@ void _calendar_register() {
         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
         OBJECT_STYLE_EX_FOCUSABLE,
         DT_CENTER | DT_VCENTER,
-        sizeof(calendar_s*),
+        1,
         LoadCursor(0, IDC_HAND),
         CANVAS_FLAG_TEXTANTIALIAS,
         _calendar_proc);
@@ -152,7 +152,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
     static INT g_hoverIndex = -1;
     static POINT g_lastMouse = { 0 };
 
-    calendar_s* pCal = (calendar_s*)Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+    calendar_s* pCal = (calendar_s*)Ex_ObjGetLong(hObj, 0);
 
     if (uMsg == WM_CREATE) {
         pCal = (calendar_s*)malloc(sizeof(calendar_s));
@@ -172,7 +172,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         pCal->nSelectedIndex = _calendar_get_day_index(pCal->lpYear, pCal->lpMon, pCal->Mday);
         pCal->hFont = Ex_ObjGetFont(hObj);
         
-        Ex_ObjSetLong(hObj, OBJECT_LONG_LPARAM, (LONG_PTR)pCal);
+        Ex_ObjSetLong(hObj, 0, (LONG_PTR)pCal);
         Ex_ObjSetLong(hObj, OBJECT_LONG_CURSOR, (LONG_PTR)LoadCursor(0, IDC_ARROW));
 
     }
