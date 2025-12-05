@@ -133,7 +133,7 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			if (hdr->idFrom == hmenuCtxt) //判断是否为主菜单句柄 
 			{
 				rc->cx += 10 * dpiScale;
-				rc->cy += 110 * dpiScale;
+				rc->cy += 112 * dpiScale;
 				HEXOBJ hObjfind = Ex_ObjFind(hdr->hObjFrom, 0, L"Item", 0);
 				INT t = 40 + 70;
 				RECT rcObj{ 0 };
@@ -173,8 +173,8 @@ LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
 			}
 			else //子菜单句柄
 			{
-				windowWidth += 10;
-				windowHeight += 12;
+				rc->cx += Ex_Scale(10);
+				rc->cy += Ex_Scale(12);
 				std::vector<CHAR> data;
 				Ex_ReadFile(L"res/custommenu/Sub.png", &data);
 				RECT grid{ 8, 9, 10, 10 };
