@@ -244,6 +244,10 @@ LRESULT CALLBACK _listbuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
                 INT Pos_x = lpRect.left + pObj->w_left_ + pTR->nLeft ;
                 INT Pos_y = lpRect.top + pObj->w_bottom_ + 2;
                 Ex_TrackPopupMenu(pTR->nMenu, 0, Pos_x, Pos_y, 0, hObj, NULL);
+                //未选中消息直接转移焦点到窗口时，设置不选中。
+                pTR->dwState = 0;
+                Ex_ObjSetLong(hObj, LISTBUTTON_LONG_INDEX, -1);
+                Ex_ObjInvalidateRect(hObj, 0);
             }
         }
         return 0;

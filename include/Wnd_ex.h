@@ -90,16 +90,16 @@ struct wnd_s
 
     FLOAT fBlur_;
 
-    HEXOBJ objTrackPrev_;
-    HEXOBJ objTrack_;
-    HEXOBJ objCaption_;
-    HEXOBJ objFocus_;
+    HEXOBJ objTrackPrev_;   
+    HEXOBJ objTrack_;       // 鼠标轨迹所在组件
+    HEXOBJ objCaption_;     // 标题栏组件句柄
+    HEXOBJ objFocus_;       // 焦点组件句柄
     HEXOBJ objFocusPrev_;
 
     HEXOBJ objMenucontext_;
-    LONG   dwHitObjPos_Abs_;
-    INT    dwHitCode_;
-    HEXOBJ objHittest_;
+    LONG   dwHitObjPos_Abs_; // 鼠标在组件的坐标
+    INT    dwHitCode_;       // 记录鼠标命中测试结果
+    HEXOBJ objHittest_;      // 记录命中组件, WM_NCHITTEST中记录更新其值
     HEXOBJ objHittestPrev_;
     INT    dwTrackContext_;
     wnd_s* pMenuTrackWnd_;
