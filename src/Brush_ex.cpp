@@ -97,19 +97,19 @@ void _brush_settransform(HEXBRUSH hBrush, HEXMATRIX matrix)
 }
 
 HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrPts,
-                                INT* arrColors)
+                                INT* arrColors, INT   nStops)
 {
     ID2D1GradientStopCollection* gradientStopCollection = nullptr;
     ID2D1LinearGradientBrush*    hBrush                 = nullptr;
-    D2D1_GRADIENT_STOP* gradientStops = (D2D1_GRADIENT_STOP*)malloc(2 * sizeof(D2D1_GRADIENT_STOP));
+    D2D1_GRADIENT_STOP* gradientStops = (D2D1_GRADIENT_STOP*)malloc(nStops * sizeof(D2D1_GRADIENT_STOP));
     D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES gradientProperties{};
     if (gradientStops) {
-        for (INT i = 0; i < 2; i++) {
+        for (INT i = 0; i < nStops; i++) {
             ARGB2ColorF(arrColors[i], &gradientStops[i].color);
             gradientStops[i].position = arrPts[i];
         }
         g_Ri.pD2DDeviceContext->CreateGradientStopCollection(
-            gradientStops, 2, D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &gradientStopCollection);
+            gradientStops, nStops, D2D1_GAMMA_2_2, D2D1_EXTEND_MODE_CLAMP, &gradientStopCollection);
 
         gradientProperties.startPoint.x = xStart;
         gradientProperties.startPoint.y = yStart;
@@ -131,5 +131,5 @@ HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,
 {
     FLOAT arrPts[]    = {0.0f, 1.0f};
     INT   arrColors[] = {crBegin, crEnd};
-    return _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrPts, arrColors);
+    return _brush_createlinear_ex(xStart, yStart, xEnd, yEnd, arrPts, arrColors,2);
 }

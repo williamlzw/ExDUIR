@@ -13,7 +13,7 @@ HEXCANVAS _canvas_draw(HEXDUI hExDui, INT width, INT height) {
         Ex_DUIGetClientRect(hExDui, &rc);
         FLOAT    arrPts[] = { 0.0f, 1.0f };
         INT      arrColors[] = { ExARGB(10, 127, 213, 220), ExARGB(200, 10, 10, 220) };
-        HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, arrPts, arrColors);
+        HEXBRUSH hBrush = _brush_createlinear_ex(0, 0, rc.right, rc.bottom, arrPts, arrColors,2);
         _canvas_fillellipse(hCanvas, hBrush,
             width / 2, height / 2,
             width / 2 - 2, height / 2 - 2);

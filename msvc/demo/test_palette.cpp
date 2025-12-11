@@ -6,7 +6,7 @@ HEXDUI m_hExDuiPalette;
 LRESULT CALLBACK OnPaletteEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
     if (nCode == PALETTE_EVENT_MOUSEMOVE) {
-        Ex_DUISetLong(m_hExDuiPalette, ENGINE_LONG_CRBKG, ExRGB2ARGB(wParam, 255));
+        Ex_DUISetLong(m_hExDuiPalette, ENGINE_LONG_CRBKG, ExRGB2ARGB(wParam, lParam));
     }
     return 0;
 }
@@ -23,5 +23,6 @@ void test_palette(HWND hParent)
     Ex_DUISetLong(m_hExDuiPalette, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     HEXOBJ hObj = Ex_ObjCreate(L"Palette", 0, -1, 50, 50, 300, 150, m_hExDuiPalette);
     Ex_ObjHandleEvent(hObj, PALETTE_EVENT_MOUSEMOVE, OnPaletteEvent);
+    Ex_ObjSendMessage(hObj, PALETTE_LONG_SETCOLOR, 0, ExARGB(100, 255, 100, 255));
     Ex_DUIShowWindow(m_hExDuiPalette, SW_SHOWNORMAL);
 }
