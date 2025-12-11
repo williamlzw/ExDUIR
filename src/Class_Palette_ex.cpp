@@ -35,20 +35,20 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         Ex_ObjSetLong(hObj, PALETTE_LONG_DOWN, 1);
         // 记录按下时的区域
         RECT rc;
-        Ex_ObjGetClientRect(hObj, &rc);
+        Ex_ObjGetClientRectForDpi(hObj, &rc);
         auto x = GET_X_LPARAM(lParam);
         auto y = GET_Y_LPARAM(lParam);
 
-        FLOAT colorBarLeft = (FLOAT)(rc.right - PALETTE_COLOR_BAR_WIDTH);
-        FLOAT colorBarRight = colorBarLeft + PALETTE_COLOR_BAR_WIDTH;
+        FLOAT colorBarLeft = (FLOAT)(rc.right - Ex_Scale(PALETTE_COLOR_BAR_WIDTH));
+        FLOAT colorBarRight = colorBarLeft + Ex_Scale(PALETTE_COLOR_BAR_WIDTH);
         INT downArea = 0;
-        if (x >= colorBarLeft && x < colorBarRight && y >= rc.top && y < rc.bottom - PALETTE_MARGIN) {
+        if (x >= colorBarLeft && x < colorBarRight && y >= rc.top && y < rc.bottom - Ex_Scale(PALETTE_MARGIN)) {
             downArea = 1;
         }
-        else if (x >= rc.left && x < rc.right - PALETTE_MARGIN && y >= rc.top && y < rc.bottom - PALETTE_MARGIN) {
+        else if (x >= rc.left && x < rc.right - Ex_Scale(PALETTE_MARGIN) && y >= rc.top && y < rc.bottom - Ex_Scale(PALETTE_MARGIN)) {
             downArea = 2;
         }
-        else if (y >= rc.bottom - PALETTE_MARGIN && x >= 0 && x < rc.right - PALETTE_MARGIN) {
+        else if (y >= rc.bottom - Ex_Scale(PALETTE_MARGIN) && x >= 0 && x < rc.right - Ex_Scale(PALETTE_MARGIN)) {
             downArea = 3;
         }
         Ex_ObjSetLong(hObj, PALETTE_LONG_DOWN_AREA, downArea);
@@ -62,17 +62,17 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         auto down = Ex_ObjGetLong(hObj, PALETTE_LONG_DOWN);
         if (down) {
             RECT rc;
-            Ex_ObjGetClientRect(hObj, &rc);
+            Ex_ObjGetClientRectForDpi(hObj, &rc);
             auto x = GET_X_LPARAM(lParam);
             auto y = GET_Y_LPARAM(lParam);
             if (x >= rc.left && x <= rc.right && y >= rc.top && y <= rc.bottom) {              
-                FLOAT colorBarLeft = (FLOAT)(rc.right - PALETTE_COLOR_BAR_WIDTH); // 与绘制起始x对齐
-                FLOAT colorBarRight = colorBarLeft + PALETTE_COLOR_BAR_WIDTH;     // 宽14，与绘制一致
+                FLOAT colorBarLeft = (FLOAT)(rc.right - Ex_Scale(PALETTE_COLOR_BAR_WIDTH)); // 与绘制起始x对齐
+                FLOAT colorBarRight = colorBarLeft + Ex_Scale(PALETTE_COLOR_BAR_WIDTH);     // 宽14，与绘制一致
                 auto downArea = Ex_ObjGetLong(hObj, PALETTE_LONG_DOWN_AREA); // 获取按下时的区域
-                if (x >= colorBarLeft && x < colorBarRight && y >= rc.top && y < rc.bottom - PALETTE_MARGIN && downArea == 1){
+                if (x >= colorBarLeft && x < colorBarRight && y >= rc.top && y < rc.bottom - Ex_Scale(PALETTE_MARGIN) && downArea == 1){
                     // 在七彩条上 - 只更新基色，保持主颜色区域选择点
                     Ex_ObjSetLong(hObj, PALETTE_LONG_Y1, y);
-                    FLOAT colorBarHeight = rc.bottom - rc.top - PALETTE_MARGIN;
+                    FLOAT colorBarHeight = rc.bottom - rc.top - Ex_Scale(PALETTE_MARGIN);
                     FLOAT t = (y - rc.top) / colorBarHeight;
                     t = max(0.0f, min(1.0f, t));
                     EXARGB cr = _palette_get_color_from_hue(t);
@@ -80,7 +80,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     _palette_update_final_color(hObj, &rc);
 
                 }
-                else if (x >= rc.left && x < rc.right - PALETTE_MARGIN && y >= rc.top && y < rc.bottom - PALETTE_MARGIN && downArea == 2) {
+                else if (x >= rc.left && x < rc.right - Ex_Scale(PALETTE_MARGIN) && y >= rc.top && y < rc.bottom - Ex_Scale(PALETTE_MARGIN) && downArea == 2) {
                     // 在主颜色区域 - 更新饱和度和明度
                     Ex_ObjSetLong(hObj, PALETTE_LONG_X1, x);
                     Ex_ObjSetLong(hObj, PALETTE_LONG_Y2, y);
@@ -91,9 +91,9 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     // 发送通知
                     Ex_ObjDispatchNotify(hObj, PALETTE_EVENT_MOUSEMOVE, finalColor, alpha);
                 }
-                else if (y >= rc.bottom - PALETTE_MARGIN && x >= 0 && x < rc.right - PALETTE_MARGIN && downArea == 3) {
+                else if (y >= rc.bottom - Ex_Scale(PALETTE_MARGIN) && x >= 0 && x < rc.right - Ex_Scale(PALETTE_MARGIN) && downArea == 3) {
                     // 在 Alpha 滑块区域 - 只更新透明度
-                    FLOAT alphaW = (FLOAT)(rc.right - rc.left - PALETTE_MARGIN);
+                    FLOAT alphaW = (FLOAT)(rc.right - rc.left - Ex_Scale(PALETTE_MARGIN));
                     FLOAT t = (x - rc.left) / alphaW;
                     t = max(0.0f, min(1.0f, t));
                     BYTE alpha = (BYTE)(t * 255 + 0.5f);
@@ -110,12 +110,12 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
     }
     else if (uMsg == PALETTE_LONG_SETCOLOR) {
         RECT rc;
-        Ex_ObjGetClientRect(hObj, &rc);
+        Ex_ObjGetClientRectForDpi(hObj, &rc);
         // 将传入的颜色转换为HSV，获取色调
         EXHSB hsb = ExRGBA2HSB((EXARGB)lParam);
 
         // 计算七色条上的位置（根据色调）
-        FLOAT colorBarHeight = rc.bottom - rc.top - PALETTE_MARGIN;
+        FLOAT colorBarHeight = rc.bottom - rc.top - Ex_Scale(PALETTE_MARGIN);
         FLOAT y1 = rc.top + (hsb.h / 360.0f) * colorBarHeight;       
         Ex_ObjSetLong(hObj, PALETTE_LONG_Y1, (LONG)y1);// 更新七色条位置
 
@@ -124,8 +124,8 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         Ex_ObjSetLong(hObj, PALETTE_LONG_QCRGB, hueColor);
 
         // 同时更新主颜色区域的选择点（根据饱和度和明度）
-        FLOAT mainWidth = (FLOAT)(rc.right - rc.left - PALETTE_MARGIN);
-        FLOAT mainHeight = (FLOAT)(rc.bottom - rc.top - PALETTE_MARGIN);
+        FLOAT mainWidth = (FLOAT)(rc.right - rc.left - Ex_Scale(PALETTE_MARGIN));
+        FLOAT mainHeight = (FLOAT)(rc.bottom - rc.top - Ex_Scale(PALETTE_MARGIN));
 
         FLOAT x1 = rc.left + hsb.s * mainWidth;
         FLOAT y2 = rc.top + (1.0f - hsb.b) * mainHeight;
@@ -139,7 +139,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             Ex_ObjSetLong(hObj, PALETTE_LONG_ALPHA, alpha);
 
             // 更新Alpha滑块位置
-            FLOAT alphaW = (FLOAT)(rc.right - rc.left - PALETTE_MARGIN);
+            FLOAT alphaW = (FLOAT)(rc.right - rc.left - Ex_Scale(PALETTE_MARGIN));
             FLOAT ax = rc.left + (alpha / 255.0f) * alphaW;
             Ex_ObjSetLong(hObj, PALETTE_LONG_AX, (LONG)ax);
         }
@@ -162,10 +162,10 @@ void _palette_on_draw(HEXOBJ hObj, EX_PAINTSTRUCT* ps) {
     HEXBRUSH borderBrush = _brush_create(ExARGB(0, 0, 0, 66));
     // 七彩垂直渐变条区域
     {
-        FLOAT x = width - PALETTE_COLOR_BAR_WIDTH;
+        FLOAT x = width - Ex_Scale(PALETTE_COLOR_BAR_WIDTH);
         FLOAT y = 0;
-        FLOAT w = PALETTE_COLOR_BAR_WIDTH;
-        FLOAT h = height - PALETTE_MARGIN;
+        FLOAT w = Ex_Scale(PALETTE_COLOR_BAR_WIDTH);
+        FLOAT h = height - Ex_Scale(PALETTE_MARGIN);
 
         const int N = 37; // 0~360 每 10 度一个点
         FLOAT pts[N] = {0};
@@ -184,13 +184,13 @@ void _palette_on_draw(HEXOBJ hObj, EX_PAINTSTRUCT* ps) {
         // 七色条选择块
         {
             FLOAT colorBarTop = 0;
-            FLOAT colorBarHeight = height - PALETTE_MARGIN; 
+            FLOAT colorBarHeight = height - Ex_Scale(PALETTE_MARGIN); 
             // 仅当 y1 在七彩条有效范围内才绘制
             if (_y1 >= colorBarTop && _y1 <= colorBarTop + colorBarHeight) {
                 // 填充白色
-                FLOAT rectLeft = width - PALETTE_COLOR_BAR_WIDTH;
+                FLOAT rectLeft = width - Ex_Scale(PALETTE_COLOR_BAR_WIDTH);
                 FLOAT rectTop = _y1 - 2;      // 向上偏移 2 像素，使 y1 居中
-                FLOAT rectRight = rectLeft + PALETTE_COLOR_BAR_WIDTH;
+                FLOAT rectRight = rectLeft + Ex_Scale(PALETTE_COLOR_BAR_WIDTH);
                 FLOAT rectBottom = rectTop + PALETTE_SELECTOR_HEIGHT;
                 _canvas_fillrect(ps->hCanvas, whiteBrush, rectLeft, rectTop, rectRight, rectBottom);
 
@@ -201,8 +201,8 @@ void _palette_on_draw(HEXOBJ hObj, EX_PAINTSTRUCT* ps) {
     }
     // 主颜色区域
     {
-        FLOAT mainW = width - PALETTE_MARGIN;
-        FLOAT mainH = height - PALETTE_MARGIN;
+        FLOAT mainW = width - Ex_Scale(PALETTE_MARGIN);
+        FLOAT mainH = height - Ex_Scale(PALETTE_MARGIN);
         // 白 → _qcrgb
         HEXBRUSH h1 = _brush_createlinear(0, 0, mainW, 0, ExARGB(255, 255, 255, 255), _qcrgb);
         if (h1) {
@@ -223,9 +223,9 @@ void _palette_on_draw(HEXOBJ hObj, EX_PAINTSTRUCT* ps) {
     }
     // Alpha滑块区域
     {
-        FLOAT alphaY = height - PALETTE_COLOR_BAR_WIDTH;
-        FLOAT alphaH = PALETTE_COLOR_BAR_WIDTH;
-        FLOAT alphaW = width - PALETTE_MARGIN;
+        FLOAT alphaY = height - Ex_Scale(PALETTE_COLOR_BAR_WIDTH);
+        FLOAT alphaH = Ex_Scale(PALETTE_COLOR_BAR_WIDTH);
+        FLOAT alphaW = width - Ex_Scale(PALETTE_MARGIN);
         // 黑白棋盘格背景
         {
             const FLOAT tileSize = 7.0f;
@@ -366,8 +366,8 @@ EXARGB _palette_update_final_color(HEXOBJ hObj, RECT* rc) {
     EXARGB base = (EXARGB)Ex_ObjGetLong(hObj, PALETTE_LONG_QCRGB);
 
     // 计算饱和度和明度
-    FLOAT mainWidth = (FLOAT)(rc->right - rc->left - PALETTE_MARGIN);
-    FLOAT mainHeight = (FLOAT)(rc->bottom - rc->top - PALETTE_MARGIN);
+    FLOAT mainWidth = (FLOAT)(rc->right - rc->left - Ex_Scale(PALETTE_MARGIN));
+    FLOAT mainHeight = (FLOAT)(rc->bottom - rc->top - Ex_Scale(PALETTE_MARGIN));
 
     FLOAT s = (x1 - rc->left) / mainWidth;
     FLOAT v = 1.0f - (y2 - rc->top) / mainHeight;
@@ -387,8 +387,8 @@ void _palette_update_alpha_only(HEXOBJ hObj, RECT* rc) {
     BYTE alpha = (BYTE)Ex_ObjGetLong(hObj, PALETTE_LONG_ALPHA);
 
     // 计算RGB颜色
-    FLOAT mainWidth = (FLOAT)(rc->right - rc->left - PALETTE_MARGIN);
-    FLOAT mainHeight = (FLOAT)(rc->bottom - rc->top - PALETTE_MARGIN);
+    FLOAT mainWidth = (FLOAT)(rc->right - rc->left - Ex_Scale(PALETTE_MARGIN));
+    FLOAT mainHeight = (FLOAT)(rc->bottom - rc->top - Ex_Scale(PALETTE_MARGIN));
 
     FLOAT s = (x1 - rc->left) / mainWidth;
     FLOAT v = 1.0f - (y2 - rc->top) / mainHeight;
