@@ -52,9 +52,10 @@ HEXBRUSH _brush_createlinear(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd,
 /// <param name="yEnd">终点Y</param>
 /// <param name="arrPts">位置数组(取值0-1.0),两个</param>
 /// <param name="arrColors">ARGB颜色数组,两个</param>
+/// <param name="nStops>渐变停点数量（必须 >= 2）</param>
 /// <returns></returns>
 HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd,
-                                FLOAT yEnd, FLOAT* arrPts, INT* arrColors);
+                                FLOAT yEnd, FLOAT* arrPts, INT* arrColors, INT nStops);
 
 /// <summary>
 /// 画刷销毁

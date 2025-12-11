@@ -86,6 +86,7 @@ void _color_picker_show_popup(HWND hWnd, HEXOBJ hObj) {
     HEXOBJ hPalette = Ex_ObjCreateEx(-1, L"Palette", NULL, OBJECT_STYLE_VISIBLE,
         5, 5, 250, 160, hExDUI, 0, -1, hObj, 0, 0);
     Ex_ObjSetLong(hPalette, OBJECT_LONG_USERDATA, (LONG_PTR)hWndPopup);
+    EXARGB initialColor = Ex_ObjGetColor(hObj, COLOR_EX_BACKGROUND);
     // 注册颜色选择事件
     Ex_ObjHandleEvent(hPalette, PALETTE_EVENT_MOUSEMOVE, _color_OnPaletteEvent);
     //Ex_ObjHandleEvent(hPalette, NM_LUP, _color_OnPaletteEvent);
@@ -95,7 +96,6 @@ void _color_picker_show_popup(HWND hWnd, HEXOBJ hObj) {
         4, 170, 100, 25, hExDUI, 0, -1, hObj, 0, _color_picker_edit_proc);
 
     // 设置初始颜色
-    EXARGB initialColor = Ex_ObjGetColor(hColorPicker, COLOR_EX_BACKGROUND);
     _color_picker_update_edit(hEdit, initialColor);
     Ex_ObjSetLong(hEdit, OBJECT_LONG_USERDATA, (LONG_PTR)hPalette);
     Ex_ObjSendMessage(hPalette, PALETTE_LONG_SETCOLOR, 0, initialColor);
@@ -127,7 +127,7 @@ LRESULT CALLBACK _color_picker_popup_proc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WP
 LRESULT CALLBACK _color_OnPaletteEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam) {
     if (nCode == PALETTE_EVENT_MOUSEMOVE) {
         // 获取颜色
-        EXARGB color = ExRGB2ARGB(wParam, 255);
+        EXARGB color = ExRGB2ARGB(wParam, lParam);
 
         // 获取颜色选择器对象
         HEXOBJ hColorPicker = Ex_ObjGetLong(hObj,OBJECT_LONG_LPARAM);
@@ -217,7 +217,8 @@ LRESULT CALLBACK _color_picker_btn_ok_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
         HEXOBJ hEdit = Ex_ObjFind(hExDUI, 0, L"Edit", NULL);
 
         EXARGB color = Ex_ObjGetColor(hColorPicker, COLOR_EX_BACKGROUND); // 默认使用当前背景色
-
+        // 应用颜色
+        Ex_ObjSetColor(hColorPicker, COLOR_EX_BACKGROUND, color, TRUE);
         if (hEdit)
         {
             WCHAR colorStr[10] = { 0 };
@@ -240,8 +241,7 @@ LRESULT CALLBACK _color_picker_btn_ok_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
             }
         }
 
-        // 应用颜色
-        Ex_ObjSetColor(hColorPicker, COLOR_EX_BACKGROUND, color, TRUE);
+        
         //Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
 
         // 关闭弹窗
