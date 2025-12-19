@@ -32,6 +32,7 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 Ex_ObjGetRect(parent, &rcParent);
                 int x = rcObj.left + pt.x - ptOrg.x;
                 int y = rcObj.top + pt.y - ptOrg.y;
+
                 if (x <= 0) {
                     x = 0;
                 }
@@ -44,7 +45,7 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 if (y > rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top)) {
                     y = rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top);
                 }
-                Ex_ObjSetPos(hObj, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                Ex_ObjSetPos(hObj, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_EX_NODPISCALE);
             }
             else {
                 HEXDUI hexdui = Ex_DUIFromWindow(hWnd);
@@ -63,7 +64,7 @@ LRESULT CALLBACK OnDragMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 if (y > rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top)) {
                     y = rcParent.bottom - rcParent.top - (rcObj.bottom - rcObj.top);
                 }
-                Ex_ObjSetPos(hObj, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                Ex_ObjSetPos(hObj, 0, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_EX_NODPISCALE);
             }
         }
     }

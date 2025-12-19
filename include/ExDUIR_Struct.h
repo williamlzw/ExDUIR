@@ -1447,7 +1447,7 @@
 
 #pragma region palette notify
 // 通知_调色板_设置颜色 wParam 0,lParam ExARGB
-#define PALETTE_LONG_SETCOLOR 100001
+#define PALETTE_MESSAGE_SETCOLOR 100001
 // 调色板通知_鼠标移动 wParam返回不带alpha的RGB颜色,用ExRGB2ARGB转换到ARGB
 #define PALETTE_EVENT_MOUSEMOVE 100000
 #pragma endregion palette notify
@@ -2083,7 +2083,7 @@ typedef LPVOID   HEXEASING;      // 缓动句柄/指针
 typedef LPVOID   HEXRES;         // 资源包句柄
 typedef LPVOID   HEXEFFECT;      // 效果器句柄
 typedef EXHANDLE HEXSVG;         // SVG句柄
-typedef EXHANDLE HEXMENU;        // 菜单句柄
+
 
 typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);
@@ -2409,7 +2409,7 @@ struct EX_LISTBUTTON_ITEMINFO
 	UINT    nLeft;        // 项目左边
 	UINT    nWidth;       // 项目宽度
 	UINT    dwState;      // 项目状态   可取STATE_NORMAL,STATE_DOWN,STATE_FOCUS,STATE_DISABLE
-	HEXMENU   nMenu;        // 项目菜单
+	HMENU   nMenu;        // 项目菜单
 	INT     TextFormat;   // 项目文本格式
 };
 

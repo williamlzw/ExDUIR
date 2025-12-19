@@ -150,13 +150,13 @@ void _scrollbar_init(obj_s* pObj)
     if (g_Li.hMenuVS == 0 && bVS) {
         HMODULE puser32 = GetModuleHandleW(L"user32.dll");
         if (puser32 != 0) {
-            g_Li.hMenuVS = Ex_MenuLoadW(puser32, MAKEINTRESOURCE(80));
+            g_Li.hMenuVS = LoadMenuW(puser32, MAKEINTRESOURCE(80));
         }
     }
     if (g_Li.hMenuHS == 0 && !bVS) {
         HMODULE puser32 = GetModuleHandleW(L"user32.dll");
         if (puser32 != 0) {
-            g_Li.hMenuHS = Ex_MenuLoadW(puser32, MAKEINTRESOURCE(64));
+            g_Li.hMenuHS = LoadMenuW(puser32, MAKEINTRESOURCE(64));
         }
     }
 }
@@ -480,30 +480,30 @@ void _scrollbar_oncommand(HWND hWnd, HEXOBJ hObj, obj_s* pObj, WPARAM wParam, LP
 
 void _scrollbar_oncontextmenu(HEXOBJ hObj, obj_s* pObj, LPARAM lParam)
 {
-    HEXMENU hMenu =
+    HMENU hMenu =
         ((pObj->dwStyle_ & SCROLLBAR_STYLE_VERTICALSCROLL) == SCROLLBAR_STYLE_VERTICALSCROLL)
         ? g_Li.hMenuVS
         : g_Li.hMenuHS;
-    hMenu = Ex_MenuGetSubMenu(hMenu, 0);
+    hMenu = GetSubMenu(hMenu, 0);
     si_s* psi = (si_s*)_obj_pOwner(pObj);
     psi->nTrackPosOffset_ = lParam;
     INT wEnable = ((psi->wArrows_ & ESB_DISABLE_BOTH) == ESB_DISABLE_BOTH) ? 1026 : 1024;
-    Ex_MenuEnableItem(hMenu, 0, wEnable);   // 滚动至此
+    EnableMenuItem(hMenu, 0, wEnable);   // 滚动至此
     wEnable =
         (((psi->wArrows_ & ESB_DISABLE_LEFT) == ESB_DISABLE_LEFT) || (psi->nPos_ == psi->nMin_))
         ? 1026
         : 1024;
-    Ex_MenuEnableItem(hMenu, 2, wEnable);   // 顶部
-    Ex_MenuEnableItem(hMenu, 5, wEnable);   // 上页
-    Ex_MenuEnableItem(hMenu, 8, wEnable);   // 上行
+    EnableMenuItem(hMenu, 2, wEnable);   // 顶部
+    EnableMenuItem(hMenu, 5, wEnable);   // 上页
+    EnableMenuItem(hMenu, 8, wEnable);   // 上行
     wEnable =
         (((psi->wArrows_ & ESB_DISABLE_RIGHT) == ESB_DISABLE_RIGHT) || (psi->nPos_ == psi->nMax_))
         ? 1026
         : 1024;
-    Ex_MenuEnableItem(hMenu, 3, wEnable);   // 底部
-    Ex_MenuEnableItem(hMenu, 6, wEnable);   // 下页
-    Ex_MenuEnableItem(hMenu, 9, wEnable);   // 下行
-    Ex_TrackPopupMenu(hMenu, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hObj, 0);
+    EnableMenuItem(hMenu, 3, wEnable);   // 底部
+    EnableMenuItem(hMenu, 6, wEnable);   // 下页
+    EnableMenuItem(hMenu, 9, wEnable);   // 下行
+    Ex_TrackPopupMenu(hMenu, 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), 0, hObj, 0, 0, 0);
 }
 
 INT _scrollbar_paint(HEXOBJ hObj, obj_s* pObj)

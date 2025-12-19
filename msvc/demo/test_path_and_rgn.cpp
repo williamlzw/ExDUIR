@@ -107,6 +107,7 @@ LRESULT CALLBACK OnPathAndRgnMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         _brush_destroy(hBrushRgn);
         _path_destroy(path2);
         _rgn_destroy(hRgn2);
+        return 1;
     }
     else if (uMsg == WM_MOUSEMOVE) {
         POINT pt  = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};

@@ -44,7 +44,7 @@ size_t CALLBACK OnBtnEasing(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent,
                             LPVOID pEasingContext, INT nTimeSurplus, size_t p1, size_t p2,
                             size_t p3, size_t p4)
 {
-    Ex_ObjSetPos(p1, 0, 0, 0, nCurrent, 50, SWP_NOMOVE | SWP_NOZORDER);
+    Ex_ObjSetPos(p1, 0, 0, 0, Ex_Scale(nCurrent), Ex_Scale(50), SWP_NOMOVE | SWP_NOZORDER | SWP_EX_NODPISCALE);
     return 0;
 }
 
@@ -54,7 +54,7 @@ size_t CALLBACK OnBtnEasing4(LPVOID pEasing, DOUBLE nProgress, DOUBLE nCurrent,
 {
     RECT rc{0};
     GetWindowRect(m_hWndAni, &rc);
-    MoveWindow(m_hWndAni, rc.left, rc.top, nCurrent, rc.bottom - rc.top, TRUE);
+    MoveWindow(m_hWndAni, rc.left, rc.top, Ex_Scale(nCurrent), rc.bottom - rc.top, TRUE);
     return 0;
 }
 
@@ -79,7 +79,7 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
         else if (nCode == NM_EASING) {
             EX_EASINGINFO pEasingInfo{0};
             RtlMoveMemory(&pEasingInfo, (LPVOID)lParam, sizeof(EX_EASINGINFO));
-            Ex_ObjSetPos(hObj, 0, 0, 0, pEasingInfo.nCurrent, 50, SWP_NOMOVE | SWP_NOZORDER);
+            Ex_ObjSetPos(hObj, 0, 0, 0, Ex_Scale(pEasingInfo.nCurrent), Ex_Scale(50), SWP_NOMOVE | SWP_NOZORDER | SWP_EX_NODPISCALE);
         }
     }
     else if (nID == 10003) {
@@ -97,7 +97,7 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
         else if (nCode == NM_EASING) {
             EX_EASINGINFO pEasingInfo{0};
             RtlMoveMemory(&pEasingInfo, (LPVOID)lParam, sizeof(EX_EASINGINFO));
-            Ex_ObjSetPos(hObj, 0, 0, 0, pEasingInfo.nCurrent, 50, SWP_NOMOVE | SWP_NOZORDER);
+            Ex_ObjSetPos(hObj, 0, 0, 0, Ex_Scale(pEasingInfo.nCurrent), Ex_Scale(50), SWP_NOMOVE | SWP_NOZORDER | SWP_EX_NODPISCALE);
         }
     }
     else if (nID == 10004) {
@@ -106,7 +106,7 @@ LRESULT CALLBACK OnAniButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam
                 EASING_TYPE_INOUTCIRC, 0,
                 MAKELONG(
                     EASING_MODE_MANYTIMES | EASING_MODE_BACKANDFORTH | EASING_MODE_CALLFUNCTION, 4),
-                (size_t)OnBtnEasing4, 400, 25, 0, 400, 150, 0, 0, 0, 0);
+                (size_t)OnBtnEasing4, 400, 25, 0, (400), (150), 0, 0, 0, 0);
         }
     }
     return 0;

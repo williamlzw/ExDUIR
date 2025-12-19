@@ -102,9 +102,8 @@ public:
 			auto nPos = ScrollDefaultProc(hObj, SCROLLBAR_TYPE_VERT, wParam, 1, 10, TRUE);
 			RECT rc;
 			GetWindowRect(NativeWindow::GetInstance().m_skin3.m_hWnd, &rc);
-			auto dpiy = Ex_DUIGetSystemDpi();
-			MoveWindow(NativeWindow::GetInstance().m_skin3.m_hWnd, 0, 0 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
-			MoveWindow(NativeWindow::GetInstance().m_skin4.m_hWnd, 0, 310 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+			MoveWindow(NativeWindow::GetInstance().m_skin3.m_hWnd, 0, 0 - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+			MoveWindow(NativeWindow::GetInstance().m_skin4.m_hWnd, 0, 310 - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
 		}
 		return 0;
 	}
@@ -115,12 +114,11 @@ public:
 		{
 			INT width = LOWORD(lParam);
 			INT height = HIWORD(lParam);
-			auto dpiy = Ex_DUIGetSystemDpi();
-			MoveWindow(NativeWindow::GetInstance().m_skin2.m_hWnd, 0, 30 * dpiy, width, height - 30 * dpiy, TRUE);
-			MoveWindow(NativeWindow::GetInstance().m_skin3.m_hWnd, 0, 0, width - 30, 300 * dpiy, TRUE);
-			MoveWindow(NativeWindow::GetInstance().m_skin4.m_hWnd, 0, 310 * dpiy, width - 30, 300 * dpiy, TRUE);
-			NativeWindow::GetInstance().m_static.Move(0, 0, width / dpiy, height / dpiy - 30, TRUE);
-			NativeWindow::GetInstance().m_static.SetScrollInfo(SCROLLBAR_TYPE_VERT, SIF_ALL, 0, (300 + 300 - height / dpiy + 30) * dpiy, 100, 0, TRUE);
+			MoveWindow(NativeWindow::GetInstance().m_skin2.m_hWnd, 0, 30, width, height - 30, TRUE);
+			MoveWindow(NativeWindow::GetInstance().m_skin3.m_hWnd, 0, 0, width - 30, 300, TRUE);
+			MoveWindow(NativeWindow::GetInstance().m_skin4.m_hWnd, 0, 310, width - 30, 300, TRUE);
+			NativeWindow::GetInstance().m_static.Move(0, 0, width, height - 30, TRUE);
+			NativeWindow::GetInstance().m_static.SetScrollInfo(SCROLLBAR_TYPE_VERT, SIF_ALL, 0, (300 + 300 - height + 30), 100, 0, TRUE);
 		}
 		return 0;
 	}

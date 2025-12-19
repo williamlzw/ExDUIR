@@ -7,12 +7,10 @@ LRESULT CALLBACK OnIconWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
                                   LRESULT* lpResult)
 {
     if (uMsg == WM_SIZE) {
-        auto dpix = Ex_DUIGetSystemDpi();
         if (m_hListViewIcon != 0)
         {
-            // 因为LOWORD(lParam)是DPI缩放后的窗口坐标,而Ex_ObjMove接受缩放前坐标，因此这里需要除以dpix
-            Ex_ObjMove(m_hListViewIcon, 25, 50, (LOWORD(lParam) - 50) / dpix,
-                (HIWORD(lParam) - 75) / dpix, TRUE);
+            Ex_ObjMove(m_hListViewIcon, 25, 50, (LOWORD(lParam) - 50) ,
+                (HIWORD(lParam) - 75), TRUE);
         }
         
     }

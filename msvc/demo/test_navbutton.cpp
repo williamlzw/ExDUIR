@@ -76,5 +76,21 @@ void test_navbutton(HWND hWnd)
     _layout_setprop(m_hLayout, LAYOUT_PROP_PAGE_CURRENT, m_nCurIndex);
     Ex_ObjSendMessage(m_hNavBtn[0], BM_SETCHECK, 1, 1);
 
+
+    HEXOBJ hObj_scrollview =
+        Ex_ObjCreate(L"FlowScrollView", 0, -1, 30, 30, 350, 350, m_hPageNavBtn[1]);
+    // 获取容器句柄
+    HEXOBJ hContainer = (HEXOBJ)Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_GET_CONTAINER_HANDLE, 0, 0);
+    HEXOBJ hObj_groupbox1 =
+        Ex_ObjCreate(L"groupbox", L"分组框1", -1, 30, 30, 230, 230, hContainer);
+    Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)hObj_groupbox1, 0);
+    HEXOBJ hObj_groupbox2 =
+        Ex_ObjCreate(L"groupbox", L"分组框2", -1, 30, 270, 230, 230, hContainer);
+    Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)hObj_groupbox2, 0);
+    HEXOBJ hObj_groupbox3 =
+        Ex_ObjCreate(L"groupbox", L"分组框3", -1, 30, 510, 230, 230, hContainer);
+    Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)hObj_groupbox3, 0);
+
+
     Ex_DUIShowWindow(hExDui_navbutton, SW_SHOWNORMAL);
 }

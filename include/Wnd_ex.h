@@ -45,16 +45,7 @@ struct wnd_s
         };   // 方便使用base里的成员
     };
     UPDATELAYEREDWINDOWINFO ulwi_;
-    /*INT ulwi_cbsize_;
-    LPVOID ulwi_hdcDest_;
-    LPVOID ulwi_pptDst_;
-    LPVOID ulwi_psize_;
-    LPVOID ulwi_hdcSrc_;
-    LPVOID ulwi_pptSrc_;
-    LPVOID ulwi_crKey_;
-    LPVOID ulwi_pblend_;
-    INT ulwi_dwFlags_;
-    LPVOID ulwi_prcDirty_;*/
+
     INT           left_;   // the same as ulwi_pptDst_x
     INT           top_;    // the same as ulwi_pptDst_y
     INT           width_;
@@ -221,3 +212,9 @@ void   _wnd_menu_updatecurrent(wnd_s* pWnd);
 LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 BOOL Ex_DUIGetBackgroundImage(HEXDUI hExDui, LPVOID lpBackgroundImage);
 void _wnd_getclientrect(wnd_s* pWnd, RECT* lpRect, INT* nError);
+void          _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* lParam);
+void          _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd);
+void          _wnd_menu_init(HWND hWnd, wnd_s* pWnd);
+void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu);
+BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
+    LONG_PTR* iItem);

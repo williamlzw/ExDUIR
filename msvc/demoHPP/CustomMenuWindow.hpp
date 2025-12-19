@@ -193,7 +193,6 @@ public:
 		else if (uMsg == WM_ERASEBKGND)
 		{
 			RECT rc{ 0 };
-			auto dpix = Ex_DUIGetSystemDpi();
 			ExCanvas canvas = ExCanvas(wParam);
 			canvas.Clear(0);
 			if (GetPropW(hWnd, L"IsMainMenu") != 0)

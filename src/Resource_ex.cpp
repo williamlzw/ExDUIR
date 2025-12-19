@@ -399,6 +399,55 @@ BOOL Ex_ResGetFile(HEXRES hRes, LPCWSTR lpwzPath, LPVOID* lpFile, size_t* dwFile
     return Ex_ResGetFileFromAtom(hRes, Ex_Atom(lpwzPath), lpFile, dwFileLen);
 }
 
+bool createDirectoryRecursive(const std::wstring& dirPath) {
+    // 尝试创建目录
+    if (CreateDirectoryW(dirPath.c_str(), NULL)) {
+        return true;  // 创建成功
+    }
+
+    // 如果失败是因为目录已存在
+    if (GetLastError() == ERROR_ALREADY_EXISTS) {
+        DWORD attrs = GetFileAttributesW(dirPath.c_str());
+        if (attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY)) {
+            return true;  // 目录已经存在
+        }
+        return false;  // 存在同名文件
+    }
+
+    // 如果失败是因为父目录不存在，递归创建父目录
+    if (GetLastError() == ERROR_PATH_NOT_FOUND) {
+        // 找到父目录路径
+        size_t pos = dirPath.find_last_of(L"\\/");
+        if (pos == std::wstring::npos) {
+            return false;
+        }
+
+        std::wstring parentDir = dirPath.substr(0, pos);
+        if (parentDir.empty()) {
+            return false;
+        }
+
+        // 递归创建父目录
+        if (!createDirectoryRecursive(parentDir)) {
+            return false;
+        }
+
+        // 再次尝试创建当前目录
+        return CreateDirectoryW(dirPath.c_str(), NULL) != 0;
+    }
+
+    return false;
+}
+
+// 检查目录是否存在
+bool directoryExists(const std::wstring& dirPath) {
+    DWORD attrs = GetFileAttributesW(dirPath.c_str());
+    if (attrs == INVALID_FILE_ATTRIBUTES) {
+        return false;
+    }
+    return (attrs & FILE_ATTRIBUTE_DIRECTORY) != 0;
+}
+
 BOOL Ex_ResWriteToDirectory(HEXRES hRes, LPCWSTR lpwzOutputDir)
 {
     if (hRes == nullptr || lpwzOutputDir == nullptr) {
@@ -406,8 +455,8 @@ BOOL Ex_ResWriteToDirectory(HEXRES hRes, LPCWSTR lpwzOutputDir)
     }
 
     // 确保输出目录存在
-    if (!std::filesystem::exists(lpwzOutputDir)) {
-        if (!std::filesystem::create_directories(lpwzOutputDir)) {
+    if (!directoryExists(lpwzOutputDir)) {
+        if (!createDirectoryRecursive(lpwzOutputDir)) {
             return FALSE;
         }
     }
@@ -452,8 +501,8 @@ BOOL Ex_ResWriteToDirectory(HEXRES hRes, LPCWSTR lpwzOutputDir)
         size_t pos = outputPath.find_last_of(L"\\/");
         if (pos != std::wstring::npos) {
             std::wstring dirPath = outputPath.substr(0, pos);
-            if (!std::filesystem::exists(dirPath)) {
-                std::filesystem::create_directories(dirPath);
+            if (!directoryExists(dirPath)) {
+                createDirectoryRecursive(dirPath);
             }
         }
 

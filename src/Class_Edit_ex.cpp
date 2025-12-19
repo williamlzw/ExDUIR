@@ -329,7 +329,7 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
         }
         if (g_Li.hMenuEdit == 0) {
             g_Li.hMenuEdit =
-                Ex_MenuLoadW(GetModuleHandleW(L"user32.dll"), MAKEINTRESOURCEW(1));
+                LoadMenuW(GetModuleHandleW(L"user32.dll"), MAKEINTRESOURCEW(1));
         }
     }
 }
@@ -572,21 +572,21 @@ void _edit_contextmenu(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj,
     if (_obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE)) {
         _obj_baseproc(hWnd, hObj, pObj, WM_COMMAND, EM_SETSEL, 0);
     }
-    HEXMENU hMenu = Ex_MenuGetSubMenu(g_Li.hMenuEdit, 0);
+    HMENU hMenu = GetSubMenu(g_Li.hMenuEdit, 0);
     BOOL sOK;
-    LRESULT tmp = _edit_sendmessage(pObj, EM_CANUNDO, 0, 0, &sOK); //撤销
-    Ex_MenuEnableItem(hMenu, 0, tmp ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);
+    LRESULT tmp = _edit_sendmessage(pObj, EM_CANUNDO, 0, 0, &sOK);  // 撤销
+    EnableMenuItem(hMenu, 0, tmp ? 1024 : 1026);
     SIZE sz;
     _edit_sendmessage(pObj, EM_EXGETSEL, 0, (size_t)&sz, &sOK);
     LONG index = sz.cy - sz.cx;
     index = index > 0 ? index : 0;
-    Ex_MenuEnableItem(hMenu, 2, index != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);              //剪切
-    Ex_MenuEnableItem(hMenu, 3, index != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);              //复制
-    Ex_MenuEnableItem(hMenu, 5, index != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);              //删除
-    tmp = _edit_sendmessage(pObj, EM_CANPASTE, 0, 0, &sOK);          //粘贴
-    Ex_MenuEnableItem(hMenu, 4, tmp != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);                //剪切
-    Ex_MenuEnableItem(hMenu, 7, _edit_getlen(pObj) != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED); //全选
-    Ex_TrackPopupMenu(hMenu, 0, x, y, 0, hObj, 0);
+    EnableMenuItem(hMenu, 2, index != 0 ? 1024 : 1026);               // 剪切
+    EnableMenuItem(hMenu, 3, index != 0 ? 1024 : 1026);               // 复制
+    EnableMenuItem(hMenu, 5, index != 0 ? 1024 : 1026);               // 删除
+    tmp = _edit_sendmessage(pObj, EM_CANPASTE, 0, 0, &sOK);           // 粘贴
+    EnableMenuItem(hMenu, 4, tmp != 0 ? 1024 : 1026);                 // 剪切
+    EnableMenuItem(hMenu, 7, _edit_getlen(pObj) != 0 ? 1024 : 1026);  // 全选
+    Ex_TrackPopupMenu(hMenu, 0, x, y, 0, hObj, 0, NULL, 0);
 }
 
 LRESULT _edit_getlen(obj_s* pObj) {
@@ -603,7 +603,7 @@ void _edit_command(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
         wParam == WM_PASTE || wParam == WM_CLEAR) {
         uMsg = wParam;
         wParam = 0;
-        lParam = 0;
+
         _edit_sendmessage(pObj, uMsg, wParam, lParam, &sOK);
     }
     else {

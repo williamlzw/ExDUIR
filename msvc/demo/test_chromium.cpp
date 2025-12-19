@@ -12,11 +12,10 @@ LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
                                       LPARAM lParam, LRESULT* lpResult)
 {
     if (uMsg == WM_SIZE) {
-        auto dpiy = Ex_DUIGetSystemDpi();
         if (m_hObjChromium != 0)
         {
-            Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100) / dpiy,
-                (HIWORD(lParam) - 100) / dpiy, FALSE);
+            Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100),
+                (HIWORD(lParam) - 100), FALSE);
         }
     }
     else if (uMsg == WM_DESTROY)

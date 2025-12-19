@@ -108,7 +108,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             }
         }
     }
-    else if (uMsg == PALETTE_LONG_SETCOLOR) {
+    else if (uMsg == PALETTE_MESSAGE_SETCOLOR) {
         RECT rc;
         Ex_ObjGetClientRectForDpi(hObj, &rc);
         // 将传入的颜色转换为HSV，获取色调

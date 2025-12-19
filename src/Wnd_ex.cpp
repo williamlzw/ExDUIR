@@ -570,6 +570,34 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 		INT height = HIWORD(lParam);
 		_wnd_wm_size(pWnd, hWnd, wParam, width, height);
 	}
+	else if (uMsg == WM_WINDOWPOSCHANGING)  // 70
+	{
+		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
+			tagWINDOWPOS* pos = (tagWINDOWPOS*)lParam;
+			if (!(pos->flags & SWP_NOSIZE)) {
+				LPVOID padding_client = pWnd->padding_client_;
+				if (padding_client != 0) {
+					pos->cy += Ex_Scale(__get_int(padding_client, 4) +
+						__get_int(padding_client, 12));
+				}
+			}
+
+			if ((pos->flags & SWP_NOMOVE) != SWP_NOMOVE)  // 被移动了
+			{
+				if (GetWindow(hWnd, GW_OWNER) != 0)  // 子菜单
+				{
+					pWnd->pMenuHostWnd_->dwFlags_ =
+						pWnd->pMenuHostWnd_->dwFlags_ -
+						(pWnd->pMenuHostWnd_->dwFlags_ & EWF_BMENUREPOSTION);
+					_wnd_menu_setpos(hWnd, pWnd, pos);
+				}
+				pWnd->left_ = pos->x;
+				pWnd->top_ = pos->y;
+				_wnd_menu_init(hWnd, pWnd);
+				return 0;
+			}
+		}
+	}
 	else if (uMsg == WM_WINDOWPOSCHANGED)  // 71
 	{
 		tagWINDOWPOS* pos = (tagWINDOWPOS*)lParam;
@@ -717,6 +745,13 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 				DLGC_WANTMESSAGE | DLGC_HASSETSEL | DLGC_WANTCHARS);
 		}
 	}
+	else if (uMsg == WM_INITMENUPOPUP)  // 279
+	{
+		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
+			return 0;
+		}
+		_wnd_wm_initmenupopup(hWnd, pWnd, (HMENU)wParam);
+	}
 	else if (uMsg == WM_EXITMENULOOP)  // 530
 	{
 		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
@@ -740,6 +775,29 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 				wParam, lParam);
 		}
 	}
+	else if (uMsg == MENU_MESSAGE_SELECTITEM)  // MENU_MESSAGE_SELECTITEM
+	{
+		if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) {
+			POINT pt;
+			GetCursorPos(&pt);
+			_wnd_wm_mouse(pWnd, hWnd, WM_MOUSEMOVE, 1,
+				MAKELONG(pt.x - pWnd->left_, pt.y - pWnd->top_));
+			return 0;
+		}
+		else {
+			LONG_PTR item = 0;
+			_wnd_menu_mouse(hWnd, pWnd, WM_MOUSEMOVE, 0, (LONG_PTR*)&wParam);
+			if (LODWORD(wParam) == -1) {
+				return 0;
+			}
+			else {
+				wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
+				if (pMenuHostWnd != 0) {
+					pMenuHostWnd->pMenuPrevWnd_ = pWnd;
+				}
+			}
+		}
+	}
 	else if (uMsg == 0x1E6)  // MN_CANCELMENUS
 	{
 		wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
@@ -752,6 +810,31 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 					return 0;
 				}
 			}
+		}
+	}
+	else if (uMsg == 0x1ED)  // MN_BUTTONDOWN
+	{
+		// 如果是 TPM_RETURNCMD 模式，完全让系统处理 这样点击菜单后 会又残影
+		/*if (pWnd->lpMenuParams_ && (pWnd->lpMenuParams_->uFlags_ & TPM_RETURNCMD)) {
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+		}*/
+		if (!_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONDOWN, 1, (LONG_PTR*)&wParam)) {
+			return 0;
+		}
+
+		if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT)) {
+			return 0;
+		}
+	}
+	else if (uMsg == 0x1EF)  // MN_BUTTONUP
+	{
+		// 如果是 TPM_RETURNCMD 模式，完全让系统处理 这样点击菜单后 会又残影
+		/*if (pWnd->lpMenuParams_ && (pWnd->lpMenuParams_->uFlags_ & TPM_RETURNCMD)) {
+			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+		}*/
+		_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONUP, 0, (LONG_PTR*)&wParam);
+		if (pWnd->objTrackPrev_ != pWnd->objHittest_) {
+			return 0;
 		}
 	}
 	else if (uMsg == 0x01F1)  // MN_DBLCLK
@@ -1358,60 +1441,76 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 					rcObj.bottom = pObj->bottom_;
 
 					OffsetRect(&rcObj, offsetX, offsetY);
+					// 检查是否在绘制区域内
 					RECT rcClip{ 0 };
 					if (IntersectRect(&rcClip, &rcPaint, &rcObj)) {
-						auto fPage = (pObj->dwFlags_ & EOF_BPAGE) != EOF_BPAGE;
-						if (fPage) {
-							if (((pObj->dwFlags_ & EOF_BCANREDRAW) == EOF_BCANREDRAW)) {
-								if (((pObj->dwFlags_ & EOF_BNEEDREDRAW) == EOF_BNEEDREDRAW)) {
-									pObj->dwFlags_ =
-										pObj->dwFlags_ - (pObj->dwFlags_ & EOF_BNEEDREDRAW);
-									if (!IsRectEmpty(
-										(RECT*)((size_t)pObj + offsetof(obj_s, d_left_)))) {
-										_obj_baseproc(hWnd, objNext, pObj, WM_PAINT, 0, 0);
-										if (fDX) {
-											_dx_settarget(pContext, (ID2D1Bitmap*)pBitmapDisplay);
-										}
-									}
-								}
-							}
-						}
-						// 组件透明度是否需要被窗口透明度影响？？
+						ID2D1Layer* pLayer = nullptr;
 						INT alpha = pObj->dwAlpha_ * pWnd->alpha_ / 255;
 						alpha = alpha * pAlpha / 255;
-
-						if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) ==
-							OBJECT_STYLE_DISABLED)) {
-							alpha = alpha * pObj->dwAlphaDisable_ / 255;
-						}
-						if (fPage)  // 非页面
+						if ((pObj->base.dwFlags_ & EOF_BPAGE) != EOF_BPAGE)
 						{
-							if (((pObj->dwFlags_ & EOF_BPATH) == EOF_BPATH)) {
-								HEXBRUSH hPathBrush =
-									_brush_createfromcanvas2(pObj->canvas_obj_, alpha);
-								if (hPathBrush != 0) {
-									HEXMATRIX matrix = _matrix_create();
-									_matrix_translate(matrix, pObj->w_left_, pObj->w_top_);
-									_brush_settransform(hPathBrush, matrix);
-									_canvas_fillpath(cvDisplay, pObj->hPath_Window_, hPathBrush);
-									_brush_destroy(hPathBrush);
-									_matrix_destroy(matrix);
+							if (((pObj->base.dwFlags_ & EOF_BCANREDRAW) == EOF_BCANREDRAW))
+							{
+								if (((pObj->dwStyle_ & OBJECT_STYLE_DISABLED) == OBJECT_STYLE_DISABLED))
+								{
+									alpha = alpha * pObj->dwAlphaDisable_ / 255;
 								}
-							}
-							else {
-								if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) ==
-									OBJECT_STYLE_EX_COMPOSITED)) {
-									_canvas_bitblt(cvDisplay, pObj->canvas_obj_, rcClip.left,
-										rcClip.top, rcClip.right, rcClip.bottom,
-										rcClip.left - rcObj.left,
-										rcClip.top - rcObj.top);
+								if (((pObj->base.dwFlags_ & EOF_BNEEDREDRAW) == EOF_BNEEDREDRAW))
+								{
+									FLAGS_DEL(pObj->base.dwFlags_, EOF_BNEEDREDRAW);
+									pObj->base.dwFlags_ |= EOF_BUSERPROCESSESED;
+									if (pObj->pfnSubClass_)
+									{
+										LRESULT ret = 0;
+										if (!(pObj->pfnSubClass_)(hWnd, objNext, WM_PAINT, 0, 0, &ret))
+										{
+
+											pObj->pfnClsProc_(hWnd, objNext, WM_PAINT, 0, 0);
+										}
+									}
+									else
+									{
+										pObj->pfnClsProc_(hWnd, objNext, WM_PAINT, 0, 0);
+									}
+
+									pContext->SetTarget((ID2D1Bitmap*)pBitmapDisplay);
 								}
-								else {
-									_canvas_alphablend(
-										cvDisplay, pObj->canvas_obj_, rcClip.left, rcClip.top,
-										rcClip.right, rcClip.bottom, rcClip.left - rcObj.left,
-										rcClip.top - rcObj.top, rcClip.right - rcObj.left,
-										rcClip.bottom - rcObj.top, alpha);
+								_canvas_cliprect(pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom); //必须CLIP,防止组件超出父组件
+
+								if (((pObj->base.dwFlags_ & EOF_BPATH) == EOF_BPATH))
+								{
+									path_s* pPath = nullptr;
+									if (_handle_validate(pObj->hPath_Window_, HT_PATH, (LPVOID*)&pPath, 0))
+									{
+										pContext->CreateLayer(nullptr, &pLayer);
+										D2D1_LAYER_PARAMETERS1 layerParams = D2D1::LayerParameters1();
+										layerParams.geometricMask = pPath->pGeometry_;  // 直接赋值几何对象
+										pContext->PushLayer(&layerParams, pLayer);// 应用图层裁剪
+									}
+									LPVOID hPathBrush = _brush_createfromcanvas2(pObj->canvas_obj_, alpha);
+									if (hPathBrush != 0)
+									{
+										HEXMATRIX matrix = _matrix_create();
+										_matrix_translate(matrix, pObj->w_left_, pObj->w_top_);
+										_brush_settransform(hPathBrush, matrix);
+										_canvas_fillpath(pObj->canvas_obj_, pObj->hPath_Window_, hPathBrush);//cvDisplay
+										_brush_destroy(hPathBrush);
+										_matrix_destroy(matrix);
+									}
+								}
+								else
+								{
+
+									if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
+									{
+										_canvas_bitblt(cvDisplay, pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom,
+											rcClip.left - rcObj.left, rcClip.top - rcObj.top);
+									}
+									else
+									{
+										_canvas_alphablend(cvDisplay, pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom,
+											rcClip.left - rcObj.left, rcClip.top - rcObj.top, rcClip.right - rcObj.left, rcClip.bottom - rcObj.top, alpha);
+									}
 								}
 							}
 						}
@@ -1421,12 +1520,18 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 								D2D1_DASH_STYLE_SOLID);
 						}
 
-						HEXOBJ objChild = pObj->objChildFirst_;
+						HEXOBJ objChild = pObj->base.objChildFirst_;
 						if (objChild != 0) {
 							_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay,
 								rcClip, objChild, rcObj.left, rcObj.top, alpha,
 								fDX, hBorderBrush);
 						}
+						if (pLayer)
+						{
+							pContext->PopLayer();
+							pLayer->Release();
+						}
+						_canvas_resetclip(pObj->canvas_obj_);//在此处执行恢复裁剪
 					}
 				}
 			}
@@ -1810,7 +1915,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 			_canvas_bitblt(cvDisplay, pWnd->canvas_bkg_, rcPaint.left, rcPaint.top,
 				rcPaint.right, rcPaint.bottom, rcPaint.left, rcPaint.top);
 		}
-		
+
 		ID2D1Layer* pLayer = nullptr;
 		ID2D1RoundedRectangleGeometry* pClipGeometry = nullptr;
 		// 在调用_wnd_render_obj前插入：
@@ -1839,7 +1944,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 		if (Flag_Query(ENGINE_FLAG_OBJECT_SHOWRECTBORDER)) {
 			hBrush = _brush_create(-65536);
 		}
-		
+
 		_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcPaint,
 			pWnd->objChildFirst_, 0, 0, 255, fDX, hBrush);
 		if (pWnd->Radius_ != 0 && fDX) {
@@ -1851,7 +1956,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 		_brush_destroy(hBrush);
 
 		_wnd_render_dc(hWnd, pWnd, hDC, cvDisplay, rcPaint, fLayer);
-	
+
 		_canvas_enddraw(cvDisplay);
 	}
 	pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BRENDERING);
@@ -1911,6 +2016,253 @@ void _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width,
 		}
 	}
 	InvalidateRect(hWnd, 0, FALSE);
+}
+
+void _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* pos) {
+	wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
+	wnd_s* pMenuPrevWnd = nullptr;
+	RECT rcParent{ 0 };
+	RECT rcScreen{ 0 };
+
+	// 获取屏幕工作区域
+	SystemParametersInfo(SPI_GETWORKAREA, 0, &rcScreen, 0);
+
+	if (pMenuHostWnd != 0) {
+		pMenuPrevWnd = pMenuHostWnd->pMenuPrevWnd_;
+		if (pMenuPrevWnd != 0) {
+			GetWindowRect(pMenuPrevWnd->hWnd_, &rcParent);
+		}
+	}
+
+	auto offset = LOBYTE(HIWORD(pWnd->szItemSeparator_));
+	INT x = pos->x;
+	INT y = pos->y;
+
+	// 获取子菜单尺寸
+	RECT rcSubMenu;
+	GetWindowRect(hWnd, &rcSubMenu);
+	INT subMenuWidth = rcSubMenu.right - rcSubMenu.left;
+	INT subMenuHeight = rcSubMenu.bottom - rcSubMenu.top;
+
+	POINT pt;
+	GetCursorPos(&pt);
+
+	// 水平方向定位
+	if (rcParent.left < x) {  // 子菜单在右边
+		x = rcParent.right + offset - 1;
+
+		// 检查右侧空间是否足够
+		if (x + subMenuWidth > rcScreen.right) {
+			// 空间不足，显示在左侧
+			x = rcParent.left - subMenuWidth - offset + 1;
+		}
+	}
+	else {  // 子菜单在左边
+		x = rcParent.left - subMenuWidth - offset + 1;
+
+		// 检查左侧空间是否足够
+		if (x < rcScreen.left) {
+			// 空间不足，显示在右侧
+			x = rcParent.right + offset - 1;
+		}
+	}
+
+	pos->x = x;
+
+	if (pMenuPrevWnd != 0) {
+		HEXOBJ hObj = pMenuPrevWnd->objFocus_;
+		obj_s* pObj = nullptr;
+		INT nError = 0;
+		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+			LPVOID padding_client = pWnd->padding_client_;
+			y = pObj->w_top_ + pMenuPrevWnd->top_ - __get_int(padding_client, 4);
+
+			// 检查垂直方向空间
+			if (y + subMenuHeight > rcScreen.bottom) {
+				// 空间不足，向上调整位置
+				y = rcScreen.bottom - subMenuHeight;
+
+				// 如果向上调整后顶部超出，则限制在屏幕内
+				if (y < rcScreen.top) {
+					y = rcScreen.top;
+					// 如果菜单高度超过屏幕高度，需要启用滚动或限制高度
+					// 这里可以添加滚动逻辑或高度限制
+				}
+			}
+
+			// 确保位置不低于屏幕顶部
+			if (y < rcScreen.top) {
+				y = rcScreen.top;
+			}
+		}
+	}
+
+	pos->y = y;
+}
+
+void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd) {
+	size_t hMenu = SendMessageW(hWnd, MN_GETHMENU, 0, 0);
+	HEXTHEME hTheme = pWnd->hTheme_;
+	LPVOID lpPaddingText =
+		Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_PADDING_TEXT);
+	INT nCount = GetMenuItemCount((HMENU)hMenu);
+	wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
+	HWND hParent = pMenuHostWnd->hWnd_;
+	RECT rcParent{ 0 };
+	GetWindowRect(hParent, &rcParent);
+	LPVOID padding_client = pWnd->padding_client_;
+	RECT rcPaddingClient = { 0 };
+	if (padding_client != 0) {
+		RtlMoveMemory(&rcPaddingClient, padding_client, 16);
+		if (g_Li.DpiX > 1) {
+			rcPaddingClient.left = rcPaddingClient.left * g_Li.DpiX;
+			rcPaddingClient.top = rcPaddingClient.top * g_Li.DpiX;
+			rcPaddingClient.right = rcPaddingClient.right * g_Li.DpiX;
+			rcPaddingClient.bottom = rcPaddingClient.bottom * g_Li.DpiX;
+		}
+	}
+
+	obj_s* pParnet = nullptr;
+	INT nError = 0;
+	HEXOBJ objParent =
+		_obj_create_init(hWnd, pWnd, ATOM_PAGE, 0, &pParnet, &nError);
+	if (objParent != 0) {
+		INT width = pWnd->width_ - (rcPaddingClient.left + rcPaddingClient.right);
+		INT height = pWnd->height_ - (rcPaddingClient.top + rcPaddingClient.bottom);
+		_obj_create_proc(&nError, FALSE, hTheme, pParnet, OBJECT_STYLE_EX_FOCUSABLE,
+			ATOM_PAGE, 0,
+			OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL |
+			OBJECT_STYLE_MENUITEM_SUBMENU,
+			rcPaddingClient.left, rcPaddingClient.top, width, height,
+			0, 0, 0, 0, 0);
+		_obj_create_done(hWnd, pWnd, objParent, pParnet);
+		HEXOBJ objPP = objParent;
+		HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_ABSOLUTE, pWnd->hexdui_);
+		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
+			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
+			rcPaddingClient.left);
+		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_TOP,
+			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
+			rcPaddingClient.top);
+		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
+			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
+			rcPaddingClient.right);
+		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
+			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
+			rcPaddingClient.bottom);
+		nError = 0;
+		objParent = _obj_create_init(hWnd, pWnd, ATOM_PAGE, 0, &pParnet, &nError);
+		if (objParent != 0) {
+			INT heightParent = height;
+			_obj_create_proc(
+				&nError, FALSE, hTheme, pParnet, OBJECT_STYLE_EX_FOCUSABLE, ATOM_PAGE,
+				0, OBJECT_STYLE_VISIBLE, 0, 0, width, height, objPP, 0, 0, 0, 0);
+			_obj_create_done(hWnd, pWnd, objParent, pParnet);
+			hLayout = _layout_create(LAYOUT_TYPE_ABSOLUTE, objPP);
+			_layout_absolute_setedge(hLayout, objParent, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
+				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
+			_layout_absolute_setedge(hLayout, objParent, LAYOUT_SUBPROP_ABSOLUTE_TOP,
+				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
+			_layout_absolute_setedge(hLayout, objParent,
+				LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
+				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
+			_layout_absolute_setedge(hLayout, objParent,
+				LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
+				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
+			height = 0;
+			MENUITEMINFOW mii;
+			mii.cbSize = sizeof(MENUITEMINFOW);
+			mii.fMask = MIIM_FTYPE | MIIM_SUBMENU | MIIM_ID;
+			RECT rcItem{ 0 };
+			INT eos;
+			INT offsetTop = 0;
+			for (INT i = 0; i < nCount; i++) {
+				if (GetMenuItemRect(hParent, (HMENU)hMenu, i, &rcItem)) {
+					eos = OBJECT_STYLE_VISIBLE;
+					if (GetMenuItemInfoW((HMENU)hMenu, i, TRUE, &mii)) {
+						if ((mii.fType & MFT_SEPARATOR) != 0)  // 分隔符
+						{
+							eos = eos | OBJECT_STYLE_MENUITEM_SEPARATOR;
+						}
+						else {
+							if (mii.hSubMenu != 0) {
+								eos = eos | OBJECT_STYLE_MENUITEM_SUBMENU;
+							}
+						}
+					}
+					WCHAR buff[520];
+					OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
+					// 组件超出屏幕左边会出现菜单项目左边负数
+					if (rcItem.left < 0) {
+						INT offset = abs(rcItem.left);
+						rcItem.left = rcItem.left + offset;
+						rcItem.right = rcItem.right + offset;
+					}
+					else if (rcItem.left > 0) {
+						INT offset = abs(rcItem.left);
+						rcItem.left = rcItem.left - offset;
+						rcItem.right = rcItem.right - offset;
+					}
+					// 判断第一项，取第一项顶边偏移,组件移到屏幕最顶端二级子菜单第一项会负数
+					if (rcItem.top < 0 && i == 0) {
+						offsetTop = abs(rcItem.top);
+					}
+
+					rcItem.top = rcItem.top + offsetTop;
+					rcItem.bottom = rcItem.bottom + offsetTop;
+
+					GetMenuStringW((HMENU)hMenu, i, buff, 520, MF_BYPOSITION);
+					obj_s* pObj = nullptr;
+					nError = 0;
+					HEXOBJ hObj =
+						_obj_create_init(hWnd, pWnd, ATOM_ITEM, 0, &pObj, &nError);
+					if (hObj != 0) {
+						_obj_create_proc(
+							&nError, FALSE, hTheme, pObj,
+							OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, ATOM_ITEM,
+							buff, eos, rcItem.left, rcItem.top, width,
+							rcItem.bottom - rcItem.top, objParent, mii.wID, 0, i,
+							DT_VCENTER | DT_SINGLELINE);
+
+						pObj->dwFlags_ = pObj->dwFlags_ | EOF_BMENUITEM;
+						_obj_create_done(hWnd, pWnd, hObj, pObj);
+						if (lpPaddingText != 0) {
+							RtlMoveMemory((LPVOID)((size_t)pObj + offsetof(obj_s, t_left_)),
+								lpPaddingText, 16);
+							if (g_Li.DpiX > 1) {
+								pObj->t_left_ = pObj->t_left_ * g_Li.DpiX;
+								pObj->t_top_ = pObj->t_top_ * g_Li.DpiY;
+								pObj->t_right_ = pObj->t_right_ * g_Li.DpiX;
+								pObj->t_bottom_ = pObj->t_bottom_ * g_Li.DpiY;
+							}
+						}
+					}
+					height = height + rcItem.bottom - rcItem.top;
+				}
+			}
+			_obj_setpos_org(pParnet, objParent, 0, OBJECT_POSITION_DEFAULT,
+				OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT, height,
+				SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW |
+				SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_EX_NODPISCALE,
+				0);
+			height = height - 1;
+			Ex_ObjScrollShow(objPP, SCROLLBAR_TYPE_VERT, height - heightParent > 0);
+			Ex_ObjScrollSetInfo(objPP, SCROLLBAR_TYPE_VERT, SIF_RANGE | SIF_PAGE, 0,
+				height - heightParent, heightParent, 0, TRUE);
+		}
+	}
+	SendMessageW(hWnd, WM_INITMENUPOPUP, hMenu, 0);
+}
+
+void _wnd_menu_init(HWND hWnd, wnd_s* pWnd) {
+	if ((pWnd->dwFlags_ & EWF_BMENUINITED) != EWF_BMENUINITED) {
+		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMENUINITED;
+		_wnd_menu_createitems(hWnd, pWnd);
+		ShowWindow(pWnd->hWndShadow_, SW_SHOWNOACTIVATE);
+
+		SetWindowLongPtrW(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
+		InvalidateRect(hWnd, NULL, FALSE);
+	}
 }
 
 void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush) {
@@ -2538,6 +2890,106 @@ void _wnd_menu_updatecurrent(wnd_s* pWnd) {
 	if (pHost != 0) {
 		pHost->pMenuTrackWnd_ = pWnd;
 	}
+}
+
+BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
+	LONG_PTR* iItem) {
+	*iItem = -1;
+	POINT pt;
+	GetCursorPos(&pt);
+	_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
+	_wnd_wm_mouse(pWnd, hWnd, uMsg, wParam, MAKELONG(pt.x, pt.y));
+	obj_s* pObj = nullptr;
+	INT nError = 0;
+	BOOL ret = FALSE;
+	if (_handle_validate(pWnd->objHittest_, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+		if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_FOCUSABLE) ==
+			OBJECT_STYLE_EX_FOCUSABLE)) {
+			if (((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)) {
+				*iItem = pObj->lParam_;
+			}
+			ret = TRUE;
+		}
+	}
+	_wnd_menu_updatecurrent(pWnd);
+	return ret;
+}
+
+void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu) {
+	BOOL fChecked = FALSE;
+	if (!Flag_Query(ENGINE_FLAG_MENU_ALL)) {
+		LPVOID lpMenuParams = pWnd->lpMenuParams_;
+		if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s))) {
+			if (hMenu == (LPVOID)__get(lpMenuParams, 0)) {
+				fChecked = TRUE;
+			}
+		}
+	}
+	else {
+		fChecked = TRUE;
+	}
+	if (fChecked) {
+		INT nCount = GetMenuItemCount(hMenu);
+		HEXCANVAS hCanvas = pWnd->canvas_bkg_;
+		HEXFONT hFont = pWnd->hFont_Menu_;
+
+		WCHAR buff[520];
+		FLOAT width, height, nMax = 0;
+		for (INT i = 0; i < nCount; i++) {
+			GetMenuStringW(hMenu, i, buff, 520, MF_BYPOSITION);
+			_canvas_calctextsize(hCanvas, hFont, buff, -1, DT_SINGLELINE, 0, 0,
+				&width, &height);
+			if (nMax < width) {
+				nMax = width;
+			}
+		}
+		pWnd->menu_maxwidth_ = nMax;
+		MENUITEMINFOW mii;
+		mii.cbSize = sizeof(MENUITEMINFOW);
+
+		mii.fMask = MIIM_FTYPE | MIIM_ID;
+		for (INT i = 0; i < nCount; i++) {
+			if (GetMenuItemInfoW(hMenu, i, TRUE, &mii)) {
+				if ((mii.fType & MFT_SEPARATOR) != 0) {
+					mii.wID = 0;
+				}
+				mii.fType = mii.fType | MFT_OWNERDRAW;
+				if (SetMenuItemInfoW(hMenu, i, TRUE, &mii)) {
+					continue;
+				}
+			}
+			fChecked = FALSE;
+			break;
+		}
+		if (fChecked) {
+			if (HashTable_Set(g_Li.hTableLayout, (size_t)hMenu, pWnd->hexdui_)) {
+				pWnd->hMenuPopup_ = hMenu;
+				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMENUINITED;
+			}
+		}
+	}
+}
+
+BOOL Ex_TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y,
+	size_t nReserved, EXHANDLE handle, RECT* lpRC,
+	MsgPROC pfnCallback, DWORD dwFlags) {
+	HWND hWnd = 0;
+	wnd_s* pWnd = nullptr;
+	menu_s menu{};
+	if (_wnd_getfromhandle(handle, &hWnd, &pWnd)) {
+		menu.hMenu_ = hMenu;
+		menu.uFlags_ = uFlags;
+		menu.x_ = x;
+		menu.y_ = y;
+		menu.nReserved_ = nReserved;
+		menu.handle_ = handle;
+		menu.lpRC_ = lpRC;
+		menu.pfnCallback_ = pfnCallback;
+		menu.dwFlags_ = dwFlags;
+		pWnd->lpMenuParams_ = &menu;
+	}
+	BOOL ret = TrackPopupMenu((HMENU)hMenu, uFlags, x, y, nReserved, hWnd, lpRC);
+	return ret;
 }
 
 INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,

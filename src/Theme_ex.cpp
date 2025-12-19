@@ -453,8 +453,8 @@ BOOL Ex_ThemeWriteToDirectory(LPCWSTR lpszThemeFile, LPCWSTR lpszOutputDir)
     }
 
     // 确保输出目录存在
-    if (!std::filesystem::exists(lpszOutputDir)) {
-        if (!std::filesystem::create_directories(lpszOutputDir)) {
+    if (!directoryExists(lpszOutputDir)) {
+        if (!createDirectoryRecursive(lpszOutputDir)) {
             Ex_SetLastError(ERROR_EX_HANDLE_INVALID);
             return FALSE;
         }
@@ -526,8 +526,8 @@ BOOL Ex_ThemeWriteToDirectory(LPCWSTR lpszThemeFile, LPCWSTR lpszOutputDir)
         size_t nLastSlash = wzOutputPath.find_last_of(L"\\/");
         if (nLastSlash != std::wstring::npos) {
             std::wstring wzDirPath = wzOutputPath.substr(0, nLastSlash);
-            if (!std::filesystem::exists(wzDirPath)) {
-                std::filesystem::create_directories(wzDirPath);
+            if (!directoryExists(wzDirPath)) {
+                createDirectoryRecursive(wzDirPath);
             }
         }
 

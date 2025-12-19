@@ -643,8 +643,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
     else if (uMsg == WM_MOUSEMOVE) {
         auto bkg = (HEXIMAGE)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_IMG_BKG);
         if (bkg != 0) {
-            auto x = ((FLOAT)GET_X_LPARAM(lParam));
-            auto y = ((FLOAT)GET_Y_LPARAM(lParam));
+            auto x = ((INT)GET_X_LPARAM(lParam));
+            auto y = ((INT)GET_Y_LPARAM(lParam));
 
             auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
             auto sbOffsetTop  = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET);
@@ -670,8 +670,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_HIT_PATH, hitTest);
             auto tagging = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_TAGGING);
             if (tagging == 1) {
-                Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDX, x);
-                Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDY, y);
+                Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDX, (INT)x);
+                Ex_ObjSetLong(hObj, TAGGINGBOARD_LONG_ENDY, (INT)y);
 
                 auto ptr = (EX_POLYGON*)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_DATA);
 
@@ -783,8 +783,8 @@ LRESULT CALLBACK _taggingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         }
     }
     else if (uMsg == WM_RBUTTONUP) {
-        auto x = (INT)((FLOAT)GET_X_LPARAM(lParam));
-        auto y = (INT)((FLOAT)GET_Y_LPARAM(lParam));
+        auto x = ((FLOAT)GET_X_LPARAM(lParam));
+        auto y = ((FLOAT)GET_Y_LPARAM(lParam));
 
         auto sbOffsetLeft = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_LEFT_OFFSET);
         auto sbOffsetTop  = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_SB_TOP_OFFSET);
@@ -881,9 +881,10 @@ void _taggingboard_updatedraw(HEXOBJ hObj)
         int      endX   = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ENDX);
         int      endY   = Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_ENDY);
         HEXBRUSH brush  = (HEXBRUSH)Ex_ObjGetLong(hObj, TAGGINGBOARD_LONG_PEN);
-
+       
         _canvas_drawline(canvas, brush, beginX - sbOffsetLeft, beginY - sbOffsetTop,
                          endX - sbOffsetLeft, endY - sbOffsetTop, Ex_Scale(2), 0);
+      
     }
     _canvas_enddraw(canvas);
     Ex_ObjInvalidateRect(hObj, 0);
@@ -958,6 +959,7 @@ void _taggingboard_paint(HEXOBJ hObj)
                             _canvas_drawline(ps.hCanvas, brush, startX - sbOffsetLeft,
                                              startY - sbOffsetTop, x - sbOffsetLeft,
                                              y - sbOffsetTop, Ex_Scale(2), 0);
+                            
                             _path_addline(path, startX - sbOffsetLeft, startY - sbOffsetTop,
                                           x - sbOffsetLeft, y - sbOffsetTop);
                         }

@@ -98,7 +98,7 @@ void _color_picker_show_popup(HWND hWnd, HEXOBJ hObj) {
     // 设置初始颜色
     _color_picker_update_edit(hEdit, initialColor);
     Ex_ObjSetLong(hEdit, OBJECT_LONG_USERDATA, (LONG_PTR)hPalette);
-    Ex_ObjSendMessage(hPalette, PALETTE_LONG_SETCOLOR, 0, initialColor);
+    Ex_ObjSendMessage(hPalette, PALETTE_MESSAGE_SETCOLOR, 0, initialColor);
 
     // 创建“确认”按钮
     HEXOBJ hBtnOK = Ex_ObjCreateEx(-1, L"Button", L"确认", OBJECT_STYLE_VISIBLE,
@@ -196,7 +196,7 @@ LRESULT CALLBACK _color_picker_edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARA
             // 通知颜色变化
             //Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
             HEXOBJ hPalette = (HEXOBJ)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
-            Ex_ObjSendMessage(hPalette, PALETTE_LONG_SETCOLOR, 0, color);
+            Ex_ObjSendMessage(hPalette, PALETTE_MESSAGE_SETCOLOR, 0, color);
             return 0;
         }
     }

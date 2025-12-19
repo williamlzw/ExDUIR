@@ -47,8 +47,7 @@ public:
 	{
 		if (uMsg == WM_SIZE)
 		{
-			auto dpix = Ex_DUIGetSystemDpi();;
-			IconListViewWindow::GetInstance().m_iconlistview.Move(25, 50, (LOWORD(lParam) - 50) / dpix, (HIWORD(lParam) - 75) / dpix, TRUE);
+			IconListViewWindow::GetInstance().m_iconlistview.Move(25, 50, (LOWORD(lParam) - 50), (HIWORD(lParam) - 75), TRUE);
 		}
 	}
 

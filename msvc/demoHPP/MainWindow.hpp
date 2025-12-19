@@ -69,7 +69,7 @@ private:
 public:
 	void CreateMainWindow()
 	{
-		DWORD dwGlobalFlags = ENGINE_FLAG_RENDER_METHOD_D2D | ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL;
+		DWORD dwGlobalFlags = ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL;
 		std::vector<CHAR> data;
 		data.resize(Default_ext_size);
 		RtlMoveMemory(data.data(), Default_ext, Default_ext_size);

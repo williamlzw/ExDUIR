@@ -126,10 +126,9 @@ public:
 		}
 		else if (uMsg == WM_MOUSEMOVE)
 		{
-			auto dpi = Ex_DUIGetSystemDpi();
 			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-			obj.SetObjProp(0, pt.x / dpi);
-			obj.SetObjProp(1, pt.y / dpi);
+			obj.SetObjProp(0, pt.x);
+			obj.SetObjProp(1, pt.y);
 			obj.Invalidate();
 		}
 		else if (uMsg == WM_DESTROY)

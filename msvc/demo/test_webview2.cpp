@@ -6,12 +6,11 @@ LRESULT CALLBACK OnWebViewWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM 
 	LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_SIZE) {
-		auto dpiy = Ex_DUIGetSystemDpi();
 	
 		if (hObj_webview2 != 0)
 		{
-			Ex_ObjMove(hObj_webview2, 1, 0, (LOWORD(lParam) - 2) / dpiy,
-				(HIWORD(lParam) ) / dpiy, FALSE);
+			Ex_ObjMove(hObj_webview2, 1, 0, (LOWORD(lParam) - 2),
+				(HIWORD(lParam) ), FALSE);
 		}
 	}
 	return 0;

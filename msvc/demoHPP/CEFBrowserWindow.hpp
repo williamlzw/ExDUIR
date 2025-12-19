@@ -25,8 +25,7 @@ public:
 	{
 		if (uMsg == WM_SIZE)
 		{
-			auto dpiy = Ex_DUIGetSystemDpi();
-			CEFBrowserWindow::GetInstance().m_cefbrowser.Move(50, 50, (LOWORD(lParam) - 100) / dpiy, (HIWORD(lParam) - 100) / dpiy, FALSE);
+			CEFBrowserWindow::GetInstance().m_cefbrowser.Move(50, 50, (LOWORD(lParam) - 100), (HIWORD(lParam) - 100), FALSE);
 		}
 		return 0;
 	}

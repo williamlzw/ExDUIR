@@ -12,15 +12,14 @@ LRESULT CALLBACK OnNativeParentWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WP
     if (uMsg == WM_SIZE) {
         INT  width  = LOWORD(lParam);
         INT  height = HIWORD(lParam);
-        auto dpiy   = Ex_DUIGetSystemDpi();
         if (m_hWndNativeWindow2 != 0)
         {
-            MoveWindow(m_hWndNativeWindow2, 0, 30 * dpiy, width, height - 30 * dpiy, TRUE);
-            MoveWindow(m_hWndChild, 0, 0, width - 30, 300 * dpiy, TRUE);
-            MoveWindow(m_hWndChild2, 0, 310 * dpiy, width - 30, 300 * dpiy, TRUE);
-            Ex_ObjMove(m_hObjPage, 0, 0, width / dpiy, height / dpiy - 30, TRUE);
+            MoveWindow(m_hWndNativeWindow2, 0, 30, width, height - 30, TRUE);
+            MoveWindow(m_hWndChild, 0, 0, width - 30, 300, TRUE);
+            MoveWindow(m_hWndChild2, 0, 310, width - 30, 300, TRUE);
+            Ex_ObjMove(m_hObjPage, 0, 0, width, height - 30, TRUE);
             Ex_ObjScrollSetInfo(m_hObjPage, SCROLLBAR_TYPE_VERT, SIF_ALL, 0,
-                (300 + 300 - height / dpiy + 30) * dpiy, 100, 0, TRUE);
+                (300 + 300 - height + 30), 100, 0, TRUE);
         }
     }
     else if (uMsg == WM_DESTROY)
@@ -100,9 +99,8 @@ LRESULT CALLBACK OnNativeWndScrollMsg(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
         auto nPos = Ex_ObjScrollDefaultProc(hObj, SCROLLBAR_TYPE_VERT, wParam, 1, 10, TRUE);
         RECT rc;
         GetWindowRect(m_hWndChild, &rc);
-        auto dpiy = Ex_DUIGetSystemDpi();
-        MoveWindow(m_hWndChild, 0, 0 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
-        MoveWindow(m_hWndChild2, 0, 310 * dpiy - nPos, rc.right - rc.left, rc.bottom - rc.top,
+        MoveWindow(m_hWndChild, 0,  -nPos, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+        MoveWindow(m_hWndChild2, 0, 310 - nPos, rc.right - rc.left, rc.bottom - rc.top,
                    TRUE);
     }
     return 0;

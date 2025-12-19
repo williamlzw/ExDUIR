@@ -110,7 +110,7 @@ LRESULT CALLBACK OnTaggingWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM 
 	LPARAM lParam, LRESULT* lpResult)
 {
 	if (uMsg == WM_SIZE) {
-		auto dpiy = Ex_DUIGetSystemDpi();
+		auto dpiy = 1;
 		INT  width = LOWORD(lParam);
 		INT  height = HIWORD(lParam);
 		if (hObj_taggingBoard != 0)
