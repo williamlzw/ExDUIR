@@ -1484,7 +1484,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 
 									pContext->SetTarget((ID2D1Bitmap*)pBitmapDisplay);
 								}
-								_canvas_cliprect(pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom); //必须CLIP,防止组件超出父组件
+								//_canvas_cliprect(pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom); //必须CLIP,防止组件超出父组件
 
 								if (((pObj->base.dwFlags_ & EOF_BPATH) == EOF_BPATH))
 								{
@@ -1545,7 +1545,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 						{
 							if (((pObj->base.dwFlags_ & EOF_BCANREDRAW) == EOF_BCANREDRAW))
 							{
-								_canvas_resetclip(pObj->canvas_obj_);//在此处执行恢复裁剪
+								//_canvas_resetclip(pObj->canvas_obj_);//在此处执行恢复裁剪
 							}
 							
 						}

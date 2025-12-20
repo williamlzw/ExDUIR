@@ -9,13 +9,14 @@ struct MyValObj
 
 
 LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam,
-                                      LPARAM lParam, LRESULT* lpResult)
+    LPARAM lParam, LRESULT* lpResult)
 {
     if (uMsg == WM_SIZE) {
+        auto dpiy = Ex_DUIGetSystemDpi();
         if (m_hObjChromium != 0)
         {
-            Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100),
-                (HIWORD(lParam) - 100), FALSE);
+            Ex_ObjMove(m_hObjChromium, 50, 50, (LOWORD(lParam) - 100) / dpiy,
+                (HIWORD(lParam) - 100) / dpiy, FALSE);
         }
     }
     else if (uMsg == WM_DESTROY)
@@ -26,7 +27,7 @@ LRESULT CALLBACK OnChromiumWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM
 }
 
 void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> arguments,
-                         uintptr_t* retval, LPCWSTR exception, bool* pbHandled, void* lParam)
+    uintptr_t* retval, LPCWSTR exception, bool* pbHandled, void* lParam)
 {
     if (std::wstring(name) == L"add_Function") {
         // 演示接收js传入两个整数变量并运算返回
@@ -38,7 +39,7 @@ void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> 
             nSum = nSum + Ck_V8GetIntValue((HV8VALUE)arguments[i]);
         }
         // 创建整数返回值
-        *retval    = (uintptr_t)Ck_V8CreateInt(nSum);
+        *retval = (uintptr_t)Ck_V8CreateInt(nSum);
         *pbHandled = TRUE;
     }
     else if (std::wstring(name) == L"register") {
@@ -47,28 +48,28 @@ void CALLBACK OnFunction(LPCWSTR name, HV8VALUE object, std::vector<uintptr_t*> 
         std::vector<int> data;
         data.push_back(3);
         data.push_back(8);
-        auto ret    = Ck_V8ExecuteFunction_Int(v8, data.data(), 2);
+        auto ret = Ck_V8ExecuteFunction_Int(v8, data.data(), 2);
         auto retint = Ck_V8GetIntValue(ret);
-        *retval     = (uintptr_t)Ck_V8CreateInt(retint);
-        *pbHandled  = TRUE;
+        *retval = (uintptr_t)Ck_V8CreateInt(retint);
+        *pbHandled = TRUE;
     }
     else if (std::wstring(name) == L"addFunction1") {
         if (retval) {
             // 这里设置myval初始化值传给js
-            *retval    = (uintptr_t)Ck_V8CreateString(L"test.myfunc返回addFunction1的值");
+            *retval = (uintptr_t)Ck_V8CreateString(L"test.myfunc返回addFunction1的值");
             *pbHandled = TRUE;
         }
     }
 }
 
 void CALLBACK OnFunAccessor(int uMsg, LPCWSTR name, HV8VALUE object, uintptr_t* retval,
-                            LPCWSTR exception, bool* pbHandled, void* lParam)
+    LPCWSTR exception, bool* pbHandled, void* lParam)
 {
     if (uMsg == 1)   // 获取值消息
     {
         if (std::wstring(name) == L"myval") {
             // 这里设置myval初始化值传给js
-            *retval    = (uintptr_t)Ck_V8CreateString(L"我是程序初始化的值传给js");
+            *retval = (uintptr_t)Ck_V8CreateString(L"我是程序初始化的值传给js");
             *pbHandled = TRUE;
         }
     }
@@ -76,9 +77,9 @@ void CALLBACK OnFunAccessor(int uMsg, LPCWSTR name, HV8VALUE object, uintptr_t* 
     {
         if (std::wstring(name) == L"myval") {
             // 这里返回js修改后的myval值
-            auto         v8     = (HV8VALUE)retval;
+            auto         v8 = (HV8VALUE)retval;
             auto         retstr = Ck_V8GetStringValue(v8);
-            std::wstring str    = L"返回js修改后的myval值:" + std::wstring(retstr);
+            std::wstring str = L"返回js修改后的myval值:" + std::wstring(retstr);
             Ex_MessageBox(0, str.c_str(), L"", 0, 0);
             *pbHandled = TRUE;
         }
@@ -86,8 +87,8 @@ void CALLBACK OnFunAccessor(int uMsg, LPCWSTR name, HV8VALUE object, uintptr_t* 
 }
 
 void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LONG_PTR attach1,
-                                  LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4,
-                                  bool* pbHWEBVIEWd, void* lParam)
+    LONG_PTR attach2, LONG_PTR attach3, LONG_PTR attach4,
+    bool* pbHWEBVIEWd, void* lParam)
 {
     if (uMsg == 1) {
         OUTPUTW(L"即将处理命令行");
@@ -96,7 +97,7 @@ void CALLBACK OnBeforeCommandLine(int uMsg, LONG_PTR handler, LONG_PTR hObj, LON
         OUTPUTW(L"即将创建V8环境");
         // 绑定js文本值变量示例
         HV8VALUE window = Ck_V8CGetGlobal((HV8CONTEXE)attach1);
-        HV8VALUE v8     = Ck_V8CreateString(L"say yes");
+        HV8VALUE v8 = Ck_V8CreateString(L"say yes");
         Ck_V8SetValue(window, L"say_yes", v8, 0);
 
         // 绑定js对象变量示例
@@ -150,14 +151,14 @@ void test_chromium(HWND hParent)
     HEXDUI hExDui_chromium = Ex_DUIBindWindowEx(
         hWnd_chromium, 0,
         WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_BUTTON_CLOSE |
-            WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
+        WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON | WINDOW_STYLE_SIZEABLE,
         0, OnChromiumWndMsgProc);
     Ex_DUISetLong(hExDui_chromium, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     Ex_ObjCefBrowserInitialize(0, 0, L"FTBrowser.dll", NULL, 0, 0, OnBeforeCommandLine);
     m_hObjChromium = Ex_ObjCreateEx(-1, L"CefBrowser", NULL, -1, 30, 30, 750, 550, hExDui_chromium,
-                                    0, -1, 0, 0, 0);
+        0, -1, 0, 0, 0);
     Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0,
-                      (LPARAM)L"https://www.bing.com");
+        (LPARAM)L"https://www.bing.com");
     // Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"d:/test.mp4");
     // Ex_ObjSendMessage(m_hObjChromium, CEFBROWSER_MESSAGE_LOADURL, 0, (LPARAM)L"res/cefjs.html");
     Ex_ObjHandleEvent(m_hObjChromium, CEFBROWSER_EVENT_LOADEND, OnChromiumEvent);
