@@ -464,13 +464,16 @@ BOOL _obj_setfocus(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, BOOL bDispa
 
 void _obj_setfocus_real(HWND hWnd, obj_s* pObj, HEXOBJ hObj, HEXOBJ lstObj)
 {
-    INT    nError = 0;
-    obj_s* pLast = nullptr;
-    if (_handle_validate(lstObj, HT_OBJECT, (LPVOID*)&pLast, &nError)) {
-        _obj_baseproc(hWnd, lstObj, pLast, WM_KILLFOCUS, hObj, 0);
+    if (hObj != lstObj)
+    {
+        INT    nError = 0;
+        obj_s* pLast = nullptr;
+        if (_handle_validate(lstObj, HT_OBJECT, (LPVOID*)&pLast, &nError)) {
+            _obj_baseproc(hWnd, lstObj, pLast, WM_KILLFOCUS, hObj, 0);
+        }
+        pObj->pWnd_->objFocus_ = hObj;
+        pObj->dwState_ = pObj->dwState_ | STATE_FOCUS;
     }
-    pObj->pWnd_->objFocus_ = hObj;
-    pObj->dwState_ = pObj->dwState_ | STATE_FOCUS;
 }
 
 BOOL Ex_ObjSetFocus(HEXOBJ hObj)
@@ -1507,6 +1510,9 @@ void _obj_setpos_org(obj_s* pObj, EXHANDLE hObj, EXHANDLE hObjInsertAfter, INT x
         if (((pObj->dwFlags_ & EOF_BPATHBYROUNDEDRECT) == EOF_BPATHBYROUNDEDRECT)) {
             _obj_reset_path(pObj, np.rgrc[2].left, np.rgrc[2].top, np.rgrc[2].right,
                 np.rgrc[2].bottom, offsetof(obj_s, hPath_Client_));
+            if (pObj->radius_rgn_)
+                _rgn_destroy(pObj->radius_rgn_);
+            pObj->radius_rgn_ = _rgn_createfrompath(pObj->hPath_Client_);
             _obj_reset_path(pObj, pObj->w_left_, pObj->w_top_, pObj->w_right_, pObj->w_bottom_,
                 offsetof(obj_s, hPath_Window_));
         }
@@ -1889,6 +1895,7 @@ void _obj_destroy(HEXOBJ hObj, obj_s* pObj, INT* nError)
     _canvas_destroy(pObj->canvas_obj_);
     _path_destroy(pObj->hPath_Client_);
     _path_destroy(pObj->hPath_Window_);
+    _rgn_destroy(pObj->radius_rgn_);
 
     _struct_destroyfromaddr(pObj, offsetof(obj_s, pstrTips_));
     _struct_destroyfromaddr(pObj, offsetof(obj_s, pstrTitle_));
@@ -2046,10 +2053,6 @@ void _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, IN
     if (nID != 0) {
         pObj->id_ = nID;
         HashTable_Set(pWnd->hTableObjects_, nID, hObj);
-    }
-    if (atomName != 0) {
-        pObj->atomName_ = atomName;
-        HashTable_Set(pWnd->hTableObjects_, atomName, hObj);
     }
 
     // 初始化滚动条
@@ -4256,10 +4259,7 @@ BOOL Ex_ObjSetParent(HEXOBJ hObj, EXHANDLE hParent)
                     HashTable_Remove(pWnd->hTableObjects_, pObj->id_);   // 删除原来的键值对
                     pObj->id_ = 0;
                 }
-                if (pObj->atomName_ != 0) {
-                    HashTable_Remove(pWnd->hTableObjects_, pObj->atomName_);   // 删除原来的键值对
-                    pObj->atomName_ = 0;
-                }
+
 
                 if ((pObj->dwStyleEx_ & OBJECT_STYLE_EX_DRAGDROP) == OBJECT_STYLE_EX_DRAGDROP) {
                     if (!pWnd2->lpIDropTarget_) {

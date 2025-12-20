@@ -116,22 +116,27 @@ struct obj_s
     INT top_;
     INT right_;
     INT bottom_;
+
     INT c_left_;   // 客户区位置
     INT c_top_;
     INT c_right_;
     INT c_bottom_;
+
     INT w_left_;   // 组件窗口位置
     INT w_top_;
     INT w_right_;
     INT w_bottom_;
+
     INT d_left_;   // 脏区域
     INT d_top_;
     INT d_right_;
     INT d_bottom_;
+
     INT t_left_;   // 文本偏移矩形
     INT t_top_;
     INT t_right_;
     INT t_bottom_;
+
     INT crBackground_;
     INT crBorder_;
     INT crNormal_;
@@ -158,44 +163,50 @@ struct obj_s
 
     HEXPATH       hPath_Window_;
     HEXPATH       hPath_Client_;
+
     INT           radius_unit_;
     INT           radius_topleft_;
     INT           radius_topright_;
     INT           radius_bottomright_;
     INT           radius_bottomleft_;
+    HEXRGN        radius_rgn_;
+
     INT           nPropCount_;
     HEXOBJ        objNext_;
     HEXOBJ        objPrev_;
-    HEXOBJ        objNextTabstop_;
+
     HEXOBJ        objVScroll_;
     HEXOBJ        objHScroll_;
+
     LPCWSTR       pstrTitle_;
     LPCWSTR       pstrTips_;
-    EXHANDLE      pObjJS_;
-    EX_HASHTABLE* hTableJsEvents_;
+
+    INT           id_;
+    INT           nodeid_;
     INT           dwState_;
     LPVOID        dwOwnerData_;
     HEXCANVAS     canvas_obj_;
     LPVOID        dwUserData_;
-    INT           dwStyleEx_;
-    HEXFONT       hFont_;
-    EXATOM        atomName_;
-    HCURSOR       hCursor_;
     INT           dwStyle_;
+    INT           dwStyleEx_;
+    INT           dwTextFormat_;
+    HCURSOR       hCursor_;
+    HEXFONT       hFont_;    
+
+    FLOAT         fHUE_;// 旋转色相   HSL的H分量  0-1
+    FLOAT         fBlur_;// 正值  通常0 - 250
+    INT           dwAlphaDisable_;// 禁用时组件透明度 默认128
+    INT           dwAlpha_;// 组件透明度 默认255
+
     EX_HASHTABLE* pPropListEntry_;
     EX_CLASSINFO* pCls_;
-    ClsPROC       pfnClsProc_;
-    INT           id_;
-    INT           dwTextFormat_;
+    ClsPROC       pfnClsProc_;//组件类过程回调
+    MsgPROC       pfnSubClass_;// 组件过滤回调 
+    
     EXHANDLE      objParent_;
     LPARAM        lParam_;
-    INT           dwAlphaDisable_;
-    INT           dwAlpha_;
-    MsgPROC       pfnSubClass_;
-    FLOAT         fHUE_;
-    FLOAT         fBlur_;
-    INT           nodeid_;
-    UINT uTimerID_;
+    
+    UINT          uTimerID_;
     LONG_PTR      extraData_[1];   // 组件附加数据，必须放在末尾
 };
 

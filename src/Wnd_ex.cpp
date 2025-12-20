@@ -1092,11 +1092,20 @@ HEXOBJ _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, HEXOBJ objLast, INT x,
 	HEXOBJ objPrev = objLast;
 	obj_s* pObj = nullptr;
 	INT nError = 0;
+	POINT po = { x, y };
 	while (_handle_validate(objPrev, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 		if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE)) {
 			RECT rt = { pObj->left_, pObj->top_, pObj->right_, pObj->bottom_ };
-			POINT po = { x, y };
+			
+			if (((pObj->base.dwFlags_ & EOF_BPATH) == EOF_BPATH)) //2025.12.13 圆角组件检测
+			{
+				if (_rgn_hittest(pObj->radius_rgn_, po.x - pObj->left_, po.y - pObj->top_))
+				{
+					goto hit;
+				}
+			}
 			if (PtInRect(&rt, po)) {
+			hit:
 				INT ox = x - pObj->left_;
 				INT oy = y - pObj->top_;
 				auto lParam = MAKELONG(ox, oy);
@@ -3197,9 +3206,6 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex) {
 		else if (nIndex == ENGINE_LONG_RADIUS) {
 			ret = (size_t)pWnd->Radius_;
 		}
-		else if (nIndex == -143) {
-			ret = (size_t)pWnd->vol_wndptr_;
-		}
 		else {
 			EX_ASSERT(false, L"Ex_DUIGetLong: unknown EWL index: %ld", nIndex);
 		}
@@ -3281,11 +3287,6 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong) {
 		else if (nIndex == ENGINE_LONG_RADIUS) {
 			ret = (size_t)pWnd->Radius_;
 			pWnd->Radius_ = dwNewLong;
-			bRedraw = TRUE;
-		}
-		else if (nIndex == -143) {
-			ret = (size_t)pWnd->vol_wndptr_;
-			pWnd->vol_wndptr_ = (void*)dwNewLong;
 			bRedraw = TRUE;
 		}
 		else {

@@ -50,6 +50,7 @@ struct wnd_s
     INT           top_;    // the same as ulwi_pptDst_y
     INT           width_;
     INT           height_;
+
     INT           ulwi_pptSrc_x_;
     INT           ulwi_pptSrc_y_;
     BLENDFUNCTION ulwi_pblend_;
@@ -105,8 +106,6 @@ struct wnd_s
     HEXDUI        hExDuiParent_;
     EX_HASHTABLE* hTableObjects_;
     EX_HASHTABLE* hTableEvent_;
-    LPVOID        pJSObj_;
-    LPVOID        pSysObj_;
 
     EXHANDLE lpPopupParams_;
     HWND     hWndPopup_;
@@ -122,23 +121,19 @@ struct wnd_s
     LPVOID  hRes_;
     INT     crBkg_;
     INT     crBorder_;
+    INT     crSD_;//背景颜色
     HWND    hWndShadow_;
     INT     alpha_;
     wnd_s*  pMenuPrevWnd_;
     LPVOID  hMenuPopup_;
     INT     szItemSeparator_;
+    INT   menu_maxwidth_;
     LPVOID  padding_client_;
     LPVOID  padding_text_;
     LPVOID  padding_separator_;
     HEXFONT hFont_Menu_;
 
-    LPVOID pJSDUIObj_;
-    size_t hJSObjMap_;
-
-    INT   menu_maxwidth_;
-    INT   crSD_;
     INT   Radius_;
-    void* vol_wndptr_;   //-143
 };
 
 LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
