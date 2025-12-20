@@ -347,7 +347,6 @@ void _canvas_init(INT* nError)
     }
     if (!bDX) {
         _dx_uninit();
-        Flag_Del(ENGINE_FLAG_RENDER_METHOD_D2D);
     }
     g_Li.pfnUpdateLayeredWindowIndirect =
         (UpdateLayeredWindowIndirectPROC)GetProcAddr(L"user32.dll", "UpdateLayeredWindowIndirect");

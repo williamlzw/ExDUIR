@@ -19,10 +19,6 @@
 #define ENGINE_FLAG_DPI_ENABLE 0x02
 // 引擎标识_渲染_画布不抗锯齿
 #define ENGINE_FLAG_RENDER_CANVAS_ALIAS 0x40
-// 引擎标识_渲染_使用D2D
-#define ENGINE_FLAG_RENDER_METHOD_D2D 0x100
-// 引擎标识_渲染_使用支持GDI交互的D2D渲染
-#define ENGINE_FLAG_RENDER_METHOD_D2D_GDI_COMPATIBLE 0x300
 // 引擎标识_文本渲染_使用ClearType抗锯齿
 #define ENGINE_FLAG_TEXT_CLEARTYPE 0x400
 // 引擎标识_文本渲染_抗锯齿

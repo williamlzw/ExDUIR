@@ -16,12 +16,13 @@ const std::vector<std::wstring> buttonData = {
     L"路径与区域",     L"VLC播放器",  L"自定字体和SVG", L"卷帘菜单",   L"托盘图标",   L"蒙板",
     L"标注画板",       L"效果器",     L"打包",          L"环形进度条", L"水波进度条", L"折线图",
     L"对话盒",         L"流程图",     L"分隔条",         L"D3D绘制" , L"表格",       L"webview2浏览器",
-    L"流式滚动容器",    L"原型画板"};
+    L"流式滚动容器",    L"原型画板" };
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
     LRESULT* lpResult)
 {
     if (uMsg == WM_SIZE) {
+        auto dpi = Ex_DUIGetSystemDpi();
         auto windowWidth = LOWORD(lParam);
         auto windowHeight = HIWORD(lParam);
 
@@ -29,9 +30,9 @@ LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
         HEXOBJ hScrollView = Ex_ObjGetFromID(hExDui, 1000);
         if (hScrollView != 0)
         {
-            INT margin = 30;
-            INT scrollViewWidth = (windowWidth - 2 * margin);
-            INT scrollViewHeight = (windowHeight - 2 * margin);
+            INT margin = 30 * dpi;
+            INT scrollViewWidth = (windowWidth - 2 * margin) / dpi;
+            INT scrollViewHeight = (windowHeight - 2 * margin) / dpi;
 
             Ex_ObjSetPos(hScrollView, 0, margin, margin, scrollViewWidth, scrollViewHeight, SWP_NOZORDER);
 
@@ -39,7 +40,7 @@ LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
             Ex_ObjSendMessage(hScrollView, FLOWSCROLLVIEW_MESSAGE_UPDATE_SCROLL_RANGE, 0, 0);
         }
     }
- 
+
     return 0;
 }
 
@@ -74,8 +75,8 @@ void test_exdui()
     //Ex_ReadFile(L"E:\\ExDUIR\\x64\\Debug\\res/test_theme.ext", &data);//加载自定义打包的主题包
     // 开启DPI缩放,渲染全部菜单(二级子菜单改背景色需启用此风格)
     Ex_Init(GetModuleHandleW(NULL),
-        ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,// || ENGINE_FLAG_OBJECT_SHOWRECTBORDER,//| ENGINE_FLAG_OBJECT_SHOWRECTBORDER,
-            hCursor, 0, data.data(), data.size(), 0, 0);
+        ENGINE_FLAG_DPI_ENABLE | ENGINE_FLAG_MENU_ALL,//| ENGINE_FLAG_OBJECT_SHOWRECTBORDER,
+        hCursor, 0, data.data(), data.size(), 0, 0);
 
     INT windowWidth = 1280;
     INT windowsHeight = 800;
@@ -91,7 +92,6 @@ void test_exdui()
             0, OnMainWndMsgProc);
         // 改变标题栏标题组件颜色,先获取标题栏句柄,类似关闭，最大化，最小化按钮也可以这样获取
         HEXOBJ hObjCaption = Ex_DUIGetLong(hExDui, ENGINE_LONG_OBJCAPTION);
-        
         // 标题栏窗口风格就是标题栏子组件的ID
         HEXOBJ hObjTitle = Ex_ObjGetFromID(hObjCaption, WINDOW_STYLE_TITLE);
         Ex_ObjSetColor(hObjTitle, COLOR_EX_TEXT_NORMAL, ExARGB(120, 130, 220, 255), TRUE);

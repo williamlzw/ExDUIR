@@ -81,7 +81,7 @@ void _flowscrollview_updatescrollrange(HEXOBJ hScrollView)
 
     // 计算容器所需高度
     INT containerHeight = _flowscrollview_calculateHeight(hScrollView);
-    
+
     // 获取当前滚动位置
     INT vScrollPos = Ex_ObjScrollGetPos(hScrollView, SCROLLBAR_TYPE_VERT);
 

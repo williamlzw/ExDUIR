@@ -1521,6 +1521,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 											rcClip.left - rcObj.left, rcClip.top - rcObj.top, rcClip.right - rcObj.left, rcClip.bottom - rcObj.top, alpha);
 									}
 								}
+								
 							}
 						}
 						if (hBorderBrush != 0) {
@@ -1540,7 +1541,15 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 							pContext->PopLayer();
 							pLayer->Release();
 						}
-						_canvas_resetclip(pObj->canvas_obj_);//在此处执行恢复裁剪
+						if ((pObj->base.dwFlags_ & EOF_BPAGE) != EOF_BPAGE)
+						{
+							if (((pObj->base.dwFlags_ & EOF_BCANREDRAW) == EOF_BCANREDRAW))
+							{
+								_canvas_resetclip(pObj->canvas_obj_);//在此处执行恢复裁剪
+							}
+							
+						}
+						
 					}
 				}
 			}
