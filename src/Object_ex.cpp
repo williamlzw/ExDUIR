@@ -2099,7 +2099,7 @@ void _obj_create_done(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj)
         pObj->dwState_ = pObj->dwState_ | STATE_ALLOWFOCUS;
     }
 
-    INT flags = SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS | SWP_DRAWFRAME;
+    INT flags = SWP_NOACTIVATE | SWP_NOREDRAW | SWP_NOCOPYBITS;
 
     if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE)) {
         flags = flags | SWP_SHOWWINDOW;
