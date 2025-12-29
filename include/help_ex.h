@@ -37,6 +37,7 @@ struct obj_base
     HEXOBJ                  objChildLast_;
     HEXLAYOUT               hLayout_;
     INT                     dwFlags_;
+    UINT uElapse_;//时钟周期
     EX_BACKGROUNDIMAGEINFO* lpBackgroundImage_;
     HEXTHEME                hTheme_;
 };
@@ -276,10 +277,11 @@ struct LOCALINFO
     UpdateLayeredWindowIndirectPROC pfnUpdateLayeredWindowIndirect;
     LOGFONTW*                       lpLogFontDefault;
     HEXTHEME                        hThemeDefault;
-    HMENU                           hMenuVS;
-    HMENU                           hMenuHS;
-    HMENU                           hMenuEdit;
+    HEXMENU                           hMenuVS;
+    HEXMENU                           hMenuHS;
+    HEXMENU                           hMenuEdit;
     HHOOK                           hHookMsgBox;
+    wnd_s* MsgpWnd;//新增
     mempool_s*                      hHandles;
     std::vector<HEXTHEME>           aryThemes;
     std::vector<INT>                aryColorsAtom;
@@ -291,6 +293,8 @@ struct LOCALINFO
     LPCWSTR                         lpStrClose;
     LPCWSTR                         lpStrHelp;
     UINT                            dwClickTime;
+    HEXBRUSH hObjBorderBrush;
+    bool IsSupportedChildLayered;
 };
 
 struct RENDERINFO
@@ -392,7 +396,7 @@ BOOL    Flag_Query(INT dwFlag);
 void    Flag_Add(INT dwFlag);
 void    Flag_Del(INT dwFlag);
 LPCWSTR GetErrorMessage(DWORD error);
-void    IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable);
+void    IME_Control(HWND hWnd, BOOL bEnable);
 
 /// <summary>
 /// url编码

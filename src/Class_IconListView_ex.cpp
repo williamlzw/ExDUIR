@@ -88,10 +88,10 @@ LRESULT CALLBACK _iconlistview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
     {
         INT width = LOWORD(lParam);
         if (width < 10) width = 10;
-        Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_WIDTH, (width));   // Ex_Scale
+        Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_WIDTH, (width));   
         INT height = HIWORD(lParam);
         if (height < 10) height = 10;
-        Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HEIGHT, (height));   // Ex_Scale
+        Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HEIGHT, (height));   
         RECT rc{0};
         Ex_ObjGetRect(hObj, &rc);
         Ex_ObjDispatchMessage(hObj, WM_SIZE, 0, MAKELONG(rc.right - rc.left, rc.bottom - rc.top));
@@ -131,8 +131,8 @@ void _iconlistview_onarrdelete(array_s* pArray, INT nIndex, EX_ICONLISTVIEW_ITEM
 
 void _iconlistview_init(HEXOBJ hObj)
 {
-    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_WIDTH, Ex_Scale(90));
-    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HEIGHT, Ex_Scale(100));
+    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_WIDTH, (90));
+    Ex_ObjSetLong(hObj, ICONLISTVIEW_LONG_HEIGHT, (100));
     array_s* pArray = Array_Create(0);
     Array_BindEvent(pArray, ARRAY_EVENT_ADDMEMBER, _iconlistview_onarrappend);
     Array_BindEvent(pArray, ARRAY_EVENT_DELMEMBER, _iconlistview_onarrdelete);
@@ -189,7 +189,7 @@ BOOL _iconlistview_ondrawitem(HEXOBJ hObj, EX_CUSTOMDRAW* cdr)
                                  cdr->rcPaint.right - cdr->rcPaint.left,
                                  cdr->rcPaint.bottom - cdr->rcPaint.top, &nWidthText, &nHeightText);
         }
-        FLOAT nHeightTotal = nHeightIcon + Ex_Scale(3) + nHeightText;
+        FLOAT nHeightTotal = nHeightIcon + (3) + nHeightText;
 
         // 本矩形是宽度占满,高度为文本、图标高度的矩形
         RECT rcIconAndText;

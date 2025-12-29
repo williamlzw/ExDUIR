@@ -31,7 +31,7 @@ void LockPanel(HEXOBJ panel) {
         panel, lockPanel2 ? SPLITTER_LONG_PANEL2 : SPLITTER_LONG_PANEL1);
     if (subPanel) {
       RECT subRect{};
-      Ex_ObjGetRectExForDpi(subPanel, &subRect, 1);
+      Ex_ObjGetRectEx(subPanel, &subRect, 1);
       Ex_ObjSetLong(
           panel, SPLITTER_LONG_LOCKSIZE,
           MAKELONG(subRect.right - subRect.left, subRect.bottom - subRect.top));
@@ -39,7 +39,7 @@ void LockPanel(HEXOBJ panel) {
     // 如果没有要锁定的子面板，则按照当前分割条位置计算锁定面板的宽度和高度值
     else {
       RECT m_rect{};
-      Ex_ObjGetRectExForDpi(panel, &m_rect, 1);
+      Ex_ObjGetRectEx(panel, &m_rect, 1);
       int width = m_rect.right - m_rect.left;
       int height = m_rect.bottom - m_rect.top;
       if (direction == 0) {
@@ -81,7 +81,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
       // output("WM_SIZE", hObj, wParam, lParam);
       //  调整大小时，更新分割条位置
       RECT m_rect{};
-      Ex_ObjGetRectExForDpi(hObj, &m_rect, 1);
+      Ex_ObjGetRectEx(hObj, &m_rect, 1);
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_POSITION);
       int newPosition = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
@@ -127,7 +127,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
                          ? m_rect.bottom - m_rect.top
                          : m_rect.bottom - m_rect.top - lockHeight - size;
           }
-          Ex_ObjMoveForDpi(panel1, left, top, width, height, false);
+          Ex_ObjMove(panel1, left, top, width, height, false);
           Ex_ObjSetLong(hObj, SPLITTER_LONG_CURPOSITION, newPosition);
         }
 
@@ -160,7 +160,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
             width = direction == 0 ? lockWidth : m_rect.right - m_rect.left;
             height = direction == 0 ? m_rect.bottom - m_rect.top : lockHeight;
           }
-          Ex_ObjMoveForDpi(panel2, left, top, width, height, false);
+          Ex_ObjMove(panel2, left, top, width, height, false);
           Ex_ObjSetLong(hObj, SPLITTER_LONG_CURPOSITION, newPosition);
         }
         // output("Second Splitter Adjusted", hObj, wParam, lParam);
@@ -174,7 +174,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
     
       Ex_ObjSetLong(hObj, SPLITTER_LONG_CURPOSITION, newPosition);
       if (panel1) {
-        Ex_ObjMoveForDpi(panel1, m_rect.left, m_rect.top,
+          Ex_ObjMove(panel1, m_rect.left, m_rect.top,
                          direction == 0 ? newPosition - m_rect.left
                                         : m_rect.right - m_rect.left,
                          direction == 0 ? m_rect.bottom - m_rect.top
@@ -182,7 +182,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
                          false);
       }
       if (panel2) {
-        Ex_ObjMoveForDpi(panel2,
+          Ex_ObjMove(panel2,
                          direction == 0 ? newPosition + size : m_rect.left,
                          direction == 0 ? m_rect.top : newPosition + size,
                          direction == 0 ? m_rect.right - m_rect.left -
@@ -215,7 +215,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
       int y = GET_Y_LPARAM(lParam);
 
       RECT m_rect{};  // 当前m_rect
-      Ex_ObjGetRectExForDpi(hObj, &m_rect, 1);
+      Ex_ObjGetRectEx(hObj, &m_rect, 1);
 
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
@@ -245,7 +245,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
       int y = GET_Y_LPARAM(lParam);
       // output("WM_MOUSEMOVE", x, y);
       RECT m_rect{};  // 当前m_rect
-      Ex_ObjGetRectExForDpi(hObj, &m_rect, 1);
+      Ex_ObjGetRectEx(hObj, &m_rect, 1);
 
       int direction = Ex_ObjGetLong(hObj, SPLITTER_LONG_DIRECTION);
       int position = Ex_ObjGetLong(hObj, SPLITTER_LONG_CURPOSITION);
@@ -269,7 +269,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
           HEXOBJ panel2 = (HEXOBJ)Ex_ObjGetLong(hObj, SPLITTER_LONG_PANEL2);
 
           if (panel1) {
-            Ex_ObjMoveForDpi(panel1, m_rect.left, m_rect.top,
+              Ex_ObjMove(panel1, m_rect.left, m_rect.top,
                              direction == 0 ? newPosition - m_rect.left
                                             : m_rect.right - m_rect.left,
                              direction == 0 ? m_rect.bottom - m_rect.top
@@ -278,7 +278,7 @@ LRESULT CALLBACK _splitter_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
           }
 
           if (panel2) {
-            Ex_ObjMoveForDpi(
+              Ex_ObjMove(
                 panel2, direction == 0 ? newPosition + size : m_rect.left,
                 direction == 0 ? m_rect.top : newPosition + size,
                 direction == 0 ? m_rect.right - m_rect.left -

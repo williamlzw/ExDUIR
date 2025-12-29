@@ -145,7 +145,7 @@ public:
     static void InsertBitmap(IRichEditOle* pRichEditOle, HBITMAP hBitmap);
 
 private:
-    ULONG m_ulRefCnt;
+    ULONG m_ulRefCnt = 0;
     BOOL  m_bRelease;
 
     // The data being bassed to the richedit

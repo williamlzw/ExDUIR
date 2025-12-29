@@ -323,10 +323,6 @@ void _canvas_recreate(canvas_s* pCanvas, INT width, INT height, INT* nError)
             oldBitmap->Release();
         }
         pCanvas->pBitmap_ = pBitmap;
-        if (pCanvas->pWnd_ != nullptr)
-        {
-            pCanvas->pContext_ = pCanvas->pWnd_->dx_context_;
-        }
     }
 }
 
@@ -422,10 +418,10 @@ BOOL _canvas_enddraw(HEXCANVAS hCanvas)
     INT       nError  = -1;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
         _dx_settarget(pCanvas->pContext_, 0);
-
         if (pCanvas->pWnd_ != nullptr) {
             wnd_s* pWnd = pCanvas->pWnd_;
             if (InterlockedExchangeAdd((long*)&pWnd->dx_counts_, -1) == 1) {
+                
                 _dx_enddraw(pCanvas->pContext_);
             }
         }
@@ -710,12 +706,12 @@ BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
     pt = gridPaddingTop;
     pr = gridPaddingRight;
     pb = gridPaddingBottom;
-    if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0) {
+    /*if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0) {
         pl = Ex_Scale(pl);
         pt = Ex_Scale(pt);
         pr = Ex_Scale(pr);
         pb = Ex_Scale(pb);
-    }
+    }*/
     BOOL ret = FALSE;
     // 右-中间
     ret = _canvas_drawimagerectrect(hCanvas, hImage, dstRight - pr, dstTop + pt, dstRight,
@@ -874,9 +870,16 @@ BOOL _canvas_drawimagefrombkgimg(HEXCANVAS hCanvas, EX_BACKGROUNDIMAGEINFO* lpBk
 {
     BOOL ret = FALSE;
     if (lpBkgImg != 0) {
-        ret = _canvas_drawimagefrombkgimg_ex(hCanvas, lpBkgImg->hImage, lpBkgImg->x, lpBkgImg->y,
-                                             lpBkgImg->dwRepeat, lpBkgImg->lpGrid,
-                                             lpBkgImg->dwFlags, lpBkgImg->dwAlpha, NULL, NULL);
+        if (_handle_validate(lpBkgImg->hImage, HT_IMAGE, 0, 0))//图片
+        {
+            ret = _canvas_drawimagefrombkgimg_ex(hCanvas, lpBkgImg->hImage, lpBkgImg->x,
+                lpBkgImg->y, lpBkgImg->dwRepeat, lpBkgImg->lpGrid,
+                lpBkgImg->dwFlags, lpBkgImg->dwAlpha, lpBkgImg->lpRcSrc, lpBkgImg->lpRCFDst);
+        }
+        else if (_handle_validate(lpBkgImg->hImage, HT_SVG, 0, 0))
+        {
+            ret = _canvas_drawsvg2(hCanvas, lpBkgImg->hImage, lpBkgImg->x, lpBkgImg->y);
+        }
     }
     return ret;
 }

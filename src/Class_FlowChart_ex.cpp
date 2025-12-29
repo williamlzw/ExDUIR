@@ -303,8 +303,6 @@ void _flowchart_onscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPA
 	Ex_ObjGetClientRect(hObj, &rc);
 	INT widthRC = (INT)(rc.right - rc.left);
 	INT heightRC = (INT)(rc.bottom - rc.top);
-	widthRC = Ex_Scale(widthRC);
-	heightRC = Ex_Scale(heightRC);
 	INT oPos = 0;
 	INT nView = 0;
 	INT nPage = 2000;
@@ -1859,9 +1857,8 @@ void _flowchart_ondoubleclick(HEXOBJ hObj, INT x, INT y)
 						HEXOBJ edit = Ex_ObjGetLong(hObj, FLOWCHART_LONG_EDIT_HANDLE);
 						Ex_ObjSetText(edit, (LPCWSTR)dataItem->data, FALSE);
 						EX_FLOWCHART_DATA* pData = (EX_FLOWCHART_DATA*)Ex_ObjGetLong(hObj, 0);
-						auto dpi = Ex_DUIGetSystemDpi();
-						Ex_ObjMove(edit, (node->x + dataItem->rect.left) / dpi * pData->zoom, (node->y + dataItem->rect.top) / dpi * pData->zoom, 
-							(dataItem->rect.right - dataItem->rect.left) / dpi * pData->zoom, (dataItem->rect.bottom - dataItem->rect.top) / dpi * pData->zoom, TRUE);
+						Ex_ObjMove(edit, (node->x + dataItem->rect.left) * pData->zoom, (node->y + dataItem->rect.top) * pData->zoom, 
+							(dataItem->rect.right - dataItem->rect.left) * pData->zoom, (dataItem->rect.bottom - dataItem->rect.top) * pData->zoom, TRUE);
 						Ex_ObjShow(edit, TRUE);
 						break;
 					}

@@ -289,20 +289,20 @@
 #pragma endregion object state constant
 
 #pragma region object style constant
-// 组件风格_滚动条不可用时显示禁止状态
-#define OBJECT_STYLE_DISABLENOSCROLL 0x2000000
-// 组件风格_可调整尺寸
-#define OBJECT_STYLE_SIZEBOX 0x4000000
-// 组件风格_禁止
-#define OBJECT_STYLE_DISABLED 0x8000000
 // 组件风格_可视
-#define OBJECT_STYLE_VISIBLE 0x10000000
+#define OBJECT_STYLE_VISIBLE 0x10000000L
+// 组件风格_禁止
+#define OBJECT_STYLE_DISABLED 0x08000000L
 // 组件风格_边框
-#define OBJECT_STYLE_BORDER 0x20000000
+#define OBJECT_STYLE_BORDER 0x00800000L
 // 组件风格_垂直滚动条
-#define OBJECT_STYLE_VSCROLL 0x40000000
+#define OBJECT_STYLE_VSCROLL 0x00200000L
 // 组件风格_水平滚动条
-#define OBJECT_STYLE_HSCROLL 0x80000000
+#define OBJECT_STYLE_HSCROLL 0x00100000L
+// 组件风格_滚动条不可用时显示禁止状态
+#define OBJECT_STYLE_DISABLENOSCROLL 0x02000000L
+// 组件风格_逐层通知父控件
+#define OBJECT_STYLE_NOTIFYPARENT    0x04000000L
 #pragma endregion object style constant
 
 #pragma region object ex style constant
@@ -1441,9 +1441,12 @@
 #define COLORPICKER_EVENT_COLORCHANGE 100052
 #pragma endregion colorpicker notify
 
-#pragma region palette notify
-// 通知_调色板_设置颜色 wParam 0,lParam ExARGB
+#pragma region palette message
+// 消息_调色板_设置颜色 wParam 0,lParam ExARGB
 #define PALETTE_MESSAGE_SETCOLOR 100001
+#pragma endregion palette message
+
+#pragma region palette notify
 // 调色板通知_鼠标移动 wParam返回不带alpha的RGB颜色,用ExRGB2ARGB转换到ARGB
 #define PALETTE_EVENT_MOUSEMOVE 100000
 #pragma endregion palette notify
@@ -1875,6 +1878,8 @@
 //发送向菜单拥有者句柄的WM_NOTIFY的事件代码: 弹出菜单窗口即将修改位置和大小
 #define MN_PRESETPOS              (MN_FIRST + 20)
 
+// 布局更新后触发的消息
+#define WM_LAYOUT_UPDATE (MN_FIRST + 2)
 
 #define SWP_EX_NODPISCALE 0x80000000
 
@@ -2079,7 +2084,7 @@ typedef LPVOID   HEXEASING;      // 缓动句柄/指针
 typedef LPVOID   HEXRES;         // 资源包句柄
 typedef LPVOID   HEXEFFECT;      // 效果器句柄
 typedef EXHANDLE HEXSVG;         // SVG句柄
-
+typedef EXHANDLE HEXMENU;        // 菜单句柄
 
 typedef LRESULT(CALLBACK* WinMsgPROC)(HWND, HEXDUI, INT, WPARAM, LPARAM, LRESULT*);
 typedef LRESULT(CALLBACK* MsgPROC)(HWND, HEXOBJ, INT, WPARAM, LPARAM, LRESULT*);
@@ -2291,6 +2296,8 @@ struct EX_BACKGROUNDIMAGEINFO
 	DWORD    curFrame;   // 当前帧
 	DWORD    maxFrame;   // 最大帧
 	DWORD    dwAlpha;    // 透明度
+    RECT* lpRcSrc;
+    EX_RECTF* lpRCFDst;
 };
 
 // 组件类信息结构
@@ -2405,7 +2412,7 @@ struct EX_LISTBUTTON_ITEMINFO
 	UINT    nLeft;        // 项目左边
 	UINT    nWidth;       // 项目宽度
 	UINT    dwState;      // 项目状态   可取STATE_NORMAL,STATE_DOWN,STATE_FOCUS,STATE_DISABLE
-	HMENU   nMenu;        // 项目菜单
+	HEXMENU   nMenu;        // 项目菜单
 	INT     TextFormat;   // 项目文本格式
 };
 

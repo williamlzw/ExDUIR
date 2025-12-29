@@ -476,6 +476,22 @@ std::string Ex_U2A2(std::vector<CHAR> str)
     return Ex_W2A(Ex_U2W2(str));
 }
 
+std::string Ex_U2A3(const char* strUTF8, size_t u8len)
+{
+    int len = MultiByteToWideChar(CP_UTF8, 0, strUTF8, u8len, NULL, 0);
+    wchar_t* wszGBK = new wchar_t[len + 1];
+    memset(wszGBK, 0, len * 2 + 2);
+    MultiByteToWideChar(CP_UTF8, 0, strUTF8, u8len, wszGBK, len);
+    len = WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, NULL, 0, NULL, NULL);
+    char* szGBK = new char[len + 1];
+    memset(szGBK, 0, len + 1);
+    WideCharToMultiByte(CP_ACP, 0, wszGBK, -1, szGBK, len, NULL, NULL);
+    std::string strTemp(szGBK);
+    if (wszGBK) delete[] wszGBK;
+    if (szGBK) delete[] szGBK;
+    return strTemp;
+}
+
 std::string Ex_W2U(const std::wstring& wstr)
 {
     if (wstr.empty()) {
@@ -987,9 +1003,26 @@ void Flag_Del(INT dwFlag)
     g_Li.dwFlags = g_Li.dwFlags - (g_Li.dwFlags & dwFlag);
 }
 
-void IME_Control(HWND hWnd, wnd_s* pWnd, BOOL bEnable)
+void IME_Control(HWND hWnd, BOOL bEnable)
 {
-    ImmAssociateContext(hWnd, (bEnable ? pWnd->hImc_ : 0));
+    if (bEnable)
+    {
+        HIMC hImc = ImmGetContext(hWnd);
+        if (!hImc)
+        {
+            hImc = ImmCreateContext();
+            ImmAssociateContext(hWnd, hImc);
+        }
+    }
+    else
+    {
+        HIMC hImc = ImmGetContext(hWnd);
+        ImmAssociateContext(hWnd, NULL);
+        if (hImc)
+        {
+            ImmDestroyContext(hImc);
+        }
+    }
 }
 
 LPCWSTR GetErrorMessage(DWORD error)

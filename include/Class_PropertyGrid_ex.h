@@ -28,7 +28,7 @@
 #define PROPERTYGRID_LONG_HOBJBUTTON 12
 // 属性_属性框_线条颜色
 #define PROPERTYGRID_LONG_LINECOLOR 13
-
+#define PROPERTYGRID_LONG_IGNORING_CLICKS 14
 void _propertygrid_register();
 void _propertygrid_update_layout(HEXOBJ hObj);
 LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);

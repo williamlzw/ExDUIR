@@ -118,8 +118,8 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 			GetWindowRect(hWnd, &lpRect);
 			RECT objRect;
 			Ex_ObjGetRectEx(hObj, &objRect, 2);
-			lpRect.left += Ex_Scale(objRect.left);        // 修复弹出定位
-			lpRect.top += Ex_Scale(objRect.bottom + 2);   // 修复弹出定位
+			lpRect.left += (objRect.left);        // 修复弹出定位
+			lpRect.top += (objRect.bottom + 2);   // 修复弹出定位
 
 			// 创建弹出窗口
 			HWND hWndBox = Ex_WndCreate(hWnd, NULL, NULL, 0, 0,
@@ -135,8 +135,8 @@ LRESULT CALLBACK _datebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
 				SetWindowPos(hWndBox, 0, (lpRect.left), (lpRect.top), Ex_Scale(290),
 					Ex_Scale(290), SWP_NOZORDER | SWP_NOACTIVATE);
 				// Calendar 控件
-				HEXOBJ hCal = Ex_ObjCreateEx(OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,
-					L"Calendar",L"",-1,0, 0, (290), (290),
+				HEXOBJ hCal = Ex_ObjCreateEx(-1,
+					L"Calendar",L"", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_BORDER,0, 0, (290), (290),
 					hExBox,0,-1,0,0,nullptr
 				);
 				Ex_ObjSetLong(hCal, OBJECT_LONG_USERDATA, (LONG_PTR)hExBox);

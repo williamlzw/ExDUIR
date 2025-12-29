@@ -10,9 +10,9 @@ void _drawingboard_register()
 LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (uMsg == WM_CREATE) {
-        Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_PEN_WIDTH, Ex_Scale(3));
-        Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_PAINT_WIDTH, Ex_Scale(3));
-        Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_ERASER_WIDTH, Ex_Scale(10));
+        Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_PEN_WIDTH, (3));
+        Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_PAINT_WIDTH, (3));
+        Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_ERASER_WIDTH, (10));
         Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_PEN_TYPE, 0);
         Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_PEN_COLOR, ExRGB2ARGB(0, 255));
         Ex_ObjSetLong(hObj, DRAWINGBOARD_LONG_DOWN, 0);
@@ -54,8 +54,8 @@ LRESULT CALLBACK _drawingboard_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
             auto x = GET_X_LPARAM(lParam);
             auto y = GET_Y_LPARAM(lParam);
             if (penType == 0 || penType == 1) {
-                if (x >= Ex_Scale(rc.left) && x <= Ex_Scale(rc.right)) {
-                    if (y >= Ex_Scale(rc.top) && y <= Ex_Scale(rc.bottom)) {
+                if (x >= (rc.left) && x <= (rc.right)) {
+                    if (y >= (rc.top) && y <= (rc.bottom)) {
                         _drawingboard_updatedraw(hObj, x, y);
                     }
                 }

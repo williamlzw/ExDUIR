@@ -14,13 +14,13 @@ void _carousel_paint(HEXOBJ hObj)
                               ps.rcPaint.bottom, 255);
         INT count = _imglist_count(hImageList);
         for (int i = 1; i < count + 1; i++) {
-            int x = ps.rcPaint.right - (count + 1) * Ex_Scale(20) + i * Ex_Scale(20) - Ex_Scale(2);
-            int y = ps.rcPaint.bottom - Ex_Scale(17);
+            int x = ps.rcPaint.right - (count + 1) * (20) + i * (20) - (2);
+            int y = ps.rcPaint.bottom - (17);
             if (i == index) {
-                _carousel_drawcircle(ps.hCanvas, x, y, Ex_Scale(5), ExRGB2ARGB(16777215, 255));
+                _carousel_drawcircle(ps.hCanvas, x, y, (5), ExRGB2ARGB(16777215, 255));
             }
             else {
-                _carousel_drawcircle(ps.hCanvas, x, y, Ex_Scale(5), ExRGB2ARGB(0, 70));
+                _carousel_drawcircle(ps.hCanvas, x, y, (5), ExRGB2ARGB(0, 70));
             }
         }
     }
@@ -137,7 +137,7 @@ LRESULT CALLBACK _carousel_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             Ex_ObjGetClientRect(hObj, &rc);
             auto x      = GET_X_LPARAM(lParam);
             auto y      = GET_Y_LPARAM(lParam);
-            auto dpi    = Ex_DUIGetSystemDpi();
+            auto dpi    = 1;
             auto width  = rc.right - rc.left;
             auto height = rc.bottom - rc.top;
             auto index  = (INT)(count - (FLOAT)(width - x / dpi + 8) / 20 + 2);

@@ -218,7 +218,7 @@ void _treeview_updateitem(obj_s* pObj)
         INT minWidth = Ex_Scale(50);
         if (currentWidth != minWidth) {
             _obj_setextralong(pObj, TREEVIEW_LONG_LEFT, minWidth);
-            _obj_sendmessage(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_SIZE, 0,
+            _obj_sendmessage(_obj_gethwnd(pObj), pObj->base.hObj_, pObj, WM_SIZE, 0,
                 MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
         }
         return;
@@ -228,7 +228,7 @@ void _treeview_updateitem(obj_s* pObj)
     _treeview_calcitemmaxwidth(pObj, root, &width);
     if (currentWidth != width) {
         _obj_setextralong(pObj, TREEVIEW_LONG_LEFT, width);
-        _obj_sendmessage(_obj_gethwnd(pObj), pObj->hObj_, pObj, WM_SIZE, 0,
+        _obj_sendmessage(_obj_gethwnd(pObj), pObj->base.hObj_, pObj, WM_SIZE, 0,
             MAKELONG(pObj->right_ - pObj->left_, pObj->bottom_ - pObj->top_), 0);
     }
 }
@@ -359,7 +359,7 @@ void _treeview_freeitem(obj_s* pObj, EX_TREEVIEW_NODEITEM* item, BOOL child, BOO
                 child = tmp;
             }
         }
-        _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, pObj->id_,
+        _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->base.hObj_, pObj->id_,
             TREEVIEW_EVENT_DELETEITEM, 0, (size_t)item);
         _treeview_updateitem(pObj);
         if (item->pwzText) {
@@ -386,7 +386,7 @@ EX_TREEVIEW_NODEITEM* _treeview_insertitem(obj_s* pObj, EX_TREEVIEW_INSERTINFO* 
             INT tmp = 0;
             INT count = _treeview_itemcount(
                 (EX_TREEVIEW_NODEITEM*)_obj_getextralong(pObj, TREEVIEW_LONG_NODEITEM), &tmp);
-            _obj_sendmessage(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_SETITEMCOUNT,
+            _obj_sendmessage(_obj_gethwnd(pObj), pObj->base.hObj_, pObj, LISTVIEW_MESSAGE_SETITEMCOUNT,
                 count, 2, 0);
         }
     }
@@ -486,7 +486,7 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
     _canvas_setantialias(ps->hCanvas, 0);
     if (item) {
         ps->iItemParam = (size_t)item;
-        if (!_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, pObj->id_,
+        if (!_obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->base.hObj_, pObj->id_,
             TREEVIEW_EVENT_DRAWITEM, index, (size_t)ps)) {
             RECT rect;
             rect.left = ps->rcPaint.left + Ex_Scale(5) +
@@ -495,8 +495,8 @@ void _treeview_drawitem(obj_s* pObj, EX_NMHDR* lParam)
             rect.top = (ps->rcPaint.bottom + ps->rcPaint.top - Ex_Scale(8)) / 2;
             rect.bottom = (ps->rcPaint.bottom + ps->rcPaint.top + Ex_Scale(8)) / 2;
 
-            INT iSelected = _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_GETSELECTIONMARK, 0, 0);
-            INT iHot = _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_GETHOTITEM, 0, 0);
+            INT iSelected = _obj_baseproc(_obj_gethwnd(pObj), pObj->base.hObj_, pObj, LISTVIEW_MESSAGE_GETSELECTIONMARK, 0, 0);
+            INT iHot = _obj_baseproc(_obj_gethwnd(pObj), pObj->base.hObj_, pObj, LISTVIEW_MESSAGE_GETHOTITEM, 0, 0);
 
             if (ps->iItem == iSelected) {
                 HEXBRUSH brush = _brush_create((EXARGB)_obj_getextralong(pObj, TREEVIEW_LONG_SELECTEDCOLOR));
@@ -664,7 +664,7 @@ EX_TREEVIEW_NODEITEM* _treeview_hittest(obj_s* pObj, POINT pt, INT* pType)
         pItem = (EX_TREEVIEW_NODEITEM*)Array_GetMember(pArray, cur);
         if (pItem) {
             RECT rect = { 0 };
-            _obj_baseproc(_obj_gethwnd(pObj), pObj->hObj_, pObj, LISTVIEW_MESSAGE_GETITEMRECT,
+            _obj_baseproc(_obj_gethwnd(pObj), pObj->base.hObj_, pObj, LISTVIEW_MESSAGE_GETITEMRECT,
                 pList->index_mouse_, (size_t)&rect);
 
             RECT tmp = { 0 };

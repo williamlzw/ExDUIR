@@ -114,13 +114,13 @@ void _sliderbar_paint(HEXOBJ hObj)
         if ((Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & SLIDERBAR_STYLE_VERTICAL) ==
             SLIDERBAR_STYLE_VERTICAL) {
             _canvas_drawline(
-                ps.hCanvas, hBrush, Ex_Scale((FLOAT)RC.right / 2),
-                Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE), Ex_Scale((FLOAT)RC.right / 2),
-                Ex_Scale((FLOAT)(RC.bottom)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
-                Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
-            x = Ex_Scale((FLOAT)RC.right / 2);
+                ps.hCanvas, hBrush, ((FLOAT)RC.right / 2),
+                Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE), ((FLOAT)RC.right / 2),
+                ((FLOAT)(RC.bottom)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
+                (2), D2D1_DASH_STYLE_SOLID);
+            x = ((FLOAT)RC.right / 2);
             if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1) {
-                y = Ex_Scale((FLOAT)RC.bottom);
+                y = ((FLOAT)RC.bottom);
             }
             else {
                 y = Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE);
@@ -129,25 +129,25 @@ void _sliderbar_paint(HEXOBJ hObj)
         else {
             _canvas_drawline(
                 ps.hCanvas, hBrush, Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
-                Ex_Scale((FLOAT)RC.bottom / 2),
-                Ex_Scale((FLOAT)(RC.right)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
-                Ex_Scale((FLOAT)RC.bottom / 2), Ex_Scale(2), D2D1_DASH_STYLE_SOLID);
+                ((FLOAT)RC.bottom / 2),
+                ((FLOAT)(RC.right)) - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE),
+                ((FLOAT)RC.bottom / 2), (2), D2D1_DASH_STYLE_SOLID);
             if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1) {
-                x = Ex_Scale((FLOAT)RC.right);
+                x = ((FLOAT)RC.right);
             }
             else {
                 x = Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE);
             }
-            y = Ex_Scale((FLOAT)RC.bottom / 2);
+            y = ((FLOAT)RC.bottom / 2);
         }
         _brush_setcolor(hBrush, Ex_ObjGetColor(hObj, COLOR_EX_TEXT_CHECKED));
         _sliderbar_getrect(hObj, &RC);
-        _canvas_fillellipse(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2,
-                            Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2,
-                            Ex_Scale(Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)),
-                            Ex_Scale(Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)));
-        _canvas_drawline(ps.hCanvas, hBrush, Ex_Scale((FLOAT)(RC.left + RC.right)) / 2,
-                         Ex_Scale((FLOAT)(RC.top + RC.bottom)) / 2, x, y, Ex_Scale(2),
+        _canvas_fillellipse(ps.hCanvas, hBrush, ((FLOAT)(RC.left + RC.right)) / 2,
+                            ((FLOAT)(RC.top + RC.bottom)) / 2,
+                            (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)),
+                            (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE)));
+        _canvas_drawline(ps.hCanvas, hBrush, ((FLOAT)(RC.left + RC.right)) / 2,
+                         ((FLOAT)(RC.top + RC.bottom)) / 2, x, y, (2),
                          D2D1_DASH_STYLE_SOLID);
         _brush_destroy(hBrush);
         Ex_ObjEndPaint(hObj, &ps);
@@ -219,27 +219,27 @@ FLOAT _sliderbar_getvalueofthepoint(HEXOBJ hObj, LPARAM lParam)
         SLIDERBAR_STYLE_VERTICAL) {
         if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1) {
             value =
-                (Ex_Scale((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) -
+                (((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) -
                  (short)HIWORD(lParam)) /
-                Ex_Scale((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
+                ((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
         }
         else {
             value =
-                ((short)HIWORD(lParam) - Ex_Scale(Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE))) /
-                Ex_Scale((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
+                ((short)HIWORD(lParam) - (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE))) /
+                ((FLOAT)RC.bottom - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
         }
     }
     else {
         if (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_DIRECTION) == 1) {
             value =
-                (Ex_Scale((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) -
+                (((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2) -
                  (short)LOWORD(lParam)) /
-                Ex_Scale((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
+                ((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
         }
         else {
             value =
-                ((short)LOWORD(lParam) - Ex_Scale(Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE))) /
-                Ex_Scale((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
+                ((short)LOWORD(lParam) - (Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE))) /
+                ((FLOAT)RC.right - Ex_ObjGetLong(hObj, SLIDERBAR_LONG_BLOCK_SIZE) * 2);
         }
     }
     value = Ex_ObjGetLong(hObj, SLIDERBAR_LONG_MIN) +

@@ -2,7 +2,11 @@
 
 LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam,
 	LPARAM lParam) {
-	return DefWindowProcW(hWnd, Msg, wParam, lParam);
+	if (Msg == WM_NCCALCSIZE)
+	{
+		return 0;
+	}
+	return IsWindow(hWnd) ? DefWindowProcW(hWnd, Msg, wParam, lParam) : 0;
 }
 
 WORD Ex_WndRegisterClass(LPCWSTR lpwzClassName, HICON hIcon, HICON hIconsm,
@@ -62,8 +66,7 @@ BOOL _wnd_getfromhandle(size_t handle, HWND* hWnd, wnd_s** ppWnd, obj_s** ppObj,
 }
 
 LRESULT _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID,
-	INT nCode, WPARAM wParam, LPARAM lParam,
-	obj_s* pObj) {
+	INT nCode, WPARAM wParam, LPARAM lParam) {
 	WinMsgPROC pfnMsgProc = pWnd->pfnMsgProc_;
 	LRESULT ret = 0;
 	if (pfnMsgProc) {
@@ -73,7 +76,7 @@ LRESULT _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID,
 		hdr.lParam = lParam;
 		hdr.nCode = nCode;
 		hdr.wParam = wParam;
-		pfnMsgProc(hWnd, pWnd->hexdui_, WM_NOTIFY, nID, (size_t)&hdr, &ret);
+		pfnMsgProc(hWnd, pWnd->base.hexdui_, WM_NOTIFY, nID, (size_t)&hdr, &ret);
 	}
 
 	return ret;
@@ -82,8 +85,11 @@ LRESULT _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID,
 void _wnd_redraw_bkg(HWND hWnd, wnd_s* pWnd, LPVOID lpRect, BOOL bRedrawBkg,
 	BOOL bUpdate) {
 	if (bRedrawBkg) {
-		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BREDRAWBACKGROUND;
+		pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BREDRAWBACKGROUND;
 	}
+	//AAAAAAAAAA不同
+	LPRECT RCP = &pWnd->ulwi_prcDirty;
+	UnionRect(RCP, RCP, (RECT*)lpRect);
 	InvalidateRect(hWnd, (RECT*)lpRect, FALSE);
 	if (bUpdate) {
 		UpdateWindow(hWnd);
@@ -251,7 +257,7 @@ void _wnd_recalcclient(wnd_s* pWnd, HWND hWnd, INT width, INT height) {
 		if (_canvas_resize(pWnd->canvas_bkg_, width,
 			height))  // 客户区被改变,必定触发背景被改变事件
 		{
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BREDRAWBACKGROUND;
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BREDRAWBACKGROUND;
 		}
 	}
 	_rgn_destroy(pWnd->hrgn_client_);
@@ -282,23 +288,27 @@ BOOL _wnd_wm_stylechanging(wnd_s* pWnd, HWND hWnd, WPARAM wParam,
 	if (wParam == GWL_EXSTYLE) {
 		if (((pWnd->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) ==
 			WINDOW_STYLE_MESSAGEBOX)) {
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLAYERED;
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BLAYERED;
 		}
 		else {
 			if (__query_int((LPVOID)lParam, 4, WS_EX_LAYERED))  // 待定有问题
 			{
-				pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BLAYERED);
+				FLAGS_DEL(pWnd->base.dwFlags_, EWF_BLAYERED);
 			}
 			else {
-				if (((pWnd->dwFlags_ & EWF_BLAYERED) == EWF_BLAYERED)) {
-					pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BLAYERED);
+				if (((pWnd->base.dwFlags_ & EWF_BLAYERED) == EWF_BLAYERED)) {
+					FLAGS_DEL(pWnd->base.dwFlags_, EWF_BLAYERED);
 				}
 			}
 		}
 		InvalidateRect(hWnd, NULL, FALSE);
 	}
 	else {
-		styleNew = (styleNew & ~(WS_DLGFRAME | WS_BORDER));
+		//AAAAAAAAAAA不同
+		if ((pWnd->dwStyle_ & WINDOW_STYLE_NOSHADOW) == 0 /* 开启阴影 = 真 */ || FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW) || !Flag_Query(4))
+		{
+			styleNew = (styleNew & ~(WS_DLGFRAME | WS_BORDER));
+		}
 		if ((styleDui & WINDOW_STYLE_BUTTON_MIN) == 0 ||
 			(styleDui & WINDOW_STYLE_FULLSCREEN) == WINDOW_STYLE_FULLSCREEN) {
 			styleNew = (styleNew & ~WS_MINIMIZEBOX);
@@ -436,6 +446,7 @@ void _wnd_loadtheme(wnd_s* pWnd, HWND hWnd, HEXTHEME hTheme) {
 }
 
 void _wnd_calc_captionrect(wnd_s* pWnd, RECT* rcCaption) {
+	//返回缩放dpi后矩形
 	LPVOID lpValue = pWnd->size_caption_;
 	if (lpValue != 0) {
 		(*rcCaption).right =
@@ -463,7 +474,7 @@ void CALLBACK _wnd_backgroundimage_timer_inherit(HWND hWnd, UINT uMsg,
 		if (_handle_validate(pWnd->hExDuiParent_, HT_DUI, (LPVOID*)&ppWnd,
 			&nError)) {
 			EX_BACKGROUNDIMAGEINFO* lpBI =
-				(EX_BACKGROUNDIMAGEINFO*)ppWnd->lpBackgroundImage_;
+				(EX_BACKGROUNDIMAGEINFO*)ppWnd->base.lpBackgroundImage_;
 			if (lpBI) {
 				INT* pDelay = (INT*)lpBI->lpDelay;
 				if (pDelay != 0) {
@@ -486,22 +497,22 @@ size_t _wnd_dispatch_msg(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
 	else if (nType == EMT_DUI)  // 窗体消息
 	{
 		if (wParam == EMV_HEXDUI) {
-			return pWnd->hexdui_;
+			return pWnd->base.hexdui_;
 		}
 		else if (wParam == EMV_PFN_PACK) {
 		}
 	}
 	else if (nType >= WM_MOUSEFIRST && nType <= WM_MOUSELAST ||
 		nType >= NIN_SELECT && nType <= NIN_BALLOONUSERCLICK) {
-		_wnd_dispatch_notify(hWnd, pWnd, pWnd->hexdui_, -1, NM_TRAYICON, wParam,
-			lParam, 0);
+		_wnd_dispatch_notify(hWnd, pWnd, pWnd->base.hexdui_, -1, NM_TRAYICON, wParam,
+			lParam);
 	}
 	else if (nType == EMT_LAYOUT_UPDATE) {
 		_layout_update(wParam);
 	}
 	else if (nType == EMT_EASING) {
-		_wnd_dispatch_notify(hWnd, pWnd, pWnd->hexdui_, -1, NM_EASING,
-			__get((LPVOID)wParam, 0), wParam, 0);
+		_wnd_dispatch_notify(hWnd, pWnd, pWnd->base.hexdui_, -1, NM_EASING,
+			__get((LPVOID)wParam, 0), wParam);
 	}
 	return ret;
 }
@@ -515,7 +526,7 @@ size_t _wnd_dispatch_msg_obj(HWND hWnd, mempoolmsg_s* lpData, obj_s* pObj,
 		wParam = lpData->wParam;
 		lParam = lpData->lParam;
 		if (pObj) {
-			ret = _obj_msgproc(hWnd, pObj->hObj_, pObj, uMsg, wParam, lParam);
+			ret = _obj_msgproc(hWnd, pObj->base.hObj_, pObj, uMsg, wParam, lParam);
 		}
 		MemPool_Free(g_Li.hMemPoolMsg, lpData);
 	}
@@ -524,21 +535,33 @@ size_t _wnd_dispatch_msg_obj(HWND hWnd, mempoolmsg_s* lpData, obj_s* pObj,
 
 LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
-	wnd_s* pWnd = (wnd_s*)dwRefData;
-	WinMsgPROC pfnMsgProc = pWnd->pfnMsgProc_;
-	if (pfnMsgProc != 0) {
-		LRESULT ret = 0;
-		if (pfnMsgProc(hWnd, pWnd->hexdui_, uMsg, wParam, lParam, &ret) != 0) {
-			return ret;
-		}
+	// 添加有效性检查
+	if (!dwRefData || !IsWindow(hWnd)) {
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 	}
-
+	wnd_s* pWnd = (wnd_s*)dwRefData;
+	// 检查pWnd结构有效性
+	if (pWnd->base.hexdui_ == 0 || pWnd->hWnd_ != hWnd) {
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+	}
+	WinMsgPROC pfnMsgProc = pWnd->pfnMsgProc_;
+	//AAAAAAAAAAAA不同
 	if (uMsg == g_Li.dwMessage) {
 		return _wnd_dispatch_msg(hWnd, pWnd, uMsg, wParam, lParam);
 	}
-	else if (uMsg == WM_NCHITTEST)  // 132
+	if (pfnMsgProc != 0) {
+		LRESULT ret = 0;
+		if (pfnMsgProc(hWnd, pWnd->base.hexdui_, uMsg, wParam, lParam, &ret) != 0) {
+			return ret;
+		}
+	}
+	if (uMsg == WM_NCHITTEST)  // 132
 	{
 		return _wnd_wm_nchittest(pWnd, hWnd, lParam);
+	}
+	else if (uMsg == WM_SETICON) 
+	{
+		Ex_ObjInvalidateRect(pWnd->objCaption_, 0);//防止修改图标不会及时刷新
 	}
 	else if (uMsg == WM_SETCURSOR)  // 32
 	{
@@ -560,7 +583,16 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 		if (_wnd_destroy(hWnd, pWnd) != 0) {
 			PostQuitMessage(0);
 		}
-		RemoveWindowSubclass(hWnd, _wnd_proc, 0);
+		return 0;
+	}
+	else if (uMsg == WM_NCDESTROY)
+	{
+		// 在WM_NCDESTROY中移除子类化
+		if (IsWindow(hWnd))
+		{
+			RemoveWindowSubclass(hWnd, _wnd_proc, uIdSubclass);
+		}
+		return 0; // 或者调用DefSubclassProc
 	}
 	else if (uMsg == WM_ERASEBKGND) {
 		return 1;
@@ -569,34 +601,6 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 		INT width = LOWORD(lParam);
 		INT height = HIWORD(lParam);
 		_wnd_wm_size(pWnd, hWnd, wParam, width, height);
-	}
-	else if (uMsg == WM_WINDOWPOSCHANGING)  // 70
-	{
-		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
-			tagWINDOWPOS* pos = (tagWINDOWPOS*)lParam;
-			if (!(pos->flags & SWP_NOSIZE)) {
-				LPVOID padding_client = pWnd->padding_client_;
-				if (padding_client != 0) {
-					pos->cy += Ex_Scale(__get_int(padding_client, 4) +
-						__get_int(padding_client, 12));
-				}
-			}
-
-			if ((pos->flags & SWP_NOMOVE) != SWP_NOMOVE)  // 被移动了
-			{
-				if (GetWindow(hWnd, GW_OWNER) != 0)  // 子菜单
-				{
-					pWnd->pMenuHostWnd_->dwFlags_ =
-						pWnd->pMenuHostWnd_->dwFlags_ -
-						(pWnd->pMenuHostWnd_->dwFlags_ & EWF_BMENUREPOSTION);
-					_wnd_menu_setpos(hWnd, pWnd, pos);
-				}
-				pWnd->left_ = pos->x;
-				pWnd->top_ = pos->y;
-				_wnd_menu_init(hWnd, pWnd);
-				return 0;
-			}
-		}
 	}
 	else if (uMsg == WM_WINDOWPOSCHANGED)  // 71
 	{
@@ -614,15 +618,15 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	else if (uMsg == WM_NCACTIVATE)  // 134
 	{
 		obj_s Obj;
-		_wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittest_, -1, &Obj, lParam, TRUE);
+		_wnd_wm_leavecheck(hWnd, pWnd, uMsg, pWnd->objHittest_, -1, &Obj, wParam, lParam, TRUE);
 		if (wParam == 0) {
 			HEXOBJ focus = pWnd->objFocus_;
-			pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_ACTIVE);
+			FLAGS_DEL(pWnd->base.dwFlags_, EWF_ACTIVE);
 			pWnd->objFocusPrev_ = focus;
 			Ex_ObjKillFocus(focus);
 		}
 		else {
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_ACTIVE;
+			FLAGS_ADD(pWnd->base.dwFlags_, EWF_ACTIVE);
 			HEXOBJ focus = pWnd->objFocusPrev_;
 			Ex_ObjSetFocus(focus);
 			pWnd->objFocusPrev_ = 0;
@@ -642,23 +646,18 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	{
 		return 0;
 	}
-	else if (uMsg == WM_MOUSEACTIVATE) {
-		// 防止弹出窗获取焦点
-		if (FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW)) {
-			return MA_NOACTIVATE;
-		}
-	}
 	else if (uMsg == WM_NCLBUTTONDOWN) {
-		_wnd_popupclose(pWnd, hWnd, 0, 0);
+		
 	}
 	else if (uMsg == WM_PAINT)  // 15
 	{
 		if (_wnd_wm_paint(pWnd, hWnd)) {
-			return 0;
+			
 		}
 	}
 	else if (uMsg == WM_SHOWWINDOW)  // 24
 	{
+		
 		if (wParam == 0) {
 			HEXOBJ objHittest = pWnd->objHittest_;
 			if (objHittest != 0) {
@@ -674,7 +673,7 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 				SWP_NOACTIVATE);
 		}
 		ShowWindow(hWndShadow, wParam == 0 ? 0 : SW_SHOWNOACTIVATE);
-		InvalidateRect(hWnd, NULL, FALSE);
+		//InvalidateRect(hWnd, NULL, FALSE);
 	}
 	else if (uMsg == WM_GETMINMAXINFO)  // 36
 	{
@@ -690,22 +689,49 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	}
 	else if (
 		uMsg ==
-		WM_MOUSEWHEEL)  // 522
-		// WM_MOUSEFIRST到WM_MOUSELAST包含了WM_MOUSEWHEEL，因此要在下一个判断之前拦截。
+		WM_MOUSEWHEEL)
 	{
 		_wnd_wm_mousewheel(hWnd, pWnd, uMsg, wParam, lParam);
 	}
-	else if (uMsg >= WM_MOUSEFIRST && uMsg < WM_MOUSELAST)  // 512 - 526
+	else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_LBUTTONDBLCLK || uMsg == WM_MOUSEMOVE ||
+		uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONDOWN || uMsg == WM_RBUTTONUP ||
+		uMsg == WM_RBUTTONDBLCLK || uMsg == WM_MBUTTONDOWN || uMsg == WM_MBUTTONUP ||
+		uMsg == WM_MBUTTONDBLCLK || uMsg == WM_XBUTTONDOWN || uMsg == WM_XBUTTONUP ||
+		uMsg == WM_XBUTTONDBLCLK || uMsg == WM_MOUSEHWHEEL)  // 512 - 526
 	{
 		_wnd_wm_mouse(pWnd, hWnd, uMsg, wParam, lParam);
 	}
-	else if (uMsg >= WM_KEYFIRST && uMsg <= WM_KEYLAST)  // 256,264
+	else if (uMsg == WM_MOUSELEAVE)
+	{
+		_wnd_wm_leavecheck(hWnd, pWnd, uMsg, pWnd->objHittestPrev_, 0, 0, wParam, 0, TRUE);
+	}
+	else if (uMsg == WM_MOUSEHOVER)
+	{
+		HEXOBJ hObj = 0;
+		if (((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) //是否按住组件
+			hObj = pWnd->objTrack_;
+		else
+			hObj = pWnd->objHittest_;
+		if (hObj)
+		{
+			obj_s* pObj = nullptr;
+			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, 0))
+			{
+				FLAGS_DEL(pWnd->base.dwFlags_, EWF_BLEAVESENT);
+				pWnd->objHittestPrev_ = hObj;
+				_obj_baseproc(hWnd, hObj, pObj, WM_MOUSEHOVER, wParam, pWnd->dwHitObjPos_Abs_);
+			}
+		}
+	}
+	else if (uMsg == WM_KEYDOWN || uMsg == WM_KEYUP || uMsg == WM_CHAR ||
+		uMsg == WM_DEADCHAR || uMsg == WM_SYSKEYDOWN || uMsg == WM_SYSKEYUP ||
+		uMsg == WM_SYSCHAR || uMsg == WM_SYSDEADCHAR || uMsg == WM_UNICHAR)
 	{
 		_wnd_wm_keyboard(pWnd, hWnd, uMsg, wParam, lParam);
 	}
 	else if (uMsg == WM_CAPTURECHANGED)  // 533
 	{
-		_wnd_wm_captionchange(hWnd, pWnd, lParam);
+		_wnd_obj_untrack(hWnd, pWnd, wParam, lParam, FALSE);
 	}
 	else if (uMsg == WM_CONTEXTMENU)  // 被动接受消息123
 	{
@@ -717,17 +743,11 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	}
 	else if (uMsg == WM_ENTERSIZEMOVE)  // 561
 	{
-		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BSIZEMOVING;
+		FLAGS_ADD(pWnd->base.dwFlags_, EWF_BSIZEMOVING);
 	}
 	else if (uMsg == WM_EXITSIZEMOVE)  // 562
 	{
-		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BSIZEMOVING);
-	}
-	else if (uMsg == WM_MEASUREITEM)  // 44
-	{
-		if (_wnd_wm_measureitem_host(pWnd, wParam, lParam)) {
-			return 1;
-		}
+		FLAGS_DEL(pWnd->base.dwFlags_, EWF_BSIZEMOVING);
 	}
 	else if (uMsg == WM_INITDIALOG)  // 272
 	{
@@ -740,29 +760,10 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	}
 	else if (uMsg == WM_GETDLGCODE)  // 135
 	{
-		if (((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL)) {
+		if (((pWnd->base.dwFlags_ & EWF_BMODAL) == EWF_BMODAL)) {
 			return (DLGC_WANTARROWS | DLGC_WANTTAB | DLGC_WANTALLKEYS |
 				DLGC_WANTMESSAGE | DLGC_HASSETSEL | DLGC_WANTCHARS);
 		}
-	}
-	else if (uMsg == WM_INITMENUPOPUP)  // 279
-	{
-		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
-			return 0;
-		}
-		_wnd_wm_initmenupopup(hWnd, pWnd, (HMENU)wParam);
-	}
-	else if (uMsg == WM_EXITMENULOOP)  // 530
-	{
-		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
-			return 0;
-		}
-		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BMENUINITED);
-		size_t objHittest = pWnd->objHittest_;
-		_wnd_wm_nchittest(pWnd, hWnd, -1);
-		obj_s Obj;
-		_wnd_wm_leavecheck(hWnd, pWnd, objHittest, -1, &Obj, lParam, TRUE);
-		pWnd->dx_counts_ = 0;
 	}
 	else if (uMsg == WM_IME_COMPOSITION)  // 271
 	{
@@ -774,72 +775,6 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 			Ex_ObjSendMessage(_obj_getobjfromidorname(pWnd, WINDOW_STYLE_TITLE), uMsg,
 				wParam, lParam);
 		}
-	}
-	else if (uMsg == MENU_MESSAGE_SELECTITEM)  // MENU_MESSAGE_SELECTITEM
-	{
-		if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) {
-			POINT pt;
-			GetCursorPos(&pt);
-			_wnd_wm_mouse(pWnd, hWnd, WM_MOUSEMOVE, 1,
-				MAKELONG(pt.x - pWnd->left_, pt.y - pWnd->top_));
-			return 0;
-		}
-		else {
-			LONG_PTR item = 0;
-			_wnd_menu_mouse(hWnd, pWnd, WM_MOUSEMOVE, 0, (LONG_PTR*)&wParam);
-			if (LODWORD(wParam) == -1) {
-				return 0;
-			}
-			else {
-				wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
-				if (pMenuHostWnd != 0) {
-					pMenuHostWnd->pMenuPrevWnd_ = pWnd;
-				}
-			}
-		}
-	}
-	else if (uMsg == 0x1E6)  // MN_CANCELMENUS
-	{
-		wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
-		if (pMenuHostWnd != 0) {
-			wnd_s* pMenuTrackWnd = pMenuHostWnd->pMenuTrackWnd_;
-			if (pMenuTrackWnd != 0) {
-				if (((pMenuTrackWnd->dwFlags_ & EWF_BTRACKOBJECT) ==
-					EWF_BTRACKOBJECT)) {
-					_wnd_obj_untrack(pMenuTrackWnd->hWnd_, pMenuTrackWnd, lParam, TRUE);
-					return 0;
-				}
-			}
-		}
-	}
-	else if (uMsg == 0x1ED)  // MN_BUTTONDOWN
-	{
-		// 如果是 TPM_RETURNCMD 模式，完全让系统处理 这样点击菜单后 会又残影
-		/*if (pWnd->lpMenuParams_ && (pWnd->lpMenuParams_->uFlags_ & TPM_RETURNCMD)) {
-			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
-		}*/
-		if (!_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONDOWN, 1, (LONG_PTR*)&wParam)) {
-			return 0;
-		}
-
-		if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT)) {
-			return 0;
-		}
-	}
-	else if (uMsg == 0x1EF)  // MN_BUTTONUP
-	{
-		// 如果是 TPM_RETURNCMD 模式，完全让系统处理 这样点击菜单后 会又残影
-		/*if (pWnd->lpMenuParams_ && (pWnd->lpMenuParams_->uFlags_ & TPM_RETURNCMD)) {
-			return DefSubclassProc(hWnd, uMsg, wParam, lParam);
-		}*/
-		_wnd_menu_mouse(hWnd, pWnd, WM_LBUTTONUP, 0, (LONG_PTR*)&wParam);
-		if (pWnd->objTrackPrev_ != pWnd->objHittest_) {
-			return 0;
-		}
-	}
-	else if (uMsg == 0x01F1)  // MN_DBLCLK
-	{
-		return 0;
 	}
 	else if (uMsg == WM_COPY) {
 		if (_wnd_wm_keyboard(pWnd, hWnd, uMsg, wParam, lParam)) {
@@ -856,6 +791,7 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 
 INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 	HEXTHEME hTheme, LPARAM lParam, WinMsgPROC lpfnMsgProc) {
+	
 	ShowWindow(hWnd, 0);
 	RECT rcWindow{ 0 };
 	GetWindowRect(hWnd, &rcWindow);
@@ -909,14 +845,13 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 	if (hTheme == 0) hTheme = g_Li.hThemeDefault;
 
 	pWnd->dwStyle_ = dwStyle;
-	pWnd->hImc_ = ImmGetContext(hWnd);
 	pWnd->hWnd_ = hWnd;
-	pWnd->hexdui_ = hExDui;
-	pWnd->hTheme_ = hTheme;
+	pWnd->base.hexdui_ = hExDui;
+	pWnd->base.hTheme_ = hTheme;
 	pWnd->width_ = size.cx;
 	pWnd->height_ = size.cy;
 	pWnd->alpha_ = 255;
-	pWnd->dwFlags_ = dwFlags | EWF_BLEAVESENT;
+	pWnd->base.dwFlags_ = dwFlags | EWF_BLEAVESENT;
 	pWnd->pfnMsgProc_ = lpfnMsgProc;
 	pWnd->hTableObjects_ = HashTable_Create(GetNearestPrime(256), NULL);
 
@@ -932,11 +867,9 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 	// layer
 	pWnd->ulwi_.pptDst = (POINT*)((size_t)pWnd + offsetof(wnd_s, left_));
 	pWnd->ulwi_.psize = (SIZE*)((size_t)pWnd + offsetof(wnd_s, width_));
-	pWnd->ulwi_.pptSrc = (POINT*)((size_t)pWnd + offsetof(wnd_s, ulwi_pptSrc_x_));
-	pWnd->ulwi_.pblend =
-		(BLENDFUNCTION*)((size_t)pWnd + offsetof(wnd_s, ulwi_pblend_));
-	pWnd->ulwi_.prcDirty =
-		(RECT*)((size_t)pWnd + offsetof(wnd_s, ulwi_prcDirty_left_));
+	pWnd->ulwi_.pptSrc = &pWnd->ulwi_pptSrc;
+	pWnd->ulwi_.pblend = &pWnd->ulwi_pblend_;
+	pWnd->ulwi_.prcDirty = &pWnd->ulwi_prcDirty;
 
 	pWnd->ulwi_.cbSize = sizeof(pWnd->ulwi_);
 	pWnd->ulwi_.dwFlags = 2;
@@ -948,11 +881,11 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 	pWnd->top_ = rcWindow.top;
 	pWnd->width_ = size.cx;
 	pWnd->height_ = size.cy;
-	pWnd->ulwi_prcDirty_right_ = size.cx;
-	pWnd->ulwi_prcDirty_bottom_ = size.cy;
+	pWnd->ulwi_prcDirty.right = size.cx;
+	pWnd->ulwi_prcDirty.bottom = size.cy;
 	INT nError = 0;
 	// sysshadow,有阴影才创建阴影窗口
-	if (!((pWnd->dwStyle_ & WINDOW_STYLE_NOSHADOW) == WINDOW_STYLE_NOSHADOW)) {
+	if (((pWnd->dwStyle_ & WINDOW_STYLE_NOSHADOW) != WINDOW_STYLE_NOSHADOW) && !FLAGS_CHECK(dwStyle, WINDOW_STYLE_POPUPWINDOW)) {
 		auto style = GetClassLongPtrW(hWnd, GCL_STYLE);
 		if ((style & CS_DROPSHADOW) != 0) {
 			SetClassLongPtrW(hWnd, GCL_STYLE, (style & ~CS_DROPSHADOW));
@@ -962,13 +895,13 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 		HWND hwndShadow = CreateWindowExW(exStyle, (LPCWSTR)g_Li.atomSysShadow, 0,
 			WS_POPUP, 0, 0, 0, 0, hWnd, 0, 0, 0);
 		pWnd->hWndShadow_ = hwndShadow;
-		SetWindowSubclass(hwndShadow, _wnd_shadow_proc, 0, 0);
+		SetWindowSubclass(hwndShadow, _wnd_shadow_proc, 1, (DWORD_PTR)pWnd);
 	}
 
-	// tips
+	// tips TTS_ALWAYSTIP 0x1   TTS_NOPREFIX 0x2
 	HWND hWndTips =
 		CreateWindowExW(WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST,
-			L"tooltips_class32", 0, WS_POPUP, 0, 0, 0, 0, 0, 0, 0, 0);
+			L"tooltips_class32", 0, WS_POPUP | 0x1 | 0x2, 0, 0, 0, 0, 0, 0, 0, 0);
 	SendMessageW(hWndTips, 1048, 0, 2048);  // TTM_SETMAXTIPWIDTH 支持多行
 	pWnd->hWndTips_ = hWndTips;
 	nError = 0;
@@ -993,7 +926,7 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 	tooltrack->uId_ = tooltrack;
 	SendMessageW(hWndTips, 1074, 0, (LPARAM)tooltrack);  // TTM_ADDTOOLW
 	nError = 0;
-	SetWindowSubclass(hWndTips, _wnd_tooltips_proc, 0, (DWORD_PTR)pWnd);
+	SetWindowSubclass(hWndTips, _wnd_tooltips_proc, 2, (DWORD_PTR)pWnd);
 	// 初始化渲染,以及背景
 	_wnd_dx_init(pWnd);
 	INT w1, h1;
@@ -1016,28 +949,28 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 		}
 
 		_wnd_addstyle(hWnd, WS_THICKFRAME, FALSE);  // 强制触发样式被修改事件
-		SetWindowSubclass(hWnd, _wnd_proc, 0, (DWORD_PTR)pWnd);
+		
+		SetWindowSubclass(hWnd, _wnd_proc, (size_t)hWnd, (DWORD_PTR)pWnd);
 		_wnd_delstyle(hWnd, WS_THICKFRAME, FALSE);
-		IME_Control(hWnd, pWnd, FALSE);
+		IME_Control(hWnd, FALSE);
 
 		if (FLAGS_CHECK(dwStyle, WINDOW_STYLE_POPUPWINDOW)) {
 			pWnd->lpPopupParams_ = lParam;
 			if (_handle_validate(pWnd->hExDuiParent_, HT_DUI, (LPVOID*)&pWnd,
 				&nError)) {
-				HWND old = pWnd->hWndPopup_;
-				pWnd->hWndPopup_ = hWnd;
-				DestroyWindow(old);
-				FLAGS_ADD(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN);
+				
 				obj_s* pObj;
 				if (_handle_validate(lParam, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 					_obj_baseproc(hWndParent, lParam, pObj, WM_EX_INITPOPUP, hExDui, 0);
-					IME_Control(hWndParent, pWnd, TRUE);
+					IME_Control(hWndParent, TRUE);
 				}
 			}
 			nError = 0;
 		}
 	}
-
+	CHANGEFILTERSTRUCT cwmf{ sizeof(CHANGEFILTERSTRUCT),0 };
+	ChangeWindowMessageFilterEx(hWnd, WM_DROPFILES, MSGFLT_ALLOW, &cwmf);
+	ChangeWindowMessageFilterEx(hWnd, 0x0049, MSGFLT_ALLOW, &cwmf);
 	return nError;
 }
 
@@ -1045,8 +978,9 @@ LRESULT CALLBACK _wnd_tooltips_proc(HWND hWnd, UINT uMsg, WPARAM wParam,
 	LPARAM lParam, UINT_PTR uIdSubclass,
 	DWORD_PTR dwRefData) {
 	wnd_s* pWnd = (wnd_s*)dwRefData;
-	if (uMsg == WM_DESTROY) {
-		RemoveWindowSubclass(hWnd, _wnd_tooltips_proc, 0);
+	if (uMsg == WM_NCDESTROY) {
+		RemoveWindowSubclass(hWnd, _wnd_tooltips_proc, uIdSubclass);
+		return 0;
 	}
 	else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN) {
 		SendMessageW(hWnd, 1041, 0, (size_t)pWnd + offsetof(wnd_s, ti_track_));
@@ -1058,8 +992,10 @@ LRESULT CALLBACK _wnd_tooltips_proc(HWND hWnd, UINT uMsg, WPARAM wParam,
 LRESULT CALLBACK _wnd_shadow_proc(HWND hWnd, UINT uMsg, WPARAM wParam,
 	LPARAM lParam, UINT_PTR uIdSubclass,
 	DWORD_PTR dwRefData) {
-	if (uMsg == WM_DESTROY) {
-		RemoveWindowSubclass(hWnd, _wnd_shadow_proc, 0);
+	wnd_s* pWnd = (wnd_s*)dwRefData;
+	if (uMsg == WM_NCDESTROY) {
+		RemoveWindowSubclass(hWnd, _wnd_shadow_proc, uIdSubclass);
+		return 0;
 	}
 	return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
@@ -1096,7 +1032,6 @@ HEXOBJ _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, HEXOBJ objLast, INT x,
 	while (_handle_validate(objPrev, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 		if (((pObj->dwStyle_ & OBJECT_STYLE_VISIBLE) == OBJECT_STYLE_VISIBLE)) {
 			RECT rt = { pObj->left_, pObj->top_, pObj->right_, pObj->bottom_ };
-			
 			if (((pObj->base.dwFlags_ & EOF_BPATH) == EOF_BPATH)) //2025.12.13 圆角组件检测
 			{
 				if (_rgn_hittest(pObj->radius_rgn_, po.x - pObj->left_, po.y - pObj->top_))
@@ -1104,7 +1039,8 @@ HEXOBJ _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, HEXOBJ objLast, INT x,
 					goto hit;
 				}
 			}
-			if (PtInRect(&rt, po)) {
+			else if (PtInRect(&rt, po)) 
+			{
 			hit:
 				INT ox = x - pObj->left_;
 				INT oy = y - pObj->top_;
@@ -1127,7 +1063,7 @@ HEXOBJ _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, HEXOBJ objLast, INT x,
 					}
 				}
 				else {
-					objLast = pObj->objChildLast_;
+					objLast = pObj->base.objChildLast_;
 					if (objLast != 0) {
 						auto ret = _wnd_wm_nchittest_obj(hWnd, pWnd, objLast, ox, oy,
 							hitCode, pObjMouse);
@@ -1226,30 +1162,19 @@ INT _wnd_wm_nchittest_sizebox(INT width, INT height, INT x, INT y) {
 }
 
 INT _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
+	//AAAAAAAAAAA不同
 	INT dwHitCode = HTCLIENT;
-
-	if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT))
-		return dwHitCode;
-
-	if (!((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
-		if (((pWnd->dwFlags_ & EWF_BMENUINITED) == EWF_BMENUINITED)) {
-			return dwHitCode;
-		}
-	}
 
 	POINT pt;
 	HEXOBJ objMouse = 0;
-	if (lParam == -1) {
-		GetCursorPos(&pt);
-	}
-	else {
-		pt.x = GET_X_LPARAM(lParam);
-		pt.y = GET_Y_LPARAM(lParam);
-	}
+	
+	pt.x = GET_X_LPARAM(lParam);
+	pt.y = GET_Y_LPARAM(lParam);
+	
 	ScreenToClient(hWnd, &pt);
-	if (_rgn_hittest(pWnd->hrgn_client_, pt.x, pt.y) || pWnd->dwWinState_ == 2) {
+	if (_rgn_hittest(pWnd->hrgn_client_, pt.x, pt.y) || pWnd->dwWinState_ == SIZE_MAXIMIZED) {
 		obj_s* pobjMouse = nullptr;
-		objMouse = _wnd_wm_nchittest_obj(hWnd, pWnd, pWnd->objChildLast_, pt.x,
+		objMouse = _wnd_wm_nchittest_obj(hWnd, pWnd, pWnd->base.objChildLast_, pt.x,
 			pt.y, &dwHitCode, &pobjMouse);
 		if (objMouse == 0) {
 			pobjMouse = 0;
@@ -1264,6 +1189,7 @@ INT _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 			pWnd->dwHitCode_ = dwHitCode;
 			if (objMouse == pWnd->objCaption_) {
 				dwHitCode = HTCAPTION;
+	
 			}
 			else {
 				if (((pobjMouse->dwStyle_ & OBJECT_STYLE_DISABLED) ==
@@ -1302,7 +1228,7 @@ INT _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 }
 
 void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle) {
-	HEXTHEME hTheme = pWnd->hTheme_;
+	HEXTHEME hTheme = pWnd->base.hTheme_;
 	RECT rcCaption = { 0 };
 	_wnd_calc_captionrect(pWnd, &rcCaption);
 	obj_s* pObjCaption = nullptr;
@@ -1377,7 +1303,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle) {
 			if (hfont != 0) _font_destroy(hfont);
 		}
 
-		_obj_create_done(hWnd, pWnd, objCaption, pObjCaption);
+		_obj_create_done(hWnd, pWnd, objCaption, pObjCaption, HWND_TOP);
 		pWnd->objCaption_ = objCaption;
 		nMinHeight = rcCaption.bottom + rcCaption.top;
 	}
@@ -1390,7 +1316,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle) {
 								ATOM_SYSBUTTON_MIN,   ATOM_SYSBUTTON_MENU,
 								ATOM_SYSBUTTON_SKN,   ATOM_SYSBUTTON_SETTING,
 								ATOM_SYSBUTTON_HELP };
-	INT left = rcCaption.right - rcCaption.left;
+	INT right = rcCaption.right - rcCaption.left;
 	INT nMinWidth = 0;
 
 	for (INT i = 0; i < 7; i++) {
@@ -1399,21 +1325,23 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle) {
 			if (lpValuea != 0) {
 				RECT rcObject{ 0 };
 				RtlMoveMemory(&rcObject, lpValuea, 16);
-				rcObject.right = Ex_Scale(rcObject.right - rcObject.left);
-				rcObject.bottom = Ex_Scale(rcObject.bottom - rcObject.top);
+				INT btnWidth = Ex_Scale(rcObject.right - rcObject.left);
+				INT btnHeight = Ex_Scale(rcObject.bottom - rcObject.top);
 
-				left = left - rcObject.right;
+				right = right - btnWidth;
+	
 				obj_s* pObjTmp = nullptr;
 				INT nError = 0;
 				HEXOBJ objTmp =
 					_obj_create_init(hWnd, pWnd, ATOM_SYSBUTTON, 0, &pObjTmp, &nError);
 				if (objTmp != 0) {
 					_obj_create_proc(&nError, FALSE, hTheme, pObjTmp, -1, ATOM_SYSBUTTON,
-						0, OBJECT_STYLE_VISIBLE | aryBtn[i], left, 0,
-						rcObject.right, rcObject.bottom, objCaption,
+						0, OBJECT_STYLE_VISIBLE | aryBtn[i], right, 0,
+						btnWidth, btnHeight, objCaption,
 						aryBtn[i], 0, 0, 0);
-					_obj_create_done(hWnd, pWnd, objTmp, pObjTmp);
-					nMinWidth = nMinWidth + rcObject.right;
+
+					_obj_create_done(hWnd, pWnd, objTmp, pObjTmp, HWND_TOP);
+					nMinWidth = nMinWidth + btnWidth;
 				}
 			}
 		}
@@ -1433,7 +1361,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle) {
 }
 
 void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
-	HEXCANVAS cvDisplay, LPVOID pBitmapDisplay, RECT rcPaint,
+	HEXCANVAS cvDisplay, LPVOID pBitmapDisplay, RECT rcPaint, BOOL ParentBorder,
 	EXHANDLE objChildFirst, INT offsetX, INT offsetY,
 	INT pAlpha, BOOL fDX, LPVOID hBorderBrush) {
 	EXHANDLE objNext = objChildFirst;
@@ -1473,7 +1401,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 										LRESULT ret = 0;
 										if (!(pObj->pfnSubClass_)(hWnd, objNext, WM_PAINT, 0, 0, &ret))
 										{
-
+											
 											pObj->pfnClsProc_(hWnd, objNext, WM_PAINT, 0, 0);
 										}
 									}
@@ -1481,11 +1409,11 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 									{
 										pObj->pfnClsProc_(hWnd, objNext, WM_PAINT, 0, 0);
 									}
-
+									
 									pContext->SetTarget((ID2D1Bitmap*)pBitmapDisplay);
 								}
-								//_canvas_cliprect(pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom); //必须CLIP,防止组件超出父组件
-
+								_canvas_cliprect(pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom); //必须CLIP,防止组件超出父组件
+						
 								if (((pObj->base.dwFlags_ & EOF_BPATH) == EOF_BPATH))
 								{
 									path_s* pPath = nullptr;
@@ -1509,7 +1437,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 								}
 								else
 								{
-
+									
 									if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
 									{
 										_canvas_bitblt(cvDisplay, pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom,
@@ -1521,7 +1449,6 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 											rcClip.left - rcObj.left, rcClip.top - rcObj.top, rcClip.right - rcObj.left, rcClip.bottom - rcObj.top, alpha);
 									}
 								}
-								
 							}
 						}
 						if (hBorderBrush != 0) {
@@ -1529,11 +1456,11 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 								pObj->w_top_, pObj->w_right_, pObj->w_bottom_, 1,
 								D2D1_DASH_STYLE_SOLID);
 						}
-
+						
 						HEXOBJ objChild = pObj->base.objChildFirst_;
 						if (objChild != 0) {
 							_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay,
-								rcClip, objChild, rcObj.left, rcObj.top, alpha,
+								rcClip, ParentBorder | ((pObj->dwStyle_ & OBJECT_STYLE_BORDER) == OBJECT_STYLE_BORDER), objChild, rcObj.left, rcObj.top, alpha,
 								fDX, hBorderBrush);
 						}
 						if (pLayer)
@@ -1541,15 +1468,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 							pContext->PopLayer();
 							pLayer->Release();
 						}
-						if ((pObj->base.dwFlags_ & EOF_BPAGE) != EOF_BPAGE)
-						{
-							if (((pObj->base.dwFlags_ & EOF_BCANREDRAW) == EOF_BCANREDRAW))
-							{
-								//_canvas_resetclip(pObj->canvas_obj_);//在此处执行恢复裁剪
-							}
-							
-						}
-						
+						_canvas_resetclip(pObj->canvas_obj_);//在此处执行恢复裁剪
 					}
 				}
 			}
@@ -1625,19 +1544,21 @@ BOOL _wnd_wm_setcursor(HWND hWnd, wnd_s* pWnd, LPARAM lParam) {
 
 void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent,
 	DWORD dwTime) {
+	//AAAAAAAAAAAAA不同
 	KillTimer(hWnd, idEvent);
 	wnd_s* pWnd = (wnd_s*)(idEvent - TIMER_MOUSETRACK);
 
-	if ((pWnd->dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT) {
+	if ((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT) {
 		POINT pt;
 		GetCursorPos(&pt);
 		if (WindowFromPoint(pt) != hWnd) {
-			if ((pWnd->dwFlags_ & EWF_BLEAVESENT) != EWF_BLEAVESENT) {
-				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEAVESENT;
+			if ((pWnd->base.dwFlags_ & EWF_BLEAVESENT) != EWF_BLEAVESENT) {
+				pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BLEAVESENT;
 				HEXOBJ hObj = pWnd->objHittestPrev_;
 				obj_s* pObj = nullptr;
 				INT nError = 0;
 				if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+					KillTimer(hWnd, (size_t)pObj + TIMER_MOUSEHOVER);
 					_obj_baseproc(hWnd, hObj, pObj, WM_MOUSELEAVE, 0, 0);  // 发送离开
 					pWnd->objHittestPrev_ = pWnd->objHittest_;
 					pWnd->objHittest_ = 0;
@@ -1647,9 +1568,10 @@ void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent,
 	}
 }
 
-void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, HEXOBJ objCheck,
-	HEXOBJ objHittest, obj_s* pObjHittest, LPARAM lParam,
+void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, INT uMsg, HEXOBJ objCheck,
+	HEXOBJ objHittest, obj_s* pObjHittest, LPARAM wParam, LPARAM lParam,
 	BOOL fTrack) {
+	//AAAAAAAAAAAAAAA不同
 	INT nError = 0;
 	if (objHittest == -1) {
 		objHittest = pWnd->objHittest_;
@@ -1659,15 +1581,16 @@ void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, HEXOBJ objCheck,
 		nError = 0;
 		obj_s* pObjCheck = nullptr;
 		if (_handle_validate(objCheck, HT_OBJECT, (LPVOID*)&pObjCheck, &nError)) {
-			if ((pWnd->dwFlags_ & EWF_BLEAVESENT) != EWF_BLEAVESENT) {
-				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEAVESENT;
+			if ((pWnd->base.dwFlags_ & EWF_BLEAVESENT) != EWF_BLEAVESENT) {
+				pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BLEAVESENT;
+				KillTimer(hWnd, (size_t)pObjCheck + TIMER_MOUSEHOVER);
 				_obj_baseproc(hWnd, objCheck, pObjCheck, WM_MOUSELEAVE, 0, lParam);
 			}
 		}
 		if (objHittest != 0) {
-			pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BLEAVESENT);
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ - (pWnd->base.dwFlags_ & EWF_BLEAVESENT);
 			pWnd->objHittestPrev_ = objHittest;
-			_obj_baseproc(hWnd, objHittest, pObjHittest, WM_MOUSEHOVER, 0, lParam);
+			_obj_baseproc(hWnd, objHittest, pObjHittest, WM_MOUSEHOVER, wParam, pWnd->dwHitObjPos_Abs_);
 		}
 	}
 
@@ -1679,26 +1602,10 @@ void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, HEXOBJ objCheck,
 }
 
 INT _wnd_destroy(HWND hWnd, wnd_s* pWnd) {
+	//AAAAAAAAAAAAAAA不同
 	obj_s* pObj = nullptr;
 	INT nError = 0;
-	pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BDESTROYWINDOW;
-
-	if (FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW)) {
-		wnd_s* pWndParent;
-		if (_handle_validate(pWnd->hExDuiParent_, HT_DUI, (LPVOID*)&pWndParent,
-			&nError)) {
-			FLAGS_DEL(pWndParent->dwFlags_, EWF_BPOPUPWINDOIWSHOWN);
-			pWndParent->hWndPopup_ = 0;
-
-			if (_handle_validate(pWnd->lpPopupParams_, HT_OBJECT, (LPVOID*)&pObj,
-				&nError)) {
-				_obj_baseproc(pWndParent->hWnd_, pWnd->lpPopupParams_, pObj, -7, 0, 0);
-				IME_Control(pWndParent->hWnd_, pWndParent, FALSE);
-			}
-		}
-		nError = 0;
-		pObj = NULL;
-	}
+	pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BDESTROYWINDOW;
 
 	// clear MESSAGEBOX
 	if (((pWnd->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) == WINDOW_STYLE_MESSAGEBOX)) {
@@ -1716,12 +1623,12 @@ INT _wnd_destroy(HWND hWnd, wnd_s* pWnd) {
 	DestroyWindow(pWnd->hWndTips_);
 	DestroyWindow(pWnd->hWndShadow_);
 
-	if (_handle_validate(pWnd->objChildFirst_, HT_OBJECT, (LPVOID*)&pObj,
+	if (_handle_validate(pWnd->base.objChildFirst_, HT_OBJECT, (LPVOID*)&pObj,
 		&nError)) {
-		_obj_notify_brothers(hWnd, pWnd->objChildFirst_, pObj, WM_DESTROY, 0, 0,
+		_obj_notify_brothers(hWnd, pWnd->base.objChildFirst_, pObj, WM_DESTROY, 0, 0,
 			FALSE, FALSE);
 	}
-
+	
 	// clear NotifyIcon
 	if (pWnd->lpNid_) {
 		Shell_NotifyIconW(NIM_DELETE, (PNOTIFYICONDATAW)pWnd->lpNid_);
@@ -1755,16 +1662,17 @@ INT _wnd_destroy(HWND hWnd, wnd_s* pWnd) {
 	_canvas_destroy(pWnd->canvas_bkg_);
 	_canvas_destroy(pWnd->canvas_display_);
 
-	if (pWnd->hLayout_ != 0) {
-		_layout_destroy(pWnd->hLayout_);
+	if (pWnd->base.hLayout_ != 0) {
+		_layout_destroy(pWnd->base.hLayout_);
 	}
 
 	_wnd_dx_unint(pWnd);
-	HEXDUI hExDui = pWnd->hexdui_;
+	HEXDUI hExDui = pWnd->base.hexdui_;
 	nError = 0;
 	_handle_destroy(hExDui, &nError);
 	Ex_MemFree(pWnd);
 	Ex_SetLastError(nError);
+
 	return bMainWnd ? 1 : 0;
 }
 
@@ -1776,7 +1684,7 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd) {
 		_canvas_setimageantialias(cvBkg, TRUE);
 		LRESULT result = 0;
 		if (!pWnd->pfnMsgProc_ ||
-			!pWnd->pfnMsgProc_(hWnd, pWnd->hexdui_, WM_ERASEBKGND, cvBkg,
+			!pWnd->pfnMsgProc_(hWnd, pWnd->base.hexdui_, WM_ERASEBKGND, cvBkg,
 				MAKELONG(pWnd->width_, pWnd->height_), &result)) {
 			if (!((pWnd->dwStyle_ & WINDOW_STYLE_NOINHERITBKG) ==
 				WINDOW_STYLE_NOINHERITBKG)) {
@@ -1787,9 +1695,9 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd) {
 					p = pParent;
 				}
 
-				if ((pWnd->dwFlags_ & EWF_BINHERITBKGSTARTED) !=
+				if ((pWnd->base.dwFlags_ & EWF_BINHERITBKGSTARTED) !=
 					EWF_BINHERITBKGSTARTED) {
-					pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BINHERITBKGSTARTED;
+					pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BINHERITBKGSTARTED;
 					SetTimer(hWnd, (size_t)pWnd + TIMER_BKG_INHERIT, 100,
 						&_wnd_backgroundimage_timer_inherit);
 				}
@@ -1799,8 +1707,8 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd) {
 			_canvas_clear(cvBkg, p->crBkg_);
 
 			// 绘制背景
-			if (p->lpBackgroundImage_) {
-				_canvas_drawimagefrombkgimg(cvBkg, p->lpBackgroundImage_);
+			if (p->base.lpBackgroundImage_) {
+				_canvas_drawimagefrombkgimg(cvBkg, p->base.lpBackgroundImage_);
 			}
 		}
 
@@ -1813,12 +1721,12 @@ void _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd) {
 			_msgbox_drawinfo(pWnd, cvBkg);
 		}
 		if (FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_COMBOWINDOW)) {
-			Ex_ThemeDrawControl(pWnd->hTheme_, cvBkg, 0, 0, pWnd->width_ - 1,
+			Ex_ThemeDrawControl(pWnd->base.hTheme_, cvBkg, 0, 0, pWnd->width_ - 1,
 				pWnd->height_ - 1, -1741080004, ATOM_NORMAL, 255);
 		}
 	}
 	_canvas_enddraw(cvBkg);
-	_obj_compostied_all(pWnd->objChildFirst_);
+	_obj_compostied_all(pWnd->base.objChildFirst_);
 }
 
 void _wnd_render_dc(HWND hWnd, wnd_s* pWnd, LPVOID hDC, HEXCANVAS cvDisplay,
@@ -1826,10 +1734,10 @@ void _wnd_render_dc(HWND hWnd, wnd_s* pWnd, LPVOID hDC, HEXCANVAS cvDisplay,
 	LPVOID mDC = _canvas_getdc(cvDisplay);
 	if (mDC != 0) {
 		if (fLayer) {
-			pWnd->ulwi_prcDirty_left_ = rcPaint.left;
-			pWnd->ulwi_prcDirty_top_ = rcPaint.top;
-			pWnd->ulwi_prcDirty_right_ = rcPaint.right;
-			pWnd->ulwi_prcDirty_bottom_ = rcPaint.bottom;
+			pWnd->ulwi_prcDirty.left = rcPaint.left;
+			pWnd->ulwi_prcDirty.top = rcPaint.top;
+			pWnd->ulwi_prcDirty.right = rcPaint.right;
+			pWnd->ulwi_prcDirty.bottom = rcPaint.bottom;
 
 			pWnd->ulwi_.hdcSrc = (HDC)mDC;
 			if (g_Li.pfnUpdateLayeredWindowIndirect) {
@@ -1838,14 +1746,19 @@ void _wnd_render_dc(HWND hWnd, wnd_s* pWnd, LPVOID hDC, HEXCANVAS cvDisplay,
 			}
 			else {
 				BLENDFUNCTION pb_;
-				pb_.BlendOp = 0;
+				pb_.BlendOp = AC_SRC_OVER;
 				pb_.BlendFlags = 0;
 				pb_.SourceConstantAlpha = 0xFF;
-				pb_.AlphaFormat = 1;
+				pb_.AlphaFormat = AC_SRC_ALPHA;
 				UpdateLayeredWindow(hWnd, 0, 0, (SIZE*)pWnd->ulwi_.psize,
 					pWnd->ulwi_.hdcSrc, (POINT*)pWnd->ulwi_.pptSrc, 0,
 					&pb_, ULW_ALPHA);
 			}
+			//AAAAAAAAAAAAAAAA不同
+			pWnd->ulwi_prcDirty.left = 0;
+			pWnd->ulwi_prcDirty.top = 0;
+			pWnd->ulwi_prcDirty.right = 0;
+			pWnd->ulwi_prcDirty.bottom = 0;
 		}
 		else {
 			BitBlt((HDC)hDC, rcPaint.left, rcPaint.top, rcPaint.right - rcPaint.left,
@@ -1858,82 +1771,19 @@ void _wnd_render_dc(HWND hWnd, wnd_s* pWnd, LPVOID hDC, HEXCANVAS cvDisplay,
 
 void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 	BOOL fDX) {
-	pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BRENDERING;
-
-	if ((pWnd->dwFlags_ & EWF_BREDRAWBACKGROUND) == EWF_BREDRAWBACKGROUND) {
-		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BREDRAWBACKGROUND);
+	//AAAAAAAAAAAAAAAA不同
+	if ((pWnd->base.dwFlags_ & EWF_BREDRAWBACKGROUND) == EWF_BREDRAWBACKGROUND) {
+		FLAGS_DEL(pWnd->base.dwFlags_, EWF_BREDRAWBACKGROUND);
 		_wnd_paint_bkg(hWnd, pWnd);
 	}
 	HEXCANVAS cvDisplay = pWnd->canvas_display_;
 	if (_canvas_begindraw(cvDisplay)) {
-		ID2D1DeviceContext* pContext = nullptr;
-		ID2D1Bitmap* pBitmapDisplay = nullptr;
-		if (fDX) {
-			pContext = pWnd->dx_context_;
-			pBitmapDisplay =
-				(ID2D1Bitmap*)_canvas_getcontext(cvDisplay, CANVAS_DX_D2DBITMAP);
+		_canvas_clear(cvDisplay, 0);//必须清除背景色为透明
+		ID2D1DeviceContext* pContext = pContext = pWnd->dx_context_;
+		ID2D1Bitmap* pBitmapDisplay =
+			(ID2D1Bitmap*)_canvas_getcontext(cvDisplay, CANVAS_DX_D2DBITMAP);
 
-			if (pWnd->Radius_ == 0 || !_wnd_querystyle(hWnd, WS_EX_LAYERED, TRUE)) {
-				_dx_bmp_copyfrom(&pBitmapDisplay,
-					(ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_,
-						CANVAS_DX_D2DBITMAP),
-					rcPaint.left, rcPaint.top, rcPaint.left, rcPaint.top,
-					rcPaint.right, rcPaint.bottom);
-			}
-			else {
-				int nError = 0;
-				canvas_s* pCanvas = nullptr;
-				if (_handle_validate(pWnd->canvas_bkg_, HT_CANVAS, (LPVOID*)&pCanvas,
-					&nError)) {
-					ID2D1DeviceContext* pContext = pCanvas->pContext_;
-					pContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-					pContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_DEFAULT);
-					// 创建兼容渲染目标
-					ID2D1BitmapRenderTarget* bmpRenderTarget = nullptr;
-					pContext->CreateCompatibleRenderTarget(&bmpRenderTarget);
-					ID2D1BitmapBrush* br = nullptr;
-					HRESULT hr = g_Ri.pD2DDeviceContext->CreateBitmapBrush(
-						(ID2D1Bitmap*)_canvas_getcontext(pWnd->canvas_bkg_,
-							CANVAS_DX_D2DBITMAP),
-						&br);
-					if (SUCCEEDED(hr)) {
-						bmpRenderTarget->BeginDraw();
-						bmpRenderTarget->Clear(0);
-						D2D1_ROUNDED_RECT rc = { 0 };
-						rc.radiusX = pWnd->Radius_;
-						rc.radiusY = pWnd->Radius_;
-						rc.rect = D2D1::RectF(0, 0, pWnd->width_, pWnd->height_);
-						bmpRenderTarget->FillRoundedRectangle(rc, br);
-						br->Release();
-						hr = bmpRenderTarget->EndDraw();
-					}
-
-					if (SUCCEEDED(hr)) {
-						ID2D1Bitmap* bitmap;
-						bmpRenderTarget->GetBitmap(&bitmap);
-						_dx_bmp_copyfrom(&pBitmapDisplay, bitmap, rcPaint.left, rcPaint.top,
-							rcPaint.left, rcPaint.top, rcPaint.right,
-							rcPaint.bottom);
-						bitmap->Release();
-					}
-					else {
-						_dx_bmp_copyfrom(&pBitmapDisplay,
-							(ID2D1Bitmap*)_canvas_getcontext(
-								pWnd->canvas_bkg_, CANVAS_DX_D2DBITMAP),
-							rcPaint.left, rcPaint.top, rcPaint.left,
-							rcPaint.top, rcPaint.right, rcPaint.bottom);
-					}
-
-					bmpRenderTarget->Release();
-				}
-			}
-			_dx_settarget(pContext, (ID2D1Bitmap*)pBitmapDisplay);
-		}
-		else {
-			_canvas_bitblt(cvDisplay, pWnd->canvas_bkg_, rcPaint.left, rcPaint.top,
-				rcPaint.right, rcPaint.bottom, rcPaint.left, rcPaint.top);
-		}
-
+		pContext->SetTarget(pBitmapDisplay);
 		ID2D1Layer* pLayer = nullptr;
 		ID2D1RoundedRectangleGeometry* pClipGeometry = nullptr;
 		// 在调用_wnd_render_obj前插入：
@@ -1941,65 +1791,36 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 			pContext->CreateLayer(nullptr, &pLayer);
 			D2D1_ROUNDED_RECT clipRect;
 			clipRect.rect = D2D1::RectF(0, 0, pWnd->width_, pWnd->height_);
-			clipRect.radiusX = pWnd->Radius_;
-			clipRect.radiusY = pWnd->Radius_;
+			clipRect.radiusX = pWnd->Radius_ * g_Li.DpiX;
+			clipRect.radiusY = pWnd->Radius_ * g_Li.DpiX;
 			// 创建圆角矩形几何对象
-			g_Ri.pD2Dfactory->CreateRoundedRectangleGeometry(clipRect,
-				&pClipGeometry);
+			g_Ri.pD2Dfactory->CreateRoundedRectangleGeometry(clipRect, &pClipGeometry);
 			// 配置图层参数
 			D2D1_LAYER_PARAMETERS1 layerParams = D2D1::LayerParameters1();
 			layerParams.geometricMask = pClipGeometry;  // 直接赋值几何对象
-			layerParams.contentBounds = D2D1::InfiniteRect();
-			layerParams.maskAntialiasMode = D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
-			layerParams.maskTransform = D2D1::Matrix3x2F::Identity();
-			layerParams.opacity = 1.0f;
-			layerParams.opacityBrush = nullptr;
-			layerParams.layerOptions = D2D1_LAYER_OPTIONS1_INITIALIZE_FROM_BACKGROUND;//重要防止编辑框黑色背景
 			// 应用图层裁剪
 			pContext->PushLayer(&layerParams, pLayer);
 		}
-		LPVOID hBrush = nullptr;
-		if (Flag_Query(ENGINE_FLAG_OBJECT_SHOWRECTBORDER)) {
-			hBrush = _brush_create(-65536);
-		}
-
-		_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcPaint,
-			pWnd->objChildFirst_, 0, 0, 255, fDX, hBrush);
-		if (pWnd->Radius_ != 0 && fDX) {
+		
+		_canvas_drawcanvas(cvDisplay, pWnd->canvas_bkg_, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom, rcPaint.left, rcPaint.top, 255, 0);
+		_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcPaint, FALSE,
+			pWnd->base.objChildFirst_, 0, 0, 255, fDX, g_Li.hObjBorderBrush);
+		if (pWnd->Radius_ != 0) {
 			// 使用后释放几何对象
 			if (pClipGeometry) pClipGeometry->Release();
 			if (pLayer) pContext->PopLayer();
 			if (pLayer) pLayer->Release();
 		}
-		_brush_destroy(hBrush);
-
 		_wnd_render_dc(hWnd, pWnd, hDC, cvDisplay, rcPaint, fLayer);
-
+	
 		_canvas_enddraw(cvDisplay);
 	}
-	pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BRENDERING);
-}
-
-INT _wnd_popupclose(wnd_s* pWnd, HWND hWnd, INT wParam, obj_s* pObj) {
-	INT result = 0;
-	INT nError = 0;
-
-	if (FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN)) {
-		if (!pObj ||
-			(!_handle_validate(pWnd->lpPopupParams_, HT_OBJECT, (LPVOID*)&pObj,
-				&nError)) ||
-			(result = _obj_baseproc(hWnd, pObj->hObj_, pObj, -7, wParam, 0)) == 0) {
-			FLAGS_DEL(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN);
-			result = DestroyWindow(pWnd->hWndPopup_);
-		}
-	}
-	return result;
 }
 
 void _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width,
 	INT height) {
-	pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BRENDERED);
-	pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_SIZED | EWF_BREDRAWBACKGROUND;
+	pWnd->base.dwFlags_ = pWnd->base.dwFlags_ - (pWnd->base.dwFlags_ & EWF_BRENDERED);
+	pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_SIZED | EWF_BREDRAWBACKGROUND;
 	if (width != pWnd->width_ || height != pWnd->height_) {
 		if (((pWnd->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) ==
 			WINDOW_STYLE_MESSAGEBOX)) {
@@ -2007,285 +1828,86 @@ void _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width,
 		}
 
 		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
-			width = width - GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
-			height = height - GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
+			width = width - 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
+			//width = Ex_Scale(width);
+			//height = Ex_Scale(height);
 		}
 		_wnd_recalcclient(pWnd, hWnd, width, height);
-		_layout_update(pWnd->hLayout_);
+		_layout_update(pWnd->base.hLayout_);
 		RECT rcCaption{ 0 };
 		_wnd_calc_captionrect(pWnd, &rcCaption);
 		Ex_ObjSetPos(pWnd->objCaption_, 0, 0, 0, rcCaption.right - rcCaption.left,
 			OBJECT_POSITION_DEFAULT,
 			SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS |
-			SWP_EX_NODPISCALE);
+			SWP_EX_NODPISCALE | SWP_ASYNCWINDOWPOS);
+		HEXOBJ hObj = 0;
 		if (pWnd->dwWinState_ != wParam) {
+			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_HELP) == 
+				WINDOW_STYLE_BUTTON_HELP))
+			{
+				hObj = _obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_HELP);
+				Ex_ObjInvalidateRect(hObj, 0);
+			}
+			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_SETTING) ==
+				WINDOW_STYLE_BUTTON_SETTING))
+			{
+				hObj = _obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_SETTING);
+				Ex_ObjInvalidateRect(hObj, 0);
+			}
+			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_MENU) ==
+				WINDOW_STYLE_BUTTON_MENU))
+			{
+				hObj = _obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_MENU);
+				Ex_ObjInvalidateRect(hObj, 0);
+			}
+			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_SKIN) ==
+				WINDOW_STYLE_BUTTON_SKIN))
+			{
+				hObj = _obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_SKIN);
+				Ex_ObjInvalidateRect(hObj, 0);
+			}
 			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_MAX) ==
 				WINDOW_STYLE_BUTTON_MAX)) {
-				Ex_ObjInvalidateRect(
-					_obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_MAX), 0);
+				hObj = _obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_MAX);
+				Ex_ObjInvalidateRect(hObj, 0);
 			}
 
 			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_MIN) ==
 				WINDOW_STYLE_BUTTON_MIN)) {
-				Ex_ObjInvalidateRect(
-					_obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_MIN), 0);
+				hObj = _obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_MIN);
+				Ex_ObjInvalidateRect(hObj, 0);
 			}
 			pWnd->dwWinState_ = wParam;
 		}
+		if (wParam != SIZE_MINIMIZED) // 窗口已最小化
+		{
+			if (wParam == SIZE_MAXIMIZED)
+			{
+				Ex_ObjSetRadius(pWnd->objCaption_, 0, 0, 0, 0, TRUE);
+				Ex_ObjSetRadius(hObj, 0, 0, 0, 0, TRUE);
+			}
+			else
+			{
+				if (pWnd->Radius_ == 0)
+				{
+					Ex_ObjSetRadius(pWnd->objCaption_, 0, 0, 0, 0, TRUE);
+					Ex_ObjSetRadius(hObj, 0, 0, 0, 0, TRUE);
+				}
+				else
+				{
+					Ex_ObjSetRadius(pWnd->objCaption_, pWnd->Radius_, pWnd->Radius_, 0, 0, TRUE);
+					Ex_ObjSetRadius(hObj, 0, pWnd->Radius_, 0, 0, TRUE);
+				}
+			}
+		}
 	}
 	InvalidateRect(hWnd, 0, FALSE);
-}
-
-void _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* pos) {
-	wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
-	wnd_s* pMenuPrevWnd = nullptr;
-	RECT rcParent{ 0 };
-	RECT rcScreen{ 0 };
-
-	// 获取屏幕工作区域
-	SystemParametersInfo(SPI_GETWORKAREA, 0, &rcScreen, 0);
-
-	if (pMenuHostWnd != 0) {
-		pMenuPrevWnd = pMenuHostWnd->pMenuPrevWnd_;
-		if (pMenuPrevWnd != 0) {
-			GetWindowRect(pMenuPrevWnd->hWnd_, &rcParent);
-		}
-	}
-
-	auto offset = LOBYTE(HIWORD(pWnd->szItemSeparator_));
-	INT x = pos->x;
-	INT y = pos->y;
-
-	// 获取子菜单尺寸
-	RECT rcSubMenu;
-	GetWindowRect(hWnd, &rcSubMenu);
-	INT subMenuWidth = rcSubMenu.right - rcSubMenu.left;
-	INT subMenuHeight = rcSubMenu.bottom - rcSubMenu.top;
-
-	POINT pt;
-	GetCursorPos(&pt);
-
-	// 水平方向定位
-	if (rcParent.left < x) {  // 子菜单在右边
-		x = rcParent.right + offset - 1;
-
-		// 检查右侧空间是否足够
-		if (x + subMenuWidth > rcScreen.right) {
-			// 空间不足，显示在左侧
-			x = rcParent.left - subMenuWidth - offset + 1;
-		}
-	}
-	else {  // 子菜单在左边
-		x = rcParent.left - subMenuWidth - offset + 1;
-
-		// 检查左侧空间是否足够
-		if (x < rcScreen.left) {
-			// 空间不足，显示在右侧
-			x = rcParent.right + offset - 1;
-		}
-	}
-
-	pos->x = x;
-
-	if (pMenuPrevWnd != 0) {
-		HEXOBJ hObj = pMenuPrevWnd->objFocus_;
-		obj_s* pObj = nullptr;
-		INT nError = 0;
-		if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-			LPVOID padding_client = pWnd->padding_client_;
-			y = pObj->w_top_ + pMenuPrevWnd->top_ - __get_int(padding_client, 4);
-
-			// 检查垂直方向空间
-			if (y + subMenuHeight > rcScreen.bottom) {
-				// 空间不足，向上调整位置
-				y = rcScreen.bottom - subMenuHeight;
-
-				// 如果向上调整后顶部超出，则限制在屏幕内
-				if (y < rcScreen.top) {
-					y = rcScreen.top;
-					// 如果菜单高度超过屏幕高度，需要启用滚动或限制高度
-					// 这里可以添加滚动逻辑或高度限制
-				}
-			}
-
-			// 确保位置不低于屏幕顶部
-			if (y < rcScreen.top) {
-				y = rcScreen.top;
-			}
-		}
-	}
-
-	pos->y = y;
-}
-
-void _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd) {
-	size_t hMenu = SendMessageW(hWnd, MN_GETHMENU, 0, 0);
-	HEXTHEME hTheme = pWnd->hTheme_;
-	LPVOID lpPaddingText =
-		Ex_ThemeGetValuePtr(hTheme, ATOM_DUIMENU, ATOM_PADDING_TEXT);
-	INT nCount = GetMenuItemCount((HMENU)hMenu);
-	wnd_s* pMenuHostWnd = pWnd->pMenuHostWnd_;
-	HWND hParent = pMenuHostWnd->hWnd_;
-	RECT rcParent{ 0 };
-	GetWindowRect(hParent, &rcParent);
-	LPVOID padding_client = pWnd->padding_client_;
-	RECT rcPaddingClient = { 0 };
-	if (padding_client != 0) {
-		RtlMoveMemory(&rcPaddingClient, padding_client, 16);
-		if (g_Li.DpiX > 1) {
-			rcPaddingClient.left = rcPaddingClient.left * g_Li.DpiX;
-			rcPaddingClient.top = rcPaddingClient.top * g_Li.DpiX;
-			rcPaddingClient.right = rcPaddingClient.right * g_Li.DpiX;
-			rcPaddingClient.bottom = rcPaddingClient.bottom * g_Li.DpiX;
-		}
-	}
-
-	obj_s* pParnet = nullptr;
-	INT nError = 0;
-	HEXOBJ objParent =
-		_obj_create_init(hWnd, pWnd, ATOM_PAGE, 0, &pParnet, &nError);
-	if (objParent != 0) {
-		INT width = pWnd->width_ - (rcPaddingClient.left + rcPaddingClient.right);
-		INT height = pWnd->height_ - (rcPaddingClient.top + rcPaddingClient.bottom);
-		_obj_create_proc(&nError, FALSE, hTheme, pParnet, OBJECT_STYLE_EX_FOCUSABLE,
-			ATOM_PAGE, 0,
-			OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL |
-			OBJECT_STYLE_MENUITEM_SUBMENU,
-			rcPaddingClient.left, rcPaddingClient.top, width, height,
-			0, 0, 0, 0, 0);
-		_obj_create_done(hWnd, pWnd, objParent, pParnet);
-		HEXOBJ objPP = objParent;
-		HEXLAYOUT hLayout = _layout_create(LAYOUT_TYPE_ABSOLUTE, pWnd->hexdui_);
-		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
-			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
-			rcPaddingClient.left);
-		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_TOP,
-			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
-			rcPaddingClient.top);
-		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
-			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
-			rcPaddingClient.right);
-		_layout_absolute_setedge(hLayout, objPP, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
-			LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX,
-			rcPaddingClient.bottom);
-		nError = 0;
-		objParent = _obj_create_init(hWnd, pWnd, ATOM_PAGE, 0, &pParnet, &nError);
-		if (objParent != 0) {
-			INT heightParent = height;
-			_obj_create_proc(
-				&nError, FALSE, hTheme, pParnet, OBJECT_STYLE_EX_FOCUSABLE, ATOM_PAGE,
-				0, OBJECT_STYLE_VISIBLE, 0, 0, width, height, objPP, 0, 0, 0, 0);
-			_obj_create_done(hWnd, pWnd, objParent, pParnet);
-			hLayout = _layout_create(LAYOUT_TYPE_ABSOLUTE, objPP);
-			_layout_absolute_setedge(hLayout, objParent, LAYOUT_SUBPROP_ABSOLUTE_LEFT,
-				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
-			_layout_absolute_setedge(hLayout, objParent, LAYOUT_SUBPROP_ABSOLUTE_TOP,
-				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
-			_layout_absolute_setedge(hLayout, objParent,
-				LAYOUT_SUBPROP_ABSOLUTE_RIGHT,
-				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
-			_layout_absolute_setedge(hLayout, objParent,
-				LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
-				LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 0);
-			height = 0;
-			MENUITEMINFOW mii;
-			mii.cbSize = sizeof(MENUITEMINFOW);
-			mii.fMask = MIIM_FTYPE | MIIM_SUBMENU | MIIM_ID;
-			RECT rcItem{ 0 };
-			INT eos;
-			INT offsetTop = 0;
-			for (INT i = 0; i < nCount; i++) {
-				if (GetMenuItemRect(hParent, (HMENU)hMenu, i, &rcItem)) {
-					eos = OBJECT_STYLE_VISIBLE;
-					if (GetMenuItemInfoW((HMENU)hMenu, i, TRUE, &mii)) {
-						if ((mii.fType & MFT_SEPARATOR) != 0)  // 分隔符
-						{
-							eos = eos | OBJECT_STYLE_MENUITEM_SEPARATOR;
-						}
-						else {
-							if (mii.hSubMenu != 0) {
-								eos = eos | OBJECT_STYLE_MENUITEM_SUBMENU;
-							}
-						}
-					}
-					WCHAR buff[520];
-					OffsetRect(&rcItem, -rcParent.left, -rcParent.top);
-					// 组件超出屏幕左边会出现菜单项目左边负数
-					if (rcItem.left < 0) {
-						INT offset = abs(rcItem.left);
-						rcItem.left = rcItem.left + offset;
-						rcItem.right = rcItem.right + offset;
-					}
-					else if (rcItem.left > 0) {
-						INT offset = abs(rcItem.left);
-						rcItem.left = rcItem.left - offset;
-						rcItem.right = rcItem.right - offset;
-					}
-					// 判断第一项，取第一项顶边偏移,组件移到屏幕最顶端二级子菜单第一项会负数
-					if (rcItem.top < 0 && i == 0) {
-						offsetTop = abs(rcItem.top);
-					}
-
-					rcItem.top = rcItem.top + offsetTop;
-					rcItem.bottom = rcItem.bottom + offsetTop;
-
-					GetMenuStringW((HMENU)hMenu, i, buff, 520, MF_BYPOSITION);
-					obj_s* pObj = nullptr;
-					nError = 0;
-					HEXOBJ hObj =
-						_obj_create_init(hWnd, pWnd, ATOM_ITEM, 0, &pObj, &nError);
-					if (hObj != 0) {
-						_obj_create_proc(
-							&nError, FALSE, hTheme, pObj,
-							OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_TABSTOP, ATOM_ITEM,
-							buff, eos, rcItem.left, rcItem.top, width,
-							rcItem.bottom - rcItem.top, objParent, mii.wID, 0, i,
-							DT_VCENTER | DT_SINGLELINE);
-
-						pObj->dwFlags_ = pObj->dwFlags_ | EOF_BMENUITEM;
-						_obj_create_done(hWnd, pWnd, hObj, pObj);
-						if (lpPaddingText != 0) {
-							RtlMoveMemory((LPVOID)((size_t)pObj + offsetof(obj_s, t_left_)),
-								lpPaddingText, 16);
-							if (g_Li.DpiX > 1) {
-								pObj->t_left_ = pObj->t_left_ * g_Li.DpiX;
-								pObj->t_top_ = pObj->t_top_ * g_Li.DpiY;
-								pObj->t_right_ = pObj->t_right_ * g_Li.DpiX;
-								pObj->t_bottom_ = pObj->t_bottom_ * g_Li.DpiY;
-							}
-						}
-					}
-					height = height + rcItem.bottom - rcItem.top;
-				}
-			}
-			_obj_setpos_org(pParnet, objParent, 0, OBJECT_POSITION_DEFAULT,
-				OBJECT_POSITION_DEFAULT, OBJECT_POSITION_DEFAULT, height,
-				SWP_NOMOVE | SWP_NOZORDER | SWP_NOREDRAW |
-				SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_EX_NODPISCALE,
-				0);
-			height = height - 1;
-			Ex_ObjScrollShow(objPP, SCROLLBAR_TYPE_VERT, height - heightParent > 0);
-			Ex_ObjScrollSetInfo(objPP, SCROLLBAR_TYPE_VERT, SIF_RANGE | SIF_PAGE, 0,
-				height - heightParent, heightParent, 0, TRUE);
-		}
-	}
-	SendMessageW(hWnd, WM_INITMENUPOPUP, hMenu, 0);
-}
-
-void _wnd_menu_init(HWND hWnd, wnd_s* pWnd) {
-	if ((pWnd->dwFlags_ & EWF_BMENUINITED) != EWF_BMENUINITED) {
-		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMENUINITED;
-		_wnd_menu_createitems(hWnd, pWnd);
-		ShowWindow(pWnd->hWndShadow_, SW_SHOWNOACTIVATE);
-
-		SetWindowLongPtrW(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-		InvalidateRect(hWnd, NULL, FALSE);
-	}
+	UpdateWindow(hWnd);
 }
 
 void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush) {
 	if (!((pWnd->dwStyle_ & WINDOW_STYLE_NOSHADOW) == WINDOW_STYLE_NOSHADOW)) {
-		if ((pWnd->dwFlags_ & EWF_BRENDERED) == EWF_BRENDERED) {
+		if ((pWnd->base.dwFlags_ & EWF_BRENDERED) == EWF_BRENDERED) {
 			HWND hWnd = pWnd->hWndShadow_;
 			POINT ptDst;
 			ptDst.x = pWnd->left_;
@@ -2312,14 +1934,15 @@ void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush) {
 						pWnd, sz.cx, sz.cy, CANVAS_FLAG_GDI_COMPATIBLE, &nError);
 					if (cvShadow != 0) {
 						INT alpha =
-							((pWnd->dwFlags_ & EWF_ACTIVE) == EWF_ACTIVE) ? 255 : 204;
+							((pWnd->base.dwFlags_ & EWF_ACTIVE) == EWF_ACTIVE) ? 255 : 204;
 						alpha = alpha * pWnd->alpha_ / 255;
 						if (_canvas_begindraw(cvShadow)) {
 							_canvas_setantialias(cvShadow, TRUE);
 							_canvas_setimageantialias(cvShadow, TRUE);
+							float radi = pWnd->Radius_ * g_Li.DpiX;
 							_canvas_drawshadow(cvShadow, 11, 11, sz.cx - 11, sz.cy - 11, 11,
-								pWnd->crSD_, pWnd->Radius_, pWnd->Radius_,
-								pWnd->Radius_, pWnd->Radius_, 0, 0);
+								pWnd->crSD_, radi, radi,
+								radi, radi, 0, 0);
 							LPVOID mDC = _canvas_getdc(cvShadow);
 							if (mDC != 0) {
 								POINT ptSrc = { 0 };
@@ -2346,37 +1969,28 @@ void _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush) {
 BOOL _wnd_wm_paint(wnd_s* pWnd, HWND hWnd) {
 	PAINTSTRUCT ps = { 0 };
 
-	if (((pWnd->dwFlags_ & EWF_INTED) == EWF_INTED)) {
-		BOOL fSized = ((pWnd->dwFlags_ & EWF_SIZED) == EWF_SIZED);
-		if (fSized) {
-			pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_SIZED);
-		}
-
-		BOOL fLayer = ((pWnd->dwFlags_ & EWF_BLAYERED) == EWF_BLAYERED);
-
-		if (fLayer) {
-			if (fSized) {
-				ps.rcPaint.right = pWnd->width_;
-				ps.rcPaint.bottom = pWnd->height_;
-			}
-			else {
-				GetUpdateRect(hWnd, &ps.rcPaint, FALSE);
-
-				if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
-				}
-			}
-		}
-		else {
-			BeginPaint(hWnd, &ps);
-		}
-
-		_wnd_render(hWnd, pWnd, ps.hdc, ps.rcPaint, fLayer, TRUE);
-		if (!fLayer) {
-			EndPaint(hWnd, &ps);
-		}
+	BOOL fSized = ((pWnd->base.dwFlags_ & EWF_SIZED) == EWF_SIZED);
+	if (fSized) {
+		pWnd->base.dwFlags_ = pWnd->base.dwFlags_ - (pWnd->base.dwFlags_ & EWF_SIZED);
 	}
-	if ((pWnd->dwFlags_ & EWF_BRENDERED) != EWF_BRENDERED) {
-		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BRENDERED;
+
+	BOOL fLayer = ((pWnd->base.dwFlags_ & EWF_BLAYERED) == EWF_BLAYERED);
+	//AAAAAAAAAAAAAA不同
+	if (fLayer) {
+		ps.rcPaint.right = pWnd->width_;
+		ps.rcPaint.bottom = pWnd->height_;
+	}
+	else {
+		BeginPaint(hWnd, &ps);
+	}
+
+	_wnd_render(hWnd, pWnd, ps.hdc, ps.rcPaint, fLayer, TRUE);
+	if (!fLayer) {
+		EndPaint(hWnd, &ps);
+	}
+	
+	if ((pWnd->base.dwFlags_ & EWF_BRENDERED) != EWF_BRENDERED) {
+		pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BRENDERED;
 		_wnd_paint_shadow(pWnd, TRUE, FALSE);
 	}
 	return FALSE;
@@ -2386,9 +2000,7 @@ BOOL _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 	RECT rcMonitor{ 0 }, rcDesk{ 0 };
 	BOOL ret = FALSE;
 	if (_wnd_getscreenrect(hWnd, &rcMonitor, &rcDesk)) {
-		INT width = pWnd->width_;
-		INT height = pWnd->height_;
-
+	
 		if (((pWnd->dwStyle_ & WINDOW_STYLE_FULLSCREEN) ==
 			WINDOW_STYLE_FULLSCREEN))  // 全屏模式
 		{
@@ -2420,159 +2032,179 @@ BOOL _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 }
 
 void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj,
-	INT uMsg, WPARAM wParam, LPARAM lParam) {
-	if ((pWnd->dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT) {
-		pWnd->dwFlags_ =
-			pWnd->dwFlags_ - (pWnd->dwFlags_ & (EWF_BLEFTTRACK | EWF_BRIGHTTRACK |
+	INT uMsg, WPARAM wParam, LPARAM lParam, BOOL sendmsg) {
+	if ((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT) {
+		FLAGS_DEL(pWnd->base.dwFlags_ , (EWF_BLEFTTRACK | EWF_BRIGHTTRACK |
 				EWF_BMIDTRACK | EWF_BLEFTDTRACK));
-		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BTRACKOBJECT;
+
+		pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BTRACKOBJECT;
 		if (uMsg == WM_LBUTTONDOWN) {
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEFTTRACK;
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BLEFTTRACK;
 			_obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE);
 		}
 		else if (uMsg == WM_LBUTTONDBLCLK) {
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BLEFTDTRACK;
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BLEFTDTRACK;
 			_obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE);
-			uMsg = WM_LBUTTONDOWN;
 		}
 		else if (uMsg == WM_RBUTTONDOWN) {
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BRIGHTTRACK;
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BRIGHTTRACK;
 		}
 		else {
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMIDTRACK;
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BMIDTRACK;
 		}
 		pWnd->objTrack_ = hObj;
 		_obj_tooltips_popup(pWnd, 0, 0, -1, -1, -1, 0, FALSE);
-		_obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
+		//AAAAAAAAAAAAAAAAAA不同
 		if (wParam != 0) {
 			SetCapture(hWnd);  // 对menu窗口无效
 		}
 	}
+	if (sendmsg)
+	{
+		_obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
+	}
 }
 
-void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, LPARAM lParam,
+void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam,
 	BOOL fMsgDispatch) {
-	if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) {
-		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BTRACKOBJECT);
-		HEXOBJ objTrack = pWnd->objTrack_;
-		pWnd->objTrack_ = 0;
-		pWnd->objTrackPrev_ = objTrack;
-		if (!fMsgDispatch) {
+	//AAAAAAAAAAAAAAAAAAA不同
+	if (((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) {
+		FLAGS_DEL(pWnd->base.dwFlags_, EWF_BTRACKOBJECT);
+		if (!fMsgDispatch && !FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW)) {
 			ReleaseCapture();  // 对menu窗口无效
 		}
+
+		HEXOBJ objTrack = pWnd->objTrack_;
+		pWnd->objTrack_ = 0;
+	
 		obj_s* pObj = nullptr;
 		INT nError = 0;
 		if (_handle_validate(objTrack, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 			POINT pt;
 			GetCursorPos(&pt);
-			INT uMsg;
-			if (fMsgDispatch) {
-				if ((pWnd->dwFlags_ & EWF_BLEFTTRACK) == EWF_BLEFTTRACK) {
-					uMsg = WM_LBUTTONUP;
-				}
-				else if ((pWnd->dwFlags_ & EWF_BRIGHTTRACK) == EWF_BRIGHTTRACK) {
-					uMsg = WM_RBUTTONUP;
-				}
-				else if ((pWnd->dwFlags_ & EWF_BMIDTRACK) == EWF_BMIDTRACK) {
-					uMsg = WM_MBUTTONUP;
-				}
-				_obj_baseproc(hWnd, objTrack, pObj, uMsg, 0, 0);
+			INT uMsg = 0;
+			
+			_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
+			obj_s Obj;
+			_wnd_wm_leavecheck(hWnd, pWnd, uMsg, objTrack, -1, &Obj, wParam, lParam, FALSE);
+			_obj_dispatchnotify(hWnd, pObj, objTrack, pObj->id_, NM_RELEASEDCAPTURE, 0, 0);
 
-				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
-				obj_s Obj;
-				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, lParam, FALSE);
-			}
-			else {
-				_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
-				obj_s Obj;
-				_wnd_wm_leavecheck(hWnd, pWnd, objTrack, -1, &Obj, lParam, FALSE);
-				if (pWnd->objHittest_ == objTrack) {
-					if (((pWnd->dwFlags_ & EWF_BLEFTTRACK) == EWF_BLEFTTRACK)) {
-						uMsg = WM_EX_LCLICK;
-					}
-					else if (((pWnd->dwFlags_ & EWF_BLEFTDTRACK) == EWF_BLEFTDTRACK)) {
-						uMsg = WM_EX_LDCLICK;
-					}
-					else if (((pWnd->dwFlags_ & EWF_BRIGHTTRACK) == EWF_BRIGHTTRACK)) {
-						uMsg = WM_EX_RCLICK;
-					}
-					else {
-						uMsg = WM_EX_MCLICK;
-					}
-					_obj_baseproc(hWnd, objTrack, pObj, uMsg, 0, pWnd->dwHitObjPos_Abs_);
+			if (pWnd->objHittest_ == objTrack && wParam != EOF_BDISABLESPACEANDENTER && !IsWindow((HWND)lParam)) {
+				if (((pWnd->base.dwFlags_ & EWF_BLEFTTRACK) == EWF_BLEFTTRACK)) {
+					uMsg = WM_EX_LCLICK;
+				}
+				else if (((pWnd->base.dwFlags_ & EWF_BLEFTDTRACK) == EWF_BLEFTDTRACK)) {
+					uMsg = WM_EX_LDCLICK;
+				}
+				else if (((pWnd->base.dwFlags_ & EWF_BRIGHTTRACK) == EWF_BRIGHTTRACK)) {
+					uMsg = WM_EX_RCLICK;
+				}
+				else if (((pWnd->base.dwFlags_ & EWF_BMIDTRACK) == EWF_BMIDTRACK)) {
+					uMsg = WM_EX_MCLICK;
+				}
+				KillTimer(hWnd, (size_t)pObj + TIMER_MOUSEHOVER);
+				if (uMsg)
+				{
+					_obj_baseproc(hWnd, objTrack, pObj, uMsg, wParam, pWnd->dwHitObjPos_Abs_);
 				}
 			}
-			_obj_dispatchnotify(hWnd, pObj, objTrack, 0, NM_RELEASEDCAPTURE, 0, 0);
 		}
+		
 	}
 }
 
-void _wnd_wm_captionchange(HWND hWnd, wnd_s* pWnd, LPARAM lParam) {
-	_wnd_obj_untrack(hWnd, pWnd, lParam, FALSE);
+void CALLBACK _wnd_timer_mousehover(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+	KillTimer(hWnd, idEvent);
+	obj_s* pObjHittest = (obj_s*)(idEvent - TIMER_MOUSEHOVER);
+	_obj_baseproc(hWnd, pObjHittest->base.hObj_, pObjHittest, WM_MOUSEHOVER, 0, pObjHittest->pWnd_->dwHitObjPos_Abs_);//lParam
 }
 
-void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
-	LPARAM lParam) {
-	HEXOBJ hObj;
-	LPARAM OldlParam = lParam;
-	if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) ==
-		EWF_BTRACKOBJECT))  // 是否按住组件
+void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	//AAAAAAAAAAAAAAA不同
+	bool isbTrack = ((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT);//是否按住组件
+	pWnd->dwHitWndPos_ = lParam;
+	if (FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW) && !isbTrack && GetCapture())
 	{
-		hObj = pWnd->objTrack_;
+		// 捕获窗口时  不会触发WM_NCHITTEST  ,所以需要强制更新 pWnd->hObjHittest_  
+		// 用以解决捕获类似组合框弹窗鼠标移动不命中组件. 
+		// 按下左键时不处理命中组件强制更新，否则类似拖动组件拖动修改大小时移动过快会丢失鼠标跟随.
+		obj_s* pobjMouse = nullptr;
+		INT dwHitCode = HTCLIENT;
+		pWnd->objHittest_ = _wnd_wm_nchittest_obj(hWnd, pWnd, pWnd->base.objChildLast_, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &dwHitCode, &pobjMouse);
 	}
-	else {
-		hObj = pWnd->objHittest_;
-	}
-	INT dwHitCode = pWnd->dwHitCode_;
+	HEXOBJ hObj = isbTrack ? pWnd->objTrack_ : pWnd->objHittest_;
 	obj_s* pObj = nullptr;
-	INT nError = 0;
-	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-		if (((pWnd->dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) {
-			lParam = MAKELONG(GET_X_LPARAM(lParam) - pObj->w_left_,
-				GET_Y_LPARAM(lParam) - pObj->w_top_);
+	if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, 0))
+	{
+		if (isbTrack)
+		{
+			lParam = MAKELONG(GET_X_LPARAM(lParam) - pObj->w_left_, GET_Y_LPARAM(lParam) - pObj->w_top_);
 			pWnd->dwHitObjPos_Abs_ = lParam;
 		}
-		else {
+		else
+		{
 			lParam = pWnd->dwHitObjPos_Abs_;
 		}
 	}
-	if (uMsg == WM_MOUSEMOVE) {
-		if (wParam == 0) {
-			_wnd_wm_leavecheck(hWnd, pWnd, pWnd->objHittestPrev_, hObj, pObj,
-				OldlParam, TRUE);
+	_wnd_wm_leavecheck(hWnd, pWnd, uMsg, pWnd->objHittestPrev_, hObj, pObj, wParam, pWnd->dwHitWndPos_, TRUE);
+	if (uMsg == WM_MOUSEMOVE)
+	{
+		if (wParam == 0) // 指示各种虚拟键是否已按下
+		{
+			FLAGS_DEL(pWnd->base.dwFlags_, (EWF_BLEFTTRACK | EWF_BRIGHTTRACK | EWF_BMIDTRACK | EWF_BLEFTDTRACK));
 		}
-		if (hObj != 0) {
+		if (hObj != 0 && pObj)// pObj 可能为0 
+		{
+			if (pWnd->OldPos_Abs_ != lParam)
+			{
+				pWnd->OldPos_Abs_ = lParam;
+				size_t nEvent = (size_t)pObj + TIMER_MOUSEHOVER;
+				SetTimer(hWnd, nEvent, g_Li.dwClickTime, _wnd_timer_mousehover);
+			}
 			_obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
 		}
 	}
-	else {
-		if (pObj != 0) {
-			if (uMsg == WM_LBUTTONDOWN) {
-				_wnd_popupclose(pWnd, hWnd, hObj, pObj);
-			}
-			if (uMsg == WM_LBUTTONDOWN || uMsg == WM_RBUTTONDOWN ||
-				uMsg == WM_MBUTTONDOWN) {
-				_wnd_wm_buttondown(hWnd, pWnd, hObj, pObj, uMsg, wParam, lParam);
-			}
-			else if (uMsg == WM_LBUTTONUP || uMsg == WM_RBUTTONUP ||
-				uMsg == WM_MBUTTONUP) {
+	else
+	{
+		if (pObj != 0)
+		{
+			switch (uMsg)
+			{
+			case WM_LBUTTONDOWN:
+			case WM_RBUTTONDOWN:
+			case WM_MBUTTONDOWN:
+			wm_buttondown:
+				_wnd_wm_buttondown(hWnd, pWnd, hObj, pObj, uMsg, wParam, lParam, TRUE);
+				break;
+			case WM_LBUTTONUP:
+			case WM_RBUTTONUP:
+			case WM_MBUTTONUP:
 				_obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
-				_wnd_obj_untrack(hWnd, pWnd, lParam, FALSE);
-			}
-			else if (uMsg == WM_LBUTTONDBLCLK || uMsg == WM_RBUTTONDBLCLK ||
-				uMsg == WM_MBUTTONDBLCLK) {
-				_obj_baseproc(hWnd, hObj, pObj, uMsg, wParam, lParam);
-				INT newMsg = uMsg;
-				if (uMsg == WM_LBUTTONDBLCLK) {
-					newMsg = WM_LBUTTONDBLCLK;
+				_wnd_obj_untrack(hWnd, pWnd, wParam, lParam, FALSE);
+				break;
+			case WM_LBUTTONDBLCLK:
+			case WM_RBUTTONDBLCLK:
+			case WM_MBUTTONDBLCLK:
+				if ((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT)
+				{
+					FLAGS_DEL(pWnd->base.dwFlags_, (EWF_BLEFTTRACK | EWF_BRIGHTTRACK | EWF_BMIDTRACK | EWF_BLEFTDTRACK));
+					pWnd->base.dwFlags_ |= EWF_BTRACKOBJECT;
+					if (uMsg == WM_LBUTTONDBLCLK)
+						pWnd->base.dwFlags_ |= EWF_BLEFTDTRACK;
+					else if (uMsg == WM_RBUTTONDBLCLK)
+						pWnd->base.dwFlags_ |= EWF_BRIGHTTRACK;
+					else
+						pWnd->base.dwFlags_ |= EWF_BMIDTRACK;
+					pWnd->objTrack_ = hObj;
+					if (wParam != 0)
+					{
+						SetCapture(hWnd); //对menu窗口无效
+					}
 				}
-				else if (uMsg == WM_RBUTTONDBLCLK) {
-					newMsg = WM_RBUTTONDOWN;
-				}
-				else {
-					newMsg = WM_MBUTTONDOWN;
-				}
-				_wnd_wm_buttondown(hWnd, pWnd, hObj, pObj, newMsg, wParam, lParam);
+				goto wm_buttondown;
+				break;
 			}
 		}
 	}
@@ -2580,14 +2212,18 @@ void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 
 void _wnd_wm_menucontext(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
 	LPARAM lParam) {
+	//AAAAAAAAAAAAAA不同
 	HEXOBJ objHittest = pWnd->objHittest_;
-	obj_s* pObj = nullptr;
-	INT nError = 0;
-	if (_handle_validate(objHittest, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-		pWnd->objMenucontext_ = objHittest;
-		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMENUCONTEXT;
+	obj_s* pObj = NULL;
+	if (objHittest == 0)//强制触发命中组件检测
+	{
+		obj_s* pobjMouse = nullptr;
+		INT dwHitCode = HTCLIENT;
+		pWnd->objHittest_ = _wnd_wm_nchittest_obj(hWnd, pWnd, pWnd->base.objChildLast_, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), &dwHitCode, &pObj);
+	}
+	if (_handle_validate(objHittest, HT_OBJECT, (LPVOID*)&pObj, 0))
+	{
 		_obj_baseproc(hWnd, objHittest, pObj, uMsg, wParam, lParam);
-		pWnd->dwFlags_ = pWnd->dwFlags_ - (pWnd->dwFlags_ & EWF_BMENUCONTEXT);
 	}
 }
 
@@ -2596,12 +2232,6 @@ void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
 	HEXOBJ objHittest = pWnd->objHittest_;
 	obj_s* pObj = nullptr;
 	INT nError = 0;
-
-	if (FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN)) {
-		hWnd = pWnd->hWndPopup_;
-		SendMessage(hWnd, uMsg, wParam, lParam);
-		return;
-	}
 
 	if (_handle_validate(objHittest, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 		if (_obj_baseproc(hWnd, objHittest, pObj, uMsg, wParam, lParam) ==
@@ -2629,24 +2259,13 @@ void _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
 
 void _wnd_wm_command(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
 	LPARAM lParam) {
-	if (((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL)) {
-		if (wParam == 2) {
-			if (Ex_ObjIsEnable(Ex_ObjGetFromID(
-				pWnd->objCaption_,
-				WINDOW_STYLE_BUTTON_CLOSE)))  // 判断按下关闭按钮,退出模态窗口
+	//AAAAAAAAAAAAAAAA不同
+	if (((pWnd->base.dwFlags_ & EWF_BMODAL) == EWF_BMODAL)) {
+		if (wParam == IDCANCEL) {
+			if (((pWnd->dwStyle_ & WINDOW_STYLE_ESCEXIT) == WINDOW_STYLE_ESCEXIT))//if (Ex_ObjIsEnable(Ex_ObjGetFromID(pWnd->hObjCaption_, EWS_BUTTON_CLOSE))) 
 			{
 				EndDialog(hWnd, IDCANCEL);
 			}
-		}
-	}
-	else {
-		HEXOBJ objMenucontext = pWnd->objMenucontext_;
-		pWnd->objMenucontext_ = 0;
-		obj_s* pObj = nullptr;
-		INT nError = 0;
-
-		if (_handle_validate(objMenucontext, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-			_obj_baseproc(hWnd, objMenucontext, pObj, uMsg, wParam, lParam);
 		}
 	}
 }
@@ -2681,34 +2300,29 @@ void _wnd_obj_settabstop(HWND hWnd, wnd_s* pWnd, HEXOBJ objLastFocus) {
 			if (_handle_validate(objParent, HT_OBJECT, (LPVOID*)&pObjParent,
 				&nError)) {
 				objNextFocus = _wnd_obj_setnextfocus(
-					hWnd, pWnd, pObjParent->objChildFirst_, objLastFocus);
+					hWnd, pWnd, pObjParent->base.objChildFirst_, objLastFocus);
 			}
 			else {
-				objNextFocus = _wnd_obj_setnextfocus(hWnd, pWnd, pWnd->objChildFirst_,
+				objNextFocus = _wnd_obj_setnextfocus(hWnd, pWnd, pWnd->base.objChildFirst_,
 					objLastFocus);
 			}
 		}
 	}
 	else {
 		objNextFocus =
-			_wnd_obj_setnextfocus(hWnd, pWnd, pWnd->objChildFirst_, objLastFocus);
+			_wnd_obj_setnextfocus(hWnd, pWnd, pWnd->base.objChildFirst_, objLastFocus);
 	}
 }
 
 BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 	LPARAM lParam) {
+	//AAAAAAAAAAAAA不同
 	HEXOBJ objFocus = pWnd->objFocus_;
 	obj_s* pObj = nullptr;
 	INT nError = 0;
 	BOOL bPopupWindowShown = FALSE;
 	if (_handle_validate(objFocus, HT_OBJECT, (LPVOID*)&pObj, &nError) &&
 		uMsg != WM_IME_CHAR) {
-		if (FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN)) {
-			if (uMsg >= WM_KEYDOWN && uMsg <= WM_KEYLAST) {
-				SendMessageW(pWnd->hWndPopup_, uMsg, wParam, lParam);
-				bPopupWindowShown = TRUE;
-			}
-		}
 		if (_obj_baseproc(hWnd, objFocus, pObj, uMsg, wParam, lParam) !=
 			0)  // 先给组件，看他需不需要消息。
 		{
@@ -2719,16 +2333,18 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 		if (wParam == VK_ESCAPE) {
 			if (((pWnd->dwStyle_ & WINDOW_STYLE_ESCEXIT) == WINDOW_STYLE_ESCEXIT) &&
 				!bPopupWindowShown) {
-				PostMessageW(hWnd, WM_CLOSE, 0, 0);
+				if (((pWnd->base.dwFlags_ & EWF_BMODAL) == EWF_BMODAL))
+					EndDialog(hWnd, IDCANCEL);
+				else
+					PostMessageW(hWnd, WM_CLOSE, 0, 0);
 			}
 		}
 		else if (wParam == VK_SPACE) {
 			if (_wnd_getfunctionkeys() == 0) {
 				if (pObj != 0) {
-					if (!__query(pObj, offsetof(obj_s, dwFlags_),
-						EOF_BDISABLESPACEANDENTER)) {
-						_wnd_wm_buttondown(hWnd, pWnd, objFocus, pObj, WM_LBUTTONDOWN, 0,
-							0);
+					if (!__query(pObj, offsetof(obj_s, base.dwFlags_),
+						EOF_BDISABLESPACEANDENTER) && pObj->pCls_->atomName == -1890710555) {
+						_wnd_wm_buttondown(hWnd, pWnd, objFocus, pObj, WM_LBUTTONDOWN, EOF_BDISABLESPACEANDENTER, 0, TRUE);
 					}
 				}
 			}
@@ -2736,11 +2352,11 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 		else if (wParam == VK_RETURN) {
 			if (_wnd_getfunctionkeys() == 0) {
 				if (pObj != 0) {
-					if (!__query(pObj, offsetof(obj_s, dwFlags_),
+					if (!__query(pObj, offsetof(obj_s, base.dwFlags_),
 						EOF_BDISABLESPACEANDENTER)) {
 						if (_obj_dispatchnotify(hWnd, pObj, objFocus, 0, NM_RETURN, wParam,
 							lParam) == 0) {
-							_obj_baseproc(hWnd, objFocus, pObj, WM_EX_LCLICK, 0, 0);
+							_obj_baseproc(hWnd, objFocus, pObj, WM_EX_LCLICK, EOF_BDISABLESPACEANDENTER, 0);
 						}
 					}
 				}
@@ -2749,18 +2365,8 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 		else if (wParam == VK_TAB) {
 			_wnd_obj_settabstop(hWnd, pWnd, objFocus);
 		}
-		else if (wParam == VK_UP || wParam == VK_DOWN) {
-			if ((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU) {
-				return 1;
-			}
-		}
-		else if (wParam == VK_LEFT || wParam == VK_RIGHT) {
-			if ((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU) {
-				return 1;
-			}
-		}
 
-		if ((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL) {
+		if ((pWnd->base.dwFlags_ & EWF_BMODAL) == EWF_BMODAL) {
 			UINT retvalue = MapVirtualKeyW(wParam, 2);  // 判断是否不是输入法
 			if (retvalue) {
 				BYTE bs[256] = { 0 };
@@ -2777,10 +2383,10 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 	else if (uMsg == WM_KEYUP) {
 		if (wParam == VK_SPACE) {
 			if (pObj != 0) {
-				if (!__query(pObj, offsetof(obj_s, dwFlags_),
-					EOF_BDISABLESPACEANDENTER)) {
-					_wnd_wm_mouse(pWnd, hWnd, WM_LBUTTONUP, 0, 0);
-					_obj_baseproc(hWnd, objFocus, pObj, WM_EX_LCLICK, 0, 0);
+				if (!__query(pObj, offsetof(obj_s, base.dwFlags_),
+					EOF_BDISABLESPACEANDENTER) && pObj->pCls_->atomName == -1890710555) {
+					_wnd_wm_mouse(pWnd, hWnd, WM_LBUTTONUP, EOF_BDISABLESPACEANDENTER, 0);
+					_obj_baseproc(hWnd, objFocus, pObj, WM_EX_LCLICK, EOF_BDISABLESPACEANDENTER, 0);
 				}
 			}
 		}
@@ -2794,7 +2400,7 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 		}
 	}
 	else if (uMsg == WM_IME_CHAR) {
-		if ((pWnd->dwFlags_ & EWF_BMODAL) == EWF_BMODAL && pObj) {
+		if ((pWnd->base.dwFlags_ & EWF_BMODAL) == EWF_BMODAL && pObj) {
 			_obj_baseproc(hWnd, objFocus, pObj, WM_CHAR, wParam, lParam);
 		}
 	}
@@ -2819,7 +2425,7 @@ BOOL _wnd_obj_childtabstop(HEXOBJ objEntry, HEXOBJ* objFocusable,
 			ret = TRUE;
 			break;
 		}
-		HEXOBJ objSub = pObj->objChildFirst_;
+		HEXOBJ objSub = pObj->base.objChildFirst_;
 		if (objSub != 0) {
 			if (_wnd_obj_childtabstop(objSub, objFocusable, pObjFocusable, objLast,
 				bFounded)) {
@@ -2837,12 +2443,7 @@ void _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd) {
 	if (hImc != 0) {
 		POINT pt;
 		GetCaretPos(&pt);
-		if (FLAGS_CHECK(pWnd->dwFlags_, EWF_BPOPUPWINDOIWSHOWN)) {
-			RECT rect;
-			GetWindowRect(pWnd->hWndPopup_, &rect);
-			pt.x += rect.left - pWnd->left_;
-			pt.y += rect.top - pWnd->top_;
-		}
+
 		COMPOSITIONFORM cf;
 		cf.dwStyle = CFS_POINT;
 		cf.ptCurrentPos.x = pt.x;
@@ -2863,160 +2464,12 @@ void _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd) {
 	}
 }
 
-BOOL _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam) {
-	BOOL ret = FALSE;
-	if (wParam ==
-		0)  // menu MEASUREITEMSTRUCT
-		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-measureitemstruct
-	{
-		if (((MEASUREITEMSTRUCT*)lParam)->CtlType == ODT_MENU) {
-			INT nID = ((MEASUREITEMSTRUCT*)lParam)->itemID;
-			RECT* ppc = (RECT*)pWnd->padding_client_;
-			INT offset = 0;
-			if (ppc != 0) {
-				offset = offset + Ex_Scale(ppc->left + ppc->right);
-			}
-			RECT* ppt = (RECT*)pWnd->padding_text_;
-			if (ppt != 0) {
-				offset = offset + Ex_Scale(ppt->left + ppt->right);
-			}
-			INT szItemSeparator = pWnd->szItemSeparator_;
-			CHAR byte = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_));
-			INT width, height;
-
-			if (nID == 0)  // MF_SEPARATOR
-			{
-				width = Ex_Scale(byte) + offset;
-				byte = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_) + 3);
-				height = Ex_Scale(byte);
-			}
-			else {
-				width = Ex_Scale(pWnd->menu_maxwidth_) + offset;
-				byte = __get_char(pWnd, offsetof(wnd_s, szItemSeparator_) + 1);
-				height = Ex_Scale(byte);
-			}
-			((MEASUREITEMSTRUCT*)lParam)->itemWidth = width;
-			((MEASUREITEMSTRUCT*)lParam)->itemHeight = height;
-			ret = TRUE;
-		}
-	}
-	return ret;
-}
-
-void _wnd_menu_updatecurrent(wnd_s* pWnd) {
-	wnd_s* pHost = pWnd->pMenuHostWnd_;
-	if (pHost != 0) {
-		pHost->pMenuTrackWnd_ = pWnd;
-	}
-}
-
-BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
-	LONG_PTR* iItem) {
-	*iItem = -1;
-	POINT pt;
-	GetCursorPos(&pt);
-	_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
-	_wnd_wm_mouse(pWnd, hWnd, uMsg, wParam, MAKELONG(pt.x, pt.y));
-	obj_s* pObj = nullptr;
-	INT nError = 0;
-	BOOL ret = FALSE;
-	if (_handle_validate(pWnd->objHittest_, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-		if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_FOCUSABLE) ==
-			OBJECT_STYLE_EX_FOCUSABLE)) {
-			if (((pObj->dwFlags_ & EOF_BMENUITEM) == EOF_BMENUITEM)) {
-				*iItem = pObj->lParam_;
-			}
-			ret = TRUE;
-		}
-	}
-	_wnd_menu_updatecurrent(pWnd);
-	return ret;
-}
-
-void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu) {
-	BOOL fChecked = FALSE;
-	if (!Flag_Query(ENGINE_FLAG_MENU_ALL)) {
-		LPVOID lpMenuParams = pWnd->lpMenuParams_;
-		if (!IsBadReadPtr(lpMenuParams, sizeof(menu_s))) {
-			if (hMenu == (LPVOID)__get(lpMenuParams, 0)) {
-				fChecked = TRUE;
-			}
-		}
-	}
-	else {
-		fChecked = TRUE;
-	}
-	if (fChecked) {
-		INT nCount = GetMenuItemCount(hMenu);
-		HEXCANVAS hCanvas = pWnd->canvas_bkg_;
-		HEXFONT hFont = pWnd->hFont_Menu_;
-
-		WCHAR buff[520];
-		FLOAT width, height, nMax = 0;
-		for (INT i = 0; i < nCount; i++) {
-			GetMenuStringW(hMenu, i, buff, 520, MF_BYPOSITION);
-			_canvas_calctextsize(hCanvas, hFont, buff, -1, DT_SINGLELINE, 0, 0,
-				&width, &height);
-			if (nMax < width) {
-				nMax = width;
-			}
-		}
-		pWnd->menu_maxwidth_ = nMax;
-		MENUITEMINFOW mii;
-		mii.cbSize = sizeof(MENUITEMINFOW);
-
-		mii.fMask = MIIM_FTYPE | MIIM_ID;
-		for (INT i = 0; i < nCount; i++) {
-			if (GetMenuItemInfoW(hMenu, i, TRUE, &mii)) {
-				if ((mii.fType & MFT_SEPARATOR) != 0) {
-					mii.wID = 0;
-				}
-				mii.fType = mii.fType | MFT_OWNERDRAW;
-				if (SetMenuItemInfoW(hMenu, i, TRUE, &mii)) {
-					continue;
-				}
-			}
-			fChecked = FALSE;
-			break;
-		}
-		if (fChecked) {
-			if (HashTable_Set(g_Li.hTableLayout, (size_t)hMenu, pWnd->hexdui_)) {
-				pWnd->hMenuPopup_ = hMenu;
-				pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BMENUINITED;
-			}
-		}
-	}
-}
-
-BOOL Ex_TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y,
-	size_t nReserved, EXHANDLE handle, RECT* lpRC,
-	MsgPROC pfnCallback, DWORD dwFlags) {
-	HWND hWnd = 0;
-	wnd_s* pWnd = nullptr;
-	menu_s menu{};
-	if (_wnd_getfromhandle(handle, &hWnd, &pWnd)) {
-		menu.hMenu_ = hMenu;
-		menu.uFlags_ = uFlags;
-		menu.x_ = x;
-		menu.y_ = y;
-		menu.nReserved_ = nReserved;
-		menu.handle_ = handle;
-		menu.lpRC_ = lpRC;
-		menu.pfnCallback_ = pfnCallback;
-		menu.dwFlags_ = dwFlags;
-		pWnd->lpMenuParams_ = &menu;
-	}
-	BOOL ret = TrackPopupMenu((HMENU)hMenu, uFlags, x, y, nReserved, hWnd, lpRC);
-	return ret;
-}
-
 INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,
 	LPCWSTR lpCheckBox, BOOL* lpCheckBoxChecked,
 	INT dwMilliseconds, INT dwFlags, MsgPROC lpfnMsgProc) {
 	HWND hWnd = 0;
-	wnd_s* pWnd = nullptr;
 	mbp_s mbp{};
-	if (_wnd_getfromhandle(handle, &hWnd, &pWnd)) {
+	if (_wnd_getfromhandle(handle, &hWnd, &g_Li.MsgpWnd)) {
 		mbp.handle_ = handle;
 		mbp.lpText_ = lpText;
 		mbp.lpCaption_ = lpCaption;
@@ -3027,7 +2480,7 @@ INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,
 		mbp.dwFlags_ = dwFlags;
 		mbp.lpfnNotifyCallback_ = lpfnMsgProc;
 
-		pWnd->lpMsgParams_ = &mbp;
+		g_Li.MsgpWnd->lpMsgParams_ = &mbp;
 	}
 	auto ret = 0;
 	if (dwMilliseconds) {
@@ -3036,6 +2489,7 @@ INT Ex_MessageBoxEx(size_t handle, LPCWSTR lpText, LPCWSTR lpCaption, INT uType,
 	else {
 		ret = MessageBoxW(hWnd, lpText, lpCaption, uType);
 	}
+	g_Li.MsgpWnd = 0;
 	return ret;
 }
 
@@ -3136,7 +2590,7 @@ BOOL Ex_DUIGetBackgroundImage(HEXDUI hExDui, LPVOID lpBackgroundImage) {
 			nError = ERROR_EX_MEMORY_BADPTR;
 		}
 		else {
-			RtlMoveMemory(lpBackgroundImage, pWnd->lpBackgroundImage_,
+			RtlMoveMemory(lpBackgroundImage, pWnd->base.lpBackgroundImage_,
 				sizeof(EX_BACKGROUNDIMAGEINFO));
 		}
 	}
@@ -3152,10 +2606,10 @@ void _wnd_getclientrect(wnd_s* pWnd, RECT* lpRect, INT* nError) {
 		RtlZeroMemory(lpRect, 16);
 		lpRect->right = pWnd->width_;
 		lpRect->bottom = pWnd->height_;
-		if (Flag_Query(ENGINE_FLAG_DPI_ENABLE)) {
+		/*if (Flag_Query(ENGINE_FLAG_DPI_ENABLE)) {
 			lpRect->right = (FLOAT)lpRect->right / g_Li.DpiX;
 			lpRect->bottom = (FLOAT)lpRect->bottom / g_Li.DpiY;
-		}
+		}*/
 	}
 }
 
@@ -3189,7 +2643,7 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex) {
 			ret = (size_t)pWnd->crSD_;
 		}
 		else if (nIndex == ENGINE_LONG_HTHEME) {
-			ret = (size_t)pWnd->hTheme_;
+			ret = (size_t)pWnd->base.hTheme_;
 		}
 		else if (nIndex == ENGINE_LONG_HWND) {
 			ret = (size_t)pWnd->hWnd_;
@@ -3232,7 +2686,7 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong) {
 		if (nIndex == ENGINE_LONG_ALPHA) {
 			ret = (size_t)pWnd->alpha_;
 			pWnd->alpha_ = dwNewLong;
-			FLAGS_DEL(pWnd->dwFlags_, EWF_BRENDERED);  // 强制阴影重画
+			FLAGS_DEL(pWnd->base.dwFlags_, EWF_BRENDERED);  // 强制阴影重画
 		}
 		else if (nIndex == ENGINE_LONG_BLUR) {
 			ret = pWnd->fBlur_;
@@ -3251,8 +2705,8 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong) {
 			bRedraw = TRUE;
 		}
 		else if (nIndex == ENGINE_LONG_HTHEME) {
-			ret = (size_t)pWnd->hTheme_;
-			pWnd->hTheme_ = (HEXTHEME)dwNewLong;
+			ret = (size_t)pWnd->base.hTheme_;
+			pWnd->base.hTheme_ = (HEXTHEME)dwNewLong;
 			bRedraw = TRUE;
 		}
 		else if (nIndex == ENGINE_LONG_HWND) {
@@ -3302,7 +2756,7 @@ size_t Ex_DUISetLong(HEXDUI hExDui, INT nIndex, size_t dwNewLong) {
 			EX_ASSERT(false, L"Ex_DUISetLong: unknown EWL index: %ld", nIndex);
 		}
 		if (bRedraw) {
-			pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_BREDRAWBACKGROUND;
+			pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BREDRAWBACKGROUND;
 			_wnd_redraw_bkg(pWnd->hWnd_, pWnd, 0, TRUE, FALSE);
 		}
 	}
@@ -3317,14 +2771,13 @@ BOOL Ex_DUIShowWindow(HEXDUI hExDui, INT nCmdShow) {
 	if (_handle_validate(hExDui, HT_DUI, (LPVOID*)&pWnd, &nError)) {
 		HWND hWnd = pWnd->hWnd_;
 		// 刷新组件层
-		pWnd->dwFlags_ = pWnd->dwFlags_ | EWF_INTED;
 		if (FLAGS_CHECK(pWnd->dwStyle_,
 			WINDOW_STYLE_POPUPWINDOW)) {  // 弹出窗不获取焦点
 			nCmdShow = SW_SHOWNOACTIVATE;
 		}
 		ret = ShowWindow(hWnd, nCmdShow);
 		if (GetFocus() == hWnd) {
-			FLAGS_ADD(pWnd->dwFlags_, EWF_ACTIVE);
+			FLAGS_ADD(pWnd->base.dwFlags_, EWF_ACTIVE);
 		}
 		auto atomName = GetClassLongPtrW(hWnd, GCW_ATOM);
 		if (atomName == ATOM_DIALOG)  // 判断是模态窗口,添加模态窗口风格
@@ -3395,10 +2848,10 @@ HEXOBJ Ex_DUIGetObjFromPoint(EXHANDLE handle, INT x, INT y) {
 	}
 	else if (_wnd_getfromhandle((size_t)handle, &hWnd, &pWnd)) {
 		INT hitCode = 0;
-		_wnd_wm_nchittest_obj(hWnd, pWnd, pWnd->objChildLast_, point.x, point.y,
+		_wnd_wm_nchittest_obj(hWnd, pWnd, pWnd->base.objChildLast_, point.x, point.y,
 			&hitCode, &pObj);
 		if (pObj) {
-			return pObj->hObj_;
+			return pObj->base.hObj_;
 		}
 	}
 	return 0;

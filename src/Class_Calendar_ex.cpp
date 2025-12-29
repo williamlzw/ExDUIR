@@ -346,7 +346,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         INT titleH = DPI_Y(30);
         if (y < titleH) {
             RECT rc;
-          Ex_ObjGetClientRectForDpi(hObj, &rc);
+          Ex_ObjGetClientRect(hObj, &rc);
             int width = rc.right - rc.left;
             // 计算按钮位置（与绘制逻辑一致）
             INT todayW = DPI_X(50);
@@ -411,7 +411,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         else {
             // 点击日历区域
             RECT rc;
-            Ex_ObjGetClientRectForDpi(hObj, &rc);
+            Ex_ObjGetClientRect(hObj, &rc);
             int width = rc.right - rc.left;
             int height = rc.bottom - rc.top;
             INT hit = -1;
@@ -474,7 +474,7 @@ LRESULT CALLBACK _calendar_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         INT newHover = -1;
         if (y >= titleH) {
             RECT rc;
-            Ex_ObjGetClientRectForDpi(hObj, &rc);
+            Ex_ObjGetClientRect(hObj, &rc);
             int width = rc.right - rc.left;
             int height = rc.bottom - rc.top;
             if (pCal->nSohwType == 0) {

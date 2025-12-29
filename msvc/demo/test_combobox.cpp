@@ -1,6 +1,6 @@
 ﻿#include "test_combobox.h"
 
-std::vector<HEXOBJ> m_hComboBoxButton(7);
+std::vector<HEXOBJ> m_hComboBoxButton(6);
 HEXOBJ              m_hComboBox;
 
 HEXOBJ m_hComboBox1;
@@ -34,9 +34,6 @@ LRESULT CALLBACK OnComboBoxButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
             Ex_ObjSendMessage(m_hComboBox, CB_RESETCONTENT, 0, 0);
         }
         else if (hObj == m_hComboBoxButton[5]) {
-            Ex_ObjSendMessage(m_hComboBox, CB_SHOWDROPDOWN, TRUE, 0);
-        }
-        else if (hObj == m_hComboBoxButton[6]) {
             Ex_ObjSendMessage(m_hComboBox, CB_DELETESTRING, 2, 0);
         }
     }
@@ -115,12 +112,9 @@ void test_combobox(HWND hWnd)
     Ex_ObjHandleEvent(m_hComboBoxButton[4], NM_CLICK, OnComboBoxButtonEvent);
 
     m_hComboBoxButton[5] =
-        Ex_ObjCreate(L"button", L"弹出列表", -1, 340, 110, 100, 30, hExDui_combobox);
+        Ex_ObjCreate(L"button", L"删除项目", -1, 340, 110, 100, 30, hExDui_combobox);
     Ex_ObjHandleEvent(m_hComboBoxButton[5], NM_CLICK, OnComboBoxButtonEvent);
 
-    m_hComboBoxButton[6] =
-        Ex_ObjCreate(L"button", L"删除项目", -1, 230, 150, 100, 30, hExDui_combobox);
-    Ex_ObjHandleEvent(m_hComboBoxButton[6], NM_CLICK, OnComboBoxButtonEvent);
 
 
     Ex_DUIShowWindow(hExDui_combobox, SW_SHOWNORMAL);

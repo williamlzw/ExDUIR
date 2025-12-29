@@ -67,7 +67,7 @@ HEXLAYOUT _layout_create(INT nType, EXHANDLE hObjBind)
                     pLayout->hArrChildrenInfo_ = hArr;
                     hLayout                    = _handle_create(HT_LAYOUT, pLayout, &nError);
                     pLayout->hLayout_          = hLayout;
-                    ((obj_s*)pObj)->hLayout_   = hLayout;
+                    ((obj_s*)pObj)->base.hLayout_   = hLayout;
                 }
                 else {
                     Ex_MemFree(pLayout);
@@ -97,7 +97,7 @@ HEXLAYOUT _layout_get_parent_layout(HEXOBJ hObj)
         EXHANDLE hObj = pObj->objParent_;
         if (hObj == 0) {
             wnd_s* pWnd = pObj->pWnd_;
-            hObj        = pWnd->hexdui_;
+            hObj        = pWnd->base.hexdui_;
         }
         hLayoutParent = Ex_ObjLayoutGet(hObj);
     }
@@ -592,6 +592,7 @@ LRESULT CALLBACK __layout_linear_proc(layout_s* pLayout, INT nEvent, WPARAM wPar
                                     arrOrg[i - 1]);
             }
         }
+        Ex_ObjDispatchMessage(pLayout->hBind_, WM_LAYOUT_UPDATE, 0, 0);
     }
     return 0;
 }
@@ -682,6 +683,7 @@ LRESULT CALLBACK __layout_flow_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
                 rcObj.left = rcObj.right;
             }
         }
+        Ex_ObjDispatchMessage(pLayout->hBind_, WM_LAYOUT_UPDATE, 0, 0);
     }
     return 0;
 }
@@ -724,6 +726,7 @@ LRESULT CALLBACK __layout_page_proc(layout_s* pLayout, INT nEvent, WPARAM wParam
             }
             Ex_ObjShow(hObj, i == nCurrentPage);
         }
+        Ex_ObjDispatchMessage(pLayout->hBind_, WM_LAYOUT_UPDATE, 0, 0);
     }
     return 0;
 }
@@ -866,6 +869,7 @@ LRESULT CALLBACK __layout_table_proc(layout_s* pLayout, INT nEvent, WPARAM wPara
             _layout_move_margin(hObj, &rcClient, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15,
                                 0);
         }
+        Ex_ObjDispatchMessage(pLayout->hBind_, WM_LAYOUT_UPDATE, 0, 0);
     }
     return 0;
 }
@@ -915,6 +919,7 @@ LRESULT CALLBACK __layout_relative_proc(layout_s* pLayout, INT nEvent, WPARAM wP
     else if (nEvent == LAYOUT_EVENT_UPDATE) {
         _layout_relative_update((layout_s*)pLayout, ((layout_s*)pLayout)->lpLayoutInfo_,
                                 ((layout_s*)pLayout)->hArrChildrenInfo_, lParam);
+        Ex_ObjDispatchMessage(pLayout->hBind_, WM_LAYOUT_UPDATE, 0, 0);
     }
     return 0;
 }
@@ -1652,6 +1657,7 @@ LRESULT CALLBACK __layout_absolute_proc(layout_s* pLayout, INT nEvent, WPARAM wP
 
             _layout_move_margin(hObj, &rcObj, (LPVOID)((size_t)pInfo - 4 * sizeof(size_t)), 15, 0);
         }
+        Ex_ObjDispatchMessage(pLayout->hBind_, WM_LAYOUT_UPDATE, 0, 0);
     }
     else if (nEvent == LAYOUT_EVENT_CHECKCHILDPROPVALUE) {
         array_s* pChildrenInfo = ((layout_s*)pLayout)->hArrChildrenInfo_;
@@ -1684,7 +1690,7 @@ BOOL _layout_addchild(HEXLAYOUT hLayout, HEXOBJ hObj)
             }
             else {
                 if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-                    if (pObj->objParent_ == 0 && pObj->pWnd_->hexdui_ == pLayout->hBind_) {
+                    if (pObj->objParent_ == 0 && pObj->pWnd_->base.hexdui_ == pLayout->hBind_) {
                         fIsChild = TRUE;
                     }
                 }
@@ -1733,10 +1739,10 @@ BOOL _layout_addchildren(HEXLAYOUT hLayout, BOOL fDesc, EXATOM dwObjClassATOM, I
         if (_handle_validate(hObj, pLayout->nBindType_, (LPVOID*)&pObj, &nError)) {
             *nCount = 0;
             if (pLayout->nBindType_ == HT_OBJECT) {
-                hObj = fDesc ? ((obj_s*)pObj)->objChildLast_ : ((obj_s*)pObj)->objChildFirst_;
+                hObj = fDesc ? ((obj_s*)pObj)->base.objChildLast_ : ((obj_s*)pObj)->base.objChildFirst_;
             }
             else {
-                hObj = fDesc ? ((wnd_s*)pObj)->objChildLast_ : ((wnd_s*)pObj)->objChildFirst_;
+                hObj = fDesc ? ((wnd_s*)pObj)->base.objChildLast_ : ((wnd_s*)pObj)->base.objChildFirst_;
             }
             obj_s* pObj2 = nullptr;
             while (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj2, &nError)) {

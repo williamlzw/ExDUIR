@@ -8,7 +8,7 @@ void _sysbutton_register()
 
 void _page_register()
 {
-    Ex_ObjRegister(L"Page", OBJECT_STYLE_VISIBLE, OBJECT_STYLE_EX_TRANSPARENT, 0, 0, 0, 0,
+    Ex_ObjRegister(L"Page", OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | OBJECT_STYLE_HSCROLL, OBJECT_STYLE_EX_TRANSPARENT, 0, 0, 0, 0,
                    _page_proc);
 }
 
@@ -97,7 +97,7 @@ size_t _sysbutton_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
 
 void _sysbutton_remove_proc(obj_s* pObj, INT width, INT height)
 {
-    HEXOBJ sObj      = pObj->objChildFirst_;
+    HEXOBJ sObj      = pObj->base.objChildFirst_;
     obj_s* psobj     = nullptr;
     INT    nError    = 0;
     BOOL   bReCalced = FALSE;
@@ -108,7 +108,7 @@ void _sysbutton_remove_proc(obj_s* pObj, INT width, INT height)
             nOffset   = width - psobj->right_;
         }
         Ex_ObjSetPos(sObj, 0, psobj->left_ + nOffset, OBJECT_POSITION_DEFAULT, 0, 0,
-                     SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+            SWP_NOSIZE | SWP_NOZORDER | SWP_NOREDRAW | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
         sObj = psobj->objNext_;
     }
 }
@@ -243,51 +243,185 @@ size_t _page_paint(HEXOBJ hObj)
     return 0;
 }
 
+void _page_onhscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    INT nCode = LOWORD(wParam);
+    INT left = 0;
+    INT nPos = 0;
+    INT oPos = Ex_ObjScrollGetPos(hObj, SB_HORZ);
+    INT lpnMinPos = 0, lpnMaxPos = 0;
+    Ex_ObjScrollGetRange(hObj, SB_HORZ, &lpnMinPos, &lpnMaxPos);
+    INT nPage = 0;
+    Ex_ObjScrollGetPAGE(hObj, SB_HORZ, &nPage);
+    if (nPage == 0)
+        nPage = WHEEL_DELTA / 3;
+    if (lpnMaxPos == 0)
+        return;
+    if (nCode == SB_THUMBPOSITION)
+    {
+        nPos = HIWORD(wParam);
+        left = oPos - nPos;
+    }
+    else if (nCode == SB_THUMBTRACK)
+    {
+        INT Pos = HIWORD(wParam);
+        nPos = oPos - left;
+        left = -(Pos - oPos);
+    }
+    else if (nCode == SB_PAGEUP)
+    {
+        nPos = oPos - nPage;
+        left = nPage;
+    }
+    else if (nCode == SB_PAGEDOWN)
+    {
+        nPos = oPos + nPage;
+        left = -nPage;
+    }
+    else if (nCode == SB_LINEUP)
+    {
+        if (lpnMinPos >= oPos)
+            return;
+        nPos = oPos - nPage;
+        if (nPos < lpnMinPos)
+            nPos = lpnMinPos;
+        left = (INT)nPage;//滚动大小nPage
+    }
+    else if (nCode == SB_LINEDOWN)
+    {
+        if (lpnMaxPos == oPos)
+            return;
+        nPos = oPos + nPage;
+        if (nPos > lpnMaxPos)
+            nPos = lpnMaxPos;
+        left = -nPage;//滚动大小nPage
+    }
+    else if (nCode == SB_TOP)
+    {
+        nPos = 0;// lpnMinPos
+        left = oPos;
+    }
+    else if (nCode == SB_BOTTOM)
+    {
+        nPos = lpnMaxPos;
+        left = oPos - nPos;
+    }
+    Ex_ObjScrollSetPos(hObj, SB_HORZ, nPos, TRUE);
+    //HEXOBJ objEntry = pObj->base.objChildFirst_;
+    //obj_s* pObj2 = nullptr;
+    //while (_handle_validate(objEntry, HT_OBJECT, (LPVOID*)&pObj2, 0))
+    //{
+    //    if (objEntry)
+    //    {
+    //        if (objEntry != pObj->objVScroll_ && objEntry != pObj->objHScroll_)
+    //        {
+    //            Ex_ObjSetPos(objEntry, 0, pObj2->left_ + left, pObj2->top_, 0, 0, SWP_EX_UPDATEOBJECT | SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+    //        }
+    //    }
+    //    else
+    //        break;
+    //    objEntry = pObj2->objNext_;
+    //}
+    _obj_invalidaterect(pObj, 0, 0);
+}
+
 void _page_onvscrollbar(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    INT nCode  = LOWORD(wParam);
-    INT oPos   = Ex_ObjScrollGetPos(hObj, SCROLLBAR_TYPE_VERT);
-    INT height = pObj->c_bottom_ - pObj->c_top_;
-    INT nPos   = 0;
-    if (nCode == SB_THUMBPOSITION) {
-        nPos = oPos;
-    }
-    else if (nCode == SB_PAGEUP) {
-        nPos = oPos - height;
-    }
-    else if (nCode == SB_PAGEDOWN) {
-        nPos = oPos + height;
-    }
-    else if (nCode == SB_LINEUP) {
-        nPos = oPos - HIBYTE(LOWORD(pObj->pWnd_->szItemSeparator_));
-    }
-    else if (nCode == SB_LINEDOWN) {
-        nPos = oPos + HIBYTE(LOWORD(pObj->pWnd_->szItemSeparator_));
-    }
-    else if (nCode == SB_TOP) {
-        nPos = 0;
-    }
-    else if (nCode == SB_BOTTOM) {
-        RECT rect{0};
-        Ex_ObjGetRect(pObj->objChildFirst_, &rect);
-        nPos = rect.bottom - rect.top - height;
-    }
-    else {
+    INT nCode = LOWORD(wParam);
+    INT top = 0;
+    INT nPos = 0;
+    INT oPos = Ex_ObjScrollGetPos(hObj, SB_VERT);
+    INT lpnMinPos = 0, lpnMaxPos = 0;
+    Ex_ObjScrollGetRange(hObj, SB_VERT, &lpnMinPos, &lpnMaxPos);
+    INT nPage = 0;
+    Ex_ObjScrollGetPAGE(hObj, SB_VERT, &nPage);
+    if (nPage == 0)
+        nPage = WHEEL_DELTA / 3;
+    if (lpnMaxPos == 0)
         return;
+    if (nCode == SB_THUMBPOSITION)
+    {
+        nPos = HIWORD(wParam);
+        top = oPos - nPos;
     }
-    nPos = Ex_ObjScrollSetPos(hObj, SCROLLBAR_TYPE_VERT, nPos, TRUE);
-    Ex_ObjSetPos(pObj->objChildFirst_, 0, OBJECT_POSITION_DEFAULT, (-nPos), 0, 0,
-                 SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+    else if (nCode == SB_THUMBTRACK)
+    {
+        INT Pos = HIWORD(wParam);
+        nPos = oPos - top;
+        top = -(Pos - oPos);
+    }
+    else if (nCode == SB_PAGEUP)
+    {
+        nPos = oPos - nPage;
+        top = nPage;
+    }
+    else if (nCode == SB_PAGEDOWN)
+    {
+        nPos = oPos + nPage;
+        top = -nPage;
+    }
+    else if (nCode == SB_LINEUP)
+    {
+        if (lpnMinPos >= oPos)
+            return;
+        nPos = oPos - nPage;
+        if (nPos < lpnMinPos)
+            nPos = lpnMinPos;
+        top = (INT)nPage;//滚动大小nPage
+    }
+    else if (nCode == SB_LINEDOWN)
+    {
+        if (lpnMaxPos == oPos)
+            return;
+        nPos = oPos + nPage;
+        if (nPos > lpnMaxPos)
+            nPos = lpnMaxPos;
+        top = -nPage;//滚动大小nPage
+    }
+    else if (nCode == SB_TOP)
+    {
+        nPos = 0;// lpnMinPos
+        top = oPos;
+    }
+    else if (nCode == SB_BOTTOM)
+    {
+        nPos = lpnMaxPos;
+        top = oPos - nPos;
+    }
+    Ex_ObjScrollSetPos(hObj, SB_VERT, nPos, TRUE);
+    //HEXOBJ objEntry = pObj->base.objChildFirst_;
+    //obj_s* pObj2 = nullptr;
+    //while (_handle_validate(objEntry, HT_OBJECT, (LPVOID*)&pObj2, 0))
+    //{
+    //    if (objEntry)
+    //    {
+    //        if (objEntry != pObj->objVScroll_ && objEntry != pObj->objHScroll_)
+    //        {
+    //            Ex_ObjSetPos(objEntry, 0, pObj2->left_, pObj2->top_ + top, 0, 0, SWP_EX_UPDATEOBJECT | SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE | SWP_EX_NODPISCALE);
+    //        }
+    //    }
+    //    else
+    //        break;
+    //    objEntry = pObj2->objNext_;
+    //}
+    _obj_invalidaterect(pObj, 0, 0);
 }
 
 LRESULT CALLBACK _page_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
     INT    nError = 0;
     obj_s* pObj   = nullptr;
-    if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
-        if (uMsg == WM_VSCROLL || uMsg == WM_HSCROLL) {
+    if (uMsg == WM_VSCROLL)
+    {
+        if ((pObj->dwStyle_ & OBJECT_STYLE_VSCROLL) == OBJECT_STYLE_VSCROLL)
             _page_onvscrollbar(hWnd, hObj, pObj, uMsg, wParam, lParam);
+        return 0;
         }
-    }
+    else if (uMsg == WM_HSCROLL)
+    {
+        if ((pObj->dwStyle_ & OBJECT_STYLE_HSCROLL) == OBJECT_STYLE_HSCROLL)
+            _page_onhscrollbar(hWnd, hObj, pObj, uMsg, wParam, lParam);
+        return 0;
+        }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }

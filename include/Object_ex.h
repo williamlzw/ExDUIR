@@ -2,26 +2,34 @@
 
 #define WM_NOTIFY_SELF 1030   // notify父控件前,先发给自己
 
+// _obj_baseproc 标记, 在Ex_ObjDefProc删除标记.
 #define EOF_BUSERPROCESSESED 0x01
+// 用于区分信息框中的按钮.  仅在_button_proc 单击事件中
 #define EOF_BMSGBOXCONTROL 0x02
+// 自适应尺寸 标记
 #define EOF_BAUTOSIZED 0x04
+// 仅用于item组件 用以区分菜单项
 #define EOF_BMENUITEM 0x08
+// 标记组件是否为路径
 #define EOF_BPATH 0x10
+// 标记组件为圆角,必定为路径
 #define EOF_BPATHBYROUNDEDRECT 0x20
-#define EOF_BDOWN 0x400
-#define EOF_BUP 0x800
-#define EOF_BSENDSIZEMOVEMSGS 0x4000
-#define EOF_BNEEDREDRAW 0x8000
-#define EOF_BCANREDRAW 0x10000
-#define EOF_BHIDDENPOPUP 0x20000
-#define EOF_BHASCAPTION 0x40000
-#define EOF_BEVENTBUBBLE 0x80000
-#define EOF_BPAGE 0x100000
-#define EOF_BDISABLESPACEANDENTER 0x200000
-#define EOF_BIME 0x400000
-#define EOF_BPAINTINGMSG 0x800000
-#define EOF_OBJECT 0x40000000
-#define EOF_INITED 0x80000000
+// 标记需要重画
+#define EOF_BNEEDREDRAW 0x40
+// 标记允许重画
+#define EOF_BCANREDRAW 0x80
+// 事件冒泡的标记
+#define EOF_BEVENTBUBBLE 0x100
+// 页面组件标记
+#define EOF_BPAGE 0x200
+// 是否禁止转换空格和回车为单击事件
+#define EOF_BDISABLESPACEANDENTER 0x400
+// 是否允许启用输入法
+#define EOF_BIME 0x800
+// 是否启用绘画中消息 WM_EX_PAINTING 默认未启用
+#define EOF_BPAINTINGMSG 0x1000
+// 类型为组件
+#define EOF_OBJECT 0x100000
 
 #define TIMER_BKG 1
 #define TIMER_ANIMATION 2
@@ -32,34 +40,47 @@
 #define TIMER_EDIT_CARET 7
 #define TIMER_MOUSETRACK 8
 #define TIMER_BKG_INHERIT 9
+#define TIMER_MOUSEHOVER 10
 
 #define SWP_EX_UPDATEOBJECT 0x40000000
 
-#define EWF_ACTIVE 0x02
-#define EWF_BLAYERED 0x04
-#define EWF_SIZED 0x08
-#define EWF_BMENUCONTEXT 0x10
-#define EWF_BREDRAWBACKGROUND 0x20
-#define EWF_BTRACKOBJECT 0x40
-#define EWF_BRENDERING 0x80
-#define EWF_BPOPUPWINDOIWSHOWN 0x100
-#define EWF_BLEFTTRACK 0x200
-#define EWF_BRIGHTTRACK 0x400
-#define EWF_BMIDTRACK 0x800
-#define EWF_BMODAL 0x1000
-#define EWF_BLEAVESENT 0x2000
-#define EWF_BRENDERED 0x4000
-#define EWF_BLEFTDTRACK 0x8000
-#define EWF_BCHILDLAYOUTED 0x100000
-#define EWF_BTOOLTIPSPOPUP 0x200000
-#define EWF_BTOOLTIPSTRACKPOSTION 0x400000
-#define EWF_BMENUINITED 0x800000
-#define EWF_BMENUREPOSTION 0x1000000
-#define EWF_BCOMPOSITEDCHECK 0x2000000
-#define EWF_BINHERITBKGSTARTED 0x4000000
-#define EWF_BDESTROYWINDOW 0x8000000
-#define EWF_BSIZEMOVING 0x10000000
-#define EWF_INTED 0x80000000
+#define EWF_ACTIVE 0x01
+// 分层透明标志
+#define EWF_BLAYERED 0x02
+// 正在调整大小
+#define EWF_SIZED 0x04
+// 重画背景 标志
+#define EWF_BREDRAWBACKGROUND 0x08
+// 是否按下鼠标(未松开)标志
+#define EWF_BTRACKOBJECT 0x10
+// EWS_POPUPWINDOW 窗口弹出标志
+#define EWF_BPOPUPWINDOIWSHOWN 0x20
+// 按下鼠标左键标志
+#define EWF_BLEFTTRACK 0x40
+// 按下鼠标右键标志
+#define EWF_BRIGHTTRACK 0x80
+// 按下鼠标中键标志
+#define EWF_BMIDTRACK 0x100
+// 对话框标志
+#define EWF_BMODAL 0x200
+// 离开组件标志
+#define EWF_BLEAVESENT 0x400
+// 阴影重画标志
+#define EWF_BRENDERED 0x800
+// 双击鼠标左键标志
+#define EWF_BLEFTDTRACK 0x1000
+// 提示窗口弹出标志
+#define EWF_BTOOLTIPSPOPUP 0x2000
+#define EWF_BTOOLTIPSTRACKPOSTION 0x4000
+// 高斯模糊标志
+#define EWF_BCOMPOSITEDCHECK 0x10000
+// 背景图时钟设置标志,用于避免多次SetTimer
+#define EWF_BINHERITBKGSTARTED 0x20000
+// 销毁窗口标志
+#define EWF_BDESTROYWINDOW 0x40000
+// 窗口大小改变移动标志
+#define EWF_BSIZEMOVING 0x80000
+
 
 struct EX_EVENT_HANDLER
 {
@@ -95,20 +116,7 @@ struct mempoolmsg_s
 
 struct obj_s
 {
-    union
-    {
-        obj_base base;
-        struct
-        {
-            HEXOBJ                  hObj_;
-            HEXOBJ                  objChildFirst_;
-            HEXOBJ                  objChildLast_;
-            HEXLAYOUT               hLayout_;
-            UINT                    dwFlags_;
-            EX_BACKGROUNDIMAGEINFO* lpBackgroundImage_;
-            HEXTHEME                hTheme_;
-        };
-    };
+    obj_base base;
 
     wnd_s* pWnd_;
 
@@ -126,11 +134,6 @@ struct obj_s
     INT w_top_;
     INT w_right_;
     INT w_bottom_;
-
-    INT d_left_;   // 脏区域
-    INT d_top_;
-    INT d_right_;
-    INT d_bottom_;
 
     INT t_left_;   // 文本偏移矩形
     INT t_top_;
@@ -150,17 +153,6 @@ struct obj_s
     INT crShadow_;
     INT dwShadowSize_;
 
-    INT minmax_reserved_1_;
-    INT minmax_reserved_2_;
-    INT minmax_maxsize_width_;
-    INT minmax_maxsize_height_;
-    INT minmax_maxpostion_width_;
-    INT minmax_maxpostion_height_;
-    INT minmax_mintracksize_width_;
-    INT minmax_mintracksize_height_;
-    INT minmax_maxtracksize_width_;
-    INT minmax_maxtracksize_height_;
-
     HEXPATH       hPath_Window_;
     HEXPATH       hPath_Client_;
 
@@ -175,11 +167,11 @@ struct obj_s
     HEXOBJ        objNext_;
     HEXOBJ        objPrev_;
 
-    HEXOBJ        objVScroll_;
-    HEXOBJ        objHScroll_;
+    HEXOBJ        objVScroll_;// 垂直滚动条
+    HEXOBJ        objHScroll_;// 水平滚动条
 
-    LPCWSTR       pstrTitle_;
-    LPCWSTR       pstrTips_;
+    LPCWSTR       pstrTitle_;// 标题
+    LPCWSTR       pstrTips_;// 提示内容
 
     INT           id_;
     INT           nodeid_;
@@ -191,10 +183,11 @@ struct obj_s
     INT           dwStyleEx_;
     INT           dwTextFormat_;
     HCURSOR       hCursor_;
-    HEXFONT       hFont_;    
+    HEXFONT       hFont_;
 
     FLOAT         fHUE_;// 旋转色相   HSL的H分量  0-1
     FLOAT         fBlur_;// 正值  通常0 - 250
+
     INT           dwAlphaDisable_;// 禁用时组件透明度 默认128
     INT           dwAlpha_;// 组件透明度 默认255
 
@@ -208,6 +201,14 @@ struct obj_s
     
     UINT          uTimerID_;
     LONG_PTR      extraData_[1];   // 组件附加数据，必须放在末尾
+};
+
+struct _SP_ChildhObj_private
+{
+    HEXOBJ hObj;
+    obj_s* pObj;
+    EXHANDLE realParent;
+    INT parentnum;
 };
 
 struct ti_s
@@ -306,7 +307,8 @@ void   _obj_create_proc(INT* nError, BOOL fScale, HEXTHEME hTheme, obj_s* pObj, 
                         EXATOM atomClass, LPCWSTR lpszName, INT dwStyle, INT x, INT y, INT width,
                         INT height, EXHANDLE hParent, INT nID, EXATOM atomName, LPARAM lParam,
                         INT dwTextFormat);
-void   _obj_create_done(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj);
+
+void   _obj_create_done(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, HWND TOP);
 void   _obj_create_scrollbar(HWND hWnd, wnd_s* pWnd, obj_s* pObj, HEXOBJ hObj, HEXTHEME hTheme);
 void   _obj_theme_load_color_font(wnd_s* pWnd, obj_s* pObj, HEXTHEME hTheme);
 void   _obj_visable(HWND hWnd, HEXOBJ hObj, obj_s* pObj, BOOL fVisable);
@@ -317,7 +319,7 @@ void   _obj_drawbackground(obj_s* pObj, HEXCANVAS hCanvas, RECT rcPaint);
 HEXOBJ _obj_getobjfromidorname(wnd_s* pWnd, INT idorname);
 void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 BOOL _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, LPVOID lpImage, INT dwImageLen, INT x, INT y,
-                              INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError);
+                              INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, RECT* lpRcSrc, EX_RECTF* lpRCFDst, INT* nError);
 BOOL _obj_backgroundimage_setsvg(HWND hWnd, obj_s* pObj, HEXSVG hSvg, INT x, INT y,
     INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError);
 void _obj_backgroundimage_frames(HWND hWnd, obj_s* pObj, BOOL bResetFrame, BOOL bPlayFrames,
@@ -336,3 +338,6 @@ BOOL          _obj_queryextra(obj_s* pObj, INT nIndex, size_t flags);
 void          _obj_addextra(obj_s* pObj, INT nIndex, size_t flags);
 void          _obj_delextra(obj_s* pObj, INT nIndex, size_t flags);
 void CALLBACK _obj_timer_object(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
+INT CALLBACK _SetParent_EnumChild(size_t hObj, size_t lParam);
+bool _SP_ChildhObj_private_sort(_SP_ChildhObj_private a, _SP_ChildhObj_private b);
+BOOL _obj_ChildEnum(HEXOBJ hObjParent, LPVOID lpEnumFunc, LPARAM lParam);

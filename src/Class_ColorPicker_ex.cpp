@@ -63,8 +63,8 @@ void _color_picker_show_popup(HWND hWnd, HEXOBJ hObj) {
     GetWindowRect(hWnd, &lpRect);
     RECT objRect;
     Ex_ObjGetRectEx(hObj, &objRect, 2);
-    lpRect.left += Ex_Scale(objRect.left);        // 修复弹出定位
-    lpRect.top += Ex_Scale(objRect.bottom + 2);   // 修复弹出定位
+    lpRect.left += (objRect.left);        // 修复弹出定位
+    lpRect.top += (objRect.bottom + 2);   // 修复弹出定位
 
 
     HWND hWndPopup =
@@ -140,7 +140,8 @@ LRESULT CALLBACK _color_OnPaletteEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM w
         if(hEdit) // 更新颜色输入框
             _color_picker_update_edit(hEdit, color);
 
-
+        // 通知颜色变化
+        Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
         return 1;
     }
     else if (nCode == NM_LUP)
@@ -194,7 +195,7 @@ LRESULT CALLBACK _color_picker_edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARA
             Ex_ObjSetColor(hColorPicker, COLOR_EX_BACKGROUND, color, TRUE);
 
             // 通知颜色变化
-            //Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
+            Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
             HEXOBJ hPalette = (HEXOBJ)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
             Ex_ObjSendMessage(hPalette, PALETTE_MESSAGE_SETCOLOR, 0, color);
             return 0;
@@ -242,7 +243,7 @@ LRESULT CALLBACK _color_picker_btn_ok_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPA
         }
 
         
-        //Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
+        Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)color);
 
         // 关闭弹窗
         HWND hWndPopup = (HWND)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);
@@ -260,7 +261,7 @@ LRESULT CALLBACK _color_picker_btn_clear_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, 
         // 设置为完全透明（ARGB = 0）
         EXARGB clearColor = 0; // 或 ExARGB(0, 0, 0, 0)
         Ex_ObjSetColor(hColorPicker, COLOR_EX_BACKGROUND, clearColor, TRUE);
-        //Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)clearColor);
+        Ex_ObjDispatchNotify(hColorPicker, COLORPICKER_EVENT_COLORCHANGE, 0, (LPARAM)clearColor);
 
         // 关闭弹窗
         HWND hWndPopup = (HWND)Ex_ObjGetLong(hObj, OBJECT_LONG_USERDATA);

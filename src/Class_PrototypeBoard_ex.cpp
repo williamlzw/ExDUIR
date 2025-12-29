@@ -2492,16 +2492,16 @@ void _prototype_board_initparam(HEXOBJ hObj)
 	RECT rc;
 	Ex_ObjGetRect(hObj, &rc);
 
-	auto canvasTemp = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
+	auto canvasTemp = _canvas_createfromobj(hObj, (rc.right), (rc.bottom), 0);
 	Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_CANVAS_TEMP, canvasTemp);
 
-	auto canvasSelect = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
+	auto canvasSelect = _canvas_createfromobj(hObj, (rc.right), (rc.bottom), 0);
 	Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_CANVAS_SELECT, canvasSelect);
 
-	auto canvasChoice = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
+	auto canvasChoice = _canvas_createfromobj(hObj, (rc.right), (rc.bottom), 0);
 	Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_CANVAS_CHOICE, canvasChoice);
 
-	auto canvasBkg = _canvas_createfromobj(hObj, Ex_Scale(rc.right), Ex_Scale(rc.bottom), 0);
+	auto canvasBkg = _canvas_createfromobj(hObj, (rc.right), (rc.bottom), 0);
 	Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_CANVAS_BACKGROUND, canvasBkg);
 
 	Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_HOVER_LAYER_INDEX, -1);

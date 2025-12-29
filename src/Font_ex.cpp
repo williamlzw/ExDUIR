@@ -2,7 +2,7 @@
 
 void CALLBACK pfnDefaultFreeFont(LPVOID dwData)
 {
-	if (!IsBadReadPtr(dwData, sizeof(font_s))) {
+	if (IsBadReadPtr(dwData, sizeof(font_s))) {
 		IDWriteTextFormat* pObj = ((font_s*)dwData)->pObj_;
 		if (pObj) {
 			pObj->Release();
@@ -93,16 +93,10 @@ HEXFONT _font_createfromlogfont_ex(LOGFONTW* lpLogfont, INT flags)
 			if (lfItalic != 0) {
 				lfItalic = 2;
 			}
-			auto hr = g_Ri.pDWriteFactory->CreateTextFormat(
+			g_Ri.pDWriteFactory->CreateTextFormat(
 				pFont->font_.lfFaceName, NULL, (DWRITE_FONT_WEIGHT)pFont->font_.lfWeight,
 				(DWRITE_FONT_STYLE)lfItalic, DWRITE_FONT_STRETCH_NORMAL,
 				(FLOAT)(-pFont->font_.lfHeight), (WCHAR*)g_Ri.pLocaleName, &pFont->pObj_);
-			if (!SUCCEEDED(hr))
-			{
-				Ex_MemFree(pFont);
-				hFont = 0;
-				Ex_SetLastError(ERROR_EX_INVALID_OBJECT);
-			}
 		}
 		else {
 			hFont = 0;

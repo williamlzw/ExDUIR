@@ -4,7 +4,7 @@ void _propertygrid_register()
 {
 	Ex_ObjRegister(L"PropertyGrid",
 		OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-		DT_LEFT | DT_VCENTER, 14 * sizeof(size_t), NULL, 0,
+		DT_LEFT | DT_VCENTER, 15 * sizeof(size_t), NULL, 0,
 		_propertygrid_proc);
 }
 
@@ -28,6 +28,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMHOTCOLOR, ExARGB(198, 198, 201, 255));
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_ITEMSELCOLOR, ExARGB(171, 171, 185, 255));
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_LINECOLOR, ExARGB(0, 0, 0, 10));
+		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_IGNORING_CLICKS, 0);
 		//-------组件创建---------------
 		HEXOBJ hobjEdit = Ex_ObjCreateEx(
 			OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED | OBJECT_STYLE_EX_CUSTOMDRAW,
@@ -161,6 +162,10 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		auto x = ((FLOAT)GET_X_LPARAM(lParam));
 		auto y = ((FLOAT)GET_Y_LPARAM(lParam));
 		_propertygrid_onmousemove(hObj, x, y);
+	}
+	else if (uMsg == WM_LBUTTONDOWN)
+	{
+		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_IGNORING_CLICKS, 0);
 	}
 	else if (uMsg == WM_LBUTTONUP)
 	{
@@ -776,8 +781,8 @@ LRESULT CALLBACK _propertygrid_oncolorpickerevent(HEXOBJ hObj, INT nID, INT nCod
 				(argb >> 8) & 0xFF,  // 绿色分量
 				argb & 0xFF);         // 蓝色分量
 			_propertygrid_setitemtext(parent, itemSelect, color);
-			Ex_ObjKillFocus(hObj);
-			Ex_ObjShow(hObj, FALSE);
+			//Ex_ObjKillFocus(hObj);
+			//Ex_ObjShow(hObj, FALSE);
 		}
 	}
 	return 0;
@@ -897,7 +902,7 @@ void _propertygrid_onmousemove(HEXOBJ hObj, INT x, INT y)
 	HEXOBJ colorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
 	HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
 	HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
-	
+
 	BOOL bVisiableCombobox = Ex_ObjIsVisible(combobox);
 	RECT rcCombobox;
 	Ex_ObjGetRect(combobox, &rcCombobox);
@@ -959,7 +964,7 @@ void _propertygrid_onmousemove(HEXOBJ hObj, INT x, INT y)
 		Ex_ObjShow(button, TRUE);
 	}
 
-	
+
 	INT hotItem = -1;
 	size_t* ptrArray = (size_t*)arr->Items;
 
@@ -1038,6 +1043,9 @@ BOOL _propertygrid_is_item_visible(HEXOBJ hObj, INT index)
 
 void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 {
+	if (Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_IGNORING_CLICKS)) {
+		return; // 忽略点击
+	}
 	INT nPos = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET);
 	EX_PROPERTYGRID_ITEMINFO* arr = (EX_PROPERTYGRID_ITEMINFO*)Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_ITEMARRAY);
 	if (!arr) return;
@@ -1053,7 +1061,7 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 	if (Ex_ObjIsValidate(datebox)) Ex_ObjShow(datebox, FALSE);
 	if (Ex_ObjIsValidate(button)) Ex_ObjShow(button, FALSE);
 	size_t* ptrArray = (size_t*)arr->Items;
-	auto dpi = Ex_DUIGetSystemDpi();
+
 	for (int i = 0; i < arr->Count; i++) {
 		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[i];
 		if (!sub->bVisible) continue; // 只检查可见的项目
@@ -1104,8 +1112,8 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 						OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
 				}
 				Ex_ObjSetText(edit, data->Content, TRUE);
-				Ex_ObjMove(edit, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
-					(rcContent.bottom - rcContent.top) / dpi, TRUE);
+				Ex_ObjMove(edit, rcContent.left, rcContent.top, (rcContent.right - rcContent.left),
+					(rcContent.bottom - rcContent.top), TRUE);
 				Ex_ObjSendMessage(edit, EM_SETSEL, -1, -1);// 光标移动到末尾
 				Ex_ObjSetLong(edit, OBJECT_LONG_LPARAM, i);
 				Ex_ObjSetFocus(edit);
@@ -1114,8 +1122,8 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				if (sub->Type & PROPERTYGRID_ITEMTYPE_BUTTON) {
 					HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
 					Ex_ObjSetText(button, L"...", TRUE);
-					Ex_ObjMove(button, (rcContent.right - Ex_Scale(26)) / dpi, rcContent.top / dpi, Ex_Scale(26) / dpi,
-						(rcContent.bottom - rcContent.top) / dpi, TRUE);
+					Ex_ObjMove(button, (rcContent.right - Ex_Scale(26)), rcContent.top, Ex_Scale(26),
+						(rcContent.bottom - rcContent.top), TRUE);
 					Ex_ObjSetLong(button, OBJECT_LONG_LPARAM, i);
 					Ex_ObjShow(button, TRUE);
 				}
@@ -1126,19 +1134,20 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				OffsetRect(&rcContent, 0, -nPos);
 				HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
 				Ex_ObjSetText(datebox, data->Content, TRUE);
-				Ex_ObjMove(datebox, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
-					(rcContent.bottom - rcContent.top) / dpi, TRUE);
+				Ex_ObjMove(datebox, rcContent.left, rcContent.top, (rcContent.right - rcContent.left),
+					(rcContent.bottom - rcContent.top), TRUE);
 				Ex_ObjSetFocus(datebox);
 				Ex_ObjSetLong(datebox, OBJECT_LONG_LPARAM, i);
 				Ex_ObjShow(datebox, TRUE);
+				Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_IGNORING_CLICKS, 1);
 			}
 			else if (sub->Type == PROPERTYGRID_ITEMTYPE_COLORPICKER) {
 				EX_PROPERTYGRID_ITEMINFO_COLORPICKER* data = (EX_PROPERTYGRID_ITEMINFO_COLORPICKER*)sub->Data;
 				RECT rcContent = data->Layout.rcContent;
 				OffsetRect(&rcContent, 0, -nPos);
 				HEXOBJ hobjColorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
-				Ex_ObjMove(hobjColorPicker, rcContent.left / dpi, rcContent.top / dpi,
-					30 / dpi, (rcContent.bottom - rcContent.top) / dpi,
+				Ex_ObjMove(hobjColorPicker, rcContent.left, rcContent.top,
+					30, (rcContent.bottom - rcContent.top),
 					TRUE);
 				EXARGB color = ExRGB2ARGB(0, 255);
 				if (data->Content) {
@@ -1164,8 +1173,8 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				Ex_ObjSetText(combobox, data->Content, TRUE);   // 让组合框显示为当前的内容
 				Ex_ObjSetFocus(combobox);
 				Ex_ObjSetLong(combobox, OBJECT_LONG_LPARAM, i);
-				Ex_ObjMove(combobox, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
-					(rcContent.bottom - rcContent.top) / dpi, TRUE);
+				Ex_ObjMove(combobox, rcContent.left, rcContent.top, (rcContent.right - rcContent.left),
+					(rcContent.bottom - rcContent.top), TRUE);
 				Ex_ObjShow(combobox, TRUE);
 			}
 			else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON) {
@@ -1174,8 +1183,8 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 				OffsetRect(&rcContent, 0, -nPos);
 				HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
 				Ex_ObjSetText(button, data->Content, TRUE);
-				Ex_ObjMove(button, rcContent.left / dpi, rcContent.top / dpi, (rcContent.right - rcContent.left) / dpi,
-					(rcContent.bottom - rcContent.top) / dpi, TRUE);
+				Ex_ObjMove(button, rcContent.left, rcContent.top, (rcContent.right - rcContent.left),
+					(rcContent.bottom - rcContent.top), TRUE);
 				Ex_ObjSetFocus(button);
 				Ex_ObjSetLong(button, OBJECT_LONG_LPARAM, i);
 				Ex_ObjShow(button, TRUE);
@@ -1226,7 +1235,7 @@ void _propertygrid_update_layout(HEXOBJ hObj)
 
 	RECT rc;
 	Ex_ObjGetClientRect(hObj, &rc);
-	INT widthClient = Ex_Scale(rc.right - rc.left);
+	INT widthClient = (rc.right - rc.left);
 	INT currentY = 0;
 	size_t* ptrArray = (size_t*)arr->Items;
 	// 先计算所有项目的可见性
@@ -1302,7 +1311,7 @@ void _propertygrid_update_layout(HEXOBJ hObj)
 	}
 
 	// 更新滚动条范围
-	INT viewHeight = Ex_Scale(rc.bottom - rc.top);
+	INT viewHeight = (rc.bottom - rc.top);
 	INT scrollRange = max(0, currentY - viewHeight);
 	Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, scrollRange, TRUE);
 
@@ -1673,7 +1682,7 @@ void _propertygrid_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 
 	RECT rc;
 	Ex_ObjGetClientRect(hObj, &rc);
-	INT heightRC = Ex_Scale(rc.bottom - rc.top);
+	INT heightRC = (rc.bottom - rc.top);
 
 	switch (nCode) {
 	case SB_THUMBPOSITION:

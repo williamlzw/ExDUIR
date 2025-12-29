@@ -10,7 +10,7 @@ INT _flowscrollview_calculateHeight(HEXOBJ hScrollView)
 
     // 获取容器宽度
     RECT rcContainer;
-    Ex_ObjGetRect(hContainer, &rcContainer);
+    Ex_ObjGetClientRect(hContainer, &rcContainer);
     INT containerWidth = rcContainer.right - rcContainer.left;
 
     if (containerWidth <= 0) return 0;
@@ -24,8 +24,9 @@ INT _flowscrollview_calculateHeight(HEXOBJ hScrollView)
     HEXOBJ hChild = Ex_ObjGetObj(hContainer, GW_CHILD);
     while (hChild)
     {
-        RECT rcChild;
-        Ex_ObjGetRect(hChild, &rcChild);
+        RECT rcChild{ 0 };
+        Ex_ObjGetClientRect(hChild, &rcChild);
+
         SIZE size;
         size.cx = rcChild.right - rcChild.left;
         size.cy = rcChild.bottom - rcChild.top;
@@ -63,7 +64,7 @@ INT _flowscrollview_calculateHeight(HEXOBJ hScrollView)
 
     // 加上最后一行的高度
     currentY += currentRowHeight;
-
+    currentY += nVerticalSpacing;
     return currentY;
 }
 
@@ -86,7 +87,7 @@ void _flowscrollview_updatescrollrange(HEXOBJ hScrollView)
     INT vScrollPos = Ex_ObjScrollGetPos(hScrollView, SCROLLBAR_TYPE_VERT);
 
     // 更新容器高度
-    Ex_ObjMove(hContainer, 0, 0, scrollViewWidth, containerHeight, FALSE);
+    //Ex_ObjMove(hContainer, 0, 0, scrollViewWidth, containerHeight, TRUE);
 
     // 处理垂直滚动条
     BOOL needVScroll = (containerHeight > scrollViewHeight);
@@ -110,7 +111,7 @@ void _flowscrollview_updatescrollrange(HEXOBJ hScrollView)
     }
 
     // 调整容器位置
-    Ex_ObjSetPos(hContainer, 0, 0, -vScrollPos, scrollViewWidth, containerHeight, SWP_NOZORDER | SWP_NOSIZE);
+    Ex_ObjMove(hContainer, 0, -vScrollPos, scrollViewWidth, containerHeight, TRUE);
 }
 
 // 滚动条默认处理
@@ -173,6 +174,18 @@ void ScrollView_ForceRelayout(HEXOBJ hScrollView)
     }
 }
 
+LRESULT CALLBACK _flowscrollview_static_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
+{
+    switch (uMsg) {
+        //case WM_VSCROLL:
+    case WM_MOUSEWHEEL:
+        *lpResult = Ex_ObjDispatchMessage((HEXOBJ)Ex_ObjGetLong(hObj, OBJECT_LONG_OBJPARENT), uMsg, wParam, lParam);
+        return 1;
+        break;
+    }
+    return 0;
+}
+
 // ScrollView 消息处理函数
 LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -180,7 +193,7 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
     case WM_CREATE:
     {
         // 初始化属性
-        Ex_ObjInitPropList(hObj, 10);
+        Ex_ObjInitPropList(hObj, 5);
 
         // 设置默认布局配置
         Ex_ObjSetProp(hObj, FLOWSCROLLVIEW_PROP_HORIZONTAL_SPACING, 24);
@@ -188,8 +201,8 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
         Ex_ObjSetProp(hObj, FLOWSCROLLVIEW_PROP_COMPONENT_COUNT, 0);
 
         // 创建容器
-        HEXOBJ hContainer = Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_VISIBLE,
-            0, 0, 0, 0, hObj, 0, -1, 0, 0, NULL);
+        HEXOBJ hContainer = Ex_ObjCreateEx(OBJECT_STYLE_EX_TRANSPARENT, L"static", NULL, OBJECT_STYLE_VISIBLE,
+            0, 0, 0, 0, hObj, 0, -1, 120, 0, _flowscrollview_static_proc);
 
         if (hContainer)
         {
@@ -217,7 +230,7 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
         }
         break;
     }
-
+    case WM_LAYOUT_UPDATE:
     case WM_SIZE:
     {
         _flowscrollview_updatescrollrange(hObj);
@@ -226,15 +239,18 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 
     case WM_VSCROLL:
     {
-        INT nPos = _flowscrollview_pagescrolldefaultproc(hObj, SCROLLBAR_TYPE_VERT, wParam, 1, 10, TRUE);
         HEXOBJ hContainer = (HEXOBJ)Ex_ObjGetProp(hObj, FLOWSCROLLVIEW_PROP_CONTAINER_HANDLE);
+        RECT rc;
+        Ex_ObjGetClientRect(hObj, &rc);
+        
+        INT nPos = _flowscrollview_pagescrolldefaultproc(hObj, SCROLLBAR_TYPE_VERT, wParam, Ex_ObjGetLong(hContainer, OBJECT_LONG_LPARAM), rc.bottom - rc.top, TRUE);
         if (hContainer != 0)
         {
             RECT rcContainer;
-            Ex_ObjGetRect(hContainer, &rcContainer);
+            Ex_ObjGetClientRect(hContainer, &rcContainer);
             INT containerWidth = rcContainer.right - rcContainer.left;
             INT containerHeight = rcContainer.bottom - rcContainer.top;
-            Ex_ObjSetPos(hContainer, 0, 0, -nPos, containerWidth, containerHeight, SWP_NOZORDER | SWP_NOSIZE);
+            Ex_ObjMove(hContainer, 0, -nPos, containerWidth, containerHeight, TRUE);
         }
         break;
     }
@@ -251,6 +267,7 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
 
         if (hContainer == 0 || hLayout == 0) return FALSE;
 
+
         // 检查组件是否已经在容器中
         HEXOBJ hParent = Ex_ObjGetParent(hComponent);
         if (hParent != hContainer)
@@ -258,6 +275,7 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
             // 将组件移动到容器中
             Ex_ObjSetParent(hComponent, hContainer);
         }
+
 
         // 设置布局属性
         INT nHorizontalSpacing = (INT)Ex_ObjGetProp(hObj, FLOWSCROLLVIEW_PROP_HORIZONTAL_SPACING);
@@ -399,7 +417,7 @@ void _flowscrollview_register()
         OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL,
         OBJECT_STYLE_EX_FOCUSABLE,
         DT_LEFT,
-        10 * sizeof(size_t),
+        0,
         NULL,
         0,
         _flowscrollview_proc);

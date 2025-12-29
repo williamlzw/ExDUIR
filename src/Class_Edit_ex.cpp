@@ -24,13 +24,13 @@ public:
 
     //@cmember Show the scroll bar
     BOOL TxShowScrollBar(INT fnBar, BOOL fShow) {
-        Ex_ObjScrollShow(m_pOwner->pObj_->hObj_, fnBar, fShow);
+        Ex_ObjScrollShow(m_pOwner->pObj_->base.hObj_, fnBar, fShow);
         return TRUE;
     };
 
     //@cmember Enable the scroll bar
     BOOL TxEnableScrollBar(INT fuSBFlags, INT fuArrowflags) {
-        Ex_ObjScrollEnable(m_pOwner->pObj_->hObj_, fuSBFlags, fuArrowflags);
+        Ex_ObjScrollEnable(m_pOwner->pObj_->base.hObj_, fuSBFlags, fuArrowflags);
         return TRUE;
     };
 
@@ -44,14 +44,14 @@ public:
         else {
             nMaxFixed = nMaxPos - (prcText->right - prcText->left);
         }
-        return Ex_ObjScrollSetRange(m_pOwner->pObj_->hObj_, fnBar, nMinPos,
+        return Ex_ObjScrollSetRange(m_pOwner->pObj_->base.hObj_, fnBar, nMinPos,
             nMaxFixed, fRedraw);
     };
 
     //@cmember Set the scroll position
     BOOL TxSetScrollPos(INT fnBar, INT nPos, BOOL fRedraw) {
         obj_s* pObj = m_pOwner->pObj_;
-        HEXOBJ hObj = pObj->hObj_;
+        HEXOBJ hObj = pObj->base.hObj_;
         Ex_ObjScrollSetPos(hObj, fnBar, nPos, fRedraw);
         return TRUE;
     };
@@ -128,7 +128,7 @@ public:
     void TxSetCapture(BOOL fCapture) {};
 
     //@cmember Set the focus to the text window
-    void TxSetFocus() { Ex_ObjSetFocus(m_pOwner->pObj_->hObj_); };
+    void TxSetFocus() { Ex_ObjSetFocus(m_pOwner->pObj_->base.hObj_); };
 
     //@cmember Establish a new cursor shape
     void TxSetCursor(HCURSOR hcur, BOOL fText) {};
@@ -239,7 +239,7 @@ public:
     HRESULT TxNotify(DWORD iNotify, LPVOID pv) {
         obj_s* pObj = m_pOwner->pObj_;
         if (iNotify != EN_UPDATE) {
-            _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->hObj_, 0, iNotify, 0,
+            _obj_dispatchnotify(_obj_gethwnd(pObj), pObj, pObj->base.hObj_, 0, iNotify, 0,
                 (size_t)pv);
             if (iNotify == EDIT_EVENT_SELCHANGE) {
                 INT nError = 0;
@@ -329,7 +329,7 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
         }
         if (g_Li.hMenuEdit == 0) {
             g_Li.hMenuEdit =
-                LoadMenuW(GetModuleHandleW(L"user32.dll"), MAKEINTRESOURCEW(1));
+                Ex_MenuLoadW(GetModuleHandleW(L"user32.dll"), MAKEINTRESOURCEW(1));
         }
     }
 }
@@ -570,23 +570,23 @@ void _edit_contextmenu(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj,
         return;
     }
     if (_obj_setfocus(hWnd, pWnd, hObj, pObj, TRUE)) {
-        _obj_baseproc(hWnd, hObj, pObj, WM_COMMAND, EM_SETSEL, 0);
+        _obj_baseproc(hWnd, hObj, pObj, WM_COMMAND, EM_EXSETSEL, 0);
     }
-    HMENU hMenu = GetSubMenu(g_Li.hMenuEdit, 0);
+    HEXMENU hMenu = Ex_MenuGetSubMenu(g_Li.hMenuEdit, 0);
     BOOL sOK;
-    LRESULT tmp = _edit_sendmessage(pObj, EM_CANUNDO, 0, 0, &sOK);  // 撤销
-    EnableMenuItem(hMenu, 0, tmp ? 1024 : 1026);
+    LRESULT tmp = _edit_sendmessage(pObj, EM_CANUNDO, 0, 0, &sOK); //撤销
+    Ex_MenuEnableItem(hMenu, 0, tmp ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);
     SIZE sz;
     _edit_sendmessage(pObj, EM_EXGETSEL, 0, (size_t)&sz, &sOK);
     LONG index = sz.cy - sz.cx;
     index = index > 0 ? index : 0;
-    EnableMenuItem(hMenu, 2, index != 0 ? 1024 : 1026);               // 剪切
-    EnableMenuItem(hMenu, 3, index != 0 ? 1024 : 1026);               // 复制
-    EnableMenuItem(hMenu, 5, index != 0 ? 1024 : 1026);               // 删除
-    tmp = _edit_sendmessage(pObj, EM_CANPASTE, 0, 0, &sOK);           // 粘贴
-    EnableMenuItem(hMenu, 4, tmp != 0 ? 1024 : 1026);                 // 剪切
-    EnableMenuItem(hMenu, 7, _edit_getlen(pObj) != 0 ? 1024 : 1026);  // 全选
-    Ex_TrackPopupMenu(hMenu, 0, x, y, 0, hObj, 0, NULL, 0);
+    Ex_MenuEnableItem(hMenu, 2, index != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);              //剪切
+    Ex_MenuEnableItem(hMenu, 3, index != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);              //复制
+    Ex_MenuEnableItem(hMenu, 5, index != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);              //删除
+    tmp = _edit_sendmessage(pObj, EM_CANPASTE, 0, 0, &sOK);          //粘贴
+    Ex_MenuEnableItem(hMenu, 4, tmp != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED);                //剪切
+    Ex_MenuEnableItem(hMenu, 7, _edit_getlen(pObj) != 0 ? MF_BYPOSITION : MF_BYPOSITION | MF_DISABLED | MF_GRAYED); //全选
+    Ex_TrackPopupMenu(hMenu, 0, x, y, 0, hObj, 0);
 }
 
 LRESULT _edit_getlen(obj_s* pObj) {
@@ -603,7 +603,7 @@ void _edit_command(obj_s* pObj, INT uMsg, WPARAM wParam, LPARAM lParam) {
         wParam == WM_PASTE || wParam == WM_CLEAR) {
         uMsg = wParam;
         wParam = 0;
-
+        lParam = 0;
         _edit_sendmessage(pObj, uMsg, wParam, lParam, &sOK);
     }
     else {
@@ -673,7 +673,7 @@ size_t _edit_paint(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
             IntersectRect(&rcTmp, (RECT*)&ps.rcText.left, (RECT*)&ps.rcPaint.left);
             HDC mDc = ((edit_s*)ps.dwOwnerData)->mDc_;
             wnd_s* pWnd = pObj->pWnd_;
-            BOOL ismove = (pWnd->dwFlags_ & EWF_BSIZEMOVING) == EWF_BSIZEMOVING;
+            BOOL ismove = (pWnd->base.dwFlags_ & EWF_BSIZEMOVING) == EWF_BSIZEMOVING;
             HDC hDc = _canvas_getdc(ps.hCanvas);
             _edit_txpaint(pITS, DVASPECT_CONTENT, 0, NULL, NULL, hDc, NULL, NULL,
                 NULL, &rcTmp, NULL,
@@ -810,7 +810,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             _obj_setuistate(pObj, STATE_HOVER, TRUE, 0, TRUE, &nError);
         }
         else if (uMsg == WM_SETFOCUS) {
-            IME_Control(hWnd, pObj->pWnd_,
+            IME_Control(hWnd, 
                 !((pObj->dwStyle_ & EDIT_STYLE_USEPASSWORD) ==
                     EDIT_STYLE_USEPASSWORD));
             ((ITextServices*)_edit_its(pObj))->OnTxUIActivate();
@@ -845,7 +845,7 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
             nError = 0;
             _obj_setuistate(pObj, STATE_FOCUS, TRUE, 0, TRUE, &nError);
             DestroyCaret();
-            IME_Control(hWnd, pObj->pWnd_, FALSE);
+            IME_Control(hWnd, FALSE);
         }
         else if (uMsg == WM_CHAR) {
             if ((pObj->dwStyle_ & EDIT_STYLE_NUMERICINPUT) ==

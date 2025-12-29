@@ -399,6 +399,9 @@ BOOL Ex_ResGetFile(HEXRES hRes, LPCWSTR lpwzPath, LPVOID* lpFile, size_t* dwFile
     return Ex_ResGetFileFromAtom(hRes, Ex_Atom(lpwzPath), lpFile, dwFileLen);
 }
 
+#include <windows.h>
+#include <string>
+
 bool createDirectoryRecursive(const std::wstring& dirPath) {
     // 尝试创建目录
     if (CreateDirectoryW(dirPath.c_str(), NULL)) {

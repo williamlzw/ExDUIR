@@ -35,7 +35,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         Ex_ObjSetLong(hObj, PALETTE_LONG_DOWN, 1);
         // 记录按下时的区域
         RECT rc;
-        Ex_ObjGetClientRectForDpi(hObj, &rc);
+        Ex_ObjGetClientRect(hObj, &rc);
         auto x = GET_X_LPARAM(lParam);
         auto y = GET_Y_LPARAM(lParam);
 
@@ -62,7 +62,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
         auto down = Ex_ObjGetLong(hObj, PALETTE_LONG_DOWN);
         if (down) {
             RECT rc;
-            Ex_ObjGetClientRectForDpi(hObj, &rc);
+            Ex_ObjGetClientRect(hObj, &rc);
             auto x = GET_X_LPARAM(lParam);
             auto y = GET_Y_LPARAM(lParam);
             if (x >= rc.left && x <= rc.right && y >= rc.top && y <= rc.bottom) {              
@@ -110,7 +110,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
     }
     else if (uMsg == PALETTE_MESSAGE_SETCOLOR) {
         RECT rc;
-        Ex_ObjGetClientRectForDpi(hObj, &rc);
+        Ex_ObjGetClientRect(hObj, &rc);
         // 将传入的颜色转换为HSV，获取色调
         EXHSB hsb = ExRGBA2HSB((EXARGB)lParam);
 

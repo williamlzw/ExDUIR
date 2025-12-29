@@ -30,34 +30,17 @@ struct EX_THUNK_DATA
 
 struct wnd_s
 {
-    union
-    {
-        obj_base base;
-        struct
-        {
-            HEXDUI                  hexdui_;
-            HEXOBJ                  objChildFirst_;
-            HEXOBJ                  objChildLast_;
-            HEXLAYOUT               hLayout_;
-            INT                     dwFlags_;
-            EX_BACKGROUNDIMAGEINFO* lpBackgroundImage_;
-            HEXTHEME                hTheme_;
-        };   // 方便使用base里的成员
-    };
+    obj_base base;
     UPDATELAYEREDWINDOWINFO ulwi_;
+    POINT ulwi_pptSrc;
+    RECT ulwi_prcDirty;
+    BLENDFUNCTION ulwi_pblend_;
 
     INT           left_;   // the same as ulwi_pptDst_x
     INT           top_;    // the same as ulwi_pptDst_y
     INT           width_;
     INT           height_;
 
-    INT           ulwi_pptSrc_x_;
-    INT           ulwi_pptSrc_y_;
-    BLENDFUNCTION ulwi_pblend_;
-    INT           ulwi_prcDirty_left_;
-    INT           ulwi_prcDirty_top_;
-    INT           ulwi_prcDirty_right_;
-    INT           ulwi_prcDirty_bottom_;
 
     ID2D1DeviceContext*          dx_context_;
     ID2D1GdiInteropRenderTarget* dx_gdiinterop_;
@@ -67,7 +50,6 @@ struct wnd_s
 
     size_t dwWinState_;
     INT    dwStyle_;
-    HIMC   hImc_;
     LPVOID hCursor_;
     HWND   hWnd_;
     HWND   hWndTips_;
@@ -88,13 +70,12 @@ struct wnd_s
     HEXOBJ objFocus_;       // 焦点组件句柄
     HEXOBJ objFocusPrev_;
 
-    HEXOBJ objMenucontext_;
+    INT dwHitWndPos_;       // 鼠标在窗口的坐标
     LONG   dwHitObjPos_Abs_; // 鼠标在组件的坐标
+    INT OldPos_Abs_;        // 用于判断是否重置跟踪时钟(MOUSEHOVER)
     INT    dwHitCode_;       // 记录鼠标命中测试结果
     HEXOBJ objHittest_;      // 记录命中组件, WM_NCHITTEST中记录更新其值
     HEXOBJ objHittestPrev_;
-    INT    dwTrackContext_;
-    wnd_s* pMenuTrackWnd_;
 
     ti_s* ti_auto_;
     ti_s* ti_track_;
@@ -106,6 +87,8 @@ struct wnd_s
     HEXDUI        hExDuiParent_;
     EX_HASHTABLE* hTableObjects_;
     EX_HASHTABLE* hTableEvent_;
+    LPVOID        pJSObj_;
+    LPVOID        pSysObj_;
 
     EXHANDLE lpPopupParams_;
     HWND     hWndPopup_;
@@ -121,18 +104,21 @@ struct wnd_s
     LPVOID  hRes_;
     INT     crBkg_;
     INT     crBorder_;
-    INT     crSD_;//背景颜色
     HWND    hWndShadow_;
     INT     alpha_;
     wnd_s*  pMenuPrevWnd_;
     LPVOID  hMenuPopup_;
     INT     szItemSeparator_;
-    INT   menu_maxwidth_;
     LPVOID  padding_client_;
     LPVOID  padding_text_;
     LPVOID  padding_separator_;
     HEXFONT hFont_Menu_;
 
+    LPVOID pJSDUIObj_;
+    size_t hJSObjMap_;
+
+    INT   menu_maxwidth_;
+    INT   crSD_;
     INT   Radius_;
 };
 
@@ -140,7 +126,7 @@ LRESULT CALLBACK _wnd_defwindowprocW(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM 
 BOOL _wnd_getfromhandle(size_t handle, HWND* hWnd = NULL, wnd_s** pWnd = NULL, obj_s** pObj = NULL,
                         BOOL* isObject = NULL, INT* nError = NULL);
 LRESULT _wnd_dispatch_notify(HWND hWnd, wnd_s* pWnd, size_t hObj, INT nID, INT nCode, WPARAM wParam,
-                             LPARAM lParam, obj_s* pObj);
+                             LPARAM lParam);
 void    _wnd_redraw_bkg(HWND hWnd, wnd_s* pWnd, LPVOID lpRect, BOOL bRedrawBkg, BOOL bUpdate);
 LRESULT _wnd_defaultproc(HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL    _wnd_querystyle(HWND hWnd, INT dwStyle, BOOL bExStyle);
@@ -164,7 +150,6 @@ size_t _wnd_dispatch_msg_obj(HWND hWnd, mempoolmsg_s* lpData, obj_s* pObj, INT u
                              LPARAM lParam);
 LRESULT CALLBACK _wnd_tooltips_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 LRESULT CALLBACK _wnd_shadow_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
-INT              _wnd_popupclose(wnd_s* pWnd, HWND hWnd, INT wParam, obj_s* pObj);
 void             _wnd_dx_unint(wnd_s* pWnd);
 void             _wnd_dx_init(wnd_s* pWnd);
 HEXOBJ _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, HEXOBJ objLast, INT x, INT y, INT* hitCode,
@@ -173,12 +158,12 @@ INT    _wnd_wm_nchittest_sizebox(INT width, INT height, INT x, INT y);
 INT    _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam);
 void   _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle);
 void   _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext, HEXCANVAS cvDisplay,
-                       LPVOID pBitmapDisplay, RECT rcPaint, EXHANDLE objChildFirst, INT offsetX,
+                       LPVOID pBitmapDisplay, RECT rcPaint, BOOL ParentBorder, EXHANDLE objChildFirst, INT offsetX,
                        INT offsetY, INT pAlpha, BOOL fDX, LPVOID hBorderBrush);
 BOOL   _wnd_wm_setcursor(HWND hWnd, wnd_s* pWnd, LPARAM lParam);
 void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
-void          _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, HEXOBJ objCheck, HEXOBJ objHittest,
-                                 obj_s* pObjHittest, LPARAM lParam, BOOL fTrack);
+void          _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, INT uMsg, HEXOBJ objCheck, HEXOBJ objHittest,
+                                 obj_s* pObjHittest, LPARAM wParam, LPARAM lParam, BOOL fTrack);
 INT           _wnd_destroy(HWND hWnd, wnd_s* pWnd);
 void          _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd);
 void          _wnd_render_dc(HWND hWnd, wnd_s* pWnd, LPVOID hDC, HEXCANVAS cvDisplay, RECT rcPaint,
@@ -189,9 +174,8 @@ void          _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush);
 BOOL          _wnd_wm_paint(wnd_s* pWnd, HWND hWnd);
 BOOL          _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam);
 void   _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wParam,
-                          LPARAM lParam);
-void   _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, LPARAM lParam, BOOL fMsgDispatch);
-void   _wnd_wm_captionchange(HWND hWnd, wnd_s* pWnd, LPARAM lParam);
+                          LPARAM lParam, BOOL sendmsg);
+void   _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam, BOOL fMsgDispatch);
 void   _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 void   _wnd_wm_menucontext(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
 void   _wnd_wm_mousewheel(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam, LPARAM lParam);
@@ -202,14 +186,7 @@ BOOL   _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM 
 BOOL   _wnd_obj_childtabstop(HEXOBJ objEntry, HEXOBJ* objFocusable, LPVOID* pObjFocusable,
                              HEXOBJ objLast, BOOL* bFounded);
 void   _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd);
-BOOL   _wnd_wm_measureitem_host(wnd_s* pWnd, WPARAM wParam, LPARAM lParam);
-void   _wnd_menu_updatecurrent(wnd_s* pWnd);
 LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 BOOL Ex_DUIGetBackgroundImage(HEXDUI hExDui, LPVOID lpBackgroundImage);
 void _wnd_getclientrect(wnd_s* pWnd, RECT* lpRect, INT* nError);
-void          _wnd_menu_setpos(HWND hWnd, wnd_s* pWnd, tagWINDOWPOS* lParam);
-void          _wnd_menu_createitems(HWND hWnd, wnd_s* pWnd);
-void          _wnd_menu_init(HWND hWnd, wnd_s* pWnd);
-void _wnd_wm_initmenupopup(HWND hWnd, wnd_s* pWnd, HMENU hMenu);
-BOOL _wnd_menu_mouse(HWND hWnd, wnd_s* pWnd, INT uMsg, WPARAM wParam,
-    LONG_PTR* iItem);
+void CALLBACK _wnd_timer_mousehover(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);

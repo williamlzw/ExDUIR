@@ -806,7 +806,7 @@ void _chatbox_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
 
     RECT rc;
     Ex_ObjGetClientRect(hObj, &rc);
-    INT heightRC = Ex_Scale(rc.bottom - rc.top);
+    INT heightRC = (rc.bottom - rc.top);
 
     switch (nCode) {
     case SB_THUMBPOSITION:
@@ -820,10 +820,10 @@ void _chatbox_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
         nPos += heightRC;
         break;
     case SB_LINEUP:
-        nPos -= Ex_Scale(30);
+        nPos -= (30);
         break;
     case SB_LINEDOWN:
-        nPos += Ex_Scale(30);
+        nPos += (30);
         break;
     case SB_TOP:
         nPos = 0;
@@ -867,9 +867,9 @@ void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
-        Ex_Scale(5), Ex_Scale(5));
-    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
-        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+        (5), (5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + (2), rcBubble.top + (2),
+        rcBubble.right - (2), rcBubble.bottom - (2), (5), ExARGB(150, 150, 150, 255), (5), (5), (5), (5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     INT imgAvatarWidth, imgAvatarHeight;
@@ -902,7 +902,7 @@ void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         RECT rcText = data->Layout.rcUnitList[i];
         OffsetRect(&rcText, 0, -nPos);
         _canvas_drawroundedrect(ps.hCanvas, hBrush, rcText.left, rcText.top,
-            rcText.right, rcText.bottom, Ex_Scale(5), Ex_Scale(5), 1, 0);
+            rcText.right, rcText.bottom, (5), (5), 1, 0);
         _canvas_drawtext(ps.hCanvas, hFontText,
             ExARGB(70, 99, 255, 255),
             ((EX_CHATBOX_ITEMINFO_LINK_UNIT*)data->ListInfo)[i].Text, -1,
@@ -933,9 +933,9 @@ void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
-        Ex_Scale(5), Ex_Scale(5));
-    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
-        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+        (5), (5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + (2), rcBubble.top + (2),
+        rcBubble.right - (2), rcBubble.bottom - (2), (5), ExARGB(150, 150, 150, 255), (5), (5), (5), (5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     INT imgAvatarWidth, imgAvatarHeight;
@@ -954,7 +954,7 @@ void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
     _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
-    _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcContent.bottom + Ex_Scale(10), rcContent.right, rcContent.bottom + Ex_Scale(10), 1, 0);
+    _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcContent.bottom + (10), rcContent.right, rcContent.bottom + (10), 1, 0);
     BOOL fillTitle = FALSE;
     for (int i = 0; i < data->ListCount; i++)
     {
@@ -966,7 +966,7 @@ void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             rcCurrent = rcColumnText;
             if (i == 0 && !fillTitle)//首行填充背景色
             {
-                _canvas_fillrect(ps.hCanvas, hBrush, rcContent.left, rcCurrent.top - Ex_Scale(10), rcContent.right, rcCurrent.bottom + Ex_Scale(10));
+                _canvas_fillrect(ps.hCanvas, hBrush, rcContent.left, rcCurrent.top - (10), rcContent.right, rcCurrent.bottom + (10));
                 fillTitle = TRUE;
             }
             _canvas_drawtext(ps.hCanvas, hFontTitle,
@@ -976,9 +976,9 @@ void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
                 rcColumnText.left, rcColumnText.top,
                 rcColumnText.right, rcColumnText.bottom);
         }
-        _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcCurrent.bottom + Ex_Scale(10), rcContent.right, rcCurrent.bottom + Ex_Scale(10), 1, 0);
-        _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcCurrent.top - Ex_Scale(10), rcContent.left, rcCurrent.bottom + Ex_Scale(10), 1, 0);
-        _canvas_drawline(ps.hCanvas, hBrush, rcContent.right, rcCurrent.top - Ex_Scale(10), rcContent.right, rcCurrent.bottom + Ex_Scale(10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcCurrent.bottom + (10), rcContent.right, rcCurrent.bottom + (10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcCurrent.top - (10), rcContent.left, rcCurrent.bottom + (10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcContent.right, rcCurrent.top - (10), rcContent.right, rcCurrent.bottom + (10), 1, 0);
     }
     _brush_destroy(hBrush);
 }
@@ -1003,9 +1003,9 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
-        Ex_Scale(5), Ex_Scale(5));
-    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
-        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+        (5), (5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + (2), rcBubble.top + (2),
+        rcBubble.right - (2), rcBubble.bottom - (2), (5), ExARGB(150, 150, 150, 255), (5), (5), (5), (5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     INT imgAvatarWidth, imgAvatarHeight;
@@ -1024,7 +1024,7 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
     _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
-    _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcContent.bottom + Ex_Scale(10), rcContent.right, rcContent.bottom + Ex_Scale(10), 1, 0);
+    _canvas_drawline(ps.hCanvas, hBrush, rcContent.left, rcContent.bottom + (10), rcContent.right, rcContent.bottom + (10), 1, 0);
     for (int i = 0; i < data->ListCount; i++)
     {
         RECT rcTitle = data->Layout.rcTitleList[i];
@@ -1033,7 +1033,7 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             ExARGB(134, 134, 140, 255),
             ((EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)data->ListInfo)[i].Title, -1,
             DT_LEFT | DT_TOP,
-            rcTitle.left + Ex_Scale(10), rcTitle.top,
+            rcTitle.left + (10), rcTitle.top,
             rcTitle.right, rcTitle.bottom);
 
         RECT rcDescription = data->Layout.rcDescriptionList[i];
@@ -1046,9 +1046,9 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             rcDescription.right, rcDescription.bottom);
 
         _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
-        _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcDescription.bottom + Ex_Scale(10), rcDescription.right, rcDescription.bottom + Ex_Scale(10), 1, 0);
-        _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcDescription.top - Ex_Scale(10), rcTitle.left, rcDescription.bottom + Ex_Scale(10), 1, 0);
-        _canvas_drawline(ps.hCanvas, hBrush, rcDescription.right, rcDescription.top - Ex_Scale(10), rcDescription.right, rcDescription.bottom + Ex_Scale(10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcDescription.bottom + (10), rcDescription.right, rcDescription.bottom + (10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcDescription.top - (10), rcTitle.left, rcDescription.bottom + (10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcDescription.right, rcDescription.top - (10), rcDescription.right, rcDescription.bottom + (10), 1, 0);
         //#ifdef _DEBUG
         //        _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
         //        _canvas_drawrect(ps.hCanvas, hBrush, rcDescription.left, rcDescription.top, rcDescription.right, rcDescription.bottom, 1, 0);
@@ -1088,9 +1088,9 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
-        Ex_Scale(5), Ex_Scale(5));
-    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
-        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+        (5), (5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + (2), rcBubble.top + (2),
+        rcBubble.right - (2), rcBubble.bottom - (2), (5), ExARGB(150, 150, 150, 255), (5), (5), (5), (5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     INT imgAvatarWidth, imgAvatarHeight;
@@ -1113,7 +1113,7 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         rcTitle.left, rcTitle.top,
         rcTitle.right, rcTitle.bottom);
     _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
-    _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcTitle.bottom + Ex_Scale(10), rcTitle.right, rcTitle.bottom + Ex_Scale(10), 1, 0);
+    _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcTitle.bottom + (10), rcTitle.right, rcTitle.bottom + (10), 1, 0);
 
     for (int i = 0; i < data->ListCount; i++)
     {
@@ -1153,7 +1153,7 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             rcDescriptionText.left, rcDescriptionText.top,
             rcDescriptionText.right, rcDescriptionText.bottom);
         _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
-        _canvas_drawline(ps.hCanvas, hBrush, rcDescription.left, rcDescriptionText.bottom + Ex_Scale(10), rcDescriptionText.right, rcDescriptionText.bottom + Ex_Scale(10), 1, 0);
+        _canvas_drawline(ps.hCanvas, hBrush, rcDescription.left, rcDescriptionText.bottom + (10), rcDescriptionText.right, rcDescriptionText.bottom + (10), 1, 0);
 
         //#ifdef _DEBUG
         //        _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
@@ -1209,9 +1209,9 @@ void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
-        Ex_Scale(5), Ex_Scale(5));
-    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
-        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+        (5), (5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + (2), rcBubble.top + (2),
+        rcBubble.right - (2), rcBubble.bottom - (2), (5), ExARGB(150, 150, 150, 255), (5), (5), (5), (5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     INT imgAvatarWidth, imgAvatarHeight;
@@ -1240,7 +1240,7 @@ void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         rcContent.right, rcContent.bottom);
 
     _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
-    _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcTitle.bottom + Ex_Scale(10), rcTitle.right, rcTitle.bottom + Ex_Scale(10), 1, 0);
+    _canvas_drawline(ps.hCanvas, hBrush, rcTitle.left, rcTitle.bottom + (10), rcTitle.right, rcTitle.bottom + (10), 1, 0);
 
     //#ifdef _DEBUG
     //    _brush_setcolor(hBrush, ExARGB(0, 0, 255, 255));   // 蓝色边框
@@ -1296,9 +1296,9 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
-        Ex_Scale(5), Ex_Scale(5));
-    _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
-        rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+        (5), (5));
+    _canvas_drawshadow(ps.hCanvas, rcBubble.left + (2), rcBubble.top + (2),
+        rcBubble.right - (2), rcBubble.bottom - (2), (5), ExARGB(150, 150, 150, 255), (5), (5), (5), (5), 0, 0);
     // 绘制头像（使用预计算的布局）
     HEXIMAGE hAvatarImg = Ex_ObjGetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT);
     INT imgAvatarWidth, imgAvatarHeight;
@@ -1337,7 +1337,7 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _brush_setcolor(hBrush, ExARGB(227, 241, 255, 255));
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcReasonRect.left, rcReasonRect.top,
-        rcReasonRect.right, rcReasonRect.bottom, Ex_Scale(10), Ex_Scale(10));
+        rcReasonRect.right, rcReasonRect.bottom, (10), (10));
 
     _brush_setcolor(hBrush, ExRGB2ARGB(16777215, 255));
     _canvas_drawtext(ps.hCanvas, hFontReasonTitle,
@@ -1365,7 +1365,7 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
 
     _canvas_fillroundedrect(ps.hCanvas, hButtonBrush,
         rcButton.left, rcButton.top,
-        rcButton.right, rcButton.bottom, Ex_Scale(8), Ex_Scale(8));
+        rcButton.right, rcButton.bottom, (8), (8));
 
     HEXFONT hFontButton = Ex_ObjGetLong(hObj, CHATBOX_LONG_CARD_BUTTONFONT);
     _canvas_drawtext(ps.hCanvas, hFontButton,
@@ -1421,11 +1421,11 @@ void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_fillroundedrect(ps.hCanvas, hBrush,
         rcBubble.left, rcBubble.top,
         rcBubble.right, rcBubble.bottom,
-        Ex_Scale(5), Ex_Scale(5));
+        (5), (5));
     if (role == CHATBOX_ITEMROLE_ASSISTANT)
     {
-        _canvas_drawshadow(ps.hCanvas, rcBubble.left + Ex_Scale(2), rcBubble.top + Ex_Scale(2),
-            rcBubble.right - Ex_Scale(2), rcBubble.bottom - Ex_Scale(2), Ex_Scale(5), ExARGB(150, 150, 150, 255), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), Ex_Scale(5), 0, 0);
+        _canvas_drawshadow(ps.hCanvas, rcBubble.left + (2), rcBubble.top + (2),
+            rcBubble.right - (2), rcBubble.bottom - (2), (5), ExARGB(150, 150, 150, 255), (5), (5), (5), (5), 0, 0);
     }
 
     // 绘制头像
@@ -1485,49 +1485,49 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         HEXFONT hFontText = Ex_ObjGetLong(hObj, CHATBOX_LONG_TEXT_FONT);
         // 测量文本尺寸
         FLOAT nWidthText, nHeightText;
-        INT maxTextWidth = widthClient - Ex_Scale(140); // 70+70=140
+        INT maxTextWidth = widthClient - (140); // 70+70=140
         _chatbox_measure_text(hCanvas, hFontText, data->Text,
             maxTextWidth, &nWidthText, &nHeightText);
     
         // 计算布局
-        INT bgWidth = (INT)ceil(nWidthText) + Ex_Scale(40);
-        INT bgHeight = (INT)ceil(nHeightText) + Ex_Scale(40);
+        INT bgWidth = (INT)ceil(nWidthText) + (40);
+        INT bgHeight = (INT)ceil(nHeightText) + (40);
 
         // 设置项目区域
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = bgHeight + Ex_Scale(30);
+        sub->rcItem.bottom = bgHeight + (30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
         if (sub->Role == CHATBOX_ITEMROLE_ASSISTANT) {
-            data->Layout.rcAvatar.left = Ex_Scale(10);
-            data->Layout.rcAvatar.top = Ex_Scale(0);
-            data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-            data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+            data->Layout.rcAvatar.left = (10);
+            data->Layout.rcAvatar.top = (0);
+            data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+            data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
-            data->Layout.rcBubble.left = Ex_Scale(70);
-            data->Layout.rcBubble.top = Ex_Scale(0);
+            data->Layout.rcBubble.left = (70);
+            data->Layout.rcBubble.top = (0);
         }
         else {
-            data->Layout.rcAvatar.left = widthClient - Ex_Scale(60);
-            data->Layout.rcAvatar.top = Ex_Scale(0);
-            data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-            data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+            data->Layout.rcAvatar.left = widthClient - (60);
+            data->Layout.rcAvatar.top = (0);
+            data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+            data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
-            data->Layout.rcBubble.left = widthClient - Ex_Scale(70) - bgWidth;
-            data->Layout.rcBubble.top = Ex_Scale(0);
+            data->Layout.rcBubble.left = widthClient - (70) - bgWidth;
+            data->Layout.rcBubble.top = (0);
         }
 
         data->Layout.rcBubble.right = data->Layout.rcBubble.left + bgWidth;
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + bgHeight;
 
         // 设置内容区域
-        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcContent.bottom = data->Layout.rcBubble.bottom - Ex_Scale(20);
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.bottom - (20);
     }
     else if (sub->Type == CHATBOX_ITEMTYPE_CARD) {
         EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
@@ -1538,81 +1538,81 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         // 测量文本尺寸
         FLOAT nWidthContent, nHeightContent;
         FLOAT nWidthReason, nHeightReason;
-        INT maxTextWidthContent = widthClient - Ex_Scale(140); // 70+70=140
-        INT maxTextWidthReason = widthClient - Ex_Scale(180); // 70+70+40=180
-        maxTextWidthContent = max(maxTextWidthContent, Ex_Scale(120));
+        INT maxTextWidthContent = widthClient - (140); // 70+70=140
+        INT maxTextWidthReason = widthClient - (180); // 70+70+40=180
+        maxTextWidthContent = max(maxTextWidthContent, (120));
         _chatbox_measure_text(hCanvas, hFontCardContent, data->Content,
             maxTextWidthContent, &nWidthContent, &nHeightContent);
         _chatbox_measure_text(hCanvas, hFontCardReason, data->Reason,
             maxTextWidthReason, &nWidthReason, &nHeightReason);
 
         // 计算卡片高度
-        INT cardHeight = Ex_Scale(20 + 50 + 20 + 20 + 20 + 40 + 20 + 20 + 30 + 20) +
+        INT cardHeight = (20 + 50 + 20 + 20 + 20 + 40 + 20 + 20 + 30 + 20) +
             (INT)ceil(nHeightContent) + (INT)ceil(nHeightReason);
 
         // 设置项目区域
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = cardHeight + Ex_Scale(30);
+        sub->rcItem.bottom = cardHeight + (30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
-        data->Layout.rcAvatar.left = Ex_Scale(10);
-        data->Layout.rcAvatar.top = Ex_Scale(0);
-        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+        data->Layout.rcAvatar.left = (10);
+        data->Layout.rcAvatar.top = (0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
         // 设置气泡区域
-        data->Layout.rcBubble.left = Ex_Scale(70);
-        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.left = (70);
+        data->Layout.rcBubble.top = (0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
-            (nWidthContent + Ex_Scale(40));
+            (nWidthContent + (40));
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + cardHeight;
 
         // 设置卡片内部区域
-        data->Layout.rcCardImage.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcCardImage.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcCardImage.right = data->Layout.rcCardImage.left + Ex_Scale(50);
-        data->Layout.rcCardImage.bottom = data->Layout.rcCardImage.top + Ex_Scale(50);
+        data->Layout.rcCardImage.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcCardImage.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcCardImage.right = data->Layout.rcCardImage.left + (50);
+        data->Layout.rcCardImage.bottom = data->Layout.rcCardImage.top + (50);
 
-        data->Layout.rcCardTitle.left = data->Layout.rcCardImage.right + Ex_Scale(10);
-        data->Layout.rcCardTitle.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcCardTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcCardTitle.bottom = data->Layout.rcCardTitle.top + Ex_Scale(50);
+        data->Layout.rcCardTitle.left = data->Layout.rcCardImage.right + (10);
+        data->Layout.rcCardTitle.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcCardTitle.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcCardTitle.bottom = data->Layout.rcCardTitle.top + (50);
 
-        data->Layout.rcCardContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcCardContent.top = data->Layout.rcCardImage.bottom + Ex_Scale(20);
-        data->Layout.rcCardContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcCardContent.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcCardContent.top = data->Layout.rcCardImage.bottom + (20);
+        data->Layout.rcCardContent.right = data->Layout.rcBubble.right - (20);
         data->Layout.rcCardContent.bottom =
             data->Layout.rcCardContent.top + (INT)ceil(nHeightContent);
 
         //  原因矩形（在内容下方）
-        data->Layout.rcReasonRect.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcReasonRect.top = data->Layout.rcCardContent.bottom + Ex_Scale(20);
-        data->Layout.rcReasonRect.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcReasonRect.bottom = data->Layout.rcReasonRect.top + Ex_Scale(20)  // 上内边距
-            + Ex_Scale(40)  // 原因标题高度
+        data->Layout.rcReasonRect.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcReasonRect.top = data->Layout.rcCardContent.bottom + (20);
+        data->Layout.rcReasonRect.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcReasonRect.bottom = data->Layout.rcReasonRect.top + (20)  // 上内边距
+            + (40)  // 原因标题高度
             + (INT)ceil(nHeightReason)   // 原因文本高度
-            + Ex_Scale(20); // 下内边距
+            + (20); // 下内边距
 
         //  原因标题（在原因矩形内）
-        data->Layout.rcReasonTitle.left = data->Layout.rcReasonRect.left + Ex_Scale(20);
-        data->Layout.rcReasonTitle.top = data->Layout.rcReasonRect.top + Ex_Scale(20);
-        data->Layout.rcReasonTitle.right = data->Layout.rcReasonRect.right - Ex_Scale(20);
-        data->Layout.rcReasonTitle.bottom = data->Layout.rcReasonTitle.top + Ex_Scale(40);
+        data->Layout.rcReasonTitle.left = data->Layout.rcReasonRect.left + (20);
+        data->Layout.rcReasonTitle.top = data->Layout.rcReasonRect.top + (20);
+        data->Layout.rcReasonTitle.right = data->Layout.rcReasonRect.right - (20);
+        data->Layout.rcReasonTitle.bottom = data->Layout.rcReasonTitle.top + (40);
 
         //  原因文本（在原因标题下方）
-        data->Layout.rcReason.left = data->Layout.rcReasonRect.left + Ex_Scale(20);
+        data->Layout.rcReason.left = data->Layout.rcReasonRect.left + (20);
         data->Layout.rcReason.top = data->Layout.rcReasonTitle.bottom;
-        data->Layout.rcReason.right = data->Layout.rcReasonRect.right - Ex_Scale(20);
+        data->Layout.rcReason.right = data->Layout.rcReasonRect.right - (20);
         data->Layout.rcReason.bottom = data->Layout.rcReason.top + (INT)ceil(nHeightReason);
 
         //  按钮（在原因矩形下方）
-        data->Layout.rcButton.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcButton.top = data->Layout.rcReasonRect.bottom + Ex_Scale(20);
-        data->Layout.rcButton.right = data->Layout.rcButton.left + Ex_Scale(120);
-        data->Layout.rcButton.bottom = data->Layout.rcButton.top + Ex_Scale(30);
+        data->Layout.rcButton.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcButton.top = data->Layout.rcReasonRect.bottom + (20);
+        data->Layout.rcButton.right = data->Layout.rcButton.left + (120);
+        data->Layout.rcButton.bottom = data->Layout.rcButton.top + (30);
     }
     else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE) {
 
@@ -1624,50 +1624,50 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         // 测量文本尺寸
         FLOAT nWidthTitle, nHeightTitle;
         FLOAT nWidthContent, nHeightContent;
-        INT maxTextWidthTitle = widthClient - Ex_Scale(130); // 10 + 50 + 10 + 20 + 20 + 20
-        INT maxTextWidthContent = widthClient - Ex_Scale(164); // 10 + 50 + 10 + 20 + 24 + 10 + 20 + 20
+        INT maxTextWidthTitle = widthClient - (130); // 10 + 50 + 10 + 20 + 20 + 20
+        INT maxTextWidthContent = widthClient - (164); // 10 + 50 + 10 + 20 + 24 + 10 + 20 + 20
         _chatbox_measure_text(hCanvas, hFontBoostModeTitle, data->Title,
             maxTextWidthTitle, &nWidthTitle, &nHeightTitle);
         _chatbox_measure_text(hCanvas, hFontBoostModeContent, data->Content,
             maxTextWidthContent, &nWidthContent, &nHeightContent);
 
         // 计算项目高度
-        INT itemHeight = Ex_Scale(20 + 20 + 20) +
+        INT itemHeight = (20 + 20 + 20) +
             (INT)ceil(nHeightTitle) + (INT)ceil(nHeightContent);
 
         // 设置项目区域
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->rcItem.bottom = itemHeight + (30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
-        data->Layout.rcAvatar.left = Ex_Scale(10);
-        data->Layout.rcAvatar.top = Ex_Scale(0);
-        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+        data->Layout.rcAvatar.left = (10);
+        data->Layout.rcAvatar.top = (0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
         // 设置气泡区域
-        data->Layout.rcBubble.left = Ex_Scale(70);
-        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.left = (70);
+        data->Layout.rcBubble.top = (0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
-            ((INT)ceil(nWidthContent) + Ex_Scale(80));
+            ((INT)ceil(nWidthContent) + (80));
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
 
-        data->Layout.rcTitle.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcTitle.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)ceil(nHeightTitle);
+        data->Layout.rcTitle.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcTitle.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcTitle.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + (20) + (INT)ceil(nHeightTitle);
 
-        data->Layout.rcImage.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcImage.top = data->Layout.rcTitle.bottom + Ex_Scale(20);
-        data->Layout.rcImage.right = data->Layout.rcImage.left + Ex_Scale(24);
-        data->Layout.rcImage.bottom = data->Layout.rcImage.top + Ex_Scale(24);
+        data->Layout.rcImage.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcImage.top = data->Layout.rcTitle.bottom + (20);
+        data->Layout.rcImage.right = data->Layout.rcImage.left + (24);
+        data->Layout.rcImage.bottom = data->Layout.rcImage.top + (24);
 
-        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(54);//20+24+10
-        data->Layout.rcContent.top = data->Layout.rcTitle.bottom + Ex_Scale(20);
-        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + (54);//20+24+10
+        data->Layout.rcContent.top = data->Layout.rcTitle.bottom + (20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - (20);
         data->Layout.rcContent.bottom = data->Layout.rcContent.top + (INT)ceil(nHeightContent);
     }
     else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
@@ -1679,11 +1679,11 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         HEXFONT hFontErrorListDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT);
         // 测量文本尺寸
         FLOAT nWidthTitle, nHeightTitle;
-        INT maxTitleWidth = widthClient - Ex_Scale(170); // 70+20+30+10+20+20
+        INT maxTitleWidth = widthClient - (170); // 70+20+30+10+20+20
         _chatbox_measure_text(hCanvas, hFontErrorListTitle, data->Title,
             maxTitleWidth, &nWidthTitle, &nHeightTitle);
 
-        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)ceil(nHeightTitle);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT itemHeight = (20 + 20 + 20) + (int)ceil(nHeightTitle);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
         INT maxErrorCodeWidth = (INT)((FLOAT)maxTitleWidth / 5 * 2);//宽度五分之二
         INT maxErrorCodeTextWidth = (INT)((FLOAT)maxTitleWidth / 5 * 3);//宽度五分之三
         INT maxDescriptionWidth = (INT)((FLOAT)maxTitleWidth / 5 * 2);//宽度五分之二
@@ -1712,7 +1712,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             FLOAT nWidthDescriptionText, nHeightDescriptionText;
             _chatbox_measure_text(hCanvas, hFontErrorListDescription, descriptionText,
                 maxDescriptionTextWidth, &nWidthDescriptionText, &nHeightDescriptionText);
-            unitHeight[i] = max((int)ceil(nHeightErrorCode), (int)ceil(nHeightErrorCodeText)) + max((int)ceil(nHeightDescription), (int)ceil(nHeightDescriptionText)) + Ex_Scale(20 + 20); //条目内间距20+内容间距20
+            unitHeight[i] = max((int)ceil(nHeightErrorCode), (int)ceil(nHeightErrorCodeText)) + max((int)ceil(nHeightDescription), (int)ceil(nHeightDescriptionText)) + (20 + 20); //条目内间距20+内容间距20
             unitErrorCodeHeight[i] = (int)ceil(nHeightErrorCode);
             unitErrorCodeTextHeight[i] = (int)ceil(nHeightErrorCodeText);
             unitDescriptionHeight[i] = (int)ceil(nHeightDescription);
@@ -1723,32 +1723,32 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->rcItem.bottom = itemHeight + (30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
-        data->Layout.rcAvatar.left = Ex_Scale(10);
-        data->Layout.rcAvatar.top = Ex_Scale(0);
-        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+        data->Layout.rcAvatar.left = (10);
+        data->Layout.rcAvatar.top = (0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
         // 设置气泡区域
-        data->Layout.rcBubble.left = Ex_Scale(70);
-        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.left = (70);
+        data->Layout.rcBubble.top = (0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
-            ((INT)ceil(maxTitleWidth) + Ex_Scale(80));
+            ((INT)ceil(maxTitleWidth) + (80));
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
         //  标题
-        data->Layout.rcTitle.left = data->Layout.rcBubble.left + Ex_Scale(20 + 30 + 10);
-        data->Layout.rcTitle.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)ceil(nHeightTitle);
+        data->Layout.rcTitle.left = data->Layout.rcBubble.left + (20 + 30 + 10);
+        data->Layout.rcTitle.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcTitle.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + (20) + (INT)ceil(nHeightTitle);
 
-        data->Layout.rcImage.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcImage.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcImage.right = data->Layout.rcImage.left + Ex_Scale(30);
-        data->Layout.rcImage.bottom = data->Layout.rcImage.top + Ex_Scale(30);
-        INT topOffset = Ex_Scale(20);
+        data->Layout.rcImage.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcImage.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcImage.right = data->Layout.rcImage.left + (30);
+        data->Layout.rcImage.bottom = data->Layout.rcImage.top + (30);
+        INT topOffset = (20);
         for (int i = 0; i < data->ListCount; i++)
         {
             data->Layout.rcErrorCodeList[i].left = data->Layout.rcTitle.left;
@@ -1762,7 +1762,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             data->Layout.rcErrorCodeTextList[i].bottom = data->Layout.rcErrorCodeTextList[i].top + unitErrorCodeTextHeight[i];
 
             data->Layout.rcDescriptionList[i].left = data->Layout.rcTitle.left;
-            data->Layout.rcDescriptionList[i].top = data->Layout.rcErrorCodeList[i].top + max(unitErrorCodeHeight[i], unitErrorCodeTextHeight[i]) + Ex_Scale(20);//取最大高度
+            data->Layout.rcDescriptionList[i].top = data->Layout.rcErrorCodeList[i].top + max(unitErrorCodeHeight[i], unitErrorCodeTextHeight[i]) + (20);//取最大高度
             data->Layout.rcDescriptionList[i].right = data->Layout.rcDescriptionList[i].left + (INT)ceil(maxDescriptionWidth);
             data->Layout.rcDescriptionList[i].bottom = data->Layout.rcDescriptionList[i].top + unitDescriptionHeight[i];
 
@@ -1787,11 +1787,11 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         HEXFONT hFontInfoListDescription = Ex_ObjGetLong(hObj, CHATBOX_LONG_INFOLIST_DESCRIPTIONFONT);
         // 测量文本尺寸
         FLOAT nWidthContent, nHeightContent;
-        INT maxContentWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        INT maxContentWidth = widthClient - (130); // 70+20+20+20
         _chatbox_measure_text(hCanvas, hFontInfoListContent, data->Content,
             maxContentWidth, &nWidthContent, &nHeightContent);
 
-        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)ceil(nHeightContent);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT itemHeight = (20 + 20 + 20) + (int)ceil(nHeightContent);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
         INT maxTitleWidth = (INT)((FLOAT)maxContentWidth / 5 * 2);//宽度五分之二
         INT maxDescriptionWidth = (INT)((FLOAT)maxContentWidth / 5 * 3);//宽度五分之三
         INT* unitHeight = (INT*)malloc(data->ListCount * 4);
@@ -1807,7 +1807,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             FLOAT nWidthDescription, nHeighDescription;
             _chatbox_measure_text(hCanvas, hFontInfoListDescription, description,
                 maxDescriptionWidth, &nWidthDescription, &nHeighDescription);
-            unitHeight[i] = max((int)ceil(nHeightTitle), (int)ceil(nHeighDescription)) + Ex_Scale(20); //条目内间距20
+            unitHeight[i] = max((int)ceil(nHeightTitle), (int)ceil(nHeighDescription)) + (20); //条目内间距20
             unitTitleHeight[i] = (int)ceil(nHeightTitle);
             unitDescriptionHeight[i] = (int)ceil(nHeighDescription);
             itemHeight += unitHeight[i];
@@ -1816,29 +1816,29 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->rcItem.bottom = itemHeight + (30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
-        data->Layout.rcAvatar.left = Ex_Scale(10);
-        data->Layout.rcAvatar.top = Ex_Scale(0);
-        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+        data->Layout.rcAvatar.left = (10);
+        data->Layout.rcAvatar.top = (0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
         // 设置气泡区域
-        data->Layout.rcBubble.left = Ex_Scale(70);
-        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.left = (70);
+        data->Layout.rcBubble.top = (0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
-            ((INT)ceil(maxContentWidth) + Ex_Scale(40));
+            ((INT)ceil(maxContentWidth) + (40));
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
 
         //  内容
-        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)ceil(nHeightContent);
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + (20) + (INT)ceil(nHeightContent);
 
-        INT topOffset = Ex_Scale(20);
+        INT topOffset = (20);
         for (int i = 0; i < data->ListCount; i++)
         {
             data->Layout.rcTitleList[i].left = data->Layout.rcContent.left;
@@ -1866,12 +1866,12 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
 
         // 测量文本尺寸
         FLOAT nWidthContent, nHeightContent;
-        INT maxContentWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        INT maxContentWidth = widthClient - (130); // 70+20+20+20
         _chatbox_measure_text(hCanvas, hFontTableListContent, data->Content,
             maxContentWidth, &nWidthContent, &nHeightContent);
 
-        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)ceil(nHeightContent);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
-        INT maxColumnWidth = (INT)((FLOAT)(maxContentWidth - Ex_Scale(10 + 10)) / data->ColumnCount);//宽度按列平均分,10是文本与表格边界距离
+        INT itemHeight = (20 + 20 + 20) + (int)ceil(nHeightContent);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT maxColumnWidth = (INT)((FLOAT)(maxContentWidth - (10 + 10)) / data->ColumnCount);//宽度按列平均分,10是文本与表格边界距离
         INT* unitHeight = (INT*)malloc(data->ListCount * 4);
         INT* unitColumnHeight = (INT*)malloc(data->ListCount * 4);
         for (int i = 0; i < data->ListCount; i++)
@@ -1888,7 +1888,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
                     maxColumnHeight = nHeighColumn;
                 }
             }
-            unitHeight[i] = (int)ceil(maxColumnHeight) + Ex_Scale(20); //条目内间距20
+            unitHeight[i] = (int)ceil(maxColumnHeight) + (20); //条目内间距20
             unitColumnHeight[i] = (int)ceil(maxColumnHeight);
             itemHeight += unitHeight[i];
         }
@@ -1896,32 +1896,32 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->rcItem.bottom = itemHeight + (30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
-        data->Layout.rcAvatar.left = Ex_Scale(10);
-        data->Layout.rcAvatar.top = Ex_Scale(0);
-        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+        data->Layout.rcAvatar.left = (10);
+        data->Layout.rcAvatar.top = (0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
         // 设置气泡区域
-        data->Layout.rcBubble.left = Ex_Scale(70);
-        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.left = (70);
+        data->Layout.rcBubble.top = (0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
-            ((INT)ceil(maxContentWidth) + Ex_Scale(40));
+            ((INT)ceil(maxContentWidth) + (40));
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
 
         //  内容
-        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)ceil(nHeightContent);
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + (20) + (INT)ceil(nHeightContent);
 
-        INT topOffset = Ex_Scale(20);
+        INT topOffset = (20);
         for (int i = 0; i < data->ListCount; i++)
         {
-            INT leftOffset = Ex_Scale(10);
+            INT leftOffset = (10);
             for (int j = 0; j < data->ColumnCount; j++)
             {
                 data->Layout.rcUnitList[i * data->ColumnCount + j].left = data->Layout.rcContent.left + leftOffset;
@@ -1944,17 +1944,17 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
 
         // 测量文本尺寸
         FLOAT nWidthContent, nHeightContent;
-        INT maxContentWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        INT maxContentWidth = widthClient - (130); // 70+20+20+20
         _chatbox_measure_text(hCanvas, hFontLinkContent, data->Content,
             maxContentWidth, &nWidthContent, &nHeightContent);
 
         FLOAT nWidthTitle, nHeightTitle;
-        INT maxTitleWidth = widthClient - Ex_Scale(130); // 70+20+20+20
+        INT maxTitleWidth = widthClient - (130); // 70+20+20+20
         _chatbox_measure_text(hCanvas, hFontLinkTitle, data->Content,
             maxTitleWidth, &nWidthTitle, &nHeightTitle);
 
-        INT itemHeight = Ex_Scale(20 + 20 + 20) + (int)ceil(nHeightContent) + (int)ceil(nHeightTitle);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
-        INT maxTextWidth = (INT)(maxContentWidth - Ex_Scale(20 + 20));//20是文本与左右边界距离
+        INT itemHeight = (20 + 20 + 20) + (int)ceil(nHeightContent) + (int)ceil(nHeightTitle);//标题顶边距20+项目底边距20+标题与内容底边距20+标题高度
+        INT maxTextWidth = (INT)(maxContentWidth - (20 + 20));//20是文本与左右边界距离
         INT* unitHeight = (INT*)malloc(data->ListCount * 4);
         INT* unitTextHeight = (INT*)malloc(data->ListCount * 4);
         INT* unitTextWidth = (INT*)malloc(data->ListCount * 4);
@@ -1964,47 +1964,47 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             FLOAT nWidthText, nHeighText;
             _chatbox_measure_text(hCanvas, hFontLinkText, Text,
                 maxTextWidth, &nWidthText, &nHeighText);
-            unitHeight[i] = (int)ceil(nHeighText) + Ex_Scale(10) + Ex_Scale(20); //条目内间距20
-            unitTextHeight[i] = (int)ceil(nHeighText) + Ex_Scale(20);
-            unitTextWidth[i] = (int)ceil(nWidthText) + Ex_Scale(20);
+            unitHeight[i] = (int)ceil(nHeighText) + (10) + (20); //条目内间距20
+            unitTextHeight[i] = (int)ceil(nHeighText) + (20);
+            unitTextWidth[i] = (int)ceil(nWidthText) + (20);
             itemHeight += unitHeight[i];
         }
         // 设置项目区域
         sub->rcItem.left = 0;
         sub->rcItem.top = 0;
         sub->rcItem.right = widthClient;
-        sub->rcItem.bottom = itemHeight + Ex_Scale(30);
+        sub->rcItem.bottom = itemHeight + (30);
         sub->nHeight = sub->rcItem.bottom;
 
         // 设置头像区域
-        data->Layout.rcAvatar.left = Ex_Scale(10);
-        data->Layout.rcAvatar.top = Ex_Scale(0);
-        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + Ex_Scale(50);
-        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + Ex_Scale(50);
+        data->Layout.rcAvatar.left = (10);
+        data->Layout.rcAvatar.top = (0);
+        data->Layout.rcAvatar.right = data->Layout.rcAvatar.left + (50);
+        data->Layout.rcAvatar.bottom = data->Layout.rcAvatar.top + (50);
 
         // 设置气泡区域
-        data->Layout.rcBubble.left = Ex_Scale(70);
-        data->Layout.rcBubble.top = Ex_Scale(0);
+        data->Layout.rcBubble.left = (70);
+        data->Layout.rcBubble.top = (0);
         data->Layout.rcBubble.right = data->Layout.rcBubble.left +
-            ((INT)ceil(maxContentWidth) + Ex_Scale(40));
+            ((INT)ceil(maxContentWidth) + (40));
         data->Layout.rcBubble.bottom = data->Layout.rcBubble.top + itemHeight;
 
         //  内容
-        data->Layout.rcContent.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcContent.top = data->Layout.rcBubble.top + Ex_Scale(20);
-        data->Layout.rcContent.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)ceil(nHeightContent);
+        data->Layout.rcContent.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcContent.top = data->Layout.rcBubble.top + (20);
+        data->Layout.rcContent.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcContent.bottom = data->Layout.rcBubble.top + (20) + (INT)ceil(nHeightContent);
 
         //  副标题
-        data->Layout.rcTitle.left = data->Layout.rcBubble.left + Ex_Scale(20);
-        data->Layout.rcTitle.top = data->Layout.rcContent.bottom + Ex_Scale(10);
-        data->Layout.rcTitle.right = data->Layout.rcBubble.right - Ex_Scale(20);
-        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + Ex_Scale(20) + (INT)ceil(nHeightContent) + (INT)ceil(nHeightTitle) + Ex_Scale(10);
+        data->Layout.rcTitle.left = data->Layout.rcBubble.left + (20);
+        data->Layout.rcTitle.top = data->Layout.rcContent.bottom + (10);
+        data->Layout.rcTitle.right = data->Layout.rcBubble.right - (20);
+        data->Layout.rcTitle.bottom = data->Layout.rcBubble.top + (20) + (INT)ceil(nHeightContent) + (INT)ceil(nHeightTitle) + (10);
 
-        INT topOffset = Ex_Scale(20);
+        INT topOffset = (20);
         for (int i = 0; i < data->ListCount; i++)
         {
-            data->Layout.rcUnitList[i].left = data->Layout.rcContent.left + Ex_Scale(20);
+            data->Layout.rcUnitList[i].left = data->Layout.rcContent.left + (20);
             data->Layout.rcUnitList[i].top = data->Layout.rcTitle.bottom + topOffset;
             data->Layout.rcUnitList[i].right = data->Layout.rcUnitList[i].left + unitTextWidth[i];
             data->Layout.rcUnitList[i].bottom = data->Layout.rcUnitList[i].top + unitTextHeight[i];
@@ -2025,10 +2025,10 @@ void _chatbox_update_layout(HEXOBJ hObj) {
     // 获取控件宽度
     RECT rc;
     Ex_ObjGetClientRect(hObj, &rc);
-    INT widthClient = Ex_Scale(rc.right - rc.left);
+    INT widthClient = (rc.right - rc.left);
 
     // 累计高度
-    INT currentY = Ex_Scale(30);   // 初始30顶边距离
+    INT currentY = (30);   // 初始30顶边距离
 
     size_t* ptrArray = (size_t*)arr->Items;
     for (int i = 0; i < arr->Count; i++) {
@@ -2133,7 +2133,7 @@ void _chatbox_update_layout(HEXOBJ hObj) {
     }
 
     // 更新滚动条范围
-    INT viewHeight = Ex_Scale(rc.bottom - rc.top);
+    INT viewHeight = (rc.bottom - rc.top);
     INT scrollRange = max(0, currentY - viewHeight);
     Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, scrollRange, TRUE);
 

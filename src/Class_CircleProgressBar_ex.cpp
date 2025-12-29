@@ -85,7 +85,6 @@ void _circleprogressbar_paint(HEXOBJ hObj)
         FLOAT startY = circleRadius + (circleRadius - halfLineWidth) * sin(startAngle * PI / 180);
         FLOAT endX   = circleRadius + (circleRadius - halfLineWidth) * cos(endAngle * PI / 180);
         FLOAT endY   = circleRadius + (circleRadius - halfLineWidth) * sin(endAngle * PI / 180);
-        auto  dpi    = Ex_DUIGetSystemDpi();
         _path_beginfigure2(path2, startX , startY );
         _path_addarc3(path2, endX, endY, circleRadius - halfLineWidth, circleRadius - halfLineWidth,
                       startAngle,

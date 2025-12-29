@@ -35,7 +35,7 @@ LRESULT CALLBACK OnPrototypeBoardButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WP
 	else if (nID == 107)
 	{
 		HEXIMAGE hImage;
-		_img_createfromfile(L"E:/ExDUIR/msvc/demo/res/rotateimgbox.jpg", &hImage); // 加载图片
+		_img_createfromfile(L"res/rotateimgbox.jpg", &hImage); // 加载图片
 		Ex_ObjSendMessage(m_hPrototypeBoard, PROTOTYPEBOARD_MESSAGE_SET_IMAGE, (WPARAM)hImage, (LPARAM)FALSE);
 	}
 	else if (nID == 108)

@@ -32,7 +32,7 @@ BOOL _dx_init(INT* nError)
             if (*nError == 0 && g_Ri.pDXGIDevice != nullptr) {
                 *nError = g_Ri.pD2Dfactory->CreateDevice(g_Ri.pDXGIDevice, &g_Ri.pD2DDevice);
                 if (*nError == 0 && g_Ri.pD2DDevice != nullptr) {
-                    *nError = g_Ri.pD2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+                    *nError = g_Ri.pD2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,
                                                                    &g_Ri.pD2DDeviceContext);
                     if (*nError == 0 && g_Ri.pD2DDeviceContext != nullptr) {
                         g_Ri.pD2DDeviceContext->SetUnitMode(D2D1_UNIT_MODE_PIXELS);
@@ -179,10 +179,10 @@ void _dx_blur(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap, FLOAT fD
     _dx_flush(pDeviceContext);
     if (g_Ri.pEffectGaussianBlur == 0) {
         _dx_createeffect(pDeviceContext, CLSID_D2D1GaussianBlur, &g_Ri.pEffectGaussianBlur, nError);
-        INT    hard     = 1;
+      /*  INT    hard     = 1;
         UINT32 datasize = 4;
         *nError         = g_Ri.pEffectGaussianBlur->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE,
-                                                             D2D1_BORDER_MODE_SOFT);
+                                                             D2D1_BORDER_MODE_SOFT);*/
     }
     if (*nError == 0) {
         D2D1_SIZE_F   size     = {};
@@ -205,7 +205,7 @@ void _dx_blur(ID2D1DeviceContext* pDeviceContext, ID2D1Bitmap* pBitmap, FLOAT fD
 
             FLOAT fScale = fDeviation / 2;
             *nError = g_Ri.pEffectGaussianBlur->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION,
-                                                         (BYTE*)&fScale, 4);
+                fDeviation);
             if (*nError == 0) {
                 ID2D1Image* output = nullptr;
                 g_Ri.pEffectGaussianBlur->GetOutput(&output);

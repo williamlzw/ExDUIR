@@ -10,13 +10,92 @@ void Ex_SetLastError(INT nError) {
 
 INT Ex_GetLastError() { return g_Li.dwError; }
 
+DOUBLE Ex_GetWinVersion()
+{
+    typedef LONG(__stdcall* fnRtlGetVersion)(PRTL_OSVERSIONINFOW lpVersionInformation);
+    RTL_OSVERSIONINFOW VersionInformation = { 0 };
+    VersionInformation.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOW);
+    double OsVersion = 0;
+    HMODULE hNtdll = GetModuleHandleW(L"ntdll.dll");
+    if (hNtdll == NULL)
+        return OsVersion = 0;
+    fnRtlGetVersion pRtlGetVersion = (fnRtlGetVersion)GetProcAddress(hNtdll, "RtlGetVersion");
+    if (pRtlGetVersion == NULL)
+        return OsVersion = 0;
+    LONG ntStatus = pRtlGetVersion(&VersionInformation);
+    if (ntStatus != 0)
+        return OsVersion = 0;
+    ULONG dwMajorVersion = VersionInformation.dwMajorVersion;
+    ULONG dwMinorVersion = VersionInformation.dwMinorVersion;
+    ULONG dwBuildNumber = VersionInformation.dwBuildNumber;
+    if (dwMajorVersion == 5 && dwMinorVersion == 1 && dwBuildNumber == 2600)
+        OsVersion = 5;// WINXP2600;
+    else if (dwMajorVersion == 5 && dwMinorVersion == 1)
+        OsVersion = 51;// WINXP;
+    else if (dwMajorVersion == 6 && dwMinorVersion == 1 && dwBuildNumber == 7601)
+        OsVersion = 7;// WIN77601;
+    else if (dwMajorVersion == 6 && dwMinorVersion == 1 && dwBuildNumber == 7600)
+        OsVersion = 7;// WIN77600;
+    else if (dwMajorVersion == 6 && dwMinorVersion == 1)
+        OsVersion = 7;// WIN7;
+    else if (dwMajorVersion == 6 && dwMinorVersion == 2 && dwBuildNumber == 9200)
+        OsVersion = 8;// WIN89200; 629200
+    else if (dwMajorVersion == 6 && dwMinorVersion == 2)
+        OsVersion = 8;// WIN8;62
+    else if (dwMajorVersion == 6 && dwMinorVersion == 3 && dwBuildNumber == 9600)
+        OsVersion = 9;// WIN819600;
+    else if (dwMajorVersion == 6 && dwMinorVersion == 3)
+        OsVersion = 9;// WIN81;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 10240)
+        OsVersion = 10.1507;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 10586)
+        OsVersion = 10.1511;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 14393)
+        OsVersion = 10.1607;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 15063)
+        OsVersion = 10.1703;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 16299)
+        OsVersion = 10.1709;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 17134)
+        OsVersion = 10.1803;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 17763)
+        OsVersion = 10.1809;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 18362)
+        OsVersion = 10.1903;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 18363)
+        OsVersion = 10.1909;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 19041)
+        OsVersion = 10.2004;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber == 19042)
+        OsVersion = 10.2004;
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber < 22000)// 22000是11
+        OsVersion = 10.2172;//20h2
+    else if (dwMajorVersion == 10 && dwMinorVersion == 0 && dwBuildNumber >= 22000)
+        OsVersion = 11;// WIN11;
+    return OsVersion;
+}
+
 BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
              LPCWSTR lpszDefaultClassName, LPVOID lpDefaultTheme,
              size_t dwDefaultThemeLen, LPCWSTR lpDefaultFontFace,
              size_t dwDefaultFontSize) {
+ 
+  double Ver = Ex_GetWinVersion();
+  if (Ver < 7)
+  {
+      MessageBoxW(NULL, L"最低受支持的客户端: 适用于 Windows 7 的平台更新!\r\n最低受支持的服务器: 适用于 Windows Server 2008 R2 的平台更新!", L"Ex_DirectUI - 系统不支持!", MB_ICONWARNING);
+      exit(0);
+      return 0;
+  }
+  if (Ver >= 8)
+  {
+      g_Li.IsSupportedChildLayered = true;
+  }
+      
+ 
   CoInitialize(NULL);
   g_Li.csError = Thread_InitializeCriticalSection();
-
+  
   g_Li.hInstance = hInstance;
   g_Li.dwFlags = dwGlobalFlags;
   if (hDefaultCursor == 0) {
@@ -69,7 +148,7 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
       offsetof(obj_s, crVisted_),     offsetof(obj_s, crShadow_)};
   g_Li.hModuleUser = GetModuleHandleW(L"user32.dll");
   g_Ri.hRiched20 = LoadLibraryW(L"Msftedit.dll");
-  // g_Ri.hRiched20 = LoadLibraryW(L"Riched20.dll");
+ 
   LPVOID i = Ex_MemAlloc(64);
   INT len;
   len = LoadStringW(g_Li.hModuleUser, 900, (LPWSTR)i, 64);
@@ -92,8 +171,18 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
   Ex_MemFree(i);
   INT nError = 0;
   _canvas_init(&nError);
+  //if (Ver >= 10.1703)
+  //{
+  //    SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+  //}
+  //else {
+  //    
+  //}
+  if (Flag_Query(ENGINE_FLAG_OBJECT_SHOWRECTBORDER))
+  {
+      g_Li.hObjBorderBrush = _brush_create(-65536);
+  }
   SetProcessDPIAware();
-
   g_Li.DpiX = 1;
   g_Li.DpiY = 1;
   HDC dc = GetDC(NULL);
@@ -136,7 +225,10 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
 
   nError = g_Ri.pDWriteFactory->RegisterFontCollectionLoader(
       ExLazySingleton<ExFontCollectionLoader>::GetInstance());
-
+  if (g_Li.hMenuEdit == 0)
+  {
+      g_Li.hMenuEdit = Ex_MenuLoadW(GetModuleHandleW(L"user32.dll"), MAKEINTRESOURCEW(1));
+  }
   Ex_SetLastError(nError);
   return nError == 0;
 }
@@ -160,7 +252,12 @@ void Ex_UnInit() {
   ExLazySingleton<ExFontCollectionLoader>::ClearInstance(true);
   ExLazySingleton<ExFontFileLoader>::ClearInstance(true);
   _canvas_uninit();
-
+  if (g_Li.hMenuEdit)
+      Ex_MenuDestroy(g_Li.hMenuEdit);
+  if (g_Li.hMenuVS)
+      Ex_MenuDestroy(g_Li.hMenuVS);
+  if (g_Li.hMenuHS)
+      Ex_MenuDestroy(g_Li.hMenuHS);
   {
 #ifdef _DEBUG
       if (!g_Li.hHandles) return;
@@ -205,6 +302,7 @@ void Ex_UnInit() {
   DestroyIcon(g_Li.hIcon);
   DestroyIcon(g_Li.hIconsm);
   DestroyCursor(g_Li.hCursor);
+  _brush_destroy(g_Li.hObjBorderBrush);
   CoUninitialize();
 }
 

@@ -1331,8 +1331,8 @@ size_t _listview_size(HWND hWnd, HEXOBJ hObj, obj_s* pObj)
     _canvas_calctextsize(pObj->canvas_obj_, pObj->hFont_, L"S", 1, 0, rcClient->right,
                          rcClient->bottom, &iWidth, &iHeight);
     if (bHView) {
-        iWidth  = Ex_Scale(60);
-        iHeight = Ex_Scale(60);
+        iWidth  = (60);
+        iHeight = (60);
     }
     else {
         iWidth  = (FLOAT)(rcClient->right - rcClient->left - Ex_Scale(1)) / g_Li.DpiX;
