@@ -323,6 +323,10 @@ void _canvas_recreate(canvas_s* pCanvas, INT width, INT height, INT* nError)
             oldBitmap->Release();
         }
         pCanvas->pBitmap_ = pBitmap;
+        if (pCanvas->pWnd_ != nullptr)
+        {
+            pCanvas->pContext_ = pCanvas->pWnd_->dx_context_;
+        }
     }
 }
 
