@@ -169,6 +169,7 @@ void          _wnd_paint_bkg(HWND hWnd, wnd_s* pWnd);
 void          _wnd_render_dc(HWND hWnd, wnd_s* pWnd, LPVOID hDC, HEXCANVAS cvDisplay, RECT rcPaint,
                              BOOL fLayer);
 void          _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer, BOOL fDX);
+INT _wnd_popupclose(wnd_s* pWnd, HWND hWnd, INT wParam, obj_s* pObj);
 void          _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width, INT height);
 void          _wnd_paint_shadow(wnd_s* pWnd, BOOL bUpdateRgn, BOOL bFlush);
 BOOL          _wnd_wm_paint(wnd_s* pWnd, HWND hWnd);

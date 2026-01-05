@@ -559,6 +559,7 @@ LRESULT _obj_baseproc(HWND hWnd, HEXOBJ hObj, obj_s* pObj, INT uMsg, WPARAM wPar
         }
     }
     else if (uMsg == WM_KILLFOCUS) {
+        _wnd_popupclose(pObj->pWnd_, hWnd, 0, 0);
         _obj_killfocus_real(pObj, hObj, (HEXOBJ)wParam);
         if (FLAGS_CHECK(pObj->base.dwFlags_, EOF_BIME)) {
             IME_Control(hWnd, FALSE);

@@ -646,8 +646,14 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	{
 		return 0;
 	}
+	else if (uMsg == WM_MOUSEACTIVATE) {
+		// 防止弹出窗获取焦点
+		if (FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW)) {
+			return MA_NOACTIVATE;
+		}
+	}
 	else if (uMsg == WM_NCLBUTTONDOWN) {
-		
+		_wnd_popupclose(pWnd, hWnd, 0, 0);
 	}
 	else if (uMsg == WM_PAINT)  // 15
 	{
@@ -958,7 +964,10 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 			pWnd->lpPopupParams_ = lParam;
 			if (_handle_validate(pWnd->hExDuiParent_, HT_DUI, (LPVOID*)&pWnd,
 				&nError)) {
-				
+				HWND old = pWnd->hWndPopup_;
+				pWnd->hWndPopup_ = hWnd;
+				DestroyWindow(old);
+				FLAGS_ADD(pWnd->base.dwFlags_, EWF_BPOPUPWINDOIWSHOWN);
 				obj_s* pObj;
 				if (_handle_validate(lParam, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 					_obj_baseproc(hWndParent, lParam, pObj, WM_EX_INITPOPUP, hExDui, 0);
@@ -1606,7 +1615,22 @@ INT _wnd_destroy(HWND hWnd, wnd_s* pWnd) {
 	obj_s* pObj = nullptr;
 	INT nError = 0;
 	pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BDESTROYWINDOW;
+	if (FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW)) {
+		wnd_s* pWndParent;
+		if (_handle_validate(pWnd->hExDuiParent_, HT_DUI, (LPVOID*)&pWndParent,
+			&nError)) {
+			FLAGS_DEL(pWndParent->base.dwFlags_, EWF_BPOPUPWINDOIWSHOWN);
+			pWndParent->hWndPopup_ = 0;
 
+			if (_handle_validate(pWnd->lpPopupParams_, HT_OBJECT, (LPVOID*)&pObj,
+				&nError)) {
+				_obj_baseproc(pWndParent->hWnd_, pWnd->lpPopupParams_, pObj, -7, 0, 0);
+				IME_Control(pWndParent->hWnd_, FALSE);
+			}
+		}
+		nError = 0;
+		pObj = NULL;
+	}
 	// clear MESSAGEBOX
 	if (((pWnd->dwStyle_ & WINDOW_STYLE_MESSAGEBOX) == WINDOW_STYLE_MESSAGEBOX)) {
 		if (pWnd->lpMsgParams_ != 0) {
@@ -1815,6 +1839,22 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 	
 		_canvas_enddraw(cvDisplay);
 	}
+}
+
+INT _wnd_popupclose(wnd_s* pWnd, HWND hWnd, INT wParam, obj_s* pObj) {
+	INT result = 0;
+	INT nError = 0;
+
+	if (FLAGS_CHECK(pWnd->base.dwFlags_, EWF_BPOPUPWINDOIWSHOWN)) {
+		if (!pObj ||
+			(!_handle_validate(pWnd->lpPopupParams_, HT_OBJECT, (LPVOID*)&pObj,
+				&nError)) ||
+			(result = _obj_baseproc(hWnd, pObj->base.hObj_, pObj, WM_EX_EXITPOPUP, wParam, 0)) == 0) {
+			FLAGS_DEL(pWnd->base.dwFlags_, EWF_BPOPUPWINDOIWSHOWN);
+			result = DestroyWindow(pWnd->hWndPopup_);
+		}
+	}
+	return result;
 }
 
 void _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width,
@@ -2176,6 +2216,7 @@ void _wnd_wm_mouse(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam, LPARAM lPara
 			case WM_RBUTTONDOWN:
 			case WM_MBUTTONDOWN:
 			wm_buttondown:
+				_wnd_popupclose(pWnd, hWnd, hObj, pObj);
 				_wnd_wm_buttondown(hWnd, pWnd, hObj, pObj, uMsg, wParam, lParam, TRUE);
 				break;
 			case WM_LBUTTONUP:
