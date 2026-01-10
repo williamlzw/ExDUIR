@@ -204,12 +204,12 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
   }
   if (dwDefaultFontSize > 0) {
     g_Li.lpLogFontDefault->lfHeight = -(LONG)dwDefaultFontSize;
-  }
-  if (!Flag_Query(ENGINE_FLAG_DPI_ENABLE)) {
-    g_Li.lpLogFontDefault->lfHeight =
-        (FLOAT)g_Li.lpLogFontDefault->lfHeight / g_Li.DpiY_Real;
-  }
 
+    if (Flag_Query(ENGINE_FLAG_DPI_ENABLE)) {
+      g_Li.lpLogFontDefault->lfHeight =
+          (FLOAT)g_Li.lpLogFontDefault->lfHeight * g_Li.DpiY_Real;
+    }
+  }
   _object_init();
 
   g_Li.aryThemes.clear();
