@@ -143,6 +143,32 @@ void PropertyGrid_AddButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonT
     Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);
 }
 
+void PropertyGrid_AddSwitchItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex)
+{
+    EX_PROPERTYGRID_ITEMINFO_SUBITEM item = { 0 };
+    item.Type = PROPERTYGRID_ITEMTYPE_SWITCH;
+    item.ParentIndex = parentIndex; // 父分组索引
+
+    EX_PROPERTYGRID_ITEMINFO_SWITCH buttonData = { 0 };
+    buttonData.Title = title;
+    buttonData.Content = buttonText;
+
+    item.Data = &buttonData;
+    buttonData.switchprops.crBkgNormal = ExARGB(62, 68, 81, 255);
+    buttonData.switchprops.crBkgHover = ExARGB(62, 68, 81, 255);
+    buttonData.switchprops.crBkgDownOrChecked = ExARGB(97, 175, 239, 255);
+    buttonData.switchprops.crBorderNormal = 0;// ExARGB(62, 68, 81, 255);
+    buttonData.switchprops.radius = 0;
+    buttonData.switchprops.strokeWidth = 0;
+    buttonData.switchprops.crIconNormal = ExARGB(255, 255, 255, 255);
+    buttonData.switchprops.crIconHover = ExARGB(255, 255, 255, 255);
+    buttonData.switchprops.crIconDownOrFocus = ExARGB(92, 99, 112, 255); //自定义样式
+
+
+    Ex_ObjSendMessage(hPropGrid, PROPERTYGRID_MESSAGE_ADDITEM, 0, (LPARAM)&item);
+
+}
+
 void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex, INT type)
 {
     EX_PROPERTYGRID_ITEMINFO_SUBITEM item = { 0 };
@@ -196,6 +222,11 @@ void test_propertygrid(HWND hParent)
     // 添加颜色选择器到第一个分组
     auto color = std::to_wstring(ExRGB2ARGB(3523123, 255));
     PropertyGrid_AddColorPickerItem(m_hObjPropertyGrid, L"颜色框演示", color.c_str(), 0); // 白色
+
+    PropertyGrid_AddSwitchItem(m_hObjPropertyGrid, L"选择框演示", L"1", 0);//函数内部设定样式
+    PropertyGrid_AddSwitchItem(m_hObjPropertyGrid, L"AAA", L"0", 0);
+    PropertyGrid_AddSwitchItem(m_hObjPropertyGrid, L"BBB", L"0", 0);
+    PropertyGrid_AddSwitchItem(m_hObjPropertyGrid, L"CCC", L"1", 0);
 
     // 添加组合框到第一个分组
     LPCWSTR fontOptions[] = { L"宋体", L"黑体", L"微软雅黑", L"Arial" };

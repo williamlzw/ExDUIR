@@ -1560,6 +1560,8 @@
 #define PROPERTYGRID_ITEMTYPE_COMBOBOX 16
 // 属性框_项目类型_按钮
 #define PROPERTYGRID_ITEMTYPE_BUTTON 32
+// 属性框_项目类型_选择框
+#define PROPERTYGRID_ITEMTYPE_SWITCH 64
 #pragma endregion propertygrid item type constant
 
 #pragma region propertygrid notify
@@ -2944,6 +2946,23 @@ struct EX_PROPERTYGRID_ITEMINFO_BUTTON
 	LPCWSTR Content;//内容
 	EX_PROPERTYGRID_ITEM_LAYOUT_BUTTON Layout;
 };
+#pragma pack()
+
+struct EX_PROPERTYGRID_ITEM_LAYOUT_SWITCH
+{
+    RECT rcTitle;    // 标题区域
+    RECT rcContent;   // 内容区域
+};
+
+#pragma pack(4)
+typedef struct _EX_PROPERTYGRID_ITEMINFO_SWITCH
+{
+    LPCWSTR Title;          // 标题
+    LPCWSTR Content;        // 开关状态（L"1"=开启，L"0"=关闭，便于存储和传输）
+    EX_PROPERTYGRID_ITEM_LAYOUT_SWITCH Layout; // 布局信息（复用现有布局结构体）
+    EX_OBJ_PROPS switchprops;
+    HEXOBJ hSwitchCtrl;
+} EX_PROPERTYGRID_ITEMINFO_SWITCH;
 #pragma pack()
 
 struct EX_PROPERTYGRID_ITEM_LAYOUT_DATEBOX

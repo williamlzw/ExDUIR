@@ -26,6 +26,8 @@
 #define PROPERTYGRID_LONG_HOBJDATEBOX 11
 // 属性_属性框_按钮句柄
 #define PROPERTYGRID_LONG_HOBJBUTTON 12
+
+
 // 属性_属性框_线条颜色
 #define PROPERTYGRID_LONG_LINECOLOR 13
 #define PROPERTYGRID_LONG_IGNORING_CLICKS 14
@@ -44,6 +46,7 @@ LRESULT CALLBACK _propertygrid_oncomboboxevent(HEXOBJ hObj, INT nID, INT nCode, 
 LRESULT CALLBACK _propertygrid_ondateboxevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK _propertygrid_oncolorpickerevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK _propertygrid_onswitchevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam);
 void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content);
 void _propertygrid_onlbuttondblclk(HEXOBJ hObj, INT x, INT y);
 LRESULT CALLBACK _propertygrid_oneditmsgproc(HWND hWND, HEXOBJ hObj, INT uMsg, WPARAM wParam,

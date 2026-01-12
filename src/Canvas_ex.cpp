@@ -1584,9 +1584,10 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas, FLOAT fLeft, FLOAT fTop, FLOAT fRight
                                     // 创建层，并设置剪辑区
                                     ID2D1Layer* layer;
                                     if (SUCCEEDED(pContext->CreateLayer(&layer))) {
-                                        pContext->PushLayer(D2D1::LayerParameters(
-                                                                D2D1::InfiniteRect(), pGeometry,
-                                                                D2D1_ANTIALIAS_MODE_PER_PRIMITIVE),
+                                        D2D1_LAYER_PARAMETERS1 layerParams = D2D1::LayerParameters1();
+                                        layerParams.geometricMask = pGeometry;  // 直接赋值几何对象
+                                        layerParams.layerOptions = D2D1_LAYER_OPTIONS1_INITIALIZE_FROM_BACKGROUND;
+                                        pContext->PushLayer(layerParams,
                                                             layer);
                                         // 将模糊后的阴影图绘制到画布上
                                         pContext->DrawImage(effect, D2D1_INTERPOLATION_MODE_LINEAR);

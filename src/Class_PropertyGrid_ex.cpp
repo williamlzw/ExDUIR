@@ -1,10 +1,14 @@
 #include "stdafx.h"
 
+
+
+
+
 void _propertygrid_register()
 {
 	Ex_ObjRegister(L"PropertyGrid",
 		OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL, OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
-		DT_LEFT | DT_VCENTER, 15 * sizeof(size_t), NULL, 0,
+		DT_LEFT | DT_VCENTER, 16 * sizeof(size_t), NULL, 0,
 		_propertygrid_proc);
 }
 
@@ -76,6 +80,7 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		Ex_ObjDisableTranslateSpaceAndEnterToClick(hobjbt, TRUE);
 		Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 1, 2000, 0, TRUE);
 		Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
+
 	}
 	else if (uMsg == WM_DESTROY)
 	{
@@ -141,6 +146,16 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 					EX_PROPERTYGRID_ITEMINFO_BUTTON* data = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
 					Ex_MemFree((void*)data->Title);
 					Ex_MemFree((void*)data->Content);
+					free(data);
+				}
+				else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+				{
+					EX_PROPERTYGRID_ITEMINFO_SWITCH* data = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+					Ex_MemFree((void*)data->Title);
+					Ex_MemFree((void*)data->Content);
+					if (Ex_ObjIsValidate(data->hSwitchCtrl)) {
+						Ex_ObjDestroy(data->hSwitchCtrl);
+					}
 					free(data);
 				}
 				free(sub);
@@ -262,6 +277,32 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			textCopy->Content = StrDupW(textData->Content);
 			itemCopy->Data = textCopy;
 		}
+		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+		{
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* textData = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)newValue->Data;
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* textCopy = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_SWITCH));
+			textCopy->Title = StrDupW(textData->Title);
+			textCopy->Content = StrDupW(textData->Content);  // 复制开关状态（L"1"/L"0"）
+			textCopy->Layout = textData->Layout;  // 复制布局信息
+
+			INT lineHeight = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_LINEHEIGHT);
+			HEXOBJ hSwitchCtrl = Ex_ObjCreateEx(
+				OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED,
+				L"Switch", L" | ", 0,  // 直接设置VISIBLE，后续无需手动显隐
+				0, 0, Ex_Scale(40), lineHeight - Ex_Scale(4),  // 宽度适配，高度留边距
+				hObj, 0, DT_VCENTER, 0, 0, 0);
+
+			Ex_ObjSendMessage(hSwitchCtrl, WM_EX_PROPS, 0, (LPARAM)&textData->switchprops); //外面传进来的
+			Ex_ObjHandleEvent(hSwitchCtrl, NM_CHECK, _propertygrid_onswitchevent);
+			Ex_ObjSetLong(hSwitchCtrl, OBJECT_LONG_LPARAM, arr->Count);
+			Ex_ObjDisableTranslateSpaceAndEnterToClick(hSwitchCtrl, TRUE);
+
+			BOOL bSwitchOn = (wcscmp(textCopy->Content, L"1") == 0);
+			Ex_ObjSendMessage(hSwitchCtrl, BM_SETCHECK, (WPARAM)bSwitchOn, 0);
+			textCopy->hSwitchCtrl = hSwitchCtrl;
+
+			itemCopy->Data = textCopy;
+		}
 		void* newItems = realloc(arr->Items, (arr->Count + 1) * sizeof(size_t));
 		if (newItems == NULL) {
 			// 处理内存分配失败
@@ -344,7 +385,13 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			Ex_MemFree((void*)oldData->Content);
 			free(oldData);
 		}
-
+		else if (oldSub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+		{
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* oldData = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)oldSub->Data;
+			Ex_MemFree((void*)oldData->Title);
+			Ex_MemFree((void*)oldData->Content);
+			free(oldData);
+		}
 		// 复制新的子项结构体（不包括数据部分）
 		EX_PROPERTYGRID_ITEMINFO_SUBITEM* newSub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_SUBITEM));
 		memcpy(newSub, newValue, sizeof(EX_PROPERTYGRID_ITEMINFO_SUBITEM));
@@ -409,6 +456,22 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			textCopy->Content = StrDupW(textData->Content);
 			newSub->Data = textCopy;
 		}
+		else if (newValue->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+		{
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* textData = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)newValue->Data;
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* textCopy = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)malloc(sizeof(EX_PROPERTYGRID_ITEMINFO_SWITCH));
+			textCopy->Title = StrDupW(textData->Title);
+			textCopy->Content = StrDupW(textData->Content);
+			textCopy->Layout = textData->Layout;
+			textCopy->hSwitchCtrl = textData->hSwitchCtrl; // 保留控件句柄
+			newSub->Data = textCopy;
+
+			// 补充：同步SWITCH控件显隐（根据当前项的可见性）
+			if (Ex_ObjIsValidate(textCopy->hSwitchCtrl)) {
+				BOOL isItemVisible = _propertygrid_is_item_visible(hObj, index);
+				Ex_ObjShow(textCopy->hSwitchCtrl, isItemVisible);
+			}
+		}
 		// 替换旧项目
 		ptrArray[index] = (size_t)newSub;
 
@@ -463,6 +526,11 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			EX_PROPERTYGRID_ITEMINFO_BUTTON* textData = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
 			text = textData->Content;
 		}
+		else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+		{
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* textData = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+			text = textData->Content;
+		}
 		return (LRESULT)(text);
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_GETITEMNAME)
@@ -497,6 +565,11 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 		else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON)
 		{
 			EX_PROPERTYGRID_ITEMINFO_BUTTON* textData = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
+			text = textData->Title;
+		}
+		else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+		{
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* textData = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
 			text = textData->Title;
 		}
 		return (LRESULT)(text);
@@ -562,6 +635,13 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 			if (text) Ex_MemFree((void*)text);
 			textData->Content = StrDupW(newValue);
 		}
+		else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+		{
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* textData = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+			text = textData->Content;
+			if (text) Ex_MemFree((void*)text);
+			textData->Content = StrDupW(newValue);
+		}
 		Ex_ObjInvalidateRect(hObj, 0);
 	}
 	else if (uMsg == PROPERTYGRID_MESSAGE_GETITEMCOUNT)
@@ -598,7 +678,8 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_COMBOBOX*)sub->Data)->Title;
 			else if (sub->Type == PROPERTYGRID_ITEMTYPE_BUTTON)
 				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data)->Title;
-
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+				currentTitle = ((EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data)->Title;
 
 			// 比较标题
 			if (currentTitle != NULL && wcscmp(currentTitle, lpszTitle) == 0) {
@@ -662,6 +743,16 @@ LRESULT CALLBACK _propertygrid_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
 				EX_PROPERTYGRID_ITEMINFO_BUTTON* data = (EX_PROPERTYGRID_ITEMINFO_BUTTON*)sub->Data;
 				Ex_MemFree((void*)data->Title);
 				Ex_MemFree((void*)data->Content);
+				free(data);
+			}
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+			{
+				EX_PROPERTYGRID_ITEMINFO_SWITCH* data = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+				Ex_MemFree((void*)data->Title);
+				Ex_MemFree((void*)data->Content);
+				if (Ex_ObjIsValidate(data->hSwitchCtrl)) {
+					Ex_ObjDestroy(data->hSwitchCtrl);
+				}
 				free(data);
 			}
 			free(sub);
@@ -743,6 +834,21 @@ LRESULT CALLBACK _propertygrid_onbuttonevent(HEXOBJ hObj, INT nID, INT nCode, WP
 	return 0;
 }
 
+LRESULT CALLBACK _propertygrid_onswitchevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
+{
+
+	HEXOBJ parent = Ex_ObjGetParent(hObj);
+	if (Ex_ObjIsValidate(parent))
+	{
+		int itemSelect = Ex_ObjGetLong(hObj, OBJECT_LONG_LPARAM);
+		if (itemSelect < 0) return 0;
+		BOOL bSwitchOn = (BOOL)wParam;
+		LPCWSTR szState = bSwitchOn ? L"1" : L"0";
+		_propertygrid_setitemtext(parent, itemSelect, szState);
+	}
+
+	return 0;
+}
 LRESULT CALLBACK _propertygrid_ondateboxevent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode == DATEBOX_EVENT_DATETIME)
@@ -903,6 +1009,7 @@ void _propertygrid_onmousemove(HEXOBJ hObj, INT x, INT y)
 	HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
 	HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
 
+
 	BOOL bVisiableCombobox = Ex_ObjIsVisible(combobox);
 	RECT rcCombobox;
 	Ex_ObjGetRect(combobox, &rcCombobox);
@@ -1019,26 +1126,22 @@ BOOL _propertygrid_is_item_visible(HEXOBJ hObj, INT index)
 	size_t* ptrArray = (size_t*)arr->Items;
 	EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[index];
 
-	// 分组项目总是可见
+	// 分组项目总是可见（保留原有逻辑）
 	if (sub->Type == PROPERTYGRID_ITEMTYPE_GROUP) return TRUE;
 
-	// 非分组项目需要检查其所属分组是否展开
+	// 非分组项目：修复父分组查找逻辑（核心：准确找到父分组）
 	if (sub->ParentIndex >= 0) {
-		// 找到对应的分组项目
-		INT groupCount = 0;
-		for (int i = 0; i < arr->Count; i++) {
-			EX_PROPERTYGRID_ITEMINFO_SUBITEM* item = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[i];
-			if (item->Type == PROPERTYGRID_ITEMTYPE_GROUP) {
-				if (groupCount == sub->ParentIndex) {
-					EX_PROPERTYGRID_ITEMINFO_GROUP* groupData = (EX_PROPERTYGRID_ITEMINFO_GROUP*)item->Data;
-					return groupData->bExpanded;
-				}
-				groupCount++;
-			}
-		}
+		// 直接通过_parentIndex查找分组（优化原有循环，避免groupCount计数错误）
+		INT groupIndex = _propertygrid_find_group_index(hObj, sub->ParentIndex);
+		if (groupIndex == -1) return FALSE; // 父分组不存在，不可见
+
+		EX_PROPERTYGRID_ITEMINFO_SUBITEM* groupItem = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[groupIndex];
+		EX_PROPERTYGRID_ITEMINFO_GROUP* groupData = (EX_PROPERTYGRID_ITEMINFO_GROUP*)groupItem->Data;
+		return groupData->bExpanded; // 父分组展开则可见，否则不可见
 	}
 
-	return FALSE;
+	// 无父分组的非分组项，默认可见
+	return TRUE;
 }
 
 void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
@@ -1081,8 +1184,9 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 						EX_PROPERTYGRID_ITEMINFO_SUBITEM* item = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[j];
 						item->bVisible = _propertygrid_is_item_visible(hObj, j);
 					}
-					// 更新布局
 					_propertygrid_update_layout(hObj);
+					// 强制重绘，刷新界面
+					Ex_ObjInvalidateRect(hObj, 0);
 				}
 			}
 			else if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT) {
@@ -1192,6 +1296,7 @@ void _propertygrid_onlbuttonup(HEXOBJ hObj, INT x, INT y)
 			Ex_ObjInvalidateRect(hObj, 0);
 			break;
 		}
+
 	}
 }
 
@@ -1242,11 +1347,18 @@ void _propertygrid_update_layout(HEXOBJ hObj)
 	for (int i = 0; i < arr->Count; i++) {
 		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[i];
 		sub->bVisible = _propertygrid_is_item_visible(hObj, i);
+		if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)//这里控制折叠隐藏
+		{
+			EX_PROPERTYGRID_ITEMINFO_SWITCH* data = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+			HEXOBJ hSwitchCtrl = data->hSwitchCtrl;
+			Ex_ObjShow(hSwitchCtrl, sub->bVisible);
+		}
 	}
 
 	// 然后计算所有可见项目的位置
 	for (int i = 0; i < arr->Count; i++) {
 		EX_PROPERTYGRID_ITEMINFO_SUBITEM* sub = (EX_PROPERTYGRID_ITEMINFO_SUBITEM*)ptrArray[i];
+
 		if (!sub->bVisible) continue;
 
 		INT lineHeight = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_LINEHEIGHT);
@@ -1305,8 +1417,21 @@ void _propertygrid_update_layout(HEXOBJ hObj)
 				data->Layout.rcTitle = rcTitle;
 				data->Layout.rcContent = rcContent;
 			}
-		}
+			else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH) {
+				EX_PROPERTYGRID_ITEMINFO_SWITCH* data = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+				if (data == NULL) break;
+				data->Layout.rcTitle = rcTitle;
+				data->Layout.rcContent = rcContent;
+				HEXOBJ hSwitchCtrl = data->hSwitchCtrl;
 
+				INT topOffset = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET);
+				INT switchLeft = rcContent.left + Ex_Scale(5);
+				INT switchTop = rcContent.top - topOffset + Ex_Scale(2);
+				INT switchWidth = Ex_Scale(40);
+				INT switchHeight = rcContent.bottom - rcContent.top - Ex_Scale(4);
+				Ex_ObjMove(hSwitchCtrl, switchLeft, switchTop, switchWidth, switchHeight, TRUE);
+			}
+		}
 		currentY += lineHeight;
 	}
 
@@ -1432,7 +1557,18 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 		Ex_MemFree((void*)data->Content);
 		data->Content = StrDupW(content);
 	}
-
+	else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+	{
+		EX_PROPERTYGRID_ITEMINFO_SWITCH* data = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+		Ex_MemFree((void*)data->Content);
+		data->Content = StrDupW(content);
+		HEXOBJ hSwitchCtrl = data->hSwitchCtrl;
+		if (Ex_ObjIsValidate(hSwitchCtrl) && Ex_ObjIsVisible(hSwitchCtrl))
+		{
+			BOOL bSwitchOn = (wcscmp(content, L"1") == 0);
+			Ex_ObjSendMessage(hSwitchCtrl, BM_SETCHECK, (WPARAM)bSwitchOn, 0);
+		}
+	}
 	// 如果该项目是当前选中的项目，更新编辑器内容
 	INT selItem = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_SELITEM);
 	if (index == selItem) {
@@ -1441,6 +1577,7 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 		HEXOBJ colorPicker = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOLORPICKER);
 		HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
 		HEXOBJ button = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJBUTTON);
+
 		if (sub->Type & PROPERTYGRID_ITEMTYPE_EDIT && Ex_ObjIsVisible(edit)) {
 			Ex_ObjSetText(edit, content, TRUE);
 		}
@@ -1482,6 +1619,10 @@ void _propertygrid_setitemtext(HEXOBJ hObj, INT index, LPCWSTR content)
 	else if (sub->Type == (PROPERTYGRID_ITEMTYPE_EDIT | PROPERTYGRID_ITEMTYPE_BUTTON))
 	{
 		type = 5;
+	}
+	else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+	{
+		type = 6;
 	}
 	EX_PROGRID_CHANGEITEMINFO itemInfo = { 0 };
 	itemInfo.text = content;
@@ -1601,7 +1742,13 @@ void _propertygrid_paint(HEXOBJ hObj)
 					rcTitle = data->Layout.rcTitle;
 					rcContent = data->Layout.rcContent;
 				}
-
+				else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH) {
+					EX_PROPERTYGRID_ITEMINFO_SWITCH* data = (EX_PROPERTYGRID_ITEMINFO_SWITCH*)sub->Data;
+					title = data->Title;
+					//content = L"开启" : L"关闭";  // 显示友好名称
+					rcTitle = data->Layout.rcTitle;
+					rcContent = data->Layout.rcContent;
+				}
 				// 应用滚动偏移
 				OffsetRect(&rcTitle, 0, -nPos);
 				OffsetRect(&rcContent, 0, -nPos);
@@ -1647,6 +1794,10 @@ void _propertygrid_paint(HEXOBJ hObj)
 							rcContent.left + Ex_Scale(30), rcContent.top + Ex_Scale(5),  // 文本位置微调，避免紧贴边框
 							rcContent.right - Ex_Scale(2), rcContent.bottom - Ex_Scale(5));
 					}
+					else if (sub->Type == PROPERTYGRID_ITEMTYPE_SWITCH)
+					{
+
+					}
 					else {
 						_canvas_drawtext(ps.hCanvas, hFont, txtColor, content, -1,
 							DT_LEFT | DT_VCENTER | DT_SINGLELINE,
@@ -1662,9 +1813,9 @@ void _propertygrid_paint(HEXOBJ hObj)
 		Ex_ObjEndPaint(hObj, &ps);
 	}
 }
-
 void _propertygrid_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	// 1. 隐藏全局控件（保留原有逻辑）
 	HEXOBJ edit = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJEDIT);
 	HEXOBJ combobox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJCOMBOBOX);
 	HEXOBJ datebox = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_HOBJDATEBOX);
@@ -1675,8 +1826,9 @@ void _propertygrid_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	Ex_ObjShow(datebox, FALSE);
 	Ex_ObjShow(colorPicker, FALSE);
 	Ex_ObjShow(button, FALSE);
+
+	// 2. 修复滚动条参数：统一使用SCROLLBAR_TYPE_VERT，避免参数不匹配
 	INT nCode = LOWORD(wParam);
-	HEXOBJ hVSB = Ex_ObjScrollGetControl(hObj, SCROLLBAR_TYPE_VERT);
 	INT oPos = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET);
 	INT nPos = oPos;
 
@@ -1684,10 +1836,11 @@ void _propertygrid_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	Ex_ObjGetClientRect(hObj, &rc);
 	INT heightRC = (rc.bottom - rc.top);
 
+	// 3. 修复滚动位置计算（保留原有逻辑，简化hVSB获取）
 	switch (nCode) {
 	case SB_THUMBPOSITION:
 	case SB_THUMBTRACK:
-		nPos = Ex_ObjScrollGetTrackPos(hVSB, SCROLLBAR_TYPE_CONTROL);
+		nPos = Ex_ObjScrollGetTrackPos(hObj, SCROLLBAR_TYPE_VERT); // 直接从hObj获取，无需hVSB
 		break;
 	case SB_PAGEUP:
 		nPos -= heightRC;
@@ -1705,20 +1858,24 @@ void _propertygrid_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 		nPos = 0;
 		break;
 	case SB_BOTTOM:
-		nPos = Ex_ObjScrollGetRange(hVSB, SCROLLBAR_TYPE_CONTROL, NULL, NULL);
+		INT scrollMax;
+		Ex_ObjScrollGetRange(hObj, SCROLLBAR_TYPE_VERT, NULL, &scrollMax);
+		nPos = scrollMax;
 		break;
 	default:
 		return;
 	}
 
-	// 边界检查
+	// 4. 边界检查（简化，直接从hObj获取范围）
 	INT nMin, nMax;
-	Ex_ObjScrollGetRange(hVSB, SCROLLBAR_TYPE_CONTROL, &nMin, &nMax);
-	nPos = max(0, min(nPos, nMax));
+	Ex_ObjScrollGetRange(hObj, SCROLLBAR_TYPE_VERT, &nMin, &nMax);
+	nPos = max(nMin, min(nPos, nMax));
 
+	// 5. 滚动位置变化后，强制同步布局+Switch位置+重绘（核心修复）
 	if (nPos != oPos) {
 		Ex_ObjSetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET, nPos);
-		Ex_ObjScrollSetPos(hVSB, SCROLLBAR_TYPE_CONTROL, nPos, TRUE);
-		Ex_ObjInvalidateRect(hObj, 0);
+		Ex_ObjScrollSetPos(hObj, SCROLLBAR_TYPE_VERT, nPos, TRUE);
+		_propertygrid_update_layout(hObj); // 先更新布局（同步所有项和Switch位置）
+		Ex_ObjInvalidateRect(hObj, 0); // 再重绘
 	}
 }

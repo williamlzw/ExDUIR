@@ -13,3 +13,4 @@ void PropertyGrid_AddComboBoxItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR* opti
 void PropertyGrid_AddDateBoxItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR dateValue, INT parentIndex);
 void PropertyGrid_AddButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex);
 void PropertyGrid_AddEditButtonItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex, INT type);
+void PropertyGrid_AddSwitchItem(HEXOBJ hPropGrid, LPCWSTR title, LPCWSTR buttonText, INT parentIndex);
