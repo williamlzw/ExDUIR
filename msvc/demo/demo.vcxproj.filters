@@ -206,6 +206,9 @@
     <ClCompile Include="test_prototypeboard.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test_candlestickchart.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -415,6 +418,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_prototypeboard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_candlestickchart.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,6 @@
 #include <string>
 #include <tchar.h>
 #include <vector>
-#include <commctrl.h>
 #pragma region 编译配置
 // 启用VLC播放引擎
 //#define VCL_PLAYER
@@ -2023,6 +2022,7 @@
 // 按钮_属性_状态 0正常 1点燃 2按下
 #define BUTTON_LONG_STATE 0
 
+// 选择框属性
 #define CHECKBUTTON_PROP_CRNORMAL 1
 #define CHECKBUTTON_PROP_CRHOVER 2
 #define CHECKBUTTON_PROP_CRCHECKED 3
@@ -2030,12 +2030,33 @@
 #define CHECKBUTTON_PROP_CRHOVERCHECK 5
 #define CHECKBUTTON_LONG_STATE 0
 
+// 单选框属性
 #define RADIOBUTTON_PROP_CRNORMAL 1
 #define RADIOBUTTON_PROP_CRHOVER 2
 #define RADIOBUTTON_PROP_CRCHECKED 3
 #define RADIOBUTTON_PROP_TEXT 4
 #define RADIOBUTTON_PROP_CRHOVERCHECK 5
 #define RADIOBUTTON_LONG_STATE 0
+
+// K线图消息_添加数据
+#define CANDLESTICKCHART_MESSAGE_ADD_DATA 100001
+// K线图消息_清空数据
+#define CANDLESTICKCHART_MESSAGE_CLEAR_DATA 100002
+// K线图消息_设置均线天数
+#define CANDLESTICKCHART_MESSAGE_SET_MA_DAYS 100003
+// K线图消息_是否显示均线
+#define CANDLESTICKCHART_MESSAGE_SHOW_MA 100004
+// K线图消息_设置价格范围
+#define CANDLESTICKCHART_MESSAGE_SET_RANGE 100005
+// K线图消息_取选择
+#define CANDLESTICKCHART_MESSAGE_GET_SELECTED 100006
+
+// K线图事件_项目点击
+#define CANDLESTICKCHART_EVENT_ITEM_CLICKED 100
+// K线图事件_项目点燃
+#define CANDLESTICKCHART_EVENT_ITEM_HOVER 101
+// K线图事件_范围选择
+#define CANDLESTICKCHART_EVENT_RANGE_CHANGED 102
 
 #define LVSICF_NOSCROLL 2
 #define EX_DEFINE_API(NAME, RET, ARGS)      \
@@ -2791,10 +2812,10 @@ struct EXMENUITEMINFOW
 
 
 // Grid 表格:: Cell data mask
-#define GVIF_TEXT               LVIF_TEXT
-#define GVIF_IMAGE              LVIF_IMAGE
-#define GVIF_PARAM              LVIF_PARAM
-#define GVIF_STATE              LVIF_STATE
+#define GVIF_TEXT               0x00000001
+#define GVIF_IMAGE              0x00000002
+#define GVIF_PARAM              0x00000004
+#define GVIF_STATE              0x00000008
 #define GVIF_BKCLR              (GVIF_STATE<<1)
 #define GVIF_FGCLR              (GVIF_STATE<<2)
 #define GVIF_FORMAT             (GVIF_STATE<<3)
@@ -3427,6 +3448,20 @@ struct EX_FLOWCHART_DATA
 struct EX_FLOWSCROLLVIEW_LAYOUT_CONFIG {
 	INT nHorizontalSpacing; // 水平间距
 	INT nVerticalSpacing;   // 垂直间距
+};
+
+// K线图 K线数据类型
+struct EX_CANDLESTICK_DATA {
+    LONGLONG timestamp;    // 时间戳
+    DOUBLE open;           // 开盘价
+    DOUBLE high;           // 最高价
+    DOUBLE low;            // 最低价
+    DOUBLE close;          // 收盘价
+    DOUBLE volume;         // 成交量
+    DOUBLE ma5;           // 5日均线
+    DOUBLE ma10;          // 10日均线
+    DOUBLE ma20;          // 20日均线
+    DOUBLE ma30;          // 30日均线
 };
 
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown* effect,

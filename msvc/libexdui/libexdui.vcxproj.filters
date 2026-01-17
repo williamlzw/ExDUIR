@@ -276,6 +276,9 @@
     <ClCompile Include="..\..\src\Class_PrototypeBoard_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Class_CandlestickChart_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -549,6 +552,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\Class_PrototypeBoard_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_CandlestickChart_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

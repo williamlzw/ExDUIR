@@ -157,6 +157,7 @@
 #include "Class_Splitter_ex.h"
 #include "Class_SysMenu_ex.h"
 #include "Class_PrototypeBoard_ex.h"
+#include "Class_CandlestickChart_ex.h"
 
 #ifdef WEB_VIEW2
 #include "Class_WebView_ex.h"

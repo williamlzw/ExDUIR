@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\src\Array_ex.cpp" />
     <ClCompile Include="..\..\src\Brush_ex.cpp" />
     <ClCompile Include="..\..\src\Canvas_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_CandlestickChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ChatBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Grid_ex.cpp" />
@@ -113,6 +114,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\Array_ex.h" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
+    <ClInclude Include="..\..\include\Class_CandlestickChart_ex.h" />
     <ClInclude Include="..\..\include\Class_ChatBox_ex.h" />
     <ClInclude Include="..\..\include\Class_FlowChart_ex.h" />
     <ClInclude Include="..\..\include\Class_Grid_ex.h" />
