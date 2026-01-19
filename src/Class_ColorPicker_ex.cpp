@@ -18,13 +18,10 @@ LRESULT CALLBACK _color_picker_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPa
         EXARGB initialColor = ExARGB(250, 50, 50, 255);
         Ex_ObjSetColor(hObj, COLOR_EX_BACKGROUND, initialColor, TRUE);
         _color_picker_update_edit(hObj, initialColor);
-        //color_picker_s* ptr = (color_picker_s*)malloc(sizeof(color_picker_s));
-        //ptr->hObj = hObj;
-        //Ex_ObjSetLong(hObj, COLORPICKER_LONG_DATA, (LONG_PTR)ptr);
+        
     }
     else if (uMsg == WM_DESTROY) {
-        //color_picker_s* ptr = (color_picker_s*)Ex_ObjGetLong(hObj, COLORPICKER_LONG_DATA);
-        //free(ptr);
+        
     }
     else if (uMsg == WM_PAINT) {
         EX_PAINTSTRUCT ps{ 0 };

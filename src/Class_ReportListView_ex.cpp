@@ -1027,7 +1027,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                                rcTD.left + itemHeight / 4 * 3, rcTD.top + itemHeight / 4 * 3 };
 
             if (pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) {
-                rcTD.left = rcTD.left + itemHeight / 4.0f * 3 -1;
+                rcTD.left = rcTD.left + itemHeight / 4.0f * 3 - 1;
             }
             else {
                 hImage = _imglist_get(hImgList, pTR->nImageIndex_);
@@ -1043,7 +1043,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                 rcTD.right = rcTD.left + pTC->nWidth;
                 if (i == 1 &&
                     ((pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) || hImage != 0)) {
-                    rcTD.right = rcTD.right - itemHeight / 4 * 3 ;
+                    rcTD.right = rcTD.right - itemHeight / 4 * 3;
                 }
                 _reportlistview_draw_td(hObj, pDrawInfo, pDrawInfo->iItem, i, pTC, &rcTD);
                 rcTD.left = rcTD.right;

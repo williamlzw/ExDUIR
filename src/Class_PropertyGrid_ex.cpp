@@ -1,9 +1,5 @@
 #include "stdafx.h"
 
-
-
-
-
 void _propertygrid_register()
 {
 	Ex_ObjRegister(L"PropertyGrid",
