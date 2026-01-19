@@ -598,11 +598,16 @@ void _candlestickchart_onlbuttondown(HEXOBJ hObj, INT x, INT y)
     FLOAT chartWidth = pData->visibleCount > 0 ? (FLOAT)(pData->visibleCount * candleWidth * 1.2f) : 0;
     if (x < chartLeft || x > chartLeft + chartWidth) pData->selectedIndex = -1;
 
-    if (prevSelectedIndex != pData->selectedIndex)
+    // ====================== 修改判定逻辑 ======================
+    // 方案：只要选中有效K线，就触发事件（不管和上次是否相同）
+    BOOL isClickValid = pData->selectedIndex != -1;
+    if (prevSelectedIndex != pData->selectedIndex || isClickValid)
     {
         Ex_ObjInvalidateRect(hObj, 0);
         if (pData->selectedIndex != -1)
+        {
             Ex_ObjDispatchNotify(hObj, CANDLESTICKCHART_EVENT_ITEM_CLICKED, pData->selectedIndex, 0);
+        }
     }
 }
 
