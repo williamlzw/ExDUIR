@@ -3453,6 +3453,14 @@ void Ex_SetLastError(INT nError);
 void Ex_Sleep(INT us);
 
 /// <summary>
+/// 时间戳转时间文本，支持10位，13位时间戳
+/// </summary>
+/// <param name="llTimestamp"></param>
+/// <param name="szOutTime"></param>
+/// <param name="nOutLen"></param>
+void Ex_TimestampToDatetime(LONGLONG llTimestamp, WCHAR* szOutTime, INT nOutLen);
+
+/// <summary>
 /// 添加菜单项目
 /// </summary>
 /// <param name="hMenu"></param>

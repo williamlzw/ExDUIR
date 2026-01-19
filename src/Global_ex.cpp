@@ -573,3 +573,34 @@ void* Ex_GetD3DDeviceContext()
 {
     return g_Ri.pD3DDeviceContext;
 }
+
+void Ex_TimestampToDatetime(LONGLONG llTimestamp, WCHAR* szOutTime, int nOutLen)
+{
+    if (szOutTime == NULL || nOutLen <= 0) return;
+    // 默认值兜底
+    wcscpy_s(szOutTime, nOutLen, L"--");
+
+    time_t timestamp = 0;
+    // 自动判断时间戳单位：13位=毫秒级，10位=秒级 (股票K线的两种主流格式)
+    if (llTimestamp > 1000000000000)
+    {
+        timestamp = (time_t)(llTimestamp / 1000); // 毫秒转秒
+    }
+    else
+    {
+        timestamp = (time_t)llTimestamp; // 已是秒级
+    }
+
+    // 转换为本地时区的时间
+    struct tm tm_time;
+    localtime_s(&tm_time, &timestamp); // VS编译器安全版
+
+    // 格式化输出: 年-月-日 时:分:秒
+    swprintf_s(szOutTime, nOutLen, L"%04d-%02d-%02d %02d:%02d:%02d",
+        tm_time.tm_year + 1900,  // tm_year是从1900开始的差值
+        tm_time.tm_mon + 1,       // tm_mon是0-11，要+1
+        tm_time.tm_mday,
+        tm_time.tm_hour,
+        tm_time.tm_min,
+        tm_time.tm_sec);
+}
