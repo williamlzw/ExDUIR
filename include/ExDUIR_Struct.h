@@ -511,6 +511,8 @@
 #pragma endregion listview notify constant
 
 #pragma region canvas flag constant
+// 画布标识_默认
+#define CANVAS_FLAG_DEFAULT 0x00
 // 画布标识_画布抗锯齿
 #define CANVAS_FLAG_CANVASANTIALIAS 0x01
 // 画布标识_文本抗锯齿

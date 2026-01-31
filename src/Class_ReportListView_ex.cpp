@@ -999,7 +999,9 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
         rcTD.left = pDrawInfo->rcPaint.left;
         rcTD.top = pDrawInfo->rcPaint.top;
         rcTD.bottom = pDrawInfo->rcPaint.bottom;
-
+        // 获取横向滚动偏移量（核心：滚动时列边界基准统一）
+        INT nScrollX = -Ex_ObjScrollGetPos(hObj, SCROLLBAR_TYPE_HORZ);
+        // 表头区域裁剪
         if (rcTD.top < Ex_ObjGetLong(hObj, REPORTLISTVIEW_LONG_HEADHEIGHT) &&
             (Ex_ObjGetLong(hObj, OBJECT_LONG_STYLE) & REPORTLISTVIEW_STYLE_NOHEAD) == 0) {
             _canvas_cliprect(pDrawInfo->hCanvas, pDrawInfo->rcPaint.left,
@@ -1011,6 +1013,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
             HEXIMAGELIST hImgList =
                 (HEXIMAGELIST)Ex_ObjGetLong(hObj, REPORTLISTVIEW_LONG_HIMAGELIST);
             INT itemHeight = pDrawInfo->rcPaint.bottom - pDrawInfo->rcPaint.top;
+            // 行背景色绘制
             if ((pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_ROWCOLOUR) ==
                 REPORTLISTVIEW_LINESTYLE_ROWCOLOUR)   // 新增
             {
@@ -1025,14 +1028,15 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                                rcTD.bottom };
             RECT imgrc = { rcTD.left + itemHeight / 4, rcTD.top + itemHeight / 4,
                                rcTD.left + itemHeight / 4 * 3, rcTD.top + itemHeight / 4 * 3 };
-
+            // 标记：第一列是否有选择框/图标（用于列内内容偏移，不修改列边界）
+            BOOL bFirstColHasIconOrCheck = FALSE;
             if (pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) {
-                rcTD.left = rcTD.left + itemHeight / 4.0f * 3 - 1;
+                bFirstColHasIconOrCheck = TRUE;
             }
             else {
                 hImage = _imglist_get(hImgList, pTR->nImageIndex_);
                 if (hImage != 0) {
-                    rcTD.left = rcTD.left + itemHeight / 4.0f * 3 - 1;
+                    bFirstColHasIconOrCheck = TRUE;
                 }
             }
 
@@ -1040,16 +1044,23 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                 (EX_REPORTLIST_COLUMNINFO*)Ex_ObjGetLong(hObj, REPORTLISTVIEW_LONG_TCINFO);
 
             for (INT i = 1; i <= nCount; i++) {
+                // 核心1：列边界始终按原始宽度计算（不扣减，保证竖线对齐基准统一）
                 rcTD.right = rcTD.left + pTC->nWidth;
-                if (i == 1 &&
-                    ((pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) || hImage != 0)) {
-                    rcTD.right = rcTD.right - itemHeight / 4 * 3;
+                // 临时存储列原始边界，用于传递给绘制函数（防止后续修改影响）
+                RECT rcTD_Origin = rcTD;
+                // 核心2：仅对第一列做列内内容偏移，不修改列边界rcTD
+                if (i == 1 && bFirstColHasIconOrCheck) {
+                    // 列内内容绘制的左侧偏移（选择框/图标宽度）
+                    rcTD_Origin.left = rcTD.left + itemHeight / 4.0f * 3 - 1;
+                    // 移除原rcTD.right扣减逻辑，列边界保持不变
                 }
-                _reportlistview_draw_td(hObj, pDrawInfo, pDrawInfo->iItem, i, pTC, &rcTD);
+                // 传递原始列边界（rcTD）和偏移后的内容绘制边界（rcTD_Origin）
+                _reportlistview_draw_td(hObj, pDrawInfo, pDrawInfo->iItem, i, pTC, &rcTD_Origin);
+                // 核心3：列边界按原始宽度累加，保证后续列的基准连续
                 rcTD.left = rcTD.right;
                 pTC = (EX_REPORTLIST_COLUMNINFO*)((size_t)pTC + sizeof(EX_REPORTLIST_COLUMNINFO));
             }
-
+            // 水平线绘制
             if ((pDrawInfo->dwStyle & REPORTLISTVIEW_STYLE_DRAWHORIZONTALLINE) ==
                 REPORTLISTVIEW_STYLE_DRAWHORIZONTALLINE) {
                 HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BORDER));
@@ -1058,6 +1069,7 @@ void _reportlistview_draw_tr(HEXOBJ hObj, EX_CUSTOMDRAW* pDrawInfo)
                     pDrawInfo->rcPaint.bottom, 1.5, D2D1_DASH_STYLE_SOLID);
                 _brush_destroy(hBrush);
             }
+            // 选择框 / 图标绘制
             if (pTR->dwStyle_ & REPORTLISTVIEW_LINESTYLE_CHECKBOX) {
                 Ex_ThemeDrawControl(pDrawInfo->hTheme, pDrawInfo->hCanvas, checkrc.left,
                     checkrc.top, checkrc.right, checkrc.bottom, ATOM_CHECKBUTTON,
@@ -1085,6 +1097,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
     reportlistview_td_s* pTD = _reportlistview_td_get(hObj, nIndexTR, nIndexTC);
     if (pTD != 0) {
         if (Ex_ObjDispatchNotify(hObj, REPORTLISTVIEW_EVENT_DRAW_TD, nIndexTC, (size_t)cd) == 0) {
+            // 单元格背景色绘制
             if ((pTD->cellStyle_ & REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR) ==
                 REPORTLISTVIEW_CELLSTYLE_CELLCOLOUR)   // 新增
             {
@@ -1093,6 +1106,7 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
                     rcTD->top, rcTD->right + 1.0, rcTD->bottom);
                 _brush_destroy(hBrush);
             }
+            // 单元格文本绘制
             LPCWSTR wzText = pTD->wzText_;
             if (wzText != 0) {
                 INT crText = 0;
@@ -1117,11 +1131,13 @@ void _reportlistview_draw_td(HEXOBJ hObj, EX_CUSTOMDRAW* cd, INT nIndexTR, INT n
                 _canvas_drawtext(cd->hCanvas, Font, crText, wzText, -1, pTC->dwTextFormat,
                     rcTD->left + 3.5, rcTD->top, rcTD->right + 1, rcTD->bottom);
             }
+            // 核心：竖线绘制基于【原始列右边界】（rcTD->right 继承自未修改的rcTD）
             if ((cd->dwStyle & REPORTLISTVIEW_STYLE_DRAWVERTICALLINE) ==
                 REPORTLISTVIEW_STYLE_DRAWVERTICALLINE) {
                 HEXBRUSH hBrush = _brush_create(Ex_ObjGetColor(hObj, COLOR_EX_BORDER));
+                // 绘制在列原始右边界+1位置，与所有列竖线基准一致
                 _canvas_drawline(cd->hCanvas, hBrush, rcTD->right + 1.0, rcTD->top,
-                    rcTD->right + 1., rcTD->bottom, 1.0, D2D1_DASH_STYLE_SOLID);
+                    rcTD->right + 1.0, rcTD->bottom, 1.0, D2D1_DASH_STYLE_SOLID);
                 _brush_destroy(hBrush);
             }
         }

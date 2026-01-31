@@ -2896,7 +2896,7 @@ BOOL Ex_ObjPostMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 /// <param name="dwTextFormat">相关常量 DT_</param>
 /// <param name="cbObjExtra">组件额外分配字节数(值可为0),每个成员8字节</param>
 /// <param name="hCursor">组件默认鼠标指针句柄(值可为0)</param>
-/// <param name="dwFlags">画布标志 #ECVF_(值可为0)</param>
+/// <param name="dwFlags">画布标识常量CANVAS_FLAG_</param>
 /// <param name="pfnObjProc">组件默认回调 LRESULT CALLBACK ClsPROC(HWND hWnd,
 /// HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)</param>
 /// <returns>成功返回组件类名原子,失败返回0</returns>
