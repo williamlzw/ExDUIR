@@ -555,7 +555,7 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 			return ret;
 		}
 	}
-	if (uMsg == WM_NCHITTEST)  // 132
+	 if (uMsg == WM_NCHITTEST)  // 132
 	{
 		return _wnd_wm_nchittest(pWnd, hWnd, lParam);
 	}
@@ -1372,7 +1372,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle) {
 void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 	HEXCANVAS cvDisplay, LPVOID pBitmapDisplay, RECT rcPaint, BOOL ParentBorder,
 	EXHANDLE objChildFirst, INT offsetX, INT offsetY,
-	INT pAlpha, BOOL fDX, LPVOID hBorderBrush) {
+	INT pAlpha, BOOL fDX, HEXBRUSH hBorderBrush) {
 	EXHANDLE objNext = objChildFirst;
 	INT nError = 0;
 	if (objNext != 0) {
@@ -1553,7 +1553,6 @@ BOOL _wnd_wm_setcursor(HWND hWnd, wnd_s* pWnd, LPARAM lParam) {
 
 void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent,
 	DWORD dwTime) {
-	//AAAAAAAAAAAAA不同
 	KillTimer(hWnd, idEvent);
 	wnd_s* pWnd = (wnd_s*)(idEvent - TIMER_MOUSETRACK);
 
@@ -1580,7 +1579,6 @@ void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent,
 void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, INT uMsg, HEXOBJ objCheck,
 	HEXOBJ objHittest, obj_s* pObjHittest, LPARAM wParam, LPARAM lParam,
 	BOOL fTrack) {
-	//AAAAAAAAAAAAAAA不同
 	INT nError = 0;
 	if (objHittest == -1) {
 		objHittest = pWnd->objHittest_;
@@ -1611,7 +1609,6 @@ void _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, INT uMsg, HEXOBJ objCheck,
 }
 
 INT _wnd_destroy(HWND hWnd, wnd_s* pWnd) {
-	//AAAAAAAAAAAAAAA不同
 	obj_s* pObj = nullptr;
 	INT nError = 0;
 	pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BDESTROYWINDOW;
@@ -2110,7 +2107,7 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam,
 	//AAAAAAAAAAAAAAAAAAA不同
 	if (((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) == EWF_BTRACKOBJECT)) {
 		FLAGS_DEL(pWnd->base.dwFlags_, EWF_BTRACKOBJECT);
-		if (!fMsgDispatch && !FLAGS_CHECK(pWnd->dwStyle_, WINDOW_STYLE_POPUPWINDOW)) {
+		if (!fMsgDispatch) {
 			ReleaseCapture();  // 对menu窗口无效
 		}
 
@@ -2384,7 +2381,7 @@ BOOL _wnd_wm_keyboard(wnd_s* pWnd, HWND hWnd, INT uMsg, WPARAM wParam,
 			if (_wnd_getfunctionkeys() == 0) {
 				if (pObj != 0) {
 					if (!__query(pObj, offsetof(obj_s, base.dwFlags_),
-						EOF_BDISABLESPACEANDENTER) && pObj->pCls_->atomName == -1890710555) {
+						EOF_BDISABLESPACEANDENTER)) {
 						_wnd_wm_buttondown(hWnd, pWnd, objFocus, pObj, WM_LBUTTONDOWN, EOF_BDISABLESPACEANDENTER, 0, TRUE);
 					}
 				}
@@ -2484,7 +2481,6 @@ void _wnd_wm_ime_composition(HWND hWnd, wnd_s* pWnd) {
 	if (hImc != 0) {
 		POINT pt;
 		GetCaretPos(&pt);
-
 		COMPOSITIONFORM cf;
 		cf.dwStyle = CFS_POINT;
 		cf.ptCurrentPos.x = pt.x;

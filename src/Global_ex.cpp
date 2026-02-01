@@ -180,7 +180,7 @@ BOOL Ex_Init(HINSTANCE hInstance, DWORD dwGlobalFlags, HCURSOR hDefaultCursor,
   //}
   if (Flag_Query(ENGINE_FLAG_OBJECT_SHOWRECTBORDER))
   {
-      g_Li.hObjBorderBrush = _brush_create(-65536);
+      g_Li.hObjBorderBrush = _brush_create(ExARGB(255, 0, 0, 255));
   }
   SetProcessDPIAware();
   g_Li.DpiX = 1;

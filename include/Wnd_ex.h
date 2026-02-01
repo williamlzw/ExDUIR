@@ -159,7 +159,7 @@ INT    _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam);
 void   _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle);
 void   _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext, HEXCANVAS cvDisplay,
                        LPVOID pBitmapDisplay, RECT rcPaint, BOOL ParentBorder, EXHANDLE objChildFirst, INT offsetX,
-                       INT offsetY, INT pAlpha, BOOL fDX, LPVOID hBorderBrush);
+                       INT offsetY, INT pAlpha, BOOL fDX, HEXBRUSH hBorderBrush);
 BOOL   _wnd_wm_setcursor(HWND hWnd, wnd_s* pWnd, LPARAM lParam);
 void CALLBACK _wnd_timer_mousetrack(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 void          _wnd_wm_leavecheck(HWND hWnd, wnd_s* pWnd, INT uMsg, HEXOBJ objCheck, HEXOBJ objHittest,
