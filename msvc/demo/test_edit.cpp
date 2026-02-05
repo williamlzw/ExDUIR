@@ -69,10 +69,10 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			Ex_ObjEditSetSelParFormat(hEdit, EDIT_SELECT_PARAGRAPHFORMAT_NUMBERING,
 				EDIT_PARAGRAPHFSYMBOL_LCROMAN);
 		}
-		else if (nID == 211)   // 文本颜色
+		else if (nID == 211)   // 文本红色
 		{
 			Ex_ObjEditSetSelCharFormat(hEdit, EDIT_SELECT_CHARFORMAT_COLOR,
-				ExRGB2ARGB(16711680, 255));
+				ExARGB(0, 0, 255, 255));
 		}
 		else if (nID == 212)   // 加粗
 		{
@@ -154,15 +154,17 @@ LRESULT CALLBACK OnEditButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 			Ex_ObjSendMessage(hEdit, EDIT_MESSAGE_SETTEXTEX, (WPARAM)&textformat,
 				(LPARAM)L"选中替换为这个");
 		}
-	}
-	if (nID == 227) {
-		auto hObj_edit4 = Ex_ObjGetFromID(m_hExDuiEdit, 2020);
-		auto oldstyle = Ex_ObjGetLong(hObj_edit4, OBJECT_LONG_STYLE);
-		if (oldstyle & EDIT_STYLE_READONLY)
-			Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE, OBJECT_STYLE_VISIBLE);
-		else
-			Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE,
-				OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
+		else if (nID == 227) { //切换只读模式
+			auto hObj_edit4 = Ex_ObjGetFromID(m_hExDuiEdit, 2020);
+			auto oldstyle = Ex_ObjGetLong(hObj_edit4, OBJECT_LONG_STYLE);
+			if (oldstyle & EDIT_STYLE_READONLY)
+			{
+				Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE, OBJECT_STYLE_VISIBLE);
+			}
+			else
+				Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE,
+					OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
+					}
 	}
 	return 0;
 }
@@ -222,10 +224,9 @@ void test_edit(HWND hWnd)
 		(LPARAM)L"测试数值输入编辑框");
 	HEXOBJ hObj_edit4 =
 		Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit",
-			L"测试只读编辑框", -1, 10, 150, 150,
+			L"测试只读编辑框", OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY, 10, 150, 150,
 			30, m_hExDuiEdit, 2020, DT_SINGLELINE, 0, 0, NULL);
-	Ex_ObjSetLong(hObj_edit4, OBJECT_LONG_STYLE,
-		OBJECT_STYLE_VISIBLE | EDIT_STYLE_READONLY);
+
 	HEXOBJ hObj_edit5 =
 		Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED |
 			OBJECT_STYLE_EX_TABSTOP | OBJECT_STYLE_EX_CUSTOMDRAW,

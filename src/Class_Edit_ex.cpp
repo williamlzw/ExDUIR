@@ -317,7 +317,7 @@ void _edit_init(HWND hWnd, HEXOBJ hObj, obj_s* pObj) {
                 pITS->OnTxInPlaceActivate(0);
                 LRESULT ret;
                 pITS->TxSendMessage(EM_SETOLECALLBACK, 0, (LPARAM)ole_callback, &ret);
-                pITS->TxSendMessage(EM_SETLANGOPTIONS, 0, 0, &ret);
+                //pITS->TxSendMessage(EM_SETLANGOPTIONS, 0, 0, &ret);
                 pITS->TxSendMessage(EM_LIMITTEXT, 0x7FFFFFFE, 0, &ret);
                 pITS->TxSendMessage(
                     EM_SETEVENTMASK, 0,
@@ -431,7 +431,7 @@ void _edit_setpropbits(obj_s* pObj, edit_s* pOwner) {
             }
         }
     }
-    if ((dwStyle & EDIT_STYLE_DISABLEDRAG) == 0) {
+    if ((dwStyle & EDIT_STYLE_DISABLEDRAG) != 0) {
         dwProperty = dwProperty | TXTBIT_DISABLEDRAG;
     }
     if ((dwStyle & EDIT_STYLE_READONLY) != 0) {
@@ -440,7 +440,7 @@ void _edit_setpropbits(obj_s* pObj, edit_s* pOwner) {
     if ((dwStyle & EDIT_STYLE_USEPASSWORD) != 0) {
         dwProperty = dwProperty | TXTBIT_USEPASSWORD;
     }
-    if ((dwStyle & EDIT_STYLE_HIDESELECTION) == 0) {
+    if ((dwStyle & EDIT_STYLE_HIDESELECTION) != 0) {
         dwProperty = dwProperty | TXTBIT_HIDESELECTION;
     }
     if ((dwStyle & EDIT_STYLE_ALLOWBEEP) != 0) {
@@ -965,59 +965,31 @@ LRESULT CALLBACK _edit_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
         }
         else if (uMsg == WM_SETFONT) {
             edit_s* pOwner = (edit_s*)_obj_pOwner(pObj);
-            LOGFONTW logfont = {};
-            pObj->hFont_ = (HEXFONT)wParam;
-            _font_getlogfont(pObj->hFont_, &logfont);
-            CHARFORMAT2W* pcf = (CHARFORMAT2W*)pOwner->pcf_;
-            DWORD dwMask = EDIT_SELECT_CHARFORMAT_SIZE |
-                EDIT_SELECT_CHARFORMAT_COLOR | EDIT_SELECT_CHARFORMAT_FACE;
-            DWORD dwEffects = 0;
-            if (logfont.lfWeight != 400) {
-                dwEffects = dwEffects | CFE_BOLD;
-                dwMask = dwMask | EDIT_SELECT_CHARFORMAT_BOLD;
-            }
-
-            if (logfont.lfItalic != 0) {
-                dwEffects = dwEffects | CFE_ITALIC;
-                dwMask = dwMask | EDIT_SELECT_CHARFORMAT_ITALIC;
-            }
-
-            if (logfont.lfUnderline != 0) {
-                dwEffects = dwEffects | CFE_UNDERLINE;
-                dwMask = dwMask | EDIT_SELECT_CHARFORMAT_UNDERLINE;
-            }
-
-            if (logfont.lfStrikeOut != 0) {
-                dwEffects = dwEffects | CFE_STRIKEOUT;
-                dwMask = dwMask | EDIT_SELECT_CHARFORMAT_STRIKEOUT;
-            }
-            pcf->dwMask = dwMask;
-            pcf->dwEffects = dwEffects;
-            pcf->yHeight = -logfont.lfHeight * 1440 / 96;
-            pcf->bCharSet = logfont.lfCharSet;
-            pcf->bPitchAndFamily = logfont.lfPitchAndFamily;
-            RtlMoveMemory(pcf->szFaceName, logfont.lfFaceName, LF_FACESIZE);
-            ((ITextServices*)_edit_its(pObj))
-                ->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE,
+            if (_obj_setfont(pObj, wParam, lParam))
+            {
+                _edit_setpcf(pObj, pOwner, 0);
+                ((ITextServices*)(pOwner->its_))->OnTxPropertyBitsChange(TXTBIT_CHARFORMATCHANGE,
                     TXTBIT_CHARFORMATCHANGE);
-            _edit_size(hWnd, hObj, pObj);
+                _obj_dispatchnotify(hWnd, pObj, hObj, pObj->id_, NM_FONTCHANGED, wParam, lParam);
+                return TRUE;
+            }
             return 0;
         }
-        //else if (uMsg == WM_STYLECHANGED) {
-        //  // 应该还有其他的style变化需要处理
-        //  if (GWL_STYLE == wParam) {
-        //    DWORD dwUpdatedBits = 0;
-        //    if ((lParam & EDIT_STYLE_READONLY) != 0) {
-        //      dwUpdatedBits |= TXTBIT_READONLY;
-        //    }
-        //    LPVOID pits = _edit_its(pObj);
-        //    if (pits != nullptr) {
-        //      auto lret =
-        //          ((ITextServices*)pits)
-        //              ->OnTxPropertyBitsChange(TXTBIT_READONLY, dwUpdatedBits);
-        //    }
-        //  }
-        //} 
+        else if (uMsg == WM_STYLECHANGING) {
+          // 应该还有其他的style变化需要处理
+          if (OBJECT_LONG_STYLE == wParam) {
+            DWORD dwUpdatedBits = 0;
+            if ((lParam & EDIT_STYLE_READONLY) != 0) {
+              dwUpdatedBits |= TXTBIT_READONLY;
+            }
+            LPVOID pits = _edit_its(pObj);
+            if (pits != nullptr) {
+              auto lret =
+                  ((ITextServices*)pits)
+                      ->OnTxPropertyBitsChange(TXTBIT_READONLY, dwUpdatedBits);
+            }
+          }
+        } 
         else {
             if (uMsg == WM_KEYDOWN) {
                 if (wParam == VK_RETURN) {
