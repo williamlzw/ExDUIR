@@ -14,46 +14,45 @@ void _candlestickchart_calculate_ma(EX_CANDLESTICKCHART_DATA* pData)
 {
     if (!pData || pData->count == 0) return;
 
+    // 获取实际设定的天数，防呆处理为最小1天
+    INT d5 = pData->maDays[0] > 0 ? pData->maDays[0] : 5;
+    INT d10 = pData->maDays[1] > 0 ? pData->maDays[1] : 10;
+    INT d20 = pData->maDays[2] > 0 ? pData->maDays[2] : 20;
+    INT d30 = pData->maDays[3] > 0 ? pData->maDays[3] : 30;
+
     DOUBLE sum5 = 0.0, sum10 = 0.0, sum20 = 0.0, sum30 = 0.0;
     for (INT i = 0; i < pData->count; i++)
     {
         EX_CANDLESTICK_DATA* pItem = &pData->data[i];
         DOUBLE close = pItem->close;
-        // 滑动累加求和
-        sum5 += close;
-        sum10 += close;
-        sum20 += close;
-        sum30 += close;
 
-        // MA5 计算 (5个值：i-4, i-3, i-2, i-1, i)
-        if (i >= 4)
-        {
-            pItem->ma5 = sum5 / 5.0;
-            sum5 -= pData->data[i - 4].close; // 正确：移除最左侧的旧值
+        sum5 += close; sum10 += close; sum20 += close; sum30 += close;
+
+        // MA 1 计算
+        if (i >= d5 - 1) {
+            pItem->ma5 = sum5 / d5;
+            sum5 -= pData->data[i - (d5 - 1)].close;
         }
         else pItem->ma5 = 0;
 
-        // MA10 计算
-        if (i >= 9)
-        {
-            pItem->ma10 = sum10 / 10.0;
-            sum10 -= pData->data[i - 9].close;
+        // MA 2 计算
+        if (i >= d10 - 1) {
+            pItem->ma10 = sum10 / d10;
+            sum10 -= pData->data[i - (d10 - 1)].close;
         }
         else pItem->ma10 = 0;
 
-        // MA20 计算
-        if (i >= 19)
-        {
-            pItem->ma20 = sum20 / 20.0;
-            sum20 -= pData->data[i - 19].close;
+        // MA 3 计算
+        if (i >= d20 - 1) {
+            pItem->ma20 = sum20 / d20;
+            sum20 -= pData->data[i - (d20 - 1)].close;
         }
         else pItem->ma20 = 0;
 
-        // MA30 计算
-        if (i >= 29)
-        {
-            pItem->ma30 = sum30 / 30.0;
-            sum30 -= pData->data[i - 29].close;
+        // MA 4 计算
+        if (i >= d30 - 1) {
+            pItem->ma30 = sum30 / d30;
+            sum30 -= pData->data[i - (d30 - 1)].close;
         }
         else pItem->ma30 = 0;
     }
@@ -236,16 +235,17 @@ void _candlestickchart_draw_ma(HEXCANVAS hCanvas, EX_CANDLESTICKCHART_DATA* pDat
         HEXBRUSH hBrushMA5 = _brush_create(ExARGB(255, 255, 0, 255));
         FLOAT lastX = 0, lastY = 0;
         BOOL hasLast = FALSE;
-
-        for (INT i = startIdx; i <= endIdx; i++)
+        // FIX: 从 startIdx - 1 开始查找，确保第一根可视K线有源点相连
+        INT maStart = startIdx > 0 ? startIdx - 1 : 0;
+        for (INT i = maStart; i <= endIdx; i++)
         {
             if (pData->data[i].ma5 > 0)
             {
                 FLOAT x = rcChart.left + (i - startIdx) * candleWidth * 1.2f + candleHalfWidth;
                 FLOAT y = _candlestickchart_price_to_y(pData->data[i].ma5, maxPrice, minPrice,
                     rcChart.top, rcChart.bottom);
-
-                if (hasLast)
+                // FIX: 只有当前节点在可视范围内时才绘制连线
+                if (hasLast && i >= startIdx)
                 {
                     _canvas_drawline(hCanvas, hBrushMA5, lastX, lastY, x, y, 1.5f, 0);
                 }
@@ -424,6 +424,9 @@ void _candlestickchart_draw_tooltip(HEXCANVAS hCanvas, EX_CANDLESTICKCHART_DATA*
 
     if (tipX + szTextX > rcChart.right)
         tipX = mouseX - szTextX - 10;
+    // FIX: 新增左侧碰撞检测
+    if (tipX < rcChart.left)
+        tipX = rcChart.left + 5;
     if (tipY + szTextY > rcChart.bottom)
         tipY = rcChart.bottom - szTextY - 5;
     if (tipY < rcChart.top)
@@ -524,8 +527,45 @@ void _candlestickchart_paint(HEXOBJ hObj)
         if (pData->visibleCount > 0)
         {
             INT endIdx = pData->visibleStart + pData->visibleCount - 1;
+            // ==========================================
+            // FIX: 核心修正！动态计算【当前可见范围内】的极值
+            // ==========================================
+            if (!pData->customRange)
+            {
+                DOUBLE localMax = pData->data[pData->visibleStart].high;
+                DOUBLE localMin = pData->data[pData->visibleStart].low;
+                DOUBLE localMaxVol = pData->data[pData->visibleStart].volume;
+
+                for (INT i = pData->visibleStart + 1; i <= endIdx; i++)
+                {
+                    if (pData->data[i].high > localMax) localMax = pData->data[i].high;
+                    if (pData->data[i].low < localMin) localMin = pData->data[i].low;
+                    if (pData->data[i].volume > localMaxVol) localMaxVol = pData->data[i].volume;
+                }
+
+                DOUBLE range = localMax - localMin;
+                if (range <= 0.00001)
+                {
+                    localMax += 0.01; localMin -= 0.01;
+                }
+                else
+                {
+                    localMax += range * 0.05; localMin -= range * 0.05; // 5%上下边距
+                }
+                if (localMin < 0) localMin = 0;
+                if (localMaxVol <= 0) localMaxVol = 1;
+
+                pData->maxPrice = localMax;
+                pData->minPrice = localMin;
+                pData->maxVolume = localMaxVol;
+            }
+
+            // ==========================================
+            //剪辑区,防止超出绘制区域
+            _canvas_cliprect(ps.hCanvas, rcChart.left, rcChart.top, rcChart.right, rcChart.bottom);
             _candlestickchart_draw_candles(ps.hCanvas, pData, rcChart, pData->visibleStart, endIdx);
             _candlestickchart_draw_ma(ps.hCanvas, pData, rcChart, pData->visibleStart, endIdx);
+            _canvas_resetclip(ps.hCanvas);
             _candlestickchart_draw_volume(ps.hCanvas, pData, rcVolume, pData->visibleStart, endIdx);
 
             if (pData->hoverIndex >= pData->visibleStart && pData->hoverIndex <= endIdx)
@@ -719,10 +759,10 @@ LRESULT CALLBACK _candlestickchart_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
         EX_CANDLESTICKCHART_DATA* pData = (EX_CANDLESTICKCHART_DATA*)Ex_ObjGetLong(hObj, CANDLESTICKCHART_LONG_DATA);
         if (pData) { if (pData->data) Ex_MemFree(pData->data); Ex_MemFree(pData); }
     }
-    else if (uMsg == WM_PAINT) _candlestickchart_paint(hObj);
-    else if (uMsg == WM_SIZE) Ex_ObjInvalidateRect(hObj, 0);
-    else if (uMsg == WM_MOUSEMOVE) _candlestickchart_onmousemove(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-    else if (uMsg == WM_LBUTTONDOWN) _candlestickchart_onlbuttondown(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    else if (uMsg == WM_PAINT) { _candlestickchart_paint(hObj); return 0; }
+    else if (uMsg == WM_SIZE) { Ex_ObjInvalidateRect(hObj, 0); return 0; }
+    else if (uMsg == WM_MOUSEMOVE) { _candlestickchart_onmousemove(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); return 0; }
+    else if (uMsg == WM_LBUTTONDOWN) { _candlestickchart_onlbuttondown(hObj, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); return 0; }
     else if (uMsg == WM_MOUSEWHEEL) { _candlestickchart_onmousewheel(hObj, GET_WHEEL_DELTA_WPARAM(wParam)); return 0; }
     else if (uMsg == WM_HSCROLL)
     {

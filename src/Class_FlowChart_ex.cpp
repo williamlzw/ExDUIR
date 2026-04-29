@@ -13,7 +13,7 @@ LRESULT CALLBACK _flowchart_edit_killfocus(HEXOBJ hObj, INT nID, INT nCode, WPAR
 	LPARAM lParam)
 {
 	if (nCode == NM_KILLFOCUS) {
-		Ex_ObjShow(hObj, FALSE);	
+		Ex_ObjShow(hObj, FALSE);
 		size_t       len = Ex_ObjGetTextLength(hObj);
 		std::wstring text;
 		text.resize(len);
@@ -23,7 +23,7 @@ LRESULT CALLBACK _flowchart_edit_killfocus(HEXOBJ hObj, INT nID, INT nCode, WPAR
 		Ex_ObjSetFocus(hParent);
 		INT nodeId = Ex_ObjGetLong(hParent, FLOWCHART_LONG_DOUBLECLICK_NODEID);
 		INT dataId = Ex_ObjGetLong(hParent, FLOWCHART_LONG_DOUBLECLICK_DATAID);
-		newData.id = dataId; 
+		newData.id = dataId;
 		newData.type = FLOWCHART_NODEDATA_TYPE_EDIT;
 		newData.data = (LPVOID)text.data();
 		Ex_ObjSendMessage(hParent, FLOWCHART_MESSAGE_UPDATE_NODEDATA,
@@ -56,10 +56,10 @@ LRESULT CALLBACK _flowchart_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam
 		Ex_ObjSetLong(hObj, FLOWCHART_LONG_MOUSE_Y, 0);
 		HEXOBJ edit = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE | OBJECT_STYLE_EX_COMPOSITED, L"edit", 0,
 			OBJECT_STYLE_VISIBLE | EDIT_STYLE_HIDESELECTION | OBJECT_STYLE_VSCROLL |
-			EDIT_STYLE_DISABLEMENU  | EDIT_STYLE_NEWLINE,
+			EDIT_STYLE_DISABLEMENU | EDIT_STYLE_NEWLINE,
 			10, 30, 150, 30, hObj, 0, DT_LEFT | DT_TOP, 0, 0, 0);
 		Ex_ObjHandleEvent(edit, NM_KILLFOCUS, _flowchart_edit_killfocus);
-		
+
 		Ex_ObjShow(edit, FALSE);
 		Ex_ObjSetLong(hObj, FLOWCHART_LONG_EDIT_HANDLE, edit);
 		Ex_ObjSetLong(hObj, FLOWCHART_LONG_DOUBLECLICK_NODEID, -1);
@@ -1849,7 +1849,7 @@ void _flowchart_ondoubleclick(HEXOBJ hObj, INT x, INT y)
 				EX_FLOWCHART_NODE_DATA* dataItem = &node->nodeDataList[j];
 				if (dataItem->type == FLOWCHART_NODEDATA_TYPE_EDIT)
 				{
-					if (virtualX - node->x >= dataItem->rect.left && virtualX - node->x <= dataItem->rect.right && 
+					if (virtualX - node->x >= dataItem->rect.left && virtualX - node->x <= dataItem->rect.right &&
 						virtualY - node->y >= dataItem->rect.top && virtualY - node->y <= dataItem->rect.bottom)
 					{
 						Ex_ObjSetLong(hObj, FLOWCHART_LONG_DOUBLECLICK_NODEID, node->id);
@@ -1857,7 +1857,7 @@ void _flowchart_ondoubleclick(HEXOBJ hObj, INT x, INT y)
 						HEXOBJ edit = Ex_ObjGetLong(hObj, FLOWCHART_LONG_EDIT_HANDLE);
 						Ex_ObjSetText(edit, (LPCWSTR)dataItem->data, FALSE);
 						EX_FLOWCHART_DATA* pData = (EX_FLOWCHART_DATA*)Ex_ObjGetLong(hObj, 0);
-						Ex_ObjMove(edit, (node->x + dataItem->rect.left) * pData->zoom, (node->y + dataItem->rect.top) * pData->zoom, 
+						Ex_ObjMove(edit, (node->x + dataItem->rect.left) * pData->zoom, (node->y + dataItem->rect.top) * pData->zoom,
 							(dataItem->rect.right - dataItem->rect.left) * pData->zoom, (dataItem->rect.bottom - dataItem->rect.top) * pData->zoom, TRUE);
 						Ex_ObjShow(edit, TRUE);
 						break;
