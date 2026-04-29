@@ -1,146 +1,81 @@
 ﻿#include "test_chatbox.h"
 
-HEXDUI hExDui_chatbox;
+// ====================== 常量宏定义 ======================
+#define EDIT_BOX_ID            100
+#define BTN_SEND_ASSISTANT_ID  101
+#define BTN_SEND_USER_ID       102
+#define BTN_UPDATE_TEXT_ID     103
+#define BTN_UPDATE_CARD_ID     104
+#define BTN_GET_CONTENT_ID     105
+#define CHAT_BOX_ID            200
 
+#define WINDOW_WIDTH           1100
+#define WINDOW_HEIGHT          1000
+#define CHAT_BOX_X             50
+#define CHAT_BOX_Y             50
+#define CHAT_BOX_WIDTH         1000
+#define CHAT_BOX_HEIGHT        750
+#define EDIT_BOX_Y             830
+#define BUTTON_Y               950
+
+#define RES_USER_IMG           L"res/user.png"
+#define RES_AI_IMG             L"res/ai.png"
+#define WINDOW_BKG_COLOR       ExARGB(80, 80, 90, 255)
+
+// ====================== 全局变量 ======================
+HEXDUI g_hExDuiChatBox = 0;
+
+// ====================== 安全释放模板 ======================
+template<typename T>
+void SafeDeleteArray(T*& pArray) {
+    if (pArray) {
+        delete[] pArray;
+        pArray = nullptr;
+    }
+}
+
+// ====================== 聊天框事件回调 ======================
 LRESULT CALLBACK OnChatBoxEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (nCode == CHATBOX_EVENT_CLICKLINK)
+    switch (nCode)
     {
+    case CHATBOX_EVENT_CLICKLINK:
         OUTPUTW(L"链接点击", wParam, lParam);
-    }
-    else if (nCode == CHATBOX_EVENT_CLICKBUTTON)
-    {
+        break;
+    case CHATBOX_EVENT_CLICKBUTTON:
         OUTPUTW(L"卡片按钮点击", lParam);
+        break;
+    default:
+        break;
     }
     return 0;
 }
 
+// ====================== 按钮事件回调 ======================
 LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
-    if (nID == 101)
+    HEXOBJ hChatBox = Ex_ObjGetFromID(g_hExDuiChatBox, CHAT_BOX_ID);
+    HEXOBJ hEditBox = Ex_ObjGetFromID(g_hExDuiChatBox, EDIT_BOX_ID);
+
+    switch (nID)
     {
-        auto text_length =
-            Ex_ObjGetTextLength(Ex_ObjGetFromID(hExDui_chatbox, 100));
-        std::wstring str;
-        str.resize(text_length);
-        Ex_ObjGetText(Ex_ObjGetFromID(hExDui_chatbox, 100), str.data(), text_length * 2);
-
-        EX_CHATBOX_ITEMINFO_SUBITEM ptr;
-        ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
-        ptr.Type = CHATBOX_ITEMTYPE_TEXT;
-
-        EX_CHATBOX_ITEMINFO_TEXT itemData;
-        itemData.Text = str.c_str();
-        ptr.Data = &itemData;
-        Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-
-    }
-    else if (nID == 102)
+    case BTN_SEND_ASSISTANT_ID:
+        AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT, GetEditBoxText(hEditBox).c_str());
+        break;
+    case BTN_SEND_USER_ID:
+        AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_USER, GetEditBoxText(hEditBox).c_str());
+        break;
+    case BTN_UPDATE_TEXT_ID:
     {
-        auto text_length =
-            Ex_ObjGetTextLength(Ex_ObjGetFromID(hExDui_chatbox, 100));
-        std::wstring str;
-        str.resize(text_length);
-        Ex_ObjGetText(Ex_ObjGetFromID(hExDui_chatbox, 100), str.data(), text_length * 2);
+        //添加一个空文本项
+        AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT, L"");
+        // 1. 获取聊天框句柄 + 有效项索引（更新最后一条消息）
+        int nItemCount = Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_GETITEMCOUNT, 0, 0);
+        if (nItemCount <= 0) break; // 无消息可更新，直接退出
+        int nUpdateIndex = nItemCount - 1;
 
-        EX_CHATBOX_ITEMINFO_SUBITEM ptr;
-        ptr.Role = CHATBOX_ITEMROLE_USER;
-        ptr.Type = CHATBOX_ITEMTYPE_TEXT;
-
-        EX_CHATBOX_ITEMINFO_TEXT itemData;
-        itemData.Text = str.c_str();
-        ptr.Data = &itemData;
-        Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-
-    }
-    else if (nID == 103)
-    {
-        std::wstring str = L"更新内容";
-        EX_CHATBOX_ITEMINFO_SUBITEM ptr;
-        ptr.Role = CHATBOX_ITEMROLE_USER;
-        ptr.Type = CHATBOX_ITEMTYPE_TEXT;
-
-        EX_CHATBOX_ITEMINFO_TEXT itemData;
-        itemData.Text = str.c_str();
-        ptr.Data = &itemData;
-        Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_UPDATEITEM, 0, (size_t)&ptr);
-    }
-    else if (nID == 104)
-    {
-        EX_CHATBOX_ITEMINFO_SUBITEM ptr;
-        ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
-        ptr.Type = CHATBOX_ITEMTYPE_CARD;
-        HEXIMAGE hImgCard;
-        _img_createfromfile(L"res/user.png", &hImgCard);
-        
-        EX_CHATBOX_ITEMINFO_CARD itemDataCard;
-        itemDataCard.Title = L"测试卡片标题2!";
-        itemDataCard.Content = L"测试卡片内容2测试卡片内容2";
-        itemDataCard.Reason = L"测试卡片子内容2测试卡片子内容2.";
-        itemDataCard.ReasonTitle = L"测试卡片子标题2";
-        itemDataCard.Image = hImgCard;
-        itemDataCard.ButtonText = L"测试按钮2";
-        ptr.Data = &itemDataCard;
-        Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_UPDATEITEM, 3, (size_t)&ptr);
-    }
-    else if (nID == 105)
-    {
-        auto type = Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_GETITEMTYPE, 3, 0);
-        auto data = Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_GETITEMDATA, 3, 0);
-        auto count = Ex_ObjSendMessage(Ex_ObjGetFromID(hExDui_chatbox, 200), CHATBOX_MESSAGE_GETITEMCOUNT, 0, 0);
-        OUTPUTW(L"类型", type, L"总数", count);
-        EX_CHATBOX_ITEMINFO_CARD* itemDataCard = (EX_CHATBOX_ITEMINFO_CARD*)data;
-        OUTPUTW(L"内容标题", itemDataCard->Title);
-    }
-    return 0;
-}
-
-void test_chatbox(HWND hWnd)
-{
-    HWND hWnd_chatbox = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试对话盒", 0, 0, 1100, 1000, 0, 0);
-    hExDui_chatbox = Ex_DUIBindWindowEx(hWnd_chatbox, 0,
-        WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE |
-        WINDOW_STYLE_BUTTON_MIN | WINDOW_STYLE_MOVEABLE |
-        WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE |
-        WINDOW_STYLE_HASICON,
-        0, 0);
-    Ex_DUISetLong(hExDui_chatbox, ENGINE_LONG_CRBKG, ExARGB(80, 80, 90, 255));
-    auto hEdit = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"edit",
-        L"测试多行编辑框\r\n测试多行编辑框测试多行编辑框\r\n测试多行编辑框测试多行编辑框测试多行编辑框\r\n测试多行编辑框测试多行编辑框测试多行编辑框测试多行编辑框",
-        OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | EDIT_STYLE_NEWLINE, 50, 830, 600, 100, hExDui_chatbox,
-        100, DT_LEFT, 0, 0, NULL);
-    auto hButton1 = Ex_ObjCreateEx(-1, L"button", L"发送助手", -1, 50, 950, 100, 30,
-        hExDui_chatbox, 101, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton2 = Ex_ObjCreateEx(-1, L"button", L"发送用户", -1, 180, 950, 100, 30,
-        hExDui_chatbox, 102, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton3 = Ex_ObjCreateEx(-1, L"button", L"更新文本", -1, 310, 950, 100, 30,
-        hExDui_chatbox, 103, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton4 = Ex_ObjCreateEx(-1, L"button", L"更新卡片", -1, 440, 950, 100, 30,
-        hExDui_chatbox, 104, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    auto hButton5 = Ex_ObjCreateEx(-1, L"button", L"取内容", -1, 570, 950, 100, 30,
-        hExDui_chatbox, 105, DT_VCENTER | DT_CENTER, 0, 0, NULL);
-    Ex_ObjHandleEvent(hButton1, NM_CLICK, OnChatButtonEvent);
-    Ex_ObjHandleEvent(hButton2, NM_CLICK, OnChatButtonEvent);
-    Ex_ObjHandleEvent(hButton3, NM_CLICK, OnChatButtonEvent);
-    Ex_ObjHandleEvent(hButton4, NM_CLICK, OnChatButtonEvent);
-    Ex_ObjHandleEvent(hButton5, NM_CLICK, OnChatButtonEvent);
-    auto hChatBox = Ex_ObjCreateEx(-1, L"ChatBox", NULL, -1, 50, 50, 1000, 750, hExDui_chatbox, 200, -1, 0, 0, NULL);
-    Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKBUTTON, OnChatBoxEvent);
-    Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKLINK, OnChatBoxEvent);
-    HEXIMAGE hImgUser, hImgAssistant;
-
-    _img_createfromfile(L"res/user.png", &hImgUser);
-    _img_createfromfile(L"res/ai.png", &hImgAssistant);
-
- 
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_USER, 0, (size_t)hImgUser);
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_ASSISTANT, 0, (size_t)hImgAssistant);
-
-    EX_CHATBOX_ITEMINFO_SUBITEM ptr;
-    ptr.Type = CHATBOX_ITEMTYPE_TEXT;
-    EX_CHATBOX_ITEMINFO_TEXT itemData;
-    LPCWSTR user = LR"(C#编写的计算当前月天数的方法)";
-    LPCWSTR assistant = LR"(以下是一个用C#编写的计算当前月天数的方法：
+        // 2. 流式输出的测试文本（可自定义修改）
+        std::wstring streamText = LR"(以下是一个用C#编写的计算当前月天数的方法：
     using System;
 
     public class MonthDaysCalculator
@@ -192,182 +127,303 @@ void test_chatbox(HWND hWnd)
 
     这个方法会正确处理所有月份，包括不同年份的二月天数差异。 
     )";
-    itemData.Text = user;
 
-    ptr.Data = &itemData;
-    ptr.Role = CHATBOX_ITEMROLE_USER;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+        std::wstring currentText;
 
-    itemData.Text = assistant;
-    ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+        // 3. 循环逐字流式更新
+        for (wchar_t ch : streamText)
+        {
+            // 追加字符
+            currentText += ch;
 
-    itemData.Text = L"输出更多样式";
-    ptr.Role = CHATBOX_ITEMROLE_USER;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+            // 构造更新数据
+            EX_CHATBOX_ITEMINFO_SUBITEM itemInfo{};
+            EX_CHATBOX_ITEMINFO_TEXT itemData{};
+            itemInfo.Role = CHATBOX_ITEMROLE_ASSISTANT;
+            itemInfo.Type = CHATBOX_ITEMTYPE_TEXT;
+            itemData.Text = currentText.c_str();
+            itemInfo.Data = &itemData;
 
-    ptr.Role = CHATBOX_ITEMROLE_ASSISTANT;
-    HEXIMAGE hImgCard;
-    _img_createfromfile(L"res/user.png", &hImgCard);
+            // 发送更新消息
+            Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_UPDATEITEM, nUpdateIndex, (size_t)&itemInfo);
 
-    EX_CHATBOX_ITEMINFO_CARD itemDataCard;
-    itemDataCard.Title = L"测试卡片标题!";
-    itemDataCard.Content = L"测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容";
-    itemDataCard.Reason = L"测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容.";
-    itemDataCard.ReasonTitle = L"测试卡片子标题";
-    itemDataCard.Image = hImgCard;
-    itemDataCard.ButtonText = L"测试按钮";
-    ptr.Type = CHATBOX_ITEMTYPE_CARD;
-    ptr.Data = &itemDataCard;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-
-    EX_CHATBOX_ITEMINFO_BOOSTMODE itemDataBoost;
-    HEXIMAGE hImgBoost;
-    _img_createfromfile(L"res/user.png", &hImgBoost);
-
-    itemDataBoost.Title = L"完成标题";
-    itemDataBoost.Content = L"完成内容!";
-    itemDataBoost.Image = hImgBoost;
-    ptr.Type = CHATBOX_ITEMTYPE_BOOSTMODE;
-    ptr.Data = &itemDataBoost;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-
-    EX_CHATBOX_ITEMINFO_ERRORLIST itemDataErrorList;
-    HEXIMAGE hImgErrorList;
-    _img_createfromfile(L"res/user.png", &hImgErrorList);
-
-    itemDataErrorList.Title = L"一些错误被捕捉";
-    itemDataErrorList.Image = hImgErrorList;
-    itemDataErrorList.ListCount = 3;
-    itemDataErrorList.ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * 3);
-    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit0;
-    unit0.ErrorCode = L"错误ID";
-    unit0.ErrorCodeText = L"20";
-    unit0.Description = L"错误描述";
-    unit0.DescriptionText = L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994";
-
-    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit1;
-    unit1.ErrorCode = L"错误ID";
-    unit1.ErrorCodeText = L"20";
-    unit1.Description = L"错误描述";
-    unit1.DescriptionText = L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994\r\n错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994";
-
-    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit2;
-    unit2.ErrorCode = L"错误ID";
-    unit2.ErrorCodeText = L"20";
-    unit2.Description = L"错误描述";
-    unit2.DescriptionText = L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient\r\n[创建时间]2025-06-24 23:25:18\r\n[记录ID]26994";
-    itemDataErrorList.ListInfo = new EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT[3];
-    itemDataErrorList.ListInfo[0] = unit0;
-    itemDataErrorList.ListInfo[1] = unit1;
-    itemDataErrorList.ListInfo[2] = unit2;
-
-    ptr.Type = CHATBOX_ITEMTYPE_ERRORLIST;
-    ptr.Data = &itemDataErrorList;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    delete[] itemDataErrorList.ListInfo;
-
-    EX_CHATBOX_ITEMINFO_ERRORLIST itemDataErrorList2;
-    HEXIMAGE hImgErrorList2;
-    _img_createfromfile(L"res/user.png", &hImgErrorList2);
- 
-    itemDataErrorList2.Title = L"一些错误被捕捉\r\n以下是错误信息";
-    itemDataErrorList2.Image = hImgErrorList2;
-    itemDataErrorList2.ListCount = 2;
-    itemDataErrorList2.ListInfo = (EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)malloc(sizeof(EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT) * 2);
-    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit5;
-    unit5.ErrorCode = L"错误码";
-    unit5.ErrorCodeText = L"024(时间:25/06/25 11:15:03)";
-    unit5.Description = L"错误描述";
-    unit5.DescriptionText = L"无法关机";
-
-    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT unit6;
-    unit6.ErrorCode = L"错误码";
-    unit6.ErrorCodeText = L"003(时间:25/06/25 15:12:13)";
-    unit6.Description = L"错误描述";
-    unit6.DescriptionText = L"系统崩溃\r\n无法关机";
-    itemDataErrorList2.ListInfo = new EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT[2];
-    itemDataErrorList2.ListInfo[0] = unit5;
-    itemDataErrorList2.ListInfo[1] = unit6;
-    ptr.Type = CHATBOX_ITEMTYPE_ERRORLIST;
-    ptr.Data = &itemDataErrorList2;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    delete[] itemDataErrorList2.ListInfo;
-     
-
-    EX_CHATBOX_ITEMINFO_INFOLIST itemDataInfoList;
-    itemDataInfoList.Content = L"以下是信息列表";
-    itemDataInfoList.ListCount = 3;
-    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT unit11;
-    unit11.Title = L"CPU";
-    unit11.Description = L"Intel i9 14900k";
-
-    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT unit12;
-    unit12.Title = L"网络";
-    unit12.Description = L"●Intel Ethernet Connection 1219-LM\r\n●TP-LINK Wireless N Adapter\r\n●Marvell AQtion 10Gbit Network Adapter";
-
-    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT unit13;
-    unit13.Title = L"GPU";
-    unit13.Description = L"NVIDIA RTX 4090";
-    itemDataInfoList.ListInfo = new EX_CHATBOX_ITEMINFO_INFOLIST_UNIT[3];
-    // 直接赋值，不需要 RtlMoveMemory
-    itemDataInfoList.ListInfo[0] = unit11;
-    itemDataInfoList.ListInfo[1] = unit12;
-    itemDataInfoList.ListInfo[2] = unit13;
-    ptr.Type = CHATBOX_ITEMTYPE_INFOLIST;
-    ptr.Data = &itemDataInfoList;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    delete[] itemDataInfoList.ListInfo;
-    EX_CHATBOX_ITEMINFO_TABLELIST itemDataTableList;
-    itemDataTableList.ListCount = 4;
-    itemDataTableList.ColumnCount = 4;
-    itemDataTableList.Content = L"测试表格";
-    itemDataTableList.ListInfo = new EX_CHATBOX_ITEMINFO_TABLELIST_UNIT[4];
-    for (int i = 0; i < 4; i++)
+            // 4. 延时20ms + 处理UI消息（防止界面卡死）
+            Ex_Sleep(100);
+        }
+        break;
+    }
+    case BTN_UPDATE_CARD_ID:
     {
-        itemDataTableList.ListInfo[i].Columns = new EX_CHATBOX_ITEMINFO_TABLELIST_TEXT[4];
-        for (int j = 0; j < 4; j++)
+        HEXIMAGE hImg = 0;
+        _img_createfromfile(RES_USER_IMG, &hImg);
+        EX_CHATBOX_ITEMINFO_SUBITEM itemInfo{};
+        EX_CHATBOX_ITEMINFO_CARD itemData{};
+        itemInfo.Role = CHATBOX_ITEMROLE_ASSISTANT;
+        itemInfo.Type = CHATBOX_ITEMTYPE_CARD;
+        itemData.Title = L"测试卡片标题2!";
+        itemData.Content = L"测试卡片内容2测试卡片内容2";
+        itemData.Reason = L"测试卡片子内容2测试卡片子内容2.";
+        itemData.ReasonTitle = L"测试卡片子标题2";
+        itemData.Image = hImg;
+        itemData.ButtonText = L"测试按钮2";
+        itemInfo.Data = &itemData;
+        Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_UPDATEITEM, 3, (size_t)&itemInfo);
+
+        break;
+    }
+    case BTN_GET_CONTENT_ID:
+    {
+        int type = Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_GETITEMTYPE, 3, 0);
+        int count = Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_GETITEMCOUNT, 0, 0);
+        auto data = (EX_CHATBOX_ITEMINFO_CARD*)Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_GETITEMDATA, 3, 0);
+        OUTPUTW(L"类型", type, L"总数", count);
+        if (data) OUTPUTW(L"内容标题", data->Title);
+        break;
+    }
+    }
+    return 0;
+}
+
+// ====================== 初始化默认聊天内容 ======================
+void InitDefaultChatContent(HEXOBJ hChatBox)
+{
+    // 1. 文本消息
+    AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_USER, LR"(C#编写的计算当前月天数的方法)");
+    AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT, LR"(以下是C#计算当月天数的代码
+    using System;
+
+    public class MonthDaysCalculator
+    {
+        /// <summary>
+        /// 获取当前月份的天数
+        /// </summary>
+        /// <returns>当前月份的总天数</returns>
+        public static int GetDaysInCurrentMonth()
         {
-            std::wstring str = std::wstring(L"第") + std::to_wstring(i) + std::wstring(L"行,第") + std::to_wstring(j) + std::wstring(L"列");
-            if (i == 1 && j == 2)
-            {
-                str += L"\r\n测试高度单元格\r\n测试高度单元格\r\n测试高度单元格";
-            }
-            else if (i == 2 && j == 1)
-            {
-                str += L"\r\n测试高度单元格\r\n测试高度单元格";
-            }
-            else if (i == 3 && j == 3)
-            {
-                str += L"\r\n测试高度单元格";
-            }
-            itemDataTableList.ListInfo[i].Columns[j].Text = StrDupW(str.c_str());
+            DateTime today = DateTime.Today;
+            return DateTime.DaysInMonth(today.Year, today.Month);
+        }
+
+        /// <summary>
+        /// 获取指定年份和月份的天数
+        /// </summary>
+        /// <param name="year">年份</param>
+        /// <param name="month">月份(1-12)</param>
+        /// <returns>该月的总天数</returns>
+        public static int GetDaysInMonth(int year, int month)
+        {
+            return DateTime.DaysInMonth(year, month);
         }
     }
-    ptr.Type = CHATBOX_ITEMTYPE_TABLELIST;
-    ptr.Data = &itemDataTableList;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
-    for (int i = 0; i < itemDataTableList.ListCount; i++) {
-        for (int j = 0; j < itemDataTableList.ColumnCount; j++)
-        {
-            Ex_MemFree((void*)itemDataTableList.ListInfo[i].Columns[j].Text);
-        }
-        delete[] itemDataTableList.ListInfo[i].Columns;
+    )");
+    AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_USER, L"输出更多样式");
+
+    // 2. 卡片项
+    AddChatCardItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        L"测试卡片标题!",
+        L"测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容测试卡片内容",
+        L"测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容测试卡片子内容.",
+        L"测试卡片子标题",
+        L"测试按钮",
+        RES_USER_IMG);
+
+    // 3. BOOSTMODE 完成项
+    AddChatBoostModeItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        L"完成标题", L"完成内容!", RES_USER_IMG);
+
+    // 4. ERRORLIST 错误列表1
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT errUnits1[] = {
+        {L"错误ID", L"20", L"错误描述", L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient"},
+        {L"错误ID", L"20", L"错误描述", L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient"},
+        {L"错误ID", L"20", L"错误描述", L"错误详情\r\n[来源]Microsoft-Windows-WindowsUpdateClient"}
+    };
+    AddChatErrorListItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        L"一些错误被捕捉", RES_USER_IMG, errUnits1, 3);
+
+    // 5. ERRORLIST 错误列表2
+    EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT errUnits2[] = {
+        {L"错误码", L"024(时间:25/06/25 11:15:03)", L"错误描述", L"无法关机"},
+        {L"错误码", L"003(时间:25/06/25 15:12:13)", L"错误描述", L"系统崩溃\r\n无法关机"}
+    };
+    AddChatErrorListItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        L"一些错误被捕捉\r\n以下是错误信息", RES_USER_IMG, errUnits2, 2);
+
+    // 6. INFOLIST 信息列表
+    EX_CHATBOX_ITEMINFO_INFOLIST_UNIT infoUnits[] = {
+        {L"CPU", L"Intel i9 14900k"},
+        {L"网络", L"●Intel Ethernet Connection 1219-LM\r\n●TP-LINK Wireless N Adapter"},
+        {L"GPU", L"NVIDIA RTX 4090"}
+    };
+    AddChatInfoListItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        L"以下是信息列表", infoUnits, 3);
+}
+
+// ====================== 主函数 ======================
+void test_chatbox(HWND hWnd)
+{
+    HWND hWndChat = Ex_WndCreate(hWnd, L"Ex_DirectUI", L"测试对话盒", 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, 0);
+    g_hExDuiChatBox = Ex_DUIBindWindowEx(hWndChat, 0,
+        WINDOW_STYLE_NOINHERITBKG | WINDOW_STYLE_BUTTON_CLOSE | WINDOW_STYLE_BUTTON_MIN |
+        WINDOW_STYLE_MOVEABLE | WINDOW_STYLE_CENTERWINDOW | WINDOW_STYLE_TITLE | WINDOW_STYLE_HASICON, 0, 0);
+    Ex_DUISetLong(g_hExDuiChatBox, ENGINE_LONG_CRBKG, WINDOW_BKG_COLOR);
+
+    // 创建输入框
+    HEXOBJ hEdit = Ex_ObjCreateEx(OBJECT_STYLE_EX_FOCUSABLE, L"edit", L"测试多行编辑框",
+        OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | EDIT_STYLE_NEWLINE,
+        CHAT_BOX_X, EDIT_BOX_Y, 600, 100, g_hExDuiChatBox, EDIT_BOX_ID, DT_LEFT, 0, 0, nullptr);
+
+    // 批量创建按钮
+    struct { LPCWSTR text; int x; int id; } btns[] = {
+        {L"发送助手",50,BTN_SEND_ASSISTANT_ID}, {L"发送用户",180,BTN_SEND_USER_ID},
+        {L"流式更新文本",310,BTN_UPDATE_TEXT_ID}, {L"更新卡片",440,BTN_UPDATE_CARD_ID},
+        {L"取内容",570,BTN_GET_CONTENT_ID}
+    };
+    for (auto& btn : btns) {
+        HEXOBJ hBtn = Ex_ObjCreateEx(-1, L"button", btn.text, -1, btn.x, BUTTON_Y, 100, 30,
+            g_hExDuiChatBox, btn.id, DT_VCENTER | DT_CENTER, 0, 0, nullptr);
+        Ex_ObjHandleEvent(hBtn, NM_CLICK, OnChatButtonEvent);
     }
-    delete[] itemDataTableList.ListInfo;
 
-    EX_CHATBOX_ITEMINFO_LINK itemDataLink;
-    itemDataLink.ListCount = 3;
-    itemDataLink.Content = L"测试标题";
-    itemDataLink.Title = L"副标题";
-    itemDataLink.ListInfo = new EX_CHATBOX_ITEMINFO_LINK_UNIT[3];
-    itemDataLink.ListInfo[0].Text = L"测试条目一";
-    itemDataLink.ListInfo[1].Text = L"测试条目二测试条目二测试条目二";
-    itemDataLink.ListInfo[2].Text = L"测试条目三\r\n测试条目三";
-    ptr.Type = CHATBOX_ITEMTYPE_LINK;
-    ptr.Data = &itemDataLink;
-    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&ptr);
+    // 创建聊天框
+    HEXOBJ hChatBox = Ex_ObjCreateEx(-1, L"ChatBox", nullptr, -1,
+        CHAT_BOX_X, CHAT_BOX_Y, CHAT_BOX_WIDTH, CHAT_BOX_HEIGHT,
+        g_hExDuiChatBox, CHAT_BOX_ID, -1, 0, 0, nullptr);
+    Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKBUTTON, OnChatBoxEvent);
+    Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKLINK, OnChatBoxEvent);
 
-    delete[] itemDataLink.ListInfo;
-    Ex_DUIShowWindow(hExDui_chatbox, SW_SHOWNORMAL);
+    // 设置头像
+    HEXIMAGE hUser = 0, hAi = 0;
+    _img_createfromfile(RES_USER_IMG, &hUser);
+    _img_createfromfile(RES_AI_IMG, &hAi);
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_USER, 0, (size_t)hUser);
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_SETIMAGE_ASSISTANT, 0, (size_t)hAi);
+
+    // 初始化内容
+    InitDefaultChatContent(hChatBox);
+
+
+    Ex_DUIShowWindow(g_hExDuiChatBox, SW_SHOWNORMAL);
+}
+
+// ====================== 工具函数实现 ======================
+// 获取输入框文本
+std::wstring GetEditBoxText(HEXOBJ hEditObj)
+{
+    if (!hEditObj) return L"";
+    int len = Ex_ObjGetTextLength(hEditObj);
+    std::wstring str; str.resize(len);
+    Ex_ObjGetText(hEditObj, str.data(), len * sizeof(wchar_t));
+    return str;
+}
+
+// 添加文本项
+void AddChatTextItem(HEXOBJ hChatBox, int nRole, LPCWSTR szText)
+{
+    if (!hChatBox || !szText) return;
+    EX_CHATBOX_ITEMINFO_SUBITEM info{};
+    EX_CHATBOX_ITEMINFO_TEXT data{};
+    info.Role = nRole; info.Type = CHATBOX_ITEMTYPE_TEXT;
+    data.Text = szText; info.Data = &data;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
+}
+
+// ====================== 卡片项封装实现 ======================
+void AddChatCardItem(HEXOBJ hChatBox, int nRole,
+    LPCWSTR szTitle, LPCWSTR szContent, LPCWSTR szReason, LPCWSTR szReasonTitle,
+    LPCWSTR szButtonText, LPCWSTR szImgPath)
+{
+    if (!hChatBox || !szImgPath) return;
+
+    // 自动创建并管理图片资源
+    HEXIMAGE hImgCard = 0;
+    _img_createfromfile(szImgPath, &hImgCard);
+
+    // 结构体零初始化，防止野指针
+    EX_CHATBOX_ITEMINFO_SUBITEM itemInfo{};
+    EX_CHATBOX_ITEMINFO_CARD itemData{};
+
+    // 配置卡片数据
+    itemInfo.Role = nRole;
+    itemInfo.Type = CHATBOX_ITEMTYPE_CARD;
+    itemData.Title = szTitle;
+    itemData.Content = szContent;
+    itemData.Reason = szReason;
+    itemData.ReasonTitle = szReasonTitle;
+    itemData.Image = hImgCard;
+    itemData.ButtonText = szButtonText;
+    itemInfo.Data = &itemData;
+
+    // 添加到聊天框
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&itemInfo);
+}
+
+// ====================== 核心完善：BOOSTMODE 项 ======================
+void AddChatBoostModeItem(HEXOBJ hChatBox, int nRole, LPCWSTR szTitle, LPCWSTR szContent, LPCWSTR szImgPath)
+{
+    if (!hChatBox) return;
+    HEXIMAGE hImg = 0;
+    _img_createfromfile(szImgPath, &hImg);
+
+    EX_CHATBOX_ITEMINFO_SUBITEM info{};
+    EX_CHATBOX_ITEMINFO_BOOSTMODE data{};
+    info.Role = nRole; info.Type = CHATBOX_ITEMTYPE_BOOSTMODE;
+    data.Title = szTitle;
+    data.Content = szContent;
+    data.Image = hImg;
+    info.Data = &data;
+
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
+
+}
+
+// ====================== 核心完善：ERRORLIST 错误列表项 ======================
+void AddChatErrorListItem(HEXOBJ hChatBox, int nRole, LPCWSTR szTitle, LPCWSTR szImgPath, const EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* pUnits, int nCount)
+{
+    if (!hChatBox || !pUnits || nCount <= 0) return;
+    HEXIMAGE hImg = 0;
+    _img_createfromfile(szImgPath, &hImg);
+
+    EX_CHATBOX_ITEMINFO_SUBITEM info{};
+    EX_CHATBOX_ITEMINFO_ERRORLIST data{};
+    info.Role = nRole; info.Type = CHATBOX_ITEMTYPE_ERRORLIST;
+
+    // 初始化数据
+    data.Title = szTitle;
+    data.Image = hImg;
+    data.ListCount = nCount;
+    data.ListInfo = new EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT[nCount];
+
+    // 拷贝数据
+    for (int i = 0; i < nCount; i++) data.ListInfo[i] = pUnits[i];
+
+    info.Data = &data;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
+
+    // 释放内存（无泄漏）
+    SafeDeleteArray(data.ListInfo);
+  
+}
+
+// ====================== 核心完善：INFOLIST 信息列表项 ======================
+void AddChatInfoListItem(HEXOBJ hChatBox, int nRole, LPCWSTR szContent, const EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* pUnits, int nCount)
+{
+    if (!hChatBox || !pUnits || nCount <= 0) return;
+
+    EX_CHATBOX_ITEMINFO_SUBITEM info{};
+    EX_CHATBOX_ITEMINFO_INFOLIST data{};
+    info.Role = nRole; info.Type = CHATBOX_ITEMTYPE_INFOLIST;
+
+    // 初始化数据
+    data.Content = szContent;
+    data.ListCount = nCount;
+    data.ListInfo = new EX_CHATBOX_ITEMINFO_INFOLIST_UNIT[nCount];
+
+    // 拷贝数据
+    for (int i = 0; i < nCount; i++) data.ListInfo[i] = pUnits[i];
+
+    info.Data = &data;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
+
+    // 释放内存（无泄漏）
+    SafeDeleteArray(data.ListInfo);
 }
