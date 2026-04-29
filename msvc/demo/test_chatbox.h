@@ -12,3 +12,8 @@ void AddChatCardItem(HEXOBJ hChatBox, int nRole, LPCWSTR szTitle, LPCWSTR szCont
 void AddChatBoostModeItem(HEXOBJ hChatBox, int nRole, LPCWSTR szTitle, LPCWSTR szContent, LPCWSTR szImgPath);
 void AddChatErrorListItem(HEXOBJ hChatBox, int nRole, LPCWSTR szTitle, LPCWSTR szImgPath, const EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* pUnits, int nCount);
 void AddChatInfoListItem(HEXOBJ hChatBox, int nRole, LPCWSTR szContent, const EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* pUnits, int nCount);
+void AddChatMarkdownItem(HEXOBJ hChatBox, int nRole, LPCWSTR szMarkdown);
+void AddChatLinkItem(HEXOBJ hChatBox, int nRole, LPCWSTR szContent, LPCWSTR szTitle,
+    const EX_CHATBOX_ITEMINFO_LINK_UNIT* pUnits, int nCount);
+void AddChatTableListItem(HEXOBJ hChatBox, int nRole, LPCWSTR szContent,
+    int nRows, int nCols, const LPCWSTR* pCellTexts);

@@ -52,7 +52,7 @@ win7需要安装KB2670838补丁
 * 根据上面原理，ExDuiR选择基于DirectX绘制的函数(DirectX11和D2D)，用windows子类化的方式实现自定义绘制和接收Windows窗口消息。
 
 ## 总体设计
-* 为了编译其他语言调用,ExDuiR以函数形式对外暴露接口，编译为dll供其他语言调用。	
+* 为了便于其他语言调用,ExDuiR以函数形式对外暴露接口，编译为dll供其他语言调用。	
 * ExDuiR设计了自己了一套基础类，包括Array数组类（供需要数组的控件使用）；HandleTable组件句柄表类(维护引擎的控件句柄)；HashTable哈希表类(用于保存控件事件、控件属性、资源包、主题包、字体、布局的键值信息)；Theme主题包类(用于读取主题包文件资源图片、主题绘制)；Resource资源包类(主题包文件解包)；Easing缓动算法类(用于缓动)；ImageList图片列表类(便于管理图片资源)；Layout布局类(定义控件间的位置关系)；MemPool内存池类(哈希表缓存信息，控件消息发送时缓存发送内容)；Thread线程类；DropTarget拖曳类。
 * ExDuiR用于绘制控件的基础类有Brush画刷类;Canvas画布类；Font字体类；Image图像类；Matrix矩阵类；Path路径类；Region区域类；StokeStyle线条风格类。
 
@@ -188,6 +188,9 @@ Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,
 ![image](demo_image/demo_linechart.png)
 ### demo chatbox:
 ![image](demo_image/demo_chatbox.png)
+![image](demo_image/demo_chatbox2.png)
+![image](demo_image/demo_chatbox3.png)
+![image](demo_image/demo_chatbox4.png)
 ### demo flowchart:
 ![image](demo_image/demo_flowchart.png)
 ### demo splitter:

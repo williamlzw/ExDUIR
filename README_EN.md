@@ -182,6 +182,9 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ![image](demo_image/demo_linechart.png)
 ### demo chatbox:
 ![image](demo_image/demo_chatbox.png)
+![image](demo_image/demo_chatbox2.png)
+![image](demo_image/demo_chatbox3.png)
+![image](demo_image/demo_chatbox4.png)
 ### demo flowchart:
 ![image](demo_image/demo_flowchart.png)
 ### demo splitter:

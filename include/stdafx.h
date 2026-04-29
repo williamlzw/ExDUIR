@@ -31,6 +31,7 @@
 #include <d2d1effectauthor.h>
 #include <d2d1effecthelpers.h>
 #include <d3dcompiler.h>
+#include <wininet.h>
 #pragma comment(lib, "bcrypt.lib")
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3d11.lib")
@@ -38,6 +39,7 @@
 #pragma comment(lib, "Dwrite.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "windowscodecs.lib")
+#pragma comment(lib, "wininet.lib")
 
 #pragma region 警告禁用
 #pragma warning(disable : 4005)
@@ -83,12 +85,12 @@
 #include "ExDUIR_Struct.h"
 
 #include "svgrender/SVGDocument.h"
+
 #include "CustomFont.h"
 #include "help_ex.h"
 #include "Array_ex.h"
 #include "Geometry_ex.h"
 #include "Canvas_ex.h"
-
 #include "DirectX_ex.h"
 #include "DropTarget_ex.h"
 #include "Easing_ex.h"

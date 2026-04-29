@@ -40,10 +40,13 @@ LRESULT CALLBACK OnChatBoxEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, 
     switch (nCode)
     {
     case CHATBOX_EVENT_CLICKLINK:
-        OUTPUTW(L"链接点击", wParam, lParam);
+        OUTPUTW(L"链接点击，消息索引:", wParam, L"链接索引:",lParam);
         break;
     case CHATBOX_EVENT_CLICKBUTTON:
-        OUTPUTW(L"卡片按钮点击", lParam);
+        OUTPUTW(L"卡片按钮点击，消息索引:", lParam);
+        break;
+    case CHATBOX_EVENT_CLICKMARKDOWNLINK:
+        OUTPUTW(L"Markdown链接点击，消息索引:", wParam, L"url:", (LPCWSTR)lParam);
         break;
     default:
         break;
@@ -167,7 +170,7 @@ LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
         itemData.Image = hImg;
         itemData.ButtonText = L"测试按钮2";
         itemInfo.Data = &itemData;
-        Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_UPDATEITEM, 3, (size_t)&itemInfo);
+        Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_UPDATEITEM, 1, (size_t)&itemInfo);
 
         break;
     }
@@ -188,34 +191,6 @@ LRESULT CALLBACK OnChatButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPara
 void InitDefaultChatContent(HEXOBJ hChatBox)
 {
     // 1. 文本消息
-    AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_USER, LR"(C#编写的计算当前月天数的方法)");
-    AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT, LR"(以下是C#计算当月天数的代码
-    using System;
-
-    public class MonthDaysCalculator
-    {
-        /// <summary>
-        /// 获取当前月份的天数
-        /// </summary>
-        /// <returns>当前月份的总天数</returns>
-        public static int GetDaysInCurrentMonth()
-        {
-            DateTime today = DateTime.Today;
-            return DateTime.DaysInMonth(today.Year, today.Month);
-        }
-
-        /// <summary>
-        /// 获取指定年份和月份的天数
-        /// </summary>
-        /// <param name="year">年份</param>
-        /// <param name="month">月份(1-12)</param>
-        /// <returns>该月的总天数</returns>
-        public static int GetDaysInMonth(int year, int month)
-        {
-            return DateTime.DaysInMonth(year, month);
-        }
-    }
-    )");
     AddChatTextItem(hChatBox, CHATBOX_ITEMROLE_USER, L"输出更多样式");
 
     // 2. 卡片项
@@ -256,6 +231,105 @@ void InitDefaultChatContent(HEXOBJ hChatBox)
     };
     AddChatInfoListItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
         L"以下是信息列表", infoUnits, 3);
+
+    AddChatMarkdownItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        LR"(
+# 🛑 Markdown 全元素测试文档
+
+## 1. 标题层级 (Headers)
+这是一级到六级标题的演示：
+# 一级标题 (H1)
+## 二级标题 (H2)
+### 三级标题 (H3)
+#### 四级标题 (H4)
+##### 五级标题 (H5)
+###### 六级标题 (H6)
+
+---
+
+## 2. 文本样式 (Inline Styles)
+这是**粗体文本 (Bold)**，这是*斜体文本 (Italic)*。
+这是`行内代码 (Inline Code)`，这是~~删除线 (Strikethrough)~~。
+
+---
+
+## 3. 列表 (Lists)
+
+### 3.1 无序列表 (Unordered)
+- 列表项 A
+- 列表项 B
+  - 嵌套子项 B-1
+  - 嵌套子项 B-2
+- 列表项 C
+
+### 3.2 有序列表 (Ordered)
+1. 第一项
+2. 第二项
+   1. 嵌套有序项
+   2. 嵌套有序项
+3. 第三项
+
+---
+
+## 4. 引用块 (Blockquote)
+> **注意**:这是一段引用文本。
+> 可以包含多行。
+> > 这是嵌套引用 (Nested Quote)。
+
+---
+
+## 5. 代码块 (Code Blocks)
+
+### 5.1 普通文本块
+```plaintext
+这是一个普通的文本代码块，
+⚠️没有语法高亮。 
+```
+### 5.2 C++ 代码块 
+```cpp
+#include <iostream>
+int main() {
+    std::cout << "Hello, ExDUIR!" << std::endl;
+    return 0;
+}
+```
+### 5.3 Python 代码块  
+```python
+def calculate_days(year, month):
+    import calendar
+    return calendar.monthrange(year, month)[1]
+print(calculate_days(2026, 4))
+```
+## 6. 图片与链接 (Images & Links)
+### 6.1 图片 (Image)
+![测试图片](https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png) 
+
+### 6.2 链接 (Link)
+- 行内链接：[访问百度](https://www.baidu.com)
+
+## 7.表格
+| 表头1 | 表头2 | 表头3 |
+|-------|-------|-------|
+| 单元格 | 单元格 | 单元格 |
+| 数据1  | 数据2  | 数据3  |
+        )");
+
+    EX_CHATBOX_ITEMINFO_LINK_UNIT linkUnits[] = {
+    {L"测试条目一"},
+    {L"测试条目二测试条目二测试条目二"},
+    {L"测试条目三\r\n测试条目三"}
+    };
+    AddChatLinkItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        L"测试标题", L"副标题", linkUnits, 3);
+
+    LPCWSTR tableCells[] = {
+L"第0行,第0列",  L"第0行,第1列",  L"第0行,第2列",  L"第0行,第3列",
+L"第1行,第0列",  L"第1行,第1列",  L"第1行,第2列\r\n多行", L"第1行,第3列",
+L"第2行,第0列",  L"第2行,第1列",  L"第2行,第2列",  L"第2行,第3列",
+L"第3行,第0列",  L"第3行,第1列",  L"第3行,第2列",  L"第3行,第3列"
+    };
+    AddChatTableListItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
+        L"测试表格", 4, 4, tableCells);
 }
 
 // ====================== 主函数 ======================
@@ -290,7 +364,7 @@ void test_chatbox(HWND hWnd)
         g_hExDuiChatBox, CHAT_BOX_ID, -1, 0, 0, nullptr);
     Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKBUTTON, OnChatBoxEvent);
     Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKLINK, OnChatBoxEvent);
-
+    Ex_ObjHandleEvent(hChatBox, CHATBOX_EVENT_CLICKMARKDOWNLINK, OnChatBoxEvent);
     // 设置头像
     HEXIMAGE hUser = 0, hAi = 0;
     _img_createfromfile(RES_USER_IMG, &hUser);
@@ -425,5 +499,77 @@ void AddChatInfoListItem(HEXOBJ hChatBox, int nRole, LPCWSTR szContent, const EX
     Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
 
     // 释放内存（无泄漏）
+    SafeDeleteArray(data.ListInfo);
+}
+
+void AddChatMarkdownItem(HEXOBJ hChatBox, int nRole, LPCWSTR szMarkdown)
+{
+    if (!hChatBox || !szMarkdown) return;
+    EX_CHATBOX_ITEMINFO_SUBITEM info{};
+    EX_CHATBOX_ITEMINFO_MARKDOWN data{};
+    info.Role = nRole;
+    info.Type = CHATBOX_ITEMTYPE_MARKDOWN;
+    data.MarkdownText = szMarkdown;
+    info.Data = &data;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
+}
+
+void AddChatLinkItem(HEXOBJ hChatBox, int nRole, LPCWSTR szContent, LPCWSTR szTitle,
+    const EX_CHATBOX_ITEMINFO_LINK_UNIT* pUnits, int nCount)
+{
+    if (!hChatBox || !pUnits || nCount <= 0) return;
+    EX_CHATBOX_ITEMINFO_SUBITEM info{};
+    EX_CHATBOX_ITEMINFO_LINK data{};
+    info.Role = nRole;
+    info.Type = CHATBOX_ITEMTYPE_LINK;
+
+    data.Content = szContent;
+    data.Title = szTitle;
+    data.ListCount = nCount;
+    data.ListInfo = new EX_CHATBOX_ITEMINFO_LINK_UNIT[nCount];
+    for (int i = 0; i < nCount; i++) data.ListInfo[i] = pUnits[i];
+
+    info.Data = &data;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
+
+    SafeDeleteArray(data.ListInfo);
+}
+
+void AddChatTableListItem(HEXOBJ hChatBox, int nRole, LPCWSTR szContent,
+    int nRows, int nCols, const LPCWSTR* pCellTexts)
+{
+    if (!hChatBox || nRows <= 0 || nCols <= 0 || !pCellTexts) return;
+    EX_CHATBOX_ITEMINFO_SUBITEM info{};
+    EX_CHATBOX_ITEMINFO_TABLELIST data{};
+    info.Role = nRole;
+    info.Type = CHATBOX_ITEMTYPE_TABLELIST;
+
+    data.Content = szContent;
+    data.ListCount = nRows;
+    data.ColumnCount = nCols;
+    data.ListInfo = new EX_CHATBOX_ITEMINFO_TABLELIST_UNIT[nRows];
+
+    // 逐行逐列填充单元格文本（使用 StrDupW 分配，组件内部会拷贝）
+    for (int i = 0; i < nRows; i++)
+    {
+        data.ListInfo[i].Columns = new EX_CHATBOX_ITEMINFO_TABLELIST_TEXT[nCols];
+        for (int j = 0; j < nCols; j++)
+        {
+            data.ListInfo[i].Columns[j].Text = StrDupW(pCellTexts[i * nCols + j]);
+        }
+    }
+
+    info.Data = &data;
+    Ex_ObjSendMessage(hChatBox, CHATBOX_MESSAGE_ADDITEM, 0, (size_t)&info);
+
+    // 释放内存：先释放每列的文本，再释放每行的列数组，最后释放行数组
+    for (int i = 0; i < nRows; i++)
+    {
+        for (int j = 0; j < nCols; j++)
+        {
+            Ex_MemFree((void*)data.ListInfo[i].Columns[j].Text);
+        }
+        SafeDeleteArray(data.ListInfo[i].Columns);
+    }
     SafeDeleteArray(data.ListInfo);
 }
