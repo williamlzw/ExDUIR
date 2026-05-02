@@ -1052,7 +1052,7 @@ void _chatbox_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
     // 边界检查
     INT nMin, nMax;
     Ex_ObjScrollGetRange(hVSB, SCROLLBAR_TYPE_CONTROL, &nMin, &nMax);
-    nPos = max(0, min(nPos, nMax));
+    nPos = __max(0, __min(nPos, nMax));
 
     if (nPos != oPos) {
         Ex_ObjSetLong(hObj, CHATBOX_LONG_TOP_OFFSET, nPos);
@@ -1755,7 +1755,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
         FLOAT nWidthReason, nHeightReason;
         INT maxTextWidthContent = widthClient - (140); // 70+70=140
         INT maxTextWidthReason = widthClient - (180); // 70+70+40=180
-        maxTextWidthContent = max(maxTextWidthContent, (120));
+        maxTextWidthContent = __max(maxTextWidthContent, (120));
         _chatbox_measure_text(hCanvas, hFontCardContent, data->Content,
             maxTextWidthContent, &nWidthContent, &nHeightContent);
         _chatbox_measure_text(hCanvas, hFontCardReason, data->Reason,
@@ -1927,7 +1927,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             FLOAT nWidthDescriptionText, nHeightDescriptionText;
             _chatbox_measure_text(hCanvas, hFontErrorListDescription, descriptionText,
                 maxDescriptionTextWidth, &nWidthDescriptionText, &nHeightDescriptionText);
-            unitHeight[i] = max((int)ceil(nHeightErrorCode), (int)ceil(nHeightErrorCodeText)) + max((int)ceil(nHeightDescription), (int)ceil(nHeightDescriptionText)) + (20 + 20); //条目内间距20+内容间距20
+            unitHeight[i] = __max((int)ceil(nHeightErrorCode), (int)ceil(nHeightErrorCodeText)) + __max((int)ceil(nHeightDescription), (int)ceil(nHeightDescriptionText)) + (20 + 20); //条目内间距20+内容间距20
             unitErrorCodeHeight[i] = (int)ceil(nHeightErrorCode);
             unitErrorCodeTextHeight[i] = (int)ceil(nHeightErrorCodeText);
             unitDescriptionHeight[i] = (int)ceil(nHeightDescription);
@@ -1977,7 +1977,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             data->Layout.rcErrorCodeTextList[i].bottom = data->Layout.rcErrorCodeTextList[i].top + unitErrorCodeTextHeight[i];
 
             data->Layout.rcDescriptionList[i].left = data->Layout.rcTitle.left;
-            data->Layout.rcDescriptionList[i].top = data->Layout.rcErrorCodeList[i].top + max(unitErrorCodeHeight[i], unitErrorCodeTextHeight[i]) + (20);//取最大高度
+            data->Layout.rcDescriptionList[i].top = data->Layout.rcErrorCodeList[i].top + __max(unitErrorCodeHeight[i], unitErrorCodeTextHeight[i]) + (20);//取最大高度
             data->Layout.rcDescriptionList[i].right = data->Layout.rcDescriptionList[i].left + (INT)ceil(maxDescriptionWidth);
             data->Layout.rcDescriptionList[i].bottom = data->Layout.rcDescriptionList[i].top + unitDescriptionHeight[i];
 
@@ -2022,7 +2022,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
             FLOAT nWidthDescription, nHeighDescription;
             _chatbox_measure_text(hCanvas, hFontInfoListDescription, description,
                 maxDescriptionWidth, &nWidthDescription, &nHeighDescription);
-            unitHeight[i] = max((int)ceil(nHeightTitle), (int)ceil(nHeighDescription)) + (20); //条目内间距20
+            unitHeight[i] = __max((int)ceil(nHeightTitle), (int)ceil(nHeighDescription)) + (20); //条目内间距20
             unitTitleHeight[i] = (int)ceil(nHeightTitle);
             unitDescriptionHeight[i] = (int)ceil(nHeighDescription);
             itemHeight += unitHeight[i];
@@ -2283,7 +2283,7 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
                 INT imgW, imgH;
                 _img_getsize(elem->hImage, &imgW, &imgH);
                 if (imgW > 0 && imgH > 0) {
-                    FLOAT scale = min(1.0f, (FLOAT)maxTextWidth / imgW);
+                    FLOAT scale = __min(1.0f, (FLOAT)maxTextWidth / imgW);
                     elemWidth = (INT)(imgW * scale);
                     elemHeight = (INT)(imgH * scale);
                 }
@@ -2711,7 +2711,7 @@ void _chatbox_update_layout(HEXOBJ hObj) {
 
     // 更新滚动条范围
     INT viewHeight = (rc.bottom - rc.top);
-    INT scrollRange = max(0, currentY - viewHeight);
+    INT scrollRange = __max(0, currentY - viewHeight);
     Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, scrollRange, TRUE);
 
     // 自动滚动到底部
@@ -2862,9 +2862,9 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             // 绘制当前层级的引用竖线
             INT lvl = elem->Level - 1;
             _brush_setcolor(hBrush, ExARGB(
-                max(0, 100 - lvl * 20),
-                max(0, 149 - lvl * 20),
-                max(0, 237 - lvl * 20), 255));
+                __max(0, 100 - lvl * 20),
+                __max(0, 149 - lvl * 20),
+                __max(0, 237 - lvl * 20), 255));
 
             INT barLeft = rc.left;
 

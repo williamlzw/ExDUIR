@@ -1,0 +1,384 @@
+view:
+  zoom: 1
+  pan_offset_x: 0
+  pan_offset_y: 0
+nodes:
+  - id: 1001
+    x: 50
+    y: 50
+    width: 235
+    height: 329
+    title: Load Image
+    ports:
+      - id: 100
+        port_type: 0
+        data_type: 2
+        name: path
+        is_connected: 0
+        widget_type: 1
+        widget_id: 0
+        widget_width: 180
+        widget_height: 25
+        port_rect:
+          left: 0
+          top: 30
+          right: 15
+          bottom: 45
+        widget_rect:
+          left: 10
+          top: 55
+          right: 190
+          bottom: 80
+        edit_text: res/rotateimgbox.jpg
+      - id: 101
+        port_type: 2
+        data_type: 1
+        name: preview
+        is_connected: 0
+        widget_type: 3
+        widget_id: 0
+        widget_width: 215
+        widget_height: 229
+        port_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+        widget_rect:
+          left: 10
+          top: 85
+          right: 225
+          bottom: 314
+      - id: 102
+        port_type: 1
+        data_type: 1
+        name: IMAGE
+        is_connected: 0
+        widget_type: 0
+        widget_id: 0
+        widget_width: 0
+        widget_height: 0
+        port_rect:
+          left: 220
+          top: 30
+          right: 235
+          bottom: 45
+        widget_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+  - id: 1002
+    x: 341
+    y: 126
+    width: 200
+    height: 250
+    title: Resize Image
+    ports:
+      - id: 200
+        port_type: 0
+        data_type: 1
+        name: image
+        is_connected: 1
+        widget_type: 0
+        widget_id: 0
+        widget_width: 0
+        widget_height: 0
+        port_rect:
+          left: 0
+          top: 30
+          right: 15
+          bottom: 45
+        widget_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+      - id: 201
+        port_type: 2
+        data_type: 1
+        name: preview
+        is_connected: 0
+        widget_type: 3
+        widget_id: 0
+        widget_width: 180
+        widget_height: 180
+        port_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+        widget_rect:
+          left: 10
+          top: 55
+          right: 190
+          bottom: 235
+      - id: 202
+        port_type: 1
+        data_type: 1
+        name: IMAGE
+        is_connected: 0
+        widget_type: 0
+        widget_id: 0
+        widget_width: 0
+        widget_height: 0
+        port_rect:
+          left: 185
+          top: 30
+          right: 200
+          bottom: 45
+        widget_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+  - id: 1003
+    x: 50
+    y: 450
+    width: 200
+    height: 205
+    title: Text Config
+    ports:
+      - id: 300
+        port_type: 0
+        data_type: 2
+        name: prefix
+        is_connected: 0
+        widget_type: 1
+        widget_id: 0
+        widget_width: 180
+        widget_height: 25
+        port_rect:
+          left: 0
+          top: 30
+          right: 15
+          bottom: 45
+        widget_rect:
+          left: 10
+          top: 105
+          right: 190
+          bottom: 130
+        edit_text: output_
+      - id: 301
+        port_type: 0
+        data_type: 4
+        name: format
+        is_connected: 0
+        widget_type: 2
+        widget_id: 0
+        widget_width: 180
+        widget_height: 25
+        port_rect:
+          left: 0
+          top: 55
+          right: 15
+          bottom: 70
+        widget_rect:
+          left: 10
+          top: 135
+          right: 190
+          bottom: 160
+        combo_data:
+          current: 0
+          options:
+            - PNG
+            - JPG
+      - id: 302
+        port_type: 0
+        data_type: 4
+        name: type
+        is_connected: 0
+        widget_type: 2
+        widget_id: 0
+        widget_width: 180
+        widget_height: 25
+        port_rect:
+          left: 0
+          top: 80
+          right: 15
+          bottom: 95
+        widget_rect:
+          left: 10
+          top: 165
+          right: 190
+          bottom: 190
+        combo_data:
+          current: 0
+          options:
+            - 数据1
+            - 数据2
+            - 数据3
+      - id: 303
+        port_type: 1
+        data_type: 2
+        name: CONFIG
+        is_connected: 0
+        widget_type: 0
+        widget_id: 0
+        widget_width: 0
+        widget_height: 0
+        port_rect:
+          left: 185
+          top: 30
+          right: 200
+          bottom: 45
+        widget_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+  - id: 1004
+    x: 491
+    y: 516
+    width: 200
+    height: 145
+    title: Save Image
+    ports:
+      - id: 400
+        port_type: 0
+        data_type: 1
+        name: image
+        is_connected: 1
+        widget_type: 0
+        widget_id: 0
+        widget_width: 0
+        widget_height: 0
+        port_rect:
+          left: 0
+          top: 30
+          right: 15
+          bottom: 45
+        widget_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+      - id: 401
+        port_type: 0
+        data_type: 2
+        name: config
+        is_connected: 1
+        widget_type: 0
+        widget_id: 0
+        widget_width: 0
+        widget_height: 0
+        port_rect:
+          left: 0
+          top: 55
+          right: 15
+          bottom: 70
+        widget_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+      - id: 402
+        port_type: 2
+        data_type: 2
+        name: result
+        is_connected: 0
+        widget_type: 1
+        widget_id: 0
+        widget_width: 180
+        widget_height: 50
+        port_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+        widget_rect:
+          left: 10
+          top: 80
+          right: 190
+          bottom: 130
+        edit_text: ''
+  - id: 1005
+    x: 650
+    y: 50
+    width: 270
+    height: 320
+    title: Preview
+    ports:
+      - id: 500
+        port_type: 0
+        data_type: 1
+        name: image
+        is_connected: 1
+        widget_type: 0
+        widget_id: 0
+        widget_width: 0
+        widget_height: 0
+        port_rect:
+          left: 0
+          top: 30
+          right: 15
+          bottom: 45
+        widget_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+      - id: 501
+        port_type: 2
+        data_type: 1
+        name: preview
+        is_connected: 0
+        widget_type: 3
+        widget_id: 0
+        widget_width: 250
+        widget_height: 250
+        port_rect:
+          left: 0
+          top: 0
+          right: 0
+          bottom: 0
+        widget_rect:
+          left: 10
+          top: 55
+          right: 260
+          bottom: 305
+connections:
+  - id: 47188234
+    from_node: 1001
+    from_slot: 2
+    to_node: 1002
+    to_slot: 0
+    control_point1:
+      x: 271.25
+      y: 87.5
+    control_point2:
+      x: 319.75
+      y: 163.5
+  - id: 47188235
+    from_node: 1002
+    from_slot: 2
+    to_node: 1005
+    to_slot: 0
+    control_point1:
+      x: 562.25
+      y: 163.5
+    control_point2:
+      x: 628.75
+      y: 87.5
+  - id: 47188236
+    from_node: 1002
+    from_slot: 2
+    to_node: 1004
+    to_slot: 0
+    control_point1:
+      x: 487.25
+      y: 263.5
+    control_point2:
+      x: 544.75
+      y: 453.5
+  - id: 47188237
+    from_node: 1003
+    from_slot: 3
+    to_node: 1004
+    to_slot: 1
+    control_point1:
+      x: 271.25
+      y: 493.75
+    control_point2:
+      x: 469.75
+      y: 572.25

@@ -373,9 +373,9 @@ void SVGDocument::ParseChild(XMLNode* child) {
         float scaleY = clipArea.height / imageHeight;
         float scale{};
         if (meetOrSlice.compare(kSliceVal) == 0)
-          scale = max(scaleX, scaleY);
+          scale =__max(scaleX, scaleY);
         else
-          scale = min(scaleX, scaleY);
+          scale = __min(scaleX, scaleY);
         fillArea.width *= scale;
         fillArea.height *= scale;
 
@@ -580,8 +580,8 @@ std::unique_ptr<D2DSVGPath> SVGDocument::ParseShape(XMLNode* child,
       ry = 0;
     }
 
-    rx = min(rx, width / 2.0f);   // std::
-    ry = min(ry, height / 2.0f);  // std::
+    rx = __min(rx, width / 2.0f);   // std::
+    ry = __min(ry, height / 2.0f);  // std::
 
     auto path = CreatePath();
     if (isCloseToZero(rx) || isCloseToZero(ry)) {
@@ -723,7 +723,7 @@ void SVGDocument::ParseFillProperties(FillStyleImpl& fillStyle,
     float opacity{};
     if (SVGStringParser::ParseAlphaValue(prop->second, opacity))
       fillStyle.fillOpacity =
-          std::max<float>(0.0, std::min<float>(1.0, opacity));
+        std::max<float>(0.0, std::min<float>(1.0, opacity));
   }
 
   prop = propertySet.find(kFillRuleProp);
@@ -849,7 +849,7 @@ void SVGDocument::ParseStrokeProperties(StrokeStyleImpl& strokeStyle,
     float opacity{};
     if (SVGStringParser::ParseAlphaValue(prop->second, opacity))
       strokeStyle.strokeOpacity =
-          std::max<float>(0.0, std::min<float>(1.0, opacity));
+         std::max<float>(0.0, std::min<float>(1.0, opacity));
   }
 }
 
@@ -861,7 +861,7 @@ void SVGDocument::ParseGraphicsProperties(GraphicStyleImpl& graphicStyle,
     float opacity{};
     if (SVGStringParser::ParseAlphaValue(prop->second, opacity))
       graphicStyle.opacity =
-          std::max<float>(0.0, std::min<float>(1.0, opacity));
+        std::max<float>(0.0, std::min<float>(1.0, opacity));
   }
 
   prop = propertySet.find(kClipPathProp);
@@ -885,7 +885,7 @@ void SVGDocument::ParseGraphicsProperties(GraphicStyleImpl& graphicStyle,
     float opacity{};
     if (SVGStringParser::ParseAlphaValue(prop->second, opacity))
       graphicStyle.stopOpacity =
-          std::max<float>(0.0, std::min<float>(1.0, opacity));
+        std::max<float>(0.0, std::min<float>(1.0, opacity));
   }
 
   prop = propertySet.find(kStopColorProp);

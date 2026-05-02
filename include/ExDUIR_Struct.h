@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <Windows.h>
+#include <algorithm>
 #include <Shlwapi.h>
 #include <ocidl.h>
 #include <sstream>
@@ -1772,49 +1773,6 @@
 #define CHATBOX_MESSAGE_SETIMAGE_ASSISTANT 10016
 #pragma endregion chatbox message constant
 
-#pragma region flowchart nodedata type constant
-// 流程图_节点列表数据类型定义
-#define FLOWCHART_NODEDATA_TYPE_EDIT    0  // 编辑框
-#define FLOWCHART_NODEDATA_TYPE_IMAGE   1  // 图片框
-#define FLOWCHART_NODEDATA_TYPE_COMBO   2  // 选项卡
-#pragma endregion flowchart nodedata type constant
-
-#pragma region flowchart messagee constant
-// 消息_流程图_添加节点, lParam: EX_FLOWCHART_NODE 结构指针
-#define FLOWCHART_MESSAGE_ADD_NODE 10000
-// 消息_流程图_移除节点 wParam: 节点ID
-#define FLOWCHART_MESSAGE_REMOVE_NODE 10001
-// 消息_流程图_添加连接线 lParam: EX_FLOWCHART_CONNECTION 结构指针
-#define FLOWCHART_MESSAGE_ADD_CONNECTION 10002
-// 消息_流程图_移除连接线 wParam: 连接线ID
-#define FLOWCHART_MESSAGE_REMOVE_CONNECTION 10003
-// 消息_流程图_取节点数量
-#define FLOWCHART_MESSAGE_GET_NODE_COUNT 10004
-// 消息_流程图_取连接线数量
-#define FLOWCHART_MESSAGE_GET_CONNECTION_COUNT 10005
-// 消息_流程图_更新节点数据 wParam: 节点ID, lParam: EX_FLOWCHART_NODE_DATA 结构指针
-#define FLOWCHART_MESSAGE_UPDATE_NODEDATA 10006
-#pragma endregion flowchart messagee constant
-
-#pragma region flowchart event constant
-// 通知_流程图_节点点击 wParam: 节点ID
-#define FLOWCHART_EVENT_NODE_CLICKED 30000
-// 通知_流程图_连接线添加 wParam: 连接线ID
-#define FLOWCHART_EVENT_CONNECTION_CREATED 30001
-// 通知_流程图_删除连接线 wParam: 连接线ID
-#define FLOWCHART_EVENT_CONNECTION_REMOVED 30002
-// 通知_流程图_节点移动 wParam: 节点ID
-#define FLOWCHART_EVENT_NODE_MOVED 30003
-// 通知_流程图_连接线选中 wParam: 节点ID
-#define FLOWCHART_EVENT_CONNECTION_SELECTED 30004
-// 通知_流程图_连接线移动 wParam: 连接线ID
-#define FLOWCHART_EVENT_CONNECTION_MOVED 30005
-// 通知_流程图_节点数据改变 wParam: 节点ID , lParam: EX_FLOWCHART_NODE_COMBO_DATA 结构指针
-#define FLOWCHART_EVENT_NODEDATA_CHANGED 30006
-// 通知_流程图_节点双击 wParam: 节点ID
-#define FLOWCHART_EVENT_NODE_DOUBLE_CLICKED 30007
-#pragma endregion flowchart event constant
-
 
 #pragma region splitter long constant
 // 分割条方向：0-垂直(默认)，1-水平
@@ -2881,8 +2839,8 @@ struct CCellRange
 	}
 	CCellRange  Intersect(const CCellRange& rhs) const
 	{
-		return CCellRange(max(m_nMinRow, rhs.m_nMinRow), max(m_nMinCol, rhs.m_nMinCol),
-			min(m_nMaxRow, rhs.m_nMaxRow), min(m_nMaxCol, rhs.m_nMaxCol));
+		return CCellRange(__max(m_nMinRow, rhs.m_nMinRow), __max(m_nMinCol, rhs.m_nMinCol),
+			__min(m_nMaxRow, rhs.m_nMaxRow), __min(m_nMaxCol, rhs.m_nMaxCol));
 	}
 
 	int GetMinRow() const { return m_nMinRow; }
@@ -3426,6 +3384,7 @@ struct EX_CHATBOX_MD_ELEMENT
 };
 #pragma pack()
 
+
 // Markdown项数据结构体
 #pragma pack(4)
 struct EX_CHATBOX_ITEMINFO_MARKDOWN
@@ -3456,61 +3415,142 @@ struct EX_CHATBOX_ITEMINFO
 	DWORD  Count;
 };
 
+
+// ================= 常量与消息定义 =================
+// 流程图_端口类型_输入
+#define FLOWCHART_PORTTYPE_INPUT        0
+// 流程图_端口类型_输出
+#define FLOWCHART_PORTTYPE_OUTPUT       1
+// 流程图_端口类型_既不是输入也不是输出，仅作中间数据展示
+#define FLOWCHART_PORTTYPE_INTERMEDIATE 2 
+
+// 流程图_消息_添加节点, lParam: EX_FLOWCHART_NODE指针
+#define FLOWCHART_MESSAGE_ADD_NODE          0x8001
+// 流程图_消息_移除节点,wParam: 节点ID
+#define FLOWCHART_MESSAGE_REMOVE_NODE       0x8002
+// 流程图_消息_添加连接线, lParam: EX_FLOWCHART_CONNECTION指针
+#define FLOWCHART_MESSAGE_ADD_CONNECTION    0x8003
+// 流程图_消息_移除连接线, wParam: 连接线ID EX_FLOWCHART_CONNECTION结构体id
+#define FLOWCHART_MESSAGE_REMOVE_CONNECTION 0x8004
+// 流程图_消息_更新节点数据, wParam: 节点ID, lParam: EX_FLOWCHART_PORT指针
+#define FLOWCHART_MESSAGE_UPDATE_NODEDATA   0x8005
+// 流程图_消息_执行节点, wParam: 节点ID
+#define FLOWCHART_MESSAGE_EXECUTE_NODE   0x8006
+// 流程图_消息_导出节点到YAML文件,  lParam: yaml文件保存绝对路径 LPCWSTR
+#define FLOWCHART_MESSAGE_EXPORT_YAML    0x8007
+// 流程图_消息_从YAML文件导入数据,  lParam: yaml文件绝对路径 LPCWSTR
+#define FLOWCHART_MESSAGE_IMPORT_YAML    0x8008
+// 流程图_消息_置背景色 , lParam:ExARGB颜色
+#define FLOWCHART_MESSAGE_SET_BACKGROUNDCOLOR 0x8009
+
+// 流程图_节点数据类型_编辑框
+#define FLOWCHART_NODEDATA_TYPE_EDIT   1
+// 流程图_节点数据类型_组合框
+#define FLOWCHART_NODEDATA_TYPE_COMBO  2
+// 流程图_节点数据类型_图片框
+#define FLOWCHART_NODEDATA_TYPE_IMAGE  3
+
+// ================= 数据类型定义 =================
+// 流程图_绑定的子组件数据类型_任何
+#define FLOWCHART_DATATYPE_ANY      0
+// 流程图_绑定的子组件数据类型_图片
+#define FLOWCHART_DATATYPE_IMAGE    1
+// 流程图_绑定的子组件数据类型_文本
+#define FLOWCHART_DATATYPE_STRING   2
+// 流程图_绑定的子组件数据类型_组合框
+#define FLOWCHART_DATATYPE_COMBO    3
+
+// 流程图_事件_选中节点, wParam:节点ID
+#define FLOWCHART_EVENT_NODE_CLICKED         10001
+// 流程图_事件_节点移动, wParam:节点ID
+#define FLOWCHART_EVENT_NODE_MOVED           10002
+// 流程图_事件_连接线增加, wParam:连接线ID
+#define FLOWCHART_EVENT_CONNECTION_CREATED   10004
+// 流程图_事件_连接线移除, wParam:连接线ID
+#define FLOWCHART_EVENT_CONNECTION_REMOVED   10005
+// 流程图_事件_连接线选中, wParam:连接线ID
+#define FLOWCHART_EVENT_CONNECTION_SELECTED  10006
+// 流程图_事件_连接线拖动, wParam:连接线ID
+#define FLOWCHART_EVENT_CONNECTION_MOVED     10007
+// 流程图_事件_组合框选项改变, wParam:节点ID, lParam:EX_FLOWCHART_PORT指针
+#define FLOWCHART_EVENT_NODEDATA_COMBO_CHANGED     10008
+// 流程图_事件_执行节点, wParam:节点ID, lParam:EX_FLOWCHART_EXECUTE_PARAMS指针
+#define FLOWCHART_EVENT_EXECUTE_NODE         10009
+
+// ================= 数据结构重构 =================
+// 节点IO数据结构
+struct EX_FLOWCHART_NODE_IO_DATA {
+	INT portId;
+	INT dataType;
+	LPVOID data;    // 外部需根据dataType管理内存
+};
+
+// 节点执行参数
+#pragma pack(4)
+struct EX_FLOWCHART_EXECUTE_PARAMS {
+	INT nodeId;
+	INT inputCount;
+	EX_FLOWCHART_NODE_IO_DATA* inputs;
+	INT outputCount;
+	EX_FLOWCHART_NODE_IO_DATA* outputs; // 外部回调需填充此数组
+};
+#pragma pack()
+
 #pragma pack(4)
 struct EX_FLOWCHART_NODE_COMBO_DATA
 {
 	LPCWSTR* options;   // 选项数组
-	INT count;           // 选项数量
-	INT current;         // 当前选中的索引
+	INT count;          // 选项数量
+	INT current;        // 当前选中的索引
 };
 #pragma pack()
 
-struct EX_FLOWCHART_NODE_DATA
+#pragma pack(4)
+struct EX_FLOWCHART_PORT
 {
-	INT type;          // 数据类型
-	INT id;            // 数据id
-	RECT rect;         // 该项的位置和大小
-	LPVOID data;       // 数据指针（指向字符串、图片句柄或 COMBO 数据结构）
-};
+	INT id;                 // 端口ID
+	INT portType;       // 端口类型, FLOWCHART_PORTTYPE_常量,0=输入, 1=输出, 2=既不是输入也不是输出，仅作中间数据展示
+	INT dataType;           // 数据类型 (用于连接限制)FLOWCHART_DATATYPE_常量
+	LPCWSTR name;           // 端口名称
+	RECT portRect;          // 端口圆点的位置
 
-// 节点数据结构
+	// 绑定的子组件属性 (仅输入端口和中间端口有效)
+	INT widgetType;         // FLOWCHART_NODEDATA_TYPE_常量, 0表示无组件
+	INT widgetId;           // 组件ID
+	FLOAT widgetWidth;  // 组件显式宽度
+	FLOAT widgetHeight; // 组件显式高度
+	RECT widgetRect;        // 组件的区域
+	LPVOID widgetData;      // 组件的数据 (如编辑框文本、COMBO结构)
+	BOOL isConnected;       // 当前端口是否已连接 (连接后隐藏子组件)
+};
+#pragma pack()
+
 #pragma pack(4)
 struct EX_FLOWCHART_NODE
 {
-	INT id;                          //节点ID
-	FLOAT x;
-	FLOAT y;
-	FLOAT width;
-	FLOAT height;
-	LPCWSTR title;                   // 标题
+	INT id;
+	FLOAT x, y, width, height;
+	LPCWSTR title;
 
-	EX_FLOWCHART_NODE_DATA* nodeDataList; // 节点数据列表
-	INT nodeDataCount;               // 节点数据项数量
-
-	// 输入输出插槽
-	LPCWSTR* inputSlots;             // 输入插槽名称数组
-	RECT* inputRects;                // 输入插槽位置数组
-	INT inputCount;                  // 输入插槽数量
-
-	LPCWSTR* outputSlots;            // 输出插槽名称数组
-	RECT* outputRects;               // 输出插槽位置数组
-	INT outputCount;                 // 输出插槽数量
+	EX_FLOWCHART_PORT* ports;   // 统一的端口数组
+	INT portCount;              // 端口数量
 };
 #pragma pack()
 
-// 连接线数据结构
+#pragma pack(4)
 struct EX_FLOWCHART_CONNECTION
 {
-	INT id; // 连接线唯一ID
-	INT fromNode; // 源节点ID
-	INT fromSlot; // 源插槽索引
-	INT toNode; // 目标节点ID
-	INT toSlot; // 目标插槽索引
-	POINTF controlPoint1; // 控制点1
-	POINTF controlPoint2; // 控制点2
+	INT id;             // 连接线唯一ID
+	INT fromNode;       // 源节点ID
+	INT fromSlot;       // 源端口索引, EX_FLOWCHART_NODE结构体ports参数端口索引，注意输入端口和输出端口共用ports
+	INT toNode;         // 目标节点ID
+	INT toSlot;         // 目标端口索引
+	POINTF controlPoint1; // 内部使用
+	POINTF controlPoint2; // 内部使用
 };
+#pragma pack()
 
-// 流程图数据结构
+#pragma pack(4)
 struct EX_FLOWCHART_DATA
 {
 	FLOAT zoom;
@@ -3528,10 +3568,20 @@ struct EX_FLOWCHART_DATA
 	INT nodeCount;
 	EX_FLOWCHART_CONNECTION* connections;
 	INT connectionCount;
-	INT selectedConnection; // 当前选中的连接线ID
-	BOOL draggingControlPoint; // 是否正在拖动控制点
-	INT draggingWhichPoint; // 0=无, 1=中间点, 2=控制点1
+	INT selectedConnection;
+	BOOL draggingControlPoint;
+	INT draggingWhichPoint;
+
+	// 选中的插槽
+	INT selectedPortNode;
+	INT selectedPortIndex;
+	INT executionDepth; // 执行深度，防止死循环 内部使用
+
+	//  组件大小调整状态
+	INT resizingNode; // 内部使用
+	INT resizingPortIdx; // 内部使用
 };
+#pragma pack()
 
 // 流式滚动容器布局配置结构
 struct EX_FLOWSCROLLVIEW_LAYOUT_CONFIG {

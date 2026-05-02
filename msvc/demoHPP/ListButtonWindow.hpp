@@ -26,19 +26,19 @@ public:
 		m_menubar1.SetColorTextHover(ExRGB2ARGB(16774117, 255));
 		m_menubar1.SetColorTextDown(ExRGB2ARGB(16765337, 255));
 
-		HMENU hMenu = LoadMenuW(GetModuleHandleW(0), (LPWSTR)IDR_MENU1);
+		HEXMENU hMenu = Ex_MenuLoadW(GetModuleHandleW(0), (LPWSTR)IDR_MENU1);
 		EX_LISTBUTTON_ITEMINFO item1 = { 0 };
 		item1.wzText = L"文件(&F)";
-		item1.nMenu = GetSubMenu(hMenu, 0);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 0);
 		m_menubar1.InsertItem(item1);
 		item1.wzText = L"编辑(&E)";
-		item1.nMenu = GetSubMenu(hMenu, 1);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 1);
 		m_menubar1.InsertItem(item1);
 		item1.wzText = L"选项(&O)";
-		item1.nMenu = GetSubMenu(hMenu, 2);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 2);
 		m_menubar1.InsertItem(item1);
 		item1.wzText = L"帮助(&H)";
-		item1.nMenu = GetSubMenu(hMenu, 3);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 3);
 		m_menubar1.InsertItem(item1, TRUE);
 
 		//创建自定义回调菜单条
@@ -48,16 +48,16 @@ public:
 		m_menubar2.SetColorTextHover(ExARGB(255, 255, 255, 55));
 		m_menubar2.SetColorTextDown(ExARGB(255, 255, 255, 100));
 		item1.wzText = L"文件(&F)";
-		item1.nMenu = GetSubMenu(hMenu, 0);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 0);
 		m_menubar2.InsertItem(item1);
 		item1.wzText = L"编辑(&E)";
-		item1.nMenu = GetSubMenu(hMenu, 1);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 1);
 		m_menubar2.InsertItem(item1);
 		item1.wzText = L"选项(&O)";
-		item1.nMenu = GetSubMenu(hMenu, 2);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 2);
 		m_menubar2.InsertItem(item1);
 		item1.wzText = L"帮助(&H)";
-		item1.nMenu = GetSubMenu(hMenu, 3);
+		item1.nMenu = Ex_MenuGetSubMenu(hMenu, 3);
 		m_menubar2.InsertItem(item1, TRUE);
 
 		m_toolbar = ExToolBar(m_skin, 0, 90, 400, 22);
@@ -133,22 +133,22 @@ public:
 		//设置菜单条目图标
 		if (hMenu)
 		{
-			HMENU hMenu_sub = GetSubMenu(hMenu, 0);
+			HEXMENU hMenu_sub = Ex_MenuGetSubMenu(hMenu, 0);
 			if (hMenu_sub)
 			{
-				MENUITEMINFOW minfo{ 0 };
-				minfo.cbSize = sizeof(MENUITEMINFOW);
+				EXMENUITEMINFOW minfo{ 0 };
+				minfo.cbSize = sizeof(EXMENUITEMINFOW);
 				minfo.fMask = MIIM_BITMAP;
-				GetMenuItemInfoW(hMenu_sub, 1, TRUE, &minfo);
+				Ex_MenuGetItemInfoW(hMenu_sub, 1, TRUE, &minfo);
 				if (minfo.hbmpItem)
 				{
-					DeleteObject(minfo.hbmpItem);
+					_img_destroy(minfo.hbmpItem);
 				}
 				ExImage image = ExImage(L"../demo/res/rotateimgbox.jpg");
 				ExImage scaleImage = image.Scale(24, 24);
 				HBITMAP hBitmap = scaleImage.GetBitmap();
-				minfo.hbmpItem = hBitmap;
-				SetMenuItemInfoW(hMenu_sub, 1, TRUE, &minfo);
+				minfo.hbmpItem = scaleImage.m_image;
+				Ex_MenuSetItemInfoW(hMenu_sub, 1, TRUE, &minfo);
 			}
 		}
 
@@ -172,11 +172,12 @@ public:
 	{
 		if (uMsg == LISTBUTTON_MESSAGE_DOWNITEM)
 		{
+			EX_LISTBUTTON_ITEMINFO* pTR = (EX_LISTBUTTON_ITEMINFO*)lParam;
 			RECT rcWindow{ 0 };
 			RECT rcObj{ 0 };
 			GetWindowRect(hWnd, &rcWindow);
 			Ex_ObjGetRectEx(hObj, &rcObj, 2);
-			Ex_TrackPopupMenu((HMENU)lParam, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + Ex_Scale(rcObj.bottom), 0, hObj, NULL, OnListButtonWndMsgProc, MENU_FLAG_NOSHADOW);
+			Ex_TrackPopupMenu(pTR->nMenu, TPM_RECURSE, rcWindow.left + rcObj.left + wParam, rcWindow.top + Ex_Scale(rcObj.bottom), 0, hObj, NULL);
 			*lpResult = 1;
 			return 1;
 		}
@@ -193,41 +194,6 @@ public:
 		return 0;
 	}
 
-	static LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
-	{
-		if (uMsg == WM_INITMENUPOPUP)
-		{
-			ExSkin skin = ExSkin(hExDui);
-			ExControl obj = skin.FindObj(L"Item");
-			if (obj.m_handle != 0)
-			{
-				obj.SetLongProc(OnListButtonMenuItemMsgProc);
-				obj = obj.GetObj(GW_HWNDNEXT);
-			}
-		}
-		else if (uMsg == WM_NOTIFY)
-		{
-			EX_NMHDR notify{ 0 };
-			RtlMoveMemory(&notify, (LPVOID)lParam, sizeof(EX_NMHDR));
-			if (notify.nCode == NM_CREATE)
-			{
-				ExMenuBar obj = ExMenuBar(notify.hObjFrom);
-				obj.SetColorTextNormal(ExARGB(210, 120, 55, 255));
-				obj.SetColorTextHover(ExRGB2ARGB(16711680, 255));
-				obj.SetColorBackground(ExARGB(110, 120, 55, 255), TRUE);
-			}
-		}
-		else if (uMsg == MENU_MESSAGE_SELECTITEM && (DWORD)wParam == -1) //恢复正常状态
-		{
-			POINT point = { 0 };
-			GetCursorPos(&point);
-			HWND currentWnd = WindowFromPoint(point);
-			ScreenToClient(currentWnd, &point);
-			ExMenuBar obj = ExMenuBar(currentWnd, point);
-			obj.SelectItem();
-		}
-		return 0;
-	}
 
 	static ListButtonWindow& GetInstance()
 	{

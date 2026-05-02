@@ -74,7 +74,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     Ex_ObjSetLong(hObj, PALETTE_LONG_Y1, y);
                     FLOAT colorBarHeight = rc.bottom - rc.top - Ex_Scale(PALETTE_MARGIN);
                     FLOAT t = (y - rc.top) / colorBarHeight;
-                    t = max(0.0f, min(1.0f, t));
+                    t =__max(0.0f, __min(1.0f, t));
                     EXARGB cr = _palette_get_color_from_hue(t);
                     Ex_ObjSetLong(hObj, PALETTE_LONG_QCRGB, cr);
                     _palette_update_final_color(hObj, &rc);
@@ -95,7 +95,7 @@ LRESULT CALLBACK _palette_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     // 在 Alpha 滑块区域 - 只更新透明度
                     FLOAT alphaW = (FLOAT)(rc.right - rc.left - Ex_Scale(PALETTE_MARGIN));
                     FLOAT t = (x - rc.left) / alphaW;
-                    t = max(0.0f, min(1.0f, t));
+                    t =__max(0.0f, __min(1.0f, t));
                     BYTE alpha = (BYTE)(t * 255 + 0.5f);
                     Ex_ObjSetLong(hObj, PALETTE_LONG_ALPHA, alpha);
                     Ex_ObjSetLong(hObj, PALETTE_LONG_AX, x);
@@ -240,8 +240,8 @@ void _palette_on_draw(HEXOBJ hObj, EX_PAINTSTRUCT* ps) {
                     if (tileBrush) {
                         FLOAT x1 = col * tileSize;
                         FLOAT y1 = alphaY + row * tileSize;
-                        FLOAT x2 = min(x1 + tileSize, alphaW);
-                        FLOAT y2 = min(y1 + tileSize, alphaY + alphaH);
+                        FLOAT x2 = __min(x1 + tileSize, alphaW);
+                        FLOAT y2 = __min(y1 + tileSize, alphaY + alphaH);
                         _canvas_fillrect(ps->hCanvas, tileBrush, x1, y1, x2, y2);
                         _brush_destroy(tileBrush);
                     }
@@ -371,8 +371,8 @@ EXARGB _palette_update_final_color(HEXOBJ hObj, RECT* rc) {
 
     FLOAT s = (x1 - rc->left) / mainWidth;
     FLOAT v = 1.0f - (y2 - rc->top) / mainHeight;
-    s = max(0.0f, min(1.0f, s));
-    v = max(0.0f, min(1.0f, v));
+    s =__max(0.0f, __min(1.0f, s));
+    v =__max(0.0f, __min(1.0f, v));
 
     // 正确的HSV到RGB转换
     EXARGB rgbColor = _palette_hsv_to_rgb(base, s, v);
@@ -392,8 +392,8 @@ void _palette_update_alpha_only(HEXOBJ hObj, RECT* rc) {
 
     FLOAT s = (x1 - rc->left) / mainWidth;
     FLOAT v = 1.0f - (y2 - rc->top) / mainHeight;
-    s = max(0.0f, min(1.0f, s));
-    v = max(0.0f, min(1.0f, v));
+    s =__max(0.0f, __min(1.0f, s));
+    v =__max(0.0f, __min(1.0f, v));
 
     EXARGB rgbColor = _palette_hsv_to_rgb(base, s, v);
     //EXARGB finalColor = ExARGB(ExGetR(rgbColor), ExGetG(rgbColor), ExGetB(rgbColor), alpha);

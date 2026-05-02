@@ -141,9 +141,9 @@ namespace ExDUIR
 					return Ex_ObjKillFocus(m_handle);
 				}
 
-				inline BOOL TrackPopupMenu(HMENU hMenu, DWORD uFlags, INT x, INT y, size_t nReserved, RECT* lpRC, MsgPROC pfnCallback, DWORD dwFlags)
+				inline BOOL TrackPopupMenu(HEXMENU hMenu, DWORD uFlags, INT x, INT y, size_t nReserved, RECT* lpRC)
 				{
-					return Ex_TrackPopupMenu(hMenu, uFlags, x, y, nReserved, m_handle, lpRC, pfnCallback, dwFlags);
+					return Ex_TrackPopupMenu(hMenu, uFlags, x, y, nReserved, m_handle, lpRC);
 				}
 
 				inline static size_t CallProc(ClsPROC lpPrevObjProc, HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam)

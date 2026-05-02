@@ -1433,7 +1433,7 @@ void _propertygrid_update_layout(HEXOBJ hObj)
 
 	// 更新滚动条范围
 	INT viewHeight = (rc.bottom - rc.top);
-	INT scrollRange = max(0, currentY - viewHeight);
+	INT scrollRange =__max(0, currentY - viewHeight);
 	Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_VERT, 0, scrollRange, TRUE);
 
 	INT currentPos = Ex_ObjGetLong(hObj, PROPERTYGRID_LONG_TOP_OFFSET);
@@ -1678,7 +1678,7 @@ void _propertygrid_paint(HEXOBJ hObj)
 					rcTitle.right, rcTitle.bottom - Ex_Scale(5));
 
 				// 绘制展开/折叠图标 
-				FLOAT arrowSize = min(rcImage.right - rcImage.left, rcImage.bottom - rcImage.top) * 0.7f; // 三角形大小为方框的70%
+				FLOAT arrowSize = __min(rcImage.right - rcImage.left, rcImage.bottom - rcImage.top) * 0.7f; // 三角形大小为方框的70%
 				FLOAT arrowLeft = rcImage.left + (rcImage.right - rcImage.left - arrowSize) / 2;
 				FLOAT arrowTop = rcImage.top + (rcImage.bottom - rcImage.top - arrowSize) / 2;
 				FLOAT arrowRight = arrowLeft + arrowSize;
@@ -1865,7 +1865,7 @@ void _propertygrid_onvscrollbar(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam,
 	// 4. 边界检查（简化，直接从hObj获取范围）
 	INT nMin, nMax;
 	Ex_ObjScrollGetRange(hObj, SCROLLBAR_TYPE_VERT, &nMin, &nMax);
-	nPos = max(nMin, min(nPos, nMax));
+	nPos =__max(nMin, __min(nPos, nMax));
 
 	// 5. 滚动位置变化后，强制同步布局+Switch位置+重绘（核心修复）
 	if (nPos != oPos) {

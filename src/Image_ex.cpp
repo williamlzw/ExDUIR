@@ -923,7 +923,7 @@ BOOL _img_createfromcanvas(HEXCANVAS hCanvas, HEXIMAGE* dstImg)
                                 pLocker->GetStride(&cbStride);
 
                                 // 拷贝点阵数据到WIC位图中
-                                cbStride = min(cbStride, mrc.pitch);
+                                cbStride = __min(cbStride, mrc.pitch);
                                 for (UINT y = 0; y < nHeight; y++) {
                                     RtlMoveMemory(aBits + cbStride * y, mrc.bits + mrc.pitch * y,
                                                   cbStride);

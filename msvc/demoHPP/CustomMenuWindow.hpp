@@ -8,8 +8,8 @@ private:
 	ExSkin m_skin;
 	ExButton m_button1;
 	ExButton m_button2;
-	HMENU m_hMenu;
-	HMENU m_hMenuRight;
+	HEXMENU m_hMenu;
+	HEXMENU m_hMenuRight;
 
 
 public:
@@ -22,96 +22,25 @@ public:
 		m_button1 = ExButton(m_skin, 50, 50, 100, 30, L"弹出菜单");
 		m_button1.HandleEvent(NM_CLICK, OnMenuButtonEvent);
 
-		m_hMenu = CreatePopupMenu();
-		AppendMenuW(m_hMenu, MF_STRING | MF_ENABLED, 301, L"项目1");
-		CheckMenuItem(m_hMenu, 301, MF_BYCOMMAND | MF_CHECKED);//选中
-		AppendMenuW(m_hMenu, MF_STRING, 302, L"禁用项目");
-		EnableMenuItem(m_hMenu, 302, MF_DISABLED);//置灰色
-		AppendMenuW(m_hMenu, MF_SEPARATOR, 0, L"横线");
-		AppendMenuW(m_hMenu, MF_STRING, 666, L"待删除项目");
-		DeleteMenu(m_hMenu, 666, MF_BYCOMMAND);//删除666菜单
-
-		//创建一个子菜单
-		HMENU hSubMenu = CreateMenu();
-		AppendMenuW(hSubMenu, MF_STRING | MF_ENABLED, 3001, L"子项目1"); //添加项目
-		AppendMenuW(m_hMenu, MF_POPUP, (UINT_PTR)hSubMenu, L"更多");
-
-		// 以下是通过item组件改变菜单项目=====================
-		m_button2 = ExButton(m_skin, 170, 50, 100, 30, L"弹出菜单2");
-		m_button2.HandleEvent(NM_CLICK, OnMenuButtonRightEvent);
-		m_hMenuRight = CreatePopupMenu();
-		AppendMenuW(m_hMenuRight, MF_STRING, 401, L"项目一");
-		AppendMenuW(m_hMenuRight, MF_STRING, 402, L"项目二");
+		
 		m_skin.Show();
 	}
 
 	static LRESULT CALLBACK OnMenuButtonRightEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 	{
-		if (nCode == NM_CLICK)
-		{
-			POINT pt;
-			GetCursorPos(&pt);
-			ExControl obj = ExControl(hObj);
-			obj.TrackPopupMenu(CustomMenuWindow::GetInstance().m_hMenuRight, 0, pt.x, pt.y, 0, 0, OnMenuWndRightMsgProc, MENU_FLAG_NOSHADOW);
-		}
+		
 		return 0;
 	}
 
 	static LRESULT CALLBACK OnMenuWndRightMsgProc(HWND hWnd, HEXDUI hExDUI, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 	{
-		if (uMsg == WM_INITMENUPOPUP)
-		{
-			if (wParam == (size_t)CustomMenuWindow::GetInstance().m_hMenuRight)
-			{
-				ExControl objFind = ExControl(hExDUI).FindObj(L"Item");
-				int i = 0;
-				while (objFind.m_handle != 0)
-				{
-					objFind.SetColorTextNormal(ExRGB2ARGB(0, 255));
-					objFind.SetLongProc(OnMenuItemRightMsgProc);
-					objFind.SetLongNodeID(i);
-					objFind = objFind.GetObj(GW_HWNDNEXT);
-					i++;
-				}
-			}
-		}
+		
 		return 0;
 	}
 
 	static LRESULT CALLBACK OnMenuItemRightMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 	{
-		if (uMsg == WM_ERASEBKGND)
-		{
-			if (__get((LPVOID)lParam, 0) == wParam)
-			{
-				EX_PAINTSTRUCT ps{ 0 };
-				RtlMoveMemory(&ps, (LPVOID)lParam, sizeof(EX_PAINTSTRUCT));
-				ExCanvas canvas = ExCanvas(ps.hCanvas);
-				ExControl obj = ExControl(hObj);
-				auto nodeID = obj.GetLongNodeID();
-				if (ps.uHeight > 10)
-				{
-					if ((ps.dwState & STATE_HOVER) == STATE_HOVER)
-					{
-						canvas.Clear(ExARGB(79, 125, 164, 255));
-					}
-					else
-					{
-						canvas.Clear(ExARGB(120, 120, 120, 255));
-					}
-					if (nodeID == 0)
-					{
-						ExImage img = ExImage(L"../demo/res/rotateimgbox.jpg");
-						ExImage imgSmall = img.Scale(20, 20);
-						canvas.DrawImage(imgSmall, 2, 2, 255);
-						imgSmall.Destroy();
-						img.Destroy();
-					}
-					*lpResult = 1;
-					return 1;
-				}
-			}
-		}
+		
 		return 0;
 	}
 
@@ -120,7 +49,7 @@ public:
 		POINT pt;
 		GetCursorPos(&pt);
 		ExControl obj = ExControl(hObj);
-		obj.TrackPopupMenu(CustomMenuWindow::GetInstance().m_hMenu, 0, pt.x, pt.y, 0, 0, OnMenuWndMsgProc, MENU_FLAG_NOSHADOW);
+		obj.TrackPopupMenu(CustomMenuWindow::GetInstance().m_hMenu, 0, pt.x, pt.y, 0, 0);
 		return 0;
 	}
 

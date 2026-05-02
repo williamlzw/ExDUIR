@@ -260,7 +260,7 @@ void test_listbutton(HWND hWnd)
                 _img_destroy(minfo.hbmpItem);
             }
             std::vector<CHAR> imgdata1;
-            //HBITMAP           hbitmap   = 0;
+
             HEXIMAGE          hImg = 0;
             HEXIMAGE          hImgSmall = 0;
             _img_createfromfile(L"res/rotateimgbox.jpg", &hImg);

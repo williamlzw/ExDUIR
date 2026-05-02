@@ -1088,9 +1088,9 @@ namespace SVGNative
 						b = std::floor(b);
 						g = std::floor(g);
 					}
-					color[0] = min(base, r) / base;
-					color[1] = min(base, g) / base;
-					color[2] = min(base, b) / base;
+					color[0] = __min(base, r) / base;
+					color[1] = __min(base, g) / base;
+					color[2] = __min(base, b) / base;
 					paint = color;
 					result = SVGDocument::Result::kSuccess;
 					return true;

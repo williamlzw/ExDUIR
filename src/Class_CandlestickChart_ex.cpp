@@ -498,7 +498,7 @@ void _candlestickchart_paint(HEXOBJ hObj)
             pData->visibleCount = visibleCount;
         }
         // FIX: 缩放后实时更新滚动条范围
-        INT maxOffset = max(0, pData->count - visibleCount);
+        INT maxOffset = __max(0, pData->count - visibleCount);
         Ex_ObjScrollSetRange(hObj, SCROLLBAR_TYPE_HORZ, 0, maxOffset, TRUE);
         Ex_ObjScrollSetPos(hObj, SCROLLBAR_TYPE_HORZ, pData->offset, TRUE);
 
@@ -771,15 +771,15 @@ LRESULT CALLBACK _candlestickchart_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM
 
         INT nCode = LOWORD(wParam);
         INT nPos = HIWORD(wParam);
-        INT maxOffset = max(0, pData->count - pData->visibleCount);
+        INT maxOffset = __max(0, pData->count - pData->visibleCount);
 
         switch (nCode)
         {
-        case SB_LINELEFT: pData->offset = max(0, pData->offset - 1); break;
-        case SB_LINERIGHT: pData->offset = min(maxOffset, pData->offset + 1); break;
-        case SB_PAGELEFT: pData->offset = max(0, pData->offset - 10); break;
-        case SB_PAGERIGHT: pData->offset = min(maxOffset, pData->offset + 10); break;
-        case SB_THUMBTRACK: case SB_THUMBPOSITION: pData->offset = min(maxOffset, nPos); break;
+        case SB_LINELEFT: pData->offset = __max(0, pData->offset - 1); break;
+        case SB_LINERIGHT: pData->offset = __min(maxOffset, pData->offset + 1); break;
+        case SB_PAGELEFT: pData->offset = __max(0, pData->offset - 10); break;
+        case SB_PAGERIGHT: pData->offset = __min(maxOffset, pData->offset + 10); break;
+        case SB_THUMBTRACK: case SB_THUMBPOSITION: pData->offset = __min(maxOffset, nPos); break;
         }
         Ex_ObjInvalidateRect(hObj, 0);
         return 0;

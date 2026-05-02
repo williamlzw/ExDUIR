@@ -52,7 +52,7 @@ void _circleprogressbar_paint(HEXOBJ hObj)
         UINT lineHeight = Ex_ObjGetLong(hObj, CIRCLEPROGRESSBAR_LONG_LINEHEIGHT);
         UINT lineCap       = Ex_ObjGetLong(hObj, CIRCLEPROGRESSBAR_LONG_LINECAP);
         UINT halfLineWidth = ceil(lineHeight / 2);
-        UINT circleRadius  = floor(min(ps.uWidth, ps.uHeight) / 2);
+        UINT circleRadius  = floor(__min(ps.uWidth, ps.uHeight) / 2);
 
         //画背景圆环
         HEXPATH path;

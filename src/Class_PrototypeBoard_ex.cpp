@@ -1260,10 +1260,10 @@ void _prototype_board_leftbuttonup(HEXOBJ hObj, LPARAM lParam)
 	else if (drawType == PROTOTYPEBOARD_DRAW_TYPE_RECT)
 	{
 		// 使用世界坐标，避免重复转换
-		FLOAT left = min(worldStartX, worldEndX);
-		FLOAT top = min(worldStartY, worldEndY);
-		FLOAT right = max(worldStartX, worldEndX);
-		FLOAT bottom = max(worldStartY, worldEndY);
+		FLOAT left = __min(worldStartX, worldEndX);
+		FLOAT top = __min(worldStartY, worldEndY);
+		FLOAT right =__max(worldStartX, worldEndX);
+		FLOAT bottom =__max(worldStartY, worldEndY);
 
 		_prototype_board_addrecttoshape(hObj, left, top, right, bottom);
 		Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_DRAW_TYPE, -1);
@@ -1285,10 +1285,10 @@ void _prototype_board_leftbuttonup(HEXOBJ hObj, LPARAM lParam)
 	else if (drawType == PROTOTYPEBOARD_DRAW_TYPE_TEXT)
 	{
 		// 使用世界坐标创建文本形状
-		FLOAT left = min(worldStartX, worldEndX);
-		FLOAT top = min(worldStartY, worldEndY);
-		FLOAT right = max(worldStartX, worldEndX);
-		FLOAT bottom = max(worldStartY, worldEndY);
+		FLOAT left = __min(worldStartX, worldEndX);
+		FLOAT top = __min(worldStartY, worldEndY);
+		FLOAT right =__max(worldStartX, worldEndX);
+		FLOAT bottom =__max(worldStartY, worldEndY);
 
 		_prototype_board_addtexttoshape(hObj, left, top, right, bottom);
 		Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_DRAW_TYPE, -1);
@@ -1297,10 +1297,10 @@ void _prototype_board_leftbuttonup(HEXOBJ hObj, LPARAM lParam)
 	else if (drawType == PROTOTYPEBOARD_DRAW_TYPE_IMAGE)
 	{
 		// 使用世界坐标创建图片形状
-		FLOAT left = min(worldStartX, worldEndX);
-		FLOAT top = min(worldStartY, worldEndY);
-		FLOAT right = max(worldStartX, worldEndX);
-		FLOAT bottom = max(worldStartY, worldEndY);
+		FLOAT left = __min(worldStartX, worldEndX);
+		FLOAT top = __min(worldStartY, worldEndY);
+		FLOAT right =__max(worldStartX, worldEndX);
+		FLOAT bottom =__max(worldStartY, worldEndY);
 
 		_prototype_board_addimagetoshape(hObj, left, top, right, bottom);
 		Ex_ObjSetLong(hObj, PROTOTYPEBOARD_LONG_DRAW_TYPE, -1);
@@ -1963,10 +1963,10 @@ void _prototype_board_update_tempcanvas(HEXOBJ hObj)
 	else if (drawType == PROTOTYPEBOARD_DRAW_TYPE_RECT)
 	{
 		// 确保矩形坐标正确
-		INT left = min(startX, ptX);
-		INT top = min(startY, ptY);
-		INT right = max(startX, ptX);
-		INT bottom = max(startY, ptY);
+		INT left = __min(startX, ptX);
+		INT top = __min(startY, ptY);
+		INT right =__max(startX, ptX);
+		INT bottom =__max(startY, ptY);
 
 		_canvas_drawrect(canvasTemp, hBrush, left, top, right, bottom, 2, 0);
 	}
@@ -1981,10 +1981,10 @@ void _prototype_board_update_tempcanvas(HEXOBJ hObj)
 	}
 	else if (drawType == PROTOTYPEBOARD_DRAW_TYPE_TEXT)
 	{
-		INT left = min(startX, ptX);
-		INT top = min(startY, ptY);
-		INT right = max(startX, ptX);
-		INT bottom = max(startY, ptY);
+		INT left = __min(startX, ptX);
+		INT top = __min(startY, ptY);
+		INT right =__max(startX, ptX);
+		INT bottom =__max(startY, ptY);
 		// 绘制文本预览矩形
 		auto hBrushGray = _brush_create(ExARGB(200, 200, 200, 255));
 		_canvas_fillrect(canvasTemp, hBrushGray, left, top, right, bottom);
@@ -2002,10 +2002,10 @@ void _prototype_board_update_tempcanvas(HEXOBJ hObj)
 	}
 	else if (drawType == PROTOTYPEBOARD_DRAW_TYPE_IMAGE)
 	{
-		INT left = min(startX, ptX);
-		INT top = min(startY, ptY);
-		INT right = max(startX, ptX);
-		INT bottom = max(startY, ptY);
+		INT left = __min(startX, ptX);
+		INT top = __min(startY, ptY);
+		INT right =__max(startX, ptX);
+		INT bottom =__max(startY, ptY);
 		// 绘制默认灰色矩形表示图片区域
 		_canvas_drawrect(canvasTemp, hBrush, left, top, right, bottom, 1, 0);
 	}
@@ -2876,10 +2876,10 @@ void _prototype_board_resize_shape(HEXOBJ hObj, EX_PROTOTYPEBOARD_SHAPE* shape, 
 		shape->currentY2 = newY2;
 
 		// 更新直线包围盒
-		shape->currentLeft = min(newX1, newX2);
-		shape->currentTop = min(newY1, newY2);
-		shape->currentRight = max(newX1, newX2);
-		shape->currentBottom = max(newY1, newY2);
+		shape->currentLeft = __min(newX1, newX2);
+		shape->currentTop = __min(newY1, newY2);
+		shape->currentRight =__max(newX1, newX2);
+		shape->currentBottom =__max(newY1, newY2);
 
 		_path_destroy(shape->path);
 		HEXPATH newPath;

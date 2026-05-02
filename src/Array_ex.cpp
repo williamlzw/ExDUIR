@@ -3,7 +3,7 @@
 LPVOID Array_MoveMember(LPVOID pData, INT nCount, INT nSize, INT nNewCount)
 {
     LPVOID pNewData   = Ex_MemAlloc(2 * sizeof(size_t) + nSize * sizeof(LPVOID));
-    INT    nMoveBytes = min(nCount, nSize) * sizeof(LPVOID);
+    INT    nMoveBytes = __min(nCount, nSize) * sizeof(LPVOID);
     if (pData != 0 && nMoveBytes > 0) {
         RtlMoveMemory((LPVOID)((size_t)pNewData + 2 * sizeof(size_t)), pData, nMoveBytes);
     }
@@ -21,8 +21,8 @@ BOOL Array_Resize(array_s* pArray, INT nCount, BOOL fGrowCount)
     if (!Array_IsLegal(pArray)) return FALSE;
     LPVOID pData = pArray->lpData_;
     if (fGrowCount) nCount = nCount + pArray->nCount_;
-    INT   nSize  = max(pArray->nSize_, 1);
-    FLOAT flGrow = max(pArray->flGrow_, ARRAY_GROWTHFACTOR);
+    INT   nSize  = __max(pArray->nSize_, 1);
+    FLOAT flGrow = __max(pArray->flGrow_, ARRAY_GROWTHFACTOR);
     while (nSize >= (INT)(flGrow * nSize)) {
         flGrow = flGrow + (FLOAT)0.1;
     }

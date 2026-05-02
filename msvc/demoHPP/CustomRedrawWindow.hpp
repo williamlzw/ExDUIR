@@ -28,7 +28,7 @@ public:
 			CustomRedrawWindow::GetInstance().m_skin.GetClientRect(rc);
 			FLOAT arrPts[] = { 0.0f, 1.0f };
 			INT arrColors[] = { ExARGB(10, 127, 213, 220), ExARGB(200, 10, 10, 220) };
-			ExBrush brush = ExBrush(0, 0, rc.right, rc.bottom, arrPts, arrColors);
+			ExBrush brush = ExBrush(0, 0, rc.right, rc.bottom, arrPts, arrColors, 2);
 			canvas.FillEllipse(brush, LOWORD(lParam) / 2, HIWORD(lParam) / 2, LOWORD(lParam) / 2 - 2, HIWORD(lParam) / 2 - 2);
 			brush.Destroy();
 			*lpResult = 1;

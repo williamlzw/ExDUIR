@@ -414,7 +414,7 @@ static void draw_bitmap_item(HWND hwnd, obj_s* pObj, struct MENU_ITEM* item, con
             // FIXME: 字体大小和位置（x，y）可能可以优化   fontsize and the position (x,y) could probably be better 
             LOGFONTW logfont = { 0, 0, 0, 0, FW_NORMAL, 0, 0, 0, SYMBOL_CHARSET, 0, 0, 0, 0,
                                  {'M','a','r','l','e','t','t'} };
-            logfont.lfHeight = min(h, w) - 5;
+            logfont.lfHeight = __min(h, w) - 5;
             //HFONT hfont, prev_font;
             //hfont = NtGdiHfontCreate(&logfont, sizeof(logfont), 0, 0, NULL);
             //prev_font = NtGdiSelectFont(hdc, hfont);

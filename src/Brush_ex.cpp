@@ -97,7 +97,7 @@ void _brush_settransform(HEXBRUSH hBrush, HEXMATRIX matrix)
 }
 
 HEXBRUSH _brush_createlinear_ex(FLOAT xStart, FLOAT yStart, FLOAT xEnd, FLOAT yEnd, FLOAT* arrPts,
-                                INT* arrColors, INT   nStops)
+                                INT* arrColors, INT nStops)
 {
     ID2D1GradientStopCollection* gradientStopCollection = nullptr;
     ID2D1LinearGradientBrush*    hBrush                 = nullptr;

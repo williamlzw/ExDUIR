@@ -19,6 +19,9 @@
     <Filter Include="svgrender\xml">
       <UniqueIdentifier>{28f80d67-f31d-43af-9b31-b47cbb7c4048}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rapidyaml">
+      <UniqueIdentifier>{8b820851-a201-434d-953f-689c5b70b371}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\HandleTable_ex.cpp">
@@ -556,6 +559,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\Class_CandlestickChart_ex.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\thirdparty\rapidyaml\rapidyaml.hpp">
+      <Filter>rapidyaml</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
