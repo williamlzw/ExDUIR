@@ -117,98 +117,88 @@ void AddImgList()
 
 LRESULT CALLBACK OnMenuWndMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam, LRESULT* lpResult)
 {
-	if (uMsg == WM_NOTIFY)//WM_INITMENUPOPUP
+	if (uMsg == WM_NOTIFY)
 	{
 		EX_NMHDR* hdr = (EX_NMHDR*)lParam;
-		if (hdr->nCode == MN_PRESETPOS)// 可在本事件下修改 菜单窗口 或 菜单项目 
+		if (hdr->nCode == MN_PRESETPOS)
 		{
-			// EX_NMHDR::hObjFrom  是当前菜单窗口的引擎句柄
-			// EX_NMHDR::idFrom    是菜单句柄
-			SIZE* rc = (SIZE*)hdr->lParam;// lParam 是默认计算后的菜单窗口大小的传值, 本事件执行后将进行菜单窗口弹出定位,无需自己再次计算
-			
-			if (hdr->idFrom == hmenuCtxt) //判断是否为主菜单句柄 
+			auto dpi = Ex_DUIGetSystemDpi();
+			SIZE* rc = (SIZE*)hdr->lParam; // 物理像素
+			INT marginPhys = Ex_Scale(3);
+			if (hdr->idFrom == hmenuCtxt)
 			{
-				rc->cx += Ex_Scale(16);
-				rc->cy += Ex_Scale(112);
-				
+				rc->cx += (16);
+				rc->cy += (112);
+
 				HEXOBJ hObjfind = Ex_ObjFind(hdr->hObjFrom, 0, L"FlowScrollView", 0);
-				FLOAT t = Ex_Scale(40 + 70);
 				RECT rcObj{ 0 };
 				Ex_ObjGetClientRect(hObjfind, &rcObj);
-				Ex_ObjMove(hObjfind, rcObj.left + 6, t, rcObj.right - 3, rcObj.bottom, TRUE);
-
-				hObjfind = Ex_ObjFind(hdr->hObjFrom, 0, L"Item", 0);
-				while (hObjfind != 0) // 先将所有的菜单项item组件进行移动位置
+				// 【只需调整 Left 和 Top】框架会自动计算宽高，保证右边和底边对齐！
+				INT newPageLeft = rcObj.left;
+				INT newPageTop = 40 + 70;
+				Ex_ObjMove(hObjfind, newPageLeft, newPageTop, rcObj.right - rcObj.left, rcObj.bottom - rcObj.top, TRUE);
+				HEXOBJ hItem = Ex_ObjFind(hdr->hObjFrom, 0, L"Item", 0);
+				while (hItem != 0)
 				{
-					Ex_ObjSetColor(hObjfind, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
-					Ex_ObjSetLong(hObjfind, OBJECT_LONG_OBJPROC, (size_t)OnMenuItemMsgProc);
-					hObjfind = Ex_ObjGetObj(hObjfind, GW_HWNDNEXT);
+					Ex_ObjSetColor(hItem, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
+					Ex_ObjSetLong(hItem, OBJECT_LONG_OBJPROC, (size_t)OnMenuItemMsgProc);
+
+					hItem = Ex_ObjGetObj(hItem, GW_HWNDNEXT);
 				}
 
-				//创建顶部按钮
 				HEXIMAGE hImg;
 				_img_createfromfile(L"res/custommenu/btn1.png", &hImg);
 
-				Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, 4, (40), (rc->cx - Ex_Scale(10)) / Ex_Scale(3),
-					(70), hdr->hObjFrom, 100, -1, hImg, 0, OnMenuBtnMsgProc);
+				INT cx_phys = rc->cx / dpi;
+				INT btn_w = (cx_phys - (10)) / 3;
+				INT btn_h = 70 / dpi;
+				INT top_y = 40 / dpi;
+				Ex_ObjCreateEx(-1, L"button", L"消息", OBJECT_STYLE_VISIBLE, Ex_Scale(4), top_y, btn_w, btn_h, hdr->hObjFrom, 100, -1, hImg, 0, OnMenuBtnMsgProc);
 
 				_img_createfromfile(L"res/custommenu/btn2.png", &hImg);
-				Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, 4 + (rc->cx - Ex_Scale(10)) / Ex_Scale(3), (40),
-					(rc->cx - Ex_Scale(10)) / Ex_Scale(3), (70), hdr->hObjFrom, 101, -1, hImg, 0, OnMenuBtnMsgProc);
+				Ex_ObjCreateEx(-1, L"button", L"收藏", OBJECT_STYLE_VISIBLE, Ex_Scale(4) + btn_w, top_y, btn_w, btn_h, hdr->hObjFrom, 101, -1, hImg, 0, OnMenuBtnMsgProc);
 
 				_img_createfromfile(L"res/custommenu/btn3.png", &hImg);
-				Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, 4 + (rc->cx - Ex_Scale(10)) / Ex_Scale(3) * 2, 40,
-					(rc->cx - Ex_Scale(10)) / Ex_Scale(3), (70), hdr->hObjFrom, 102, -1, hImg, 0, OnMenuBtnMsgProc);
+				Ex_ObjCreateEx(-1, L"button", L"文件", OBJECT_STYLE_VISIBLE, Ex_Scale(4) + btn_w * 2, top_y, btn_w, btn_h, hdr->hObjFrom, 102, -1, hImg, 0, OnMenuBtnMsgProc);
 
 				std::vector<CHAR> data;
 				Ex_ReadFile(L"res/custommenu/Main.png", &data);
 				RECT grid{ 46, 42, 13, 12 };
-				Ex_ObjSetBackgroundImage(hdr->hObjFrom, data.data(), data.size(), 0, 0, BACKGROUND_REPEAT_NO_REPEAT,
-					&grid, 0, 230, TRUE);//设置菜单窗口背景图
-				Ex_DUISetLong(hdr->hObjFrom, ENGINE_LONG_CRBKG, 0);//将菜单窗口背景色透明
-				Ex_DUISetLong(hdr->hObjFrom, ENGINE_LONG_CRSD, 0);//将菜单窗口阴影色透明
-
+				Ex_ObjSetBackgroundImage(hdr->hObjFrom, data.data(), data.size(), 0, 0, BACKGROUND_REPEAT_NO_REPEAT, &grid, 0, 230, TRUE);
+				Ex_DUISetLong(hdr->hObjFrom, ENGINE_LONG_CRBKG, 0);
+				Ex_DUISetLong(hdr->hObjFrom, ENGINE_LONG_CRSD, 0);
 			}
-			else //子菜单句柄
+			else
 			{
-				rc->cx += Ex_Scale(10);
-				rc->cy += Ex_Scale(12);
+				rc->cx += (10);
+				rc->cy += (12);
 				std::vector<CHAR> data;
 				Ex_ReadFile(L"res/custommenu/Sub.png", &data);
 				RECT grid{ 8, 9, 10, 10 };
-				Ex_ObjSetBackgroundImage(hdr->hObjFrom, data.data(), data.size(), 0, 0, BACKGROUND_REPEAT_NO_REPEAT,
-					&grid, 0, 230, TRUE);
+				Ex_ObjSetBackgroundImage(hdr->hObjFrom, data.data(), data.size(), 0, 0, BACKGROUND_REPEAT_NO_REPEAT, &grid, 0, 230, TRUE);
 				HEXOBJ hObjfind = Ex_ObjFind(hdr->hObjFrom, 0, L"FlowScrollView", 0);
-				FLOAT t = Ex_Scale(22);
 				RECT rcObj{ 0 };
 				Ex_ObjGetClientRect(hObjfind, &rcObj);
-				Ex_ObjMove(hObjfind, rcObj.left + 4, t, rcObj.right - rcObj.left - 4 , rcObj.bottom - rcObj.top, TRUE);
+				// 【只需调整 Left 和 Top】框架会自动计算宽高，保证右边和底边对齐！
+				INT newPageLeft = Ex_Scale(4);
+				INT newPageTop = rcObj.top;
+				Ex_ObjMove(hObjfind, newPageLeft, newPageTop, rcObj.right - rcObj.left, rcObj.bottom - rcObj.top, TRUE);
 
-				hObjfind = Ex_ObjFind(hdr->hObjFrom, 0, L"button", 0);
-				//RECT rcObj1{ 0 };
-				t = Ex_Scale(2);
-				while (hObjfind != 0)
-				{
-					//Ex_ObjGetClientRect(hObjfind, &rcObj1);
-					Ex_ObjMove(hObjfind, rcObj.left + 4, t, rcObj.right, Ex_Scale(18), TRUE);
-					t= t + rcObj.bottom - rcObj.top + Ex_Scale(22);
-					hObjfind = Ex_ObjGetObj(hObjfind, GW_HWNDNEXT);
-				}
 
 				Ex_DUISetLong(hdr->hObjFrom, ENGINE_LONG_CRBKG, 0);
-				Ex_DUISetLong(hdr->hObjFrom, ENGINE_LONG_CRSD, 0);//将菜单窗口阴影色透明
-				hObjfind = Ex_ObjFind(hdr->hObjFrom, 0, L"Item", 0);
-				while (hObjfind != 0)
+				Ex_DUISetLong(hdr->hObjFrom, ENGINE_LONG_CRSD, 0);
+				HEXOBJ hItem = Ex_ObjFind(hdr->hObjFrom, 0, L"Item", 0);
+				while (hItem != 0)
 				{
-					Ex_ObjSetColor(hObjfind, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
-					Ex_ObjSetLong(hObjfind, OBJECT_LONG_OBJPROC, (size_t)OnMenuItemMsgProc);
-					hObjfind = Ex_ObjGetObj(hObjfind, GW_HWNDNEXT);
+					Ex_ObjSetColor(hItem, COLOR_EX_TEXT_NORMAL, ExRGB2ARGB(0, 255), TRUE);
+					Ex_ObjSetLong(hItem, OBJECT_LONG_OBJPROC, (size_t)OnMenuItemMsgProc);
+
+					hItem = Ex_ObjGetObj(hItem, GW_HWNDNEXT);
 				}
 			}
-
 		}
 	}
-	else if (uMsg == WM_COMMAND) //真正的菜单项 事件  在 Ex_TrackPopupMenu 参数指定的组件回调内响应
+	else if (uMsg == WM_COMMAND)
 	{
 		OUTPUTW(L"菜单项目点击,id:", wParam, L"菜单句柄:", lParam);
 	}
@@ -273,7 +263,7 @@ void AddSysMenu(HEXDUI hExDUI)
 		Ex_MenuAppendMenuW(hImageSubMenu, MF_STRING, 3001, L"PNG格式");
 		Ex_MenuAppendMenuW(hImageSubMenu, MF_STRING, 3002, L"JPEG格式");
 		Ex_MenuAppendMenuW(hImageSubMenu, MF_STRING, 3003, L"BMP格式");
-		for (int i = 0; i < 60; i++)
+		for (int i = 0; i < 50; i++)
 		{
 			wchar_t buf[100];
 			wsprintfW(buf, L"我是子项目%d", i + 1);
@@ -305,7 +295,7 @@ void test_custommenu(HWND hWnd)
 		0, OnMenuMainWndMsgProc);
 
 	Ex_DUISetLong(hExDui_custommenu, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
-	
+
 	AddSysMenu(hExDui_custommenu);
 	Ex_DUIShowWindow(hExDui_custommenu, SW_SHOWNORMAL);
 }
