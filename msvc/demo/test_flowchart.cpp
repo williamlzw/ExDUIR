@@ -82,8 +82,14 @@ LRESULT CALLBACK FlowChartNotifyProc(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 		else if (params->nodeId == 1004) { // Save Image
 			HEXIMAGE hSrc = (HEXIMAGE)params->inputs[0].data;
 			LPCWSTR config = (LPCWSTR)params->inputs[1].data;
+			std::wstring savePath = config ? L"res/" + std::wstring(config) + L".png" : L"output.png";
 			std::wstring result = L"Saved as [" + (config ? std::wstring(config) : L"null") + L"].png";
-
+			
+			if (config)
+			{
+				_img_savetofile(hSrc, savePath.c_str());
+			}
+			
 			EX_FLOWCHART_PORT newData; newData.id = 402; newData.widgetType = FLOWCHART_NODEDATA_TYPE_EDIT; newData.widgetData = (LPVOID)StrDupW(result.c_str());
 			Ex_ObjSendMessage(hObj, FLOWCHART_MESSAGE_UPDATE_NODEDATA, 1004, (LPARAM)&newData);
 			// 释放StrDupW 拷贝的数据
@@ -189,5 +195,9 @@ void test_flowchart(HWND hWnd)
 		hExDui_flowchart, 10002, DT_VCENTER | DT_CENTER, 0, 0, NULL);
 	Ex_ObjHandleEvent(button1, NM_CLICK, OnFlowChartButtonEvent);
 	Ex_ObjHandleEvent(button2, NM_CLICK, OnFlowChartButtonEvent);
+
+	HEXOBJ hObj_label1 = Ex_ObjCreateEx(-1, L"static", L"1.选中连接线按下【DELETE】键可以删除连接线\n2.按住【SHIFT】键可以从输出插槽拉出第二条乃至更多连接线", -1,
+		500, 850, 480, 60, hExDui_flowchart, 0, DT_WORDBREAK, 0, 0, NULL);
+	Ex_ObjSetColor(hObj_label1, COLOR_EX_TEXT_NORMAL, ExARGB(133, 33, 53, 255), TRUE);
 	Ex_DUIShowWindow(hExDui_flowchart, SW_SHOWNORMAL);
 }

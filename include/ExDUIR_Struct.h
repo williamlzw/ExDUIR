@@ -3007,7 +3007,6 @@ struct EX_CHATBOX_ITEMINFO
 };
 
 
-// ================= 常量与消息定义 =================
 // 流程图_端口类型_输入
 #define FLOWCHART_PORTTYPE_INPUT        0
 // 流程图_端口类型_输出

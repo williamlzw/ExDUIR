@@ -671,6 +671,23 @@ void _flowchart_onlbuttondown(HEXOBJ hObj, INT x, INT y) {
 	FLOAT virtualX = (x + scrollX) / pData->zoom; FLOAT virtualY = (y + scrollY) / pData->zoom;
 	pData->selectedNode = -1; pData->selectedPortNode = -1; pData->selectedPortIndex = -1;
 
+	// 判断是否按住Shift键，按住时优先检测端口，允许从已连接的输出端口拉出新的连线
+	BOOL shiftPressed = (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
+	if (shiftPressed) {
+		for (INT i = pData->nodeCount - 1; i >= 0; i--) {
+			EX_FLOWCHART_NODE* node = &pData->nodes[i];
+			for (INT j = 0; j < node->portCount; j++) {
+				if (node->ports[j].portType == FLOWCHART_PORTTYPE_INTERMEDIATE) continue;
+				RECT rc = node->ports[j].portRect;
+				if (virtualX >= node->x + rc.left && virtualX <= node->x + rc.right && virtualY >= node->y + rc.top && virtualY <= node->y + rc.bottom) {
+					pData->selectedPortNode = node->id; pData->selectedPortIndex = j; pData->selectedConnection = -1;
+					pData->connectingSlot = j; pData->connectingNode = node->id; pData->connectingSlotType = node->ports[j].portType == FLOWCHART_PORTTYPE_OUTPUT ? FLOWCHART_SLOTTYPE_OUTPUT : FLOWCHART_SLOTTYPE_INPUT;
+					Ex_ObjInvalidateRect(hObj, 0); return;
+				}
+			}
+		}
+	}
+
 	// 1. 优先检测组件右下角调整大小手柄
 	for (INT i = pData->nodeCount - 1; i >= 0; i--) {
 		EX_FLOWCHART_NODE* node = &pData->nodes[i];
