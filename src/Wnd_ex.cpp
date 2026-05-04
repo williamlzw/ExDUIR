@@ -1866,8 +1866,7 @@ void _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width,
 
 		if (((pWnd->dwStyle_ & WINDOW_STYLE_MENU) == WINDOW_STYLE_MENU)) {
 			width = width - 2 * GetSystemMetrics(SM_CXFIXEDFRAME);
-			//width = Ex_Scale(width);
-			//height = Ex_Scale(height);
+			height = height - 2 * GetSystemMetrics(SM_CYFIXEDFRAME);
 		}
 		_wnd_recalcclient(pWnd, hWnd, width, height);
 		_layout_update(pWnd->base.hLayout_);

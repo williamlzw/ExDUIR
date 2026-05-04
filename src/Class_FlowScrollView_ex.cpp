@@ -4,68 +4,23 @@
 INT _flowscrollview_calculateHeight(HEXOBJ hScrollView)
 {
     HEXOBJ hContainer = (HEXOBJ)Ex_ObjGetProp(hScrollView, FLOWSCROLLVIEW_PROP_CONTAINER_HANDLE);
-    HEXLAYOUT hLayout = (HEXLAYOUT)Ex_ObjGetProp(hScrollView, FLOWSCROLLVIEW_PROP_LAYOUT_HANDLE);
+    if (hContainer == 0) return 0;
 
-    if (hContainer == 0 || hLayout == 0) return 0;
-
-    // 获取容器宽度
-    RECT rcContainer;
-    Ex_ObjGetClientRect(hContainer, &rcContainer);
-    INT containerWidth = rcContainer.right - rcContainer.left;
-
-    if (containerWidth <= 0) return 0;
-
-    // 获取布局配置
-    INT nHorizontalSpacing = (INT)Ex_ObjGetProp(hScrollView, FLOWSCROLLVIEW_PROP_HORIZONTAL_SPACING);
-    INT nVerticalSpacing = (INT)Ex_ObjGetProp(hScrollView, FLOWSCROLLVIEW_PROP_VERTICAL_SPACING);
-
-    // 收集所有子组件的尺寸
-    std::vector<SIZE> componentSizes;
+    INT maxBottom = 0;
     HEXOBJ hChild = Ex_ObjGetObj(hContainer, GW_CHILD);
     while (hChild)
     {
         RECT rcChild{ 0 };
-        Ex_ObjGetClientRect(hChild, &rcChild);
-
-        SIZE size;
-        size.cx = rcChild.right - rcChild.left;
-        size.cy = rcChild.bottom - rcChild.top;
-        componentSizes.push_back(size);
+        // 【修复】使用 GetRectEx 获取子项相对于容器的真实位置
+        Ex_ObjGetRectEx(hChild, &rcChild, 0);
+        if (rcChild.bottom > maxBottom)
+        {
+            maxBottom = rcChild.bottom;
+        }
         hChild = Ex_ObjGetObj(hChild, GW_HWNDNEXT);
     }
 
-    if (componentSizes.empty()) return 0;
-
-    // 模拟流式布局计算
-    INT currentX = 0;
-    INT currentY = 0;
-    INT currentRowHeight = 0;
-
-    for (const auto& size : componentSizes)
-    {
-        // 检查是否需要换行
-        if (currentX + size.cx > containerWidth && currentX > 0)
-        {
-            // 换行
-            currentX = 0;
-            currentY += currentRowHeight + nVerticalSpacing;
-            currentRowHeight = 0;
-        }
-
-        // 更新当前行高度
-        if (size.cy > currentRowHeight)
-        {
-            currentRowHeight = size.cy;
-        }
-
-        // 移动到下一个位置
-        currentX += size.cx + nHorizontalSpacing;
-    }
-
-    // 加上最后一行的高度
-    currentY += currentRowHeight;
-    currentY += nVerticalSpacing;
-    return currentY;
+    return maxBottom;
 }
 
 // 更新滚动范围
@@ -82,31 +37,36 @@ void _flowscrollview_updatescrollrange(HEXOBJ hScrollView)
 
     // 计算容器所需高度
     INT containerHeight = _flowscrollview_calculateHeight(hScrollView);
-
+    if (containerHeight < scrollViewHeight)
+        containerHeight = scrollViewHeight;
     // 获取当前滚动位置
     INT vScrollPos = Ex_ObjScrollGetPos(hScrollView, SCROLLBAR_TYPE_VERT);
-
-    // 更新容器高度
-    //Ex_ObjMove(hContainer, 0, 0, scrollViewWidth, containerHeight, TRUE);
-
+    
+ 
     // 处理垂直滚动条
-    BOOL needVScroll = (containerHeight > scrollViewHeight);
+    BOOL needVScroll = (_flowscrollview_calculateHeight(hScrollView) > scrollViewHeight);
 
     if (needVScroll)
     {
+        INT nMax = _flowscrollview_calculateHeight(hScrollView) - scrollViewHeight;
+        // 钳制滚动位置，防止超出新的最大范围
+        if (vScrollPos < 0) vScrollPos = 0;
+        if (vScrollPos > nMax) vScrollPos = nMax;
+		
         Ex_ObjScrollSetInfo(hScrollView,
             SCROLLBAR_TYPE_VERT,
-            SIF_ALL,
+            SIF_RANGE | SIF_PAGE | SIF_POS, // 【修复】明确指定标志，避免 SIF_ALL 意外重置
             0,
-            containerHeight - scrollViewHeight,
+            nMax,
             scrollViewHeight,
-            0,
+            vScrollPos, // 【修复】保留当前滚动位置，而不是填0
             TRUE);
         Ex_ObjScrollShow(hScrollView, SCROLLBAR_TYPE_VERT, TRUE);
     }
     else
     {
         Ex_ObjScrollShow(hScrollView, SCROLLBAR_TYPE_VERT, FALSE);
+        vScrollPos = 0; // 内容不足以滚动时重置位置
         Ex_ObjScrollSetPos(hScrollView, SCROLLBAR_TYPE_VERT, 0, TRUE);
     }
 
@@ -246,11 +206,12 @@ LRESULT CALLBACK _flowscrollview_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM w
         INT nPos = _flowscrollview_pagescrolldefaultproc(hObj, SCROLLBAR_TYPE_VERT, wParam, Ex_ObjGetLong(hContainer, OBJECT_LONG_LPARAM), rc.bottom - rc.top, TRUE);
         if (hContainer != 0)
         {
-            RECT rcContainer;
-            Ex_ObjGetClientRect(hContainer, &rcContainer);
-            INT containerWidth = rcContainer.right - rcContainer.left;
-            INT containerHeight = rcContainer.bottom - rcContainer.top;
-            Ex_ObjMove(hContainer, 0, -nPos, containerWidth, containerHeight, TRUE);
+            // 【修复】使用实时计算的高度，避免因容器大小未更新导致高度错误
+            INT containerHeight = _flowscrollview_calculateHeight(hObj);
+            if (containerHeight < rc.bottom - rc.top)
+                containerHeight = rc.bottom - rc.top;
+
+            Ex_ObjMove(hContainer, 0, -nPos, rc.right - rc.left, containerHeight, TRUE);
         }
         break;
     }
