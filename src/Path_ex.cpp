@@ -138,7 +138,7 @@ BOOL _path_beginfigure3(HEXPATH hPath, FLOAT x, FLOAT y, INT figureBegin)
         pPath->pObj_->BeginFigure({ x, y }, (D2D1_FIGURE_BEGIN)figureBegin);
     }
     Ex_SetLastError(nError);
-    return nError;
+    return nError == 0;
 }
 
 BOOL _path_beginfigure2(HEXPATH hPath, FLOAT x, FLOAT y)
@@ -156,7 +156,7 @@ BOOL _path_beginfigure2(HEXPATH hPath, FLOAT x, FLOAT y)
         pPath->pObj_->BeginFigure({ x, y }, D2D1_FIGURE_BEGIN_FILLED);
     }
     Ex_SetLastError(nError);
-    return nError;
+    return nError == 0;
 }
 
 BOOL _path_endfigure(HEXPATH hPath, BOOL fCloseFigure)
