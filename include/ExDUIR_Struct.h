@@ -2341,7 +2341,7 @@ struct EXMENUINFO
 	ULONG_PTR dwMenuData;
 };
 
-
+#pragma pack(4)
 struct EXMENUITEMINFOW
 {
 	UINT     cbSize;
@@ -2349,7 +2349,7 @@ struct EXMENUITEMINFOW
 	UINT     fType;          // used if MIIM_TYPE (4.0) or MIIM_FTYPE (>4.0)
 	UINT     fState;         // used if MIIM_STATE
 	UINT     wID;            // used if MIIM_ID
-	HMENU    hSubMenu;       // used if MIIM_SUBMENU
+	HEXMENU    hSubMenu;       // used if MIIM_SUBMENU
 	HEXIMAGE  hbmpChecked;   // used if MIIM_CHECKMARKS
 	HEXIMAGE  hbmpUnchecked; // used if MIIM_CHECKMARKS
 	ULONG_PTR dwItemData;    // used if MIIM_DATA
@@ -2357,6 +2357,7 @@ struct EXMENUITEMINFOW
 	UINT     cch;            // used if MIIM_TYPE (4.0) or MIIM_STRING (>4.0)
 	HEXIMAGE  hbmpItem;      // used if MIIM_BITMAP 
 };
+#pragma pack()
 
 #define GRID_MESSAGE_BASE               (WM_USER + 0x8000)
 // 表格_消息_设置行数 wParam=nRows, lParam=0

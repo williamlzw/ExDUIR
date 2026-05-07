@@ -11,40 +11,7 @@ LRESULT CALLBACK OnListButtonMenuItemMsgProc(HWND hWnd, HEXOBJ hObj, INT uMsg, W
     return 0;
 }
 
-LRESULT CALLBACK OnListButtonWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam,
-    LPARAM lParam, LRESULT* lpResult)
-{
-    if (uMsg == WM_INITMENUPOPUP) {
-        // 响应菜单项目事件
-        HEXOBJ hObjfind = Ex_ObjFind(hExDui, 0, L"Item", 0);
-        while (hObjfind != 0) {
-            Ex_ObjSetLong(hObjfind, OBJECT_LONG_OBJPROC, (size_t)OnListButtonMenuItemMsgProc);
-            hObjfind = Ex_ObjGetObj(hObjfind, GW_HWNDNEXT);
-        }
-    }
-    else if (uMsg == WM_NOTIFY) {
-        EX_NMHDR notify{ 0 };
-        RtlMoveMemory(&notify, (LPVOID)lParam, sizeof(EX_NMHDR));
-        if (notify.nCode == NM_CREATE) {
-            Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_NORMAL, ExARGB(210, 120, 55, 255),
-                TRUE);   // 改变菜单项目字体正常颜色
-            Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_TEXT_HOVER, ExRGB2ARGB(16711680, 255),
-                TRUE);   // 改变菜单项目字体悬浮颜色
-            Ex_ObjSetColor(notify.hObjFrom, COLOR_EX_BACKGROUND, ExARGB(110, 120, 55, 255),
-                TRUE);   // 改变菜单项目背景颜色
-        }
-    }
-    else if (uMsg == MENU_MESSAGE_SELECTITEM && (DWORD)wParam == -1)   // 恢复正常状态
-    {
-        POINT point = { 0 };
-        GetCursorPos(&point);
-        HWND currentWnd = WindowFromPoint(point);
-        ScreenToClient(currentWnd, &point);
-        HEXOBJ hObj = Ex_DUIGetObjFromPoint((EXHANDLE)currentWnd, point.x, point.y);
-        Ex_ObjPostMessage(hObj, LISTBUTTON_MESSAGE_SELECTITEM, 0, 0);
-    }
-    return 0;
-}
+
 LRESULT CALLBACK OnListButtonEvent(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
     if (nCode == LISTBUTTON_EVENT_CLICK) {
@@ -142,6 +109,7 @@ void test_listbutton(HWND hWnd)
     EX_LISTBUTTON_ITEMINFO item1 = { 0 };
     item1.wzText = L"文件(&F)";
     item1.nMenu = Ex_MenuGetSubMenu(hMenu, 0);
+   
     Ex_ObjSendMessage(hObj, LISTVIEW_MESSAGE_INSERTITEM, 0, (size_t)&item1);
     item1.wzText = L"编辑(&E)";
     item1.nMenu = Ex_MenuGetSubMenu(hMenu, 1);
@@ -254,8 +222,9 @@ void test_listbutton(HWND hWnd)
         if (hMenu_sub) {
             EXMENUITEMINFOW minfo{ 0 };
             minfo.cbSize = sizeof(EXMENUITEMINFOW);
+            
             minfo.fMask = MIIM_BITMAP;
-            Ex_MenuGetItemInfoW(hMenu_sub, 1, TRUE, &minfo);
+            auto ret = Ex_MenuGetItemInfoW(hMenu_sub, 1, TRUE, &minfo);
             if (minfo.hbmpItem) {
                 _img_destroy(minfo.hbmpItem);
             }
@@ -265,15 +234,11 @@ void test_listbutton(HWND hWnd)
             HEXIMAGE          hImgSmall = 0;
             _img_createfromfile(L"res/rotateimgbox.jpg", &hImg);
             _img_scale(hImg, 24, 24, &hImgSmall);   // 注意菜单条目高度跟图像高度有关，因此缩放到24
-            imgdata1.resize(24 * 24 * 4);
-            _img_savetomemory(hImgSmall, imgdata1.data());
             _img_destroy(hImg);
-            _img_destroy(hImgSmall);
-            hImg = 0;
-            _img_createfrommemory(imgdata1.data(), imgdata1.size(), &hImg);
-            minfo.hbmpItem = hImg;
+    
+            minfo.hbmpItem = hImgSmall;
             Ex_MenuSetItemInfoW(hMenu_sub, 1, TRUE, &minfo);
-            Ex_DUISetLong(hExDui_listbutton, ENGINE_LONG_LPARAM, (size_t)hImg);
+            Ex_DUISetLong(hExDui_listbutton, ENGINE_LONG_LPARAM, (size_t)hImgSmall);
         }
     }
     Ex_DUIShowWindow(hExDui_listbutton, SW_SHOWNORMAL);

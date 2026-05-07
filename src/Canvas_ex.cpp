@@ -323,10 +323,6 @@ void _canvas_recreate(canvas_s* pCanvas, INT width, INT height, INT* nError)
             oldBitmap->Release();
         }
         pCanvas->pBitmap_ = pBitmap;
-        if (pCanvas->pWnd_ != nullptr)
-        {
-            pCanvas->pContext_ = pCanvas->pWnd_->dx_context_;
-        }
     }
 }
 
@@ -1589,6 +1585,7 @@ BOOL _canvas_drawshadow(HEXCANVAS hCanvas, FLOAT fLeft, FLOAT fTop, FLOAT fRight
                                         layerParams.layerOptions = D2D1_LAYER_OPTIONS1_INITIALIZE_FROM_BACKGROUND;
                                         pContext->PushLayer(layerParams,
                                                             layer);
+                               
                                         // 将模糊后的阴影图绘制到画布上
                                         pContext->DrawImage(effect, D2D1_INTERPOLATION_MODE_LINEAR);
 
