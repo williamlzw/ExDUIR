@@ -3057,7 +3057,7 @@ size_t Ex_ObjSendMessage(HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
 BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage,
                               size_t dwImageLen, INT x, INT y, DWORD dwRepeat,
                               RECT* lpGrid, INT dwFlags, DWORD dwAlpha,
-                              BOOL fUpdate, RECT* lpRcSrc = 0, EX_RECTF* lpRCFDst = 0);
+                              BOOL fUpdate);
 
 /// <summary>
 /// 组件设置背景信息从Svg句柄

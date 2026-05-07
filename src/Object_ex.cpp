@@ -2844,7 +2844,7 @@ void CALLBACK _obj_backgroundimage_timer(HWND hWnd, UINT uMsg, UINT_PTR idEvent,
 }
 
 BOOL _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, LPVOID lpImage, INT dwImageLen, INT x, INT y,
-                              INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, RECT* lpRcSrc, EX_RECTF* lpRCFDst, INT* nError)
+                              INT dwRepeat, RECT* lpGrid, INT dwFlags, INT dwAlpha, INT* nError)
 {
     if (dwImageLen == 0) {
         _obj_backgroundimage_clear(hWnd, (obj_base*)pObj);
@@ -2871,22 +2871,7 @@ BOOL _obj_backgroundimage_set(HWND hWnd, obj_s* pObj, LPVOID lpImage, INT dwImag
                         RtlMoveMemory(lpDelay, lpGrid, 16);
                     }
                 }
-                if (lpRcSrc != 0)
-                {
-                    LPVOID lpRcSrc_ = _struct_createfromaddr(lpBI, offsetof(EX_BACKGROUNDIMAGEINFO, lpRcSrc), sizeof(RECT), nError);
-                    if (lpRcSrc_ != 0)
-                    {
-                        RtlMoveMemory(lpRcSrc_, lpRcSrc, 16);
-                    }
-                }
-                if (lpRCFDst != 0)
-                {
-                    LPVOID lpRCFDst_ = _struct_createfromaddr(lpBI, offsetof(EX_BACKGROUNDIMAGEINFO, lpRCFDst), sizeof(EX_RECTF), nError);
-                    if (lpRCFDst_ != 0)
-                    {
-                        RtlMoveMemory(lpRCFDst_, lpRCFDst, 16);
-                    }
-                }
+
                 INT nFrames = 0;
                 _img_getframecount(hImg, &nFrames);
 
@@ -2946,7 +2931,7 @@ BOOL Ex_ObjDestroyBackground(EXHANDLE handle)
 
 BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen, INT x, INT y,
                               DWORD dwRepeat, RECT* lpGrid, INT dwFlags, DWORD dwAlpha,
-                              BOOL fUpdate, RECT* lpRcSrc, EX_RECTF* lpRCFDst)
+                              BOOL fUpdate)
 {
     HWND   hWnd   = 0;
     obj_s* pObj   = nullptr;
@@ -2954,7 +2939,7 @@ BOOL Ex_ObjSetBackgroundImage(EXHANDLE handle, LPVOID lpImage, size_t dwImageLen
     INT    nError = 0;
     if (_wnd_getfromhandle(handle, &hWnd, NULL, &pObj, &bObj, &nError)) {
         if (_obj_backgroundimage_set(hWnd, pObj, lpImage, dwImageLen, x, y, dwRepeat, lpGrid,
-                                     dwFlags, dwAlpha, lpRcSrc, lpRCFDst, &nError)) {
+                                     dwFlags, dwAlpha, &nError)) {
             if (bObj) {
                 nError = 0;
                 _obj_invalidaterect(pObj, 0, &nError);
