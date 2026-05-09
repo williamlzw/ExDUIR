@@ -27,21 +27,24 @@ void test_splitter(HWND hWnd) {
   _layout_absolute_setedge(hLayout, splitter, LAYOUT_SUBPROP_ABSOLUTE_BOTTOM,
                            LAYOUT_SUBPROP_ABSOLUTE_TYPE_PX, 10);
 
-  Ex_ObjSetLong(splitter, SPLITTER_LONG_POSITION, 35);  // 默认位置35%
+  Ex_ObjSendMessage(splitter, SPLITTER_MESSAGE_SET_POSITION, 35, 0);  // 水平分割
+
   // 设置分割条颜色
-  Ex_ObjSetLong(splitter, SPLITTER_LONG_COLOR, ExARGB(50, 50, 50, 255));
+  Ex_ObjSendMessage(splitter, SPLITTER_MESSAGE_SET_COLOR, ExARGB(50, 50, 50, 255), 0);  
   // 默认固定面板1
-  Ex_ObjSetLong(splitter, SPLITTER_LONG_FIXEDPANEL, 1);
+  Ex_ObjSendMessage(splitter, SPLITTER_MESSAGE_SET_FIXEDPANEL, 1, 0); 
   auto static1 =
       Ex_ObjCreate(L"static", L"面板一", -1, 0, 0, 100, 30, splitter);
   Ex_ObjSetColor(static1, COLOR_EX_BACKGROUND, ExARGB(50, 150, 150, 55), TRUE);
 
   auto splitter2 = Ex_ObjCreate(L"Splitter", 0, -1, 0, 0, 0, 0, splitter);
   // 设置分割条大小和方向
-  Ex_ObjSetLong(splitter, SPLITTER_LONG_SIZE, 5);
-  Ex_ObjSetLong(splitter2, SPLITTER_LONG_DIRECTION, 1);
+  Ex_ObjSendMessage(splitter, SPLITTER_MESSAGE_SET_SIZE, 5, 0);
+  Ex_ObjSendMessage(splitter2, SPLITTER_MESSAGE_SET_DIRECTION, 1, 0);
+
   // 默认固定面板2
-  Ex_ObjSetLong(splitter2, SPLITTER_LONG_FIXEDPANEL, 2);
+  Ex_ObjSendMessage(splitter2, SPLITTER_MESSAGE_SET_FIXEDPANEL, 2, 0);
+
   // 附加面板
   Ex_ObjSendMessage(splitter, SPLITTER_MESSAGE_SET_PANEL, static1, splitter2);
 

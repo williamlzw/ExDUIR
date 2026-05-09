@@ -79,7 +79,7 @@ void testgrid(HEXDUI hExDui)
     // 设置默认选项
     Ex_ObjSendMessage(hGrid, GRID_MESSAGE_SETITEMTEXT, MAKELPARAM(4, 1), (LPARAM)L"Option 1");
     //改变单元格背景色和前景色
-    Ex_ObjSendMessage(hGrid, GRID_MESSAGE_SETITEMBKCOLOR, MAKELPARAM(4, 1), 0xA0F08500);
+    Ex_ObjSendMessage(hGrid, GRID_MESSAGE_SETITEMBKCOLOR, MAKELPARAM(4, 1), ExARGB(240, 133, 0, 160));
     Ex_ObjSendMessage(hGrid, GRID_MESSAGE_SETITEMFGCOLOR, MAKELPARAM(4, 1), ExARGB(120, 120, 120, 255));
 
     // 设置日期框单元格

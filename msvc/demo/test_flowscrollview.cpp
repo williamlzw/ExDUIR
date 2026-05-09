@@ -29,30 +29,15 @@ void test_flowscrollview(HWND hWnd)
 
 
     HEXOBJ config_fishing_map2 = Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_VISIBLE, 22, 22, 250, 200, body_nav_c2, 1002, 0, 0, 0, 0);//绑定到第二页
-    //Ex_ObjSetRadius(config_fishing_map2, 10, 10, 10, 10, TRUE);
+    Ex_ObjSetRadius(config_fishing_map2, 10, 10, 10, 10, TRUE);
     Ex_ObjSetColor(config_fishing_map2, COLOR_EX_BACKGROUND, argb_class, TRUE);
     Ex_ObjSendMessage(body_a2, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)config_fishing_map2, 0);
 
 
     HEXOBJ config_fishing_map3 = Ex_ObjCreateEx(-1, L"static", NULL, OBJECT_STYLE_VISIBLE, 22, 22, 250, 200, body_nav_c2, 1003, 0, 0, 0, 0);//绑定到第二页
-    //Ex_ObjSetRadius(config_fishing_map3, 10, 10, 10, 10, TRUE);
+    Ex_ObjSetRadius(config_fishing_map3, 10, 10, 10, 10, TRUE);
     Ex_ObjSetColor(config_fishing_map3, COLOR_EX_BACKGROUND, argb_class, TRUE);
     Ex_ObjSendMessage(body_a2, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)config_fishing_map3, 0);
-    //HEXOBJ hObj_scrollview =
-    //    Ex_ObjCreate(L"FlowScrollView", 0, -1, 30, 30, 350, 350, hExDui_scrollview);
-    //// 获取容器句柄
-    //HEXOBJ hContainer = (HEXOBJ)Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_GET_CONTAINER_HANDLE, 0, 0);
-    //HEXOBJ hObj_groupbox1 =
-    //    Ex_ObjCreate(L"static", L"分组框1", OBJECT_STYLE_VISIBLE, 30, 30, 230, 230, hContainer);
-    //Ex_ObjSetColor(hObj_groupbox1, COLOR_EX_BACKGROUND, ExARGB(97, 175, 239, 240), TRUE);
-    //Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)hObj_groupbox1, 0);
-    //HEXOBJ hObj_groupbox2 =
-    //    Ex_ObjCreate(L"static", L"分组框2", OBJECT_STYLE_VISIBLE, 30, 270, 230, 230, hContainer);
-    //Ex_ObjSetColor(hObj_groupbox2, COLOR_EX_BACKGROUND, ExARGB(97, 175, 239, 240), TRUE);
-    //Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)hObj_groupbox2, 0);
-    //HEXOBJ hObj_groupbox3 =
-    //    Ex_ObjCreate(L"static", L"分组框3", OBJECT_STYLE_VISIBLE, 30, 510, 230, 230, hContainer);
-    //Ex_ObjSetColor(hObj_groupbox3, COLOR_EX_BACKGROUND, ExARGB(97, 175, 239, 240), TRUE);
-    //Ex_ObjSendMessage(hObj_scrollview, FLOWSCROLLVIEW_MESSAGE_ADD_COMPONENT, (WPARAM)hObj_groupbox3, 0);
+
     Ex_DUIShowWindow(hExDui_scrollview, SW_SHOWNORMAL);
 }

@@ -1779,19 +1779,19 @@
 
 
 #pragma region splitter long constant
-// 分割条方向：0-垂直(默认)，1-水平
+// 分隔条方向：0-垂直(默认)，1-水平
 #define SPLITTER_LONG_DIRECTION 0
-// 分割条大小(默认4像素)
+// 分隔条大小(默认4像素)
 #define SPLITTER_LONG_SIZE 1
-// 分割条初始位置：使用权重值0-100表示百分位置
+// 分隔条初始位置：使用权重值0-100表示百分位置
 #define SPLITTER_LONG_POSITION 2
-// 分割条颜色
+// 分隔条颜色
 #define SPLITTER_LONG_COLOR 3
 // 分隔条锁定状态，0-不锁定(默认)，1-锁定
 #define SPLITTER_LONG_LOCK 4
-// 分割条当前位置,像素值(此属性用户设置无效)
+// 分隔条当前位置,像素值(此属性用户设置无效)
 #define SPLITTER_LONG_CURPOSITION 5
-// 是否正在拖动分割条,TRUE/FALSE(此属性用户设置无效)
+// 是否正在拖动分隔条,TRUE/FALSE(此属性用户设置无效)
 #define SPLITTER_LONG_DRAGGING 6
 // 分割面板1，即左侧或上侧(此属性不允许用户设置)
 #define SPLITTER_LONG_PANEL1 7
@@ -1805,18 +1805,26 @@
 
 
 #pragma region splitter message constant
-// 获取分割条方向，返回值0-垂直，1-水平
+// 获取分隔条方向，返回值0-垂直，1-水平
 #define SPLITTER_MESSAGE_GET_DIRECTION (WM_USER + 1)
-// 设置分割条方向，wParam传入0-垂直，1-水平，lParam未用
+// 设置分隔条方向，wParam传入0-垂直，1-水平，lParam未用
 #define SPLITTER_MESSAGE_SET_DIRECTION (WM_USER + 2)
-// 获取分割条位置，返回值为百分位置
+// 获取分隔条位置，返回值为百分位置
 #define SPLITTER_MESSAGE_GET_POSITION (WM_USER + 3)
-// 设置分割条位置，wParam传入百分位置，lParam未用
+// 设置分隔条位置，wParam传入百分位置，lParam未用
 #define SPLITTER_MESSAGE_SET_POSITION (WM_USER + 4)
 // 获取分割面板组件，wParam：0-返回左或上面板附加组件句柄；1-返回右或下面板附加组件句柄，lParam未用
 #define SPLITTER_MESSAGE_GET_PANEL (WM_USER + 5)
 // 设置分割面板组件，wParam传入面板1附加组件句柄，lParam传入面板2附加组件句柄
 #define SPLITTER_MESSAGE_SET_PANEL (WM_USER + 6)
+// 设置分隔条颜色，wParam传入ARGB颜色值，lParam未用
+#define SPLITTER_MESSAGE_SET_COLOR (WM_USER + 7)
+// 获取分隔条颜色，返回值为ARGB颜色值
+#define SPLITTER_MESSAGE_GET_COLOR (WM_USER + 8)
+// 设置分隔条锁定面板，wParam传入0-不锁定，1-锁定左或上面板，2-锁定右或下面板，lParam未用
+#define SPLITTER_MESSAGE_SET_FIXEDPANEL (WM_USER + 9)
+// 获取分隔条大小 , wParam设置尺寸 像素
+#define SPLITTER_MESSAGE_SET_SIZE (WM_USER + 10)
 #pragma endregion splitter message constant
 
 
@@ -1885,8 +1893,6 @@
 #define PROTOTYPEBOARD_MESSAGE_DRAW_TEXT 100003
 // 原型画板消息_绘制图像
 #define PROTOTYPEBOARD_MESSAGE_DRAW_IMAGE 100004
-// 原型画板消息_绘制路径
-#define PROTOTYPEBOARD_MESSAGE_DRAW_PATH 100005
 // 原型画板消息_改变模式, lParam设置模式PROTOTYPEBOARD_MODE_
 #define PROTOTYPEBOARD_MESSAGE_MODE 100006
 // 原型画板消息_设置图片，wParam为图片句柄HEXIMAGE，lParam为是否保持宽高比（1保持，0拉伸）
