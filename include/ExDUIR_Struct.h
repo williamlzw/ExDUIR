@@ -1771,6 +1771,10 @@
 #define CHATBOX_MESSAGE_SETIMAGE_USER 10015
 // 消息_对话盒_设置助手图标 lParam: 图标句柄HEXIMAGE
 #define CHATBOX_MESSAGE_SETIMAGE_ASSISTANT 10016
+// 消息_对话盒_清空消息
+#define CHATBOX_MESSAGE_CLEAR 10017
+// 消息_对话盒_删除表项 wParam:表项索引
+#define CHATBOX_MESSAGE_DELITEM 10018
 #pragma endregion chatbox message constant
 
 
@@ -3120,7 +3124,10 @@ struct EX_FLOWCHART_PORT
 struct EX_FLOWCHART_NODE
 {
 	INT id;
-	FLOAT x, y, width, height;
+	FLOAT x;
+	FLOAT y;
+	FLOAT width;
+	FLOAT height;
 	LPCWSTR title;
 
 	EX_FLOWCHART_PORT* ports;   // 统一的端口数组

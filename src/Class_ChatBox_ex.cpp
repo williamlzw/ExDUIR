@@ -18,7 +18,7 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
     if (uMsg == WM_CREATE)
     {
         auto ptr = (EX_CHATBOX_ITEMINFO*)malloc(sizeof(EX_CHATBOX_ITEMINFO));
-        ptr->Items = NULL;
+        ptr->Items = nullptr;
         ptr->Count = 0;
         Ex_ObjSetLong(hObj, CHATBOX_LONG_ITEMARRAY, (LONG_PTR)ptr);
         Ex_ObjSetLong(hObj, CHATBOX_LONG_BKG_COLOR, ExARGB(244, 246, 255, 255));
@@ -1007,6 +1007,345 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
     {
         Ex_ObjSetLong(hObj, CHATBOX_LONG_IMAGE_ASSISTANT, lParam);
     }
+    else if (uMsg == CHATBOX_MESSAGE_CLEAR)
+    {
+        EX_CHATBOX_ITEMINFO* arr = (EX_CHATBOX_ITEMINFO*)Ex_ObjGetLong(hObj, CHATBOX_LONG_ITEMARRAY);
+        if (arr != NULL) {
+            // 遍历所有项并释放内存
+
+            for (int i = 0; i < arr->Count; i++)
+            {
+                // 正确获取指针：解引用指针数组
+                size_t* ptrArray = (size_t*)arr->Items;
+                EX_CHATBOX_ITEMINFO_SUBITEM* sub = (EX_CHATBOX_ITEMINFO_SUBITEM*)ptrArray[i];
+
+                if (sub->Type == CHATBOX_ITEMTYPE_TEXT)
+                {
+                    EX_CHATBOX_ITEMINFO_TEXT* data = (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data;
+                    Ex_MemFree((void*)data->Text); // 释放文本字符串
+                    free(data);              // 释放文本数据结构体
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_CARD)
+                {
+                    EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
+                    Ex_MemFree((void*)data->Title); // 释放文本字符串
+                    Ex_MemFree((void*)data->ReasonTitle);
+                    Ex_MemFree((void*)data->Reason);
+                    Ex_MemFree((void*)data->Content);
+                    Ex_MemFree((void*)data->ButtonText);
+                    _img_destroy(data->Image);
+                    free(data);              // 释放数据结构体
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
+                {
+                    EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
+                    Ex_MemFree((void*)data->Title);
+                    Ex_MemFree((void*)data->Content);
+                    _img_destroy(data->Image);
+                    free(data);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+                {
+                    EX_CHATBOX_ITEMINFO_ERRORLIST* data = (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data;
+                    Ex_MemFree((void*)data->Title);
+                    _img_destroy(data->Image);
+                    free(data->Layout.rcErrorCodeList);
+                    free(data->Layout.rcErrorCodeTextList);
+                    free(data->Layout.rcDescriptionList);
+                    free(data->Layout.rcDescriptionTextList);
+                    // 释放错误列表数组
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        Ex_MemFree((void*)data->ListInfo[j].ErrorCode);
+                        Ex_MemFree((void*)data->ListInfo[j].ErrorCodeText);
+                        Ex_MemFree((void*)data->ListInfo[j].Description);
+                        Ex_MemFree((void*)data->ListInfo[j].DescriptionText);
+                    }
+                    free(data->ListInfo);
+                    free(data);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_INFOLIST)
+                {
+                    EX_CHATBOX_ITEMINFO_INFOLIST* data = (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data;
+                    Ex_MemFree((void*)data->Content);
+                    free(data->Layout.rcDescriptionList);
+                    free(data->Layout.rcTitleList);
+                    // 释放错误列表数组
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        Ex_MemFree((void*)data->ListInfo[j].Title);
+                        Ex_MemFree((void*)data->ListInfo[j].Description);
+                    }
+                    free(data->ListInfo);
+                    free(data);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_TABLELIST)
+                {
+                    EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data;
+
+                    // 1. 释放内容文本
+                    if (data->Content != nullptr) {
+                        Ex_MemFree((void*)data->Content);
+                    }
+
+                    // 2. 释放布局的矩形数组
+                    if (data->Layout.rcUnitList != nullptr) {
+                        free(data->Layout.rcUnitList);
+                    }
+
+                    // 3. 释放每行的列数据
+                    if (data->ListInfo != nullptr) {
+                        for (int j = 0; j < data->ListCount; j++)
+                        {
+                            EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* unit = &(data->ListInfo[j]);
+
+                            if (unit->Columns != nullptr) {
+                                // 3.1 释放每个列文本
+                                for (int k = 0; k < data->ColumnCount; k++)
+                                {
+                                    if (unit->Columns[k].Text != nullptr) {
+                                        Ex_MemFree((void*)unit->Columns[k].Text);
+                                    }
+                                }
+
+                                // 3.2 释放列文本单元数组
+                                free(unit->Columns);
+                            }
+                        }
+
+                        // 3.3 释放行单元数组
+                        free(data->ListInfo);
+                    }
+
+                    // 4. 释放主结构体
+                    free(data);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
+                {
+                    EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)sub->Data;
+                    Ex_MemFree((void*)data->Content);
+                    Ex_MemFree((void*)data->Title);
+                    free(data->Layout.rcUnitList);
+                    for (int j = 0; j < data->ListCount; j++)
+                    {
+                        Ex_MemFree((void*)data->ListInfo[j].Text);
+                    }
+                    free(data->ListInfo);
+                    free(data);
+                }
+                else if (sub->Type == CHATBOX_ITEMTYPE_MARKDOWN)
+                {
+                    EX_CHATBOX_ITEMINFO_MARKDOWN* data = (EX_CHATBOX_ITEMINFO_MARKDOWN*)sub->Data;
+                    Ex_MemFree((void*)data->MarkdownText);
+                    for (int j = 0; j < data->ElementCount; j++)
+                    {
+                        Ex_MemFree((void*)data->ElementList[j].Text);
+                        if (data->ElementList[j].Type == MD_ELEMENT_IMAGE)
+                        {
+                            _img_destroy(data->ElementList[j].hImage);
+                        }
+                        // 释放行内元素
+                        if (data->ElementList[j].InlineCount > 0 && data->ElementList[j].InlineElements)
+                        {
+                            for (int k = 0; k < data->ElementList[j].InlineCount; k++)
+                            {
+                                Ex_MemFree((void*)data->ElementList[j].InlineElements[k].Text);
+                                if (data->ElementList[j].InlineElements[k].Url) {
+                                    Ex_MemFree((void*)data->ElementList[j].InlineElements[k].Url);
+                                }
+                            }
+                            free(data->ElementList[j].InlineElements);
+                        }
+                        // 释放表格数据
+                        if (data->ElementList[j].Type == MD_ELEMENT_TABLE && data->ElementList[j].CellList)
+                        {
+                            INT totalCells = data->ElementList[j].RowCount * data->ElementList[j].ColumnCount;
+                            for (INT c = 0; c < totalCells; c++)
+                            {
+                                Ex_MemFree((void*)data->ElementList[j].CellList[c].Text);
+                            }
+                            free(data->ElementList[j].CellList);
+                        }
+                    }
+                    free(data->ElementList);
+                    free(data);
+                }
+                free(sub); // 释放子项结构体本身
+            }
+            free(arr->Items); // 释放项数组
+            arr->Count = 0;
+            arr->Items = nullptr;
+            Ex_ObjInvalidateRect(hObj, 0);
+        }
+    }
+    else if (uMsg == CHATBOX_MESSAGE_DELITEM)
+    {
+        EX_CHATBOX_ITEMINFO* arr = (EX_CHATBOX_ITEMINFO*)Ex_ObjGetLong(hObj, CHATBOX_LONG_ITEMARRAY);
+        if (arr == NULL) return -1;
+        size_t* ptrArray = (size_t*)arr->Items;
+        INT index = (INT)wParam;
+        
+        if (index < 0 || index >= arr->Count) return -1; // 索引无效
+
+        EX_CHATBOX_ITEMINFO_SUBITEM* sub = (EX_CHATBOX_ITEMINFO_SUBITEM*)ptrArray[index];
+        // 释放删除项的所有内存（复用销毁/清空的释放逻辑）
+        if (sub->Type == CHATBOX_ITEMTYPE_TEXT)
+        {
+            EX_CHATBOX_ITEMINFO_TEXT* data = (EX_CHATBOX_ITEMINFO_TEXT*)sub->Data;
+            Ex_MemFree((void*)data->Text);
+            free(data);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_CARD)
+        {
+            EX_CHATBOX_ITEMINFO_CARD* data = (EX_CHATBOX_ITEMINFO_CARD*)sub->Data;
+            Ex_MemFree((void*)data->Title);
+            Ex_MemFree((void*)data->ReasonTitle);
+            Ex_MemFree((void*)data->Reason);
+            Ex_MemFree((void*)data->Content);
+            Ex_MemFree((void*)data->ButtonText);
+            _img_destroy(data->Image);
+            free(data);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_BOOSTMODE)
+        {
+            EX_CHATBOX_ITEMINFO_BOOSTMODE* data = (EX_CHATBOX_ITEMINFO_BOOSTMODE*)sub->Data;
+            Ex_MemFree((void*)data->Title);
+            Ex_MemFree((void*)data->Content);
+            _img_destroy(data->Image);
+            free(data);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_ERRORLIST)
+        {
+            EX_CHATBOX_ITEMINFO_ERRORLIST* data = (EX_CHATBOX_ITEMINFO_ERRORLIST*)sub->Data;
+            Ex_MemFree((void*)data->Title);
+            _img_destroy(data->Image);
+            free(data->Layout.rcErrorCodeList);
+            free(data->Layout.rcErrorCodeTextList);
+            free(data->Layout.rcDescriptionList);
+            free(data->Layout.rcDescriptionTextList);
+            for (int j = 0; j < data->ListCount; j++)
+            {
+                Ex_MemFree((void*)data->ListInfo[j].ErrorCode);
+                Ex_MemFree((void*)data->ListInfo[j].ErrorCodeText);
+                Ex_MemFree((void*)data->ListInfo[j].Description);
+                Ex_MemFree((void*)data->ListInfo[j].DescriptionText);
+            }
+            free(data->ListInfo);
+            free(data);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_INFOLIST)
+        {
+            EX_CHATBOX_ITEMINFO_INFOLIST* data = (EX_CHATBOX_ITEMINFO_INFOLIST*)sub->Data;
+            Ex_MemFree((void*)data->Content);
+            free(data->Layout.rcDescriptionList);
+            free(data->Layout.rcTitleList);
+            for (int j = 0; j < data->ListCount; j++)
+            {
+                Ex_MemFree((void*)data->ListInfo[j].Title);
+                Ex_MemFree((void*)data->ListInfo[j].Description);
+            }
+            free(data->ListInfo);
+            free(data);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_TABLELIST)
+        {
+            EX_CHATBOX_ITEMINFO_TABLELIST* data = (EX_CHATBOX_ITEMINFO_TABLELIST*)sub->Data;
+            if (data->Content != nullptr) {
+                Ex_MemFree((void*)data->Content);
+            }
+            if (data->Layout.rcUnitList != nullptr) {
+                free(data->Layout.rcUnitList);
+            }
+            if (data->ListInfo != nullptr) {
+                for (int j = 0; j < data->ListCount; j++)
+                {
+                    EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* unit = &(data->ListInfo[j]);
+                    if (unit->Columns != nullptr) {
+                        for (int k = 0; k < data->ColumnCount; k++)
+                        {
+                            if (unit->Columns[k].Text != nullptr) {
+                                Ex_MemFree((void*)unit->Columns[k].Text);
+                            }
+                        }
+                        free(unit->Columns);
+                    }
+                }
+                free(data->ListInfo);
+            }
+            free(data);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_LINK)
+        {
+            EX_CHATBOX_ITEMINFO_LINK* data = (EX_CHATBOX_ITEMINFO_LINK*)sub->Data;
+            Ex_MemFree((void*)data->Content);
+            Ex_MemFree((void*)data->Title);
+            free(data->Layout.rcUnitList);
+            for (int j = 0; j < data->ListCount; j++)
+            {
+                Ex_MemFree((void*)data->ListInfo[j].Text);
+            }
+            free(data->ListInfo);
+            free(data);
+        }
+        else if (sub->Type == CHATBOX_ITEMTYPE_MARKDOWN)
+        {
+            EX_CHATBOX_ITEMINFO_MARKDOWN* data = (EX_CHATBOX_ITEMINFO_MARKDOWN*)sub->Data;
+            Ex_MemFree((void*)data->MarkdownText);
+            for (int j = 0; j < data->ElementCount; j++)
+            {
+                Ex_MemFree((void*)data->ElementList[j].Text);
+                if (data->ElementList[j].Type == MD_ELEMENT_IMAGE)
+                {
+                    _img_destroy(data->ElementList[j].hImage);
+                }
+                if (data->ElementList[j].InlineCount > 0 && data->ElementList[j].InlineElements)
+                {
+                    for (int k = 0; k < data->ElementList[j].InlineCount; k++)
+                    {
+                        Ex_MemFree((void*)data->ElementList[j].InlineElements[k].Text);
+                        if (data->ElementList[j].InlineElements[k].Url) {
+                            Ex_MemFree((void*)data->ElementList[j].InlineElements[k].Url);
+                        }
+                    }
+                    free(data->ElementList[j].InlineElements);
+                }
+                if (data->ElementList[j].Type == MD_ELEMENT_TABLE && data->ElementList[j].CellList)
+                {
+                    INT totalCells = data->ElementList[j].RowCount * data->ElementList[j].ColumnCount;
+                    for (INT c = 0; c < totalCells; c++)
+                    {
+                        Ex_MemFree((void*)data->ElementList[j].CellList[c].Text);
+                    }
+                    free(data->ElementList[j].CellList);
+                }
+            }
+            free(data->ElementList);
+            free(data);
+        }
+        free(sub); // 释放子项结构体
+
+        // 移动后续项指针，填补删除的空位
+        for (int i = index; i < arr->Count - 1; i++)
+        {
+            ptrArray[i] = ptrArray[i + 1];
+        }
+
+        arr->Count--;
+
+        // 缩小数组内存（可选，防止内存浪费）
+        if (arr->Count > 0) {
+            void* newItems = realloc(arr->Items, arr->Count * sizeof(size_t));
+            if (newItems != NULL) {
+                arr->Items = newItems;
+            }
+        }
+        else {
+            free(arr->Items);
+            arr->Items = nullptr;
+        }
+        _chatbox_update_layout(hObj);
+        Ex_ObjInvalidateRect(hObj, 0);
+        }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
