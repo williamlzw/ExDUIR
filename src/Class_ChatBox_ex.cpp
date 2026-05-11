@@ -3163,6 +3163,10 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     const INT MARKER_WIDTH = 25;
     const INT TABLE_CELL_PADDING = 8;
 
+    // 重置有序列表计数器（修复：防止多个Markdown项/同级列表序号错乱）
+    static std::map<INT, INT> orderedListCounters;
+    orderedListCounters.clear();
+
     // 3. 遍历绘制元素
     for (int i = 0; i < data->ElementCount; i++)
     {
@@ -3271,7 +3275,12 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
 
             std::wstring marker;
             if (isOrdered) {
-                marker = L"1.";
+                // 修复：有序列表按层级自动编号，同级序号自增
+                if (orderedListCounters.find(listLevel) == orderedListCounters.end()) {
+                    orderedListCounters[listLevel] = 1;
+                }
+                marker = std::to_wstring(orderedListCounters[listLevel]) + L".";
+                orderedListCounters[listLevel]++;
             }
             else {
                 switch (listLevel % 3) {

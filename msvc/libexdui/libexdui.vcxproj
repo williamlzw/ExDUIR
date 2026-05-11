@@ -281,7 +281,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)thirdparty;$(SolutionDir)thirdparty\vlc\$(Platform)\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)thirdparty\webview2\include;$(SolutionDir)thirdparty;$(SolutionDir)thirdparty\vlc\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\lib\</OutDir>
     <IntDir>$(SolutionDir)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)thirdparty\webview2\$(Platform)\lib;$(SolutionDir)thirdparty\vlc\$(Platform)\lib;$(LibraryPath)</LibraryPath>
