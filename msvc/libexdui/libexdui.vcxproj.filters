@@ -282,6 +282,9 @@
     <ClCompile Include="..\..\src\Class_CandlestickChart_ex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\Class_ImgPreviewListView_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Class_Scrollbar_ex.h">
@@ -562,6 +565,12 @@
     </ClInclude>
     <ClInclude Include="..\..\thirdparty\rapidyaml\rapidyaml.hpp">
       <Filter>rapidyaml</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_ChatBoxEx_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Class_ImgPreviewListView_ex.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\src\Class_ChatBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Grid_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_ImgPreviewListView_ex.cpp" />
     <ClCompile Include="..\..\src\Class_LineChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_PropertyGrid_ex.cpp" />
     <ClCompile Include="..\..\src\Class_FlowScrollView_ex.cpp" />
@@ -115,9 +116,11 @@
     <ClInclude Include="..\..\include\Array_ex.h" />
     <ClInclude Include="..\..\include\Canvas_ex.h" />
     <ClInclude Include="..\..\include\Class_CandlestickChart_ex.h" />
+    <ClInclude Include="..\..\include\Class_ChatBoxEx_ex.h" />
     <ClInclude Include="..\..\include\Class_ChatBox_ex.h" />
     <ClInclude Include="..\..\include\Class_FlowChart_ex.h" />
     <ClInclude Include="..\..\include\Class_Grid_ex.h" />
+    <ClInclude Include="..\..\include\Class_ImgPreviewListView_ex.h" />
     <ClInclude Include="..\..\include\Class_LineChart_ex.h" />
     <ClInclude Include="..\..\include\Class_PropertyGrid_ex.h" />
     <ClInclude Include="..\..\include\Class_FlowScrollView_ex.h" />

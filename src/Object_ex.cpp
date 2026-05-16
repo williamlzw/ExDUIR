@@ -50,6 +50,7 @@ void _object_init()
     _splitter_register();
     _prototype_board_register();
     _candlestickchart_register();
+    _imgpreviewlistview_register();
 
 #ifdef WEB_VIEW2
     _webview_register();

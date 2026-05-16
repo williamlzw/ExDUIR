@@ -3207,6 +3207,33 @@ struct EX_CANDLESTICK_DATA {
 	DOUBLE ma30;          // 30日均线
 };
 
+
+// 图片预览列表_消息定义
+#define LISTVIEW_MESSAGE_USER 20000
+// 图片预览列表_插入表项 wParam:是否重画 lParam: EX_IMGPREVIEWLISTVIEW_ITEMINFO信息结构
+#define IMGPREVIEWLISTVIEW_MESSAGE_INSERTITEM       (LISTVIEW_MESSAGE_USER + 1) 
+// 图片预览列表_删除表项 wParam:是否重画 lParam: 索引 从1开始
+#define IMGPREVIEWLISTVIEW_MESSAGE_DELETEITEM       (LISTVIEW_MESSAGE_USER + 2) 
+// 图片预览列表_删除全部 wParam:是否重画
+#define IMGPREVIEWLISTVIEW_MESSAGE_DELETEALLITEMS   (LISTVIEW_MESSAGE_USER + 3)
+// 图片预览列表_设置宽高
+#define IMGPREVIEWLISTVIEW_MESSAGE_SETITEMSIZE      (LISTVIEW_MESSAGE_USER + 4)
+// 图片预览列表_获取表项信息 lParam: 索引 从1开始, 返回EX_IMGPREVIEWLISTVIEW_ITEMINFO信息结构
+#define IMGPREVIEWLISTVIEW_MESSAGE_GETITEMINFO      (LISTVIEW_MESSAGE_USER + 5) // 获取表项信息(含路径)
+// 图片预览列表_获取选中 返回索引
+#define IMGPREVIEWLISTVIEW_MESSAGE_GETSELECTED      (LISTVIEW_MESSAGE_USER + 6)
+// 图片预览列表_获取图片总数 返回总数
+#define IMGPREVIEWLISTVIEW_MESSAGE_GETCOUNT      (LISTVIEW_MESSAGE_USER + 7)
+// 图片预览列表_更新
+#define IMGPREVIEWLISTVIEW_MESSAGE_UPDATE           LISTVIEW_MESSAGE_UPDATE
+
+
+// 图片预览列表_表项数据结构
+struct EX_IMGPREVIEWLISTVIEW_ITEMINFO {
+	INT nIndex;          // 索引
+	LPCWSTR pwzPath;      // 图片路径
+};
+
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown* effect,
 	_In_reads_(dataSize) const BYTE* data,
 	UINT32                           dataSize);

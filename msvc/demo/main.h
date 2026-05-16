@@ -79,6 +79,7 @@
 #include "test_flowscrollview.h"
 #include "test_prototypeboard.h"
 #include "test_candlestickchart.h"
+#include "test_imgpreviewlistview.h"
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
                                   LRESULT* lpResult);
