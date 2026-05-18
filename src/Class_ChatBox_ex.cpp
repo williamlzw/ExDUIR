@@ -261,10 +261,35 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
     {
         _chatbox_paint(hObj);
     }
+    else if (uMsg == WM_KEYDOWN)
+    {
+        // 检测 Ctrl+C (虚拟键码 'C' 是 0x43)
+        if (wParam == 0x43 && (GetAsyncKeyState(VK_CONTROL) & 0x8000))
+        {
+            HEXCANVAS hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
+            _canvas_copy_selected_text(hCanvas);
+
+        }
+    }
+    else if (uMsg == WM_LBUTTONDBLCLK)
+    {
+        auto x = ((FLOAT)GET_X_LPARAM(lParam));//鼠标横坐标
+        auto y = ((FLOAT)GET_Y_LPARAM(lParam));//鼠标纵坐标
+        HEXCANVAS hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
+        _canvas_handle_mouse_event_for_text(hCanvas, uMsg, x, y);
+    }
+    else if (uMsg == WM_LBUTTONDOWN)
+    {
+        auto x = ((FLOAT)GET_X_LPARAM(lParam));//鼠标横坐标
+        auto y = ((FLOAT)GET_Y_LPARAM(lParam));//鼠标纵坐标
+        HEXCANVAS hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
+        _canvas_handle_mouse_event_for_text(hCanvas, uMsg, x, y);
+    }
     else if (uMsg == WM_MOUSEMOVE)
     {
         auto x = ((FLOAT)GET_X_LPARAM(lParam));//鼠标横坐标
         auto y = ((FLOAT)GET_Y_LPARAM(lParam));//鼠标纵坐标
+        
         INT nPos = Ex_ObjGetLong(hObj, CHATBOX_LONG_TOP_OFFSET); // 滚动偏移
         INT hoverIndex = -1; // 当前悬停项索引
 
@@ -299,13 +324,15 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
             Ex_ObjSetLong(hObj, CHATBOX_LONG_HOVER_INDEX, hoverIndex);
             Ex_ObjInvalidateRect(hObj, 0); // 需要重绘更新按钮状态
         }
+        HEXCANVAS hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
+        _canvas_handle_mouse_event_for_text(hCanvas, uMsg, x, y);
     }
     else if (uMsg == WM_LBUTTONUP)
     {
         INT nPos = Ex_ObjGetLong(hObj, CHATBOX_LONG_TOP_OFFSET); // 滚动偏移
         FLOAT x = (FLOAT)GET_X_LPARAM(lParam); // 鼠标横坐标
         FLOAT y = (FLOAT)GET_Y_LPARAM(lParam); // 鼠标纵坐标
-
+        
         EX_CHATBOX_ITEMINFO* arr = (EX_CHATBOX_ITEMINFO*)Ex_ObjGetLong(hObj, CHATBOX_LONG_ITEMARRAY);
         if (arr != NULL)
         {
@@ -368,6 +395,8 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                 }
             }
         }
+        HEXCANVAS hCanvas = Ex_ObjGetLong(hObj, OBJECT_LONG_HCANVAS);
+        _canvas_handle_mouse_event_for_text(hCanvas, uMsg, x, y);
     }
     else if (uMsg == WM_SIZE)
     {
@@ -1436,7 +1465,7 @@ void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontContent,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Content, -1,
-        DT_LEFT | DT_TOP,
+        DT_LEFT | DT_TOP | DT_SELECTABLE,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
 
@@ -1445,7 +1474,7 @@ void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontTitle,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Title, -1,
-        DT_LEFT | DT_TOP,
+        DT_LEFT | DT_TOP | DT_SELECTABLE,
         rcTitle.left, rcTitle.top,
         rcTitle.right, rcTitle.bottom);
 
@@ -1459,7 +1488,7 @@ void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         _canvas_drawtext(ps.hCanvas, hFontText,
             ExARGB(70, 99, 255, 255),
             ((EX_CHATBOX_ITEMINFO_LINK_UNIT*)data->ListInfo)[i].Text, -1,
-            DT_CENTER | DT_VCENTER,
+            DT_CENTER | DT_VCENTER | DT_SELECTABLE,
             rcText.left, rcText.top,
             rcText.right, rcText.bottom);
     }
@@ -1503,7 +1532,7 @@ void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontContent,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Content, -1,
-        DT_LEFT | DT_TOP,
+        DT_LEFT | DT_TOP | DT_SELECTABLE,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
     _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
@@ -1525,7 +1554,7 @@ void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             _canvas_drawtext(ps.hCanvas, hFontTitle,
                 Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
                 ((EX_CHATBOX_ITEMINFO_TABLELIST_UNIT*)data->ListInfo)[i].Columns[j].Text, -1,
-                DT_CENTER | DT_VCENTER,
+                DT_CENTER | DT_VCENTER | DT_SELECTABLE,
                 rcColumnText.left, rcColumnText.top,
                 rcColumnText.right, rcColumnText.bottom);
         }
@@ -1573,7 +1602,7 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontContent,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Content, -1,
-        DT_LEFT | DT_TOP,
+        DT_LEFT | DT_TOP | DT_SELECTABLE,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
     _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
@@ -1585,7 +1614,7 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         _canvas_drawtext(ps.hCanvas, hFontTitle,
             ExARGB(134, 134, 140, 255),
             ((EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)data->ListInfo)[i].Title, -1,
-            DT_LEFT | DT_TOP,
+            DT_LEFT | DT_TOP | DT_SELECTABLE,
             rcTitle.left + (10), rcTitle.top,
             rcTitle.right, rcTitle.bottom);
 
@@ -1594,7 +1623,7 @@ void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         _canvas_drawtext(ps.hCanvas, hFontDescription,
             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
             ((EX_CHATBOX_ITEMINFO_INFOLIST_UNIT*)data->ListInfo)[i].Description, -1,
-            DT_LEFT | DT_TOP,
+            DT_LEFT | DT_TOP | DT_SELECTABLE,
             rcDescription.left, rcDescription.top,
             rcDescription.right, rcDescription.bottom);
 
@@ -1662,7 +1691,7 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontTitle,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Title, -1,
-        DT_LEFT | DT_TOP,
+        DT_LEFT | DT_TOP | DT_SELECTABLE,
         rcTitle.left, rcTitle.top,
         rcTitle.right, rcTitle.bottom);
     _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
@@ -1675,7 +1704,7 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         _canvas_drawtext(ps.hCanvas, hFontErrorCode,
             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
             ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].ErrorCode, -1,
-            DT_LEFT | DT_TOP,
+            DT_LEFT | DT_TOP | DT_SELECTABLE,
             rcErrorCode.left, rcErrorCode.top,
             rcErrorCode.right, rcErrorCode.bottom);
 
@@ -1684,7 +1713,7 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         _canvas_drawtext(ps.hCanvas, hFontErrorCode,
             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
             ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].ErrorCodeText, -1,
-            DT_LEFT | DT_TOP,
+            DT_LEFT | DT_TOP | DT_SELECTABLE,
             rcErrorCodeText.left, rcErrorCodeText.top,
             rcErrorCodeText.right, rcErrorCodeText.bottom);
 
@@ -1693,7 +1722,7 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         _canvas_drawtext(ps.hCanvas, hFontDescription,
             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
             ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].Description, -1,
-            DT_LEFT | DT_TOP,
+            DT_LEFT | DT_TOP | DT_SELECTABLE,
             rcDescription.left, rcDescription.top,
             rcDescription.right, rcDescription.bottom);
 
@@ -1702,7 +1731,7 @@ void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
         _canvas_drawtext(ps.hCanvas, hFontDescription,
             Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
             ((EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT*)data->ListInfo)[i].DescriptionText, -1,
-            DT_LEFT | DT_TOP,
+            DT_LEFT | DT_TOP | DT_SELECTABLE,
             rcDescriptionText.left, rcDescriptionText.top,
             rcDescriptionText.right, rcDescriptionText.bottom);
         _brush_setcolor(hBrush, ExARGB(228, 228, 228, 255));
@@ -1781,14 +1810,14 @@ void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontTitle,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Title, -1,
-        DT_LEFT | DT_TOP,
+        DT_LEFT | DT_TOP | DT_SELECTABLE,
         rcTitle.left, rcTitle.top,
         rcTitle.right, rcTitle.bottom);
 
     _canvas_drawtext(ps.hCanvas, hFontContent,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Content, -1,
-        DT_LEFT | DT_TOP | DT_WORDBREAK,
+        DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
 
@@ -1870,7 +1899,7 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontTitle,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Title, -1,
-        DT_LEFT | DT_VCENTER | DT_WORDBREAK,
+        DT_LEFT | DT_VCENTER | DT_WORDBREAK | DT_SELECTABLE,
         rcTitle.left, rcTitle.top,
         rcTitle.right, rcTitle.bottom);
 
@@ -1879,7 +1908,7 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontContent,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Content, -1,
-        DT_LEFT | DT_TOP | DT_WORDBREAK,
+        DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
         rcContent.left, rcContent.top,
         rcContent.right, rcContent.bottom);
 
@@ -1896,14 +1925,14 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontReasonTitle,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->ReasonTitle, -1,
-        DT_LEFT | DT_TOP,
+        DT_LEFT | DT_TOP | DT_SELECTABLE,
         rcReasonTitle.left, rcReasonTitle.top,
         rcReasonTitle.right, rcReasonTitle.bottom);
 
     _canvas_drawtext(ps.hCanvas, hFontReason,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->Reason, -1,
-        DT_LEFT | DT_TOP | DT_WORDBREAK,
+        DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
         rcReason.left, rcReason.top,
         rcReason.right, rcReason.bottom);
 
@@ -1924,7 +1953,7 @@ void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     _canvas_drawtext(ps.hCanvas, hFontButton,
         Ex_ObjGetColor(hObj, COLOR_EX_TEXT_NORMAL),
         data->ButtonText, -1,
-        DT_CENTER | DT_VCENTER,
+        DT_CENTER | DT_VCENTER | DT_SELECTABLE,
         rcButton.left, rcButton.top,
         rcButton.right, rcButton.bottom);
 
@@ -2001,7 +2030,7 @@ void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
 
     _canvas_drawtext(ps.hCanvas, hFontText, textColor,
         data->Text, -1,
-        DT_LEFT | DT_TOP | DT_WORDBREAK,
+        DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
         rcText.left, rcText.top,
         rcText.right, rcText.bottom);
 
@@ -3190,7 +3219,7 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             _brush_setcolor(hBrush, ExARGB(245, 245, 245, 255));
             _canvas_fillroundedrect(ps.hCanvas, hBrush, rc.left, rc.top, rc.right, rc.bottom, 5, 5);
             _canvas_drawtext(ps.hCanvas, hCodeFont, ExARGB(30, 30, 30, 255),
-                elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+                elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
                 rc.left + CODE_PADDING, rc.top + CODE_PADDING,
                 rc.right - CODE_PADDING, rc.bottom - CODE_PADDING);
             break;
@@ -3232,7 +3261,7 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             }
             else {
                 _canvas_drawtext(ps.hCanvas, hTextFont, ExARGB(80, 80, 80, 255),
-                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
                     rc.left + currentLevelBarWidth, rc.top + QUOTE_PADDING,
                     rc.right - QUOTE_PADDING, rc.bottom - QUOTE_PADDING);
             }
@@ -3250,7 +3279,7 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             }
             else {
                 _canvas_drawtext(ps.hCanvas, hTitleFont, ExARGB(0, 0, 0, 255),
-                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
                     rc.left, rc.top, rc.right, rc.bottom);
             }
             _font_destroy(hTitleFont);
@@ -3291,7 +3320,7 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             }
 
             _canvas_drawtext(ps.hCanvas, hTextFont, ExARGB(0, 0, 0, 255),
-                marker.c_str(), -1, DT_RIGHT | DT_TOP,
+                marker.c_str(), -1, DT_RIGHT | DT_TOP | DT_SELECTABLE,
                 rcMarker.left, rcMarker.top, rcMarker.right, rcMarker.bottom);
 
             // 绘制列表文本
@@ -3300,7 +3329,7 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             }
             else {
                 _canvas_drawtext(ps.hCanvas, hTextFont, ExARGB(0, 0, 0, 255),
-                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
                     rc.left + indent + MARKER_WIDTH, rc.top, rc.right, rc.bottom);
             }
             break;
@@ -3337,7 +3366,7 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
                     _canvas_drawtext(ps.hCanvas, hCellFont,
                         r == 0 ? ExARGB(0, 0, 0, 255) : ExARGB(50, 50, 50, 255),
                         elem->CellList[cellIdx].Text, -1,
-                        DT_CENTER | DT_VCENTER,
+                        DT_CENTER | DT_VCENTER | DT_SELECTABLE,
                         rcCell.left + TABLE_CELL_PADDING, rcCell.top + TABLE_CELL_PADDING,
                         rcCell.right - TABLE_CELL_PADDING, rcCell.bottom - TABLE_CELL_PADDING);
                     if (needDestroy) _font_destroy(hCellFont);
@@ -3352,7 +3381,7 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
             }
             else {
                 _canvas_drawtext(ps.hCanvas, hTextFont, ExARGB(30, 30, 30, 255),
-                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+                    elem->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
                     rc.left, rc.top, rc.right, rc.bottom);
             }
             break;
@@ -4209,13 +4238,13 @@ void _chatbox_paint_inline(HEXOBJ hObj, EX_PAINTSTRUCT ps, HEXFONT hDefaultFont,
         // 绘制文本
         if (il->Type == MD_INLINE_CODE) {
             _canvas_drawtext(ps.hCanvas, hFont, textColor,
-                il->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+                il->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
                 rc.left + 4, rc.top + 2, rc.right - 4, rc.bottom - 2);
         }
         else {
 
             _canvas_drawtext(ps.hCanvas, hFont, textColor,
-                il->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK,
+                il->Text, -1, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_SELECTABLE,
                 rc.left, rc.top, rc.right, rc.bottom);
         }
 

@@ -131,6 +131,8 @@
 #define ENGINE_LONG_OBJFOCUS -53
 // 引擎数值_窗口圆角大小
 #define ENGINE_LONG_RADIUS -11
+// 引擎数值_画布句柄
+#define ENGINE_LONG_HCANVAS -55
 #pragma endregion engine long constant
 
 #pragma region image type constant
@@ -1977,7 +1979,8 @@
 #define ExRGB2ARGB(rgb, a) \
     ((EXARGB)(ExGetB(rgb) | (ExGetG(rgb) << 8) | (ExGetR(rgb) << 16) | ((EXARGB)(a) << 24)))
 
-
+// 文本格式_可选中
+#define DT_SELECTABLE 0x00800000
 
 typedef UINT8    CHANNEL;        // 通道
 typedef COLORREF EXARGB;         // 颜色

@@ -261,7 +261,8 @@ _canvas_drawquadraticbezier
 _canvas_createindependent
 _canvas_alphablend
 _canvas_bitblt
-
+_canvas_handle_mouse_event_for_text
+_canvas_copy_selected_text
 ;----------------------------------------
 ;img
 ;----------------------------------------

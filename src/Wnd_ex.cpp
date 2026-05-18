@@ -555,11 +555,11 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 			return ret;
 		}
 	}
-	 if (uMsg == WM_NCHITTEST)  // 132
+	if (uMsg == WM_NCHITTEST)  // 132
 	{
 		return _wnd_wm_nchittest(pWnd, hWnd, lParam);
 	}
-	else if (uMsg == WM_SETICON) 
+	else if (uMsg == WM_SETICON)
 	{
 		Ex_ObjInvalidateRect(pWnd->objCaption_, 0);//防止修改图标不会及时刷新
 	}
@@ -658,12 +658,12 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 	else if (uMsg == WM_PAINT)  // 15
 	{
 		if (_wnd_wm_paint(pWnd, hWnd)) {
-			
+
 		}
 	}
 	else if (uMsg == WM_SHOWWINDOW)  // 24
 	{
-		
+
 		if (wParam == 0) {
 			HEXOBJ objHittest = pWnd->objHittest_;
 			if (objHittest != 0) {
@@ -797,7 +797,7 @@ LRESULT CALLBACK _wnd_proc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
 
 INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 	HEXTHEME hTheme, LPARAM lParam, WinMsgPROC lpfnMsgProc) {
-	
+
 	ShowWindow(hWnd, 0);
 	RECT rcWindow{ 0 };
 	GetWindowRect(hWnd, &rcWindow);
@@ -955,7 +955,7 @@ INT _wnd_create(HEXDUI hExDui, wnd_s* pWnd, HWND hWnd, INT dwStyle,
 		}
 
 		_wnd_addstyle(hWnd, WS_THICKFRAME, FALSE);  // 强制触发样式被修改事件
-		
+
 		SetWindowSubclass(hWnd, _wnd_proc, (size_t)hWnd, (DWORD_PTR)pWnd);
 		_wnd_delstyle(hWnd, WS_THICKFRAME, FALSE);
 		IME_Control(hWnd, FALSE);
@@ -1048,7 +1048,7 @@ HEXOBJ _wnd_wm_nchittest_obj(HWND hWnd, wnd_s* pWnd, HEXOBJ objLast, INT x,
 					goto hit;
 				}
 			}
-			else if (PtInRect(&rt, po)) 
+			else if (PtInRect(&rt, po))
 			{
 			hit:
 				INT ox = x - pObj->left_;
@@ -1176,10 +1176,10 @@ INT _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 
 	POINT pt;
 	HEXOBJ objMouse = 0;
-	
+
 	pt.x = GET_X_LPARAM(lParam);
 	pt.y = GET_Y_LPARAM(lParam);
-	
+
 	ScreenToClient(hWnd, &pt);
 	if (_rgn_hittest(pWnd->hrgn_client_, pt.x, pt.y) || pWnd->dwWinState_ == SIZE_MAXIMIZED) {
 		obj_s* pobjMouse = nullptr;
@@ -1198,7 +1198,7 @@ INT _wnd_wm_nchittest(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 			pWnd->dwHitCode_ = dwHitCode;
 			if (objMouse == pWnd->objCaption_) {
 				dwHitCode = HTCAPTION;
-	
+
 			}
 			else {
 				if (((pobjMouse->dwStyle_ & OBJECT_STYLE_DISABLED) ==
@@ -1338,7 +1338,7 @@ void _wnd_sysbutton_create(HWND hWnd, wnd_s* pWnd, INT dwStyle) {
 				INT btnHeight = Ex_Scale(rcObject.bottom - rcObject.top);
 
 				right = right - btnWidth;
-	
+
 				obj_s* pObjTmp = nullptr;
 				INT nError = 0;
 				HEXOBJ objTmp =
@@ -1410,7 +1410,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 										LRESULT ret = 0;
 										if (!(pObj->pfnSubClass_)(hWnd, objNext, WM_PAINT, 0, 0, &ret))
 										{
-											
+
 											pObj->pfnClsProc_(hWnd, objNext, WM_PAINT, 0, 0);
 										}
 									}
@@ -1418,11 +1418,11 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 									{
 										pObj->pfnClsProc_(hWnd, objNext, WM_PAINT, 0, 0);
 									}
-									
+
 									pContext->SetTarget((ID2D1Bitmap*)pBitmapDisplay);
 								}
 								_canvas_cliprect(pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom); //必须CLIP,防止组件超出父组件
-						
+
 								if (((pObj->base.dwFlags_ & EOF_BPATH) == EOF_BPATH))
 								{
 									path_s* pPath = nullptr;
@@ -1446,7 +1446,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 								}
 								else
 								{
-									
+
 									if (((pObj->dwStyleEx_ & OBJECT_STYLE_EX_COMPOSITED) == OBJECT_STYLE_EX_COMPOSITED))
 									{
 										_canvas_bitblt(cvDisplay, pObj->canvas_obj_, rcClip.left, rcClip.top, rcClip.right, rcClip.bottom,
@@ -1465,7 +1465,7 @@ void _wnd_render_obj(HWND hWnd, wnd_s* pWnd, ID2D1DeviceContext* pContext,
 								pObj->w_top_, pObj->w_right_, pObj->w_bottom_, 1,
 								D2D1_DASH_STYLE_SOLID);
 						}
-						
+
 						HEXOBJ objChild = pObj->base.objChildFirst_;
 						if (objChild != 0) {
 							_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay,
@@ -1649,7 +1649,7 @@ INT _wnd_destroy(HWND hWnd, wnd_s* pWnd) {
 		_obj_notify_brothers(hWnd, pWnd->base.objChildFirst_, pObj, WM_DESTROY, 0, 0,
 			FALSE, FALSE);
 	}
-	
+
 	// clear NotifyIcon
 	if (pWnd->lpNid_) {
 		Shell_NotifyIconW(NIM_DELETE, (PNOTIFYICONDATAW)pWnd->lpNid_);
@@ -1822,7 +1822,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 			// 应用图层裁剪
 			pContext->PushLayer(&layerParams, pLayer);
 		}
-		
+
 		_canvas_drawcanvas(cvDisplay, pWnd->canvas_bkg_, rcPaint.left, rcPaint.top, rcPaint.right, rcPaint.bottom, rcPaint.left, rcPaint.top, 255, 0);
 		_wnd_render_obj(hWnd, pWnd, pContext, cvDisplay, pBitmapDisplay, rcPaint, FALSE,
 			pWnd->base.objChildFirst_, 0, 0, 255, fDX, g_Li.hObjBorderBrush);
@@ -1833,7 +1833,7 @@ void _wnd_render(HWND hWnd, wnd_s* pWnd, LPVOID hDC, RECT rcPaint, BOOL fLayer,
 			if (pLayer) pLayer->Release();
 		}
 		_wnd_render_dc(hWnd, pWnd, hDC, cvDisplay, rcPaint, fLayer);
-	
+
 		_canvas_enddraw(cvDisplay);
 	}
 }
@@ -1878,7 +1878,7 @@ void _wnd_wm_size(wnd_s* pWnd, HWND hWnd, WPARAM wParam, INT width,
 			SWP_EX_NODPISCALE | SWP_ASYNCWINDOWPOS);
 		HEXOBJ hObj = 0;
 		if (pWnd->dwWinState_ != wParam) {
-			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_HELP) == 
+			if (((pWnd->dwStyle_ & WINDOW_STYLE_BUTTON_HELP) ==
 				WINDOW_STYLE_BUTTON_HELP))
 			{
 				hObj = _obj_getobjfromidorname(pWnd, WINDOW_STYLE_BUTTON_HELP);
@@ -2024,7 +2024,7 @@ BOOL _wnd_wm_paint(wnd_s* pWnd, HWND hWnd) {
 	if (!fLayer) {
 		EndPaint(hWnd, &ps);
 	}
-	
+
 	if ((pWnd->base.dwFlags_ & EWF_BRENDERED) != EWF_BRENDERED) {
 		pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BRENDERED;
 		_wnd_paint_shadow(pWnd, TRUE, FALSE);
@@ -2036,7 +2036,7 @@ BOOL _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 	RECT rcMonitor{ 0 }, rcDesk{ 0 };
 	BOOL ret = FALSE;
 	if (_wnd_getscreenrect(hWnd, &rcMonitor, &rcDesk)) {
-	
+
 		if (((pWnd->dwStyle_ & WINDOW_STYLE_FULLSCREEN) ==
 			WINDOW_STYLE_FULLSCREEN))  // 全屏模式
 		{
@@ -2070,8 +2070,8 @@ BOOL _wnd_wm_getminmaxinfo(wnd_s* pWnd, HWND hWnd, LPARAM lParam) {
 void _wnd_wm_buttondown(HWND hWnd, wnd_s* pWnd, HEXOBJ hObj, obj_s* pObj,
 	INT uMsg, WPARAM wParam, LPARAM lParam, BOOL sendmsg) {
 	if ((pWnd->base.dwFlags_ & EWF_BTRACKOBJECT) != EWF_BTRACKOBJECT) {
-		FLAGS_DEL(pWnd->base.dwFlags_ , (EWF_BLEFTTRACK | EWF_BRIGHTTRACK |
-				EWF_BMIDTRACK | EWF_BLEFTDTRACK));
+		FLAGS_DEL(pWnd->base.dwFlags_, (EWF_BLEFTTRACK | EWF_BRIGHTTRACK |
+			EWF_BMIDTRACK | EWF_BLEFTDTRACK));
 
 		pWnd->base.dwFlags_ = pWnd->base.dwFlags_ | EWF_BTRACKOBJECT;
 		if (uMsg == WM_LBUTTONDOWN) {
@@ -2112,14 +2112,14 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam,
 
 		HEXOBJ objTrack = pWnd->objTrack_;
 		pWnd->objTrack_ = 0;
-	
+
 		obj_s* pObj = nullptr;
 		INT nError = 0;
 		if (_handle_validate(objTrack, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
 			POINT pt;
 			GetCursorPos(&pt);
 			INT uMsg = 0;
-			
+
 			_wnd_wm_nchittest(pWnd, hWnd, MAKELONG(pt.x, pt.y));
 			obj_s Obj;
 			_wnd_wm_leavecheck(hWnd, pWnd, uMsg, objTrack, -1, &Obj, wParam, lParam, FALSE);
@@ -2145,7 +2145,7 @@ void _wnd_obj_untrack(HWND hWnd, wnd_s* pWnd, WPARAM wParam, LPARAM lParam,
 				}
 			}
 		}
-		
+
 	}
 }
 
@@ -2704,6 +2704,10 @@ size_t Ex_DUIGetLong(HEXDUI hExDui, INT nIndex) {
 		}
 		else if (nIndex == ENGINE_LONG_RADIUS) {
 			ret = (size_t)pWnd->Radius_;
+		}
+		else if (nIndex == ENGINE_LONG_HCANVAS)
+		{
+			ret = (size_t)pWnd->canvas_bkg_;
 		}
 		else {
 			EX_ASSERT(false, L"Ex_DUIGetLong: unknown EWL index: %ld", nIndex);
