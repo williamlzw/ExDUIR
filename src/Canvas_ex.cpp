@@ -265,6 +265,18 @@ BOOL _canvas_destroy(HEXCANVAS hCanvas)
     INT       nError = -1;
     canvas_s* pCanvas = nullptr;
     if (_handle_validate(hCanvas, HT_CANVAS, (LPVOID*)&pCanvas, &nError)) {
+        // 清空可选文本缓存（布局将在本帧重新注册）
+        for (INT i = 0; i < pCanvas->selectableTextCount; i++) {
+            if (pCanvas->selectableTexts[i].pLayout) {
+                pCanvas->selectableTexts[i].pLayout->Release();
+                pCanvas->selectableTexts[i].pLayout = nullptr;
+            }
+            if (pCanvas->selectableTexts[i].pText) {
+                Ex_MemFree(pCanvas->selectableTexts[i].pText);
+                pCanvas->selectableTexts[i].pText = nullptr;
+            }
+        }
+        pCanvas->selectableTextCount = 0;
         ID2D1Bitmap* bmp = pCanvas->pBitmap_;
         if (bmp) {
             bmp->Release();
