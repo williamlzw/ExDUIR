@@ -952,13 +952,16 @@ void _flowchart_executenode(HEXOBJ hObj, INT nodeId) {
 	if (pData->executionDepth > 100) return;
 	pData->executionDepth++;
 
-	// 1. 收集输入数据
+	// 1. 收集输入数据（将 INTERMEDIATE 也作为节点的本地输入参数收集）
 	INT inputCount = 0;
-	for (INT i = 0; i < node->portCount; i++) { if (node->ports[i].portType == FLOWCHART_PORTTYPE_INPUT) inputCount++; }
+	for (INT i = 0; i < node->portCount; i++) {
+		if (node->ports[i].portType == FLOWCHART_PORTTYPE_INPUT || node->ports[i].portType == FLOWCHART_PORTTYPE_INTERMEDIATE)
+			inputCount++;
+	}
 	EX_FLOWCHART_NODE_IO_DATA* inputs = (EX_FLOWCHART_NODE_IO_DATA*)Ex_MemAlloc(sizeof(EX_FLOWCHART_NODE_IO_DATA) * inputCount);
 	INT idx = 0;
 	for (INT i = 0; i < node->portCount; i++) {
-		if (node->ports[i].portType == FLOWCHART_PORTTYPE_INPUT) {
+		if (node->ports[i].portType == FLOWCHART_PORTTYPE_INPUT || node->ports[i].portType == FLOWCHART_PORTTYPE_INTERMEDIATE) {
 			inputs[idx].portId = node->ports[i].id;
 			inputs[idx].dataType = node->ports[i].dataType;
 			inputs[idx].data = node->ports[i].widgetData;

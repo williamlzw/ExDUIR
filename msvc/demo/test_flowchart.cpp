@@ -72,7 +72,7 @@ LRESULT CALLBACK FlowChartNotifyProc(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 			EX_FLOWCHART_NODE_COMBO_DATA* combo1 = (EX_FLOWCHART_NODE_COMBO_DATA*)params->inputs[2].data;
 			std::wstring format = L"PNG";
 			std::wstring data = L"数据";
-			
+
 			if (combo && combo->count > 0) format = combo->options[combo->current];
 			if (combo1 && combo1->count > 0) data = combo1->options[combo1->current];
 			std::wstring result = (prefix ? std::wstring(prefix) : L"") + L"_" + format + L"_" + data;
@@ -84,12 +84,12 @@ LRESULT CALLBACK FlowChartNotifyProc(HEXOBJ hObj, INT nID, INT nCode, WPARAM wPa
 			LPCWSTR config = (LPCWSTR)params->inputs[1].data;
 			std::wstring savePath = config ? L"res/" + std::wstring(config) + L".png" : L"output.png";
 			std::wstring result = L"Saved as [" + (config ? std::wstring(config) : L"null") + L"].png";
-			
+
 			if (config)
 			{
 				_img_savetofile(hSrc, savePath.c_str());
 			}
-			
+
 			EX_FLOWCHART_PORT newData; newData.id = 402; newData.widgetType = FLOWCHART_NODEDATA_TYPE_EDIT; newData.widgetData = (LPVOID)StrDupW(result.c_str());
 			Ex_ObjSendMessage(hObj, FLOWCHART_MESSAGE_UPDATE_NODEDATA, 1004, (LPARAM)&newData);
 			// 释放StrDupW 拷贝的数据
@@ -139,19 +139,19 @@ void test_flowchart(HWND hWnd)
 	EX_FLOWCHART_NODE node3 = { 0 };
 	node3.id = 1003; node3.x = 50; node3.y = 450; node3.title = L"Text Config";
 	node3.portCount = 4; node3.ports = (EX_FLOWCHART_PORT*)Ex_MemAlloc(sizeof(EX_FLOWCHART_PORT) * 4);
-	node3.ports[0] = { 300, FLOWCHART_PORTTYPE_INPUT, FLOWCHART_DATATYPE_STRING, L"prefix", {0}, FLOWCHART_NODEDATA_TYPE_EDIT, 0, 180, 25, {0}, (LPVOID)L"output_", FALSE };
+	node3.ports[0] = { 300, FLOWCHART_PORTTYPE_INTERMEDIATE, FLOWCHART_DATATYPE_STRING, L"prefix", {0}, FLOWCHART_NODEDATA_TYPE_EDIT, 0, 180, 25, {0}, (LPVOID)L"output_", FALSE };
 	LPCWSTR* fmtOpts = (LPCWSTR*)Ex_MemAlloc(sizeof(LPCWSTR) * 2); fmtOpts[0] = StrDupW(L"PNG"); fmtOpts[1] = StrDupW(L"JPG");
 	EX_FLOWCHART_NODE_COMBO_DATA* fmtData = (EX_FLOWCHART_NODE_COMBO_DATA*)Ex_MemAlloc(sizeof(EX_FLOWCHART_NODE_COMBO_DATA));
 	fmtData->options = fmtOpts; fmtData->count = 2; fmtData->current = 0;
-	node3.ports[1] = { 301, FLOWCHART_PORTTYPE_INPUT, FLOWCHART_DATATYPE_COMBO, L"format", {0}, FLOWCHART_NODEDATA_TYPE_COMBO, 0, 180, 25, {0}, (LPVOID)fmtData, FALSE };
-	
+	node3.ports[1] = { 301, FLOWCHART_PORTTYPE_INTERMEDIATE, FLOWCHART_DATATYPE_COMBO, L"format", {0}, FLOWCHART_NODEDATA_TYPE_COMBO, 0, 180, 25, {0}, (LPVOID)fmtData, FALSE };
+
 	LPCWSTR* fmtOpts1 = (LPCWSTR*)Ex_MemAlloc(sizeof(LPCWSTR) * 3); fmtOpts1[0] = StrDupW(L"数据1"); fmtOpts1[1] = StrDupW(L"数据2"); fmtOpts1[2] = StrDupW(L"数据3");
 	EX_FLOWCHART_NODE_COMBO_DATA* fmtData1 = (EX_FLOWCHART_NODE_COMBO_DATA*)Ex_MemAlloc(sizeof(EX_FLOWCHART_NODE_COMBO_DATA));
 	fmtData1->options = fmtOpts1; fmtData1->count = 3; fmtData1->current = 0;
-	node3.ports[2] = { 302, FLOWCHART_PORTTYPE_INPUT, FLOWCHART_DATATYPE_COMBO, L"type", {0}, FLOWCHART_NODEDATA_TYPE_COMBO, 0, 180, 25, {0}, (LPVOID)fmtData1, FALSE };
-	
+	node3.ports[2] = { 302, FLOWCHART_PORTTYPE_INTERMEDIATE, FLOWCHART_DATATYPE_COMBO, L"type", {0}, FLOWCHART_NODEDATA_TYPE_COMBO, 0, 180, 25, {0}, (LPVOID)fmtData1, FALSE };
+
 	node3.ports[3] = { 303, FLOWCHART_PORTTYPE_OUTPUT, FLOWCHART_DATATYPE_STRING, L"CONFIG", {0}, 0, 0, 0, 0, {0}, NULL, FALSE };
-	
+
 	AddTestNode(node3);
 
 	// ================= 4. Save Image (Output Card) =================
@@ -183,7 +183,7 @@ void test_flowchart(HWND hWnd)
 	Ex_ObjSendMessage(hFlowChart, FLOWCHART_MESSAGE_ADD_CONNECTION, 0, (LPARAM)&conn);
 
 	Ex_ObjSendMessage(hFlowChart, FLOWCHART_MESSAGE_SET_BACKGROUNDCOLOR, 0, ExARGB(120, 120, 120, 255));
-	
+
 	Ex_ObjHandleEvent(hFlowChart, FLOWCHART_EVENT_EXECUTE_NODE, FlowChartNotifyProc);
 
 	// 延时演示节点执行流程
