@@ -2186,8 +2186,8 @@ BOOL _canvas_handle_mouse_event_for_text(HEXCANVAS hCanvas, UINT uMsg, FLOAT mou
                         FLOAT left = pCanvas->selectableTexts[i].layoutX;
                         FLOAT right = left + metrics.width;
 
-                        FLOAT dx = __max(left - mouseX, 0.0f, mouseX - right);
-                        FLOAT dy = __max(top - mouseY, 0.0f, mouseY - bottom);
+                        FLOAT dx = __max(__max(left - mouseX, 0.0f), mouseX - right);
+                        FLOAT dy = __max(__max(top - mouseY, 0.0f), mouseY - bottom);
                         FLOAT dist = sqrtf(dx * dx + dy * dy);
 
                         if (dist < minDist) {
