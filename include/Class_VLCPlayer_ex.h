@@ -1,87 +1,63 @@
 ﻿#pragma once
 #ifdef VCL_PLAYER
-
 #include "vlc/vlc.h"
 
 void             _vlcplayer_register();
 LRESULT CALLBACK _vlcplayer_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
+// 媒体播放对象数据
+#    define VLCPLAYER_LONG_DATA 0
+// ===== 通知事件 =====
 
-// 媒体播放对象
-#    define VLCPLAYER_LONG_OBJ 0
-// 媒体帧图像句柄
-#    define VLCPLAYER_LONG_IMG 1
-
-class VLCPlayer : public IUnknown
-{
-public:
-    static HRESULT CreateInstance(VLCPlayer** ppPlayer, HEXOBJ hObj);
-    STDMETHODIMP   QueryInterface(REFIID iid, void** ppv);
-    STDMETHODIMP_(ULONG)
-    AddRef();
-    STDMETHODIMP_(ULONG)
-    Release();
-    void  Play(const WCHAR* fileName = NULL, int type = 0);
-    void  Pause();
-    void  Stop();
-    void  DoResume();
-    FLOAT GetMediaPosition();
-    void  SetMediaPosition(FLOAT pos);
-    void  SetMediaTime(INT64 timeMs);
-    INT64 GetMediaTime();
-    INT64 GetMediaLength();
-    INT   GetMediaVolume();
-    BOOL  SetMediaVolume(INT volume);
-    BOOL  SetMediaRate(FLOAT rate);
-    FLOAT GetMediaRate();
-    ~VLCPlayer();
-
-protected:
-    enum State
-    {
-        Opening,
-        Stopped,
-        Playing,
-        Paused,
-        End,
-        Resume
-    };
-    VLCPlayer(HANDLE hEvent);
-    void         ClearUp();
-    unsigned int setupFormat(char* chroma, unsigned int* width, unsigned int* height,
-                             unsigned int* pitches, unsigned int* lines);
-    void         SetFileName(const WCHAR* pwszFileName, int type);
-    void         SetState(State state);
-
-    State                  m_state     = Stopped;
-    UINT32                 m_width     = 0;
-    UINT32                 m_height    = 0;
-    void*                  m_pixelBuff = nullptr;
-    INT                    m_numPlanes;
-    CRITICAL_SECTION       m_critsec;
-    HANDLE                 m_hEvent;
-    LONG                   m_nRefCount;
-    const WCHAR*           m_fileName;
-    libvlc_instance_t*     m_libVlc      = NULL;
-    libvlc_media_player_t* m_mediaPlayer = NULL;
-    HEXOBJ                 m_obj         = NULL;
-
-private:
-    // VLC callback functions
-    static unsigned int vlcVideoFormatCallback(void** object, char* chroma, unsigned int* width,
-                                               unsigned int* height, unsigned int* pitches,
-                                               unsigned int* lines);
-    static void*        vlcVideoLockCallBack(void* object, void** planes);
-    static void         vlcVideoUnlockCallback(void* object, void* picture, void* const* planes);
-    static void         vlcVideoDisplayCallback(void* object, void* picture);
-    static void         vlcVideoEventCallback(const libvlc_event_t* event, void* object);
-
-    void setupPlanes(char* chroma, unsigned int* width, unsigned int* height, unsigned int* pitches,
-                     unsigned int* lines);
-    void setupBuffers();
-    void cleanupBuffers();
-    void paintFrame(HEXOBJ hObj);
-    void playerEvent(const libvlc_event_t* event);
-    void updateTexture(void* picture, void* const* planes);
-};
-
+// ===== 播放器 UI 布局常量 =====
+#    define VLC_CTRL_HEIGHT      40    // 缩小控制栏高度
+#    define VLC_PROGRESS_H       8     // 缩小进度条高度
+#    define VLC_BTN_SIZE         16    // 按钮点击区域大小
+#    define VLC_SLIDER_H         10
+// ===== 播放器内部数据结构 =====
+typedef struct {
+	// VLC 核心
+	libvlc_instance_t* libVlc;
+	libvlc_media_player_t* mediaPlayer;
+	CRITICAL_SECTION       critsec;
+	HANDLE                 hEvent;
+	void* pixelBuff;
+	UINT32                 width;
+	UINT32                 height;
+	// UI 状态
+	HEXIMAGE hCoverImg;
+	HEXIMAGE hCurrentFrame;
+	HEXIMAGE hPendingFree;   // ★ 新增：旧帧缓存，由 UI 线程负责释放
+	BOOL     bHasCover;
+	BOOL  bIsPlaying;
+	BOOL  bIsPaused;
+	INT64 nDuration;
+	INT64 nCurrentTime;
+	INT   nVolume;
+	FLOAT fRate;
+	// UI 交互状态
+	BOOL bHoverPlay;
+	BOOL bHoverStop;
+	BOOL bHoverFastFwd;
+	BOOL bHoverRate;
+	BOOL bDraggingProgress;
+	BOOL bDraggingVolume;
+	BOOL bHoverProgress;
+	BOOL bHoverVolume;
+	HEXOBJ hObj; // 自身句柄，供回调使用
+} EX_VLCPLAYER_DATA;
 #endif
+
+// ==================== 辅助函数声明 ====================
+void _vlcplayer_paint(HEXOBJ hObj, EX_PAINTSTRUCT* ps);
+void _vlcplayer_onmousemove(HEXOBJ hObj, INT x, INT y);
+void _vlcplayer_onlbuttondown(HEXOBJ hObj, INT x, INT y);
+void _vlcplayer_onlbuttonup(HEXOBJ hObj, INT x, INT y);
+void _vlcplayer_cleanup(EX_VLCPLAYER_DATA* pData);
+void _vlcplayer_setfilename(EX_VLCPLAYER_DATA* pData, const WCHAR* pwszFileName, int type);
+void _vlcplayer_format_time(INT64 ms, WCHAR* buf, INT bufSize);
+// VLC 回调函数
+unsigned int _vlcplayer_format_cb(void** object, char* chroma, unsigned int* width, unsigned int* height, unsigned int* pitches, unsigned int* lines);
+void* _vlcplayer_lock_cb(void* object, void** planes);
+void         _vlcplayer_unlock_cb(void* object, void* picture, void* const* planes);
+void         _vlcplayer_display_cb(void* object, void* picture);
+void         _vlcplayer_event_cb(const libvlc_event_t* event, void* object);
