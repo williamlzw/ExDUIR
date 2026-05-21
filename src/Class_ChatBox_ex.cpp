@@ -212,6 +212,18 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                             for (INT c = 0; c < totalCells; c++)
                             {
                                 Ex_MemFree((void*)data->ElementList[j].CellList[c].Text);
+                                // ★ 新增：释放单元格内的行内元素
+                                if (data->ElementList[j].CellList[c].InlineCount > 0 && data->ElementList[j].CellList[c].InlineElements)
+                                {
+                                    for (INT k = 0; k < data->ElementList[j].CellList[c].InlineCount; k++)
+                                    {
+                                        Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Text);
+                                        if (data->ElementList[j].CellList[c].InlineElements[k].Url) {
+                                            Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Url);
+                                        }
+                                    }
+                                    free(data->ElementList[j].CellList[c].InlineElements);
+                                }
                             }
                             free(data->ElementList[j].CellList);
                         }
@@ -833,6 +845,18 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     for (INT c = 0; c < totalCells; c++)
                     {
                         Ex_MemFree((void*)data->ElementList[j].CellList[c].Text);
+                        // ★ 新增：释放单元格内的行内元素
+                        if (data->ElementList[j].CellList[c].InlineCount > 0 && data->ElementList[j].CellList[c].InlineElements)
+                        {
+                            for (INT k = 0; k < data->ElementList[j].CellList[c].InlineCount; k++)
+                            {
+                                Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Text);
+                                if (data->ElementList[j].CellList[c].InlineElements[k].Url) {
+                                    Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Url);
+                                }
+                            }
+                            free(data->ElementList[j].CellList[c].InlineElements);
+                        }
                     }
                     free(data->ElementList[j].CellList);
                 }
@@ -1192,6 +1216,18 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                             for (INT c = 0; c < totalCells; c++)
                             {
                                 Ex_MemFree((void*)data->ElementList[j].CellList[c].Text);
+                                // ★ 新增：释放单元格内的行内元素
+                                if (data->ElementList[j].CellList[c].InlineCount > 0 && data->ElementList[j].CellList[c].InlineElements)
+                                {
+                                    for (INT k = 0; k < data->ElementList[j].CellList[c].InlineCount; k++)
+                                    {
+                                        Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Text);
+                                        if (data->ElementList[j].CellList[c].InlineElements[k].Url) {
+                                            Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Url);
+                                        }
+                                    }
+                                    free(data->ElementList[j].CellList[c].InlineElements);
+                                }
                             }
                             free(data->ElementList[j].CellList);
                         }
@@ -1344,6 +1380,18 @@ LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, 
                     for (INT c = 0; c < totalCells; c++)
                     {
                         Ex_MemFree((void*)data->ElementList[j].CellList[c].Text);
+                        // ★ 新增：释放单元格内的行内元素
+                        if (data->ElementList[j].CellList[c].InlineCount > 0 && data->ElementList[j].CellList[c].InlineElements)
+                        {
+                            for (INT k = 0; k < data->ElementList[j].CellList[c].InlineCount; k++)
+                            {
+                                Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Text);
+                                if (data->ElementList[j].CellList[c].InlineElements[k].Url) {
+                                    Ex_MemFree((void*)data->ElementList[j].CellList[c].InlineElements[k].Url);
+                                }
+                            }
+                            free(data->ElementList[j].CellList[c].InlineElements);
+                        }
                     }
                     free(data->ElementList[j].CellList);
                 }
@@ -2762,13 +2810,25 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
                     for (INT c = 0; c < colCount; c++) {
                         INT cellIdx = r * colCount + c;
                         if (cellIdx < rowCount * colCount && elem->CellList[cellIdx].Text) {
-                            FLOAT w, h;
                             HEXFONT hCellFont = (r == 0)
                                 ? _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD)
                                 : hTextFont;
-                            _chatbox_measure_text(hCanvas, hCellFont, elem->CellList[cellIdx].Text,
-                                colWidth - TABLE_CELL_PADDING * 2, &w, &h);
-                            INT cellHeight = (INT)ceil(h) + TABLE_CELL_PADDING * 2;
+
+                            INT cellHeight = 30;
+                            // ★ 新增：如果有行内元素，使用行内布局计算高度
+                            if (elem->CellList[cellIdx].InlineCount > 0 && elem->CellList[cellIdx].InlineElements) {
+                                INT inlineHeight = _chatbox_calc_inline_layout(hCanvas, hObj,
+                                    elem->CellList[cellIdx].InlineElements, elem->CellList[cellIdx].InlineCount,
+                                    0, 0, colWidth - TABLE_CELL_PADDING * 2, hCellFont, 20);
+                                cellHeight = inlineHeight + TABLE_CELL_PADDING * 2;
+                            }
+                            else {
+                                FLOAT w, h;
+                                _chatbox_measure_text(hCanvas, hCellFont, elem->CellList[cellIdx].Text,
+                                    colWidth - TABLE_CELL_PADDING * 2, &w, &h);
+                                cellHeight = (INT)ceil(h) + TABLE_CELL_PADDING * 2;
+                            }
+
                             if (cellHeight > rowHeight) rowHeight = cellHeight;
                             if (r == 0) _font_destroy(hCellFont);
                         }
@@ -2781,6 +2841,15 @@ void _chatbox_calc_layout(HEXOBJ hObj, EX_CHATBOX_ITEMINFO_SUBITEM* sub, INT wid
                             elem->CellList[cellIdx].rcCell.top = elemTop + tableHeight;
                             elem->CellList[cellIdx].rcCell.right = elemLeft + (c + 1) * colWidth;
                             elem->CellList[cellIdx].rcCell.bottom = elemTop + tableHeight + rowHeight;
+
+                            // ★ 新增：偏移行内元素到单元格内容区域
+                            if (elem->CellList[cellIdx].InlineCount > 0 && elem->CellList[cellIdx].InlineElements) {
+                                INT offsetX = elem->CellList[cellIdx].rcCell.left + TABLE_CELL_PADDING;
+                                INT offsetY = elem->CellList[cellIdx].rcCell.top + TABLE_CELL_PADDING;
+                                for (INT k = 0; k < elem->CellList[cellIdx].InlineCount; k++) {
+                                    OffsetRect(&elem->CellList[cellIdx].InlineElements[k].rcElement, offsetX, offsetY);
+                                }
+                            }
                         }
                     }
                     tableHeight += rowHeight;
@@ -3069,6 +3138,14 @@ void _chatbox_update_layout(HEXOBJ hObj) {
                     for (INT c = 0; c < totalCells; c++)
                     {
                         OffsetRect(&data->ElementList[i].CellList[c].rcCell, 0, currentY);
+                        // ★ 新增：偏移单元格内的行内元素
+                        if (data->ElementList[i].CellList[c].InlineCount > 0 && data->ElementList[i].CellList[c].InlineElements)
+                        {
+                            for (INT k = 0; k < data->ElementList[i].CellList[c].InlineCount; k++)
+                            {
+                                OffsetRect(&data->ElementList[i].CellList[c].InlineElements[k].rcElement, 0, currentY);
+                            }
+                        }
                     }
                 }
             }
@@ -3356,20 +3433,34 @@ void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
                     _brush_setcolor(hBrush, ExARGB(200, 200, 200, 255));
                     _canvas_drawrect(ps.hCanvas, hBrush, rcCell.left, rcCell.top, rcCell.right, rcCell.bottom, 1, 0);
 
-                    // 绘制文本
-                    HEXFONT hCellFont = hTextFont;
-                    BOOL needDestroy = FALSE;
-                    if (r == 0) {
-                        hCellFont = _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD);
-                        needDestroy = TRUE;
+                    // ★ 新增：有行内元素时使用行内绘制
+                    if (elem->CellList[cellIdx].InlineCount > 0 && elem->CellList[cellIdx].InlineElements)
+                    {
+                        HEXFONT hCellFont = (r == 0)
+                            ? _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD)
+                            : hTextFont;
+                        _chatbox_paint_inline(hObj, ps, hCellFont,
+                            elem->CellList[cellIdx].InlineElements, elem->CellList[cellIdx].InlineCount,
+                            nPos, 20);
+                        if (r == 0) _font_destroy(hCellFont);
                     }
-                    _canvas_drawtext(ps.hCanvas, hCellFont,
-                        r == 0 ? ExARGB(0, 0, 0, 255) : ExARGB(50, 50, 50, 255),
-                        elem->CellList[cellIdx].Text, -1,
-                        DT_CENTER | DT_VCENTER | DT_SELECTABLE,
-                        rcCell.left + TABLE_CELL_PADDING, rcCell.top + TABLE_CELL_PADDING,
-                        rcCell.right - TABLE_CELL_PADDING, rcCell.bottom - TABLE_CELL_PADDING);
-                    if (needDestroy) _font_destroy(hCellFont);
+                    else
+                    {
+                        // 原有纯文本绘制逻辑
+                        HEXFONT hCellFont = hTextFont;
+                        BOOL needDestroy = FALSE;
+                        if (r == 0) {
+                            hCellFont = _font_createfromfamily(L"Arial", 20, FONT_STYLE_BOLD);
+                            needDestroy = TRUE;
+                        }
+                        _canvas_drawtext(ps.hCanvas, hCellFont,
+                            r == 0 ? ExARGB(0, 0, 0, 255) : ExARGB(50, 50, 50, 255),
+                            elem->CellList[cellIdx].Text, -1,
+                            DT_CENTER | DT_VCENTER | DT_SELECTABLE,
+                            rcCell.left + TABLE_CELL_PADDING, rcCell.top + TABLE_CELL_PADDING,
+                            rcCell.right - TABLE_CELL_PADDING, rcCell.bottom - TABLE_CELL_PADDING);
+                        if (needDestroy) _font_destroy(hCellFont);
+                    }
                 }
             }
             break;
@@ -3933,6 +4024,12 @@ void _md_finalize_table(std::vector<EX_CHATBOX_MD_ELEMENT>& elements,
             INT cellIdx = rowIndex * colCount + j;
             if (j < (INT)tableRows[i].size() && !tableRows[i][j].empty()) {
                 cellList[cellIdx].Text = StrDupW(tableRows[i][j].c_str());
+                auto inlines = _md_parse_inline(tableRows[i][j]);
+                if (!inlines.empty()) {
+                    cellList[cellIdx].InlineCount = (INT)inlines.size();
+                    cellList[cellIdx].InlineElements = (EX_CHATBOX_MD_INLINE*)malloc(sizeof(EX_CHATBOX_MD_INLINE) * inlines.size());
+                    memcpy(cellList[cellIdx].InlineElements, inlines.data(), sizeof(EX_CHATBOX_MD_INLINE) * inlines.size());
+                }
             }
             else {
                 cellList[cellIdx].Text = StrDupW(L"");

@@ -163,7 +163,7 @@ print(calculate_days(2026, 4))
         std::wstring currentText;
 
         // 3. 循环逐字流式更新
-        for (wchar_t ch : streamText)
+        for (wchar_t ch : streamText)  
         {
             // 追加字符
             currentText += ch;
@@ -277,8 +277,10 @@ L"第3行,第0列",  L"第3行,第1列",  L"第3行,第2列",  L"第3行,第3列
         L"测试表格", 4, 4, tableCells);
     AddChatMarkdownItem(hChatBox, CHATBOX_ITEMROLE_ASSISTANT,
         LR"(
+
 # 🛑 Markdown 全元素测试文档
 
+## 1. 头文件/常量定义
 ## 1. 标题层级 (Headers)
 这是一级到六级标题的演示：
 # 一级标题 (H1)
@@ -358,8 +360,9 @@ print(calculate_days(2026, 4))
 ## 7.表格
 | 表头1 | 表头2 | 表头3 |
 |-------|-------|-------|
-| 单元格 | 单元格 | 单元格 |
-| 数据1  | 数据2  | 数据3  |
+| *** 单元格 *** | `单元格` | [访问百度](https://www.baidu.com) |
+| ** 数据1 ** | ~~数据2~~  | 数据3  |
+| * 改动点 * | 说明 | 数据4  |
         )");
 
     

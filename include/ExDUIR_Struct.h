@@ -2969,6 +2969,8 @@ struct EX_CHATBOX_MD_INLINE {
 struct EX_CHATBOX_MD_TABLE_CELL {
 	LPCWSTR Text;
 	RECT    rcCell;
+	EX_CHATBOX_MD_INLINE* InlineElements; // 解析后的格式元素数组
+	INT              InlineCount; // 行内元素数量
 };
 #pragma pack()
 
