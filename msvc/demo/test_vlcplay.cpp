@@ -7,9 +7,9 @@ HEXOBJ m_hObjMediaVLCButton1;
 LRESULT CALLBACK OnMediaVLCBtnEnevt(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LPARAM lParam)
 {
     if (hObj == m_hObjMediaVLCButton1) {
-        Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_PLAY, 0,
+        Ex_ObjSendMessage(m_hObjMediaVLC, VLCPLAYER_MESSAGE_STATE_LOAD, 0,
             (LPARAM)L"./res/test.mp4");
-        Ex_ObjSendMessage(m_hObjMediaVLC2, VLCPLAYER_MESSAGE_STATE_PLAYFROMURL, 0,
+        Ex_ObjSendMessage(m_hObjMediaVLC2, VLCPLAYER_MESSAGE_STATE_LOADFROMURL, 0,
             (LPARAM)L"https://media.w3.org/2010/05/sintel/trailer.mp4");
     }
     return 0;
@@ -29,7 +29,7 @@ void test_vlcPlay(HWND hWnd)
     Ex_DUISetLong(hExDui_mediavlc, ENGINE_LONG_CRBKG, ExARGB(150, 150, 150, 255));
     m_hObjMediaVLC = Ex_ObjCreate(L"VLCPlayer", NULL, -1, 50, 50, 300, 300, hExDui_mediavlc);
     m_hObjMediaVLC2 = Ex_ObjCreate(L"VLCPlayer", NULL, -1, 400, 50, 400, 300, hExDui_mediavlc);
-    m_hObjMediaVLCButton1 = Ex_ObjCreate(L"button", L"加载文件", -1, 50, 560, 100, 30, hExDui_mediavlc);
+    m_hObjMediaVLCButton1 = Ex_ObjCreate(L"button", L"播放", -1, 50, 560, 100, 30, hExDui_mediavlc);
 
     Ex_ObjHandleEvent(m_hObjMediaVLCButton1, NM_CLICK, OnMediaVLCBtnEnevt);
     Ex_DUIShowWindow(hExDui_mediavlc, SW_SHOWNORMAL);

@@ -1673,8 +1673,6 @@
 #pragma endregion scrollbar message
 
 #pragma region vlcplayer notify
-// 事件_vlc播放器_状态改变 lParam 0打开中 1停止播放 2播放中 3暂停中 4播放结束
-#define VLCPLAYER_EVENT_STATECHANGED 10000
 // 事件_vlc播放器_主动停止播放
 #define VLCPLAYER_EVENT_STOPPED 10001
 // 事件_vlc播放器_播放中
@@ -1686,10 +1684,14 @@
 #pragma endregion vlcplayer notify
 
 #pragma region vlcplayer message
-// 消息_vlc播放器_播放自文件 lParam :本地文件名
+// 消息_vlc播放器_播放自文件 lParam :本地文件名 (直接播放)
 #define VLCPLAYER_MESSAGE_STATE_PLAY 20000
-// 消息_vlc播放器_播放自url lParam :URL 如https://media.w3.org/2010/05/sintel/trailer.mp4
+// 消息_vlc播放器_播放自url lParam :URL (直接播放)
 #define VLCPLAYER_MESSAGE_STATE_PLAYFROMURL 20001
+// ★ 新增：消息_vlc播放器_加载自文件 lParam :本地文件名 (仅加载获取封面和时长，不自动播放)
+#define VLCPLAYER_MESSAGE_STATE_LOAD 20012
+// ★ 新增：消息_vlc播放器_加载自url lParam :URL (仅加载获取封面和时长，不自动播放)
+#define VLCPLAYER_MESSAGE_STATE_LOADFROMURL 20013
 // 消息_vlc播放器_暂停
 #define VLCPLAYER_MESSAGE_STATE_PAUSE 20002
 // 消息_vlc播放器_继续播放
