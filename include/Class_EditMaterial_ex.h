@@ -51,3 +51,4 @@ BOOL _editmaterial_check_backspace(obj_s* pObj, INT cpCur, CHARRANGE* pDelRange)
 void _editmaterial_setinittext(HEXOBJ hObj, obj_s* pObj, EDIT_MATERIAL_PRIV* pPriv, LPCWSTR pszText);
 void _editmaterial_insertformatted(HEXOBJ hObj, obj_s* pObj, LPCWSTR pszText);
 INT _editmaterial_hittest(HEXOBJ hObj, obj_s* pObj, INT x, INT y, CHARRANGE* pLinkRange);
+BOOL _editmaterial_remove(HEXOBJ hObj, obj_s* pObj, EDIT_MATERIAL_PRIV* pPriv, LPCWSTR name);

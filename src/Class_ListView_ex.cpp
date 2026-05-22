@@ -253,10 +253,10 @@ LRESULT CALLBACK _tlv_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPAR
                 Array_BindEvent(arr, ARRAY_EVENT_DELMEMBER, _tlv_array_del);
                 Array_SetExtra(arr, hObj);
                 Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_ITEMARRAY, (LONG_PTR)arr);
-                // fix: 修正ExRGB2ARGB传参错误，正确格式：(R,G,B,透明度)，原参数导致颜色异常
-                Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_HOVERCOLOR, ExRGB2ARGB(220, 220, 220, 200));  // 悬浮浅灰
-                Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_SELECTCOLOR, ExRGB2ARGB(66, 133, 244, 250));  // 选中蓝
-                Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_BORDERCOLOR, ExRGB2ARGB(200, 200, 200, 250));  // 边框浅灰
+                
+                Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_HOVERCOLOR, ExARGB(220, 220, 220, 200));  // 悬浮浅灰
+                Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_SELECTCOLOR, ExARGB(66, 133, 244, 250));  // 选中蓝
+                Ex_ObjSetLong(hObj, TEMPLATELISTVIEW_LONG_BORDERCOLOR, ExARGB(200, 200, 200, 250));  // 边框浅灰
             }
         }
         else if (uMsg == WM_DESTROY) {

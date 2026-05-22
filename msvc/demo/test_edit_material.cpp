@@ -33,6 +33,11 @@ LRESULT CALLBACK OnMatBtnEvent(HEXOBJ hObj, INT nID, INT nCode,
 		// 清空素材
 		Ex_ObjSendMessage(hEdit, EDITMATERIAL_MESSAGE_CLEARMATERIALS, 0, 0);
 	}
+	else if (nID == 404) {
+		// === 演示：调用删除素材消息 ===
+		// 参数 lParam 传入要删除的素材名称 (LPCWSTR)
+		Ex_ObjSendMessage(hEdit, EDITMATERIAL_MESSAGE_REMOVEMATERIAL, 0, (LPARAM)L"头像");
+	}
 	return 0;
 }
 void test_edit_material(HWND hWnd) {
@@ -79,6 +84,10 @@ void test_edit_material(HWND hWnd) {
 		OBJECT_STYLE_VISIBLE, 530, 80, 150, 30,
 		m_hExDuiMaterialEdit, 403, 0, 0, 0, NULL);
 	Ex_ObjHandleEvent(hBtn2, NM_CLICK, OnMatBtnEvent);
+	HEXOBJ hBtn3 = Ex_ObjCreateEx(0, L"button", L"删除'头像'素材",
+		OBJECT_STYLE_VISIBLE, 530, 120, 150, 30,
+		m_hExDuiMaterialEdit, 404, 0, 0, 0, NULL);
+	Ex_ObjHandleEvent(hBtn3, NM_CLICK, OnMatBtnEvent);
 	// 提示标签
 	HEXFONT hTipFont = _font_createfromfamily(L"微软雅黑", 11, 0);
 	HEXOBJ hTip = Ex_ObjCreateEx(0, L"Text", L"输入 @ 触发素材选择面板\n鼠标悬停素材文本预览图片\n复制时自动转换为 @{素材名} 格式",

@@ -61,20 +61,101 @@ BOOL _editmaterial_add(EDIT_MATERIAL_PRIV* pPriv, LPCWSTR name, HEXIMAGE hImage)
 // ============================================================
 // 素材管理：移除
 // ============================================================
-BOOL _editmaterial_remove(EDIT_MATERIAL_PRIV* pPriv, LPCWSTR name) {
+BOOL _editmaterial_remove(HEXOBJ hObj, obj_s* pObj, EDIT_MATERIAL_PRIV* pPriv, LPCWSTR name) {
+	INT targetIdx = -1;
 	for (INT i = 0; i < pPriv->nMaterialCount; i++) {
 		if (lstrcmpW(pPriv->pMaterials[i].szName, name) == 0) {
-			LocalFree((LPVOID)pPriv->pMaterials[i].szName);
-			if (pPriv->pMaterials[i].hImage) _img_destroy(pPriv->pMaterials[i].hImage);
-			for (INT j = i; j < pPriv->nMaterialCount - 1; j++)
-				pPriv->pMaterials[j] = pPriv->pMaterials[j + 1];
-			pPriv->nMaterialCount--;
-			pPriv->pMaterials[pPriv->nMaterialCount].szName = nullptr;
-			pPriv->pMaterials[pPriv->nMaterialCount].hImage = 0;
-			return TRUE;
+			targetIdx = i;
+			break;
 		}
 	}
-	return FALSE;
+	if (targetIdx == -1) return FALSE;
+
+	// 1. 清理富文本中对应的 "@素材名" 链接格式，降级为普通文本
+	if (pObj) {
+		BOOL sOK;
+		GETTEXTLENGTHEX gtl = { GTL_DEFAULT, 1200 };
+		LRESULT textLen = _edit_sendmessage(pObj, EM_GETTEXTLENGTHEX, (WPARAM)&gtl, 0, &sOK);
+		if (textLen > 0) {
+			CHARRANGE oldSel;
+			_edit_sendmessage(pObj, EM_EXGETSEL, 0, (LPARAM)&oldSel, &sOK);
+			DWORD oldMask = (DWORD)_edit_sendmessage(pObj, EM_GETEVENTMASK, 0, 0, &sOK);
+			_edit_sendmessage(pObj, EM_SETEVENTMASK, 0, 0, &sOK); // 禁用重绘和通知
+
+			WCHAR szTarget[256];
+			swprintf_s(szTarget, L"@%s", name);
+
+			INT i = 0;
+			while (i < (INT)textLen) {
+				_edit_sendmessage(pObj, EM_SETSEL, i, i + 1, &sOK);
+				CHARFORMAT2W cf = { };
+				cf.cbSize = sizeof(cf);
+				cf.dwMask = CFM_LINK;
+				_edit_sendmessage(pObj, EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf, &sOK);
+
+				if (cf.dwEffects & CFE_LINK) {
+					INT start = i, end = i + 1;
+					// 向前查找链接起点
+					while (start > 0) {
+						_edit_sendmessage(pObj, EM_SETSEL, start - 1, start, &sOK);
+						memset(&cf, 0, sizeof(cf)); cf.cbSize = sizeof(cf); cf.dwMask = CFM_LINK;
+						_edit_sendmessage(pObj, EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf, &sOK);
+						if (!(cf.dwEffects & CFE_LINK)) break;
+						start--;
+					}
+					// 向后查找链接终点
+					while (end < (INT)textLen) {
+						_edit_sendmessage(pObj, EM_SETSEL, end, end + 1, &sOK);
+						memset(&cf, 0, sizeof(cf)); cf.cbSize = sizeof(cf); cf.dwMask = CFM_LINK;
+						_edit_sendmessage(pObj, EM_GETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf, &sOK);
+						if (!(cf.dwEffects & CFE_LINK)) break;
+						end++;
+					}
+
+					INT linkLen = end - start;
+					LPWSTR linkText = (LPWSTR)Ex_MemAlloc((linkLen + 1) * sizeof(WCHAR));
+					if (linkText) {
+						TEXTRANGE tr = { {start, end}, linkText };
+						_edit_sendmessage(pObj, EM_GETTEXTRANGE, 0, (LPARAM)&tr, &sOK);
+
+						// 如果匹配到被删除的素材，取消它的链接和下划线格式
+						if (lstrcmpW(linkText, szTarget) == 0) {
+							_edit_sendmessage(pObj, EM_SETSEL, start, end, &sOK);
+							CHARFORMAT2W cfDef = { };
+							ZeroMemory(&cfDef, sizeof(cfDef));
+							cfDef.cbSize = sizeof(cfDef);
+							cfDef.dwMask = CFM_COLOR | CFM_LINK | CFM_UNDERLINE;
+							cfDef.dwEffects = 0; // 清除效果，降级为普通文本
+							cfDef.crTextColor = RGB(0, 0, 0); // 可选：将文本颜色恢复为默认
+							_edit_sendmessage(pObj, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cfDef, &sOK);
+						}
+						Ex_MemFree(linkText);
+					}
+					i = end; // 跳过已处理的链接块
+				}
+				else {
+					i++;
+				}
+			}
+
+			_edit_sendmessage(pObj, EM_EXSETSEL, 0, (LPARAM)&oldSel, &sOK);
+			_edit_sendmessage(pObj, EM_SETEVENTMASK, 0, oldMask, &sOK);
+			Ex_ObjInvalidateRect(hObj, 0);
+		}
+	}
+
+	// 2. 从素材库数组中彻底移除
+	LocalFree((LPVOID)pPriv->pMaterials[targetIdx].szName);
+	if (pPriv->pMaterials[targetIdx].hImage) _img_destroy(pPriv->pMaterials[targetIdx].hImage);
+
+	for (INT j = targetIdx; j < pPriv->nMaterialCount - 1; j++)
+		pPriv->pMaterials[j] = pPriv->pMaterials[j + 1];
+
+	pPriv->nMaterialCount--;
+	pPriv->pMaterials[pPriv->nMaterialCount].szName = nullptr;
+	pPriv->pMaterials[pPriv->nMaterialCount].hImage = 0;
+
+	return TRUE;
 }
 // ============================================================
 // 素材管理：清空
@@ -585,7 +666,11 @@ LRESULT CALLBACK _editmaterial_proc(HWND hWnd, HEXOBJ hObj, INT uMsg,
 	}
 	else if (uMsg == EDITMATERIAL_MESSAGE_REMOVEMATERIAL) {
 		EDIT_MATERIAL_PRIV* pPriv = _matpriv(hObj);
-		if (pPriv) return _editmaterial_remove(pPriv, (LPCWSTR)lParam);
+		if (pPriv) {
+			if (_handle_validate(hObj, HT_OBJECT, (LPVOID*)&pObj, &nError)) {
+				return _editmaterial_remove(hObj, pObj, pPriv, (LPCWSTR)lParam);
+			}
+		}
 		return FALSE;
 	}
 	else if (uMsg == EDITMATERIAL_MESSAGE_CLEARMATERIALS) {
