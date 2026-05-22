@@ -225,6 +225,7 @@
     <ClCompile Include="test_dropobj.cpp" />
     <ClCompile Include="test_edit.cpp" />
     <ClCompile Include="test_editex.cpp" />
+    <ClCompile Include="test_edit_material.cpp" />
     <ClCompile Include="test_effect.cpp" />
     <ClCompile Include="test_event.cpp" />
     <ClCompile Include="test_flow.cpp" />
@@ -302,6 +303,7 @@
     <ClInclude Include="test_dropobj.h" />
     <ClInclude Include="test_edit.h" />
     <ClInclude Include="test_editex.h" />
+    <ClInclude Include="test_edit_material.h" />
     <ClInclude Include="test_effect.h" />
     <ClInclude Include="test_event.h" />
     <ClInclude Include="test_flow.h" />

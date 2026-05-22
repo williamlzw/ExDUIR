@@ -51,6 +51,7 @@ void _object_init()
     _prototype_board_register();
     _candlestickchart_register();
     _imgpreviewlistview_register();
+    _editmaterial_register();
 
 #ifdef WEB_VIEW2
     _webview_register();

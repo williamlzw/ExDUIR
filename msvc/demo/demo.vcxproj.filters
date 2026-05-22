@@ -212,6 +212,9 @@
     <ClCompile Include="test_imgpreviewlistview.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test_edit_material.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -427,6 +430,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_imgpreviewlistview.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_edit_material.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

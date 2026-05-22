@@ -3241,6 +3241,26 @@ struct EX_IMGPREVIEWLISTVIEW_ITEMINFO {
 	LPCWSTR pwzPath;      // 图片路径
 };
 
+// 素材编辑框_条目
+struct EX_EDITMATERIAL_ITEM {
+	LPCWSTR   szName;     // 素材名（内部分配副本）
+	HEXIMAGE hImage;     // 素材图像句柄（编辑框销毁时统一销毁）
+};
+
+//素材编辑框_通知_素材被选中, lParam=素材索引
+#define EDITMATERIAL_EVENT_SELECTED     90001  
+
+// 素材编辑框_消息_添加素材：wParam=0, lParam=EX_MATERIAL_ITEM* (szName + hImage，编辑框会拷贝name并接管hImage生命周期,素材同名覆盖)
+#define EDITMATERIAL_MESSAGE_ADDMATERIAL     80001
+// 素材编辑框_消息_移除素材：wParam=0, lParam=素材名LPCWSTR
+#define EDITMATERIAL_MESSAGE_REMOVEMATERIAL  80002
+// 素材编辑框_消息_清空素材
+#define EDITMATERIAL_MESSAGE_CLEARMATERIALS  80003
+// 素材编辑框_消息_获取纯文本（@{素材名}格式）：wParam=缓冲区大小, lParam=LPWSTR缓冲区, 返回字符数
+#define EDITMATERIAL_MESSAGE_GETPLAINTEXT    80004
+// 素材编辑框_消息_设置初始化文本(解析@{素材名}), lParam 文本指针
+#define EDITMATERIAL_MESSAGE_SETINITTEXT     80005
+
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown* effect,
 	_In_reads_(dataSize) const BYTE* data,
 	UINT32                           dataSize);
