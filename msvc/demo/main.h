@@ -81,6 +81,7 @@
 #include "test_candlestickchart.h"
 #include "test_imgpreviewlistview.h"
 #include "test_edit_material.h"
+#include "test_consolebox.h"
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
                                   LRESULT* lpResult);

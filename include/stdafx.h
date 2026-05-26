@@ -162,6 +162,7 @@
 #include "Class_CandlestickChart_ex.h"
 #include "Class_ImgPreviewListView_ex.h"
 #include "Class_EditMaterial_ex.h"
+#include "Class_ConsoleBox_ex.h"
 
 #ifdef WEB_VIEW2
 #include "Class_WebView_ex.h"

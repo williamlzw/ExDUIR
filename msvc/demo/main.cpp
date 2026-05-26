@@ -16,7 +16,7 @@ const std::vector<std::wstring> buttonData = {
     L"路径与区域",     L"VLC播放器",  L"自定字体和SVG", L"卷帘菜单",   L"托盘图标",   L"蒙板",
     L"标注画板",       L"效果器",     L"打包",          L"环形进度条", L"水波进度条", L"折线图",
     L"对话盒",         L"流程图",     L"分隔条",        L"D3D绘制" , L"表格",       L"webview2浏览器",
-    L"流式滚动容器",   L"原型画板",   L"K线图",         L"图片预览列表", L"素材编辑框"};
+    L"流式滚动容器",   L"原型画板",   L"K线图",         L"图片预览列表", L"素材编辑框", L"日志框"};
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
     LRESULT* lpResult)
@@ -237,7 +237,8 @@ LRESULT CALLBACK button_click(HEXOBJ hObj, INT nID, INT nCode, WPARAM wParam, LP
         test_prototypeboard,      // 168测试原型画板
         test_candlestickchart,     // 169测试K线图
         test_imgpreviewlistview,  // 170测试图像预览列表
-        test_edit_material       //171测试素材编辑框
+        test_edit_material,       //171测试素材编辑框
+        test_consolebox           //172测试日志框
     };
     buttonProc[nID - 101](m_hWnd);
     return 0;

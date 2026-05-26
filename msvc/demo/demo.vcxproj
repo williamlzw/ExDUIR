@@ -215,6 +215,7 @@
     <ClCompile Include="test_colorbutton.cpp" />
     <ClCompile Include="test_colorpicker.cpp" />
     <ClCompile Include="test_combobox.cpp" />
+    <ClCompile Include="test_consolebox.cpp" />
     <ClCompile Include="test_custombkg.cpp" />
     <ClCompile Include="test_custommenu.cpp" />
     <ClCompile Include="test_customredraw.cpp" />
@@ -293,6 +294,7 @@
     <ClInclude Include="test_colorbutton.h" />
     <ClInclude Include="test_colorpicker.h" />
     <ClInclude Include="test_combobox.h" />
+    <ClInclude Include="test_consolebox.h" />
     <ClInclude Include="test_custombkg.h" />
     <ClInclude Include="test_custommenu.h" />
     <ClInclude Include="test_customredraw.h" />

@@ -206,3 +206,5 @@ The drawing component starts by calling Ex_ObjBeginPaint, passing in the drawing
 ### demo editmaterial:
 ![image](demo_image/demo_editmaterial1.png)
 ![image](demo_image/demo_editmaterial2.png)
+### demo consolebox:
+![image](demo_image/demo_consolebox.png)

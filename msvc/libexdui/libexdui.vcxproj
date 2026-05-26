@@ -24,6 +24,7 @@
     <ClCompile Include="..\..\src\Canvas_ex.cpp" />
     <ClCompile Include="..\..\src\Class_CandlestickChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_ChatBox_ex.cpp" />
+    <ClCompile Include="..\..\src\Class_ConsoleBox_ex.cpp" />
     <ClCompile Include="..\..\src\Class_EditMaterial_ex.cpp" />
     <ClCompile Include="..\..\src\Class_FlowChart_ex.cpp" />
     <ClCompile Include="..\..\src\Class_Grid_ex.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="..\..\include\Class_CandlestickChart_ex.h" />
     <ClInclude Include="..\..\include\Class_ChatBoxEx_ex.h" />
     <ClInclude Include="..\..\include\Class_ChatBox_ex.h" />
+    <ClInclude Include="..\..\include\Class_ConsoleBox_ex.h" />
     <ClInclude Include="..\..\include\Class_EditMaterial_ex.h" />
     <ClInclude Include="..\..\include\Class_FlowChart_ex.h" />
     <ClInclude Include="..\..\include\Class_Grid_ex.h" />

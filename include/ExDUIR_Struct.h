@@ -3261,6 +3261,18 @@ struct EX_EDITMATERIAL_ITEM {
 // 素材编辑框_消息_设置初始化文本(解析@{素材名}), lParam 文本指针
 #define EDITMATERIAL_MESSAGE_SETINITTEXT     80005
 
+
+// 日志框_消息_添加消息 wParam=文本内容LPCWSTR, lParam:ARGB颜色
+#define CONSOLEBOX_MESSAGE_ADDITEM       (WM_USER + 2001)
+// 日志框_消息_清空消息
+#define CONSOLEBOX_MESSAGE_CLEAR         (WM_USER + 2002)
+// 日志框_消息_设置是否自动滚动 wParam=BOOL是否自动滚动
+#define CONSOLEBOX_MESSAGE_SETAUTOSCROLL (WM_USER + 2003)
+// 日志框_消息_设置字体 wParam=字体句柄
+#define CONSOLEBOX_MESSAGE_SETFONT   (WM_USER + 2004) 
+// 日志框_消息_设置背景颜色 wParam:ARGB颜色值
+#define CONSOLEBOX_MESSAGE_SETBACKCOLOR (WM_USER + 2005) 
+
 typedef HRESULT(CALLBACK* PPROPERTY_SET_FUNCTION)(_In_ IUnknown* effect,
 	_In_reads_(dataSize) const BYTE* data,
 	UINT32                           dataSize);
