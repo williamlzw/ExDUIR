@@ -249,6 +249,7 @@ void test_edit(HWND hWnd)
 	Ex_ObjSendMessage(hobj_edit_multiline, EM_SETSEL, -1, -1);   // 光标移动到最后一行
 	Ex_ObjSendMessage(hobj_edit_multiline, EM_REPLACESEL, -1, (LPARAM)L"新添加一行");   // 添加一行
 	Ex_ObjSetFocus(hobj_edit_multiline);   // 添加焦点自动滚动到光标位置也就是最后一行
+	//Ex_ObjSetLong(hobj_edit_multiline, OBJECT_LONG_STYLE, OBJECT_STYLE_VISIBLE | OBJECT_STYLE_VSCROLL | EDIT_STYLE_READONLY);   //禁用编辑框只读，但仍可滚动查看内容
 
 	HEXOBJ hObj_edit7 = Ex_ObjCreateEx(
 		OBJECT_STYLE_EX_FOCUSABLE, L"edit", NULL,

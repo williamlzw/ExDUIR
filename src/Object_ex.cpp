@@ -53,6 +53,7 @@ void _object_init()
     _imgpreviewlistview_register();
     _editmaterial_register();
     _consolebox_register();
+    _scrollbarlabel_register();
 
 #ifdef WEB_VIEW2
     _webview_register();

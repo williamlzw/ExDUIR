@@ -261,6 +261,7 @@
     <ClCompile Include="test_rollmenu.cpp" />
     <ClCompile Include="test_rotateimgbox.cpp" />
     <ClCompile Include="test_scorebtn.cpp" />
+    <ClCompile Include="test_scrollbarlabel.cpp" />
     <ClCompile Include="test_sliderbar.cpp" />
     <ClCompile Include="test_splitter.cpp" />
     <ClCompile Include="test_svg_and_font.cpp" />
@@ -341,6 +342,7 @@
     <ClInclude Include="test_rollmenu.h" />
     <ClInclude Include="test_rotateimgbox.h" />
     <ClInclude Include="test_scorebtn.h" />
+    <ClInclude Include="test_scrollbarlabel.h" />
     <ClInclude Include="test_sliderbar.h" />
     <ClInclude Include="test_splitter.h" />
     <ClInclude Include="test_svg_and_font.h" />

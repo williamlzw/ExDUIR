@@ -218,6 +218,9 @@
     <ClCompile Include="test_consolebox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test_scrollbarlabel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -439,6 +442,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="test_consolebox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="test_scrollbarlabel.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
