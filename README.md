@@ -214,3 +214,5 @@ Ex_ObjRegister注册组件类,在回调callback的WM_PAINT消息里绘制组件,
 ![image](demo_image/demo_editmaterial2.png)
 ### demo consolebox:
 ![image](demo_image/demo_consolebox.png)
+### demo scrollbarlabel:
+![image](demo_image/demo_scrollbarlabel.png)

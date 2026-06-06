@@ -17,7 +17,7 @@ const std::vector<std::wstring> buttonData = {
     L"标注画板",       L"效果器",     L"打包",          L"环形进度条", L"水波进度条", L"折线图",
     L"对话盒",         L"流程图",     L"分隔条",        L"D3D绘制" , L"表格",       L"webview2浏览器",
     L"流式滚动容器",   L"原型画板",   L"K线图",         L"图片预览列表", L"素材编辑框", L"日志框",
-    L"测试滚动条标签"
+    L"滚动条标签"
 };
 
 LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wParam, LPARAM lParam,
