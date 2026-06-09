@@ -10,17 +10,21 @@ void _consolebox_recalc_items(EX_CONSOLEBOX_DATA* pData, INT nWidth, HEXCANVAS h
 
     INT nTotal = 0;
     INT nCount = Array_GetCount(pData->arrItems);
-    for (INT i = 1; i <= nCount; i++) { // Array索引从1开始
+
+    // 【修复点1】：计算实际可用于绘制的宽度 (减去左右边距 5 + 5 = 10)
+    FLOAT fDrawWidth = (FLOAT)(nWidth - 10);
+    if (fDrawWidth < 0) fDrawWidth = 0;
+
+    for (INT i = 1; i <= nCount; i++) {
         EX_CONSOLEBOX_ITEM* pItem = (EX_CONSOLEBOX_ITEM*)Array_GetMember(pData->arrItems, i);
         if (pItem) {
-            // 如果高度未计算，或者组件宽度发生了改变，则重新测量
             if (pItem->nHeight <= 0 || pData->nLastWidth != nWidth) {
                 FLOAT fWidth = 0, fHeight = 0;
-                // 传入 maxWidth 让引擎自动计算换行后的实际高度
+                // 【修复点2】：传入实际绘制宽度 fDrawWidth，保证计算出的换行和高度与实际绘制完全一致
                 _canvas_calctextsize(hCanvas, hFont, pItem->lpText, -1,
                     DT_WORDBREAK | DT_NOPREFIX | DT_EDITCONTROL,
-                    (FLOAT)nWidth, 0, &fWidth, &fHeight);
-                pItem->nHeight = (INT)(fHeight > 0 ? fHeight : 20); // 兜底默认高度20
+                    fDrawWidth, 0, &fWidth, &fHeight);
+                pItem->nHeight = (INT)(fHeight > 0 ? fHeight : 20);
             }
             nTotal += pItem->nHeight;
         }
@@ -55,10 +59,10 @@ LRESULT CALLBACK _consolebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
             pData->bAutoScroll = TRUE;
             pData->bNeedRecalc = TRUE;
             Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_DATA, (LONG_PTR)pData);
-			auto hFont = _font_createfromfamily(L"微软雅黑", 10, 0);
-			Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_FONT, (LONG_PTR)hFont);
-			auto hBackColor = ExARGB(30, 30, 30, 255);
-			Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_BACKCOLOR, (LONG_PTR)hBackColor);
+            auto hFont = _font_createfromfamily(L"微软雅黑", 10, 0);
+            Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_FONT, (LONG_PTR)hFont);
+            auto hBackColor = ExARGB(30, 30, 30, 255);
+            Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_BACKCOLOR, (LONG_PTR)hBackColor);
             // 初始化垂直滚动条
             Ex_ObjScrollShow(hObj, SCROLLBAR_TYPE_VERT, TRUE);
             Ex_ObjScrollSetInfo(hObj, SCROLLBAR_TYPE_VERT, SIF_PAGE | SIF_RANGE | SIF_POS, 0, 100, 10, 0, TRUE);
@@ -81,8 +85,8 @@ LRESULT CALLBACK _consolebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
             }
             Ex_MemFree(pData);
         }
-		auto hFont = (HEXFONT)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_FONT);
-		if (hFont) _font_destroy(hFont);
+        auto hFont = (HEXFONT)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_FONT);
+        if (hFont) _font_destroy(hFont);
     }
     else if (uMsg == WM_SIZE)
     {
@@ -123,7 +127,7 @@ LRESULT CALLBACK _consolebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
                 }
 
                 // 绘制深色背景 (类似控制台)
-				auto hBackColor = (EXARGB)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_BACKCOLOR);
+                auto hBackColor = (EXARGB)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_BACKCOLOR);
                 _canvas_clear(ps.hCanvas, hBackColor);
 
                 // 虚拟化绘制：只绘制可视区域内的条目
@@ -308,26 +312,26 @@ LRESULT CALLBACK _consolebox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPara
         }
         return 0;
     }
-	else if (uMsg == CONSOLEBOX_MESSAGE_SETFONT)
-	{
-		HEXFONT hFont = (HEXFONT)wParam;
-		auto oldFont = (HEXFONT)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_FONT);
-		if (oldFont) _font_destroy(oldFont);
-		Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_FONT, (LONG_PTR)hFont);
-		EX_CONSOLEBOX_DATA* pData = (EX_CONSOLEBOX_DATA*)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_DATA);
-		if (pData) {
-			pData->bNeedRecalc = TRUE; // 字体改变，标记需要重新计算文本高度
-			Ex_ObjInvalidateRect(hObj, 0);
-		}
-		return 0;
+    else if (uMsg == CONSOLEBOX_MESSAGE_SETFONT)
+    {
+        HEXFONT hFont = (HEXFONT)wParam;
+        auto oldFont = (HEXFONT)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_FONT);
+        if (oldFont) _font_destroy(oldFont);
+        Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_FONT, (LONG_PTR)hFont);
+        EX_CONSOLEBOX_DATA* pData = (EX_CONSOLEBOX_DATA*)Ex_ObjGetLong(hObj, CONSOLEBOX_LONG_DATA);
+        if (pData) {
+            pData->bNeedRecalc = TRUE; // 字体改变，标记需要重新计算文本高度
+            Ex_ObjInvalidateRect(hObj, 0);
+        }
+        return 0;
     }
-	else if (uMsg == CONSOLEBOX_MESSAGE_SETBACKCOLOR)
-	{
-		EXARGB crBack = (EXARGB)wParam;
-		Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_BACKCOLOR, (LONG_PTR)crBack);
-		Ex_ObjInvalidateRect(hObj, 0);
-		return 0;
-	}
+    else if (uMsg == CONSOLEBOX_MESSAGE_SETBACKCOLOR)
+    {
+        EXARGB crBack = (EXARGB)wParam;
+        Ex_ObjSetLong(hObj, CONSOLEBOX_LONG_BACKCOLOR, (LONG_PTR)crBack);
+        Ex_ObjInvalidateRect(hObj, 0);
+        return 0;
+    }
     return Ex_ObjDefProc(hWnd, hObj, uMsg, wParam, lParam);
 }
 
