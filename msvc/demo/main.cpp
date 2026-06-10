@@ -31,7 +31,7 @@ LRESULT CALLBACK OnMainWndMsgProc(HWND hWnd, HEXDUI hExDui, INT uMsg, WPARAM wPa
         HEXOBJ hScrollView = Ex_ObjGetFromID(hExDui, 1000);
         if (hScrollView != 0)
         {
-            INT margin = 30;
+            INT margin = Ex_Scale(30);
             INT scrollViewWidth = (windowWidth - 2 * margin);
             INT scrollViewHeight = (windowHeight - 2 * margin);
 

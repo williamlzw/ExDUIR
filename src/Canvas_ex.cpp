@@ -776,12 +776,12 @@ BOOL _canvas_drawimagefromgrid(HEXCANVAS hCanvas, HEXIMAGE hImage, FLOAT dstLeft
     pt = gridPaddingTop;
     pr = gridPaddingRight;
     pb = gridPaddingBottom;
-    /*if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0) {
+    if ((dwFlags & BACKGROUND_FLAG_DISABLESCALE) == 0) {
         pl = Ex_Scale(pl);
         pt = Ex_Scale(pt);
         pr = Ex_Scale(pr);
         pb = Ex_Scale(pb);
-    }*/
+    }
     BOOL ret = FALSE;
     // 右-中间
     ret = _canvas_drawimagerectrect(hCanvas, hImage, dstRight - pr, dstTop + pt, dstRight,
