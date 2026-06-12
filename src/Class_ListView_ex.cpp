@@ -448,13 +448,17 @@ void _listview_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT*
     BOOL bHView = ((pObj->dwStyle_ & LISTVIEW_STYLE_HORIZONTALLIST) == LISTVIEW_STYLE_HORIZONTALLIST);
     INT nCount = pOwner->count_items_;
     INT iWidth = (pOwner->width_item_ + pOwner->width_split_) * g_Li.DpiX;
-    INT iHeight = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiX;
+    // fix: 修正笔误，高度应使用 DpiY
+    INT iHeight = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiY;
     INT nVS = 0;
     INT nHS = 0;
-    // fix: 【致命】防止除以0，除数必须>0，否则赋值1，杜绝崩溃 ✔️
-    if (iHeight > 0) nVS = height / iHeight;
+
+    // fix: 【核心修复】使用向上取整 (Ceiling) 计算，防止边缘部分可见的项被遗漏
+    // 公式: (A + B - 1) / B 等同于 ceil(A / B)
+    if (iHeight > 0) nVS = (height + iHeight - 1) / iHeight;
     if (nVS <= 0) nVS = 1;
-    if (iWidth > 0) nHS = width / iWidth;
+
+    if (iWidth > 0) nHS = (width + iWidth - 1) / iWidth;
     if (nHS <= 0) nHS = 1;
 
     if (bHView) nHS = nHS + 1;
@@ -482,7 +486,7 @@ void _listview_updatesbvalue(HEXOBJ hObj, obj_s* pObj, listview_s* pOwner, RECT*
     pOwner->count_view_ = nVS * nHS;
     pOwner->width_view_ = vWidth;
     pOwner->height_view_ = vHeight;
-    // fix: 滚动条句柄判空，防止无效调用
+
     if (hVSB) {
         Ex_ObjScrollShow(hVSB, SCROLLBAR_TYPE_CONTROL, vHeight - height > 0);
         Ex_ObjScrollSetInfo(hVSB, SCROLLBAR_TYPE_CONTROL, SIF_PAGE | SIF_RANGE, 0, vHeight - height, height, 0, FALSE);
@@ -638,7 +642,7 @@ void _listview_getscrollbarvalue(obj_s* pObj, listview_s* pOwner, BOOL bHSB, HEX
         *oPos = pOwner->nOffsetY_;
         *hSB = pObj->objVScroll_;
         *nPage = pObj->c_bottom_ - pObj->c_top_;
-        *nLine = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiX;
+        *nLine = (pOwner->height_item_ + pOwner->height_split_) * g_Li.DpiY;
         *nView = pOwner->height_view_;
     }
     // fix: 防止nLine为0 ✔️
@@ -982,6 +986,7 @@ void _listview_drawitem(HWND hWnd, HEXOBJ hObj, obj_s* pObj, listview_s* pOwner,
     EX_CUSTOMDRAW ecd{ 0 };
     ecd.hTheme = ps.hTheme; ecd.hCanvas = ps.hCanvas; ecd.dwState = _listview_getitemstate(pOwner->lpItems_, iItem);
     ecd.dwStyle = ps.dwStyle; ecd.rcPaint = rcItem; ecd.iItem = iItem;
+ 
     if (_obj_dispatchnotify(hWnd, pObj, hObj, 0, NM_CUSTOMDRAW, iItem, (size_t)&ecd) == 0) {
         if (ecd.dwState & STATE_SELECT) atomRect = ATOM_SELECT;
         else if (ecd.dwState & STATE_HOVER) atomRect = ATOM_HOVER;
