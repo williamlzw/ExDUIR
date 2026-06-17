@@ -575,9 +575,6 @@
     <ClInclude Include="..\..\thirdparty\rapidyaml\rapidyaml.hpp">
       <Filter>rapidyaml</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Class_ChatBoxEx_ex.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Class_ImgPreviewListView_ex.h">
       <Filter>头文件</Filter>
     </ClInclude>

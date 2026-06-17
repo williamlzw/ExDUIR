@@ -24,36 +24,8 @@
 #define CHATBOX_LONG_CARD_REASONFONT 10
 // 属性_对话盒_卡片_按钮标题字体
 #define CHATBOX_LONG_CARD_BUTTONFONT 11
-// 属性_对话盒_增强模式_标题字体
-#define CHATBOX_LONG_BOOSTMODE_TITLEFONT 12
-// 属性_对话盒_增强模式_内容字体
-#define CHATBOX_LONG_BOOSTMODE_CONTENTFONT 13
-// 属性_对话盒_错误列表_标题字体
-#define CHATBOX_LONG_ERRORLIST_TITLEFONT 14
-// 属性_对话盒_错误列表_错误码字体
-#define CHATBOX_LONG_ERRORLIST_ERRORCODEFONT 15
-// 属性_对话盒_错误列表_描述字体
-#define CHATBOX_LONG_ERRORLIST_DESCRIPTIONFONT 16
-// 属性_对话盒_信息列表_内容字体
-#define CHATBOX_LONG_INFOLIST_CONTENTFONT 17
-// 属性_对话盒_信息列表_标题字体
-#define CHATBOX_LONG_INFOLIST_TITLEFONT 18
-// 属性_对话盒_信息列表_描述字体
-#define CHATBOX_LONG_INFOLIST_DESCRIPTIONFONT 19
-// 属性_对话盒_表格列表_内容字体
-#define CHATBOX_LONG_TABLELIST_CONTENTFONT 20
-// 属性_对话盒_表格列表_标题字体
-#define CHATBOX_LONG_TABLELIST_TITLEFONT 21
-// 属性_对话盒_表格列表_描述字体
-#define CHATBOX_LONG_TABLELIST_DESCRIPTIONFONT 22
-// 属性_对话盒_链接_内容字体
-#define CHATBOX_LONG_LINK_CONTENTFONT 23
-// 属性_对话盒_链接_标题字体
-#define CHATBOX_LONG_LINK_TITLEFONT 24
-// 属性_对话盒_链接_选项字体
-#define CHATBOX_LONG_LINK_TEXTFONT 25
 // 属性_对话盒_Markdown代码字体
-#define CHATBOX_LONG_MARKDOWN_CODEFONT 26
+#define CHATBOX_LONG_MARKDOWN_CODEFONT 12
 
 void _chatbox_register();
 LRESULT CALLBACK _chatbox_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, LPARAM lParam);
@@ -61,30 +33,6 @@ void _chatbox_paint_text(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_TEXT* data,
     EX_CHATBOX_ITEM_LAYOUT_TEXT* layout,
     INT nPos, INT role);
-void _chatbox_paint_card(HEXOBJ hObj, EX_PAINTSTRUCT ps,
-    EX_CHATBOX_ITEMINFO_CARD* data,
-    EX_CHATBOX_ITEM_LAYOUT_CARD* layout,
-    INT nPos, INT index);
-void _chatbox_paint_boostmode(HEXOBJ hObj, EX_PAINTSTRUCT ps,
-    EX_CHATBOX_ITEMINFO_BOOSTMODE* data,
-    EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE* layout,
-    INT nPos);
-void _chatbox_paint_errorlist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
-    EX_CHATBOX_ITEMINFO_ERRORLIST* data,
-    EX_CHATBOX_ITEM_LAYOUT_ERRORLIST* layout,
-    INT nPos);
-void _chatbox_paint_infolist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
-    EX_CHATBOX_ITEMINFO_INFOLIST* data,
-    EX_CHATBOX_ITEM_LAYOUT_INFOLIST* layout,
-    INT nPos);
-void _chatbox_paint_tablelist(HEXOBJ hObj, EX_PAINTSTRUCT ps,
-    EX_CHATBOX_ITEMINFO_TABLELIST* data,
-    EX_CHATBOX_ITEM_LAYOUT_TABLELIST* layout,
-    INT nPos);
-void _chatbox_paint_link(HEXOBJ hObj, EX_PAINTSTRUCT ps,
-    EX_CHATBOX_ITEMINFO_LINK* data,
-    EX_CHATBOX_ITEM_LAYOUT_LINK* layout,
-    INT nPos);
 void _chatbox_paint_markdown(HEXOBJ hObj, EX_PAINTSTRUCT ps,
     EX_CHATBOX_ITEMINFO_MARKDOWN* data,
     EX_CHATBOX_ITEM_LAYOUT_MARKDOWN* layout,
@@ -119,3 +67,13 @@ INT _chatbox_calc_inline_layout(HEXCANVAS hCanvas, HEXOBJ hObj,
     INT left, INT top, INT maxWidth, HEXFONT hDefaultFont, INT baseFontSize);
 void _chatbox_paint_inline(HEXOBJ hObj, EX_PAINTSTRUCT ps, HEXFONT hDefaultFont,
     EX_CHATBOX_MD_INLINE* inlines, INT inlineCount, INT nPos, INT baseFontSize);
+void _chatbox_free_thinking_data(EX_CHATBOX_ITEMINFO_THINKING* data);
+void _chatbox_free_options_data(EX_CHATBOX_ITEMINFO_OPTIONS* data);
+void _chatbox_paint_thinking(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_THINKING* data,
+    EX_CHATBOX_ITEM_LAYOUT_THINKING* layout,
+    INT nPos);
+void _chatbox_paint_options(HEXOBJ hObj, EX_PAINTSTRUCT ps,
+    EX_CHATBOX_ITEMINFO_OPTIONS* data,
+    EX_CHATBOX_ITEM_LAYOUT_OPTIONS* layout,
+    INT nPos);

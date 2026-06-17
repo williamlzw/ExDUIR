@@ -1728,20 +1728,12 @@
 #pragma region chatbox item type constant
 // 对话盒_项目类型_文本
 #define CHATBOX_ITEMTYPE_TEXT 0
-// 对话盒_项目类型_卡片
-#define CHATBOX_ITEMTYPE_CARD 1
-// 对话盒_项目类型_模式
-#define CHATBOX_ITEMTYPE_BOOSTMODE 2
-// 对话盒_项目类型_错误列表
-#define CHATBOX_ITEMTYPE_ERRORLIST 3
-// 对话盒_项目类型_信息列表
-#define CHATBOX_ITEMTYPE_INFOLIST 4
-// 对话盒_项目类型_表格列表
-#define CHATBOX_ITEMTYPE_TABLELIST 5
-// 对话盒_项目类型_链接列表
-#define CHATBOX_ITEMTYPE_LINK 6
 // 对话盒_项目类型_Markdown文本
-#define CHATBOX_ITEMTYPE_MARKDOWN   7
+#define CHATBOX_ITEMTYPE_MARKDOWN   1
+// 对话盒_项目类型_思考折叠/展开
+#define CHATBOX_ITEMTYPE_THINKING  2  
+// 对话盒_项目类型_多行选项
+#define CHATBOX_ITEMTYPE_OPTIONS   3   
 #pragma endregion chatbox item type constant
 
 #pragma region chatbox item role constant
@@ -1752,12 +1744,12 @@
 #pragma endregion chatbox item role constant
 
 #pragma region chatbox event constant
-// 事件_对话盒_点击按钮,lParam返回消息索引,从0开始
-#define CHATBOX_EVENT_CLICKBUTTON 20000
-// 事件_对话盒_点击链接,wParam返回消息索引,从0开始, lParam返回链接索引,从0开始
-#define CHATBOX_EVENT_CLICKLINK 20001
 // 事件_对话盒_点击链接,wParam=项目索引，lParam=URL指针
-#define CHATBOX_EVENT_CLICKMARKDOWNLINK 20002
+#define CHATBOX_EVENT_CLICKMARKDOWNLINK 20000
+// 事件_对话盒_点击选项 wParam:项目索引 lParam:选项文本指针(LPCWSTR)
+#define CHATBOX_EVENT_SELECTOPTION           20001
+// 事件_对话盒_思考折叠状态改变 wParam:项目索引 lParam:1=展开 0=折叠
+#define CHATBOX_EVENT_THINKINGTOGGLE         20002
 #pragma endregion chatbox event constant
 
 #pragma region chatbox message constant
@@ -1779,6 +1771,12 @@
 #define CHATBOX_MESSAGE_CLEAR 10017
 // 消息_对话盒_删除表项 wParam:表项索引
 #define CHATBOX_MESSAGE_DELITEM 10018
+// 消息_对话盒_追加文本(流式) wParam:表项索引 lParam:LPCWSTR 追加文本(支持Markdown与Thinking类型)
+#define CHATBOX_MESSAGE_APPENDTEXT           10019
+// 消息_对话盒_设置思考折叠状态 wParam:表项索引 lParam:0=切换 1=展开 2=折叠
+#define CHATBOX_MESSAGE_TOGGLETHINKING       10020
+// 消息_对话盒_设置选项列表 wParam:表项索引 lParam: EX_CHATBOX_OPTIONS_INFO* 指针(用于动态更新选项)
+#define CHATBOX_MESSAGE_SETOPTIONS           10021
 #pragma endregion chatbox message constant
 
 
@@ -2747,67 +2745,6 @@ struct EX_CHATBOX_ITEM_LAYOUT_TEXT
 	RECT rcContent;   // 内容区域
 };
 
-struct EX_CHATBOX_ITEM_LAYOUT_CARD
-{
-	RECT rcAvatar;    // 头像区域
-	RECT rcBubble;    // 气泡区域
-	RECT rcContent;   // 内容区域
-	// 卡片项目特有区域
-	RECT rcCardImage;     // 卡片图片区域
-	RECT rcCardTitle;     // 卡片标题区域
-	RECT rcCardContent;   // 卡片内容区域
-	RECT rcReasonRect;    // 原因矩形区域
-	RECT rcReasonTitle;   // 原因标题区域
-	RECT rcReason;        // 原因文本区域
-	RECT rcButton;        // 按钮区域
-};
-
-struct EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE
-{
-	RECT rcAvatar;    // 头像区域
-	RECT rcBubble;    // 气泡区域
-	RECT rcImage;     // 图片区域
-	RECT rcTitle;   // 标题区域
-	RECT rcContent;    // 文本区域
-};
-
-struct EX_CHATBOX_ITEM_LAYOUT_ERRORLIST
-{
-	RECT rcAvatar;    // 头像区域
-	RECT rcBubble;    // 气泡区域
-	RECT rcImage;     // 图片区域
-	RECT rcTitle;   // 标题区域
-	RECT* rcErrorCodeList;  // 错误文本标题矩形列表
-	RECT* rcErrorCodeTextList;  // 错误文本内容矩形列表
-	RECT* rcDescriptionList;  // 描述文本标题矩形列表
-	RECT* rcDescriptionTextList;  // 描述文本内容矩形列表
-};
-
-struct EX_CHATBOX_ITEM_LAYOUT_INFOLIST
-{
-	RECT rcAvatar;    // 头像区域
-	RECT rcBubble;    // 气泡区域
-	RECT rcContent;   // 标题区域
-	RECT* rcTitleList;  // 文本标题矩形列表
-	RECT* rcDescriptionList;  // 描述文本矩形列表
-};
-
-struct EX_CHATBOX_ITEM_LAYOUT_TABLELIST
-{
-	RECT rcAvatar;    // 头像区域
-	RECT rcBubble;    // 气泡区域
-	RECT rcContent;   // 标题区域
-	RECT* rcUnitList;  // 单元矩形列表
-};
-
-struct EX_CHATBOX_ITEM_LAYOUT_LINK
-{
-	RECT rcAvatar;    // 头像区域
-	RECT rcBubble;    // 气泡区域
-	RECT rcContent;   // 标题区域
-	RECT rcTitle;     // 副标题区域
-	RECT* rcUnitList;  // 单元矩形列表
-};
 
 //4字节对齐 方便c#调用
 #pragma pack(4)
@@ -2818,106 +2755,60 @@ struct EX_CHATBOX_ITEMINFO_TEXT
 };
 #pragma pack()
 
-//4字节对齐 方便c#调用
-#pragma pack(4)
-struct EX_CHATBOX_ITEMINFO_CARD
+
+struct EX_CHATBOX_ITEM_LAYOUT_THINKING
 {
-	LPCWSTR  Title;
-	HEXIMAGE Image;
-	LPCWSTR  Content;
-	LPCWSTR  ReasonTitle;
-	LPCWSTR  Reason;
-	LPCWSTR  ButtonText;
-	EX_CHATBOX_ITEM_LAYOUT_CARD Layout;
+	RECT rcAvatar;
+	RECT rcBubble;
+	RECT rcHeader;     // 标题栏(点击折叠/展开)
+	RECT rcArrow;      // 箭头区域
+	RECT rcTitle;      // 标题文本区域
+	RECT rcPanel;      // 展开面板区域
+	RECT rcContent;    // 内容文本区域(滚动可视区)
+	RECT rcScrollBar;  // 滚动条轨道
+	RECT rcScrollThumb;// 滚动条滑块
+};
+
+struct EX_CHATBOX_ITEM_LAYOUT_OPTIONS
+{
+	RECT  rcAvatar;
+	RECT  rcBubble;
+	RECT  rcTitle;
+	LPRECT rcOptions;  // 选项矩形数组(动态分配)
+};
+
+// 4字节对齐 方便c#调用
+#pragma pack(4)
+struct EX_CHATBOX_ITEMINFO_THINKING
+{
+	LPCWSTR Title;        // 标题
+	LPCWSTR Content;      // 思考内容
+	BOOL    Expanded;     // 是否展开
+	INT     ScrollPos;    // 当前滚动位置
+	INT     ScrollMax;    // 最大滚动范围
+	INT     ContentHeight;// 实际内容高度
+	EX_CHATBOX_ITEM_LAYOUT_THINKING Layout;
 };
 #pragma pack()
 
-//4字节对齐 方便c#调用
 #pragma pack(4)
-struct EX_CHATBOX_ITEMINFO_BOOSTMODE
+struct EX_CHATBOX_ITEMINFO_OPTIONS
 {
-	LPCWSTR  Title;
-	LPCWSTR  Content;
-	HEXIMAGE Image;
-	EX_CHATBOX_ITEM_LAYOUT_BOOSTMODE Layout;
+	LPCWSTR Title;        // 标题(可为空)
+	LPWSTR* Options;      // 选项文本数组
+	INT     OptionCount;  // 选项数量
+	INT     HoverOption;  // 当前悬停选项索引,-1无
+	EX_CHATBOX_ITEM_LAYOUT_OPTIONS Layout;
 };
 #pragma pack()
 
-struct EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT
-{
-	LPCWSTR  ErrorCode;
-	LPCWSTR  ErrorCodeText;
-	LPCWSTR  Description;
-	LPCWSTR  DescriptionText;
-};
-
-//4字节对齐 方便c#调用
+// 用于 SETOPTIONS 消息传入参数
 #pragma pack(4)
-struct EX_CHATBOX_ITEMINFO_ERRORLIST
+struct EX_CHATBOX_OPTIONS_INFO
 {
-	HEXIMAGE Image;
 	LPCWSTR Title;
-	EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组
-	INT ListCount; //EX_CHATBOX_ITEMINFO_ERRORLIST_UNIT数组数量
-	EX_CHATBOX_ITEM_LAYOUT_ERRORLIST Layout;
-};
-#pragma pack()
-
-struct EX_CHATBOX_ITEMINFO_INFOLIST_UNIT
-{
-	LPCWSTR  Title;
-	LPCWSTR  Description;
-};
-
-//4字节对齐 方便c#调用
-#pragma pack(4)
-struct EX_CHATBOX_ITEMINFO_INFOLIST
-{
-	LPCWSTR Content;
-	EX_CHATBOX_ITEMINFO_INFOLIST_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_INFOLIST_UNIT数组
-	INT ListCount; //EX_CHATBOX_ITEMINFO_INFOLIST_UNIT数组数量
-	EX_CHATBOX_ITEM_LAYOUT_INFOLIST Layout;
-};
-#pragma pack()
-
-// 对话盒表格_列文本单元结构体
-struct EX_CHATBOX_ITEMINFO_TABLELIST_TEXT
-{
-	LPCWSTR Text;       // 文本内容
-};
-
-// 对话盒表格_行单元结构体
-struct EX_CHATBOX_ITEMINFO_TABLELIST_UNIT
-{
-	EX_CHATBOX_ITEMINFO_TABLELIST_TEXT* Columns;  // 指向文本单元数组的指针
-};
-
-// 对话盒表格结构,4字节对齐 方便c#调用
-#pragma pack(4)
-struct EX_CHATBOX_ITEMINFO_TABLELIST
-{
-	LPCWSTR Content;
-	EX_CHATBOX_ITEMINFO_TABLELIST_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_TABLELIST_UNIT数组
-	INT ListCount; //行数（数组元素数量） EX_CHATBOX_ITEMINFO_TABLELIST_UNIT数组数量
-	EX_CHATBOX_ITEM_LAYOUT_TABLELIST Layout;
-	INT ColumnCount;// 总列数（每行共享列数）
-};
-#pragma pack()
-
-struct EX_CHATBOX_ITEMINFO_LINK_UNIT
-{
-	LPCWSTR Text;
-};
-
-//4字节对齐 方便c#调用
-#pragma pack(4)
-struct EX_CHATBOX_ITEMINFO_LINK
-{
-	LPCWSTR Content;
-	LPCWSTR Title;
-	EX_CHATBOX_ITEMINFO_LINK_UNIT* ListInfo; //EX_CHATBOX_ITEMINFO_LINK_UNIT数组
-	INT ListCount; //行数（数组元素数量） EX_CHATBOX_ITEMINFO_LINK_UNIT数组数量
-	EX_CHATBOX_ITEM_LAYOUT_LINK Layout;
+	LPCWSTR* Options;
+	INT     OptionCount;
 };
 #pragma pack()
 
