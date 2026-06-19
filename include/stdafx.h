@@ -9,12 +9,14 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <thread>
 #include <bcrypt.h>
 #include <ocidl.h>
 #include <richedit.h>
 #include <richole.h>
 #include <textserv.h>
-
+#include <mutex>
+#include <unordered_map>
 #pragma comment(lib, "OleAut32.lib")
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")

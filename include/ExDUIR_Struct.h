@@ -1725,59 +1725,7 @@
 #define LINECHART_MESSAGE_FOREGROUNDCOLOR_DRAW 200004
 #pragma endregion linechart message
 
-#pragma region chatbox item type constant
-// 对话盒_项目类型_文本
-#define CHATBOX_ITEMTYPE_TEXT 0
-// 对话盒_项目类型_Markdown文本
-#define CHATBOX_ITEMTYPE_MARKDOWN   1
-// 对话盒_项目类型_思考折叠/展开
-#define CHATBOX_ITEMTYPE_THINKING  2  
-// 对话盒_项目类型_多行选项
-#define CHATBOX_ITEMTYPE_OPTIONS   3   
-#pragma endregion chatbox item type constant
 
-#pragma region chatbox item role constant
-// 对话盒_项目角色_用户
-#define CHATBOX_ITEMROLE_USER 0
-// 对话盒_项目角色_助手
-#define CHATBOX_ITEMROLE_ASSISTANT 1
-#pragma endregion chatbox item role constant
-
-#pragma region chatbox event constant
-// 事件_对话盒_点击链接,wParam=项目索引，lParam=URL指针
-#define CHATBOX_EVENT_CLICKMARKDOWNLINK 20000
-// 事件_对话盒_点击选项 wParam:项目索引 lParam:选项文本指针(LPCWSTR)
-#define CHATBOX_EVENT_SELECTOPTION           20001
-// 事件_对话盒_思考折叠状态改变 wParam:项目索引 lParam:1=展开 0=折叠
-#define CHATBOX_EVENT_THINKINGTOGGLE         20002
-#pragma endregion chatbox event constant
-
-#pragma region chatbox message constant
-// 消息_对话盒_添加表项 添加行到尾部 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
-#define CHATBOX_MESSAGE_ADDITEM 10010
-// 消息_对话盒_更新表项 注意CHATBOX_ITEMTYPE_一致才能更新 wParam:表项索引 从0开始 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
-#define CHATBOX_MESSAGE_UPDATEITEM 10011
-// 消息_对话盒_取表项类型 wParam:表项索引 从0开始，返回CHATBOX_ITEMTYPE_ ,失败返回-1
-#define CHATBOX_MESSAGE_GETITEMTYPE 10012
-// 消息_对话盒_取表项数据 wParam:表项索引 从0开始，返回CEX_CHATBOX_ITEMINFO_SUBITEM 指针,失败返回-1
-#define CHATBOX_MESSAGE_GETITEMDATA 10013
-// 消息_对话盒_取表项总数,失败返回-1
-#define CHATBOX_MESSAGE_GETITEMCOUNT 10014
-// 消息_对话盒_设置用户图标 lParam: 图标句柄HEXIMAGE
-#define CHATBOX_MESSAGE_SETIMAGE_USER 10015
-// 消息_对话盒_设置助手图标 lParam: 图标句柄HEXIMAGE
-#define CHATBOX_MESSAGE_SETIMAGE_ASSISTANT 10016
-// 消息_对话盒_清空消息
-#define CHATBOX_MESSAGE_CLEAR 10017
-// 消息_对话盒_删除表项 wParam:表项索引
-#define CHATBOX_MESSAGE_DELITEM 10018
-// 消息_对话盒_追加文本(流式) wParam:表项索引 lParam:LPCWSTR 追加文本(支持Markdown与Thinking类型)
-#define CHATBOX_MESSAGE_APPENDTEXT           10019
-// 消息_对话盒_设置思考折叠状态 wParam:表项索引 lParam:0=切换 1=展开 2=折叠
-#define CHATBOX_MESSAGE_TOGGLETHINKING       10020
-// 消息_对话盒_设置选项列表 wParam:表项索引 lParam: EX_CHATBOX_OPTIONS_INFO* 指针(用于动态更新选项)
-#define CHATBOX_MESSAGE_SETOPTIONS           10021
-#pragma endregion chatbox message constant
 
 
 #pragma region splitter long constant
@@ -2821,6 +2769,9 @@ enum MD_INLINE_TYPE {
 	MD_INLINE_CODE,
 	MD_INLINE_STRIKETHROUGH,
 	MD_INLINE_LINK,
+	MD_INLINE_MATH,
+	MD_INLINE_HIGHLIGHT, //  ==高亮文本==
+	MD_INLINE_KBD,       //  <kbd>键盘标签</kbd>
 };
 
 enum MD_ELEMENT_TYPE {
@@ -2837,6 +2788,32 @@ enum MD_ELEMENT_TYPE {
 	MD_ELEMENT_ITALIC,         // 斜体 (*text*)
 	MD_ELEMENT_STRIKETHROUGH, // 删除线 (~~text~~)
 	MD_ELEMENT_TABLE,          // 表格
+	MD_ELEMENT_MATH_BLOCK,     //块级公式
+};
+
+enum MATH_NODE_TYPE {
+	MATH_NODE_TEXT,      // 普通文本/变量
+	MATH_NODE_SYMBOL,    // 希腊字母/特殊符号
+	MATH_NODE_GROUP,     // {} 分组
+	MATH_NODE_FRAC,      // \frac{a}{b}
+	MATH_NODE_SUP,       // 上标 ^
+	MATH_NODE_SUB,       // 下标 _
+	MATH_NODE_SUBSUP,    // 同时包含上下标 (如 C_n^k)
+	MATH_NODE_SQRT,       // 根号 \sqrt{}
+	MATH_NODE_MATRIX,     // 矩阵/分段函数环境
+	MATH_NODE_BIGOP,      // 大型运算符 (∑, ∫, lim 等)
+	MATH_NODE_BRACE,     // \overbrace / \underbrace
+	MATH_NODE_XARROW     // \xrightarrow / \xleftarrow
+};
+
+enum MATH_STYLE {
+	MATH_STYLE_NORMAL,
+	MATH_STYLE_MATHBB,   // 黑板粗体 \mathbb
+	MATH_STYLE_MATHCAL,  // 花体 \mathcal
+	MATH_STYLE_MATHBF,   // 粗体 \mathbf
+	MATH_STYLE_MATHSF,   // 无衬线 \mathsf
+	MATH_STYLE_MATHTT,   // 等宽 \mathtt
+	MATH_STYLE_MATHIT    // 斜体 \mathit
 };
 
 // Markdown布局结构体
@@ -2847,6 +2824,34 @@ struct EX_CHATBOX_ITEM_LAYOUT_MARKDOWN
 	RECT    rcContent;      // 内容区域
 };
 
+// 数学公式抽象语法树 (AST) 节点
+struct MathNode {
+	MATH_NODE_TYPE type;
+	std::wstring text;                 // 用于 TEXT 和 SYMBOL
+	bool isTextMode;  // 标记是否为 \text 模式（使用正文字体）
+	MATH_STYLE mathStyle; // 记录数学样式
+	std::vector<MathNode*> children;   // 子节点 (GROUP, FRAC, SUP, SUB, SQRT)
+
+	MathNode(MATH_NODE_TYPE t) : type(t), isTextMode(false), mathStyle(MATH_STYLE_NORMAL) {}
+	~MathNode() {
+		for (auto c : children) delete c;
+	}
+};
+
+// 数学公式布局结果 (用于排版和绘制)
+struct MathLayout {
+	FLOAT width;        // 总宽度
+	FLOAT height;       // 总高度
+	FLOAT baselineY;    // 从顶部到基线的距离 (核心排版参数)
+	FLOAT x, y;         // 相对于父节点左上角的偏移
+	FLOAT scale;        // 字体缩放比例 (用于上下标)
+	bool isLine;        // 是否是辅助线 (如分数线、根号顶线)
+	FLOAT lineY, lineX1, lineX2; // 线的坐标
+	std::vector<MathLayout> children; // 子节点布局
+	const MathNode* node; // 关联的AST节点
+};
+
+
 // 行内元素
 #pragma pack(4)
 struct EX_CHATBOX_MD_INLINE {
@@ -2854,6 +2859,7 @@ struct EX_CHATBOX_MD_INLINE {
 	LPCWSTR       Text;
 	LPCWSTR       Url;
 	RECT          rcElement;
+	MathNode* mathAST;// 用于 MD_INLINE_MATH 存储解析后的语法树
 };
 #pragma pack()
 
@@ -2866,6 +2872,9 @@ struct EX_CHATBOX_MD_TABLE_CELL {
 	INT              InlineCount; // 行内元素数量
 };
 #pragma pack()
+
+
+
 
 // 块级元素
 #pragma pack(4)
@@ -2881,6 +2890,8 @@ struct EX_CHATBOX_MD_ELEMENT
 	EX_CHATBOX_MD_TABLE_CELL* CellList;
 	INT                    RowCount;
 	INT                    ColumnCount;
+	MathNode* mathAST; // 用于 MD_ELEMENT_MATH_BLOCK
+	INT* ColAligns;     //  表格列对齐方式数组 (动态分配，长度为 ColumnCount)
 };
 #pragma pack()
 
@@ -2906,6 +2917,10 @@ struct EX_CHATBOX_ITEMINFO_SUBITEM
 	LPVOID                 Data;     // 子数据结构EX_CHATBOX_ITEMINFO_TEXT，EX_CHATBOX_ITEMINFO_CARD,EX_CHATBOX_ITEMINFO_BOOSTMODE,EX_CHATBOX_ITEMINFO_ERRORLIST,
 	RECT rcItem;      // 整个项目的矩形区域
 	INT  nHeight;         // 项目总高度
+	// 标题行与复制按钮布局及状态
+	RECT rcHeader;
+	RECT rcCopyBtn;
+	BOOL IsCopyBtnHover;
 };
 #pragma pack()
 
@@ -2914,6 +2929,62 @@ struct EX_CHATBOX_ITEMINFO
 	LPVOID Items;   // 数据,EX_CHATBOX_ITEMINFO_SUB数组
 	DWORD  Count;
 };
+
+#pragma region chatbox item type constant
+// 对话盒_项目类型_文本
+#define CHATBOX_ITEMTYPE_TEXT 0
+// 对话盒_项目类型_Markdown文本
+#define CHATBOX_ITEMTYPE_MARKDOWN   1
+// 对话盒_项目类型_思考折叠/展开
+#define CHATBOX_ITEMTYPE_THINKING  2  
+// 对话盒_项目类型_多行选项
+#define CHATBOX_ITEMTYPE_OPTIONS   3   
+#pragma endregion chatbox item type constant
+
+#pragma region chatbox item role constant
+// 对话盒_项目角色_用户
+#define CHATBOX_ITEMROLE_USER 0
+// 对话盒_项目角色_助手
+#define CHATBOX_ITEMROLE_ASSISTANT 1
+#pragma endregion chatbox item role constant
+
+#pragma region chatbox event constant
+// 事件_对话盒_点击链接,wParam=项目索引，lParam=URL指针
+#define CHATBOX_EVENT_CLICKMARKDOWNLINK 20000
+// 事件_对话盒_点击选项 wParam:项目索引 lParam:选项文本指针(LPCWSTR)
+#define CHATBOX_EVENT_SELECTOPTION           20001
+// 事件_对话盒_思考折叠状态改变 wParam:项目索引 lParam:1=展开 0=折叠
+#define CHATBOX_EVENT_THINKINGTOGGLE         20002
+#pragma endregion chatbox event constant
+
+#pragma region chatbox message constant
+// 消息_对话盒_添加表项 添加行到尾部 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
+#define CHATBOX_MESSAGE_ADDITEM 10010
+// 消息_对话盒_更新表项 注意CHATBOX_ITEMTYPE_一致才能更新 wParam:表项索引 从0开始 lParam: EX_CHATBOX_ITEMINFO_SUBITEM 指针
+#define CHATBOX_MESSAGE_UPDATEITEM 10011
+// 消息_对话盒_取表项类型 wParam:表项索引 从0开始，返回CHATBOX_ITEMTYPE_ ,失败返回-1
+#define CHATBOX_MESSAGE_GETITEMTYPE 10012
+// 消息_对话盒_取表项数据 wParam:表项索引 从0开始，返回CEX_CHATBOX_ITEMINFO_SUBITEM 指针,失败返回-1
+#define CHATBOX_MESSAGE_GETITEMDATA 10013
+// 消息_对话盒_取表项总数,失败返回-1
+#define CHATBOX_MESSAGE_GETITEMCOUNT 10014
+// 消息_对话盒_设置用户图标 lParam: 图标句柄HEXIMAGE
+#define CHATBOX_MESSAGE_SETIMAGE_USER 10015
+// 消息_对话盒_设置助手图标 lParam: 图标句柄HEXIMAGE
+#define CHATBOX_MESSAGE_SETIMAGE_ASSISTANT 10016
+// 消息_对话盒_清空消息
+#define CHATBOX_MESSAGE_CLEAR 10017
+// 消息_对话盒_删除表项 wParam:表项索引
+#define CHATBOX_MESSAGE_DELITEM 10018
+// 消息_对话盒_追加文本(流式) wParam:表项索引 lParam:LPCWSTR 追加文本(支持Markdown与Thinking类型)
+#define CHATBOX_MESSAGE_APPENDTEXT           10019
+// 消息_对话盒_设置思考折叠状态 wParam:表项索引 lParam:0=切换 1=展开 2=折叠
+#define CHATBOX_MESSAGE_TOGGLETHINKING       10020
+// 消息_对话盒_设置选项列表 wParam:表项索引 lParam: EX_CHATBOX_OPTIONS_INFO* 指针(用于动态更新选项)
+#define CHATBOX_MESSAGE_SETOPTIONS           10021
+// 消息_对话盒_图片异步加载完成
+#define CHATBOX_MESSAGE_IMAGE_LOADED  10022
+#pragma endregion chatbox message constant
 
 
 // 流程图_端口类型_输入
