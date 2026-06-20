@@ -25,6 +25,7 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
         if (state == 0) {
             Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 1);
+            Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
         }
         Ex_ObjInvalidateRect(hObj, 0);
     }
@@ -32,6 +33,7 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTONEX_LONG_STATE);
         if (state == 1) {
             Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 0);
+            Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
         }
         Ex_ObjInvalidateRect(hObj, 0);
     }
@@ -40,6 +42,7 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
         if (state != 2) {
             // 单选框被点击且未选中时，设置为选中状态并通知兄弟控件
             Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 2);
+            Ex_ObjSetUIState(hObj, STATE_CHECKED, FALSE, 0, TRUE);
             Ex_ObjInvalidateRect(hObj, 0);
             if (wParam == 1)
             {
@@ -57,9 +60,11 @@ LRESULT CALLBACK _radiobuttonex_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wP
     else if (uMsg == BM_SETCHECK) {
         if (wParam == 0) {
             Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 0);
+            Ex_ObjSetUIState(hObj, STATE_CHECKED | STATE_HOVER, TRUE, 0, TRUE);
         }
         else {
             Ex_ObjSetLong(hObj, RADIOBUTTONEX_LONG_STATE, 2);
+            Ex_ObjSetUIState(hObj, STATE_CHECKED, FALSE, 0, TRUE);
         }
         Ex_ObjInvalidateRect(hObj, 0);
         return 0;

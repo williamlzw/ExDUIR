@@ -26,17 +26,19 @@ LRESULT CALLBACK _button_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wParam, L
         auto state = (INT)Ex_ObjGetLong(hObj, BUTTON_LONG_STATE);
         if (state == 0) {
             Ex_ObjSetLong(hObj, BUTTON_LONG_STATE, 1);
+            Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
             Ex_ObjInvalidateRect(hObj, 0);
         }
-        Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
+       
     }
     else if (uMsg == WM_MOUSELEAVE) {
         auto state = (INT)Ex_ObjGetLong(hObj, BUTTON_LONG_STATE);
         if (state == 1) {
             Ex_ObjSetLong(hObj, BUTTON_LONG_STATE, 0);
+            Ex_ObjSetUIState(hObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE);
             Ex_ObjInvalidateRect(hObj, 0);
         }
-        Ex_ObjSetUIState(hObj, STATE_HOVER | STATE_DOWN, TRUE, 0, TRUE);
+        
     }
     else if (uMsg == WM_LBUTTONDOWN) {
         Ex_ObjSetLong(hObj, BUTTON_LONG_STATE, 2);
@@ -118,13 +120,16 @@ LRESULT CALLBACK _radiobutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
         auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTON_LONG_STATE);
         if (state == 0) {
             Ex_ObjSetLong(hObj, RADIOBUTTON_LONG_STATE, 1);
+            Ex_ObjSetUIState(hObj, STATE_HOVER, FALSE, 0, TRUE);
         }
         Ex_ObjInvalidateRect(hObj, 0);
+        
     }
     else if (uMsg == WM_MOUSELEAVE) {
         auto state = (INT)Ex_ObjGetLong(hObj, RADIOBUTTON_LONG_STATE);
         if (state == 1) {
             Ex_ObjSetLong(hObj, RADIOBUTTON_LONG_STATE, 0);
+            Ex_ObjSetUIState(hObj, STATE_HOVER, TRUE, 0, TRUE);
         }
         Ex_ObjInvalidateRect(hObj, 0);
     }
@@ -133,6 +138,7 @@ LRESULT CALLBACK _radiobutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
         if (state != 2) {
             // 单选框被点击且未选中时，设置为选中状态并通知兄弟控件
             Ex_ObjSetLong(hObj, RADIOBUTTON_LONG_STATE, 2);
+            Ex_ObjSetUIState(hObj, STATE_CHECKED, FALSE, 0, TRUE);
             Ex_ObjInvalidateRect(hObj, 0);
             if (wParam == 1)
             {
@@ -150,9 +156,11 @@ LRESULT CALLBACK _radiobutton_proc(HWND hWnd, HEXOBJ hObj, INT uMsg, WPARAM wPar
     else if (uMsg == BM_SETCHECK) {
         if (wParam == 0) {
             Ex_ObjSetLong(hObj, RADIOBUTTON_LONG_STATE, 0);
+            Ex_ObjSetUIState(hObj, STATE_CHECKED | STATE_HOVER, TRUE, 0, TRUE);
         }
         else {
             Ex_ObjSetLong(hObj, RADIOBUTTON_LONG_STATE, 2);
+            Ex_ObjSetUIState(hObj, STATE_CHECKED, FALSE, 0, TRUE);
         }
         Ex_ObjInvalidateRect(hObj, 0);
         return 0;
